@@ -1,0 +1,56 @@
+displayName: Wachete
+description: Web change monitoring with Wachete - create and update monitors that watch a page or crawl a portal, read check history and diffs, list the notifications they triggered, and organise everything into folders.
+domain: wachete.com
+recommendedAuth: api_key
+overviewNote: |
+  Find your **userId** and **apiKey** in the Wachete profile; those are what the API trades for a bearer token.
+
+  - **Two-step auth.** `POST /thirdparty/v1/user/apilogin` exchanges `{ userId, apiKey }` for a `token`, and every other call sends `Authorization: bearer <token>` — the word `bearer` lowercased, as Wachete's own docs write it. The plugin accepts a packed `<userId>\n<apiKey>` key and does the login itself, caching the token until it expires, or a bare token if you already have one.
+  - **Creating and updating are one call, but the two use different methods.** `tasks.upsert` is a `PUT` on the *collection* and `folders.upsert` is a `POST` on the same collection; in both, the body's `id` decides between creating and updating, not the route.
+  - **The enums are ambiguous, and the plugin accepts both forms.** Wachete's OpenAPI document declares alert, job and messaging types as integers, but that same document's own example payload sends names (`"Error"`, `"NotEq"`, `"Webhook"`, `"SinglePage"`) and the prose docs do too. The plugin accepts a name or the number and sends what you give it, so either contract works.
+  - **Alert names.** `Error`, `Changed`, `NotEq`, `Eq`, `Contains`, `NotContains`, `StartsWith`, `EndsWith`, `Regex`, `Lower`, `Greater`, `Exists`, `NotExists`. Messaging names: `Email`, `Webhook`, `Sms`, `Slack`, `Teams`, `Telegram`, `Pushover`, `Discord`.
+  - **A `SinglePage` monitor takes no crawling settings.** `crawlingDepth`, `urlFilter`, `crawlBinaryContent` and `crawlPagesFromAllDomains` only apply to a `Portal` monitor, so sending them on a `SinglePage` one is rejected before the request rather than silently ignored.
+  - **`tasks.search` sits after `/task/{id}` in the API's path table.** A router that matched `{id}` first would treat "search" as a monitor id; Wachete's own routing resolves it, and the plugin calls `/task/search` explicitly.
+  - **Deleting a folder deletes its contents.** `folders.delete` removes every subfolder and monitor inside it, which makes it the most destructive call here — far more than `tasks.delete`, which removes one monitor.
+  - **The last value lives in `data`.** A monitor's `data.raw` is what the last check read, `data.valueChangedTimestamp` is when it last differed, and `data.error` is set when the check failed — so a monitor can be `failedCount` without any notification arriving.
+  - **History and notifications page by continuation token.** Both answer `continuationToken`, which is null on the last page. `data.list` can return a Google-style diff per entry with `returnDiff`, which is much larger than the raw values.
+  - **`notifications.get` carries the sent HTML.** It answers JSON with the monitor's `name`, `url`, `timestampUtc` and the alert as the `html` that was sent. The plugin's event log records the HTML's length, never its content, which is the watched page's text.
+examples:
+  read:
+    path: tasks.get
+    title: Read a monitor
+    args:
+      id: 9f7e1ae7-9a7f-49e0-baa2-ffd8760f7b9e
+  write:
+    path: tasks.upsert
+    title: Watch a page daily
+    args:
+      name: My First Monitor
+      url: http://www.mypage.com
+      xPath: /
+      recurrenceInSeconds: 86400
+apiExamples:
+  tasks.upsert:
+    call: "{ name: 'My First Monitor', url: 'http://www.mypage.com', xPath: '/', recurrenceInSeconds: 86400, alerts: [{ type: 'Error' }, { type: 'NotEq' }] }"
+  tasks.get:
+    call: "{ id: '9f7e1ae7-9a7f-49e0-baa2-ffd8760f7b9e' }"
+  tasks.delete:
+    call: "{ id: '9f7e1ae7-9a7f-49e0-baa2-ffd8760f7b9e' }"
+  tasks.search:
+    call: "{ query: 'docs' }"
+  tasks.pages:
+    call: "{ id: 'c0a1b2c3-1111-2222-3333-444455556666' }"
+  notifications.list:
+    call: "{ taskId: '9f7e1ae7-9a7f-49e0-baa2-ffd8760f7b9e', from: '2024-01-01T00:00:00Z' }"
+  notifications.get:
+    call: "{ alertId: 'alert-1' }"
+  data.list:
+    call: "{ id: '9f7e1ae7-9a7f-49e0-baa2-ffd8760f7b9e', returnDiff: true }"
+  folders.list:
+    call: "{ parentId: '576b3f7e-e126-4e92-9b95-f72a8d187a18' }"
+  folders.upsert:
+    call: "{ name: 'Products' }"
+  folders.delete:
+    call: "{ id: '576b3f7e-e126-4e92-9b95-f72a8d187a18' }"
+  folders.move:
+    call: "{ folderId: '576b3f7e-e126-4e92-9b95-f72a8d187a18', taskIds: ['9f7e1ae7-9a7f-49e0-baa2-ffd8760f7b9e'] }"

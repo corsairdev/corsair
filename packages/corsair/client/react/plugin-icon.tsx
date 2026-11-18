@@ -51,7 +51,6 @@ const DOMAIN_OVERRIDES: Record<string, string> = {
 	firecrawl: 'firecrawl.dev',
 	fireflies: 'fireflies.ai',
 	googlecalendar: 'calendar.google.com',
-	googlecontacts: 'contacts.google.com',
 	googledocs: 'docs.google.com',
 	googledrive: 'drive.google.com',
 	googlemeet: 'meet.google.com',
@@ -86,6 +85,8 @@ const DOMAIN_OVERRIDES: Record<string, string> = {
 	youtube: 'youtube.com',
 	zohomail: 'zoho.com',
 	zoom: 'zoom.us',
+	accrediblecertificates: 'accredible.com',
+	agentmail: 'agentmail.to',
 };
 
 // Products whose public favicon is generic (Microsoft serves the same squares
@@ -104,14 +105,8 @@ const LOGO_OVERRIDES: Record<string, string> = {
 
 /** Docs and Sheets share docs.google.com — use product marks by plugin id. */
 const PLUGIN_ID_LOGO_OVERRIDES: Record<string, string> = {
-	gmail:
-		'https://www.gstatic.com/images/branding/product/2x/gmail_2020q4_96dp.png',
-	googlecontacts:
-		'https://www.gstatic.com/images/branding/product/2x/contacts_96dp.png',
 	googledocs:
 		'https://www.gstatic.com/images/branding/product/2x/docs_2020q4_96dp.png',
-	googlesheets:
-		'https://www.gstatic.com/images/branding/product/2x/sheets_2020q4_96dp.png',
 };
 
 /** Resolve a plugin id to a brand domain. */

@@ -13,7 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { packChaserCredentials } from './client';
+import { packChaserCredentials, splitKeyAndSecret } from './client';
 import {
 	getInvoice,
 	getOrganization,
@@ -188,8 +188,14 @@ export function chaser<const T extends ChaserPluginOptions>(
 				throw new AuthMissingError('chaser', 'api_key');
 			}
 			if (ctx.authType === 'api_key') {
-				const key = options.key ?? (await ctx.keys.get_api_key());
-				const secret = options.secret ?? (await ctx.keys.get_api_secret());
+				const storedKey = options.key ?? (await ctx.keys.get_api_key());
+				const storedSecret =
+					options.secret ?? (await ctx.keys.get_api_secret());
+				// No secret: the key field may hold both, as `key:secret`.
+				const pair =
+					storedKey && !storedSecret ? splitKeyAndSecret(storedKey) : null;
+				const key = pair?.apiKey ?? storedKey;
+				const secret = pair?.apiSecret ?? storedSecret;
 				if (!key || !secret) {
 					throw new AuthMissingError('chaser', 'api_key');
 				}

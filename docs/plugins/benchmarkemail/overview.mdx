@@ -1,9 +1,10 @@
 ---
-title: Overview
-description: "BenchmarkEmail plugin for Corsair"
+title: "Benchmark Email plugin"
+sidebarTitle: "Overview"
+description: "Email marketing platform. Manage contacts, lists, emails, automations, sign-up forms, polls, surveys, webhooks, and reports, plus account settings and the media archive."
 ---
 
-Use **BenchmarkEmail** through Corsair: one client, typed API calls, local DB sync.
+Use **Benchmark Email** through Corsair: one client, typed API calls, local DB sync.
 
 **What you get:**
 
@@ -17,16 +18,20 @@ Use **BenchmarkEmail** through Corsair: one client, typed API calls, local DB sy
 <Step title="Install">
 <CodeGroup>
 ```bash npm
-npm install corsair @corsair-dev/benchmarkemail
+npm install corsair @corsair-dev/benchmarkemail better-sqlite3
+npm install --save-dev @types/better-sqlite3
 ```
 ```bash yarn
-yarn add corsair @corsair-dev/benchmarkemail
+yarn add corsair @corsair-dev/benchmarkemail better-sqlite3
+yarn add --dev @types/better-sqlite3
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/benchmarkemail
+pnpm install corsair @corsair-dev/benchmarkemail better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
 ```
 ```bash bun
-bun add corsair @corsair-dev/benchmarkemail
+bun add corsair @corsair-dev/benchmarkemail better-sqlite3
+bun add --dev @types/better-sqlite3
 ```
 </CodeGroup>
 
@@ -44,6 +49,7 @@ export const corsair = createCorsair({
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
 	hub: {
 		projectApiKey: process.env.CORSAIR_API_KEY!,
 		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
@@ -51,7 +57,7 @@ export const corsair = createCorsair({
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
@@ -59,7 +65,7 @@ Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See 
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+Store the Benchmark Email API key before the first call: `pnpm corsair setup --plugin=benchmarkemail --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
 
 ```ts
 benchmarkemail()
@@ -89,19 +95,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`account.checkIfResponsive`**
+**List contact lists**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.benchmarkemail.api.account.checkIfResponsive({});
+await tenant.benchmarkemail.api.lists.getContactLists({});
 ```
 
 
-**`account.addRemoveInboxTestsFromSubAccount`**
+**Find a contact by email**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.benchmarkemail.api.account.addRemoveInboxTestsFromSubAccount({});
+await tenant.benchmarkemail.api.contacts.searchContactDetailsByEmail({ search: 'you@example.com' });
 ```
 
 
@@ -109,9 +115,17 @@ See the full list on the [API](/plugins/benchmarkemail/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.benchmarkemail.db.<entity>.search()` and `.list()`: `campaigns`, `contactLists`, `contacts`.
+These tables exist, but Benchmark Email calls don't fill them yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/benchmarkemail/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.benchmarkemail.db.contacts.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `campaigns`, `contactLists`, `contacts`. See [Database](/plugins/benchmarkemail/database) for filters and operators.
 
 ## What's next
 

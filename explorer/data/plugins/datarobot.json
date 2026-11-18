@@ -187,12 +187,12 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "data",
@@ -323,12 +323,12 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "data",
@@ -434,12 +434,12 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "data",
@@ -570,12 +570,12 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "data",
@@ -909,12 +909,12 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "data",
@@ -1535,12 +1535,12 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "data",
@@ -1985,12 +1985,12 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "data",
@@ -2051,12 +2051,12 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "data",
@@ -2629,12 +2629,12 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "data",
@@ -3172,12 +3172,12 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "data",
@@ -3418,12 +3418,12 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "data",
@@ -3538,12 +3538,12 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "data",

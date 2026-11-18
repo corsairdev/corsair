@@ -26,10 +26,14 @@ export type PrScopeFilters = {
 	wwwTestFilter: string;
 };
 
+// No package builds or tests read these, so a PR that only touches them skips
+// the heavy jobs. docs/ covers the Mintlify site (pages, docs.json, llms.txt,
+// icons); skills/ holds the agent skill markdown.
 function isDocumentationOnlyFile(file: string): boolean {
 	return (
 		file.startsWith('explorer/') ||
-		/^docs\/.*\.mdx?$/i.test(file) ||
+		file.startsWith('docs/') ||
+		/^skills\/.*\.md$/i.test(file) ||
 		/^[^/]+\.mdx?$/i.test(file)
 	);
 }

@@ -1,0 +1,29 @@
+displayName: Blackbaud
+description: Nonprofit software API for Raiser's Edge NXT gifts, gift batches, and membership details, SKY Payments transactions, and OneRoster discovery.
+domain: blackbaud.com
+examples:
+  read:
+    path: gifts.getGiftById
+    title: Get a gift
+    args:
+      gift_id: "1234"
+  write:
+    path: batch.addGiftsToBatch
+    title: Add gifts to a batch
+    args:
+      batch_id: "5678"
+      gifts:
+        - amount:
+            value: 50
+          constituent_id: "9012"
+          type: Donation
+          gift_splits:
+            - amount:
+                value: 50
+              fund_id: "3456"
+          payments:
+            - payment_method: Cash
+dbExample:
+  entity: gifts
+  note: Search synced gifts without hitting Blackbaud.
+  limit: 50

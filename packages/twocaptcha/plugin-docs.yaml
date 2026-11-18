@@ -1,0 +1,43 @@
+displayName: 2Captcha
+description: 'Create captcha-solving tasks, read their results, check the account balance, and report tasks as correct or incorrect.'
+domain: 2captcha.com
+recommendedAuth: api_key
+overviewNote: |
+  2Captcha is a paid captcha-solving service: you send it a captcha from a page your own automation works on, its workers solve it, and you get back a token or text to submit. Copy your API key from the 2Captcha dashboard (https://2captcha.com/enterpage); the plugin sends it as `clientKey` to API v2 at `api.2captcha.com`.
+
+  Things to know:
+
+  - **Every answer is an envelope.** 2Captcha returns HTTP 200 for almost everything and reports the outcome in `errorId`: `0` is success, anything else comes with an `errorCode` such as `ERROR_ZERO_BALANCE`. The plugin throws `TwoCaptchaAPIError` with that code, so a resolved promise means the call worked.
+  - **Creating a task costs money.** `tasks.create` charges the account per task, so it is `destructive`. What happens depends on the permissions mode ([Permissions](/concepts/permissions)): `cautious` needs an approval first (with a database Corsair records the request and the call throws until it is approved; without one the call is refused), `strict` and `readonly` refuse it, and `open` or no mode runs it. It is not replayed after a 5xx, since the task may already exist; a 429 or `ERROR_NO_SLOT_AVAILABLE`, where nothing was created, is retried. With no funds it answers `ERROR_ZERO_BALANCE`.
+  - **Poll for the result.** `tasks.result` answers `status: "processing"` while workers solve the task; poll every 5-10 seconds until `status` is `ready`, then read `solution` (its fields depend on the captcha kind) and `cost`.
+  - **Report outcomes.** `account.reportCorrect` and `account.reportIncorrect` take the task id. A rejected answer is reviewed by 2Captcha, which may refund it; the task is not solved again, and a report cannot be taken back.
+  - **Captcha kinds.** `tasks.create` takes a `type` such as `RecaptchaV2TaskProxyless`, `TurnstileTaskProxyless` or `ImageToTextTask`, and the fields that kind needs in `task` (see https://2captcha.com/api-docs). Kinds without "Proxyless" take your proxy fields.
+  - **Retries.** `ERROR_NO_SLOT_AVAILABLE` (queue full, nothing created) is retried with backoff. Other codes are permanent. A 5xx is retried for `tasks.result` and `account.balance` only.
+  - **No callbacks in this plugin.** 2Captcha can POST a result to a registered URL, but this plugin does not receive that delivery; poll `tasks.result` instead.
+examples:
+  read:
+    path: account.balance
+    title: Read the account balance
+  write:
+    path: tasks.create
+    title: Create a captcha task for a page
+    args:
+      type: RecaptchaV2TaskProxyless
+      task:
+        websiteURL: https://example.com/login
+        websiteKey: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
+apiExamples:
+  tasks.create:
+    call: "{ type: 'RecaptchaV2TaskProxyless', task: { websiteURL: 'https://example.com/login', websiteKey: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI' } }"
+  tasks.result:
+    call: "{ task_id: 734920165 }"
+  account.balance: {}
+  account.reportCorrect:
+    call: "{ task_id: 734920165 }"
+  account.reportIncorrect:
+    call: "{ task_id: 734920165 }"
+apiNotes:
+  tasks.create: 'Charges the account per task. `type` names the captcha kind and `task` carries that kind''s fields; returns `taskId`.'
+  tasks.result: '`status` is `processing` until workers finish, then `ready` with `solution` and `cost` (USD). Poll every 5-10 seconds.'
+  account.balance: '`balance` is in USD.'
+  account.reportIncorrect: 'Files a complaint about the answer. 2Captcha reviews it and may refund the task; it does not solve it again.'

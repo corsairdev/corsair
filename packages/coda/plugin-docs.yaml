@@ -1,0 +1,25 @@
+displayName: Coda
+description: All-in-one doc for teams that combines pages, tables, automations and Packs.
+examples:
+  read:
+    path: docs.list
+    title: List docs
+  write:
+    path: rows.upsert
+    title: Insert rows into a table
+    args:
+      docId: AbCDeFGH
+      tableIdOrName: Tasks
+      rows:
+        - cells:
+            - column: Name
+              value: Ship the launch plan
+dbExample:
+  entity: documents
+  note: Search synced Coda docs without hitting the API.
+  limit: 50
+exampleWebhook:
+  path: docs.created
+  note: Fires when a doc is created or copied in your Coda organization (Admin API audit webhook, Enterprise plan).
+  after: |
+    console.log('Coda docs created:', result.data);

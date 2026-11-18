@@ -14,9 +14,10 @@
     }
   },
   "scripts": {
-    "build": "rm -rf dist && tsc --build --force && tsup",
+    "build": "tsup && tsc --build --force",
     "typecheck": "tsc --noEmit",
-    "test": "jest"
+    "test": "jest",
+    "test:live": "jest --testPathIgnorePatterns=/node_modules/ --testPathPattern=api\\.test\\.ts"
   },
   "peerDependencies": {
     "corsair": ">=0.1.0",

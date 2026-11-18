@@ -1,0 +1,1183 @@
+{
+  "id": "nasa",
+  "displayName": "NASA",
+  "description": "Astronomy Picture of the Day, near-Earth asteroid data from NeoWs, space weather from DONKI, DSCOVR EPIC imagery, EONET natural events and the NASA Image and Video Library.",
+  "npmPackageName": "@corsair-dev/nasa",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 24,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "nasa.api.apod.get",
+      "shortPath": "apod.get",
+      "description": "Read one day's picture by its six-digit date code, with title, explanation, image URLs and the raw HTML page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string",
+            "description": "NASA's six-digit date code for the picture, e.g. 240115 for 2024-01-15. This is the only addressable form: the feed has no lookup by YYYY-MM-DD."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "post_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "permalink",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "media_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "explanation",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "credit",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "copyright",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "alt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hdurl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "basic_html",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "basic_html_url",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nasa.api.apod.list",
+      "shortPath": "apod.list",
+      "description": "List Astronomy Picture of the Day entries, newest first, or a date range in the legacy YYMMDD form; NASA serves at most 25 per page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page number."
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Entries per page, 1 to 25. NASA serves at most 25, so the plugin rejects a larger value instead of returning fewer than asked."
+          },
+          {
+            "key": "date_from",
+            "optional": true,
+            "type": "string",
+            "description": "Oldest day as the six-digit YYMMDD code, e.g. '240115' or '050101'. A string, so the leading zero of a 2000-2009 date survives. Only honoured when date_to is also sent."
+          },
+          {
+            "key": "date_to",
+            "optional": true,
+            "type": "string",
+            "description": "Newest day as the six-digit YYMMDD code, e.g. '240117'. Only honoured when date_from is also sent."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entries",
+            "optional": false,
+            "type": "{ date?: string | null, post_id?: number | null, title?: string | null, permalink?: string | null, media_type?: string | null, explanation?: string | null, credit?: string | null, copyright?: string | null, alt?: string | null, url?: string | null, hdurl?: string | null, basic_html?: string | null, basic_html_url?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nasa.api.donki.cme",
+      "shortPath": "donki.cme",
+      "description": "List coronal mass ejections in a date range, with the analyses and ENLIL model runs attached to each",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startDate",
+            "optional": false,
+            "type": "string",
+            "description": "First day to include."
+          },
+          {
+            "key": "endDate",
+            "optional": false,
+            "type": "string",
+            "description": "Last day to include, inclusive."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "events",
+            "optional": false,
+            "type": "{ activityID?: string | null, catalog?: string | null, startTime?: string | null, sourceLocation?: string | null, activeRegionNum?: number | null, note?: string | null, cmeAnalyses?: { catalog?: string | null, isMostAccurate?: boolean | null, time21_5?: string | null, latitude?: number | null, longitude?: number | null, halfAngle?: number | null, speed?: number | null, type?: string | null, associatedCMEID?: string | null, associatedCMEstartTime?: string | null, associatedCMELink?: string | null, featureCode?: string | null, dataLevel?: string | null, measurementTechnique?: string | null, imageType?: string | null, tilt?: number | null, minorHalfWidth?: number | null, speedMeasuredAtHeight?: number | null, note?: string | null, levelOfData?: number | null, enlilList?: { modelCompletionTime?: string | null, au?: number | null, estimatedShockArrivalTime?: string | null, isEarthGB?: boolean | null, isEarthMinorImpact?: boolean | null, rmin_re?: number | null, kp_18?: number | null, kp_90?: number | null, kp_135?: number | null, kp_180?: number | null, estimatedDuration?: number | null, link?: string | null, impactList?: { location?: string | null, arrivalTime?: string | null, isGlancingBlow?: boolean | null, isMinorImpact?: boolean | null }[] | null, cmeIDs?: string[] | null }[] | null }[] | null, link?: string | null, linkedEvents?: { activityID?: string | null }[] | null, sentNotifications?: { messageID?: string | null, messageIssueTime?: string | null, messageURL?: string | null }[] | null, submissionTime?: string | null, versionId?: number | null, instruments?: { displayName?: string | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nasa.api.donki.cmeAnalysis",
+      "shortPath": "donki.cmeAnalysis",
+      "description": "List standalone CME analyses, filterable by speed, half angle, catalog and the provider's most-accurate flag",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "A date in YYYY-MM-DD format."
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "A date in YYYY-MM-DD format."
+          },
+          {
+            "key": "mostAccurateOnly",
+            "optional": true,
+            "type": "boolean",
+            "description": "Keep only the analysis NASA marks most accurate. Defaults at the provider to true."
+          },
+          {
+            "key": "completeEntryOnly",
+            "optional": true,
+            "type": "boolean",
+            "description": "Keep only complete analyses. Defaults at the provider to true."
+          },
+          {
+            "key": "speed",
+            "optional": true,
+            "type": "number",
+            "description": "Lowest speed in km/s to include. Defaults to 0."
+          },
+          {
+            "key": "halfAngle",
+            "optional": true,
+            "type": "number",
+            "description": "Smallest half angle in degrees to include. Defaults to 0."
+          },
+          {
+            "key": "catalog",
+            "optional": true,
+            "type": "ALL | SWRC_CATALOG | JANG_ET_AL_CATALOG",
+            "description": "Which analysis catalog to read. Defaults to ALL."
+          },
+          {
+            "key": "keyword",
+            "optional": true,
+            "type": "string",
+            "description": "Free-text filter, such as swpc_annex."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "analyses",
+            "optional": false,
+            "type": "{ catalog?: string | null, isMostAccurate?: boolean | null, time21_5?: string | null, latitude?: number | null, longitude?: number | null, halfAngle?: number | null, speed?: number | null, type?: string | null, associatedCMEID?: string | null, associatedCMEstartTime?: string | null, associatedCMELink?: string | null, featureCode?: string | null, dataLevel?: string | null, measurementTechnique?: string | null, imageType?: string | null, tilt?: number | null, minorHalfWidth?: number | null, speedMeasuredAtHeight?: number | null, note?: string | null, levelOfData?: number | null, enlilList?: { modelCompletionTime?: string | null, au?: number | null, estimatedShockArrivalTime?: string | null, isEarthGB?: boolean | null, isEarthMinorImpact?: boolean | null, rmin_re?: number | null, kp_18?: number | null, kp_90?: number | null, kp_135?: number | null, kp_180?: number | null, estimatedDuration?: number | null, link?: string | null, impactList?: { location?: string | null, arrivalTime?: string | null, isGlancingBlow?: boolean | null, isMinorImpact?: boolean | null }[] | null, cmeIDs?: string[] | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nasa.api.donki.enlilSimulation",
+      "shortPath": "donki.enlilSimulation",
+      "description": "List WSA-ENLIL model runs in a date range, with their CME inputs and the estimated arrival at each spacecraft",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "First day to include. Defaults at the provider to seven days before today (UTC)."
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "Last day to include, inclusive. Defaults at the provider to today."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "simulations",
+            "optional": false,
+            "type": "{ simulationID?: string | null, modelCompletionTime?: string | null, au?: number | null, cmeInputs?: { cmeStartTime?: string | null, latitude?: number | null, longitude?: number | null, speed?: number | null, halfAngle?: number | null, time21_5?: string | null, featureCode?: string | null, isMostAccurate?: boolean | null, levelOfData?: number | null, CMEID?: string | null, ipsList?: { catalog?: string | null, activityID?: string | null, location?: string | null, eventTime?: string | null, instruments?: { displayName?: string | null }[] | null, linkedEvents?: { activityID?: string | null }[] | null, sentNotifications?: { messageID?: string | null, messageIssueTime?: string | null, messageURL?: string | null }[] | null, link?: string | null, submissionTime?: string | null, versionId?: number | null }[] | null }[] | null, estimatedShockArrivalTime?: string | null, isEarthGB?: boolean | null, isEarthMinorImpact?: boolean | null, rmin_re?: number | null, kp_18?: number | null, kp_90?: number | null, kp_135?: number | null, kp_180?: number | null, estimatedDuration?: number | null, impactList?: { location?: string | null, arrivalTime?: string | null, isGlancingBlow?: boolean | null, isMinorImpact?: boolean | null }[] | null, link?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nasa.api.donki.geomagneticStorm",
+      "shortPath": "donki.geomagneticStorm",
+      "description": "List geomagnetic storms in a date range, with the Kp index readings behind each one",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "First day to include. Defaults at the provider to 30 days before today."
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "Last day to include, inclusive. Defaults at the provider to today."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "storms",
+            "optional": false,
+            "type": "{ gstID?: string | null, startTime?: string | null, allKpIndex?: { kpIndex?: number | null, observedTime?: string | null, source?: string | null }[] | null, link?: string | null, linkedEvents?: { activityID?: string | null }[] | null, sentNotifications?: { messageID?: string | null, messageIssueTime?: string | null, messageURL?: string | null }[] | null, submissionTime?: string | null, versionId?: number | null, instruments?: { displayName?: string | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nasa.api.donki.highSpeedStream",
+      "shortPath": "donki.highSpeedStream",
+      "description": "List high speed solar wind streams in a date range, with the events each one is linked to",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "First day to include. Defaults at the provider to 30 days before today."
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "Last day to include, inclusive. Defaults at the provider to today."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "streams",
+            "optional": false,
+            "type": "{ hssID?: string | null, eventTime?: string | null, link?: string | null, linkedEvents?: { activityID?: string | null }[] | null, sentNotifications?: { messageID?: string | null, messageIssueTime?: string | null, messageURL?: string | null }[] | null, submissionTime?: string | null, versionId?: number | null, instruments?: { displayName?: string | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nasa.api.donki.interplanetaryShock",
+      "shortPath": "donki.interplanetaryShock",
+      "description": "List interplanetary shocks in a date range, filterable by the observing spacecraft and the catalog",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "First day to include. Defaults at the provider to 30 days before today."
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "Last day to include, inclusive. Defaults at the provider to today."
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "Earth | MESSENGER | STEREO A | STEREO B",
+            "description": "Which spacecraft observed the shock. Defaults to ALL."
+          },
+          {
+            "key": "catalog",
+            "optional": true,
+            "type": "ALL | SWRC_CATALOG | WINSLOW_MESSENGER_ICME_CATALOG",
+            "description": "Which catalog to read. Defaults to ALL."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shocks",
+            "optional": false,
+            "type": "{ activityID?: string | null, catalog?: string | null, location?: string | null, eventTime?: string | null, link?: string | null, linkedEvents?: { activityID?: string | null }[] | null, sentNotifications?: { messageID?: string | null, messageIssueTime?: string | null, messageURL?: string | null }[] | null, submissionTime?: string | null, versionId?: number | null, instruments?: { displayName?: string | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nasa.api.donki.magnetopauseCrossing",
+      "shortPath": "donki.magnetopauseCrossing",
+      "description": "List magnetopause crossings in a date range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "First day to include. Defaults at the provider to 30 days before today."
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "Last day to include, inclusive. Defaults at the provider to today."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "crossings",
+            "optional": false,
+            "type": "{ mpcID?: string | null, eventTime?: string | null, link?: string | null, linkedEvents?: { activityID?: string | null }[] | null, sentNotifications?: { messageID?: string | null, messageIssueTime?: string | null, messageURL?: string | null }[] | null, submissionTime?: string | null, versionId?: number | null, instruments?: { displayName?: string | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nasa.api.donki.notification",
+      "shortPath": "donki.notification",
+      "description": "List space weather notifications in a date window of at most 30 days, readable as text or filtered to one event type",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "First day to include. Defaults at the provider to seven days before today."
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "Last day to include, inclusive. Defaults at the provider to today."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "all | FLR | SEP | CME | IPS | MPC | GST | RBE | report",
+            "description": "Which notifications to return. Defaults to all. NASA caps the window at 30 days and quietly shifts it when a wider range is sent."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "notifications",
+            "optional": false,
+            "type": "{ messageType?: string | null, messageID?: string | null, messageURL?: string | null, messageIssueTime?: string | null, messageBody?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nasa.api.donki.radiationBelt",
+      "shortPath": "donki.radiationBelt",
+      "description": "List radiation belt enhancements in a date range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "First day to include. Defaults at the provider to 30 days before today."
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "Last day to include, inclusive. Defaults at the provider to today."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "enhancements",
+            "optional": false,
+            "type": "{ rbeID?: string | null, eventTime?: string | null, link?: string | null, linkedEvents?: { activityID?: string | null }[] | null, sentNotifications?: { messageID?: string | null, messageIssueTime?: string | null, messageURL?: string | null }[] | null, submissionTime?: string | null, versionId?: number | null, instruments?: { displayName?: string | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nasa.api.donki.solarEnergeticParticle",
+      "shortPath": "donki.solarEnergeticParticle",
+      "description": "List solar energetic particle events in a date range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "First day to include. Defaults at the provider to 30 days before today."
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "Last day to include, inclusive. Defaults at the provider to today."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "particles",
+            "optional": false,
+            "type": "{ sepID?: string | null, eventTime?: string | null, link?: string | null, linkedEvents?: { activityID?: string | null }[] | null, sentNotifications?: { messageID?: string | null, messageIssueTime?: string | null, messageURL?: string | null }[] | null, submissionTime?: string | null, versionId?: number | null, instruments?: { displayName?: string | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nasa.api.donki.solarFlare",
+      "shortPath": "donki.solarFlare",
+      "description": "List solar flares in a date range, with begin, peak and end times, the class and the active region",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "First day to include. Defaults at the provider to 30 days before today."
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "Last day to include, inclusive. Defaults at the provider to today."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "flares",
+            "optional": false,
+            "type": "{ flrID?: string | null, beginTime?: string | null, peakTime?: string | null, endTime?: string | null, classType?: string | null, sourceLocation?: string | null, activeRegionNum?: number | null, link?: string | null, linkedEvents?: { activityID?: string | null }[] | null, sentNotifications?: { messageID?: string | null, messageIssueTime?: string | null, messageURL?: string | null }[] | null, submissionTime?: string | null, versionId?: number | null, instruments?: { displayName?: string | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nasa.api.eonet.categories",
+      "shortPath": "eonet.categories",
+      "description": "List the EONET categories events can be filed under",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "categories",
+            "optional": false,
+            "type": "{ id?: string | null, title?: string | null, description?: string | null, link?: string | null }[]"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "link",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nasa.api.eonet.event",
+      "shortPath": "eonet.event",
+      "description": "Read one EONET event with its categories, sources and the geometry of each observation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "eventId",
+            "optional": false,
+            "type": "string",
+            "description": "The event's EONET ID, e.g. EONET_26331."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "link",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "closed",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "{ id?: string | null, title?: string | null, description?: string | null, link?: string | null }[] | null"
+          },
+          {
+            "key": "sources",
+            "optional": true,
+            "type": "{ id?: string | null, url?: string | null }[] | null"
+          },
+          {
+            "key": "geometry",
+            "optional": true,
+            "type": "{ magnitudeValue?: number | null, magnitudeUnit?: string | null, magnitudeDescription?: string | null, date?: string | null, type?: string | null, coordinates?: number[] | number[][][] | number[][] | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nasa.api.eonet.events",
+      "shortPath": "eonet.events",
+      "description": "List NASA's curated natural events, such as wildfires and storms, filterable by category, source, date window, magnitude and bounding box",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only events from these source IDs, e.g. InciWeb or EO."
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only events in these category IDs, e.g. wildfires."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "open | closed | all",
+            "description": "Only open, only closed, or both. EONET returns only open events when this is omitted."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Most events to return."
+          },
+          {
+            "key": "days",
+            "optional": true,
+            "type": "number",
+            "description": "Only events from this many prior days, today included."
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string",
+            "description": "First day of the event window."
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string",
+            "description": "Last day of the event window."
+          },
+          {
+            "key": "magID",
+            "optional": true,
+            "type": "string",
+            "description": "Magnitude ID to filter on, e.g. mag_kts."
+          },
+          {
+            "key": "magMin",
+            "optional": true,
+            "type": "number",
+            "description": "Smallest magnitude to include."
+          },
+          {
+            "key": "magMax",
+            "optional": true,
+            "type": "number",
+            "description": "Largest magnitude to include."
+          },
+          {
+            "key": "bbox",
+            "optional": true,
+            "type": "string",
+            "description": "Bounding box as minLon,maxLat,maxLon,minLat."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "events",
+            "optional": false,
+            "type": "{ id?: string | null, title?: string | null, description?: string | null, link?: string | null, closed?: string | null, categories?: { id?: string | null, title?: string | null, description?: string | null, link?: string | null }[] | null, sources?: { id?: string | null, url?: string | null }[] | null, geometry?: { magnitudeValue?: number | null, magnitudeUnit?: string | null, magnitudeDescription?: string | null, date?: string | null, type?: string | null, coordinates?: number[] | number[][][] | number[][] | null }[] | null }[]"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "link",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nasa.api.epic.availableDates",
+      "shortPath": "epic.availableDates",
+      "description": "List every day that has EPIC imagery, oldest first",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection",
+            "optional": true,
+            "type": "natural | enhanced",
+            "description": "Colour treatment. Defaults to natural."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dates",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nasa.api.epic.images",
+      "shortPath": "epic.images",
+      "description": "Read DSCOVR EPIC's full-disc imagery metadata for the most recent day or one given day, in natural or enhanced colour",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection",
+            "optional": true,
+            "type": "natural | enhanced",
+            "description": "Colour treatment. Defaults to natural."
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string",
+            "description": "A day with imagery. Omit for the most recent day NASA holds."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "images",
+            "optional": false,
+            "type": "{ identifier?: string | null, caption?: string | null, image?: string | null, version?: string | null, date?: string | null, centroid_coordinates?: { lat?: number | null, lon?: number | null } | null, dscovr_j2000_position?: { x?: number | null, y?: number | null, z?: number | null } | null, lunar_j2000_position?: { x?: number | null, y?: number | null, z?: number | null } | null, sun_j2000_position?: { x?: number | null, y?: number | null, z?: number | null } | null, attitude_quaternions?: { q0?: number | null, q1?: number | null, q2?: number | null, q3?: number | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nasa.api.images.asset",
+      "shortPath": "images.asset",
+      "description": "List an asset's downloadable file URLs at every size, and the metadata.json entry among them",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nasa_id",
+            "optional": false,
+            "type": "string",
+            "description": "The asset NASA ID, e.g. as11-40-5874."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "manifest",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "metadata_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "The metadata.json entry in the manifest, when NASA lists one."
+          }
+        ]
+      }
+    },
+    {
+      "path": "nasa.api.images.metadata",
+      "shortPath": "images.metadata",
+      "description": "Return the URL of an asset's metadata.json, which holds the raw EXIF and file details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nasa_id",
+            "optional": false,
+            "type": "string",
+            "description": "The asset NASA ID, e.g. as11-40-5874."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nasa.api.images.search",
+      "shortPath": "images.search",
+      "description": "Search the NASA Image and Video Library by text, centre, keywords, media type or year window, with the total hit count and the next page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Free-text search terms."
+          },
+          {
+            "key": "center",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description_508",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "keywords",
+            "optional": true,
+            "type": "string[]",
+            "description": "Keywords to match. Sent comma-separated."
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "media_type",
+            "optional": true,
+            "type": "image | video | audio",
+            "description": "Restrict to one media type."
+          },
+          {
+            "key": "nasa_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page number."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page. NASA defaults to 100."
+          },
+          {
+            "key": "photographer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "secondary_creator",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "year_start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "year_end",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ href?: string | null, data?: { center?: string | null, date_created?: string | null, description?: string | null, description_508?: string | null, keywords?: string[] | null, media_type?: string | null, nasa_id?: string | null, title?: string | null, photographer?: string | null, secondary_creator?: string | null, location?: string | null, album?: string[] | null }[] | null, links?: { href?: string | null, rel?: string | null, render?: string | null, width?: number | null, height?: number | null, size?: number | null }[] | null }[]"
+          },
+          {
+            "key": "total_hits",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "number | null",
+            "description": "The page after this one, when NASA supplied a next link."
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nasa.api.neo.browse",
+      "shortPath": "neo.browse",
+      "description": "Page through the whole near-Earth asteroid catalogue, with the total page count in the response",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "0-based page number."
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number",
+            "description": "Objects per page. NASA defaults to 20 and returns 20 when this is omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "near_earth_objects",
+            "optional": false,
+            "type": "{ id?: string | null, neo_reference_id?: string | null, name?: string | null, name_limited?: string | null, designation?: string | null, nasa_jpl_url?: string | null, absolute_magnitude_h?: number | null, is_potentially_hazardous_asteroid?: boolean | null, is_sentry_object?: boolean | null, estimated_diameter?: { meters?: { estimated_diameter_min?: number | null, estimated_diameter_max?: number | null } | null } | null, close_approach_data?: { close_approach_date?: string | null, close_approach_date_full?: string | null, epoch_date_close_approach?: number | null, orbiting_body?: string | null, miss_distance?: { astronomical?: string | null, lunar?: string | null, kilometers?: string | null, miles?: string | null } | null, relative_velocity?: { kilometers_per_second?: string | null, kilometers_per_hour?: string | null, miles_per_hour?: string | null } | null }[] | null, orbital_data?: { aphelion_distance?: string | null, perihelion_distance?: string | null, semi_major_axis?: string | null, eccentricity?: string | null, inclination?: string | null, mean_motion?: string | null, orbital_period?: string | null, orbit_determination_date?: string | null, first_observation_date?: string | null, last_observation_date?: string | null, data_arc_in_days?: number | null, observations_used?: number | null, orbit_uncertainty?: string | null, orbit_id?: string | null, orbit_class?: { orbit_class_type?: string | null, orbit_class_description?: string | null, orbit_class_range?: string | null } | null } | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "{ size?: number | null, number?: number | null, total_elements?: number | null, total_pages?: number | null }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ next?: string | null, previous?: string | null, self?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nasa.api.neo.feed",
+      "shortPath": "neo.feed",
+      "description": "List asteroids making close approaches in a date window of at most seven days, grouped by the day of approach",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string",
+            "description": "First day of close approaches. NASA accepts at most seven days between the two bounds."
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string",
+            "description": "Last day of close approaches, inclusive."
+          },
+          {
+            "key": "detailed",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the fuller asteroid record. Defaults at NASA to false."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "element_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "near_earth_objects",
+            "optional": false,
+            "type": "Record<string, { id?: string | null, neo_reference_id?: string | null, name?: string | null, name_limited?: string | null, designation?: string | null, nasa_jpl_url?: string | null, absolute_magnitude_h?: number | null, is_potentially_hazardous_asteroid?: boolean | null, is_sentry_object?: boolean | null, estimated_diameter?: { meters?: { estimated_diameter_min?: number | null, estimated_diameter_max?: number | null } | null } | null, close_approach_data?: { close_approach_date?: string | null, close_approach_date_full?: string | null, epoch_date_close_approach?: number | null, orbiting_body?: string | null, miss_distance?: { astronomical?: string | null, lunar?: string | null, kilometers?: string | null, miles?: string | null } | null, relative_velocity?: { kilometers_per_second?: string | null, kilometers_per_hour?: string | null, miles_per_hour?: string | null } | null }[] | null, orbital_data?: { aphelion_distance?: string | null, perihelion_distance?: string | null, semi_major_axis?: string | null, eccentricity?: string | null, inclination?: string | null, mean_motion?: string | null, orbital_period?: string | null, orbit_determination_date?: string | null, first_observation_date?: string | null, last_observation_date?: string | null, data_arc_in_days?: number | null, observations_used?: number | null, orbit_uncertainty?: string | null, orbit_id?: string | null, orbit_class?: { orbit_class_type?: string | null, orbit_class_description?: string | null, orbit_class_range?: string | null } | null } | null }[]>"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ next?: string | null, previous?: string | null, self?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nasa.api.neo.lookup",
+      "shortPath": "neo.lookup",
+      "description": "Read one asteroid's full record, including its orbital elements and every recorded close approach",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "asteroid_id",
+            "optional": false,
+            "type": "string | number",
+            "description": "The asteroid's JPL SPK-ID, e.g. 3542519."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "neo_reference_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name_limited",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "designation",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "nasa_jpl_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "absolute_magnitude_h",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "is_potentially_hazardous_asteroid",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_sentry_object",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "estimated_diameter",
+            "optional": true,
+            "type": "{ meters?: { estimated_diameter_min?: number | null, estimated_diameter_max?: number | null } | null } | null"
+          },
+          {
+            "key": "close_approach_data",
+            "optional": true,
+            "type": "{ close_approach_date?: string | null, close_approach_date_full?: string | null, epoch_date_close_approach?: number | null, orbiting_body?: string | null, miss_distance?: { astronomical?: string | null, lunar?: string | null, kilometers?: string | null, miles?: string | null } | null, relative_velocity?: { kilometers_per_second?: string | null, kilometers_per_hour?: string | null, miles_per_hour?: string | null } | null }[] | null"
+          },
+          {
+            "key": "orbital_data",
+            "optional": true,
+            "type": "{ aphelion_distance?: string | null, perihelion_distance?: string | null, semi_major_axis?: string | null, eccentricity?: string | null, inclination?: string | null, mean_motion?: string | null, orbital_period?: string | null, orbit_determination_date?: string | null, first_observation_date?: string | null, last_observation_date?: string | null, data_arc_in_days?: number | null, observations_used?: number | null, orbit_uncertainty?: string | null, orbit_id?: string | null, orbit_class?: { orbit_class_type?: string | null, orbit_class_description?: string | null, orbit_class_range?: string | null } | null } | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

@@ -1,0 +1,14 @@
+displayName: Replicate
+description: Hosted machine learning model API for running predictions, managing models and versions, deployments, trainings, and uploaded files.
+domain: replicate.com
+examples:
+  read:
+    path: models.list
+    title: List models
+  write:
+    path: predictions.create
+    title: Run a prediction
+    args:
+      version: 5c7d5dc6dd8bf75c1acaa8565735e7986bc5b66206b55cca93cb72c9bf15ccaa
+      input:
+        prompt: A watercolor painting of a lighthouse

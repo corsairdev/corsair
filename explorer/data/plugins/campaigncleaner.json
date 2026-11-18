@@ -1,7 +1,7 @@
 {
   "id": "campaigncleaner",
-  "displayName": "CampaignCleaner",
-  "description": "CampaignCleaner plugin for Corsair",
+  "displayName": "Campaign Cleaner",
+  "description": "Email campaign checking tool for listing campaigns, reading status and PDF analysis, deleting campaigns, and checking credits.",
   "npmPackageName": "@corsair-dev/campaigncleaner",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -166,6 +166,11 @@
         },
         {
           "field": "campaign_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

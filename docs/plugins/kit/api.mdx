@@ -1,0 +1,963 @@
+---
+title: "Kit API reference"
+sidebarTitle: "API"
+description: "API reference for the Kit plugin in Corsair: every `kit.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### get
+
+`account.get`
+
+The account and its user: plan, primary address, timezone and the sending addresses with their verification and DMARC status
+
+**Risk:** `read`
+
+```ts
+await corsair.kit.api.account.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object \| null` | No | — |
+| `account` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  email?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="account full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  plan_type?: string | null,
+  primary_email_address?: string | null,
+  created_at?: string | null,
+  timezone?: {
+    name?: string | null,
+    friendly_name?: string | null,
+    utc_offset?: string | null
+  } | null,
+  sending_addresses?: {
+    email_address?: string | null,
+    from_name?: string | null,
+    status?: string | null,
+    is_default?: boolean | null,
+    is_verified?: boolean | null,
+    is_dmarc_configured?: boolean | null
+  }[] | null,
+  plan?: {
+    plan_type?: string | null,
+    interval?: string | null,
+    subscriber_limit?: number | null,
+    on_trial?: boolean | null,
+    trial_lapse_date?: string | null,
+    renews_at?: string | null,
+    cancels_at?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Custom Fields
+
+### create
+
+`customFields.create`
+
+Create a custom field; Kit derives its `key` from the label
+
+**Risk:** `write`
+
+```ts
+await corsair.kit.api.customFields.create({ label: 'Last name' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `label` | `string` | Yes | The field label. Kit derives its `key` from this. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `custom_field` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="custom_field full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  key?: string | null,
+  label?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`customFields.list`
+
+Every custom field with the `key` a subscriber’s `fields` map uses
+
+**Risk:** `read`
+
+```ts
+await corsair.kit.api.customFields.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `after` | `string` | No | The `end_cursor` of the page before, for the next page. |
+| `before` | `string` | No | The `start_cursor` of the page after, for the previous page. |
+| `per_page` | `number` | No | Items per page, up to 1000. Kit’s default is 500. |
+| `include_total_count` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `custom_fields` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_fields full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  key?: string | null,
+  label?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  has_previous_page?: boolean | null,
+  has_next_page?: boolean | null,
+  start_cursor?: string | null,
+  end_cursor?: string | null,
+  per_page?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`customFields.update`
+
+Change a custom field’s label
+
+**Risk:** `write`
+
+```ts
+await corsair.kit.api.customFields.update({ customFieldId: 7, label: 'Surname' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customFieldId` | `number` | Yes | The custom field ID. |
+| `label` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `custom_field` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="custom_field full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  key?: string | null,
+  label?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Forms
+
+### list
+
+`forms.list`
+
+Forms by status, cursor-paged, optionally with each one’s subscriber count
+
+**Risk:** `read`
+
+```ts
+await corsair.kit.api.forms.list({ include: ['subscriber_count'], status: 'active' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `after` | `string` | No | The `end_cursor` of the page before, for the next page. |
+| `before` | `string` | No | The `start_cursor` of the page after, for the previous page. |
+| `per_page` | `number` | No | Items per page, up to 1000. Kit’s default is 500. |
+| `include` | `subscriber_count[]` | No | Also return each form’s active subscriber count. |
+| `status` | `active \| archived \| trashed \| all` | No | Defaults to `active`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `forms` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="forms full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  created_at?: string | null,
+  type?: string | null,
+  format?: string | null,
+  embed_js?: string | null,
+  embed_url?: string | null,
+  archived?: boolean | null,
+  uid?: string | null,
+  subscriber_count?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  has_previous_page?: boolean | null,
+  has_next_page?: boolean | null,
+  start_cursor?: string | null,
+  end_cursor?: string | null,
+  per_page?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### subscribe
+
+`forms.subscribe`
+
+Add an existing subscriber to a form, which applies the form’s incentive and records when they were added. Create the subscriber first
+
+**Risk:** `destructive`
+
+```ts
+await corsair.kit.api.forms.subscribe({ form_id: 12, email_address: 'jordan@acme.example', referrer: 'https://acme.example/blog' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form_id` | `number` | Yes | The form ID. |
+| `email_address` | `string` | Yes | An email address. Kit normalizes its case, and returns an existing subscriber rather than creating a duplicate. |
+| `referrer` | `string` | No | Where the signup came from. |
+
+The subscriber must already exist; call `subscribers.create` first, then this to record the signup against the form, apply its incentive and set `added_at`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriber` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="subscriber full type">
+
+```ts
+{
+  id: number,
+  first_name?: string | null,
+  email_address: string,
+  state?: string | null,
+  created_at?: string | null,
+  canceled_at?: string | null,
+  fields?: Record<string, string | null> | null,
+  attribution?: {
+    referrer?: string | null,
+    utm_source?: string | null,
+    utm_medium?: string | null,
+    utm_campaign?: string | null,
+    utm_term?: string | null,
+    utm_content?: string | null,
+    source_type?: string | null,
+    source_name?: string | null,
+    source_mechanism?: string | null,
+    source_mechanism_id?: number | null
+  } | null,
+  location?: {
+    city?: string | null,
+    state?: string | null,
+    country?: string | null,
+    latitude?: number | null,
+    longitude?: number | null,
+    timezone?: string | null
+  } | null,
+  tags?: {
+    id?: number | null,
+    name?: string | null
+  }[] | null,
+  added_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Subscribers
+
+### create
+
+`subscribers.create`
+
+Create a subscriber, or return the existing one for an address already on the list. Unknown custom field keys are ignored and named in `warnings`
+
+**Risk:** `write`
+
+```ts
+await corsair.kit.api.subscribers.create({ email_address: 'jordan@acme.example', first_name: 'Jordan', fields: { last_name: 'Lee' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email_address` | `string` | Yes | An email address. Kit normalizes its case, and returns an existing subscriber rather than creating a duplicate. |
+| `first_name` | `string` | No | — |
+| `state` | `active \| cancelled \| bounced \| complained \| inactive` | No | Defaults to `active`. |
+| `fields` | `Record<string, string>` | No | Custom field values keyed by the field’s `key`, such as `last_name`. An unknown key is ignored and named in `warnings`. |
+
+An address already on the list returns the existing subscriber. An unknown custom field key is ignored and named in `warnings`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriber` | `object` | Yes | — |
+| `warnings` | `string[] \| null` | No | Custom field keys Kit ignored because it did not recognise them. |
+
+<AccordionGroup>
+<Accordion title="subscriber full type">
+
+```ts
+{
+  id: number,
+  first_name?: string | null,
+  email_address: string,
+  state?: string | null,
+  created_at?: string | null,
+  canceled_at?: string | null,
+  fields?: Record<string, string | null> | null,
+  attribution?: {
+    referrer?: string | null,
+    utm_source?: string | null,
+    utm_medium?: string | null,
+    utm_campaign?: string | null,
+    utm_term?: string | null,
+    utm_content?: string | null,
+    source_type?: string | null,
+    source_name?: string | null,
+    source_mechanism?: string | null,
+    source_mechanism_id?: number | null
+  } | null,
+  location?: {
+    city?: string | null,
+    state?: string | null,
+    country?: string | null,
+    latitude?: number | null,
+    longitude?: number | null,
+    timezone?: string | null
+  } | null,
+  tags?: {
+    id?: number | null,
+    name?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`subscribers.get`
+
+One subscriber with their custom field values and location
+
+**Risk:** `read`
+
+```ts
+await corsair.kit.api.subscribers.get({ subscriberId: 1001 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriberId` | `number` | Yes | The subscriber ID, from `subscribers.list`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriber` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="subscriber full type">
+
+```ts
+{
+  id: number,
+  first_name?: string | null,
+  email_address: string,
+  state?: string | null,
+  created_at?: string | null,
+  canceled_at?: string | null,
+  fields?: Record<string, string | null> | null,
+  attribution?: {
+    referrer?: string | null,
+    utm_source?: string | null,
+    utm_medium?: string | null,
+    utm_campaign?: string | null,
+    utm_term?: string | null,
+    utm_content?: string | null,
+    source_type?: string | null,
+    source_name?: string | null,
+    source_mechanism?: string | null,
+    source_mechanism_id?: number | null
+  } | null,
+  location?: {
+    city?: string | null,
+    state?: string | null,
+    country?: string | null,
+    latitude?: number | null,
+    longitude?: number | null,
+    timezone?: string | null
+  } | null,
+  tags?: {
+    id?: number | null,
+    name?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`subscribers.list`
+
+Subscribers by state, address or date, cursor-paged, with optional attribution, tags and location
+
+**Risk:** `read`
+
+```ts
+await corsair.kit.api.subscribers.list({ per_page: 25, status: 'active', include: ['tags'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `after` | `string` | No | The `end_cursor` of the page before, for the next page. |
+| `before` | `string` | No | The `start_cursor` of the page after, for the previous page. |
+| `per_page` | `number` | No | Items per page, up to 1000. Kit’s default is 500. |
+| `status` | `active \| cancelled \| bounced \| complained \| inactive \| all` | No | Defaults to `active`. `all` widens it to every state. |
+| `email_address` | `string` | No | Only the subscriber with this exact address. |
+| `include` | `(attribution \| tags \| location \| canceled_at)[]` | No | Embed these extra fields on each subscriber. `canceled_at` needs `status: "cancelled"`. |
+| `include_total_count` | `boolean` | No | Also return the total number of matching subscribers. |
+| `slim` | `boolean` | No | Omit the `fields` object for a smaller, faster response. |
+| `sort_field` | `id \| created_at \| updated_at \| cancelled_at \| canceled_at \| engagement__sent \| engagement__opens \| engagement__clicks \| engagement__open_rate \| engagement__click_rate` | No | Field to order by. `cancelled_at` needs `status: "cancelled"`. An `engagement__<metric>` sort orders by the trailing 90 days and cannot be combined with `email_address`. |
+| `sort_order` | `asc \| desc` | No | — |
+| `created_after` | `string` | No | A date, `yyyy-mm-dd`. |
+| `created_before` | `string` | No | A date, `yyyy-mm-dd`. |
+| `updated_after` | `string` | No | A date, `yyyy-mm-dd`. |
+| `updated_before` | `string` | No | A date, `yyyy-mm-dd`. |
+
+Pages by cursor: pass `pagination.end_cursor` back as `after`. Only active subscribers are returned unless `status` says otherwise.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscribers` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="subscribers full type">
+
+```ts
+{
+  id: number,
+  first_name?: string | null,
+  email_address: string,
+  state?: string | null,
+  created_at?: string | null,
+  canceled_at?: string | null,
+  fields?: Record<string, string | null> | null,
+  attribution?: {
+    referrer?: string | null,
+    utm_source?: string | null,
+    utm_medium?: string | null,
+    utm_campaign?: string | null,
+    utm_term?: string | null,
+    utm_content?: string | null,
+    source_type?: string | null,
+    source_name?: string | null,
+    source_mechanism?: string | null,
+    source_mechanism_id?: number | null
+  } | null,
+  location?: {
+    city?: string | null,
+    state?: string | null,
+    country?: string | null,
+    latitude?: number | null,
+    longitude?: number | null,
+    timezone?: string | null
+  } | null,
+  tags?: {
+    id?: number | null,
+    name?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  has_previous_page?: boolean | null,
+  has_next_page?: boolean | null,
+  start_cursor?: string | null,
+  end_cursor?: string | null,
+  per_page?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unsubscribe
+
+`subscribers.unsubscribe`
+
+Unsubscribe a subscriber, which stops every future send to them; re-subscribing takes their own action, not a call
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.kit.api.subscribers.unsubscribe({ subscriberId: 1001 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriberId` | `number` | Yes | The subscriber ID, from `subscribers.list`. |
+
+Stops every future send to that person. Only they can resubscribe.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `subscriber_id` | `number` | Yes | — |
+
+
+
+---
+
+### update
+
+`subscribers.update`
+
+Change a subscriber’s address, first name or custom field values
+
+**Risk:** `write`
+
+```ts
+await corsair.kit.api.subscribers.update({ subscriberId: 1001, email_address: 'jordan@acme.example', first_name: 'Jordy' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriberId` | `number` | Yes | The subscriber ID, from `subscribers.list`. |
+| `email_address` | `string` | Yes | An email address. Kit normalizes its case, and returns an existing subscriber rather than creating a duplicate. |
+| `first_name` | `string \| null` | No | — |
+| `fields` | `Record<string, string>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriber` | `object` | Yes | — |
+| `warnings` | `string[] \| null` | No | Custom field keys Kit ignored because it did not recognise them. |
+
+<AccordionGroup>
+<Accordion title="subscriber full type">
+
+```ts
+{
+  id: number,
+  first_name?: string | null,
+  email_address: string,
+  state?: string | null,
+  created_at?: string | null,
+  canceled_at?: string | null,
+  fields?: Record<string, string | null> | null,
+  attribution?: {
+    referrer?: string | null,
+    utm_source?: string | null,
+    utm_medium?: string | null,
+    utm_campaign?: string | null,
+    utm_term?: string | null,
+    utm_content?: string | null,
+    source_type?: string | null,
+    source_name?: string | null,
+    source_mechanism?: string | null,
+    source_mechanism_id?: number | null
+  } | null,
+  location?: {
+    city?: string | null,
+    state?: string | null,
+    country?: string | null,
+    latitude?: number | null,
+    longitude?: number | null,
+    timezone?: string | null
+  } | null,
+  tags?: {
+    id?: number | null,
+    name?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tags
+
+### create
+
+`tags.create`
+
+Create a tag, or return the existing one when the name is taken
+
+**Risk:** `write`
+
+```ts
+await corsair.kit.api.tags.create({ name: 'customer' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The tag name. Kit returns the existing tag if the name is taken. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tag full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  created_at?: string | null,
+  subscriber_count?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tags.list`
+
+Every tag, optionally with its active subscriber count
+
+**Risk:** `read`
+
+```ts
+await corsair.kit.api.tags.list({ include: ['subscriber_count'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `after` | `string` | No | The `end_cursor` of the page before, for the next page. |
+| `before` | `string` | No | The `start_cursor` of the page after, for the previous page. |
+| `per_page` | `number` | No | Items per page, up to 1000. Kit’s default is 500. |
+| `include` | `subscriber_count[]` | No | Also return each tag’s active subscriber count. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tags` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  created_at?: string | null,
+  subscriber_count?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  has_previous_page?: boolean | null,
+  has_next_page?: boolean | null,
+  start_cursor?: string | null,
+  end_cursor?: string | null,
+  per_page?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### tagSubscriber
+
+`tags.tagSubscriber`
+
+Add a tag to an existing subscriber, found by email address
+
+**Risk:** `write`
+
+```ts
+await corsair.kit.api.tags.tagSubscriber({ tagId: 31, email_address: 'jordan@acme.example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tagId` | `number` | Yes | The tag ID. |
+| `email_address` | `string` | Yes | An email address. Kit normalizes its case, and returns an existing subscriber rather than creating a duplicate. |
+
+The subscriber must already exist; call `subscribers.create` first for a new address. The result carries the subscriber ID.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `tag_id` | `number` | Yes | — |
+| `email_address` | `string` | No | — |
+| `subscriber_id` | `number` | No | — |
+
+
+
+---
+
+### untagSubscriber
+
+`tags.untagSubscriber`
+
+Remove a tag from a subscriber, found by email address
+
+**Risk:** `write`
+
+```ts
+await corsair.kit.api.tags.untagSubscriber({ tagId: 31, email_address: 'jordan@acme.example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tagId` | `number` | Yes | The tag ID. |
+| `email_address` | `string` | Yes | An email address. Kit normalizes its case, and returns an existing subscriber rather than creating a duplicate. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `tag_id` | `number` | Yes | — |
+| `email_address` | `string` | No | — |
+| `subscriber_id` | `number` | No | — |
+
+
+
+---
+
+### update
+
+`tags.update`
+
+Rename a tag
+
+**Risk:** `write`
+
+```ts
+await corsair.kit.api.tags.update({ tagId: 31, name: 'vip' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tagId` | `number` | Yes | The tag ID. |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tag full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  created_at?: string | null,
+  subscriber_count?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

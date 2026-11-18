@@ -1,0 +1,2268 @@
+{
+  "id": "happyscribe",
+  "displayName": "Happy Scribe",
+  "description": "Transcription, subtitle and meeting-notetaker platform with Happy Scribe - start transcriptions and translations, send the notetaker to meetings, export transcripts, read discovered contacts, and manage human-service orders.",
+  "npmPackageName": "@corsair-dev/happyscribe",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 28,
+    "webhooks": 7,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "happyscribe.api.companies.get",
+      "shortPath": "companies.get",
+      "description": "Read one discovered company with its enriched firmographics (Intelligence API)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companyId",
+            "optional": false,
+            "type": "number",
+            "description": "Company ID to retrieve."
+          },
+          {
+            "key": "organizationId",
+            "optional": false,
+            "type": "string | number",
+            "description": "ID of the organization to act on, as `organizations.list` returned it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "primaryDomain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "domains",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "industry",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "employeeCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "foundedYear",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "shortDescription",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "keywords",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "websiteUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "linkedinUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "logoUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "totalFunding",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "annualRevenue",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "latestFundingStage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "happyscribe.api.companies.list",
+      "shortPath": "companies.list",
+      "description": "List companies discovered from meeting transcripts (Intelligence API; 404 when the organization is not enrolled)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": false,
+            "type": "string | number",
+            "description": "ID of the organization to act on, as `organizations.list` returned it."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Case-insensitive substring match on company name."
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string",
+            "description": "Exact match on the primary domain or any known domain."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page to retrieve; companies count from 1."
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, up to 100; the default is 5."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, primaryDomain?: string | null, domains?: string[] | null, industry?: string | null, employeeCount?: number | null, foundedYear?: number | null, shortDescription?: string | null, keywords?: string[] | null, city?: string | null, country?: string | null, websiteUrl?: string | null, linkedinUrl?: string | null, logoUrl?: string | null, totalFunding?: number | null, annualRevenue?: number | null, latestFundingStage?: string | null, createdAt?: string | null, updatedAt?: string | null }[]"
+          },
+          {
+            "key": "nextPageUrl",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "happyscribe.api.exports.create",
+      "shortPath": "exports.create",
+      "description": "Start exporting one or more transcriptions to a format (txt, srt, vtt, docx, pdf, json). Follow with exports.get until state is ready",
+      "riskLevel": "write",
+      "job": {
+        "idPath": "id",
+        "status": {
+          "op": "exports.get",
+          "idArg": "exportId",
+          "statusPath": "state",
+          "done": ["ready"],
+          "failed": ["failed", "expired"]
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "format",
+            "optional": false,
+            "type": "txt | docx | pdf | srt | vtt | stl | avid | avid_script | avid_ds_subtitles | avid_edl | facebook_srt | html | premiere | maxqda | json | fcp | edl | csv | xlsx | mp3 | mp4",
+            "description": "Export format, e.g. `txt`, `srt`, `vtt`, `docx`, `json`."
+          },
+          {
+            "key": "transcriptionIds",
+            "optional": false,
+            "type": "string[]",
+            "description": "Transcription IDs to include in the export."
+          },
+          {
+            "key": "showTimestamps",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include timestamps in the exported file."
+          },
+          {
+            "key": "showSpeakers",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include speaker names."
+          },
+          {
+            "key": "showComments",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include comments."
+          },
+          {
+            "key": "showHighlights",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include highlights."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "show_timestamps",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "show_speakers",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "show_comments",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "show_highlights",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "transcription_ids",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "download_link",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "happyscribe.api.exports.get",
+      "shortPath": "exports.get",
+      "description": "Where an export stands; once state is ready the answer carries its download_link",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "exportId",
+            "optional": false,
+            "type": "string",
+            "description": "Export ID from an export creation."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "show_timestamps",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "show_speakers",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "show_comments",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "show_highlights",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "transcription_ids",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "download_link",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "happyscribe.api.glossaries.list",
+      "shortPath": "glossaries.list",
+      "description": "List the glossaries an organization can attach to human orders",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": false,
+            "type": "string | number",
+            "description": "ID of the organization to act on, as `organizations.list` returned it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "glossaries",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, source_language?: string | null, target_languages?: string[] | null, organization_default?: boolean | null, imported?: boolean | null, created_at?: string | null, updated_at?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "happyscribe.api.meetings.create",
+      "shortPath": "meetings.create",
+      "description": "Send the HappyScribe notetaker bot to a meeting URL now or at joinAt; it records and transcribes. Follow with meetings.get until status is completed",
+      "riskLevel": "write",
+      "job": {
+        "idPath": "id",
+        "status": {
+          "op": "meetings.get",
+          "idArg": "meetingId",
+          "statusPath": "status",
+          "done": ["completed"],
+          "failed": ["failed", "cancelled"]
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": false,
+            "type": "string | number",
+            "description": "ID of the organization to act on, as `organizations.list` returned it."
+          },
+          {
+            "key": "meetingUrl",
+            "optional": false,
+            "type": "string",
+            "description": "Meeting room URL the notetaker joins, e.g. a Zoom or Meet link."
+          },
+          {
+            "key": "joinAt",
+            "optional": true,
+            "type": "string",
+            "description": "Future ISO 8601 moment, with a UTC offset, for the notetaker to join. Omit to send it now."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Spoken language code, e.g. `en`, or `auto`."
+          },
+          {
+            "key": "participants",
+            "optional": true,
+            "type": "{ email: string, name: string }[]",
+            "description": "People on the call; the notetaker greets them by name."
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Free-form metadata echoed on the meeting and its webhooks."
+          },
+          {
+            "key": "botName",
+            "optional": true,
+            "type": "string",
+            "description": "Display name of the notetaker bot."
+          },
+          {
+            "key": "recordingMode",
+            "optional": true,
+            "type": "audio_only | audio_and_video",
+            "description": "What the notetaker records."
+          },
+          {
+            "key": "summaryTemplate",
+            "optional": true,
+            "type": "string",
+            "description": "Summary template slug, e.g. `sales_call`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "meeting_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "join_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "participants",
+            "optional": true,
+            "type": "{ email?: string | null, name?: string | null }[] | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "transcription_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "transcript",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "happyscribe.api.meetings.get",
+      "shortPath": "meetings.get",
+      "description": "Read one meeting: notetaker status (queued, joining, in_call, processing, completed, failed, cancelled), settings, and the transcript and summary once ready",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meetingId",
+            "optional": false,
+            "type": "string",
+            "description": "Meeting ID, e.g. `mtg_01k0h4r9s8x7c2dvq3m5n6p4ab`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "meeting_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "join_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "participants",
+            "optional": true,
+            "type": "{ email?: string | null, name?: string | null }[] | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "transcription_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "transcript",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "happyscribe.api.memberships.add",
+      "shortPath": "memberships.add",
+      "description": "Add a user to an organization as admin or member, by email. An email new to HappyScribe gets an invitation email and the answer carries invite instead of member",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": false,
+            "type": "string | number",
+            "description": "ID of the organization to act on, as `organizations.list` returned it."
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "Email of the user to add."
+          },
+          {
+            "key": "role",
+            "optional": false,
+            "type": "admin | member",
+            "description": "Role the member gets."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "member",
+            "optional": true,
+            "type": "{ id: number, organization_id?: string | number | null, organization_name?: string | null, email?: string | null, name?: string | null, role?: string | null, created_at?: string | null, updated_at?: string | null } | null"
+          },
+          {
+            "key": "invite",
+            "optional": true,
+            "type": "{ email?: string | null, role?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "happyscribe.api.memberships.list",
+      "shortPath": "memberships.list",
+      "description": "List the members of an organization with their roles, 25 per page; nextPageUrl is set when another page exists",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": false,
+            "type": "string | number",
+            "description": "ID of the organization to act on, as `organizations.list` returned it."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page to retrieve; memberships count from 1, 25 per page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "members",
+            "optional": false,
+            "type": "{ id: number, organization_id?: string | number | null, organization_name?: string | null, email?: string | null, name?: string | null, role?: string | null, created_at?: string | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "nextPageUrl",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "happyscribe.api.memberships.remove",
+      "shortPath": "memberships.remove",
+      "description": "Remove a user from the organization; their existing transcripts stay",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "membershipId",
+            "optional": false,
+            "type": "number",
+            "description": "Membership ID to remove."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "happyscribe.api.memberships.updateRole",
+      "shortPath": "memberships.updateRole",
+      "description": "Change a member's role between admin and member",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "membershipId",
+            "optional": false,
+            "type": "number",
+            "description": "Membership ID to change."
+          },
+          {
+            "key": "role",
+            "optional": false,
+            "type": "admin | member",
+            "description": "New role for the member."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "member",
+            "optional": true,
+            "type": "{ id: number, organization_id?: string | number | null, organization_name?: string | null, email?: string | null, name?: string | null, role?: string | null, created_at?: string | null, updated_at?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "happyscribe.api.orders.confirm",
+      "shortPath": "orders.confirm",
+      "description": "Confirm an incomplete order, which charges the organization and starts the work",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orderId",
+            "optional": false,
+            "type": "string",
+            "description": "Incomplete order to confirm and pay for."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "operations",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "outputsIds",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "happyscribe.api.orders.create",
+      "shortPath": "orders.create",
+      "description": "Create a transcription or subtitling order for media at a URL: service auto (the default) is machine work, pro is human work. It stays incomplete and unpaid until orders.confirm or an explicit confirm flag",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public URL of the media to transcribe or subtitle."
+          },
+          {
+            "key": "language",
+            "optional": false,
+            "type": "string",
+            "description": "Spoken language code of the media."
+          },
+          {
+            "key": "service",
+            "optional": true,
+            "type": "auto | pro",
+            "description": "`auto` (the default) for machine work, `pro` for human work."
+          },
+          {
+            "key": "confirm",
+            "optional": true,
+            "type": "boolean",
+            "description": "Confirm and pay immediately instead of leaving the order incomplete."
+          },
+          {
+            "key": "organizationId",
+            "optional": false,
+            "type": "string | number",
+            "description": "ID of the organization to act on, as `organizations.list` returned it."
+          },
+          {
+            "key": "folderId",
+            "optional": true,
+            "type": "number",
+            "description": "Folder ID for the result."
+          },
+          {
+            "key": "folder",
+            "optional": true,
+            "type": "string",
+            "description": "Folder path for the result, e.g. `my_project`."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Name of the ordered transcription."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "Tags to attach."
+          },
+          {
+            "key": "boost",
+            "optional": true,
+            "type": "boolean",
+            "description": "Pay for faster delivery."
+          },
+          {
+            "key": "isSubtitle",
+            "optional": true,
+            "type": "boolean",
+            "description": "Order subtitling instead of transcription."
+          },
+          {
+            "key": "webhookUrl",
+            "optional": true,
+            "type": "string",
+            "description": "URL notified when the order finishes."
+          },
+          {
+            "key": "glossaryIds",
+            "optional": true,
+            "type": "number[]",
+            "description": "Glossaries the human translators use."
+          },
+          {
+            "key": "styleGuideId",
+            "optional": true,
+            "type": "number",
+            "description": "Style guide the human translators use."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "operations",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "outputsIds",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "happyscribe.api.orders.createTranslation",
+      "shortPath": "orders.createTranslation",
+      "description": "Create a translation order for an existing transcription: service auto (the default) is machine translation, pro is human. Incomplete and unpaid until confirmed",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sourceTranscriptionId",
+            "optional": false,
+            "type": "string",
+            "description": "Transcription to translate."
+          },
+          {
+            "key": "targetLanguages",
+            "optional": false,
+            "type": "string[]",
+            "description": "Languages to translate into."
+          },
+          {
+            "key": "service",
+            "optional": true,
+            "type": "auto | pro",
+            "description": "`auto` (the default) for machine translation, `pro` for human translators."
+          },
+          {
+            "key": "confirm",
+            "optional": true,
+            "type": "boolean",
+            "description": "Confirm and pay immediately."
+          },
+          {
+            "key": "organizationId",
+            "optional": false,
+            "type": "string | number",
+            "description": "ID of the organization to act on, as `organizations.list` returned it."
+          },
+          {
+            "key": "webhookUrl",
+            "optional": true,
+            "type": "string",
+            "description": "URL notified each time the order changes state."
+          },
+          {
+            "key": "glossaryIds",
+            "optional": true,
+            "type": "number[]",
+            "description": "Glossaries for the translators."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "operations",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "outputsIds",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "happyscribe.api.orders.get",
+      "shortPath": "orders.get",
+      "description": "Read one human-service order: state, operations, languages and pricing",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orderId",
+            "optional": false,
+            "type": "string",
+            "description": "Order ID from an order creation."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "operations",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "outputsIds",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "happyscribe.api.organizations.list",
+      "shortPath": "organizations.list",
+      "description": "List the organizations the API token belongs to, with the caller role and human-service availability",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizations",
+            "optional": false,
+            "type": "{ id: string | number, name?: string | null, role?: string | null, created_at?: string | null, updated_at?: string | null, owner_email?: string | null, members_count?: number | null, is_human_transcription_allowed?: boolean | null, is_human_translation_allowed?: boolean | null, email_domains?: string[] | null, idp_company_names?: string[] | null, currency?: string | null, metadata?: Record<string, any> | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "happyscribe.api.people.get",
+      "shortPath": "people.get",
+      "description": "Read one discovered contact with company linkage (Intelligence API)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "personId",
+            "optional": false,
+            "type": "number",
+            "description": "Person ID to retrieve."
+          },
+          {
+            "key": "organizationId",
+            "optional": false,
+            "type": "string | number",
+            "description": "ID of the organization to act on, as `organizations.list` returned it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fullName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "primaryEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "{ id: number, name?: string | null, primaryDomain?: string | null } | null"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "seniority",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "headline",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "linkedinUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "photoUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "avatarUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "enrichedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "happyscribe.api.people.list",
+      "shortPath": "people.list",
+      "description": "List contacts discovered from meeting transcripts (Intelligence API; 404 when not enrolled)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": false,
+            "type": "string | number",
+            "description": "ID of the organization to act on, as `organizations.list` returned it."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Full-text match over name and email fields."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Exact email match, case-insensitive."
+          },
+          {
+            "key": "companyId",
+            "optional": true,
+            "type": "number",
+            "description": "Only people of this company."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page to retrieve; people count from 1."
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, up to 100; the default is 5."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, fullName?: string | null, emails?: string[] | null, primaryEmail?: string | null, company?: { id: number, name?: string | null, primaryDomain?: string | null } | null, jobTitle?: string | null, seniority?: string | null, headline?: string | null, linkedinUrl?: string | null, city?: string | null, country?: string | null, photoUrl?: string | null, avatarUrl?: string | null, enrichedAt?: string | null, createdAt?: string | null, updatedAt?: string | null }[]"
+          },
+          {
+            "key": "nextPageUrl",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "happyscribe.api.styleGuides.list",
+      "shortPath": "styleGuides.list",
+      "description": "List the style guides an organization can attach to human orders",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": false,
+            "type": "string | number",
+            "description": "ID of the organization to act on, as `organizations.list` returned it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "styleGuides",
+            "optional": false,
+            "type": "{ id: number, name?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "happyscribe.api.transcriptions.create",
+      "shortPath": "transcriptions.create",
+      "description": "Start transcribing media from a public URL; spends transcription credits. Follow with transcriptions.getDetails until state is automatic_done",
+      "riskLevel": "write",
+      "job": {
+        "idPath": "id",
+        "status": {
+          "op": "transcriptions.getDetails",
+          "idArg": "fileId",
+          "statusPath": "state",
+          "done": ["automatic_done"],
+          "failed": ["failed", "locked"]
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": false,
+            "type": "string | number",
+            "description": "ID of the organization to act on, as `organizations.list` returned it."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the transcription."
+          },
+          {
+            "key": "language",
+            "optional": false,
+            "type": "string",
+            "description": "BCP-47 language code the media is spoken in, e.g. `en-GB`."
+          },
+          {
+            "key": "tmpUrl",
+            "optional": false,
+            "type": "string",
+            "description": "Public https URL of the media file to transcribe."
+          },
+          {
+            "key": "isSubtitle",
+            "optional": true,
+            "type": "boolean",
+            "description": "Create a subtitle file instead of a transcript."
+          },
+          {
+            "key": "folderId",
+            "optional": true,
+            "type": "number",
+            "description": "Folder to create the transcription in."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "Tags to attach."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "folder",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null } | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sharing_enabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "share_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "failure_reason",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "public_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "audio_length_in_seconds",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "cost_in_cents",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "refunded",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "soundwave_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "audio_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "video_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "meeting",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "people",
+            "optional": true,
+            "type": "{ id: number, name?: string | null, primaryEmail?: string | null, company?: { id: number, name?: string | null, primaryDomain?: string | null } | null }[] | null"
+          },
+          {
+            "key": "companies",
+            "optional": true,
+            "type": "{ id: number, name?: string | null, primaryDomain?: string | null }[] | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "happyscribe.api.transcriptions.delete",
+      "shortPath": "transcriptions.delete",
+      "description": "Delete a transcription. It moves to the Trash unless permanent is true, which cannot be undone. Deleting one still processing cancels it and refunds its credits",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string",
+            "description": "Transcription ID, e.g. `9josdjdfo09j309omsldknslkjndfjknsdfs`."
+          },
+          {
+            "key": "permanent",
+            "optional": true,
+            "type": "boolean",
+            "description": "Delete for good. Without it the transcription moves to the Trash and can be restored."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "happyscribe.api.transcriptions.getDetails",
+      "shortPath": "transcriptions.getDetails",
+      "description": "Read one transcription: processing state, language, duration, cost, media URLs and download links",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string",
+            "description": "Transcription ID, e.g. `9josdjdfo09j309omsldknslkjndfjknsdfs`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "folder",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null } | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sharing_enabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "share_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "failure_reason",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "public_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "audio_length_in_seconds",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "cost_in_cents",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "refunded",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "soundwave_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "audio_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "video_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "meeting",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "people",
+            "optional": true,
+            "type": "{ id: number, name?: string | null, primaryEmail?: string | null, company?: { id: number, name?: string | null, primaryDomain?: string | null } | null }[] | null"
+          },
+          {
+            "key": "companies",
+            "optional": true,
+            "type": "{ id: number, name?: string | null, primaryDomain?: string | null }[] | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "happyscribe.api.transcriptions.getSummary",
+      "shortPath": "transcriptions.getSummary",
+      "description": "Read the AI-generated meeting summary of a notetaker recording",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string",
+            "description": "Transcription ID, e.g. `9josdjdfo09j309omsldknslkjndfjknsdfs`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "happyscribe.api.transcriptions.list",
+      "shortPath": "transcriptions.list",
+      "description": "List transcriptions in an organization with paging, folder filter and, for Intelligence-enrolled organizations, person and company filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": false,
+            "type": "string | number",
+            "description": "Organization to list transcriptions from."
+          },
+          {
+            "key": "folderId",
+            "optional": true,
+            "type": "number",
+            "description": "Only transcriptions inside this folder or its subfolders."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page to retrieve; transcriptions count from 0."
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page."
+          },
+          {
+            "key": "personId",
+            "optional": true,
+            "type": "number",
+            "description": "Intelligence API: transcriptions where this person was linked."
+          },
+          {
+            "key": "personEmail",
+            "optional": true,
+            "type": "string",
+            "description": "Intelligence API: same, resolved by email."
+          },
+          {
+            "key": "companyId",
+            "optional": true,
+            "type": "number",
+            "description": "Intelligence API: transcriptions with a participant from this company."
+          },
+          {
+            "key": "companyDomain",
+            "optional": true,
+            "type": "string",
+            "description": "Intelligence API: same, resolved by domain."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, folder?: { id?: number | null, name?: string | null } | null, created_at?: string | null, updated_at?: string | null, sharing_enabled?: boolean | null, share_code?: string | null, state?: string | null, failure_reason?: string | null, language?: string | null, public_url?: string | null, audio_length_in_seconds?: number | null, cost_in_cents?: number | null, refunded?: boolean | null, soundwave_url?: string | null, audio_url?: string | null, video_url?: string | null, tags?: string[] | null, meeting?: Record<string, any> | null, people?: { id: number, name?: string | null, primaryEmail?: string | null, company?: { id: number, name?: string | null, primaryDomain?: string | null } | null }[] | null, companies?: { id: number, name?: string | null, primaryDomain?: string | null }[] | null, links?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "nextPageUrl",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "happyscribe.api.transcriptions.updateDetails",
+      "shortPath": "transcriptions.updateDetails",
+      "description": "Change a transcription: rename it, move it to another folder in the same organization, or toggle its public sharing link",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string",
+            "description": "Transcription ID, e.g. `9josdjdfo09j309omsldknslkjndfjknsdfs`."
+          },
+          {
+            "key": "organizationId",
+            "optional": false,
+            "type": "string | number",
+            "description": "Organization the transcription belongs to."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "New name."
+          },
+          {
+            "key": "folderId",
+            "optional": true,
+            "type": "number",
+            "description": "Folder in the same organization to move the transcription to."
+          },
+          {
+            "key": "sharingEnabled",
+            "optional": true,
+            "type": "boolean",
+            "description": "Turn the public sharing link on or off."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "folder",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null } | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sharing_enabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "share_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "failure_reason",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "public_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "audio_length_in_seconds",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "cost_in_cents",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "refunded",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "soundwave_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "audio_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "video_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "meeting",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "people",
+            "optional": true,
+            "type": "{ id: number, name?: string | null, primaryEmail?: string | null, company?: { id: number, name?: string | null, primaryDomain?: string | null } | null }[] | null"
+          },
+          {
+            "key": "companies",
+            "optional": true,
+            "type": "{ id: number, name?: string | null, primaryDomain?: string | null }[] | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "happyscribe.api.translations.createTask",
+      "shortPath": "translations.createTask",
+      "description": "Start machine-translating a transcript into a target language; spends credits. Follow with translations.getTask until state is done",
+      "riskLevel": "write",
+      "job": {
+        "idPath": "id",
+        "status": {
+          "op": "translations.getTask",
+          "idArg": "taskId",
+          "statusPath": "state",
+          "done": ["done"],
+          "failed": ["failed"]
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sourceTranscriptionId",
+            "optional": false,
+            "type": "string",
+            "description": "Transcription to translate."
+          },
+          {
+            "key": "targetLanguage",
+            "optional": false,
+            "type": "string",
+            "description": "BCP-47 code of the language to translate into, e.g. `es`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "failureReason",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "progressPercent",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "targetLanguage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "translatedTranscriptionId",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "happyscribe.api.translations.getTask",
+      "shortPath": "translations.getTask",
+      "description": "Where a translation task stands: progress percent, failure reason and the translated transcription id once done",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string",
+            "description": "Translation task ID from a creation call."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "failureReason",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "progressPercent",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "targetLanguage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "translatedTranscriptionId",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "happyscribe.api.uploads.getSignedUrl",
+      "shortPath": "uploads.getSignedUrl",
+      "description": "Get a pre-signed S3 URL for a filename; upload the file bytes there yourself, then create a transcription from it",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filename",
+            "optional": false,
+            "type": "string",
+            "description": "File name the upload gets in storage, e.g. `my_media.mp3`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signedUrl",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "happyscribe.webhooks.meetings.cancelled",
+      "shortPath": "meetings.cancelled",
+      "description": "The Meeting was cancelled before completion",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Event ID beginning with `evt_`; deduplicate retries on it."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string",
+            "description": "Event type, e.g. `meeting.summary_ready`."
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object: Record<string, any> }"
+          }
+        ]
+      },
+      "responseType": "{ id: string, type: string, created_at?: string | null, data: { object: Record<string, any> } }",
+      "usageExample": "happyscribe({\n    webhookHooks: {\n        meetings: {\n            cancelled: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "happyscribe.webhooks.meetings.failed",
+      "shortPath": "meetings.failed",
+      "description": "The notetaker or transcription flow reached a terminal failure",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Event ID beginning with `evt_`; deduplicate retries on it."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string",
+            "description": "Event type, e.g. `meeting.summary_ready`."
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object: Record<string, any> }"
+          }
+        ]
+      },
+      "responseType": "{ id: string, type: string, created_at?: string | null, data: { object: Record<string, any> } }",
+      "usageExample": "happyscribe({\n    webhookHooks: {\n        meetings: {\n            failed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "happyscribe.webhooks.meetings.recordingCompleted",
+      "shortPath": "meetings.recordingCompleted",
+      "description": "The provider recording is available for processing",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Event ID beginning with `evt_`; deduplicate retries on it."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string",
+            "description": "Event type, e.g. `meeting.summary_ready`."
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object: Record<string, any> }"
+          }
+        ]
+      },
+      "responseType": "{ id: string, type: string, created_at?: string | null, data: { object: Record<string, any> } }",
+      "usageExample": "happyscribe({\n    webhookHooks: {\n        meetings: {\n            recordingCompleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "happyscribe.webhooks.meetings.recordingStarted",
+      "shortPath": "meetings.recordingStarted",
+      "description": "The notetaker entered the call and recording started",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Event ID beginning with `evt_`; deduplicate retries on it."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string",
+            "description": "Event type, e.g. `meeting.summary_ready`."
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object: Record<string, any> }"
+          }
+        ]
+      },
+      "responseType": "{ id: string, type: string, created_at?: string | null, data: { object: Record<string, any> } }",
+      "usageExample": "happyscribe({\n    webhookHooks: {\n        meetings: {\n            recordingStarted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "happyscribe.webhooks.meetings.summaryReady",
+      "shortPath": "meetings.summaryReady",
+      "description": "The plain-text meeting summary has been generated and persisted",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Event ID beginning with `evt_`; deduplicate retries on it."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string",
+            "description": "Event type, e.g. `meeting.summary_ready`."
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object: Record<string, any> }"
+          }
+        ]
+      },
+      "responseType": "{ id: string, type: string, created_at?: string | null, data: { object: Record<string, any> } }",
+      "usageExample": "happyscribe({\n    webhookHooks: {\n        meetings: {\n            summaryReady: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "happyscribe.webhooks.meetings.transcriptReady",
+      "shortPath": "meetings.transcriptReady",
+      "description": "The full JSON transcript is ready",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Event ID beginning with `evt_`; deduplicate retries on it."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string",
+            "description": "Event type, e.g. `meeting.summary_ready`."
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object: Record<string, any> }"
+          }
+        ]
+      },
+      "responseType": "{ id: string, type: string, created_at?: string | null, data: { object: Record<string, any> } }",
+      "usageExample": "happyscribe({\n    webhookHooks: {\n        meetings: {\n            transcriptReady: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "happyscribe.webhooks.other.other",
+      "shortPath": "other.other",
+      "description": "HappyScribe delivery whose event type this plugin has no dedicated handler for; check `type` before acting",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Event ID beginning with `evt_`; deduplicate retries on it."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string",
+            "description": "Event type, e.g. `meeting.summary_ready`."
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object: Record<string, any> }"
+          }
+        ]
+      },
+      "responseType": "{ id: string, type: string, created_at?: string | null, data: { object: Record<string, any> } }",
+      "usageExample": "happyscribe({\n    webhookHooks: {\n        other: {\n            other: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": []
+}

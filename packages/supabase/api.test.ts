@@ -265,6 +265,31 @@ describe('Supabase endpoints', () => {
 		);
 	});
 
+	it('routes project logs through the replacement analytics endpoint', async () => {
+		const plugin = supabase({ key: 'test-token' });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			analytics: {
+				getProjectLogs: (
+					ctx: SupabaseContext,
+					input: { ref: string; query?: Record<string, unknown> },
+				) => Promise<unknown>;
+			};
+		};
+
+		await endpoints.analytics.getProjectLogs(mockCtx, {
+			ref: 'abcdefghijklmnopqrst',
+			query: { sql: 'select * from logs limit 1' },
+		});
+
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			method: 'GET',
+			url: '/v1/projects/abcdefghijklmnopqrst/analytics/endpoints/logs',
+			query: { sql: 'select * from logs limit 1' },
+		});
+	});
+
 	it('routes project-hosted APIs through the project base URL', async () => {
 		const plugin = supabase({
 			key: 'test-token',

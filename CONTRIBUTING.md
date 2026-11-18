@@ -153,8 +153,9 @@ That guide covers the expected scaffold and generator flow. In practice, the nor
 2. Open an issue first and align on the integration.
 3. Generate the plugin scaffold from the repo root.
 4. Implement endpoints, auth, schemas, and webhooks.
-5. Register the plugin in `demo/testing/src/server/corsair.ts`.
-6. Test the plugin through `demo/testing/src/scripts/test-script.ts`.
+5. Fill in `packages/<plugin>/plugin-docs.yaml`: `displayName` (the provider's name as they write it, e.g. `bunny.net`, `PDF.co`) and a one-sentence `description` of what the plugin covers. The docs, the catalog and corsair.dev use them, and `pnpm run validate:plugins` fails while either is missing or still a TODO. Then run `pnpm generate:docs -- --plugin=<id>`.
+6. Register the plugin in `demo/testing/src/server/corsair.ts`.
+7. Test the plugin through `demo/testing/src/scripts/test-script.ts`.
 
 The repo includes a generator:
 
@@ -246,3 +247,11 @@ When you open a pull request:
 - call out any schema, webhook, or infrastructure decisions that reviewers should pay attention to
 
 Small docs fixes can be straightforward, but anything larger should have issue context first.
+
+## Versions and Releases
+
+You don't need to change a package's version. Every merge to `main` releases the packages it changed: when a package's shipped files differ from its last release, `.github/workflows/release-on-merge.yml` moves it to the next free patch past the higher of its repo version and npm's latest, and `deploy.yml` publishes it to npm. Changes to tests, READMEs, `plugin-docs.yaml` and devDependencies don't release anything, apart from the helpers `corsair/tests` publishes and Studio's bundled devDependencies. Neither do changes to shared build config such as `tsconfig.base.json`. When one of those, or a devDependency that changes the build, alters what packages ship, raise their versions in the same pull request.
+
+For a minor or major release, raise the version in your pull request. That version is published as it is.
+
+Each release adds its pull requests to the [changelog](https://docs.corsair.dev/changelog), using their titles, so write the title for someone using the package. Every title appears there unless it starts with `chore`, `ci`, `docs`, `test`, `refactor`, `style` or `build`.

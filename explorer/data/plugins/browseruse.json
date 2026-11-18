@@ -1,0 +1,975 @@
+{
+  "id": "browseruse",
+  "displayName": "Browser Use",
+  "description": "Stealth cloud browsers you drive over CDP with Playwright or Puppeteer, plus hosted browser agent runs, behind one API key.",
+  "npmPackageName": "@corsair-dev/browseruse",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 8,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "browseruse.api.browsers.create",
+      "shortPath": "browsers.create",
+      "description": "POST /browsers — start a cloud browser; returns cdpUrl for Playwright/Puppeteer and a liveUrl",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "proxyCountryCode",
+            "optional": true,
+            "type": "ad | ae | af | ag | ai | al | am | an | ao | aq | ar | as | at | au | aw | az | ba | bb | bd | be | bf | bg | bh | bi | bj | bl | bm | bn | bo | bq | br | bs | bt | bv | bw | by | bz | ca | cc | cd | cf | cg | ch | ci | ck | cl | cm | co | cr | cs | cu | cv | cw | cx | cy | cz | de | dj | dk | dm | do | dz | ec | ee | eg | eh | er | es | et | fi | fj | fk | fm | fo | fr | ga | gd | ge | gf | gg | gh | gi | gl | gm | gn | gp | gq | gr | gs | gt | gu | gw | gy | hk | hm | hn | hr | ht | hu | id | ie | il | im | in | iq | ir | is | it | je | jm | jo | jp | ke | kg | kh | ki | km | kn | kp | kr | kw | ky | kz | la | lb | lc | li | lk | lr | ls | lt | lu | lv | ly | ma | mc | md | me | mf | mg | mh | mk | ml | mm | mn | mo | mp | mq | mr | ms | mt | mu | mv | mw | mx | my | mz | na | nc | ne | nf | ng | ni | nl | no | np | nr | nu | nz | om | pa | pe | pf | pg | ph | pk | pl | pm | pn | pr | ps | pt | pw | py | qa | re | ro | rs | ru | rw | sa | sb | sc | sd | se | sg | sh | si | sj | sk | sl | sm | sn | so | sr | ss | st | sv | sx | sy | sz | tc | td | tf | tg | th | tj | tk | tl | tm | tn | to | tr | tt | tv | tw | tz | ua | ug | uk | us | uy | uz | va | vc | ve | vg | vi | vn | vu | wf | ws | xk | ye | yt | za | zm | zw | null"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "browserScreenWidth",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "browserScreenHeight",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "allowResizing",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pdfRendererEnabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "solveCaptchas",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enableRecording",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "customProxy",
+            "optional": true,
+            "type": "{ host: string, port: number, username?: string | null, password?: string | null, ignoreCertErrors?: boolean } | null"
+          },
+          {
+            "key": "extensionIds",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "active | stopped"
+          },
+          {
+            "key": "liveUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cdpUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "timeoutAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "startedAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "finishedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "proxyUsedMb",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "proxyCost",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "browserCost",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "agentSessionId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recordingUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recordingAvailable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "extensions",
+            "optional": true,
+            "type": "{ id: string, runtimeId: string, version: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browseruse.api.browsers.get",
+      "shortPath": "browsers.get",
+      "description": "GET /browsers/{id} — browser status, URLs, cost, recording",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "active | stopped"
+          },
+          {
+            "key": "liveUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cdpUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "timeoutAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "startedAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "finishedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "proxyUsedMb",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "proxyCost",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "browserCost",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "agentSessionId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recordingUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recordingAvailable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "extensions",
+            "optional": true,
+            "type": "{ id: string, runtimeId: string, version: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browseruse.api.browsers.list",
+      "shortPath": "browsers.list",
+      "description": "GET /browsers — paginated browsers, filter by active/stopped",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filterBy",
+            "optional": true,
+            "type": "active | stopped"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "agentSessionId",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, status: active | stopped, liveUrl?: string | null, cdpUrl?: string | null, timeoutAt: string, startedAt: string, finishedAt?: string | null, proxyUsedMb?: string, proxyCost?: string, browserCost?: string, agentSessionId?: string | null, recordingUrl?: string | null, recordingAvailable?: boolean, metadata?: Record<string, string>, extensions?: { id: string, runtimeId: string, version: string }[] }[]"
+          },
+          {
+            "key": "totalItems",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pageNumber",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browseruse.api.browsers.stop",
+      "shortPath": "browsers.stop",
+      "description": "PATCH /browsers/{id} — stop a browser and refund unused time",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "active | stopped"
+          },
+          {
+            "key": "liveUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cdpUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "timeoutAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "startedAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "finishedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "proxyUsedMb",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "proxyCost",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "browserCost",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "agentSessionId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recordingUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recordingAvailable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "extensions",
+            "optional": true,
+            "type": "{ id: string, runtimeId: string, version: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browseruse.api.runs.cancel",
+      "shortPath": "runs.cancel",
+      "description": "POST /runs/{id}/cancel — cancel an in-flight run",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "task",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contextLimit",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "queued | dispatching | running | completed | failed | cancelled"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "any | null"
+          },
+          {
+            "key": "error",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "judgement",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "totalInputTokens",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "totalOutputTokens",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "totalCostUsd",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browseruse.api.runs.create",
+      "shortPath": "runs.create",
+      "description": "POST /runs — start a browser agent run for a natural-language task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "mimo-v2.6-pro | mimo-v2.6-flash | deepseek-v4.1-flash | glm-5.2 | grok-4.5 | grok-4.6 | glm-5.3-flash | deepseek-v4-flash-vision | kimi-k3 | minimax-m3 | claude-opus-4.7 | claude-opus-4.8 | claude-opus-5 | claude-opus-5-5 | claude-fable-5 | claude-sonnet-5 | claude-sonnet-5-5 | gpt-5.5 | gpt-5.6 | gpt-6-astra | gpt-6-sol | gpt-6.1-sol | gpt-6-luna | gpt-5.6-sol | gpt-5.6-terra | gpt-5.6-luna | gemini-3.6-flash | gemini-3.5-flash | gemini-3.1-pro | gemini-3-flash | bu-ultrafast | bu-fast"
+          },
+          {
+            "key": "modelParams",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "outputSchema",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "browserSettings",
+            "optional": true,
+            "type": "{ profileId?: string | null, proxyCountryCode?: ad | ae | af | ag | ai | al | am | an | ao | aq | ar | as | at | au | aw | az | ba | bb | bd | be | bf | bg | bh | bi | bj | bl | bm | bn | bo | bq | br | bs | bt | bv | bw | by | bz | ca | cc | cd | cf | cg | ch | ci | ck | cl | cm | co | cr | cs | cu | cv | cw | cx | cy | cz | de | dj | dk | dm | do | dz | ec | ee | eg | eh | er | es | et | fi | fj | fk | fm | fo | fr | ga | gd | ge | gf | gg | gh | gi | gl | gm | gn | gp | gq | gr | gs | gt | gu | gw | gy | hk | hm | hn | hr | ht | hu | id | ie | il | im | in | iq | ir | is | it | je | jm | jo | jp | ke | kg | kh | ki | km | kn | kp | kr | kw | ky | kz | la | lb | lc | li | lk | lr | ls | lt | lu | lv | ly | ma | mc | md | me | mf | mg | mh | mk | ml | mm | mn | mo | mp | mq | mr | ms | mt | mu | mv | mw | mx | my | mz | na | nc | ne | nf | ng | ni | nl | no | np | nr | nu | nz | om | pa | pe | pf | pg | ph | pk | pl | pm | pn | pr | ps | pt | pw | py | qa | re | ro | rs | ru | rw | sa | sb | sc | sd | se | sg | sh | si | sj | sk | sl | sm | sn | so | sr | ss | st | sv | sx | sy | sz | tc | td | tf | tg | th | tj | tk | tl | tm | tn | to | tr | tt | tv | tw | tz | ua | ug | uk | us | uy | uz | va | vc | ve | vg | vi | vn | vu | wf | ws | xk | ye | yt | za | zm | zw | null, customProxy?: { host: string, port: number, username?: string | null, password?: string | null, ignoreCertErrors?: boolean } | null, screenWidth?: number | null, screenHeight?: number | null, allowResizing?: boolean | null, record?: boolean | null, extensionIds?: string[] } | null"
+          },
+          {
+            "key": "keepAlive",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "agentmail",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "agentcardWalletId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "stripeLinkConnectionId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "agenticAutofillGrantId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "attachedFileIds",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "secretBindings",
+            "optional": true,
+            "type": "{ alias: string, source: { type: inline, value: string } | { type: onepassword, integrationId: string, vaultId: string, itemId: string, fieldId: string }, allowedDomains: string[] }[] | null"
+          },
+          {
+            "key": "opVaultId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "opVaultAllowedDomains",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "judge",
+            "optional": true,
+            "type": "{ context?: string | null } | null"
+          },
+          {
+            "key": "maxCostUsd",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "queued | dispatching | running | completed | failed | cancelled"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "eventsUrl",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "missingFileIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "skippedVaultItems",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browseruse.api.runs.get",
+      "shortPath": "runs.get",
+      "description": "GET /runs/{id} — full run once status is terminal: result, tokens, cost",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "task",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contextLimit",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "queued | dispatching | running | completed | failed | cancelled"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "any | null"
+          },
+          {
+            "key": "error",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "judgement",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "totalInputTokens",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "totalOutputTokens",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "totalCostUsd",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browseruse.api.runs.getStatus",
+      "shortPath": "runs.getStatus",
+      "description": "GET /runs/{id}/status — cheap poll until completed, failed, or cancelled",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "queued | dispatching | running | completed | failed | cancelled"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "browseruse.db.browsers.search",
+      "entityName": "browsers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "liveUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cdpUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "timeoutAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "startedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "finishedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "proxyUsedMb",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "proxyCost",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "browserCost",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "agentSessionId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "recordingUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "recordingAvailable",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "browseruse.db.runs.search",
+      "entityName": "runs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "task",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "model",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sessionId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "workspaceId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "result",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "error",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "contextLimit",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "totalInputTokens",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "totalOutputTokens",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "totalCostUsd",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

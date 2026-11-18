@@ -1,12 +1,11 @@
 ---
-title: Database
-description: "Customer.io local sync: searchable entities, `.search()` filters, and operators."
+title: "Customer.io database"
+sidebarTitle: "Database"
+description: "The Customer.io plugin in Corsair returns live API data and stores no local entities, so there is nothing to search locally."
 ---
 
-The Customer.io plugin syncs data locally. Use `corsair.customerio.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+No local `.search()` operations are available for Customer.io. To read its data, call the [API operations](/plugins/customerio/api), which return what Customer.io has at that moment.
 
 <Info>
 **New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
 </Info>
-
-

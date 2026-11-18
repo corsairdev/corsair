@@ -1,0 +1,463 @@
+{
+  "id": "esignatures",
+  "displayName": "eSignatures",
+  "description": "Contracts and e-signing with eSignatures - send contracts from templates, track and withdraw them, manage signers, and read back or create templates.",
+  "npmPackageName": "@corsair-dev/esignatures",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 12,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "esignatures.api.contracts.addSigner",
+      "shortPath": "contracts.addSigner",
+      "description": "Add a signer to a contract without sending a sign request; use contracts.resendToSigner to send one",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contract_id",
+            "optional": false,
+            "type": "string",
+            "description": "The contract ID."
+          },
+          {
+            "key": "signer",
+            "optional": false,
+            "type": "{ name?: string, email?: string, mobile?: string, company_name?: string, signing_order?: string, auto_sign?: yes | no, signature_request_delivery_methods?: (email | sms)[], signed_document_delivery_method?: email | sms | \"\", multi_factor_authentications?: (sms_verification_code | email_verification_code | photo_id)[], redirect_url?: string }",
+            "description": "The signer to add. No sign request email is sent; use `contracts.resendToSigner`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "esignatures.api.contracts.create",
+      "shortPath": "contracts.create",
+      "description": "Create and send a contract from a template, filling placeholder fields; set save_as_draft to create without sending",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string",
+            "description": "The template ID."
+          },
+          {
+            "key": "signers",
+            "optional": false,
+            "type": "{ name: string, email?: string, mobile?: string, company_name?: string, signing_order?: string, auto_sign?: yes | no, signature_request_delivery_methods?: (email | sms)[], signed_document_delivery_method?: email | sms | \"\", multi_factor_authentications?: (sms_verification_code | email_verification_code | photo_id)[], redirect_url?: string }[]"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "cz | da | de | el | en | en-GB | es | fi | fr | hr | hu | id | it | ja | nl | no | pl | pt | ro | rs | sk | sl | sv | vi | zh-CN | zh-TW",
+            "description": "Language of the sign request emails and sign page."
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string",
+            "description": "Custom data attached to the contract, echoed by webhooks."
+          },
+          {
+            "key": "expires_in_hours",
+            "optional": true,
+            "type": "string",
+            "description": "Hours before the sign request expires, such as \"48\"."
+          },
+          {
+            "key": "custom_webhook_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assigned_user_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "test",
+            "optional": true,
+            "type": "yes | no",
+            "description": "When yes, the contract is a demo and no sending fees are charged."
+          },
+          {
+            "key": "save_as_draft",
+            "optional": true,
+            "type": "yes | no",
+            "description": "When yes, the contract is a draft until `contracts.sendDraft` sends it."
+          },
+          {
+            "key": "placeholder_fields",
+            "optional": true,
+            "type": "{ placeholder_key: string, replace_with_text?: string, replace_with_markdown?: string, replace_with_template?: string }[]"
+          },
+          {
+            "key": "signer_fields",
+            "optional": true,
+            "type": "{ signer_field_id: string, default_value?: string }[]",
+            "description": "Pre-fills Signer fields the signer completes."
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "{ signature_request_subject?: string, signature_request_text?: string, final_contract_subject?: string, final_contract_text?: string, cc_email_addresses?: string[], reply_to?: string }",
+            "description": "Overrides for the sign request and signed-contract emails."
+          },
+          {
+            "key": "custom_branding",
+            "optional": true,
+            "type": "{ company_name?: string, logo_url?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contract",
+            "optional": false,
+            "type": "{ id?: string | null, status?: string | null, title?: string | null, metadata?: string | null, source?: string | null, test?: string | null, labels?: string[] | null, contract_pdf_url?: string | null, signers?: { id?: string | null, name?: string | null, email?: string | null, mobile?: string | null, company_name?: string | null, sign_page_url?: string | null, signing_order?: string | null, auto_sign?: string | null, signer_field_values?: Record<string, any> | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "esignatures.api.contracts.deleteSigner",
+      "shortPath": "contracts.deleteSigner",
+      "description": "Remove a signer from a contract",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contract_id",
+            "optional": false,
+            "type": "string",
+            "description": "The contract ID."
+          },
+          {
+            "key": "signer_id",
+            "optional": false,
+            "type": "string",
+            "description": "The signer's `id` from the contract's `signers`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "esignatures.api.contracts.get",
+      "shortPath": "contracts.get",
+      "description": "Read a contract's status, signers, labels and, once signed, an expiring PDF URL; contracts older than two weeks may return incomplete data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contract_id",
+            "optional": false,
+            "type": "string",
+            "description": "The contract ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contract",
+            "optional": false,
+            "type": "{ id?: string | null, status?: string | null, title?: string | null, metadata?: string | null, source?: string | null, test?: string | null, labels?: string[] | null, contract_pdf_url?: string | null, signers?: { id?: string | null, name?: string | null, email?: string | null, mobile?: string | null, company_name?: string | null, sign_page_url?: string | null, signing_order?: string | null, auto_sign?: string | null, signer_field_values?: Record<string, any> | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "esignatures.api.contracts.resendToSigner",
+      "shortPath": "contracts.resendToSigner",
+      "description": "Send or resend the sign request to one signer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contract_id",
+            "optional": false,
+            "type": "string",
+            "description": "The contract ID."
+          },
+          {
+            "key": "signer_id",
+            "optional": false,
+            "type": "string",
+            "description": "The signer's `id` from the contract's `signers`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "esignatures.api.contracts.sendDraft",
+      "shortPath": "contracts.sendDraft",
+      "description": "Send a draft contract to its signers",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contract_id",
+            "optional": false,
+            "type": "string",
+            "description": "The contract. `contracts.withdraw` refuses signed contracts; `contracts.sendDraft` needs a draft."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "esignatures.api.contracts.updateSigner",
+      "shortPath": "contracts.updateSigner",
+      "description": "Update a signer's contact details or signing settings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contract_id",
+            "optional": false,
+            "type": "string",
+            "description": "The contract ID."
+          },
+          {
+            "key": "signer_id",
+            "optional": false,
+            "type": "string",
+            "description": "The signer's `id` from the contract's `signers`."
+          },
+          {
+            "key": "signer",
+            "optional": false,
+            "type": "{ name?: string, email?: string, mobile?: string, company_name?: string, signing_order?: string, auto_sign?: yes | no, signature_request_delivery_methods?: (email | sms)[], signed_document_delivery_method?: email | sms | \"\", multi_factor_authentications?: (sms_verification_code | email_verification_code | photo_id)[], redirect_url?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "esignatures.api.contracts.withdraw",
+      "shortPath": "contracts.withdraw",
+      "description": "Withdraw a sent contract so it can no longer be signed; signed contracts cannot be withdrawn",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contract_id",
+            "optional": false,
+            "type": "string",
+            "description": "The contract. `contracts.withdraw` refuses signed contracts; `contracts.sendDraft` needs a draft."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "esignatures.api.templates.create",
+      "shortPath": "templates.create",
+      "description": "Create a template from markdown with placeholder fields",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string",
+            "description": "The template title."
+          },
+          {
+            "key": "markdown",
+            "optional": false,
+            "type": "string",
+            "description": "The contract markdown, with `{{placeholder_key}}` fields and signer fields."
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "esignatures.api.templates.delete",
+      "shortPath": "templates.delete",
+      "description": "Permanently delete a template",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string",
+            "description": "The template ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "esignatures.api.templates.get",
+      "shortPath": "templates.get",
+      "description": "Read a template's title, creation time, placeholder fields and signer field IDs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string",
+            "description": "The template ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template",
+            "optional": false,
+            "type": "{ template_id?: string | null, title?: string | null, created_at?: string | null, labels?: string[] | null, last_contract_created_at?: string | null, placeholder_keys?: string[] | null, placeholder_fields?: string[] | null, signer_field_ids?: string[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "esignatures.api.templates.list",
+      "shortPath": "templates.list",
+      "description": "List the templates with their IDs and titles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templates",
+            "optional": false,
+            "type": "{ template_id?: string | null, title?: string | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

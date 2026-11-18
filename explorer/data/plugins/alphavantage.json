@@ -422,7 +422,7 @@
           {
             "key": "Meta Data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number>"
           }
         ]
       }
@@ -466,7 +466,7 @@
           {
             "key": "Meta Data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number>"
           }
         ]
       }
@@ -497,7 +497,7 @@
           {
             "key": "Meta Data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number>"
           }
         ]
       }
@@ -528,7 +528,7 @@
           {
             "key": "Meta Data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number>"
           }
         ]
       }
@@ -947,7 +947,7 @@
           {
             "key": "Meta Data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number>"
           }
         ]
       }
@@ -1020,7 +1020,7 @@
           {
             "key": "Meta Data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number>"
           }
         ]
       }
@@ -1051,7 +1051,7 @@
           {
             "key": "Meta Data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number>"
           }
         ]
       }
@@ -1082,7 +1082,7 @@
           {
             "key": "Meta Data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number>"
           }
         ]
       }
@@ -1185,272 +1185,272 @@
           {
             "key": "AssetType",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "Name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "Description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "CIK",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "Exchange",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "Currency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "Country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "Sector",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "Industry",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "Address",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "OfficialSite",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "FiscalYearEnd",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "LatestQuarter",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "MarketCapitalization",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "EBITDA",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "PERatio",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "PEGRatio",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "BookValue",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "DividendPerShare",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "DividendYield",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "EPS",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "RevenuePerShareTTM",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ProfitMargin",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "OperatingMarginTTM",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ReturnOnAssetsTTM",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ReturnOnEquityTTM",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "RevenueTTM",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "GrossProfitTTM",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "DilutedEPSTTM",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "QuarterlyEarningsGrowthYOY",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "QuarterlyRevenueGrowthYOY",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "AnalystTargetPrice",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "AnalystRatingStrongBuy",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "AnalystRatingBuy",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "AnalystRatingHold",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "AnalystRatingSell",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "AnalystRatingStrongSell",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "TrailingPE",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ForwardPE",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "PriceToSalesRatioTTM",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "PriceToBookRatio",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "EVToRevenue",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "EVToEBITDA",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "Beta",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "52WeekHigh",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "52WeekLow",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "50DayMovingAverage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "200DayMovingAverage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "SharesOutstanding",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "SharesFloat",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "PercentInsiders",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "PercentInstitutions",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "DividendDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ExDividendDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1544,7 +1544,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[]"
+        "type": "Record<string, string>[]"
       }
     },
     {
@@ -1635,7 +1635,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[]"
+        "type": "Record<string, string>[]"
       }
     },
     {
@@ -1829,7 +1829,7 @@
           {
             "key": "payload",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1856,7 +1856,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[]"
+        "type": "Record<string, string>[]"
       }
     },
     {
@@ -1870,7 +1870,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -2005,7 +2005,7 @@
           {
             "key": "extra_params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number>"
           }
         ]
       },
@@ -2015,7 +2015,7 @@
           {
             "key": "Meta Data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number>"
           }
         ]
       }
@@ -2047,7 +2047,7 @@
           {
             "key": "Meta Data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number>"
           }
         ]
       }
@@ -2125,7 +2125,7 @@
           {
             "key": "Meta Data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number>"
           }
         ]
       }
@@ -2171,7 +2171,7 @@
           {
             "key": "Meta Data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number>"
           }
         ]
       }
@@ -2197,7 +2197,7 @@
           {
             "key": "Meta Data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number>"
           }
         ]
       }
@@ -2223,7 +2223,7 @@
           {
             "key": "Meta Data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number>"
           }
         ]
       }
@@ -2286,7 +2286,7 @@
           {
             "key": "Meta Data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number>"
           }
         ]
       }
@@ -2312,7 +2312,7 @@
           {
             "key": "Meta Data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number>"
           }
         ]
       }

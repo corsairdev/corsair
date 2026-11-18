@@ -1,6 +1,7 @@
 ---
-title: Database
-description: "Xero local sync: searchable entities, `.search()` filters, and operators."
+title: "Xero database"
+sidebarTitle: "Database"
+description: "Xero local sync in Corsair: the entities stored in your database, the `.search()` filters each one accepts, and the filter operators."
 ---
 
 The Xero plugin syncs data locally. Use `corsair.xero.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
@@ -59,6 +60,7 @@ const rows = await corsair.xero.db.bankTransactions.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `BankTransactionID` | `string` | equals, contains, startsWith, endsWith, in |
+| `Type` | `string` | equals, contains, startsWith, endsWith, in |
 | `Date` | `string` | equals, contains, startsWith, endsWith, in |
 | `Status` | `string` | equals, contains, startsWith, endsWith, in |
 | `LineAmountTypes` | `string` | equals, contains, startsWith, endsWith, in |

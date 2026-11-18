@@ -1,7 +1,7 @@
 {
   "id": "brevo",
   "displayName": "Brevo",
-  "description": "Brevo plugin for Corsair",
+  "description": "Marketing and email platform. Manage contacts and email campaigns, and read account details.",
   "npmPackageName": "@corsair-dev/brevo",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -89,7 +89,7 @@
           {
             "key": "attributes",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "emailBlacklisted",
@@ -182,7 +182,7 @@
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "emailBlacklisted",
@@ -217,7 +217,7 @@
           {
             "key": "attributes",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -268,7 +268,7 @@
           {
             "key": "contacts",
             "optional": false,
-            "type": "{ id: number, email?: string | null, emailBlacklisted?: boolean, smsBlacklisted?: boolean, createdAt?: string, modifiedAt?: string, listIds?: number[], listUnsubscribed?: number[], attributes?: {} }[]"
+            "type": "{ id: number, email?: string | null, emailBlacklisted?: boolean, smsBlacklisted?: boolean, createdAt?: string, modifiedAt?: string, listIds?: number[], listUnsubscribed?: number[], attributes?: Record<string, any> }[]"
           },
           {
             "key": "count",
@@ -294,7 +294,7 @@
           {
             "key": "attributes",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "emailBlacklisted",
@@ -415,7 +415,7 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -558,7 +558,7 @@
           {
             "key": "statistics",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -758,7 +758,7 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },

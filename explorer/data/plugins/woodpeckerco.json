@@ -1,0 +1,370 @@
+{
+  "id": "woodpeckerco",
+  "displayName": "Woodpecker Co",
+  "description": "Cold email and LinkedIn outreach with Woodpecker - list, run, pause and stop campaigns, remove unused campaign steps, add prospects to campaigns and read them back, and look up webhook event types.",
+  "npmPackageName": "@corsair-dev/woodpeckerco",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 8,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "woodpeckerco.api.campaigns.deleteStep",
+      "shortPath": "campaigns.deleteStep",
+      "description": "Permanently delete an unused EMAIL or LINKEDIN step that is not the first step; the campaign must be DRAFT or EDITED",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "number",
+            "description": "The campaign, in DRAFT or EDITED status."
+          },
+          {
+            "key": "step_id",
+            "optional": false,
+            "type": "string | number",
+            "description": "The EMAIL or LINKEDIN step's `id` from the campaign's `steps`. It cannot be the first step after START or a step that has processed prospects."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "step_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "campaign",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, status?: string | null, bounce_shield_autopaused_at?: string | null, email_account_ids?: number[] | null, settings?: Record<string, any> | null, steps?: Record<string, any> | null }",
+            "description": "The campaign as it stands after the deletion."
+          }
+        ]
+      }
+    },
+    {
+      "path": "woodpeckerco.api.campaigns.list",
+      "shortPath": "campaigns.list",
+      "description": "List campaigns, optionally filtered by status or ID; asking for exactly one ID also returns its statistics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "(RUNNING | DRAFT | EDITED | PAUSED | STOPPED | COMPLETED)[]",
+            "description": "Only campaigns in these statuses."
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number[]",
+            "description": "Only these campaigns. Exactly one ID also returns its `stats`; several return the plain list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaigns",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, status?: string | null, created?: string | null, from_name?: string | null, from_names?: string[] | null, from_email?: string | null, from_emails?: string[] | null, gdpr_unsubscribe?: boolean | null, folder_name?: string | null, folder_id?: number | null, per_day?: number | null, bcc?: string | null, cc?: string | null, stats?: { prospects?: number | null, delivery?: number | null, invalid?: number | null, bounced?: number | null, queue?: number | null, sent?: number | null, check?: number | null, autoreplied?: number | null, opened?: number | null, optout?: number | null, clicked?: number | null, replied?: number | null, interested?: number | null, maybe_later?: number | null, not_interested?: number | null, emails?: Record<string, any>[] | null } | null, timestamp?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "woodpeckerco.api.campaigns.pause",
+      "shortPath": "campaigns.pause",
+      "description": "Pause a campaign: no further contact with prospects until it is run again",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "number",
+            "description": "The campaign to change."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "woodpeckerco.api.campaigns.run",
+      "shortPath": "campaigns.run",
+      "description": "Start or resume a campaign: it becomes RUNNING and Woodpecker starts contacting its prospects",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "number",
+            "description": "The campaign to change."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "woodpeckerco.api.campaigns.stop",
+      "shortPath": "campaigns.stop",
+      "description": "Stop a campaign: no further contact with prospects until it is run again",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "number",
+            "description": "The campaign to change."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "woodpeckerco.api.prospects.addToCampaign",
+      "shortPath": "prospects.addToCampaign",
+      "description": "Add up to 20,000 prospects to a campaign, also creating them in the global list; each result says if that prospect was a duplicate or rejected",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "{ campaign_id: number, send_after?: string }"
+          },
+          {
+            "key": "force",
+            "optional": true,
+            "type": "boolean",
+            "description": "Add prospects whose global status is not ACTIVE. Use with caution: they may be contacted again even after replying elsewhere or opting out."
+          },
+          {
+            "key": "file_name",
+            "optional": true,
+            "type": "string",
+            "description": "Name of the import batch, shown in the imported column."
+          },
+          {
+            "key": "prospects",
+            "optional": false,
+            "type": "{ email: string, status?: ACTIVE | PAUSED | TO-REVIEW | TO-CHECK | BLACKLIST | BOUNCED | INVALID | REPLIED, first_name?: string, last_name?: string, company?: string, website?: string, linkedin_url?: string, tags?: string, title?: string, phone?: string, address?: string, city?: string, state?: string, country?: string, industry?: string, snippet1?: string, snippet2?: string, snippet3?: string, snippet4?: string, snippet5?: string, snippet6?: string, snippet7?: string, snippet8?: string, snippet9?: string, snippet10?: string, snippet11?: string, snippet12?: string, snippet13?: string, snippet14?: string, snippet15?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "prospects",
+            "optional": false,
+            "type": "{ email?: string | null, id?: number | null, prospect?: string | null, prospect_campaign?: string | null, status?: string | null, code?: string | null, msg?: string | null }[]"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ status?: string | null, code?: string | null, msg?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "woodpeckerco.api.prospects.listInCampaigns",
+      "shortPath": "prospects.listInCampaigns",
+      "description": "List the prospects in one or more campaigns with their campaign status and interest level, with filters, sorting and paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaigns_id",
+            "optional": false,
+            "type": "number[]",
+            "description": "The campaigns to read prospects from."
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number[]",
+            "description": "Only these prospects."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "ACTIVE | BOUNCED | TO-CHECK | TO-REVIEW | REPLIED | AUTOREPLIED | BLACKLIST | PAUSED | INVALID",
+            "description": "The prospect's status in the campaign."
+          },
+          {
+            "key": "contacted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "interested",
+            "optional": true,
+            "type": "INTERESTED | MAYBE-LATER | NOT-INTERESTED | NOT-MARKED"
+          },
+          {
+            "key": "activity",
+            "optional": true,
+            "type": "OPENED | NOT-OPENED | CLICKED | NOT-CLICKED"
+          },
+          {
+            "key": "diff",
+            "optional": true,
+            "type": "string",
+            "description": "Only prospects with an activity timestamp after this date, such as 2025-01-15T00:00:00+0200. The + is percent-encoded for you."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Fields with + (ascending) or - (descending), comma-separated, such as +company,-last_contacted."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page."
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 100."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "prospects",
+            "optional": false,
+            "type": "{ id?: number | null, email?: string | null, first_name?: string | null, last_name?: string | null, company?: string | null, organization_id?: number | null, industry?: string | null, website?: string | null, linkedin_url?: string | null, tags?: string | null, title?: string | null, phone?: string | null, address?: string | null, city?: string | null, state?: string | null, country?: string | null, last_contacted?: string | null, last replied?: string | null, updated?: string | null, encrypted?: boolean | null, snippet_labels?: Record<string, any> | null, status?: string | null, interested?: string | null, interest_level?: { level?: string | null, ai_detected?: boolean | null } | null, campaign_id?: number | null, campaign_name?: string | null, campaign_email?: string | null, campaign_emails?: string[] | null, followup_after?: string | null, campaign_status?: string | null, sent_mails?: number | null, last_open?: string | null, last_clicked?: string | null, click_url?: string | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "next_page",
+            "optional": false,
+            "type": "number | null",
+            "description": "The next page while this one is full; null once a page comes back short. A full last page leads to one empty page."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string",
+            "description": "Woodpecker's note when nothing matched."
+          }
+        ]
+      }
+    },
+    {
+      "path": "woodpeckerco.api.webhooks.listEvents",
+      "shortPath": "webhooks.listEvents",
+      "description": "List the event types Woodpecker can send to a webhook, from Woodpecker's docs; makes no API call",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "events",
+            "optional": false,
+            "type": "{ event: string, description: string, docs_url: string }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

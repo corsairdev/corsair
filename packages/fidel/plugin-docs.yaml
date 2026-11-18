@@ -1,0 +1,33 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+displayName: "Fidel"
+description: Card-linking API for linking consumer payment cards to programs and offers, exposing cards, transactions, programs, brands, locations, offers, and webhooks operations.
+domain: fidelapi.com
+recommendedAuth: api_key
+overviewNote: |
+  The API key is your Fidel secret key (`sk_test_…` or `sk_live_…`). A test key only sees test data.
+
+  List operations return up to `limit` items (100 by default). When a response has a `last` cursor there is another page: pass `JSON.stringify(last)` as `start` on the next call. On `mid-insights.listMidInsights` the cursor is already a string, so pass it unchanged.
+
+  The plugin does not link cards. Cards are linked with Fidel's own SDKs, which keep card numbers off your servers, and the plugin works with cards once they are linked.
+examples:
+  read:
+    path: programs.listPrograms
+    title: List programs
+    args: {}
+  write:
+    path: brands.createBrand
+    title: Create a brand
+    args:
+      name: Acme Coffee
+apiExamples:
+  programs.listPrograms: { limit: '50' }
+  brands.createBrand: { name: Acme Coffee, websiteURL: 'https://acme.example.com' }
+  cards.updateCardMetadata: { cardId: 'd35e2001-ecfc-4b49-84f4-a5012edf8a9b', metadata: { customKey: customValue } }
+  offers.createOffer: { brandId: '838d648e-5614-48a7-8e8b-6b3014638c66', countryCode: GBR, name: 10% off on weekends, startDate: '2030-01-01T00:00:00', type: { name: discount, value: 10 }, schemes: [visa, mastercard], channels: [in-store], daysOfWeek: [0, 6] }
+apiNotes:
+  locations.createLocation: |
+    To attach merchant IDs you already know, pass `searchBy` as a nested object: `{ merchantIds: { visa: ['1234567'], mastercard: ['7654321'], amex: ['1357986420'] } }`.
+  cards.updateCardMetadata: |
+    `metadata` replaces the card's whole metadata object. Pass `{}` to clear it.
+  webhooks.createProgramWebhook: |
+    Values in `headers` are sent to Fidel and returned by it, but Corsair's event log keeps only the header names. The response carries the hook's `secretKey`, which signs each delivery (`x-fidel-signature`); store it where you verify webhooks.

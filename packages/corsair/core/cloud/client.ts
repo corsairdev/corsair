@@ -1,43 +1,126 @@
-import type { CorsairClient } from '../client';
+import type { CorsairClient, WithTenantOptions } from '../client';
+import { DB_METHOD_RISK, decodeDbArgs, encodeDbArgs } from '../management/db';
+import { assertModeAllows } from '../permissions';
 import type { CorsairPlugin } from '../plugins';
 import type { CloudTransport } from './http';
 import { cloudRequest } from './http';
 import { CLOUD_ROUTES } from './routes';
 
-const DEFERRED = new Set(['db', 'keys', 'webhooks']);
+const DEFERRED = new Set(['keys', 'webhooks']);
 const TOP_LEVEL_DEFERRED = new Set(['chats', 'workflows']);
 const THENABLE_KEYS = new Set(['then', 'catch', 'finally']);
+
+// A transport is either resolved already, or resolved lazily on first call —
+// `corsairCloud().withInstance(name)` doesn't know the instance's base URL
+// until a resolve request completes, so it hands in a thunk instead.
+export type TransportSource = CloudTransport | (() => Promise<CloudTransport>);
+
+export function resolveTransport(
+	source: TransportSource,
+): Promise<CloudTransport> {
+	return typeof source === 'function' ? source() : Promise.resolve(source);
+}
 
 // Dynamic op proxy: `client.slack.messages.post(args)` builds the dot-path and
 // POSTs it. Intentionally loose — the op set and arg/return shapes live on the
 // VM (discovered at runtime), so they can't be statically typed here. The typed
 // layer is CorsairCloudRegistry (index.ts); this is the runtime that backs it.
 function buildInvokeProxy(
-	transport: CloudTransport,
+	transportSource: TransportSource,
 	tenantId: string,
 	pluginId: string,
 	path: string[],
+	account?: string,
 ): unknown {
-	const invoke = (...args: unknown[]) =>
-		cloudRequest(
+	const invoke = async (...args: unknown[]) => {
+		const transport = await resolveTransport(transportSource);
+		const res = await cloudRequest<{ data: unknown }>(
 			transport,
 			'POST',
 			CLOUD_ROUTES.invoke
 				.replace(':tenant', encodeURIComponent(tenantId))
 				.replace(':plugin', encodeURIComponent(pluginId))
 				.replace(':op', path.map(encodeURIComponent).join('.')),
-			{ args: args[0] },
-			// res is the { data } envelope; data is the dynamic, VM-defined op result.
-		).then((res: any) => res.data);
+			{ args: args[0], ...(account ? { account } : {}) },
+		);
+		// res is the { data } envelope; data is the dynamic, VM-defined op result.
+		return res.data;
+	};
 
 	return new Proxy(invoke, {
 		get(_target, prop) {
 			if (typeof prop !== 'string' || THENABLE_KEYS.has(prop)) {
 				return undefined;
 			}
-			return buildInvokeProxy(transport, tenantId, pluginId, [...path, prop]);
+			return buildInvokeProxy(
+				transportSource,
+				tenantId,
+				pluginId,
+				[...path, prop],
+				account,
+			);
 		},
 	});
+}
+
+// `client.<plugin>.db.<entityType>.<method>(...args)` over HTTP. Fixed at two
+// levels, so the method is checked against the entity-client surface rather
+// than walked from an open-ended dot path.
+function buildDbProxy(
+	transportSource: TransportSource,
+	tenantId: string,
+	pluginId: string,
+	account?: string,
+): unknown {
+	return new Proxy(
+		{},
+		{
+			get(_target, entityType) {
+				if (typeof entityType !== 'string' || THENABLE_KEYS.has(entityType)) {
+					return undefined;
+				}
+				return new Proxy(
+					{},
+					{
+						get(_entityTarget, method) {
+							if (typeof method !== 'string') return undefined;
+							// hasOwn, not a plain lookup: `constructor` and friends come off
+							// Object.prototype and would read as real methods.
+							const risk = Object.hasOwn(DB_METHOD_RISK, method)
+								? DB_METHOD_RISK[method]
+								: undefined;
+							if (!risk) return undefined;
+							return async (...args: unknown[]) => {
+								// The server re-checks, but its scope is AsyncLocalStorage
+								// and does not cross the request.
+								// Bound to an account, the server judges it by that
+								// account's own mode; only it can resolve the names.
+								if (account === undefined) {
+									assertModeAllows(
+										`${pluginId}.db.${entityType}.${method}`,
+										risk,
+										pluginId,
+									);
+								}
+								const transport = await resolveTransport(transportSource);
+								const res = await cloudRequest<{ data: unknown }>(
+									transport,
+									'POST',
+									CLOUD_ROUTES.entityDb
+										.replace(':tenant', encodeURIComponent(tenantId))
+										.replace(':plugin', encodeURIComponent(pluginId))
+										.replace(':entity', encodeURIComponent(entityType))
+										.replace(':method', encodeURIComponent(method)),
+									{ args: encodeDbArgs(args), ...(account ? { account } : {}) },
+								);
+								return decodeDbArgs(res.data);
+							};
+						},
+					},
+				);
+			},
+		},
+	);
 }
 
 // `plugins` typed the client and guarded unknown ids. In cloud mode both are
@@ -46,7 +129,11 @@ function buildInvokeProxy(
 // the VM — the runtime returns 404 unknown_plugin for a bad id.
 export function buildCloudClient<Plugins extends readonly CorsairPlugin[]>(
 	plugins: Plugins | undefined,
-	opts: { transport: CloudTransport; tenantId: string },
+	opts: {
+		transport: TransportSource;
+		tenantId: string;
+		accounts?: WithTenantOptions['accounts'];
+	},
 ): CorsairClient<Plugins> {
 	const pluginIds = plugins ? new Set(plugins.map((p) => p.id)) : null;
 
@@ -65,6 +152,7 @@ export function buildCloudClient<Plugins extends readonly CorsairPlugin[]>(
 				if (pluginIds && !pluginIds.has(pluginId)) {
 					throw new Error(`Unknown plugin "${pluginId}"`);
 				}
+				const account = opts.accounts?.[pluginId];
 				return new Proxy(
 					{},
 					{
@@ -75,7 +163,25 @@ export function buildCloudClient<Plugins extends readonly CorsairPlugin[]>(
 									opts.tenantId,
 									pluginId,
 									[],
+									account,
 								);
+							}
+							if (key === 'db') {
+								return buildDbProxy(
+									opts.transport,
+									opts.tenantId,
+									pluginId,
+									account,
+								);
+							}
+							if (key === 'accounts') {
+								return {
+									list: async () => {
+										throw new Error(
+											'accounts.list is not supported in cloud mode yet',
+										);
+									},
+								};
 							}
 							if (typeof key === 'string' && DEFERRED.has(key)) {
 								throw new Error(

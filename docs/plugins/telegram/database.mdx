@@ -1,6 +1,7 @@
 ---
-title: Database
-description: "Telegram local sync: searchable entities, `.search()` filters, and operators."
+title: "Telegram database"
+sidebarTitle: "Database"
+description: "Telegram local sync in Corsair: the entities stored in your database, the `.search()` filters each one accepts, and the filter operators."
 ---
 
 The Telegram plugin syncs data locally. Use `corsair.telegram.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
@@ -28,6 +29,7 @@ const rows = await corsair.telegram.db.chats.search({
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `chat_id` | `number` | equals, gt, gte, lt, lte, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
 | `title` | `string` | equals, contains, startsWith, endsWith, in |
 | `username` | `string` | equals, contains, startsWith, endsWith, in |
 | `first_name` | `string` | equals, contains, startsWith, endsWith, in |

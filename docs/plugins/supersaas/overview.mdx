@@ -1,0 +1,139 @@
+---
+title: "SuperSaaS plugin"
+sidebarTitle: "Overview"
+description: "Appointment scheduling API for managing users, bookings, slots, and schedules."
+---
+
+Use **SuperSaaS** through Corsair: one client, typed API calls.
+
+SuperSaaS uses HTTP Basic auth: the account name is the username and the API key the password. Store the key as the API key and the account name as `account_name` on the account. The key is under Account Info, API Key.
+
+- **Every booking and slot call names its schedule.** `schedule_id` is sent as a query parameter; without it SuperSaaS answers 404.
+- **Creates return the new id.** SuperSaaS answers 201 with an empty body and the new record's URL in `Location`; the plugin returns `{ created, id, location }`. Updates and deletes answer an empty 200 and return `{ id, updated }` or `{ id, deleted }`.
+- **Bookings can email the customer.** A schedule set to send confirmations emails the customer on a booking create or change, so both are marked destructive. Turn confirmations off on the schedule's Process tab for test runs.
+- **Schedule reads answer an envelope.** `schedules.changes`, `range`, `agenda` and `free` return `{ bookings }` or, on a capacity schedule, `{ slots }`.
+
+**What you get:**
+
+- 20 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/supersaas better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/supersaas better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/supersaas better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/supersaas better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { supersaas } from '@corsair-dev/supersaas';
+
+export const corsair = createCorsair({
+	plugins: [
+		supersaas(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the SuperSaaS API key before the first call: `pnpm corsair setup --plugin=supersaas --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+supersaas()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'supersaas',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List recent schedule changes**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.supersaas.api.schedules.changes({ schedule_id: 12345 });
+```
+
+
+**Create a booking**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.supersaas.api.bookings.create({
+	schedule_id: 12345,
+	email: 'jane@example.com',
+	start: '2026-12-01 09:00:00',
+	finish: '2026-12-01 09:30:00',
+});
+```
+
+
+See the full list on the [API](/plugins/supersaas/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/supersaas/api">
+    Every `supersaas.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

@@ -1,6 +1,7 @@
 ---
-title: Database
-description: "Uniswap local sync: searchable entities, `.search()` filters, and operators."
+title: "Uniswap database"
+sidebarTitle: "Database"
+description: "Uniswap local sync in Corsair: the entities stored in your database, the `.search()` filters each one accepts, and the filter operators."
 ---
 
 The Uniswap plugin syncs data locally. Use `corsair.uniswapapi.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
@@ -118,6 +119,7 @@ const rows = await corsair.uniswapapi.db.swapStatus.search({
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `txHash` | `string` | equals, contains, startsWith, endsWith, in |
 | `chainId` | `number` | equals, gt, gte, lt, lte, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 

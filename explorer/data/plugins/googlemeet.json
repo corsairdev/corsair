@@ -947,6 +947,11 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "createdAt",
           "type": "date",
           "operators": ["equals", "before", "after", "between"]
@@ -974,6 +979,11 @@
         },
         {
           "field": "endTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
@@ -1036,6 +1046,11 @@
         },
         {
           "field": "endTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

@@ -1,0 +1,152 @@
+---
+title: "Neutrino API plugin"
+sidebarTitle: "Overview"
+description: "Look up IP geolocation and blocklists, validate and verify email addresses and phone numbers, parse user agents, check domain and host reputation, inspect URLs, geocode addresses, look up card BINs, convert units, filter profanity, drive a headless browser, and send and check SMS or voice security codes."
+---
+
+Use **Neutrino API** through Corsair: one client, typed API calls.
+
+Neutrino needs two credentials on every call: the account's numeric **user id** and one of its **API keys**. Both are on https://www.neutrinoapi.com/account/. The plugin sends them combined in a single `API-Key` header as `user-id:api-key`, which is the form Neutrino documents, so neither lands in a query string.
+
+Set both before the first call, for example `pnpm corsair setup --plugin=neutrino --tenant=acme api_key=<key> user_id=<id>`, or pass `key` and `userId` in the plugin options.
+
+What each group does:
+
+- **IP.** `ip.info` geolocates an address, `ip.blocklist` checks the blocklists Neutrino tracks with a flag per threat type, and `ip.probe` reports the hosting provider rather than the place.
+- **Email.** `email.validate` checks syntax, domain and MX without contacting the mailbox. `email.verify` adds an SMTP probe and reports `verified` separately from `valid`, because a server can accept a domain and still refuse the mailbox check.
+- **Phone.** `phone.validate` parses a number into its international and local forms with the carrier prefix. `phone.hlrLookup` queries the carrier's home location register for whether the number is live and whether it was ported.
+- **Web.** `web.uaLookup` parses a User-Agent, `web.domainLookup` reads domain facts and blocklists, `web.hostReputation` checks a host against many DNSBLs, `web.urlInfo` inspects a URL, and `web.browserBot` loads a page in a real browser and can run JavaScript on it.
+- **Text.** `text.badWordFilter` finds profanity in text and returns a censored copy.
+- **Geocode, commerce.** Forward and reverse geocoding, card BIN facts, and unit and currency conversion.
+- **Messaging.** `messaging.smsVerify` texts a security code and `messaging.phoneVerify` reads one out in a call; `messaging.verifySecurityCode` checks the code the person types.
+
+Worth knowing before you call:
+
+- **`web.urlInfo` and the phone HLR lookup make Neutrino do outside work.** The first fetches the page themselves, and the second queries a carrier, so both cost more and can fail on a target that refuses them.
+- **`messaging.smsVerify` and `messaging.phoneVerify` reach a real person** and spend credits, so both are `destructive`. Neutrino keeps the code it sent, and `messaging.verifySecurityCode` checks what the person types. A 5xx on these routes is never retried, because the message or call may already have gone out.
+- **`messaging.verifySecurityCode` is `write`.** With `limitBy`, each failed check counts toward a lockout for that identifier.
+- **`web.browserBot` is `write`.** Loading a page only reads, but its `exec` statements run on the third-party page and can click or submit forms there.
+- **Parameters are hyphenated.** `country-code`, `bin-number`, `from-value`, `fetch-content`, `code-length`. The plugin maps its own camelCase inputs onto those names, so a caller writes `countryCode` and `binNumber`.
+- **A convert result comes twice.** `result` is a string and `result-float` a number; use the one the surrounding code needs rather than parsing the first.
+
+Errors are `{ "api-error": <number>, "api-error-msg": "..." }`. **Code 43 is the credential check**, and it is the only code that means a bad user id or key; a 403 with another code is a plan or permission limit. A route that does not exist answers 400 with code 45 even without credentials.
+
+**What you get:**
+
+- 20 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/neutrino better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/neutrino better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/neutrino better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/neutrino better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { neutrino } from '@corsair-dev/neutrino';
+
+export const corsair = createCorsair({
+	plugins: [
+		neutrino(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Neutrino API API key before the first call: `pnpm corsair setup --plugin=neutrino --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+neutrino()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'neutrino',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Geolocate a public address**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.neutrino.api.ip.info({ ip: '1.1.1.1' });
+```
+
+
+**Send a security code by SMS**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.neutrino.api.messaging.smsVerify({ number: '+61412345678', codeLength: 6 });
+```
+
+
+See the full list on the [API](/plugins/neutrino/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/neutrino/api">
+    Every `neutrino.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

@@ -1,0 +1,18 @@
+displayName: Uploadcare
+description: File upload and delivery platform for uploading files, managing files and groups, CDN operations, add-ons, webhooks, and project settings.
+domain: uploadcare.com
+examples:
+  read:
+    path: files.list
+    title: List files
+  write:
+    path: upload.fromUrl
+    title: Upload a file from a URL
+    args:
+      source_url: https://example.com/photo.jpg
+dbExample:
+  entity: UploadcareFile
+  note: >-
+    This table exists, but Uploadcare calls don't fill it yet. This returns
+    only rows you have written yourself.
+  limit: 50

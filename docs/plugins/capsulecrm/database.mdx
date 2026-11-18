@@ -1,6 +1,7 @@
 ---
-title: Database
-description: "Capsule CRM local sync: searchable entities, `.search()` filters, and operators."
+title: "Capsule CRM database"
+sidebarTitle: "Database"
+description: "Capsule CRM local sync in Corsair: the entities stored in your database, the `.search()` filters each one accepts, and the filter operators."
 ---
 
 The Capsule CRM plugin syncs data locally. Use `corsair.capsulecrm.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
@@ -143,6 +144,7 @@ const rows = await corsair.capsulecrm.db.parties.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `number` | equals, gt, gte, lt, lte, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
 | `firstName` | `string` | equals, contains, startsWith, endsWith, in |
 | `lastName` | `string` | equals, contains, startsWith, endsWith, in |
 | `title` | `string` | equals, contains, startsWith, endsWith, in |

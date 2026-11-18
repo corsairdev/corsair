@@ -192,7 +192,7 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "offset",
@@ -202,7 +202,7 @@
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total",
@@ -375,7 +375,7 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "offset",
@@ -385,7 +385,7 @@
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total",
@@ -544,7 +544,7 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "offset",
@@ -554,7 +554,7 @@
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total",
@@ -727,7 +727,7 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cursors",
@@ -974,7 +974,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "public",
@@ -1065,7 +1065,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "public",
@@ -1166,7 +1166,7 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "offset",
@@ -1176,7 +1176,7 @@
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total",
@@ -1232,7 +1232,7 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "offset",
@@ -1242,7 +1242,7 @@
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total",
@@ -1252,7 +1252,7 @@
           {
             "key": "items",
             "optional": true,
-            "type": "{ id: string, name: string, description?: string | null, public?: boolean, collaborative?: boolean, owner?: { id: string, display_name?: string, external_urls?: { spotify?: string } }, followers?: { total?: number }, images?: { url: string, height?: number | null, width?: number | null }[], tracks?: { href?: string, total?: number }, external_urls?: { spotify?: string }, href?: string } | null[]"
+            "type": "({ id: string, name: string, description?: string | null, public?: boolean, collaborative?: boolean, owner?: { id: string, display_name?: string, external_urls?: { spotify?: string } }, followers?: { total?: number }, images?: { url: string, height?: number | null, width?: number | null }[], tracks?: { href?: string, total?: number }, external_urls?: { spotify?: string }, href?: string } | null)[]"
           }
         ]
       }
@@ -1334,7 +1334,7 @@
           {
             "key": "playlists",
             "optional": false,
-            "type": "{ href?: string, limit?: number, next?: string | null, offset?: number, previous?: string | null, total?: number, items?: { id: string, name: string, description?: string | null, public?: boolean, collaborative?: boolean, owner?: { id: string, display_name?: string, external_urls?: { spotify?: string } }, followers?: { total?: number }, images?: { url: string, height?: number | null, width?: number | null }[], tracks?: { href?: string, total?: number }, external_urls?: { spotify?: string }, href?: string } | null[] }"
+            "type": "{ href?: string, limit?: number, next?: string | null, offset?: number, previous?: string | null, total?: number, items?: ({ id: string, name: string, description?: string | null, public?: boolean, collaborative?: boolean, owner?: { id: string, display_name?: string, external_urls?: { spotify?: string } }, followers?: { total?: number }, images?: { url: string, height?: number | null, width?: number | null }[], tracks?: { href?: string, total?: number }, external_urls?: { spotify?: string }, href?: string } | null)[] }"
           }
         ]
       }
@@ -1415,7 +1415,7 @@
           {
             "key": "preview_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "track_number",

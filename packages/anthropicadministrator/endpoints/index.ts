@@ -45,4 +45,4 @@ export const ApiKeysEndpoints = {
 	updateApiKey: ApiKeys.updateApiKey,
 };
 
-export * from './types';
+export * from './types/index';

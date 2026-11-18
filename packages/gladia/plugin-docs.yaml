@@ -1,0 +1,12 @@
+displayName: Gladia
+description: Speech-to-text API for uploading audio and video, running pre-recorded transcriptions, and managing live transcription sessions.
+domain: gladia.io
+examples:
+  read:
+    path: preRecorded.listJobs
+    title: List transcription jobs
+  write:
+    path: preRecorded.initiateTranscription
+    title: Start a transcription
+    args:
+      audio_url: https://example.com/call.mp3

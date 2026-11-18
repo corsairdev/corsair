@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Dropbox: every `dropbox.api.*` operation with input and output types."
+title: "Dropbox API reference"
+sidebarTitle: "API"
+description: "API reference for the Dropbox plugin in Corsair: every `dropbox.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `dropbox.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -143,7 +142,7 @@ await corsair.dropbox.api.files.delete({});
 
 `files.download`
 
-Download a file
+Download a file. A text file comes back as text, any other file as base64, up to about 700 KB; size and type are always returned.
 
 **Risk:** `read`
 
@@ -163,10 +162,12 @@ await corsair.dropbox.api.files.download({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `content` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `size` | `number` | No | — |
-| `path_lower` | `string` | No | — |
+| `contentBase64` | `string` | No | The file, base64-encoded. Missing when the file came back as text or contentOmitted is set. |
+| `text` | `string` | No | The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8. |
+| `contentType` | `string` | Yes | Media type of the file, for example application/pdf. |
+| `byteLength` | `number` | Yes | Size of the file in bytes. |
+| `filename` | `string` | No | The file name, when known. |
+| `contentOmitted` | `not_requested \| over_limit` | No | Set when the content was left out: the caller did not ask for it, or the file was over the limit. |
 
 
 
@@ -724,8 +725,7 @@ await corsair.dropbox.api.search.query({});
       path_display?: string
     }
   },
-  match_type?: {
-  }
+  match_type?: Record<string, any>
 }[]
 ```
 </Accordion>

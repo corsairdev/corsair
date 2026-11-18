@@ -1,0 +1,314 @@
+/**
+ * Bodies below follow New Relic's REST v2 documentation and its NerdGraph
+ * examples. The shapes that matter: `health_status` is a colour with `orange`
+ * where the UI shows yellow, REST v2 paginates through a `Link` header, and a
+ * bad NRQL query answers 200 with an `errors` array.
+ */
+
+export const applications = {
+	applications: [
+		{
+			id: 1129082,
+			name: 'My Web Page',
+			language: 'java',
+			health_status: 'green',
+			reporting: true,
+			last_reported_at: '2026-11-16T23:45:07+00:00',
+			application_summary: {
+				response_time: 304,
+				throughput: 4570,
+				error_rate: 0.0016,
+				apdex_target: 523,
+				apdex_score: 0.97,
+			},
+			end_user_summary: {
+				response_time: 3.73,
+				throughput: 0.333,
+				apdex_target: 0,
+				apdex_score: 1,
+			},
+			settings: {
+				app_apdex_threshold: 0.5,
+				end_user_apdex_threshold: 7,
+				enable_real_user_monitoring: true,
+				use_server_side_config: true,
+			},
+			links: {
+				application_instances: [2928655, 3941052],
+				alert_policy: 41534,
+				servers: [],
+				application_hosts: [2927654, 3940051],
+			},
+		},
+	],
+};
+
+/** An app that has not reported in ten minutes shows `unknown` health. */
+export const silentApplication = {
+	application: {
+		...applications.applications[0],
+		id: 1129083,
+		name: 'Silent Worker',
+		health_status: 'unknown',
+		reporting: false,
+		last_reported_at: '',
+	},
+};
+
+export const metricData = {
+	metric_data: {
+		from: '2026-11-16T14:42:00+00:00',
+		to: '2026-11-16T15:12:00+00:00',
+		metrics: [
+			{
+				name: 'Apdex',
+				timeslices: [
+					{
+						from: '2026-11-16T14:42:00+00:00',
+						to: '2026-11-16T14:43:00+00:00',
+						values: {
+							average_value: 0.97,
+							call_count: 1,
+						},
+					},
+				],
+			},
+		],
+	},
+};
+
+/** `summarize: true` collapses the window into one timeslice. */
+export const summarizedMetricData = {
+	metric_data: {
+		from: '2026-11-16T14:42:00+00:00',
+		to: '2026-11-16T15:12:00+00:00',
+		metrics: [
+			{
+				name: 'Apdex',
+				timeslices: [
+					{
+						from: '2026-11-16T14:42:00+00:00',
+						to: '2026-11-16T15:12:00+00:00',
+						values: {
+							average_value: 0.97,
+							call_count: 1840,
+						},
+					},
+				],
+			},
+		],
+	},
+};
+
+export const policies = {
+	policies: [
+		{
+			id: 41534,
+			name: 'Browser Agent Alert Policy',
+			incident_preference: 'PER_POLICY',
+			created_at: 1763000000000,
+			updated_at: 1763000000000,
+		},
+	],
+};
+
+export const createdPolicy = {
+	policy: {
+		id: 999001,
+		name: 'EMEA API alerts',
+		incident_preference: 'PER_CONDITION',
+		created_at: 1763300000000,
+		updated_at: 1763300000000,
+	},
+};
+
+export const conditions = {
+	conditions: [
+		{
+			id: 123456,
+			type: 'apm_app_metric',
+			name: 'Apdex (High)',
+			enabled: true,
+			// The docs show string ids.
+			entities: ['1129082'],
+			metric: 'apdex',
+			condition_scope: 'application',
+			terms: [
+				{
+					duration: '5',
+					operator: 'below',
+					priority: 'critical',
+					threshold: '0.7',
+					time_function: 'all',
+				},
+			],
+			user_defined: { message: 'Apdex is low' },
+		},
+	],
+};
+
+/** NerdGraph's answer: the NRQL result is nested under data.actor.account. */
+/** `SELECT uniques(appName)` puts an array in the cell. */
+export const nrqlUniquesResult = {
+	data: {
+		actor: {
+			account: {
+				nrql: {
+					results: [{ uniques: ['My Web Page', 'Silent Worker'] }],
+					metadata: {
+						timeWindow: { begin: 1763301600000, end: 1763305200000 },
+					},
+				},
+			},
+		},
+	},
+};
+
+/** `percentile(duration, 50, 95)` puts an object in the cell. */
+export const nrqlPercentileResult = {
+	data: {
+		actor: {
+			account: {
+				nrql: {
+					results: [{ percentile: { 50: 0.012, 95: 0.048 } }],
+					metadata: {
+						timeWindow: { begin: 1763301600000, end: 1763305200000 },
+					},
+				},
+			},
+		},
+	},
+};
+
+export const nrqlResult = {
+	data: {
+		actor: {
+			account: {
+				nrql: {
+					results: [{ count: 1234 }],
+					metadata: {
+						// NerdGraph answers these as epoch milliseconds.
+						timeWindow: {
+							begin: 1763301600000,
+							end: 1763305200000,
+						},
+					},
+				},
+			},
+		},
+	},
+};
+
+/** REST v2's error shape: an errors array of messages. */
+export const restAuthError = {
+	errors: [{ message: 'authentication required' }],
+};
+
+/** A GraphQL error, which can arrive with a 200 and an extension code. */
+export const graphqlNrqlError = {
+	errors: [
+		{
+			message: 'NRQL syntax error: unrecognized statement',
+			locations: [{ line: 1, column: 1 }],
+			extensions: { code: 'BAD_USER_INPUT' },
+		},
+	],
+};
+
+export const graphqlForbidden = {
+	errors: [
+		{
+			message: 'You do not have permission to view this account',
+			extensions: { code: 'FORBIDDEN' },
+		},
+	],
+};
+
+/** A 429 carries its wait in a Retry-After header rather than the body. */
+export const rateLimited = {
+	errors: [{ message: 'rate limit exceeded' }],
+};
+
+/** A NRQL condition as REST v2 returned it live (11-17), trimmed. */
+export const nrqlCondition = {
+	nrql_condition: {
+		id: 69879675,
+		entity_guid: 'ODc0NjQ2MXxBSU9QU3xDT05ESVRJT058Njk4Nzk2NzU',
+		type: 'static',
+		name: 'corsair-plugin-test',
+		enabled: false,
+		value_function: 'single_value',
+		violation_time_limit_seconds: 259200,
+		terms: [
+			{
+				duration: '5',
+				operator: 'above',
+				threshold: '1000.0',
+				time_function: 'all',
+				priority: 'critical',
+			},
+		],
+		nrql: { query: 'SELECT count(*) FROM Transaction', since_value: '3' },
+		signal: {
+			aggregation_window: '60',
+			evaluation_offset: '3',
+			fill_option: 'none',
+		},
+		data_account_id: 1234567,
+	},
+};
+
+/** REST v2's usual error body. */
+export const restErrorTitle = { error: { title: 'Policy not found' } };
+
+export const entitySearchAnswer = {
+	data: {
+		actor: {
+			entitySearch: {
+				count: 1,
+				results: {
+					nextCursor: null,
+					entities: [
+						{
+							guid: 'ODc0NjQ2MXxBSU9QU3xDT05ESVRJT058Njk4Nzk2NzU',
+							name: 'corsair-plugin-test',
+							type: 'CONDITION',
+							entityType: 'GENERIC_ENTITY',
+							domain: 'AIOPS',
+							accountId: 1234567,
+							reporting: true,
+							alertSeverity: null,
+							tags: [{ key: 'policyId', values: ['8345516'] }],
+						},
+					],
+				},
+			},
+		},
+	},
+};
+
+export const issuesAnswer = {
+	data: {
+		actor: {
+			account: {
+				aiIssues: {
+					issues: {
+						nextCursor: null,
+						issues: [
+							{
+								issueId: 'a1b2',
+								title: ['CPU above 90%'],
+								priority: 'CRITICAL',
+								state: 'ACTIVATED',
+								sources: ['newrelic'],
+								entityGuids: ['abc'],
+								totalIncidents: 1,
+								createdAt: 1794915648829,
+							},
+						],
+					},
+				},
+			},
+		},
+	},
+};

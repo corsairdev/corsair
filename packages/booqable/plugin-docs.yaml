@@ -1,0 +1,12 @@
+displayName: Booqable
+description: Rental business software. Manage customers, orders, products, product groups, bundles, stock items, inventory, payments, coupons, documents, and locations.
+domain: booqable.com
+examples:
+  read:
+    path: customers.getCustomers
+    title: List customers
+  write:
+    path: orders.listOrders
+    title: List orders
+    args:
+      companySlug: your-company

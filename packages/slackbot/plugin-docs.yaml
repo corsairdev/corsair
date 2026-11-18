@@ -1,0 +1,22 @@
+displayName: Slack Bot
+description: Slack workspace access with a bot token for messages, conversations, files, users, user groups, reminders, calls, canvases, and team info, plus Events API webhooks.
+domain: slack.com
+examples:
+  read:
+    path: conversations.list
+    title: List channels
+  write:
+    path: messages.post
+    title: Post a message
+    args:
+      channel: C01234567
+      text: Hello from Corsair
+dbExample:
+  entity: channels
+  note: Search synced channels without hitting Slack's API.
+  limit: 50
+exampleWebhook:
+  path: messages.message
+  note: Fires when someone posts in a public channel the bot can see.
+  after: |
+    console.log('Slack message:', result.data);

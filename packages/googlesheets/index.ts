@@ -283,7 +283,9 @@ export function googlesheets<const T extends GoogleSheetsPluginOptions>(
 			tokenUrl: 'https://oauth2.googleapis.com/token',
 			scopes: [
 				'https://www.googleapis.com/auth/spreadsheets',
-				'https://www.googleapis.com/auth/drive.readonly',
+				// spreadsheets.delete issues DELETE /drive/v3/files/{id};
+				// drive.readonly cannot write.
+				'https://www.googleapis.com/auth/drive',
 			],
 			authParams: { access_type: 'offline', prompt: 'consent' },
 		},

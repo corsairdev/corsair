@@ -1,7 +1,7 @@
 {
   "id": "kibana",
   "displayName": "Kibana",
-  "description": "Kibana plugin for Corsair",
+  "description": "Elastic's data exploration and management interface, with endpoints for saved objects, data views, dashboards, alerting rules, cases, connectors, security detections, and Fleet.",
   "npmPackageName": "@corsair-dev/kibana",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -39,7 +39,7 @@
           {
             "key": "body",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -81,7 +81,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -145,7 +145,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -165,7 +165,7 @@
           {
             "key": "rule_types",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -196,7 +196,7 @@
           {
             "key": "connector",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "settings",
@@ -211,7 +211,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -312,7 +312,7 @@
           {
             "key": "cases",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -343,12 +343,12 @@
           {
             "key": "config",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "secrets",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -390,7 +390,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -440,7 +440,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[]"
+        "type": "Record<string, any>[]"
       }
     },
     {
@@ -464,7 +464,7 @@
           {
             "key": "connector_types",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -490,7 +490,7 @@
           {
             "key": "panels",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "dashboard_id",
@@ -532,7 +532,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -592,7 +592,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "meta",
@@ -628,7 +628,7 @@
           {
             "key": "panels",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
@@ -715,7 +715,7 @@
           {
             "key": "data_view",
             "optional": false,
-            "type": "{ id: string, title: string, name?: string, timeFieldName?: string, sourceFilters?: {}[] }"
+            "type": "{ id: string, title: string, name?: string, timeFieldName?: string, sourceFilters?: Record<string, any>[] }"
           }
         ]
       }
@@ -735,7 +735,7 @@
           {
             "key": "data_view",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -751,12 +751,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "aggs",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "size",
@@ -771,12 +771,12 @@
           {
             "key": "hits",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "aggregations",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "took",
@@ -852,7 +852,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -903,7 +903,7 @@
           {
             "key": "items",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "total",
@@ -1005,7 +1005,7 @@
           {
             "key": "item",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1041,7 +1041,7 @@
           {
             "key": "items",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "total",
@@ -1072,7 +1072,7 @@
           {
             "key": "response",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1103,7 +1103,7 @@
           {
             "key": "data_streams",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1139,7 +1139,7 @@
           {
             "key": "response",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1200,7 +1200,7 @@
           {
             "key": "response",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1240,7 +1240,7 @@
           {
             "key": "response",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1266,7 +1266,7 @@
           {
             "key": "response",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1288,7 +1288,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1332,7 +1332,7 @@
           {
             "key": "items",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "total",
@@ -1359,7 +1359,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1383,7 +1383,7 @@
           {
             "key": "item",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1403,7 +1403,7 @@
           {
             "key": "items",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1429,7 +1429,7 @@
           {
             "key": "indices",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1461,7 +1461,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1490,7 +1490,7 @@
           {
             "key": "nodes",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1512,7 +1512,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1541,7 +1541,7 @@
           {
             "key": "jobs",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "total",
@@ -1572,12 +1572,12 @@
           {
             "key": "attributes",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "references",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "overwrite",
@@ -1602,12 +1602,12 @@
           {
             "key": "attributes",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "references",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "updated_at",
@@ -1644,7 +1644,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1708,7 +1708,7 @@
           {
             "key": "saved_objects",
             "optional": false,
-            "type": "{ id: string, type: string, attributes: {}, references?: {}[], updated_at?: string, version?: string }[]"
+            "type": "{ id: string, type: string, attributes: Record<string, any>, references?: Record<string, any>[], updated_at?: string, version?: string }[]"
           }
         ]
       }
@@ -1749,12 +1749,12 @@
           {
             "key": "attributes",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "references",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "updated_at",
@@ -1790,12 +1790,12 @@
           {
             "key": "attributes",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "references",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
@@ -1815,12 +1815,12 @@
           {
             "key": "attributes",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "references",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "updated_at",
@@ -1906,7 +1906,7 @@
           {
             "key": "records",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "total",
@@ -1931,7 +1931,7 @@
           {
             "key": "engines",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1962,7 +1962,7 @@
           {
             "key": "engines",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -2023,7 +2023,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }

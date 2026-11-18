@@ -3,7 +3,8 @@ import type {
 	PermissionLookupInput,
 	PermissionRecord,
 } from '../management/types';
-import type { CloudTransport } from './http';
+import type { TransportSource } from './client';
+import { resolveTransport } from './client';
 import { cloudRequest } from './http';
 import { CLOUD_ROUTES } from './routes';
 
@@ -17,7 +18,10 @@ export type CreateCloudConnectLinkInput = {
 	providerName?: string;
 };
 
-export function buildCloudManagement(transport: CloudTransport) {
+// Accepts a resolved transport (project-level manage) or a lazy thunk (per-
+// instance manage, whose URL isn't known until the resolve completes). Each
+// method resolves the transport at call time so both callers share one builder.
+export function buildCloudManagement(source: TransportSource) {
 	return {
 		connect: {
 			createLink: (input: CreateCloudConnectLinkInput) => {
@@ -26,54 +30,69 @@ export function buildCloudManagement(transport: CloudTransport) {
 						'connect.createLink requires both "plugin" and "tenantId" in cloud mode',
 					);
 				}
-				return cloudRequest<ConnectLink>(
-					transport,
-					'POST',
-					CLOUD_ROUTES.connectLinks,
-					input,
+				return resolveTransport(source).then((t) =>
+					cloudRequest<ConnectLink>(
+						t,
+						'POST',
+						CLOUD_ROUTES.connectLinks,
+						input,
+					),
 				);
 			},
 		},
 		tenants: {
 			create: (input: { id: string }) =>
-				cloudRequest(transport, 'POST', CLOUD_ROUTES.tenants, input),
-			list: () => cloudRequest(transport, 'GET', CLOUD_ROUTES.tenants),
+				resolveTransport(source).then((t) =>
+					cloudRequest(t, 'POST', CLOUD_ROUTES.tenants, input),
+				),
+			list: () =>
+				resolveTransport(source).then((t) =>
+					cloudRequest(t, 'GET', CLOUD_ROUTES.tenants),
+				),
 			get: (id: string) =>
-				cloudRequest(
-					transport,
-					'GET',
-					CLOUD_ROUTES.tenant.replace(':id', encodeURIComponent(id)),
+				resolveTransport(source).then((t) =>
+					cloudRequest(
+						t,
+						'GET',
+						CLOUD_ROUTES.tenant.replace(':id', encodeURIComponent(id)),
+					),
 				),
 		},
 		connectionStatus: {
 			get: (input: { tenantId: string }) =>
-				cloudRequest(
-					transport,
-					'GET',
-					`${CLOUD_ROUTES.connectionStatus}?tenantId=${encodeURIComponent(input.tenantId)}`,
+				resolveTransport(source).then((t) =>
+					cloudRequest(
+						t,
+						'GET',
+						`${CLOUD_ROUTES.connectionStatus}?tenantId=${encodeURIComponent(input.tenantId)}`,
+					),
 				),
 		},
 		disconnect: (input: { tenantId: string; plugin: string }) =>
-			cloudRequest(transport, 'POST', CLOUD_ROUTES.disconnect, input),
+			resolveTransport(source).then((t) =>
+				cloudRequest(t, 'POST', CLOUD_ROUTES.disconnect, input),
+			),
 		permissions: {
 			// By id is the admin lookup (GET /permissions/:id); by token is the
 			// public approval-page lookup (POST, so the token never lands in a URL).
 			get: (input: PermissionLookupInput) =>
-				'id' in input
-					? cloudRequest<PermissionRecord>(
-							transport,
-							'GET',
-							CLOUD_ROUTES.permission.replace(
-								':id',
-								encodeURIComponent(input.id),
+				resolveTransport(source).then((t) =>
+					'id' in input
+						? cloudRequest<PermissionRecord>(
+								t,
+								'GET',
+								CLOUD_ROUTES.permission.replace(
+									':id',
+									encodeURIComponent(input.id),
+								),
+							)
+						: cloudRequest<PermissionRecord>(
+								t,
+								'POST',
+								CLOUD_ROUTES.permissionLookup,
+								{ token: input.token },
 							),
-						)
-					: cloudRequest<PermissionRecord>(
-							transport,
-							'POST',
-							CLOUD_ROUTES.permissionLookup,
-							{ token: input.token },
-						),
+				),
 		},
 	};
 }

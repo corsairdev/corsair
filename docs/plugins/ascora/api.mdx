@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Ascora: every `ascora.api.*` operation with input and output types."
+title: "Ascora API reference"
+sidebarTitle: "API"
+description: "API reference for the Ascora plugin in Corsair: every `ascora.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `ascora.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -41,7 +40,7 @@ await corsair.ascora.api.attachments.upload({});
 |------|------|----------|-------------|
 | `entityId` | `string` | No | — |
 | `success` | `boolean` | Yes | — |
-| `message` | `string` | No | — |
+| `message` | `string \| null` | No | — |
 
 
 
@@ -74,8 +73,8 @@ await corsair.ascora.api.contacts.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-| `message` | `string` | No | — |
-| `contact` | `object` | No | — |
+| `message` | `string \| null` | No | — |
+| `contact` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="contact full type">
@@ -92,7 +91,7 @@ await corsair.ascora.api.contacts.get({});
   faxNumber?: string | null,
   defaultContact?: boolean,
   contactRole?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -135,8 +134,8 @@ await corsair.ascora.api.contacts.upsert({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-| `message` | `string` | No | — |
-| `contact` | `object` | No | — |
+| `message` | `string \| null` | No | — |
+| `contact` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="contact full type">
@@ -153,7 +152,7 @@ await corsair.ascora.api.contacts.upsert({});
   faxNumber?: string | null,
   defaultContact?: boolean,
   contactRole?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -189,8 +188,8 @@ await corsair.ascora.api.customers.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-| `message` | `string` | No | — |
-| `customer` | `object` | No | — |
+| `message` | `string \| null` | No | — |
+| `customer` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="customer full type">
@@ -240,7 +239,7 @@ await corsair.ascora.api.customers.get({});
     fieldName?: string,
     fieldValue?: string
   }[]
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -281,7 +280,7 @@ await corsair.ascora.api.customers.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-| `message` | `string` | No | — |
+| `message` | `string \| null` | No | — |
 | `results` | `object[]` | Yes | — |
 | `totalPages` | `number` | No | — |
 | `totalRecords` | `number` | No | — |
@@ -424,8 +423,8 @@ await corsair.ascora.api.customers.upsert({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-| `message` | `string` | No | — |
-| `customer` | `object` | No | — |
+| `message` | `string \| null` | No | — |
+| `customer` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="customer full type">
@@ -475,7 +474,7 @@ await corsair.ascora.api.customers.upsert({});
     fieldName?: string,
     fieldValue?: string
   }[]
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -538,7 +537,7 @@ await corsair.ascora.api.enquiries.create({});
 |------|------|----------|-------------|
 | `entityId` | `string` | No | — |
 | `success` | `boolean` | Yes | — |
-| `message` | `string` | No | — |
+| `message` | `string \| null` | No | — |
 
 
 
@@ -575,7 +574,7 @@ await corsair.ascora.api.inventory.categories({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-| `message` | `string` | No | — |
+| `message` | `string \| null` | No | — |
 | `results` | `object[]` | Yes | — |
 | `totalPages` | `number` | No | — |
 | `totalRecords` | `number` | No | — |
@@ -628,7 +627,7 @@ await corsair.ascora.api.inventory.kits({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-| `message` | `string` | No | — |
+| `message` | `string \| null` | No | — |
 | `results` | `object[]` | Yes | — |
 | `totalPages` | `number` | No | — |
 | `totalRecords` | `number` | No | — |
@@ -693,7 +692,7 @@ await corsair.ascora.api.inventory.supplies({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-| `message` | `string` | No | — |
+| `message` | `string \| null` | No | — |
 | `results` | `object[]` | Yes | — |
 | `totalPages` | `number` | No | — |
 | `totalRecords` | `number` | No | — |
@@ -761,8 +760,8 @@ await corsair.ascora.api.jobs.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-| `message` | `string` | No | — |
-| `job` | `object` | No | — |
+| `message` | `string \| null` | No | — |
+| `job` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="job full type">
@@ -801,7 +800,7 @@ await corsair.ascora.api.jobs.get({});
     id?: string | null,
     name?: string | null
   } | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -842,7 +841,7 @@ await corsair.ascora.api.jobs.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-| `message` | `string` | No | — |
+| `message` | `string \| null` | No | — |
 | `results` | `object[]` | Yes | — |
 | `totalPages` | `number` | No | — |
 | `totalRecords` | `number` | No | — |
@@ -921,7 +920,7 @@ await corsair.ascora.api.jobs.search({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-| `message` | `string` | No | — |
+| `message` | `string \| null` | No | — |
 | `results` | `object[]` | Yes | — |
 | `totalPages` | `number` | No | — |
 | `totalRecords` | `number` | No | — |
@@ -1003,7 +1002,7 @@ await corsair.ascora.api.notes.create({});
 |------|------|----------|-------------|
 | `entityId` | `string` | No | — |
 | `success` | `boolean` | Yes | — |
-| `message` | `string` | No | — |
+| `message` | `string \| null` | No | — |
 
 
 
@@ -1077,7 +1076,7 @@ await corsair.ascora.api.quotes.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-| `message` | `string` | No | — |
+| `message` | `string \| null` | No | — |
 | `results` | `object[]` | Yes | — |
 | `totalPages` | `number` | No | — |
 | `totalRecords` | `number` | No | — |
@@ -1221,7 +1220,7 @@ await corsair.ascora.api.supplierInvoices.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-| `message` | `string` | No | — |
+| `message` | `string \| null` | No | — |
 | `results` | `object[]` | Yes | — |
 | `totalPages` | `number` | No | — |
 | `totalRecords` | `number` | No | — |
@@ -1284,8 +1283,8 @@ await corsair.ascora.api.suppliers.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-| `message` | `string` | No | — |
-| `supplier` | `object` | No | — |
+| `message` | `string \| null` | No | — |
+| `supplier` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="supplier full type">
@@ -1315,7 +1314,7 @@ await corsair.ascora.api.suppliers.get({});
   postalState?: string | null,
   postalPostcode?: string | null,
   invoiceDueDaysType?: number
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1353,7 +1352,7 @@ await corsair.ascora.api.suppliers.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-| `message` | `string` | No | — |
+| `message` | `string \| null` | No | — |
 | `results` | `object[]` | Yes | — |
 | `totalPages` | `number` | No | — |
 | `totalRecords` | `number` | No | — |
@@ -1440,8 +1439,8 @@ await corsair.ascora.api.suppliers.upsert({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-| `message` | `string` | No | — |
-| `supplier` | `object` | No | — |
+| `message` | `string \| null` | No | — |
+| `supplier` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="supplier full type">
@@ -1471,7 +1470,7 @@ await corsair.ascora.api.suppliers.upsert({});
   postalState?: string | null,
   postalPostcode?: string | null,
   invoiceDueDaysType?: number
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>

@@ -1,0 +1,3087 @@
+---
+title: "D2L Brightspace API reference"
+sidebarTitle: "API"
+description: "API reference for D2L Brightspace: every `d2lbrightspace.api.*` operation with input and output types."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Courses
+
+### create
+
+`courses.create`
+
+Create a course offering
+
+**Risk:** `write`
+
+```ts
+await corsair.d2lbrightspace.api.courses.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  Name: string,
+  Code: string,
+  StartDate: string | null,
+  EndDate: string | null,
+  LocaleId: number | null,
+  ForceLocale: boolean,
+  ShowAddressBook: boolean,
+  IsActive: boolean,
+  Description: {
+    Content: string,
+    Type: Text | Html
+  },
+  CanSelfRegister: boolean | null,
+  Path: string,
+  CourseTemplateId: number,
+  SemesterId: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Identifier` | `string` | Yes | — |
+| `Name` | `string` | Yes | — |
+| `Code` | `string` | Yes | — |
+| `Path` | `string` | Yes | — |
+| `IsActive` | `boolean` | Yes | — |
+| `StartDate` | `string \| null` | Yes | — |
+| `EndDate` | `string \| null` | Yes | — |
+| `LocaleId` | `number \| null` | No | — |
+| `ForceLocale` | `boolean` | No | — |
+| `CourseTemplate` | `object \| null` | Yes | — |
+| `Semester` | `object \| null` | Yes | — |
+| `Department` | `object \| null` | Yes | — |
+| `Description` | `object` | Yes | — |
+| `CanSelfRegister` | `boolean` | Yes | — |
+| `ShowAddressBook` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="CourseTemplate full type">
+
+```ts
+{
+  Identifier: string,
+  Name: string,
+  Code: string
+} | null
+```
+</Accordion>
+
+<Accordion title="Semester full type">
+
+```ts
+{
+  Identifier: string,
+  Name: string,
+  Code: string
+} | null
+```
+</Accordion>
+
+<Accordion title="Department full type">
+
+```ts
+{
+  Identifier: string,
+  Name: string,
+  Code: string
+} | null
+```
+</Accordion>
+
+<Accordion title="Description full type">
+
+```ts
+{
+  Text?: string,
+  Html?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`courses.delete`
+
+Archive a course offering
+
+**Risk:** `destructive`
+
+```ts
+await corsair.d2lbrightspace.api.courses.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgUnitId` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`courses.get`
+
+Get a course offering
+
+**Risk:** `read`
+
+```ts
+await corsair.d2lbrightspace.api.courses.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgUnitId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Identifier` | `string` | Yes | — |
+| `Name` | `string` | Yes | — |
+| `Code` | `string` | Yes | — |
+| `Path` | `string` | Yes | — |
+| `IsActive` | `boolean` | Yes | — |
+| `StartDate` | `string \| null` | Yes | — |
+| `EndDate` | `string \| null` | Yes | — |
+| `LocaleId` | `number \| null` | No | — |
+| `ForceLocale` | `boolean` | No | — |
+| `CourseTemplate` | `object \| null` | Yes | — |
+| `Semester` | `object \| null` | Yes | — |
+| `Department` | `object \| null` | Yes | — |
+| `Description` | `object` | Yes | — |
+| `CanSelfRegister` | `boolean` | Yes | — |
+| `ShowAddressBook` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="CourseTemplate full type">
+
+```ts
+{
+  Identifier: string,
+  Name: string,
+  Code: string
+} | null
+```
+</Accordion>
+
+<Accordion title="Semester full type">
+
+```ts
+{
+  Identifier: string,
+  Name: string,
+  Code: string
+} | null
+```
+</Accordion>
+
+<Accordion title="Department full type">
+
+```ts
+{
+  Identifier: string,
+  Name: string,
+  Code: string
+} | null
+```
+</Accordion>
+
+<Accordion title="Description full type">
+
+```ts
+{
+  Text?: string,
+  Html?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### schema
+
+`courses.schema`
+
+Get course parent constraints
+
+**Risk:** `read`
+
+```ts
+await corsair.d2lbrightspace.api.courses.schema({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  Type: {
+    Id: number,
+    Code: string,
+    Name: string
+  },
+  IsNotAllowed: boolean,
+  IsRequired: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`courses.update`
+
+Update a course offering
+
+**Risk:** `write`
+
+```ts
+await corsair.d2lbrightspace.api.courses.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgUnitId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  Name: string,
+  Code: string,
+  StartDate: string | null,
+  EndDate: string | null,
+  LocaleId: number | null,
+  ForceLocale: boolean,
+  ShowAddressBook: boolean,
+  IsActive: boolean,
+  Description: {
+    Content: string,
+    Type: Text | Html
+  },
+  CanSelfRegister: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `void`
+
+
+---
+
+## Demographics
+
+### deleteUser
+
+`demographics.deleteUser`
+
+Delete user demographics
+
+**Risk:** `destructive`
+
+```ts
+await corsair.d2lbrightspace.api.demographics.deleteUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  entryIds?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `void`
+
+
+---
+
+### getOrgUnit
+
+`demographics.getOrgUnit`
+
+Get org unit demographics
+
+**Risk:** `read`
+
+```ts
+await corsair.d2lbrightspace.api.demographics.getOrgUnit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgUnitId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  fieldIds?: string,
+  roleIds?: string,
+  userIds?: string,
+  search?: string,
+  bookmark?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `PagingInfo` | `object` | Yes | — |
+| `Items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="PagingInfo full type">
+
+```ts
+{
+  Bookmark: string | null,
+  HasMoreItems: boolean
+}
+```
+</Accordion>
+
+<Accordion title="Items full type">
+
+```ts
+{
+  UserId: number,
+  EntryValues: {
+    Name: string,
+    Values: string[]
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Grades
+
+### access
+
+`grades.access`
+
+List users with access to a grade
+
+**Risk:** `read`
+
+```ts
+await corsair.d2lbrightspace.api.grades.access({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgUnitId` | `string` | Yes | — |
+| `gradeObjectId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  userId?: string,
+  roleId?: string,
+  bookmark?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Next` | `string \| null` | Yes | — |
+| `Objects` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Objects full type">
+
+```ts
+{
+  UserId: number,
+  HasAccess: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`grades.create`
+
+Create a grade object
+
+**Risk:** `write`
+
+```ts
+await corsair.d2lbrightspace.api.grades.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgUnitId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  Name: string,
+  ShortName: string,
+  CategoryId: number | null,
+  Description: {
+    Content: string,
+    Type: Text | Html
+  },
+  IsHidden?: boolean,
+  AssociatedTool?: {
+    ToolId: number,
+    ToolItemId: number
+  } | null,
+  MaxPoints: number,
+  IsBonus: boolean,
+  ExcludeFromFinalGradeCalculation: boolean,
+  GradeType: Numeric,
+  CanExceedMaxPoints: boolean,
+  GradeSchemeId: number | null
+} | {
+  Name: string,
+  ShortName: string,
+  CategoryId: number | null,
+  Description: {
+    Content: string,
+    Type: Text | Html
+  },
+  IsHidden?: boolean,
+  AssociatedTool?: {
+    ToolId: number,
+    ToolItemId: number
+  } | null,
+  MaxPoints: number,
+  IsBonus: boolean,
+  ExcludeFromFinalGradeCalculation: boolean,
+  GradeType: PassFail,
+  GradeSchemeId: number | null
+} | {
+  Name: string,
+  ShortName: string,
+  CategoryId: number | null,
+  Description: {
+    Content: string,
+    Type: Text | Html
+  },
+  IsHidden?: boolean,
+  AssociatedTool?: {
+    ToolId: number,
+    ToolItemId: number
+  } | null,
+  MaxPoints: number,
+  IsBonus: boolean,
+  ExcludeFromFinalGradeCalculation: boolean,
+  GradeType: SelectBox,
+  GradeSchemeId: number
+} | {
+  Name: string,
+  ShortName: string,
+  CategoryId: number | null,
+  Description: {
+    Content: string,
+    Type: Text | Html
+  },
+  IsHidden?: boolean,
+  AssociatedTool?: {
+    ToolId: number,
+    ToolItemId: number
+  } | null,
+  GradeType: Text
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `number` | Yes | — |
+| `GradeType` | `string` | Yes | — |
+| `Name` | `string` | Yes | — |
+| `ShortName` | `string` | Yes | — |
+| `CategoryId` | `number \| null` | Yes | — |
+| `Description` | `object` | Yes | — |
+| `MaxPoints` | `number` | No | — |
+| `CanExceedMaxPoints` | `boolean` | No | — |
+| `IsBonus` | `boolean` | No | — |
+| `ExcludeFromFinalGradeCalculation` | `boolean` | No | — |
+| `GradeSchemeId` | `number \| null` | No | — |
+| `Weight` | `number \| null` | No | — |
+| `GradeSchemeUrl` | `string` | No | — |
+| `IsHidden` | `boolean` | No | — |
+| `AssociatedTool` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="Description full type">
+
+```ts
+{
+  Text?: string,
+  Html?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="AssociatedTool full type">
+
+```ts
+{
+  ToolId: number,
+  ToolItemId: number
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`grades.delete`
+
+Delete a grade object
+
+**Risk:** `destructive`
+
+```ts
+await corsair.d2lbrightspace.api.grades.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgUnitId` | `string` | Yes | — |
+| `gradeObjectId` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`grades.get`
+
+Get a grade object
+
+**Risk:** `read`
+
+```ts
+await corsair.d2lbrightspace.api.grades.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgUnitId` | `string` | Yes | — |
+| `gradeObjectId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `number` | Yes | — |
+| `GradeType` | `string` | Yes | — |
+| `Name` | `string` | Yes | — |
+| `ShortName` | `string` | Yes | — |
+| `CategoryId` | `number \| null` | Yes | — |
+| `Description` | `object` | Yes | — |
+| `MaxPoints` | `number` | No | — |
+| `CanExceedMaxPoints` | `boolean` | No | — |
+| `IsBonus` | `boolean` | No | — |
+| `ExcludeFromFinalGradeCalculation` | `boolean` | No | — |
+| `GradeSchemeId` | `number \| null` | No | — |
+| `Weight` | `number \| null` | No | — |
+| `GradeSchemeUrl` | `string` | No | — |
+| `IsHidden` | `boolean` | No | — |
+| `AssociatedTool` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="Description full type">
+
+```ts
+{
+  Text?: string,
+  Html?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="AssociatedTool full type">
+
+```ts
+{
+  ToolId: number,
+  ToolItemId: number
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`grades.list`
+
+List grade objects
+
+**Risk:** `read`
+
+```ts
+await corsair.d2lbrightspace.api.grades.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgUnitId` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  Id: number,
+  GradeType: string,
+  Name: string,
+  ShortName: string,
+  CategoryId: number | null,
+  Description: {
+    Text?: string,
+    Html?: string | null
+  },
+  MaxPoints?: number,
+  CanExceedMaxPoints?: boolean,
+  IsBonus?: boolean,
+  ExcludeFromFinalGradeCalculation?: boolean,
+  GradeSchemeId?: number | null,
+  Weight?: number | null,
+  GradeSchemeUrl?: string,
+  IsHidden?: boolean,
+  AssociatedTool?: {
+    ToolId: number,
+    ToolItemId: number
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### setup
+
+`grades.setup`
+
+Get grade setup
+
+**Risk:** `read`
+
+```ts
+await corsair.d2lbrightspace.api.grades.setup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgUnitId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `GradingSystem` | `string` | Yes | — |
+| `IsNullGradeZero` | `boolean` | Yes | — |
+| `DefaultGradeSchemeId` | `number` | Yes | — |
+
+
+
+---
+
+### statistics
+
+`grades.statistics`
+
+Get grade statistics
+
+**Risk:** `read`
+
+```ts
+await corsair.d2lbrightspace.api.grades.statistics({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgUnitId` | `string` | Yes | — |
+| `gradeObjectId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `OrgUnitId` | `number` | Yes | — |
+| `GradeObjectId` | `number` | Yes | — |
+| `Minimum` | `number \| null` | Yes | — |
+| `Maximum` | `number \| null` | Yes | — |
+| `Average` | `number \| null` | Yes | — |
+| `Mode` | `number[]` | Yes | — |
+| `Median` | `number \| null` | Yes | — |
+| `StandardDeviation` | `number \| null` | Yes | — |
+
+
+
+---
+
+### update
+
+`grades.update`
+
+Update a grade object
+
+**Risk:** `write`
+
+```ts
+await corsair.d2lbrightspace.api.grades.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgUnitId` | `string` | Yes | — |
+| `gradeObjectId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  Name: string,
+  ShortName: string,
+  CategoryId: number | null,
+  Description: {
+    Content: string,
+    Type: Text | Html
+  },
+  IsHidden?: boolean,
+  AssociatedTool?: {
+    ToolId: number,
+    ToolItemId: number
+  } | null,
+  MaxPoints: number,
+  IsBonus: boolean,
+  ExcludeFromFinalGradeCalculation: boolean,
+  GradeType: Numeric,
+  CanExceedMaxPoints: boolean,
+  GradeSchemeId: number | null
+} | {
+  Name: string,
+  ShortName: string,
+  CategoryId: number | null,
+  Description: {
+    Content: string,
+    Type: Text | Html
+  },
+  IsHidden?: boolean,
+  AssociatedTool?: {
+    ToolId: number,
+    ToolItemId: number
+  } | null,
+  MaxPoints: number,
+  IsBonus: boolean,
+  ExcludeFromFinalGradeCalculation: boolean,
+  GradeType: PassFail,
+  GradeSchemeId: number | null
+} | {
+  Name: string,
+  ShortName: string,
+  CategoryId: number | null,
+  Description: {
+    Content: string,
+    Type: Text | Html
+  },
+  IsHidden?: boolean,
+  AssociatedTool?: {
+    ToolId: number,
+    ToolItemId: number
+  } | null,
+  MaxPoints: number,
+  IsBonus: boolean,
+  ExcludeFromFinalGradeCalculation: boolean,
+  GradeType: SelectBox,
+  GradeSchemeId: number
+} | {
+  Name: string,
+  ShortName: string,
+  CategoryId: number | null,
+  Description: {
+    Content: string,
+    Type: Text | Html
+  },
+  IsHidden?: boolean,
+  AssociatedTool?: {
+    ToolId: number,
+    ToolItemId: number
+  } | null,
+  GradeType: Text
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `number` | Yes | — |
+| `GradeType` | `string` | Yes | — |
+| `Name` | `string` | Yes | — |
+| `ShortName` | `string` | Yes | — |
+| `CategoryId` | `number \| null` | Yes | — |
+| `Description` | `object` | Yes | — |
+| `MaxPoints` | `number` | No | — |
+| `CanExceedMaxPoints` | `boolean` | No | — |
+| `IsBonus` | `boolean` | No | — |
+| `ExcludeFromFinalGradeCalculation` | `boolean` | No | — |
+| `GradeSchemeId` | `number \| null` | No | — |
+| `Weight` | `number \| null` | No | — |
+| `GradeSchemeUrl` | `string` | No | — |
+| `IsHidden` | `boolean` | No | — |
+| `AssociatedTool` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="Description full type">
+
+```ts
+{
+  Text?: string,
+  Html?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="AssociatedTool full type">
+
+```ts
+{
+  ToolId: number,
+  ToolItemId: number
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateSetup
+
+`grades.updateSetup`
+
+Update grade setup
+
+**Risk:** `write`
+
+```ts
+await corsair.d2lbrightspace.api.grades.updateSetup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgUnitId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  GradingSystem: Points | Weighted | Formula,
+  IsNullGradeZero: boolean,
+  DefaultGradeSchemeId: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `GradingSystem` | `string` | Yes | — |
+| `IsNullGradeZero` | `boolean` | Yes | — |
+| `DefaultGradeSchemeId` | `number` | Yes | — |
+
+
+
+---
+
+## Quiz Categories
+
+### create
+
+`quizCategories.create`
+
+Create a quiz category
+
+**Risk:** `write`
+
+```ts
+await corsair.d2lbrightspace.api.quizCategories.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgUnitId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  Name: string,
+  SortOrder: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Name` | `string` | Yes | — |
+| `SortOrder` | `number` | Yes | — |
+| `CategoryId` | `number` | Yes | — |
+
+
+
+---
+
+### delete
+
+`quizCategories.delete`
+
+Delete a quiz category
+
+**Risk:** `destructive`
+
+```ts
+await corsair.d2lbrightspace.api.quizCategories.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgUnitId` | `string` | Yes | — |
+| `categoryId` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`quizCategories.get`
+
+Get a quiz category
+
+**Risk:** `read`
+
+```ts
+await corsair.d2lbrightspace.api.quizCategories.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgUnitId` | `string` | Yes | — |
+| `categoryId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Name` | `string` | Yes | — |
+| `SortOrder` | `number` | Yes | — |
+| `CategoryId` | `number` | Yes | — |
+
+
+
+---
+
+### list
+
+`quizCategories.list`
+
+List quiz categories
+
+**Risk:** `read`
+
+```ts
+await corsair.d2lbrightspace.api.quizCategories.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgUnitId` | `string` | Yes | — |
+| `next` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Next` | `string \| null` | Yes | — |
+| `Objects` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Objects full type">
+
+```ts
+{
+  Name: string,
+  SortOrder: number,
+  CategoryId: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`quizCategories.update`
+
+Update a quiz category
+
+**Risk:** `write`
+
+```ts
+await corsair.d2lbrightspace.api.quizCategories.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgUnitId` | `string` | Yes | — |
+| `categoryId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  Name: string,
+  SortOrder: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Name` | `string` | Yes | — |
+| `SortOrder` | `number` | Yes | — |
+| `CategoryId` | `number` | Yes | — |
+
+
+
+---
+
+## Quizzes
+
+### access
+
+`quizzes.access`
+
+List users with quiz access
+
+**Risk:** `read`
+
+```ts
+await corsair.d2lbrightspace.api.quizzes.access({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgUnitId` | `string` | Yes | — |
+| `quizId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  userId?: string,
+  roleId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Next` | `string \| null` | Yes | — |
+| `Objects` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Objects full type">
+
+```ts
+{
+  UserId: number,
+  HasAccess: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`quizzes.create`
+
+Create a quiz
+
+**Risk:** `write`
+
+```ts
+await corsair.d2lbrightspace.api.quizzes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgUnitId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  Name: string,
+  IsActive: boolean,
+  SortOrder: number,
+  AutoExportToGrades: boolean | null,
+  GradeItemId: number | null,
+  IsAutoSetGraded: boolean,
+  Instructions: {
+    Text: {
+      Content: string,
+      Type: Text | Html
+    },
+    IsDisplayed: boolean
+  },
+  Description: {
+    Text: {
+      Content: string,
+      Type: Text | Html
+    },
+    IsDisplayed: boolean
+  },
+  StartDate: string | null,
+  EndDate: string | null,
+  DueDate: string | null,
+  DisplayInCalendar: boolean,
+  NumberOfAttemptsAllowed: number | null,
+  LateSubmissionInfo: {
+    LateSubmissionOption: number,
+    LateLimitMinutes: number | null
+  },
+  SubmissionTimeLimit: {
+    IsEnforced: boolean,
+    ShowClock: boolean,
+    TimeLimitValue: number
+  },
+  SubmissionGracePeriod: number | null,
+  Password: string | null,
+  Header: {
+    Text: {
+      Content: string,
+      Type: Text | Html
+    },
+    IsDisplayed: boolean
+  },
+  Footer: {
+    Text: {
+      Content: string,
+      Type: Text | Html
+    },
+    IsDisplayed: boolean
+  },
+  AllowHints: boolean,
+  DisableRightClick: boolean,
+  DisablePagerAndAlerts: boolean,
+  NotificationEmail: string | null,
+  CalcTypeId: number,
+  RestrictIPAddressRange: {
+    IPRangeStart: string,
+    IPRangeEnd: string | null
+  }[] | null,
+  CategoryId: number | null,
+  PreventMovingBackwards: boolean,
+  Shuffle: boolean,
+  AllowOnlyUsersWithSpecialAccess: boolean,
+  IsRetakeIncorrectOnly: boolean,
+  PagingTypeId: number | null,
+  IsSynchronous: boolean,
+  DeductionPercentage: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `QuizId` | `number` | Yes | — |
+| `Name` | `string` | Yes | — |
+| `IsActive` | `boolean` | Yes | — |
+| `SortOrder` | `number` | Yes | — |
+| `AutoExportToGrades` | `boolean \| null` | No | — |
+| `GradeItemId` | `number \| null` | No | — |
+| `IsAutoSetGraded` | `boolean` | No | — |
+| `Instructions` | `object` | No | — |
+| `Description` | `object` | No | — |
+| `Header` | `object` | No | — |
+| `Footer` | `object` | No | — |
+| `StartDate` | `string \| null` | No | — |
+| `EndDate` | `string \| null` | No | — |
+| `DueDate` | `string \| null` | No | — |
+| `DisplayInCalendar` | `boolean` | No | — |
+| `AttemptsAllowed` | `object` | No | — |
+| `LateSubmissionInfo` | `object` | No | — |
+| `SubmissionTimeLimit` | `object` | No | — |
+| `SubmissionGracePeriod` | `number \| null` | No | — |
+| `Password` | `string \| null` | No | — |
+| `AllowHints` | `boolean` | No | — |
+| `DisableRightClick` | `boolean` | No | — |
+| `DisablePagerAndAlerts` | `boolean` | No | — |
+| `NotificationEmail` | `string \| null` | No | — |
+| `CalcTypeId` | `number` | No | — |
+| `RestrictIPAddressRange` | `object[] \| null` | No | — |
+| `CategoryId` | `number \| null` | No | — |
+| `PreventMovingBackwards` | `boolean` | No | — |
+| `Shuffle` | `boolean` | No | — |
+| `ActivityId` | `string \| null` | No | — |
+| `AllowOnlyUsersWithSpecialAccess` | `boolean` | No | — |
+| `IsRetakeIncorrectOnly` | `boolean` | No | — |
+| `PagingTypeId` | `number \| null` | No | — |
+| `IsSynchronous` | `boolean` | No | — |
+| `DeductionPercentage` | `number \| null` | No | — |
+| `HideQuestionPoints` | `boolean` | No | — |
+| `IsSingleSession` | `boolean` | No | — |
+| `AnnotationToolsEnabled` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="Instructions full type">
+
+```ts
+{
+  Text: {
+    Text?: string,
+    Html?: string | null
+  },
+  IsDisplayed: boolean
+}
+```
+</Accordion>
+
+<Accordion title="Description full type">
+
+```ts
+{
+  Text: {
+    Text?: string,
+    Html?: string | null
+  },
+  IsDisplayed: boolean
+}
+```
+</Accordion>
+
+<Accordion title="Header full type">
+
+```ts
+{
+  Text: {
+    Text?: string,
+    Html?: string | null
+  },
+  IsDisplayed: boolean
+}
+```
+</Accordion>
+
+<Accordion title="Footer full type">
+
+```ts
+{
+  Text: {
+    Text?: string,
+    Html?: string | null
+  },
+  IsDisplayed: boolean
+}
+```
+</Accordion>
+
+<Accordion title="AttemptsAllowed full type">
+
+```ts
+{
+  IsUnlimited: boolean,
+  NumberOfAttemptsAllowed: number | null
+}
+```
+</Accordion>
+
+<Accordion title="LateSubmissionInfo full type">
+
+```ts
+{
+  LateSubmissionOption: number,
+  LateLimitMinutes: number | null
+}
+```
+</Accordion>
+
+<Accordion title="SubmissionTimeLimit full type">
+
+```ts
+{
+  IsEnforced: boolean,
+  ShowClock: boolean,
+  TimeLimitValue: number
+}
+```
+</Accordion>
+
+<Accordion title="RestrictIPAddressRange full type">
+
+```ts
+{
+  IPRangeStart: string,
+  IPRangeEnd: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`quizzes.delete`
+
+Delete a quiz
+
+**Risk:** `destructive`
+
+```ts
+await corsair.d2lbrightspace.api.quizzes.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgUnitId` | `string` | Yes | — |
+| `quizId` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`quizzes.get`
+
+Get a quiz
+
+**Risk:** `read`
+
+```ts
+await corsair.d2lbrightspace.api.quizzes.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgUnitId` | `string` | Yes | — |
+| `quizId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `QuizId` | `number` | Yes | — |
+| `Name` | `string` | Yes | — |
+| `IsActive` | `boolean` | Yes | — |
+| `SortOrder` | `number` | Yes | — |
+| `AutoExportToGrades` | `boolean \| null` | No | — |
+| `GradeItemId` | `number \| null` | No | — |
+| `IsAutoSetGraded` | `boolean` | No | — |
+| `Instructions` | `object` | No | — |
+| `Description` | `object` | No | — |
+| `Header` | `object` | No | — |
+| `Footer` | `object` | No | — |
+| `StartDate` | `string \| null` | No | — |
+| `EndDate` | `string \| null` | No | — |
+| `DueDate` | `string \| null` | No | — |
+| `DisplayInCalendar` | `boolean` | No | — |
+| `AttemptsAllowed` | `object` | No | — |
+| `LateSubmissionInfo` | `object` | No | — |
+| `SubmissionTimeLimit` | `object` | No | — |
+| `SubmissionGracePeriod` | `number \| null` | No | — |
+| `Password` | `string \| null` | No | — |
+| `AllowHints` | `boolean` | No | — |
+| `DisableRightClick` | `boolean` | No | — |
+| `DisablePagerAndAlerts` | `boolean` | No | — |
+| `NotificationEmail` | `string \| null` | No | — |
+| `CalcTypeId` | `number` | No | — |
+| `RestrictIPAddressRange` | `object[] \| null` | No | — |
+| `CategoryId` | `number \| null` | No | — |
+| `PreventMovingBackwards` | `boolean` | No | — |
+| `Shuffle` | `boolean` | No | — |
+| `ActivityId` | `string \| null` | No | — |
+| `AllowOnlyUsersWithSpecialAccess` | `boolean` | No | — |
+| `IsRetakeIncorrectOnly` | `boolean` | No | — |
+| `PagingTypeId` | `number \| null` | No | — |
+| `IsSynchronous` | `boolean` | No | — |
+| `DeductionPercentage` | `number \| null` | No | — |
+| `HideQuestionPoints` | `boolean` | No | — |
+| `IsSingleSession` | `boolean` | No | — |
+| `AnnotationToolsEnabled` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="Instructions full type">
+
+```ts
+{
+  Text: {
+    Text?: string,
+    Html?: string | null
+  },
+  IsDisplayed: boolean
+}
+```
+</Accordion>
+
+<Accordion title="Description full type">
+
+```ts
+{
+  Text: {
+    Text?: string,
+    Html?: string | null
+  },
+  IsDisplayed: boolean
+}
+```
+</Accordion>
+
+<Accordion title="Header full type">
+
+```ts
+{
+  Text: {
+    Text?: string,
+    Html?: string | null
+  },
+  IsDisplayed: boolean
+}
+```
+</Accordion>
+
+<Accordion title="Footer full type">
+
+```ts
+{
+  Text: {
+    Text?: string,
+    Html?: string | null
+  },
+  IsDisplayed: boolean
+}
+```
+</Accordion>
+
+<Accordion title="AttemptsAllowed full type">
+
+```ts
+{
+  IsUnlimited: boolean,
+  NumberOfAttemptsAllowed: number | null
+}
+```
+</Accordion>
+
+<Accordion title="LateSubmissionInfo full type">
+
+```ts
+{
+  LateSubmissionOption: number,
+  LateLimitMinutes: number | null
+}
+```
+</Accordion>
+
+<Accordion title="SubmissionTimeLimit full type">
+
+```ts
+{
+  IsEnforced: boolean,
+  ShowClock: boolean,
+  TimeLimitValue: number
+}
+```
+</Accordion>
+
+<Accordion title="RestrictIPAddressRange full type">
+
+```ts
+{
+  IPRangeStart: string,
+  IPRangeEnd: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getAttempt
+
+`quizzes.getAttempt`
+
+Get a quiz attempt
+
+**Risk:** `read`
+
+```ts
+await corsair.d2lbrightspace.api.quizzes.getAttempt({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgUnitId` | `string` | Yes | — |
+| `quizId` | `string` | Yes | — |
+| `attemptId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `AttemptId` | `number` | Yes | — |
+| `QuizId` | `number` | Yes | — |
+| `UserId` | `number` | Yes | — |
+| `AttemptNumber` | `number` | Yes | — |
+| `Score` | `number \| null` | Yes | — |
+| `Started` | `string` | Yes | — |
+| `Completed` | `string \| null` | Yes | — |
+| `AttemptFeedback` | `object` | Yes | — |
+| `FeedbackLastModified` | `string \| null` | Yes | — |
+| `IsPublished` | `boolean` | Yes | — |
+| `IsRetakeIncorrectOnly` | `boolean` | Yes | — |
+| `AttemptDueDate` | `string \| null` | Yes | — |
+| `AttemptEnforceTimeLimit` | `boolean` | Yes | — |
+| `AttemptSubmissionTimeLimit` | `number` | Yes | — |
+| `AttemptSubmissionGraceLimit` | `number` | Yes | — |
+| `AttemptSubmissionLateTypeId` | `number` | Yes | — |
+| `AttemptSubmissionLateData` | `number` | Yes | — |
+| `AttemptIsSynchronous` | `boolean` | Yes | — |
+| `DeductionPercentage` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="AttemptFeedback full type">
+
+```ts
+{
+  Text?: string,
+  Html?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`quizzes.list`
+
+List quizzes
+
+**Risk:** `read`
+
+```ts
+await corsair.d2lbrightspace.api.quizzes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgUnitId` | `string` | Yes | — |
+| `next` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Next` | `string \| null` | Yes | — |
+| `Objects` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Objects full type">
+
+```ts
+{
+  QuizId: number,
+  Name: string,
+  IsActive: boolean,
+  SortOrder: number,
+  AutoExportToGrades?: boolean | null,
+  GradeItemId?: number | null,
+  IsAutoSetGraded?: boolean,
+  Instructions?: {
+    Text: {
+      Text?: string,
+      Html?: string | null
+    },
+    IsDisplayed: boolean
+  },
+  Description?: {
+    Text: {
+      Text?: string,
+      Html?: string | null
+    },
+    IsDisplayed: boolean
+  },
+  Header?: {
+    Text: {
+      Text?: string,
+      Html?: string | null
+    },
+    IsDisplayed: boolean
+  },
+  Footer?: {
+    Text: {
+      Text?: string,
+      Html?: string | null
+    },
+    IsDisplayed: boolean
+  },
+  StartDate?: string | null,
+  EndDate?: string | null,
+  DueDate?: string | null,
+  DisplayInCalendar?: boolean,
+  AttemptsAllowed?: {
+    IsUnlimited: boolean,
+    NumberOfAttemptsAllowed: number | null
+  },
+  LateSubmissionInfo?: {
+    LateSubmissionOption: number,
+    LateLimitMinutes: number | null
+  },
+  SubmissionTimeLimit?: {
+    IsEnforced: boolean,
+    ShowClock: boolean,
+    TimeLimitValue: number
+  },
+  SubmissionGracePeriod?: number | null,
+  Password?: string | null,
+  AllowHints?: boolean,
+  DisableRightClick?: boolean,
+  DisablePagerAndAlerts?: boolean,
+  NotificationEmail?: string | null,
+  CalcTypeId?: number,
+  RestrictIPAddressRange?: {
+    IPRangeStart: string,
+    IPRangeEnd: string | null
+  }[] | null,
+  CategoryId?: number | null,
+  PreventMovingBackwards?: boolean,
+  Shuffle?: boolean,
+  ActivityId?: string | null,
+  AllowOnlyUsersWithSpecialAccess?: boolean,
+  IsRetakeIncorrectOnly?: boolean,
+  PagingTypeId?: number | null,
+  IsSynchronous?: boolean,
+  DeductionPercentage?: number | null,
+  HideQuestionPoints?: boolean,
+  IsSingleSession?: boolean,
+  AnnotationToolsEnabled?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listAttempts
+
+`quizzes.listAttempts`
+
+List quiz attempts
+
+**Risk:** `read`
+
+```ts
+await corsair.d2lbrightspace.api.quizzes.listAttempts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgUnitId` | `string` | Yes | — |
+| `quizId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  userId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Next` | `string \| null` | Yes | — |
+| `Objects` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Objects full type">
+
+```ts
+{
+  AttemptId: number,
+  QuizId: number,
+  UserId: number,
+  AttemptNumber: number,
+  Score: number | null,
+  Started: string,
+  Completed: string | null,
+  AttemptFeedback: {
+    Text?: string,
+    Html?: string | null
+  },
+  FeedbackLastModified: string | null,
+  IsPublished: boolean,
+  IsRetakeIncorrectOnly: boolean,
+  AttemptDueDate: string | null,
+  AttemptEnforceTimeLimit: boolean,
+  AttemptSubmissionTimeLimit: number,
+  AttemptSubmissionGraceLimit: number,
+  AttemptSubmissionLateTypeId: number,
+  AttemptSubmissionLateData: number,
+  AttemptIsSynchronous: boolean,
+  DeductionPercentage: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listQuestions
+
+`quizzes.listQuestions`
+
+List quiz questions
+
+**Risk:** `read`
+
+```ts
+await corsair.d2lbrightspace.api.quizzes.listQuestions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgUnitId` | `string` | Yes | — |
+| `quizId` | `string` | Yes | — |
+| `next` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Next` | `string \| null` | Yes | — |
+| `Objects` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Objects full type">
+
+```ts
+{
+  QuestionId: number,
+  QuestionTypeId: number,
+  Name: string | null,
+  QuestionText: {
+    Text?: string,
+    Html?: string | null
+  },
+  Points: number,
+  Difficulty: number,
+  Bonus: boolean,
+  Mandatory: boolean,
+  Hint: {
+    Text?: string,
+    Html?: string | null
+  },
+  Feedback: {
+    Text?: string,
+    Html?: string | null
+  },
+  LastModified: string,
+  LastModifiedBy: number | null,
+  SectionId: number,
+  QuestionTemplateId: number,
+  QuestionTemplateVersionId: number,
+  QuestionInfo: Record<string, any> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`quizzes.update`
+
+Update a quiz
+
+**Risk:** `write`
+
+```ts
+await corsair.d2lbrightspace.api.quizzes.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgUnitId` | `string` | Yes | — |
+| `quizId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  Name: string,
+  IsActive: boolean,
+  SortOrder: number,
+  AutoExportToGrades: boolean | null,
+  GradeItemId: number | null,
+  IsAutoSetGraded: boolean,
+  Instructions: {
+    Text: {
+      Content: string,
+      Type: Text | Html
+    },
+    IsDisplayed: boolean
+  },
+  Description: {
+    Text: {
+      Content: string,
+      Type: Text | Html
+    },
+    IsDisplayed: boolean
+  },
+  StartDate: string | null,
+  EndDate: string | null,
+  DueDate: string | null,
+  DisplayInCalendar: boolean,
+  NumberOfAttemptsAllowed: number | null,
+  LateSubmissionInfo: {
+    LateSubmissionOption: number,
+    LateLimitMinutes: number | null
+  },
+  SubmissionTimeLimit: {
+    IsEnforced: boolean,
+    ShowClock: boolean,
+    TimeLimitValue: number
+  },
+  SubmissionGracePeriod: number | null,
+  Password: string | null,
+  Header: {
+    Text: {
+      Content: string,
+      Type: Text | Html
+    },
+    IsDisplayed: boolean
+  },
+  Footer: {
+    Text: {
+      Content: string,
+      Type: Text | Html
+    },
+    IsDisplayed: boolean
+  },
+  AllowHints: boolean,
+  DisableRightClick: boolean,
+  DisablePagerAndAlerts: boolean,
+  NotificationEmail: string | null,
+  CalcTypeId: number,
+  RestrictIPAddressRange: {
+    IPRangeStart: string,
+    IPRangeEnd: string | null
+  }[] | null,
+  CategoryId: number | null,
+  PreventMovingBackwards: boolean,
+  Shuffle: boolean,
+  AllowOnlyUsersWithSpecialAccess: boolean,
+  IsRetakeIncorrectOnly: boolean,
+  PagingTypeId: number | null,
+  IsSynchronous: boolean,
+  DeductionPercentage: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `QuizId` | `number` | Yes | — |
+| `Name` | `string` | Yes | — |
+| `IsActive` | `boolean` | Yes | — |
+| `SortOrder` | `number` | Yes | — |
+| `AutoExportToGrades` | `boolean \| null` | No | — |
+| `GradeItemId` | `number \| null` | No | — |
+| `IsAutoSetGraded` | `boolean` | No | — |
+| `Instructions` | `object` | No | — |
+| `Description` | `object` | No | — |
+| `Header` | `object` | No | — |
+| `Footer` | `object` | No | — |
+| `StartDate` | `string \| null` | No | — |
+| `EndDate` | `string \| null` | No | — |
+| `DueDate` | `string \| null` | No | — |
+| `DisplayInCalendar` | `boolean` | No | — |
+| `AttemptsAllowed` | `object` | No | — |
+| `LateSubmissionInfo` | `object` | No | — |
+| `SubmissionTimeLimit` | `object` | No | — |
+| `SubmissionGracePeriod` | `number \| null` | No | — |
+| `Password` | `string \| null` | No | — |
+| `AllowHints` | `boolean` | No | — |
+| `DisableRightClick` | `boolean` | No | — |
+| `DisablePagerAndAlerts` | `boolean` | No | — |
+| `NotificationEmail` | `string \| null` | No | — |
+| `CalcTypeId` | `number` | No | — |
+| `RestrictIPAddressRange` | `object[] \| null` | No | — |
+| `CategoryId` | `number \| null` | No | — |
+| `PreventMovingBackwards` | `boolean` | No | — |
+| `Shuffle` | `boolean` | No | — |
+| `ActivityId` | `string \| null` | No | — |
+| `AllowOnlyUsersWithSpecialAccess` | `boolean` | No | — |
+| `IsRetakeIncorrectOnly` | `boolean` | No | — |
+| `PagingTypeId` | `number \| null` | No | — |
+| `IsSynchronous` | `boolean` | No | — |
+| `DeductionPercentage` | `number \| null` | No | — |
+| `HideQuestionPoints` | `boolean` | No | — |
+| `IsSingleSession` | `boolean` | No | — |
+| `AnnotationToolsEnabled` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="Instructions full type">
+
+```ts
+{
+  Text: {
+    Text?: string,
+    Html?: string | null
+  },
+  IsDisplayed: boolean
+}
+```
+</Accordion>
+
+<Accordion title="Description full type">
+
+```ts
+{
+  Text: {
+    Text?: string,
+    Html?: string | null
+  },
+  IsDisplayed: boolean
+}
+```
+</Accordion>
+
+<Accordion title="Header full type">
+
+```ts
+{
+  Text: {
+    Text?: string,
+    Html?: string | null
+  },
+  IsDisplayed: boolean
+}
+```
+</Accordion>
+
+<Accordion title="Footer full type">
+
+```ts
+{
+  Text: {
+    Text?: string,
+    Html?: string | null
+  },
+  IsDisplayed: boolean
+}
+```
+</Accordion>
+
+<Accordion title="AttemptsAllowed full type">
+
+```ts
+{
+  IsUnlimited: boolean,
+  NumberOfAttemptsAllowed: number | null
+}
+```
+</Accordion>
+
+<Accordion title="LateSubmissionInfo full type">
+
+```ts
+{
+  LateSubmissionOption: number,
+  LateLimitMinutes: number | null
+}
+```
+</Accordion>
+
+<Accordion title="SubmissionTimeLimit full type">
+
+```ts
+{
+  IsEnforced: boolean,
+  ShowClock: boolean,
+  TimeLimitValue: number
+}
+```
+</Accordion>
+
+<Accordion title="RestrictIPAddressRange full type">
+
+```ts
+{
+  IPRangeStart: string,
+  IPRangeEnd: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Roles
+
+### copy
+
+`roles.copy`
+
+Copy a role using the unsupported unstable API
+
+**Risk:** `write`
+
+```ts
+await corsair.d2lbrightspace.api.roles.copy({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deepCopyRoleId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  RoleName: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Identifier` | `string` | Yes | — |
+| `DisplayName` | `string` | Yes | — |
+| `Code` | `string` | Yes | — |
+| `Description` | `string` | No | — |
+| `RoleAlias` | `string` | No | — |
+| `IsCascading` | `boolean` | No | — |
+| `AccessFutureCourses` | `boolean` | No | — |
+| `AccessInactiveCourses` | `boolean` | No | — |
+| `AccessPastCourses` | `boolean` | No | — |
+| `ShowInGrades` | `boolean` | No | — |
+| `ShowInUserProgress` | `boolean` | No | — |
+| `InClassList` | `boolean` | No | — |
+
+
+
+---
+
+### get
+
+`roles.get`
+
+Get a role by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.d2lbrightspace.api.roles.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `roleId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Identifier` | `string` | Yes | — |
+| `DisplayName` | `string` | Yes | — |
+| `Code` | `string` | Yes | — |
+| `Description` | `string` | No | — |
+| `RoleAlias` | `string` | No | — |
+| `IsCascading` | `boolean` | No | — |
+| `AccessFutureCourses` | `boolean` | No | — |
+| `AccessInactiveCourses` | `boolean` | No | — |
+| `AccessPastCourses` | `boolean` | No | — |
+| `ShowInGrades` | `boolean` | No | — |
+| `ShowInUserProgress` | `boolean` | No | — |
+| `InClassList` | `boolean` | No | — |
+
+
+
+---
+
+### getEnrolled
+
+`roles.getEnrolled`
+
+List enrolled roles in an org unit
+
+**Risk:** `read`
+
+```ts
+await corsair.d2lbrightspace.api.roles.getEnrolled({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgUnitId` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  Identifier: string,
+  DisplayName: string,
+  Code: string,
+  Description?: string,
+  RoleAlias?: string,
+  IsCascading?: boolean,
+  AccessFutureCourses?: boolean,
+  AccessInactiveCourses?: boolean,
+  AccessPastCourses?: boolean,
+  ShowInGrades?: boolean,
+  ShowInUserProgress?: boolean,
+  InClassList?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`roles.list`
+
+List roles
+
+**Risk:** `read`
+
+```ts
+await corsair.d2lbrightspace.api.roles.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  Identifier: string,
+  DisplayName: string,
+  Code: string,
+  Description?: string,
+  RoleAlias?: string,
+  IsCascading?: boolean,
+  AccessFutureCourses?: boolean,
+  AccessInactiveCourses?: boolean,
+  AccessPastCourses?: boolean,
+  ShowInGrades?: boolean,
+  ShowInUserProgress?: boolean,
+  InClassList?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Templates
+
+### create
+
+`templates.create`
+
+Create a course template
+
+**Risk:** `write`
+
+```ts
+await corsair.d2lbrightspace.api.templates.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  Name: string,
+  Code: string,
+  Path: string,
+  ParentOrgUnitIds: number[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Identifier` | `string` | Yes | — |
+| `Name` | `string` | Yes | — |
+| `Code` | `string` | Yes | — |
+| `Path` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`templates.delete`
+
+Archive a course template
+
+**Risk:** `destructive`
+
+```ts
+await corsair.d2lbrightspace.api.templates.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgUnitId` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`templates.get`
+
+Get a course template
+
+**Risk:** `read`
+
+```ts
+await corsair.d2lbrightspace.api.templates.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgUnitId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Identifier` | `string` | Yes | — |
+| `Name` | `string` | Yes | — |
+| `Code` | `string` | Yes | — |
+| `Path` | `string` | Yes | — |
+
+
+
+---
+
+### schema
+
+`templates.schema`
+
+Get course template parent constraints
+
+**Risk:** `read`
+
+```ts
+await corsair.d2lbrightspace.api.templates.schema({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  Type: {
+    Id: number,
+    Code: string,
+    Name: string
+  },
+  IsNotAllowed: boolean,
+  IsRequired: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`templates.update`
+
+Update a course template
+
+**Risk:** `write`
+
+```ts
+await corsair.d2lbrightspace.api.templates.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgUnitId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  Name: string,
+  Code: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `void`
+
+
+---
+
+## Users
+
+### create
+
+`users.create`
+
+Create a user (SendCreationEmail emails the new user their account details)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.d2lbrightspace.api.users.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  OrgDefinedId: string | null,
+  FirstName: string,
+  MiddleName: string | null,
+  LastName: string,
+  ExternalEmail: string | null,
+  UserName: string,
+  RoleId: number,
+  IsActive: boolean,
+  SendCreationEmail: boolean,
+  Pronouns: string | null,
+  PasswordData?: {
+    Password: string,
+    ForcePasswordReset?: boolean
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+  subOrganizationOrgUnitId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `OrgId` | `number` | Yes | — |
+| `UserId` | `number` | Yes | — |
+| `FirstName` | `string` | No | — |
+| `MiddleName` | `string \| null` | No | — |
+| `LastName` | `string` | No | — |
+| `UserName` | `string` | No | — |
+| `ExternalEmail` | `string \| null` | No | — |
+| `OrgDefinedId` | `string \| null` | No | — |
+| `UniqueIdentifier` | `string` | No | — |
+| `Activation` | `object` | No | — |
+| `DisplayName` | `string` | No | — |
+| `LastAccessedDate` | `string \| null` | No | — |
+| `Pronouns` | `string \| null` | No | — |
+| `FirstLoginDate` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="Activation full type">
+
+```ts
+{
+  IsActive: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### current
+
+`users.current`
+
+Get the current user
+
+**Risk:** `read`
+
+```ts
+await corsair.d2lbrightspace.api.users.current({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Identifier` | `string` | Yes | — |
+| `FirstName` | `string` | Yes | — |
+| `LastName` | `string` | Yes | — |
+| `UniqueName` | `string` | Yes | — |
+| `ProfileIdentifier` | `string` | Yes | — |
+| `Pronouns` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`users.delete`
+
+Delete a user
+
+**Risk:** `destructive`
+
+```ts
+await corsair.d2lbrightspace.api.users.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  subOrganizationOrgUnitId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`users.get`
+
+Get a user by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.d2lbrightspace.api.users.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  subOrganizationOrgUnitId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `OrgId` | `number` | Yes | — |
+| `UserId` | `number` | Yes | — |
+| `FirstName` | `string` | No | — |
+| `MiddleName` | `string \| null` | No | — |
+| `LastName` | `string` | No | — |
+| `UserName` | `string` | No | — |
+| `ExternalEmail` | `string \| null` | No | — |
+| `OrgDefinedId` | `string \| null` | No | — |
+| `UniqueIdentifier` | `string` | No | — |
+| `Activation` | `object` | No | — |
+| `DisplayName` | `string` | No | — |
+| `LastAccessedDate` | `string \| null` | No | — |
+| `Pronouns` | `string \| null` | No | — |
+| `FirstLoginDate` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="Activation full type">
+
+```ts
+{
+  IsActive: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`users.list`
+
+List or search users
+
+**Risk:** `read`
+
+```ts
+await corsair.d2lbrightspace.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  orgDefinedId?: string,
+  userName?: string,
+  externalEmail?: string,
+  bookmark?: string,
+  subOrganizationOrgUnitId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  OrgId: number,
+  UserId: number,
+  FirstName?: string,
+  MiddleName?: string | null,
+  LastName?: string,
+  UserName?: string,
+  ExternalEmail?: string | null,
+  OrgDefinedId?: string | null,
+  UniqueIdentifier?: string,
+  Activation?: {
+    IsActive: boolean
+  },
+  DisplayName?: string,
+  LastAccessedDate?: string | null,
+  Pronouns?: string | null,
+  FirstLoginDate?: string | null
+} | {
+  OrgId: number,
+  UserId: number,
+  FirstName?: string,
+  MiddleName?: string | null,
+  LastName?: string,
+  UserName?: string,
+  ExternalEmail?: string | null,
+  OrgDefinedId?: string | null,
+  UniqueIdentifier?: string,
+  Activation?: {
+    IsActive: boolean
+  },
+  DisplayName?: string,
+  LastAccessedDate?: string | null,
+  Pronouns?: string | null,
+  FirstLoginDate?: string | null
+}[] | {
+  PagingInfo: {
+    Bookmark: string | null,
+    HasMoreItems: boolean
+  },
+  Items: {
+    OrgId: number,
+    UserId: number,
+    FirstName?: string,
+    MiddleName?: string | null,
+    LastName?: string,
+    UserName?: string,
+    ExternalEmail?: string | null,
+    OrgDefinedId?: string | null,
+    UniqueIdentifier?: string,
+    Activation?: {
+      IsActive: boolean
+    },
+    DisplayName?: string,
+    LastAccessedDate?: string | null,
+    Pronouns?: string | null,
+    FirstLoginDate?: string | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`users.update`
+
+Update a user
+
+**Risk:** `write`
+
+```ts
+await corsair.d2lbrightspace.api.users.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  OrgDefinedId: string,
+  FirstName: string,
+  MiddleName: string | null,
+  LastName: string,
+  ExternalEmail: string | null,
+  UserName: string,
+  Activation: {
+    IsActive: boolean
+  },
+  Pronouns: string | null
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+  subOrganizationOrgUnitId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `OrgId` | `number` | Yes | — |
+| `UserId` | `number` | Yes | — |
+| `FirstName` | `string` | No | — |
+| `MiddleName` | `string \| null` | No | — |
+| `LastName` | `string` | No | — |
+| `UserName` | `string` | No | — |
+| `ExternalEmail` | `string \| null` | No | — |
+| `OrgDefinedId` | `string \| null` | No | — |
+| `UniqueIdentifier` | `string` | No | — |
+| `Activation` | `object` | No | — |
+| `DisplayName` | `string` | No | — |
+| `LastAccessedDate` | `string \| null` | No | — |
+| `Pronouns` | `string \| null` | No | — |
+| `FirstLoginDate` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="Activation full type">
+
+```ts
+{
+  IsActive: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

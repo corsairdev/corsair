@@ -1,0 +1,10 @@
+displayName: Chaser
+description: Accounts receivable automation software. List customers, invoices, and credit notes, and read organization details.
+domain: chaserhq.com
+examples:
+  read:
+    path: invoices.list
+    title: List invoices
+  write:
+    path: customers.list
+    title: List customers

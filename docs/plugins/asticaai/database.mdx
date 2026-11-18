@@ -1,6 +1,7 @@
 ---
-title: Database
-description: "Astica AI local sync: searchable entities, `.search()` filters, and operators."
+title: "Astica AI database"
+sidebarTitle: "Database"
+description: "Astica AI local sync in Corsair: the entities stored in your database, the `.search()` filters each one accepts, and the filter operators."
 ---
 
 The Astica AI plugin syncs data locally. Use `corsair.asticaai.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
@@ -27,6 +28,7 @@ const rows = await corsair.asticaai.db.audioTranscripts.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `inputFingerprint` | `string` | equals, contains, startsWith, endsWith, in |
+| `inputKind` | `string` | equals, contains, startsWith, endsWith, in |
 | `inputLength` | `number` | equals, gt, gte, lt, lte, in |
 | `modelVersion` | `string` | equals, contains, startsWith, endsWith, in |
 | `text` | `string` | equals, contains, startsWith, endsWith, in |
@@ -55,6 +57,7 @@ const rows = await corsair.asticaai.db.readTextResults.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `inputFingerprint` | `string` | equals, contains, startsWith, endsWith, in |
+| `inputKind` | `string` | equals, contains, startsWith, endsWith, in |
 | `inputLength` | `number` | equals, gt, gte, lt, lte, in |
 | `modelVersion` | `string` | equals, contains, startsWith, endsWith, in |
 | `content` | `string` | equals, contains, startsWith, endsWith, in |

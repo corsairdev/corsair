@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Epic Games: every `epicgames.api.*` operation with input and output types."
+title: "Epic Games API reference"
+sidebarTitle: "API"
+description: "API reference for the Epic Games plugin in Corsair: every `epicgames.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `epicgames.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -31,17 +30,7 @@ await corsair.epicgames.api.islands.get({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -69,17 +58,7 @@ await corsair.epicgames.api.islands.getAvgMinutesPerPlayer({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -107,17 +86,7 @@ await corsair.epicgames.api.islands.getFavorites({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -142,21 +111,11 @@ await corsair.epicgames.api.islands.getMetricsByInterval({});
 | `interval` | `day \| hour \| minute` | No | — |
 | `from` | `string` | No | — |
 | `to` | `string` | No | — |
-| `metrics` | `averageMinutesPerPlayer \| peakCCU \| favorites \| minutesPlayed \| recommendations \| plays \| uniquePlayers \| retention \| averageMinutesPerPlayer \| peakCCU \| favorites \| minutesPlayed \| recommendations \| plays \| uniquePlayers \| retention[]` | No | — |
+| `metrics` | `averageMinutesPerPlayer \| peakCCU \| favorites \| minutesPlayed \| recommendations \| plays \| uniquePlayers \| retention \| (averageMinutesPerPlayer \| peakCCU \| favorites \| minutesPlayed \| recommendations \| plays \| uniquePlayers \| retention)[]` | No | — |
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -184,17 +143,7 @@ await corsair.epicgames.api.islands.getMinutesPlayed({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -222,17 +171,7 @@ await corsair.epicgames.api.islands.getPeakCcu({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -260,17 +199,7 @@ await corsair.epicgames.api.islands.getPlays({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -298,17 +227,7 @@ await corsair.epicgames.api.islands.getRecommendations({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -336,17 +255,7 @@ await corsair.epicgames.api.islands.getRetention({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -374,17 +283,7 @@ await corsair.epicgames.api.islands.getUniquePlayers({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -411,26 +310,19 @@ await corsair.epicgames.api.islands.list({});
 
 
 
-**Output:** `object`
+**Output:** `Record<string, any>[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-{
-}[] | {
-  data?: {
-  }[],
-  items?: {
-  }[],
-  results?: {
-  }[],
-  islands?: {
-  }[],
-  links?: {
-  },
-  meta?: {
-  }
+Record<string, any>[] | {
+  data?: Record<string, any>[],
+  items?: Record<string, any>[],
+  results?: Record<string, any>[],
+  islands?: Record<string, any>[],
+  links?: Record<string, any>,
+  meta?: Record<string, any>
 }
 ```
 </Accordion>
@@ -474,17 +366,7 @@ await corsair.epicgames.api.remote.batch({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -507,32 +389,12 @@ await corsair.epicgames.api.remote.callObjectFunction({});
 |------|------|----------|-------------|
 | `objectPath` | `string` | Yes | — |
 | `functionName` | `string` | Yes | — |
-| `parameters` | `object` | No | — |
+| `parameters` | `Record<string, any>` | No | — |
 | `generateTransaction` | `boolean` | No | — |
 
-<AccordionGroup>
-<Accordion title="parameters full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
-
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -552,17 +414,7 @@ await corsair.epicgames.api.remote.corsPreflight({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -588,17 +440,7 @@ await corsair.epicgames.api.remote.deletePresetMetadataKey({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -623,17 +465,7 @@ await corsair.epicgames.api.remote.describeObject({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -658,17 +490,7 @@ await corsair.epicgames.api.remote.getObjectThumbnail({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -693,17 +515,7 @@ await corsair.epicgames.api.remote.getPreset({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -728,17 +540,7 @@ await corsair.epicgames.api.remote.getPresetMetadata({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -764,17 +566,7 @@ await corsair.epicgames.api.remote.getPresetMetadataKey({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -800,17 +592,7 @@ await corsair.epicgames.api.remote.getPresetProperty({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -830,17 +612,7 @@ await corsair.epicgames.api.remote.initiateSession({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -863,31 +635,11 @@ await corsair.epicgames.api.remote.invokePresetFunction({});
 |------|------|----------|-------------|
 | `presetName` | `string` | Yes | — |
 | `functionName` | `string` | Yes | — |
-| `parameters` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="parameters full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `parameters` | `Record<string, any>` | No | — |
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -912,17 +664,7 @@ await corsair.epicgames.api.remote.listBlueprintCallableFunctions({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -946,31 +688,11 @@ await corsair.epicgames.api.remote.putObjectProperty({});
 | `objectPath` | `string` | Yes | — |
 | `propertyName` | `string` | No | — |
 | `access` | `READ_ACCESS \| WRITE_ACCESS \| WRITE_TRANSACTION_ACCESS` | No | — |
-| `propertyValue` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="propertyValue full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `propertyValue` | `Record<string, any>` | No | — |
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -997,17 +719,7 @@ await corsair.epicgames.api.remote.putPresetMetadataKey({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1034,17 +746,7 @@ await corsair.epicgames.api.remote.updatePresetProperty({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1071,17 +773,7 @@ await corsair.epicgames.api.remote.waitForObjectEvent({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---

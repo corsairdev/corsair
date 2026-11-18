@@ -11,20 +11,26 @@ export { CorsairClientError, createCorsairClient } from './client';
 export type {
 	CorsairCloudConfig,
 	CorsairCloudInstance,
+	CorsairCloudInstanceHandle,
+	CorsairCloudManage,
 	CorsairCloudRegistry,
 	ResolveConnectLinkResult,
 } from './core';
 export {
 	AuthMissingError,
+	CloudApiError,
 	CorsairKekMissingError,
 	corsairCloud,
 	createCorsair,
+	ManagementApiError,
 	PermissionRequiredError,
 	ReadonlyForbiddenError,
 	ReconnectRequiredError,
 	resolveConnectLink,
 	runReadonly,
+	runWithMode,
 } from './core';
+export type * from './core/cloud/v1';
 export type {
 	ConnectionStatus,
 	ConnectLink,

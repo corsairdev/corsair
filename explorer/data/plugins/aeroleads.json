@@ -40,147 +40,147 @@
           {
             "key": "full_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "first_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "last_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "linkedin_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "location",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "job_title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "job_company_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "job_company_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "job_company_linkedin_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "job_description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "education",
             "optional": true,
-            "type": "string | any[]"
+            "type": "string | any[] | null"
           },
           {
             "key": "experience",
             "optional": true,
-            "type": "string | any[]"
+            "type": "string | any[] | null"
           },
           {
             "key": "interests",
             "optional": true,
-            "type": "string | any[]"
+            "type": "string | any[] | null"
           },
           {
             "key": "skills",
             "optional": true,
-            "type": "string | any[]"
+            "type": "string | any[] | null"
           },
           {
             "key": "languages",
             "optional": true,
-            "type": "string | {} | any[]"
+            "type": "string | Record<string, any> | any[] | null"
           },
           {
             "key": "emails",
             "optional": true,
-            "type": "string | any[]"
+            "type": "string | any[] | null"
           },
           {
             "key": "phone_numbers",
             "optional": true,
-            "type": "string | any[]"
+            "type": "string | any[] | null"
           },
           {
             "key": "cb_rank",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "db_logo_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "profile_picture_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "job_company_size",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "industry",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "job_title_detailed_role_s2",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "organization_founded_year_s2",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "organization_facebook_url_s2",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "organization_twitter_url_s2",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "organization_current_technologies_s2",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "emails_s2",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone_numbers_s2",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }

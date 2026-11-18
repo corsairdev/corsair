@@ -1,0 +1,1831 @@
+{
+  "id": "neutrino",
+  "displayName": "Neutrino API",
+  "description": "Look up IP geolocation and blocklists, validate and verify email addresses and phone numbers, parse user agents, check domain and host reputation, inspect URLs, geocode addresses, look up card BINs, convert units, filter profanity, drive a headless browser, and send and check SMS or voice security codes.",
+  "npmPackageName": "@corsair-dev/neutrino",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 20,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "user_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "neutrino.api.commerce.binLookup",
+      "shortPath": "commerce.binLookup",
+      "description": "Read card facts from a BIN: brand, category, type, issuing country, and whether the calling IP matches that country",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "binNumber",
+            "optional": false,
+            "type": "string",
+            "description": "The card BIN or first six digits of the card number."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ip-city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ip-matches-bin",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "card-type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "card-category",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ip-country-code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ip-country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "issuer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ip-blocklisted",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "valid",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "ip-blocklists",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "issuer-website",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country-code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ip-region",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "neutrino.api.commerce.convert",
+      "shortPath": "commerce.convert",
+      "description": "Convert between currencies, units and number bases using the unit codes Neutrino publishes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fromValue",
+            "optional": false,
+            "type": "number",
+            "description": "The value to convert."
+          },
+          {
+            "key": "fromType",
+            "optional": false,
+            "type": "string",
+            "description": "The unit or currency to convert from, e.g. USD, kg, km, c. Neutrino publishes the full list in its docs."
+          },
+          {
+            "key": "toType",
+            "optional": false,
+            "type": "string",
+            "description": "The unit or currency to convert to."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "valid",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "from-value",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "to-type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "from-type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "result-float",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "from-name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "from-symbol",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "to-name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "to-symbol",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "historical-date",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "neutrino.api.email.validate",
+      "shortPath": "email.validate",
+      "description": "Validate an address without contacting it: syntax, domain, MX, and flags for disposable, free and personal",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "The email address to check."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "valid",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "syntax-error",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "domain-error",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is-freemail",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is-disposable",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "typos-fixed",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is-personal",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mx-ip",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "domain-status",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "neutrino.api.email.verify",
+      "shortPath": "email.verify",
+      "description": "Validate an address and probe its mailbox over SMTP, reporting verified separately from valid",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "The email address to check."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "valid",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "verified",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "typos-fixed",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "syntax-error",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "domain-error",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is-freemail",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is-disposable",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is-personal",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "smtp-status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "smtp-response",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is-catch-all",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is-deferred",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "mx-ip",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "domain-status",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "neutrino.api.geocode.address",
+      "shortPath": "geocode.address",
+      "description": "Forward geocode a full address or its parts, returning every location that matched",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string",
+            "description": "A full street address."
+          },
+          {
+            "key": "houseNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "street",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postalCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "The ISO two-letter country code."
+          },
+          {
+            "key": "languageCode",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "found",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "locations",
+            "optional": true,
+            "type": "{ country?: string | null, address?: string | null, city?: string | null, country-code?: string | null, country-code3?: string | null, latitude?: number | null, postal-code?: string | null, longitude?: number | null, state?: string | null, address-structured?: { name?: string | null, number?: string | null, street?: string | null, area?: string | null, city?: string | null, county?: string | null, state?: string | null, postal-code?: string | null, country?: string | null } | null, address-components?: Record<string, string> | null, currency-code?: string | null, location-type?: string | null, location-tags?: string[] | null, timezone?: { id?: string | null, name?: string | null, abbr?: string | null, date?: string | null, time?: string | null, offset?: string | null } | null, region-code?: string | null, postal-address?: string | null, language-code?: string | null, geohash?: string | null, continent-code?: string | null, building-type?: string | null, location-profile?: Record<string, string> | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "neutrino.api.geocode.reverse",
+      "shortPath": "geocode.reverse",
+      "description": "Reverse geocode a coordinate into a local address and a structured one with the same fields everywhere",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "latitude",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "longitude",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "languageCode",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "found",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country-code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "postal-code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address-structured",
+            "optional": true,
+            "type": "{ name?: string | null, number?: string | null, street?: string | null, area?: string | null, city?: string | null, county?: string | null, state?: string | null, postal-code?: string | null, country?: string | null } | null"
+          },
+          {
+            "key": "address-components",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "country-code3",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "currency-code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "location-type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "location-tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "latitude",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "longitude",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "region-code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language-code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, abbr?: string | null, date?: string | null, time?: string | null, offset?: string | null } | null"
+          },
+          {
+            "key": "location-profile",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "neutrino.api.ip.blocklist",
+      "shortPath": "ip.blocklist",
+      "description": "Check an address against the blocklists Neutrino tracks, with a flag per threat type and the sensors that matched",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ip",
+            "optional": false,
+            "type": "string",
+            "description": "The IPv4 or IPv6 address to check."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ip",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is-bot",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is-exploit-bot",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is-malware",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is-spider",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is-dshield",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "list-count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "is-proxy",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is-hijacked",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is-tor",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is-spyware",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is-spam-bot",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is-listed",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is-vpn",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "last-seen",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "blocklists",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "sensors",
+            "optional": true,
+            "type": "{ id?: number | null, blocklist?: string | null, description?: string | null }[] | null"
+          },
+          {
+            "key": "cidr",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "first-seen",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "last-seen-date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "first-seen-date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "total-hits",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "neutrino.api.ip.info",
+      "shortPath": "ip.info",
+      "description": "Geolocate one IPv4 or IPv6 address: country, city, region, time zone and currency",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ip",
+            "optional": false,
+            "type": "string",
+            "description": "The IPv4 or IPv6 address to look up."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "valid",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hostname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country-code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "latitude",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "longitude",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "continent-code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ip",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country-code3",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "currency-code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "host-domain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, abbr?: string | null, date?: string | null, time?: string | null, offset?: string | null } | null"
+          },
+          {
+            "key": "is-v6",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is-v4-mapped",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is-bogon",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "region-code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language-code",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "neutrino.api.ip.probe",
+      "shortPath": "ip.probe",
+      "description": "Identify the network and hosting provider behind an address and whether it is hosting rather than a consumer line",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ip",
+            "optional": false,
+            "type": "string",
+            "description": "The IPv4 or IPv6 address to probe."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "valid",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "provider-type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country-code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hostname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "provider-domain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "provider-website",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "provider-description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "continent-code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is-hosting",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is-isp",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "neutrino.api.messaging.phoneVerify",
+      "shortPath": "messaging.phoneVerify",
+      "description": "Call a number and read out a generated security code, which reaches a real person and costs credits; check the code with verifySecurityCode",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "number",
+            "optional": false,
+            "type": "string",
+            "description": "The phone number to call."
+          },
+          {
+            "key": "codeLength",
+            "optional": true,
+            "type": "number",
+            "description": "How many digits the generated security code has (4 to 12)."
+          },
+          {
+            "key": "playbackDelay",
+            "optional": true,
+            "type": "number",
+            "description": "Milliseconds between each digit read out."
+          },
+          {
+            "key": "countryCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "languageCode",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "number-valid",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "calling",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "security-code",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "neutrino.api.messaging.smsVerify",
+      "shortPath": "messaging.smsVerify",
+      "description": "Generate a security code and text it to a number, which sends a real SMS and costs a credit; check the code the person types with verifySecurityCode",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "number",
+            "optional": false,
+            "type": "string",
+            "description": "The phone number to message."
+          },
+          {
+            "key": "codeLength",
+            "optional": true,
+            "type": "number",
+            "description": "How many digits the generated security code has (4 to 12)."
+          },
+          {
+            "key": "countryCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "languageCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "brandName",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "number-valid",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "security-code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sent",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "neutrino.api.messaging.verifySecurityCode",
+      "shortPath": "messaging.verifySecurityCode",
+      "description": "Check a code a person typed against the codes smsVerify and phoneVerify sent, optionally capping failed attempts per user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "securityCode",
+            "optional": false,
+            "type": "string",
+            "description": "The code the person typed in, from smsVerify or phoneVerify."
+          },
+          {
+            "key": "limitBy",
+            "optional": true,
+            "type": "string",
+            "description": "Any id for the person (user id, IP) to cap failed attempts per value against brute force."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "verified",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "neutrino.api.phone.hlrLookup",
+      "shortPath": "phone.hlrLookup",
+      "description": "Query the home location register for whether a number is live, which network it is on now and whether it was ported",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "number",
+            "optional": false,
+            "type": "string",
+            "description": "The phone number to check."
+          },
+          {
+            "key": "countryCode",
+            "optional": true,
+            "type": "string",
+            "description": "The ISO two-letter country code to assume when the number has no country prefix."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "number-valid",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "international-calling-code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mnc",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "number-type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hlr-valid",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "hlr-status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ported-network",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "imsi",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mcc",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "international-number",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "local-number",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country-code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is-ported",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "msin",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "neutrino.api.phone.validate",
+      "shortPath": "phone.validate",
+      "description": "Parse a number into international and local forms with its location, carrier prefix and mobile flag",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "number",
+            "optional": false,
+            "type": "string",
+            "description": "The phone number to check."
+          },
+          {
+            "key": "countryCode",
+            "optional": true,
+            "type": "string",
+            "description": "The ISO two-letter country code to assume when the number has no country prefix."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "valid",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "international-calling-code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country-code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is-mobile",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "international-number",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "local-number",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country-code3",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "currency-code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "prefix-network",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "neutrino.api.text.badWordFilter",
+      "shortPath": "text.badWordFilter",
+      "description": "Scan text or a page for profanity and return the words found and a censored copy",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string",
+            "description": "The text to scan, or a URL whose page text Neutrino scans."
+          },
+          {
+            "key": "censorCharacter",
+            "optional": true,
+            "type": "string",
+            "description": "Replace each letter of a bad word with this character."
+          },
+          {
+            "key": "catalog",
+            "optional": true,
+            "type": "string",
+            "description": "Which word list to use: \"strict\" (the default) or \"obscene\"."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bad-words-list",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "bad-words-total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "censored-content",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is-bad",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "neutrino.api.web.browserBot",
+      "shortPath": "web.browserBot",
+      "description": "Load a page in a real browser, optionally run JavaScript on it (click, fill, submit), and return the rendered content and selected elements",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The page to load in a real browser."
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number",
+            "description": "Seconds to wait for the page to load (Neutrino defaults to 30)."
+          },
+          {
+            "key": "delay",
+            "optional": true,
+            "type": "number",
+            "description": "Seconds to wait after the page loads, for scripts to finish."
+          },
+          {
+            "key": "selector",
+            "optional": true,
+            "type": "string",
+            "description": "A CSS selector; the matching elements come back in `elements`."
+          },
+          {
+            "key": "exec",
+            "optional": true,
+            "type": "string[]",
+            "description": "JavaScript statements to run on the page in order, e.g. click or fill a field; each one gets its own entry in `exec-results`."
+          },
+          {
+            "key": "userAgent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ignoreCertificateErrors",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mime-type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is-error",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is-timeout",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "error-message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "http-status-code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "http-status-message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is-http-ok",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is-http-redirect",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "http-redirect-url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "server-ip",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "load-time",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "response-headers",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "is-secure",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "security-details",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "elements",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "exec-results",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "language-code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url-valid",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "content-size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "server-hostname",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "neutrino.api.web.domainLookup",
+      "shortPath": "web.domainLookup",
+      "description": "Read domain facts: subdomain and TLD, rank, and whether the blocklists know it for phishing, malware or spam",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string",
+            "description": "The host or domain name to look up."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is-malicious",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "blocklists",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "sensors",
+            "optional": true,
+            "type": "{ id?: number | null, blocklist?: string | null, description?: string | null }[] | null"
+          },
+          {
+            "key": "valid",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "fqdn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is-subdomain",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "tld",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tld-cc",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "rank",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "is-gov",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is-opennic",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is-pending",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is-adult",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "neutrino.api.web.hostReputation",
+      "shortPath": "web.hostReputation",
+      "description": "Check a host or IP against many DNSBLs, with one entry per list showing whether it listed the host",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string",
+            "description": "The host name or IPv4 address to check against DNSBLs."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "is-listed",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "lists",
+            "optional": true,
+            "type": "{ is-listed?: boolean | null, list-host?: string | null, list-rating?: number | null, list-name?: string | null, txt-record?: string | null, return-code?: string | null, response-time?: number | null }[] | null"
+          },
+          {
+            "key": "list-count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "host",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "neutrino.api.web.uaLookup",
+      "shortPath": "web.uaLookup",
+      "description": "Parse a User-Agent string into browser, engine, OS and device fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ua",
+            "optional": false,
+            "type": "string",
+            "description": "The User-Agent string to parse."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ua",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "version-major",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "browser-engine",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "browser-release",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "os",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "os-family",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "os-version",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "os-version-major",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "is-mobile",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is-webview",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "device-brand",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "device-model",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "browser-name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "browser-version",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is-app",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "neutrino.api.web.urlInfo",
+      "shortPath": "web.urlInfo",
+      "description": "Inspect a URL: HTTP status, server location and host, load time, and the page body when asked",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The URL to inspect."
+          },
+          {
+            "key": "fetchContent",
+            "optional": true,
+            "type": "boolean",
+            "description": "Fetch and analyse the page body as well as the headers."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "http-status-message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "server-region",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "server-name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url-port",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "server-country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "real",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "server-city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url-path",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "valid",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "server-hostname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "load-time",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "http-ok",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

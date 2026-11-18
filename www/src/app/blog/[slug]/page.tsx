@@ -3,11 +3,33 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { BlogProse } from '@/components/blog/blog-prose';
+import type { BlogPost } from '@/lib/blog';
 import { formatPostDate, getAllSlugs, getPostBySlug } from '@/lib/blog';
+import {
+	buildBlogPostJsonLd,
+	faqsVisibleInBody,
+	serializeJsonLd,
+} from '@/lib/blog-seo';
+import { clampMetaDescription } from '@/lib/page-seo';
+import { urlForImage } from '@/lib/sanity/client';
 
 type PageProps = {
 	params: Promise<{ slug: string }>;
 };
+
+const DEFAULT_SHARE_IMAGE = '/og-image.png';
+
+function shareImageUrl(post: BlogPost) {
+	const image = post.socialShareImage ?? post.coverImage;
+	if (!image) return undefined;
+
+	return urlForImage(image)
+		.width(1200)
+		.height(630)
+		.fit('crop')
+		.auto('format')
+		.url();
+}
 
 export async function generateStaticParams() {
 	const slugs = await getAllSlugs();
@@ -25,18 +47,35 @@ export async function generateMetadata({
 		return { title: 'Article not found' };
 	}
 
+	const title = post.metaTitle ?? post.title;
+	const fullDescription = post.metaDescription ?? post.description;
+	// Posts written before the 155-character limit carry longer text. Search
+	// results cut it, so the meta description is shortened; shared links keep
+	// the full text.
+	const description = clampMetaDescription(fullDescription);
+	const image = shareImageUrl(post) ?? DEFAULT_SHARE_IMAGE;
+
 	return {
-		title: post.title,
-		description: post.description,
+		title,
+		description,
 		alternates: {
 			canonical: `/blog/${post.slug}`,
 		},
 		openGraph: {
-			title: post.title,
-			description: post.description,
+			title,
+			description: fullDescription,
 			type: 'article',
+			url: `/blog/${post.slug}`,
 			publishedTime: post.publishedAt,
+			modifiedTime: post.updatedAt,
 			authors: [post.author],
+			images: [{ url: image, width: 1200, height: 630 }],
+		},
+		twitter: {
+			card: 'summary_large_image',
+			title,
+			description: fullDescription,
+			images: [image],
 		},
 	};
 }
@@ -49,8 +88,24 @@ export default async function BlogArticlePage({ params }: PageProps) {
 		notFound();
 	}
 
+	const jsonLd = buildBlogPostJsonLd({
+		slug: post.slug,
+		title: post.title,
+		description: post.metaDescription ?? post.description,
+		author: post.author,
+		publishedAt: post.publishedAt,
+		updatedAt: post.updatedAt,
+		keywords: post.keywords,
+		faqs: faqsVisibleInBody(post.faqs, post.body),
+		imageUrl: shareImageUrl(post),
+	});
+
 	return (
 		<main className="mx-auto max-w-3xl px-4 py-12 md:px-6 md:py-16">
+			<script
+				type="application/ld+json"
+				dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
+			/>
 			<Link
 				href="/blog"
 				className="mb-8 inline-flex items-center gap-1.5 text-sm text-[#1c1c1c66] no-underline transition-colors hover:text-[#1c1c1c]"

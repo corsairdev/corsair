@@ -34,9 +34,9 @@
           },
           {
             "key": "pin",
-            "optional": false,
+            "optional": true,
             "type": "string",
-            "description": "Analog pin to read from (e.g. A0)"
+            "description": "Analog pin to read from (e.g. A0). Defaults to \"A0\"."
           }
         ]
       },

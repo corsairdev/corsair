@@ -1,0 +1,107 @@
+displayName: TelTEL
+description: SMS and voice with TelTEL - send SMS one at a time or in bulk, read outbound and inbound message reports, run SMS campaigns, manage contacts and groups, place click-to-call calls, and read the DID numbers and countries on the account.
+domain: teltel.io
+recommendedAuth: api_key
+overviewNote: |
+  Create a key in the TelTEL portal under API settings. The plugin sends it as `X-API-KEY`, which keeps it out of URLs and logs; TelTEL also accepts the same key as an `apikey` query value.
+
+  Things to know before you call:
+
+  - **Sending charges the account.** `sms.send`, `sms.sendBulk` and `calls.create` bill per message part or per minute. There is no test mode.
+  - **The sender must be verified.** A numeric sender must be a DID on the account, and an alphanumeric sender ID must be 3 to 11 characters. Dynamic sender IDs need to be enabled on the account first.
+  - **Every body is wrapped in `data`.** TelTEL refuses an unwrapped request body, so each endpoint builds the wrapper for you. The bulk routes take an array as the `data` value rather than an object.
+  - **Bulk sends can partly fail.** `sms.sendBulk` answers 200 with the created IDs, or 207 with a `success` array and an `errors` array. Both parse, so a partial result does not throw. Check `data` for the split on a 207.
+  - **401 and 403 mean different things.** A 401 means no credential reached the API. A 403 means one was sent and refused, or the account cannot use that section yet (a new account without credit gets 403 on SMS, campaigns and contacts). Errors are core's `ApiError`; `teltelErrorDetails(error)` reads TelTEL's `errors` entries.
+  - **Filters go in one `filter` value.** The list inputs (`state`, `from`, `to`, `direction`, the time ranges and so on) become a comma-separated `filter` query value such as `state=DONE,created_at>2024-03-01T00:00:00`. TelTEL ignores filters sent as separate query keys.
+  - **Users come without their API keys.** TelTEL's user list includes each user's key; `users.list` drops that field before returning.
+  - **Paging is by offset.** `limit` runs from 1 to 5000 and defaults to 500; `offset` skips. A list answer is `{ data: [...] }` with no total count, so keep requesting until a page comes back short.
+  - **Deletes and most updates answer `meta`.** A delete is `{ meta: { deleted: true } }` and a campaign, contact or group update is `{ meta: { updated: true } }`. The plugin returns that envelope rather than inventing a `success` flag, and fails a call whose body has no `meta`. `numbers.update` is the exception: it answers with the updated number under `data`.
+  - **A campaign does not send until it starts.** `campaigns.create` only records the campaign. `campaigns.action` with `start` sends to every contact in the campaign groups, `pause` stops it temporarily and `stop` ends it.
+  - **A click-to-call needs both display names.** `calls.create` requires `destination_displayname` alongside the two numbers.
+examples:
+  read:
+    path: account.balance
+    title: Read the account balance
+    args: {}
+  write:
+    path: sms.send
+    title: Send one SMS
+    args:
+      from: '37126118199'
+      to: '37126118198'
+      message: Hello from TelTEL
+apiExamples:
+  account.balance: {}
+  sms.send:
+    call: "{ from: '37126118199', to: '37126118198', message: 'Hello from TelTEL' }"
+  sms.sendBulk:
+    call: "{ messages: [{ from: '37126118199', to: '37126118198', message: 'One' }, { from: '37126118199', to: '37126118197', message: 'Two' }] }"
+  smsReports.list:
+    call: "{ limit: 100, offset: 0, state: 'DONE' }"
+  smsReports.get:
+    call: '{ reportId: 1832256 }'
+  inbox.list:
+    call: '{ limit: 50 }'
+  inbox.get:
+    call: '{ inboxMessageId: 991 }'
+  campaigns.list:
+    call: '{ limit: 50 }'
+  campaigns.get:
+    call: '{ campaignId: 781 }'
+  campaigns.create:
+    call: "{ title: 'Spring sale', from: '37126118199', contact_groups: [5, 6], message: 'Spring sale starts now' }"
+  campaigns.update:
+    call: "{ campaignId: 781, title: 'Spring sale 2' }"
+  campaigns.action:
+    call: "{ campaignId: 781, action: 'start' }"
+  campaigns.delete:
+    call: '{ campaignId: 781 }'
+  contacts.list:
+    call: '{ group_id: 5 }'
+  contacts.get:
+    call: '{ contactId: 981 }'
+  contacts.create:
+    call: "{ phone: '37121234567', group_id: 5 }"
+  contacts.createBulk:
+    call: "{ contacts: [{ phone: '37121234567', group_id: 5 }, { phone: '37121234568', group_id: 5 }] }"
+  contacts.update:
+    call: "{ contactId: 981, param_1: 'VIP' }"
+  contacts.delete:
+    call: '{ contactId: 981 }'
+  contactGroups.list: {}
+  contactGroups.get:
+    call: '{ groupId: 5 }'
+  contactGroups.create:
+    call: "{ name: 'Customers' }"
+  contactGroups.update:
+    call: "{ groupId: 5, name: 'Clients' }"
+  contactGroups.delete:
+    call: '{ groupId: 5 }'
+  contactGroups.contacts:
+    call: '{ groupId: 5 }'
+  calls.list:
+    call: "{ direction: 'outbound', limit: 50 }"
+  calls.create:
+    call: "{ caller_number: '37126111111', destination_number: '37126111112', destination_displayname: 'Support' }"
+  numbers.list:
+    call: '{ limit: 50 }'
+  numbers.get:
+    call: '{ numberId: 115 }'
+  numbers.update:
+    call: "{ numberId: 115, auto_renew: false }"
+  numberCountries.list: {}
+  numberCountries.get:
+    call: '{ countryId: 115 }'
+  priceGroups.list:
+    call: '{ countryId: 115 }'
+  users.list: {}
+apiNotes:
+  'sms.send': 'Charges the account per part; a numeric sender must be a DID on the account and an alphanumeric sender ID must be 3 to 11 characters.'
+  'sms.sendBulk': 'A partial result answers 207 with success and errors arrays under data; both shapes parse.'
+  'campaigns.action': 'start sends to every contact in the campaign groups, pause stops it temporarily and stop ends it.'
+  'calls.create': 'destination_displayname is required alongside both numbers.'
+  'contacts.create': 'group_id is required; get it from contactGroups.list.'
+  'smsReports.list': 'limit runs from 1 to 5000 and defaults to 500; offset skips results. state is NEW, PROC, WAIT, DONE, ERROR or CANCEL; filters travel in one filter value.'
+  'users.list': 'Each user comes back without the api_key field TelTEL includes.'
+  'numberCountries.list': 'Returns every country in one answer; the route takes no paging.'
+  'numbers.update': 'auto_renew is a boolean in the request; the answer is the updated number, where auto_renew reads 0 or 1.'

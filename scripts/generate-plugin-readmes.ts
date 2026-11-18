@@ -16,7 +16,16 @@
  * Existing READMEs are never overwritten without --force. Existing metadata
  * values are never clobbered. A single changeset is written for touched packages.
  */
-import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import {
+	existsSync,
+	mkdtempSync,
+	readdirSync,
+	readFileSync,
+	rmSync,
+	writeFileSync,
+} from 'node:fs';
+import { tmpdir } from 'node:os';
 import { basename, dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import type { PluginDocsIntrospection } from '../packages/corsair/core/inspect/index.ts';
@@ -311,12 +320,39 @@ const FACTORY_OPTIONS: Record<string, Record<string, unknown>> = {
 };
 
 /**
- * True when a plugin failed to load only because the `corsair` workspace
- * dependency is not installed — the signature of a lane-scoped CI install
- * (the plugin lane installs just the PR's plugin), not a broken plugin.
+ * Extracts the missing package name from a loadPlugin import failure, e.g.
+ * "import failed: Cannot find package 'zod' ..." -> "zod".
  */
-export function isWorkspaceNotInstalledError(error: string): boolean {
-	return error.startsWith("import failed: Cannot find package 'corsair'");
+export function missingPackageName(error: string): string | undefined {
+	const match = error.match(/^import failed: Cannot find package '([^']+)'/);
+	return match?.[1];
+}
+
+/**
+ * True when a plugin failed to load only because workspace dependencies are
+ * not installed — the signature of a lane-scoped CI install (the plugin lane
+ * installs just the PR's plugin), not a broken plugin.
+ *
+ * Every plugin depends on `corsair` (workspace:*) and `zod`. Either missing
+ * can mean not-installed. Both are needed because import order differs per
+ * plugin: e.g. zohobigin has only `import type ... from 'corsair/core'`
+ * (erased at runtime) followed by runtime `import { z } from 'zod'`, so its
+ * first runtime failure is `zod`, while plugins with a runtime
+ * `from 'corsair/core'` value import fail on `corsair` first.
+ *
+ * Only a plugin with no `packages/<dir>/node_modules` at all counts as not
+ * installed. An installed plugin that still cannot resolve `corsair` or
+ * `zod` (e.g. it never declared the dependency) is genuine breakage, so the
+ * full lane cannot pass silently.
+ */
+export function isWorkspaceNotInstalledError(
+	error: string,
+	dir: string,
+	root: string,
+): boolean {
+	const pkg = missingPackageName(error);
+	if (pkg !== 'corsair' && pkg !== 'zod') return false;
+	return !existsSync(join(root, 'packages', dir, 'node_modules'));
 }
 
 export type CheckResultSummary = {
@@ -329,16 +365,22 @@ export type CheckResultSummary = {
 /**
  * Decide a `--check` run: gaps and real load errors fail, uninstalled
  * plugins are skipped, and a run that introspected nothing fails so a
- * broken install can never pass vacuously.
+ * broken install can never pass vacuously. `root` is the repo root, used to
+ * tell uninstalled plugins apart via `packages/<dir>/node_modules`.
  */
 export function summarizeCheckResults(
 	results: { dir: string; gaps: string[]; error?: string }[],
+	root: string,
 ): CheckResultSummary {
 	const skipped = results
-		.filter((r) => r.error && isWorkspaceNotInstalledError(r.error))
+		.filter(
+			(r) => r.error && isWorkspaceNotInstalledError(r.error, r.dir, root),
+		)
 		.map((r) => r.dir);
 	const errored = results
-		.filter((r) => r.error && !isWorkspaceNotInstalledError(r.error))
+		.filter(
+			(r) => r.error && !isWorkspaceNotInstalledError(r.error, r.dir, root),
+		)
 		.map((r) => r.dir);
 	const offenders = results
 		.filter((r) => !r.error && r.gaps.length > 0)
@@ -381,7 +423,7 @@ async function loadPlugin(
 	}
 }
 
-type PluginProcessResult = {
+export type PluginProcessResult = {
 	dir: string;
 	pluginId: string;
 	npmName: string;
@@ -492,13 +534,68 @@ async function processPlugin(
 	};
 }
 
+// Imported plugins can't be unloaded, so one process holding all of them grows
+// with the plugin count (~6 MB each). Each batch runs in its own child process.
+const PLUGINS_PER_PROCESS = 50;
+
+export function batches<T>(items: T[], size: number): T[][] {
+	const out: T[][] = [];
+	for (let i = 0; i < items.length; i += size) {
+		out.push(items.slice(i, i + size));
+	}
+	return out;
+}
+
+export function runInBatches(
+	dirs: string[],
+	flags: string[],
+	script = fileURLToPath(import.meta.url),
+): PluginProcessResult[] {
+	const tmp = mkdtempSync(join(tmpdir(), 'plugin-readmes-'));
+	try {
+		return batches(dirs, PLUGINS_PER_PROCESS).flatMap((batch, i) => {
+			const out = join(tmp, `${i}.json`);
+			spawnSync(
+				process.execPath,
+				[
+					...process.execArgv,
+					script,
+					...flags,
+					`--only=${batch.join(',')}`,
+					`--results=${out}`,
+				],
+				{ stdio: 'inherit' },
+			);
+			if (!existsSync(out)) {
+				return batch.map((dir) => ({
+					dir,
+					pluginId: dir,
+					npmName: dir,
+					readmeWritten: false,
+					metadataFields: [],
+					skippedNoOps: false,
+					gaps: [],
+					error: 'batch process exited without results',
+				}));
+			}
+			return JSON.parse(readFileSync(out, 'utf8')) as PluginProcessResult[];
+		});
+	} finally {
+		rmSync(tmp, { recursive: true, force: true });
+	}
+}
+
 function parseArgs(argv: string[]): {
 	pluginHint?: string;
 	all: boolean;
 	check: boolean;
 	force: boolean;
+	only?: string[];
+	results?: string;
 } {
 	let pluginHint: string | undefined;
+	let only: string[] | undefined;
+	let results: string | undefined;
 	let all = false;
 	let check = false;
 	let force = false;
@@ -507,16 +604,36 @@ function parseArgs(argv: string[]): {
 		if (a === '--all') all = true;
 		else if (a === '--check') check = true;
 		else if (a === '--force') force = true;
+		else if (a.startsWith('--only='))
+			only = a.slice('--only='.length).split(',');
+		else if (a.startsWith('--results=')) results = a.slice('--results='.length);
 		else if (a.startsWith('--plugin='))
 			pluginHint = a.slice('--plugin='.length);
 		else if (!a.startsWith('-') && a.length > 0) pluginHint ??= a;
 	}
-	return { pluginHint, all, check, force };
+	return { pluginHint, all, check, force, only, results };
 }
 
 async function main() {
-	const { pluginHint, all, check, force } = parseArgs(process.argv.slice(2));
+	const {
+		pluginHint,
+		all,
+		check,
+		force,
+		only,
+		results: resultsPath,
+	} = parseArgs(process.argv.slice(2));
 	const root = repoRoot();
+
+	// A batch child: process its slice, hand the results back, leave the summary to the parent.
+	if (only && resultsPath) {
+		const out: PluginProcessResult[] = [];
+		for (const dir of only) {
+			out.push(await processPlugin(root, dir, { check, force }));
+		}
+		writeFileSync(resultsPath, JSON.stringify(out), 'utf8');
+		process.exit(0);
+	}
 
 	if (!all && !pluginHint) {
 		console.error(
@@ -532,18 +649,23 @@ async function main() {
 	}
 
 	const results: PluginProcessResult[] = [];
-	for (const dir of dirs) {
-		results.push(await processPlugin(root, dir, { check, force }));
+	if (dirs.length > PLUGINS_PER_PROCESS) {
+		const flags = [check && '--check', force && '--force'].filter(
+			(f): f is string => Boolean(f),
+		);
+		results.push(...runInBatches(dirs, flags));
+	} else {
+		for (const dir of dirs) {
+			results.push(await processPlugin(root, dir, { check, force }));
+		}
 	}
 
 	const errored = results.filter((r) => r.error);
 
 	if (check) {
-		const summary = summarizeCheckResults(results);
+		const summary = summarizeCheckResults(results, root);
 		for (const dir of summary.skipped) {
-			console.warn(
-				`[${dir}] skipped: 'corsair' workspace dependency not installed`,
-			);
+			console.warn(`[${dir}] skipped: workspace dependency not installed`);
 		}
 		for (const dir of summary.errored) {
 			console.error(`[${dir}] ${results.find((r) => r.dir === dir)?.error}`);

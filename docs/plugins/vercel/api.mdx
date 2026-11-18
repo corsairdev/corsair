@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Vercel: every `vercel.api.*` operation with input and output types."
+title: "Vercel API reference"
+sidebarTitle: "API"
+description: "API reference for the Vercel plugin in Corsair: every `vercel.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `vercel.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -15,7 +14,7 @@ Every `vercel.api.*` operation is listed below with parameter shapes and return 
 
 `aliases.assignAlias`
 
-Assign an alias
+Point a hostname at a deployment. If the hostname already serves another deployment it moves, so live traffic switches; the response names the old deployment so it can be moved back.
 
 **Risk:** `write`
 
@@ -27,10 +26,10 @@ await corsair.vercel.api.aliases.assignAlias({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `deploymentId` | `string` | Yes | — |
-| `alias` | `string` | Yes | — |
-| `redirect` | `string` | No | — |
-| `teamId` | `string` | No | — |
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `deploymentId` | `string` | Yes | Deployment to point the alias at: id (dpl_…) or hostname. An alias id or hostname also works and resolves to its current deployment. |
+| `alias` | `string` | Yes | Hostname to assign, e.g. www.example.com or my-app.vercel.app. If another deployment holds it, it moves to this one. |
+| `redirect` | `string \| null` | No | Hostname to 307-redirect the alias to instead of serving the deployment. |
 
 
 
@@ -39,9 +38,112 @@ await corsair.vercel.api.aliases.assignAlias({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `uid` | `string` | Yes | — |
-| `alias` | `string` | Yes | — |
-| `created` | `string` | Yes | — |
-| `oldDeploymentId` | `string` | No | — |
+| `alias` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `oldDeploymentId` | `string \| null` | No | — |
+
+
+
+---
+
+### deleteAlias
+
+`aliases.deleteAlias`
+
+Remove an alias by id or hostname. The hostname stops serving the deployment until it is assigned again, and share links on it are lost.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.vercel.api.aliases.deleteAlias({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `aliasId` | `string` | Yes | Alias id (uid) or alias hostname to remove. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean` | Yes | — |
+| `aliasId` | `string` | Yes | — |
+| `status` | `string \| null` | No | — |
+
+
+
+---
+
+### getAlias
+
+`aliases.getAlias`
+
+Get one alias by id or hostname: the deployment and project it points at, redirect settings and creator.
+
+**Risk:** `read`
+
+```ts
+await corsair.vercel.api.aliases.getAlias({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `idOrAlias` | `string` | Yes | Alias id (uid) or alias hostname, e.g. www.example.com. |
+| `projectId` | `string` | No | Return the alias only if it belongs to this project. |
+| `since` | `number` | No | Only results created after this timestamp (ms). |
+| `until` | `number` | No | Only results created before this timestamp (ms). Pass the previous page’s pagination.next to get the next page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `alias` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `createdAt` | `number \| null` | No | — |
+| `updatedAt` | `number \| null` | No | — |
+| `deletedAt` | `number \| null` | No | — |
+| `deploymentId` | `string \| null` | No | — |
+| `projectId` | `string \| null` | No | — |
+| `redirect` | `string \| null` | No | — |
+| `redirectStatusCode` | `number \| null` | No | — |
+| `creator` | `object \| null` | No | — |
+| `deployment` | `object \| null` | No | — |
+| `protectionBypass` | `Record<string, any> \| null` | No | — |
+| `microfrontends` | `Record<string, any> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="creator full type">
+
+```ts
+{
+  uid?: string | null,
+  username?: string | null,
+  email?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="deployment full type">
+
+```ts
+{
+  id?: string | null,
+  url?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -51,7 +153,7 @@ await corsair.vercel.api.aliases.assignAlias({});
 
 `aliases.getAliases`
 
-Get all aliases
+List aliases (hostnames pointing at deployments), newest first, filtered by domain or project. Page with until = pagination.next.
 
 **Risk:** `read`
 
@@ -63,10 +165,13 @@ await corsair.vercel.api.aliases.getAliases({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `limit` | `number` | No | — |
-| `until` | `number` | No | — |
-| `since` | `number` | No | — |
-| `teamId` | `string` | No | — |
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `limit` | `number` | No | Maximum number of results to return. |
+| `since` | `number` | No | Only results created after this timestamp (ms). |
+| `until` | `number` | No | Only results created before this timestamp (ms). Pass the previous page’s pagination.next to get the next page. |
+| `domain` | `string \| string[]` | No | Only aliases on this domain, or on any of these domains (up to 20). |
+| `projectId` | `string` | No | Only aliases of this project. |
+| `rollbackDeploymentId` | `string` | No | Only the aliases that would move if production rolled back to this deployment. |
 
 
 
@@ -75,7 +180,7 @@ await corsair.vercel.api.aliases.getAliases({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `aliases` | `object[]` | Yes | — |
-| `pagination` | `object` | Yes | — |
+| `pagination` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="aliases full type">
@@ -83,12 +188,26 @@ await corsair.vercel.api.aliases.getAliases({});
 ```ts
 {
   uid: string,
-  alias: string,
-  created: string,
-  createdAt: number,
+  alias?: string | null,
+  created?: string | null,
+  createdAt?: number | null,
+  updatedAt?: number | null,
+  deletedAt?: number | null,
   deploymentId?: string | null,
   projectId?: string | null,
-  redirect?: string | null
+  redirect?: string | null,
+  redirectStatusCode?: number | null,
+  creator?: {
+    uid?: string | null,
+    username?: string | null,
+    email?: string | null
+  } | null,
+  deployment?: {
+    id?: string | null,
+    url?: string | null
+  } | null,
+  protectionBypass?: Record<string, any> | null,
+  microfrontends?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -97,10 +216,72 @@ await corsair.vercel.api.aliases.getAliases({});
 
 ```ts
 {
-  count: number,
+  count?: number,
   next?: number | null,
   prev?: number | null
-}
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getDeploymentAliases
+
+`aliases.getDeploymentAliases`
+
+List the aliases (hostnames) currently pointing at a deployment.
+
+**Risk:** `read`
+
+```ts
+await corsair.vercel.api.aliases.getDeploymentAliases({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `deploymentId` | `string` | Yes | Deployment id (dpl_…). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `aliases` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="aliases full type">
+
+```ts
+{
+  uid: string,
+  alias?: string | null,
+  created?: string | null,
+  createdAt?: number | null,
+  updatedAt?: number | null,
+  deletedAt?: number | null,
+  deploymentId?: string | null,
+  projectId?: string | null,
+  redirect?: string | null,
+  redirectStatusCode?: number | null,
+  creator?: {
+    uid?: string | null,
+    username?: string | null,
+    email?: string | null
+  } | null,
+  deployment?: {
+    id?: string | null,
+    url?: string | null
+  } | null,
+  protectionBypass?: Record<string, any> | null,
+  microfrontends?: Record<string, any> | null
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -111,56 +292,186 @@ await corsair.vercel.api.aliases.getAliases({});
 
 ## Deployments
 
-### createDeployment
+### cancelDeployment
 
-`deployments.createDeployment`
+`deployments.cancelDeployment`
 
-Create a deployment
+Stop a deployment that is still queued or building. Fails with 400 once it is READY, ERROR or already CANCELED. Redeploy to build it again.
 
 **Risk:** `write`
 
 ```ts
-await corsair.vercel.api.deployments.createDeployment({});
+await corsair.vercel.api.deployments.cancelDeployment({});
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `name` | `string` | Yes | — |
-| `project` | `string` | No | — |
-| `target` | `production \| staging` | No | — |
-| `gitSource` | `object` | No | — |
-| `files` | `any[]` | No | — |
-| `meta` | `object` | No | — |
-| `env` | `object` | No | — |
-| `teamId` | `string` | No | — |
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `deploymentId` | `string` | Yes | Deployment (dpl_…) that is still queued or building. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `projectId` | `string \| null` | No | — |
+| `ownerId` | `string \| null` | No | — |
+| `readyState` | `string \| null` | No | — |
+| `readySubstate` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `target` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `source` | `string \| null` | No | — |
+| `createdAt` | `number \| null` | No | — |
+| `buildingAt` | `number \| null` | No | — |
+| `ready` | `number \| null` | No | — |
+| `canceledAt` | `number \| null` | No | — |
+| `inspectorUrl` | `string \| null` | No | — |
+| `errorCode` | `string \| null` | No | — |
+| `errorMessage` | `string \| null` | No | — |
+| `alias` | `string[] \| null` | No | — |
+| `automaticAliases` | `string[] \| null` | No | — |
+| `aliasAssigned` | `boolean \| number \| null` | No | — |
+| `aliasError` | `object \| null` | No | — |
+| `creator` | `object \| null` | No | — |
+| `meta` | `Record<string, any> \| null` | No | — |
+| `gitSource` | `Record<string, any> \| null` | No | — |
+| `projectSettings` | `Record<string, any> \| null` | No | — |
+| `regions` | `any[] \| null` | No | — |
+| `public` | `boolean \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="aliasError full type">
+
+```ts
+{
+  code?: string | null,
+  message?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="creator full type">
+
+```ts
+{
+  uid?: string | null,
+  username?: string | null,
+  email?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createDeployment
+
+`deployments.createDeployment`
+
+Start a deployment from a Git ref, from inline files, or as a redeploy of an existing deployment. It builds in the background: follow readyState with getDeployment. target production replaces the live site once ready.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.vercel.api.deployments.createDeployment({ name: 'my-site', project: 'my-site', target: 'production', gitSource: { type: 'github', org: 'acme', repo: 'my-site', ref: 'main' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `name` | `string` | Yes | Project name used in the deployment URL. Required even when project is set. |
+| `project` | `string` | No | Project id or name to deploy into. Overrides name for the project. |
+| `target` | `string` | No | production, staging, or a custom environment. Omit for a preview deployment. production updates the live site. |
+| `customEnvironmentSlugOrId` | `string` | No | Custom environment to deploy to, overriding target. |
+| `deploymentId` | `string` | No | Redeploy this existing deployment (dpl_…): settings and env are inherited unless overridden here. |
+| `withLatestCommit` | `boolean` | No | With deploymentId: build the latest commit instead of the original one. |
+| `gitSource` | `object` | No | Git source to build: github by repoId or org+repo, gitlab by projectId, bitbucket by repoUuid or owner+slug. Not with files. |
+| `files` | `object[]` | No | Files for a deployment without Git: inline small files (file + data), or reference uploaded ones (file + sha). Not with gitSource. |
+| `projectSettings` | `object` | No | Build settings for this deployment. Needed on the first deployment of a new project, then saved. |
+| `meta` | `Record<string, string>` | No | Key-value metadata to attach to the deployment. |
+| `monorepoManager` | `string \| null` | No | — |
+| `forceNew` | `boolean` | No | true: always build, even when an identical deployment exists. |
+| `skipAutoDetectionConfirmation` | `boolean` | No | true: proceed when the detected framework differs from the project setting instead of failing with 400. |
 
 <AccordionGroup>
 <Accordion title="gitSource full type">
 
 ```ts
 {
-  type: github | gitlab | bitbucket,
-  ref?: string,
-  repoId?: string | number,
+  type: github,
+  repoId: string | number,
+  ref: string,
+  sha?: string
+} | {
+  type: github,
+  org: string,
+  repo: string,
+  ref: string,
+  sha?: string
+} | {
+  type: gitlab,
+  projectId: string | number,
+  ref: string,
+  sha?: string
+} | {
+  type: bitbucket,
+  repoUuid: string,
+  workspaceUuid?: string,
+  ref: string,
+  sha?: string
+} | {
+  type: bitbucket,
+  owner: string,
+  slug: string,
+  ref: string,
   sha?: string
 }
 ```
 </Accordion>
 
-<Accordion title="meta full type">
+<Accordion title="files full type">
 
 ```ts
-{
-}
+(
+  {
+    file: string,
+    data: string,
+    encoding?: utf-8 | base64
+  } | {
+    file: string,
+    sha: string,
+    size?: number
+  }
+)[]
 ```
 </Accordion>
 
-<Accordion title="env full type">
+<Accordion title="projectSettings full type">
 
 ```ts
 {
+  framework?: string | null,
+  buildCommand?: string | null,
+  devCommand?: string | null,
+  installCommand?: string | null,
+  outputDirectory?: string | null,
+  rootDirectory?: string | null,
+  commandForIgnoringBuildStep?: string | null,
+  nodeVersion?: 26.x | 24.x | 22.x | 20.x | 18.x,
+  serverlessFunctionRegion?: string | null,
+  sourceFilesOutsideRootDirectory?: boolean,
+  skipGitConnectDuringLink?: boolean
 }
 ```
 </Accordion>
@@ -172,49 +483,90 @@ await corsair.vercel.api.deployments.createDeployment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `uid` | `string` | Yes | — |
-| `name` | `string` | Yes | — |
-| `url` | `string` | Yes | — |
-| `created` | `number` | Yes | — |
-| `readyState` | `string` | Yes | — |
-| `type` | `LAMBDAS \| PREBUILT \| STATIC \| string` | Yes | — |
-| `creator` | `object` | No | — |
-| `meta` | `object` | No | — |
-| `target` | `production \| staging \| string` | No | — |
-| `aliasError` | `object` | No | — |
-| `aliasAssigned` | `number` | No | — |
-| `inspectorUrl` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `projectId` | `string \| null` | No | — |
+| `ownerId` | `string \| null` | No | — |
+| `readyState` | `string \| null` | No | — |
+| `readySubstate` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `target` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `source` | `string \| null` | No | — |
+| `createdAt` | `number \| null` | No | — |
+| `buildingAt` | `number \| null` | No | — |
+| `ready` | `number \| null` | No | — |
+| `canceledAt` | `number \| null` | No | — |
+| `inspectorUrl` | `string \| null` | No | — |
+| `errorCode` | `string \| null` | No | — |
+| `errorMessage` | `string \| null` | No | — |
+| `alias` | `string[] \| null` | No | — |
+| `automaticAliases` | `string[] \| null` | No | — |
+| `aliasAssigned` | `boolean \| number \| null` | No | — |
+| `aliasError` | `object \| null` | No | — |
+| `creator` | `object \| null` | No | — |
+| `meta` | `Record<string, any> \| null` | No | — |
+| `gitSource` | `Record<string, any> \| null` | No | — |
+| `projectSettings` | `Record<string, any> \| null` | No | — |
+| `regions` | `any[] \| null` | No | — |
+| `public` | `boolean \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="creator full type">
-
-```ts
-{
-  uid: string,
-  email: string,
-  username: string
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="aliasError full type">
 
 ```ts
 {
-  code: string,
-  message: string
-}
+  code?: string | null,
+  message?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="creator full type">
+
+```ts
+{
+  uid?: string | null,
+  username?: string | null,
+  email?: string | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
+
+
+
+---
+
+### deleteDeployment
+
+`deployments.deleteDeployment`
+
+Delete a deployment by id or hostname. Its URL stops serving and its build output and logs are gone. Cannot be undone.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.vercel.api.deployments.deleteDeployment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `deploymentId` | `string` | No | Deployment id (dpl_…). |
+| `url` | `string` | No | Deployment or alias hostname to delete by, instead of deploymentId. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `state` | `string \| null` | No | — |
 
 
 
@@ -224,7 +576,7 @@ await corsair.vercel.api.deployments.createDeployment({});
 
 `deployments.getDeployment`
 
-Get deployment details
+Get one deployment by id or hostname: readyState (QUEUED, BUILDING, READY, ERROR, CANCELED), URL, aliases, creator, Git metadata and error details.
 
 **Risk:** `read`
 
@@ -236,8 +588,9 @@ await corsair.vercel.api.deployments.getDeployment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `idOrUrl` | `string` | Yes | — |
-| `teamId` | `string` | No | — |
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `idOrUrl` | `string` | Yes | Deployment id (dpl_…) or its hostname, e.g. my-app-abc123.vercel.app. |
+| `withGitRepoInfo` | `boolean` | No | Include gitSource (commit SHA, branch, repo) in the response. |
 
 
 
@@ -245,46 +598,54 @@ await corsair.vercel.api.deployments.getDeployment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `uid` | `string` | Yes | — |
-| `name` | `string` | Yes | — |
-| `url` | `string` | Yes | — |
-| `created` | `number` | Yes | — |
-| `readyState` | `string` | Yes | — |
-| `type` | `LAMBDAS \| PREBUILT \| STATIC \| string` | Yes | — |
-| `creator` | `object` | No | — |
-| `meta` | `object` | No | — |
-| `target` | `production \| staging \| string` | No | — |
-| `aliasError` | `object` | No | — |
-| `aliasAssigned` | `number` | No | — |
-| `inspectorUrl` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `projectId` | `string \| null` | No | — |
+| `ownerId` | `string \| null` | No | — |
+| `readyState` | `string \| null` | No | — |
+| `readySubstate` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `target` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `source` | `string \| null` | No | — |
+| `createdAt` | `number \| null` | No | — |
+| `buildingAt` | `number \| null` | No | — |
+| `ready` | `number \| null` | No | — |
+| `canceledAt` | `number \| null` | No | — |
+| `inspectorUrl` | `string \| null` | No | — |
+| `errorCode` | `string \| null` | No | — |
+| `errorMessage` | `string \| null` | No | — |
+| `alias` | `string[] \| null` | No | — |
+| `automaticAliases` | `string[] \| null` | No | — |
+| `aliasAssigned` | `boolean \| number \| null` | No | — |
+| `aliasError` | `object \| null` | No | — |
+| `creator` | `object \| null` | No | — |
+| `meta` | `Record<string, any> \| null` | No | — |
+| `gitSource` | `Record<string, any> \| null` | No | — |
+| `projectSettings` | `Record<string, any> \| null` | No | — |
+| `regions` | `any[] \| null` | No | — |
+| `public` | `boolean \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="creator full type">
-
-```ts
-{
-  uid: string,
-  email: string,
-  username: string
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="aliasError full type">
 
 ```ts
 {
-  code: string,
-  message: string
-}
+  code?: string | null,
+  message?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="creator full type">
+
+```ts
+{
+  uid?: string | null,
+  username?: string | null,
+  email?: string | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -293,11 +654,107 @@ await corsair.vercel.api.deployments.getDeployment({});
 
 ---
 
+### getDeploymentEvents
+
+`deployments.getDeploymentEvents`
+
+Read the build logs of a deployment: stdout/stderr lines and state changes, oldest first by default. Returns what has been logged so far; it does not wait for new lines.
+
+**Risk:** `read`
+
+```ts
+await corsair.vercel.api.deployments.getDeploymentEvents({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `idOrUrl` | `string` | Yes | Deployment id (dpl_…) or its hostname, e.g. my-app-abc123.vercel.app. |
+| `direction` | `forward \| backward` | No | forward: oldest first (default). backward: newest first. |
+| `limit` | `-1 \| number` | No | Maximum number of events; -1 returns all of them. |
+| `since` | `number` | No | Only events from this timestamp (ms). |
+| `until` | `number` | No | Only events up to this timestamp (ms). |
+| `name` | `string` | No | Only events of this build id. |
+| `statusCode` | `number \| string` | No | Only request events with this HTTP status or range, e.g. 500 or 5xx. |
+| `builds` | `boolean` | No | Include build events. |
+| `delimiter` | `boolean` | No | Include delimiter events between steps. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  type: string,
+  created?: number | null,
+  date?: number | null,
+  id?: string | null,
+  deploymentId?: string | null,
+  serial?: string | null,
+  text?: string | null,
+  level?: string | null,
+  info?: Record<string, any> | null,
+  payload?: Record<string, any> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getDeploymentFiles
+
+`deployments.getDeploymentFiles`
+
+Get the source file tree of a deployment made with the CLI or the API files field. Git deployments have no file tree and return 404.
+
+**Risk:** `read`
+
+```ts
+await corsair.vercel.api.deployments.getDeploymentFiles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `deploymentId` | `string` | Yes | Deployment id (dpl_…). |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name: string,
+  type?: string | null,
+  mode?: number | null,
+  uid?: string | null,
+  contentType?: string | null,
+  children?: any[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
 ### getDeployments
 
 `deployments.getDeployments`
 
-Get all deployments
+List deployments, newest first, filtered by project, environment, state, branch, commit or creator. Page with until = pagination.next.
 
 **Risk:** `read`
 
@@ -309,10 +766,19 @@ await corsair.vercel.api.deployments.getDeployments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `projectId` | `string` | No | — |
-| `limit` | `number` | No | — |
-| `until` | `number` | No | — |
-| `teamId` | `string` | No | — |
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `limit` | `number` | No | Maximum number of results to return. |
+| `since` | `number` | No | Only results created after this timestamp (ms). |
+| `until` | `number` | No | Only results created before this timestamp (ms). Pass the previous page’s pagination.next to get the next page. |
+| `projectId` | `string` | No | Only deployments of this project (id or name). |
+| `projectIds` | `string[]` | No | Only deployments of these project ids. Not with projectId. |
+| `app` | `string` | No | Only deployments with this name. |
+| `target` | `string` | No | Environment: production, preview, or a custom environment. |
+| `state` | `BLOCKED \| BUILDING \| CANCELED \| ERROR \| INITIALIZING \| QUEUED \| READY \| (BLOCKED \| BUILDING \| CANCELED \| ERROR \| INITIALIZING \| QUEUED \| READY)[]` | No | Only deployments in this state, or any of these states. |
+| `branch` | `string` | No | Only deployments of this Git branch. |
+| `sha` | `string` | No | Only deployments of this commit SHA. |
+| `users` | `string` | No | Only deployments created by these user ids (comma-separated). |
+| `rollbackCandidate` | `boolean` | No | true: only deployments production can roll back to. |
 
 
 
@@ -321,7 +787,7 @@ await corsair.vercel.api.deployments.getDeployments({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `deployments` | `object[]` | Yes | — |
-| `pagination` | `object` | Yes | — |
+| `pagination` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="deployments full type">
@@ -329,25 +795,34 @@ await corsair.vercel.api.deployments.getDeployments({});
 ```ts
 {
   uid: string,
-  name: string,
-  url: string,
-  created: number,
-  readyState: string,
-  type: LAMBDAS | PREBUILT | STATIC | string,
-  creator?: {
-    uid: string,
-    email: string,
-    username: string
-  } | null,
-  meta?: {
-  } | null,
-  target?: production | staging | string | null,
+  name?: string | null,
+  url?: string | null,
+  projectId?: string | null,
+  state?: string | null,
+  readyState?: string | null,
+  readySubstate?: string | null,
+  target?: string | null,
+  type?: string | null,
+  source?: string | null,
+  created?: number | null,
+  createdAt?: number | null,
+  buildingAt?: number | null,
+  ready?: number | null,
+  inspectorUrl?: string | null,
+  errorCode?: string | null,
+  errorMessage?: string | null,
+  isRollbackCandidate?: boolean | null,
+  aliasAssigned?: boolean | number | null,
   aliasError?: {
-    code: string,
-    message: string
+    code?: string | null,
+    message?: string | null
   } | null,
-  aliasAssigned?: number | null,
-  inspectorUrl?: string | null
+  creator?: {
+    uid?: string | null,
+    username?: string | null,
+    email?: string | null
+  } | null,
+  meta?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -356,9 +831,384 @@ await corsair.vercel.api.deployments.getDeployments({});
 
 ```ts
 {
-  count: number,
+  count?: number,
   next?: number | null,
   prev?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Dns
+
+### createRecord
+
+`dns.createRecord`
+
+Add a DNS record to a domain whose DNS is on Vercel. Fields depend on type: A, AAAA, ALIAS, CAA, CNAME, TXT and NS take value; MX takes value and mxPriority; SRV takes srv; HTTPS takes https. Takes effect on live traffic and email.
+
+**Risk:** `write`
+
+```ts
+await corsair.vercel.api.dns.createRecord({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  teamId?: string,
+  domain: string,
+  name: string,
+  ttl?: number,
+  comment?: string,
+  type: A,
+  value: string
+} | {
+  teamId?: string,
+  domain: string,
+  name: string,
+  ttl?: number,
+  comment?: string,
+  type: AAAA,
+  value: string
+} | {
+  teamId?: string,
+  domain: string,
+  name: string,
+  ttl?: number,
+  comment?: string,
+  type: ALIAS,
+  value: string
+} | {
+  teamId?: string,
+  domain: string,
+  name: string,
+  ttl?: number,
+  comment?: string,
+  type: CAA,
+  value: string
+} | {
+  teamId?: string,
+  domain: string,
+  name: string,
+  ttl?: number,
+  comment?: string,
+  type: CNAME,
+  value: string
+} | {
+  teamId?: string,
+  domain: string,
+  name: string,
+  ttl?: number,
+  comment?: string,
+  type: MX,
+  value: string,
+  mxPriority: number
+} | {
+  teamId?: string,
+  domain: string,
+  name: string,
+  ttl?: number,
+  comment?: string,
+  type: SRV,
+  srv: {
+    priority: number | null,
+    weight: number | null,
+    port: number | null,
+    target: string
+  }
+} | {
+  teamId?: string,
+  domain: string,
+  name: string,
+  ttl?: number,
+  comment?: string,
+  type: TXT,
+  value: string
+} | {
+  teamId?: string,
+  domain: string,
+  name: string,
+  ttl?: number,
+  comment?: string,
+  type: NS,
+  value: string
+} | {
+  teamId?: string,
+  domain: string,
+  name: string,
+  ttl?: number,
+  comment?: string,
+  type: HTTPS,
+  https: {
+    priority: number | null,
+    target: string,
+    params?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string \| null` | No | — |
+| `updated` | `number \| null` | No | — |
+
+
+
+---
+
+### deleteRecord
+
+`dns.deleteRecord`
+
+Delete a DNS record from a domain. Takes effect on live traffic and email, and the record cannot be restored, only recreated with a new id.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.vercel.api.dns.deleteRecord({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `domain` | `string` | Yes | Domain whose DNS zone is on Vercel, e.g. example.com. |
+| `recordId` | `string` | Yes | DNS record id (rec_…). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `recordId` | `string` | Yes | — |
+
+
+
+---
+
+### getRecords
+
+`dns.getRecords`
+
+List the DNS records in a domain's Vercel DNS zone, 20 per page by default. Empty when the domain's DNS is hosted elsewhere (check serviceType with domains.getDomain). For the next page pass pagination.next as until.
+
+**Risk:** `read`
+
+```ts
+await corsair.vercel.api.dns.getRecords({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `domain` | `string` | Yes | Domain whose DNS zone is on Vercel, e.g. example.com. |
+| `limit` | `number` | No | Maximum number of results to return. |
+| `since` | `number` | No | Only results created after this timestamp (ms). |
+| `until` | `number` | No | Only results created before this timestamp (ms). Pass the previous page’s pagination.next to get the next page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  type?: string | null,
+  value?: string | null,
+  ttl?: number | null,
+  mxPriority?: number | null,
+  priority?: number | null,
+  slug?: string | null,
+  creator?: string | null,
+  comment?: string | null,
+  created?: number | null,
+  createdAt?: number | null,
+  updated?: number | null,
+  updatedAt?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  count?: number,
+  next?: number | null,
+  prev?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateRecord
+
+`dns.updateRecord`
+
+Change an existing DNS record by id (from getRecords): name, value, type, TTL, MX priority, SRV or HTTPS data, comment. Takes effect on live traffic and email; read the record first to be able to restore it.
+
+**Risk:** `write`
+
+```ts
+await corsair.vercel.api.dns.updateRecord({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `recordId` | `string` | Yes | DNS record id (rec_…). |
+| `name` | `string \| null` | No | New subdomain. |
+| `value` | `string \| null` | No | New value. |
+| `type` | `A \| AAAA \| ALIAS \| CAA \| CNAME \| HTTPS \| MX \| SRV \| TXT \| NS \| null` | No | New record type. |
+| `ttl` | `number \| null` | No | Time to live in seconds, 60 or more. Vercel defaults to 60. |
+| `mxPriority` | `number \| null` | No | New MX priority. |
+| `srv` | `object \| null` | No | New SRV data (all four fields). |
+| `https` | `object \| null` | No | New HTTPS record data. |
+| `comment` | `string` | No | Note on what the record is for. |
+
+<AccordionGroup>
+<Accordion title="srv full type">
+
+```ts
+{
+  target: string | null,
+  weight: number | null,
+  port: number | null,
+  priority: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="https full type">
+
+```ts
+{
+  priority: number | null,
+  target: string | null,
+  params?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `value` | `string \| null` | No | — |
+| `recordType` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `ttl` | `number \| null` | No | — |
+| `domain` | `string \| null` | No | — |
+| `creator` | `string \| null` | No | — |
+| `comment` | `string \| null` | No | — |
+| `createdAt` | `number \| null` | No | — |
+
+
+
+---
+
+## Domains
+
+### addDomain
+
+`domains.addDomain`
+
+Add a domain you already own to the account. No purchase or transfer. It may need ownership verification through DNS before it serves; zone: true creates a Vercel DNS zone (use when its nameservers point at Vercel). To serve it from a project, also call addProjectDomain.
+
+**Risk:** `write`
+
+```ts
+await corsair.vercel.api.domains.addDomain({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `name` | `string` | Yes | Apex domain you already own, e.g. example.com. |
+| `cdnEnabled` | `boolean` | No | Whether the Vercel CDN is enabled for the domain. |
+| `zone` | `boolean` | No | Create a Vercel DNS zone for the domain. Set true when its nameservers point at Vercel. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="domain full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  boughtAt?: number | null,
+  createdAt?: number | null,
+  expiresAt?: number | null,
+  transferredAt?: number | null,
+  transferStartedAt?: number | null,
+  creator?: {
+    id?: string | null,
+    username?: string | null,
+    email?: string | null,
+    customerId?: string | null,
+    isDomainReseller?: boolean | null
+  } | null,
+  customNameservers?: string[] | null,
+  intendedNameservers?: string[] | null,
+  nameservers?: string[] | null,
+  echMode?: string | null,
+  renew?: boolean | null,
+  serviceType?: string | null,
+  suffix?: boolean | null,
+  teamId?: string | null,
+  userId?: string | null,
+  verified?: boolean | null,
+  cdnEnabled?: boolean | null,
+  zone?: boolean | null
 }
 ```
 </Accordion>
@@ -368,13 +1218,236 @@ await corsair.vercel.api.deployments.getDeployments({});
 
 ---
 
-## Domains
+### addProjectDomain
+
+`domains.addProjectDomain`
+
+Assign a domain to a project, optionally as a redirect or tied to a git branch or custom environment. If verified comes back false, set the record listed in verification, then call verifyProjectDomain. Errors if the domain is already on the project.
+
+**Risk:** `write`
+
+```ts
+await corsair.vercel.api.domains.addProjectDomain({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `idOrName` | `string` | Yes | Project id (prj_…) or project name. |
+| `name` | `string` | Yes | Domain to add to the project, e.g. www.example.com. |
+| `customEnvironmentId` | `string` | No | Custom environment the domain serves. |
+| `gitBranch` | `string \| null` | No | Git branch whose latest preview deployment this domain serves. null clears it. |
+| `redirect` | `string \| null` | No | Domain to redirect to, e.g. example.com. null clears it. |
+| `redirectStatusCode` | `301 \| 302 \| 307 \| 308 \| null` | No | HTTP status for the redirect: 301, 302, 307 or 308. null clears it. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `apexName` | `string \| null` | No | — |
+| `projectId` | `string \| null` | No | — |
+| `redirect` | `string \| null` | No | — |
+| `redirectStatusCode` | `number \| null` | No | — |
+| `gitBranch` | `string \| null` | No | — |
+| `customEnvironmentId` | `string \| null` | No | — |
+| `createdAt` | `number \| null` | No | — |
+| `updatedAt` | `number \| null` | No | — |
+| `verified` | `boolean \| null` | No | — |
+| `verification` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="verification full type">
+
+```ts
+{
+  type?: string | null,
+  domain?: string | null,
+  value?: string | null,
+  reason?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteDomain
+
+`domains.deleteDomain`
+
+Remove a domain from the account. Also removes its aliases and every DNS record in its Vercel DNS zone; the records cannot be recovered. Does not cancel a registration held at another registrar.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.vercel.api.domains.deleteDomain({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `domain` | `string` | Yes | Domain name, e.g. example.com. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `uid` | `string \| null` | No | — |
+
+
+
+---
+
+### getDomain
+
+`domains.getDomain`
+
+Get one account domain by name: whether ownership is verified, current and intended nameservers, whether Vercel serves its DNS (serviceType), and purchase/expiry dates when bought through Vercel.
+
+**Risk:** `read`
+
+```ts
+await corsair.vercel.api.domains.getDomain({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `domain` | `string` | Yes | Domain name, e.g. example.com. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="domain full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  boughtAt?: number | null,
+  createdAt?: number | null,
+  expiresAt?: number | null,
+  transferredAt?: number | null,
+  transferStartedAt?: number | null,
+  creator?: {
+    id?: string | null,
+    username?: string | null,
+    email?: string | null,
+    customerId?: string | null,
+    isDomainReseller?: boolean | null
+  } | null,
+  customNameservers?: string[] | null,
+  intendedNameservers?: string[] | null,
+  nameservers?: string[] | null,
+  echMode?: string | null,
+  renew?: boolean | null,
+  serviceType?: string | null,
+  suffix?: boolean | null,
+  teamId?: string | null,
+  userId?: string | null,
+  verified?: boolean | null,
+  cdnEnabled?: boolean | null,
+  zone?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getDomainConfig
+
+`domains.getDomainConfig`
+
+Check whether a domain's DNS points at Vercel: misconfigured, configuredBy (A, CNAME, http or null) and the recommended A and CNAME values to set at the DNS provider. Pass projectIdOrName for a domain not on a project yet.
+
+**Risk:** `read`
+
+```ts
+await corsair.vercel.api.domains.getDomainConfig({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `domain` | `string` | Yes | Domain name, e.g. example.com. |
+| `projectIdOrName` | `string` | No | Project the domain will be used on. Pass it when the domain is not on a project yet. |
+| `strict` | `boolean` | No | true: report only nameservers set on this exact domain. false (default): fall back to the parent zone's nameservers. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `misconfigured` | `boolean` | Yes | — |
+| `configuredBy` | `string \| null` | No | — |
+| `acceptedChallenges` | `string[] \| null` | No | — |
+| `recommendedCNAME` | `object[] \| null` | No | — |
+| `recommendedIPv4` | `object[] \| null` | No | — |
+| `nameservers` | `string[] \| null` | No | — |
+| `serviceType` | `string \| null` | No | — |
+| `cnames` | `string[] \| null` | No | — |
+| `aValues` | `string[] \| null` | No | — |
+| `conflicts` | `any[] \| null` | No | — |
+| `ipStatus` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="recommendedCNAME full type">
+
+```ts
+{
+  rank?: number | null,
+  value?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="recommendedIPv4 full type">
+
+```ts
+{
+  rank?: number | null,
+  value?: string[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
 
 ### getDomains
 
 `domains.getDomains`
 
-Get all domains
+List the domains in the account or team (apex domains, not per-project assignments), newest first, 20 per page by default. For the next page pass pagination.next as until.
 
 **Risk:** `read`
 
@@ -386,10 +1459,10 @@ await corsair.vercel.api.domains.getDomains({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `limit` | `number` | No | — |
-| `until` | `number` | No | — |
-| `since` | `number` | No | — |
-| `teamId` | `string` | No | — |
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `limit` | `number` | No | Maximum number of results to return. |
+| `since` | `number` | No | Only results created after this timestamp (ms). |
+| `until` | `number` | No | Only results created before this timestamp (ms). Pass the previous page’s pagination.next to get the next page. |
 
 
 
@@ -398,7 +1471,7 @@ await corsair.vercel.api.domains.getDomains({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `domains` | `object[]` | Yes | — |
-| `pagination` | `object` | Yes | — |
+| `pagination` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="domains full type">
@@ -407,13 +1480,30 @@ await corsair.vercel.api.domains.getDomains({});
 {
   id: string,
   name: string,
-  createdAt: number,
   boughtAt?: number | null,
+  createdAt?: number | null,
   expiresAt?: number | null,
   transferredAt?: number | null,
-  verified: boolean,
-  nameservers: string[],
-  intendedNameservers: string[]
+  transferStartedAt?: number | null,
+  creator?: {
+    id?: string | null,
+    username?: string | null,
+    email?: string | null,
+    customerId?: string | null,
+    isDomainReseller?: boolean | null
+  } | null,
+  customNameservers?: string[] | null,
+  intendedNameservers?: string[] | null,
+  nameservers?: string[] | null,
+  echMode?: string | null,
+  renew?: boolean | null,
+  serviceType?: string | null,
+  suffix?: boolean | null,
+  teamId?: string | null,
+  userId?: string | null,
+  verified?: boolean | null,
+  cdnEnabled?: boolean | null,
+  zone?: boolean | null
 }[]
 ```
 </Accordion>
@@ -422,10 +1512,66 @@ await corsair.vercel.api.domains.getDomains({});
 
 ```ts
 {
-  count: number,
+  count?: number,
   next?: number | null,
   prev?: number | null
-}
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getProjectDomain
+
+`domains.getProjectDomain`
+
+Get one domain on a project, including the verification challenge (the DNS record to set) when verified is false.
+
+**Risk:** `read`
+
+```ts
+await corsair.vercel.api.domains.getProjectDomain({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `idOrName` | `string` | Yes | Project id (prj_…) or project name. |
+| `domain` | `string` | Yes | Domain on the project, e.g. www.example.com. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `apexName` | `string \| null` | No | — |
+| `projectId` | `string \| null` | No | — |
+| `redirect` | `string \| null` | No | — |
+| `redirectStatusCode` | `number \| null` | No | — |
+| `gitBranch` | `string \| null` | No | — |
+| `customEnvironmentId` | `string \| null` | No | — |
+| `createdAt` | `number \| null` | No | — |
+| `updatedAt` | `number \| null` | No | — |
+| `verified` | `boolean \| null` | No | — |
+| `verification` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="verification full type">
+
+```ts
+{
+  type?: string | null,
+  domain?: string | null,
+  value?: string | null,
+  reason?: string | null
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -438,7 +1584,7 @@ await corsair.vercel.api.domains.getDomains({});
 
 `domains.getProjectDomains`
 
-Get project domains
+List the domains assigned to a project (custom domains and *.vercel.app) with their redirect, git branch and verification state. Filters: production, target, gitBranch, verified, redirects, redirect, customEnvironmentId.
 
 **Risk:** `read`
 
@@ -450,11 +1596,19 @@ await corsair.vercel.api.domains.getProjectDomains({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `idOrName` | `string` | Yes | — |
-| `limit` | `number` | No | — |
-| `until` | `number` | No | — |
-| `since` | `number` | No | — |
-| `teamId` | `string` | No | — |
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `idOrName` | `string` | Yes | Project id (prj_…) or project name. |
+| `limit` | `number` | No | Maximum number of results to return. |
+| `since` | `number` | No | Only results created after this timestamp (ms). |
+| `until` | `number` | No | Only results created before this timestamp (ms). Pass the previous page’s pagination.next to get the next page. |
+| `production` | `boolean` | No | true: only production domains. |
+| `target` | `production \| preview` | No | Only domains for this target. |
+| `customEnvironmentId` | `string` | No | Only domains of this custom environment. |
+| `gitBranch` | `string` | No | Only domains linked to this git branch. |
+| `redirects` | `boolean` | No | false: leave out domains that redirect. Default true. |
+| `redirect` | `string` | No | Only domains that redirect to this domain. |
+| `verified` | `boolean` | No | Only verified (true) or unverified (false) domains. |
+| `order` | `ASC \| DESC` | No | Sort by creation time. |
 
 
 
@@ -463,7 +1617,7 @@ await corsair.vercel.api.domains.getProjectDomains({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `domains` | `object[]` | Yes | — |
-| `pagination` | `object` | Yes | — |
+| `pagination` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="domains full type">
@@ -471,14 +1625,21 @@ await corsair.vercel.api.domains.getProjectDomains({});
 ```ts
 {
   name: string,
-  apexName: string,
-  projectId: string,
+  apexName?: string | null,
+  projectId?: string | null,
   redirect?: string | null,
   redirectStatusCode?: number | null,
   gitBranch?: string | null,
-  updatedAt: number,
-  createdAt: number,
-  verified: boolean
+  customEnvironmentId?: string | null,
+  createdAt?: number | null,
+  updatedAt?: number | null,
+  verified?: boolean | null,
+  verification?: {
+    type?: string | null,
+    domain?: string | null,
+    value?: string | null,
+    reason?: string | null
+  }[] | null
 }[]
 ```
 </Accordion>
@@ -487,13 +1648,395 @@ await corsair.vercel.api.domains.getProjectDomains({});
 
 ```ts
 {
-  count: number,
+  count?: number,
   next?: number | null,
   prev?: number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
+
+
+
+---
+
+### removeProjectDomain
+
+`domains.removeProjectDomain`
+
+Unassign a domain from a project; it stops serving that project immediately. The domain stays in the account and can be added back, though it may need verifying again. removeRedirects: true also removes the project domains that redirect to it.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.vercel.api.domains.removeProjectDomain({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `idOrName` | `string` | Yes | Project id (prj_…) or project name. |
+| `domain` | `string` | Yes | Domain on the project, e.g. www.example.com. |
+| `removeRedirects` | `boolean` | No | true: also remove this project's domains that redirect to the removed domain. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `removed` | `boolean` | Yes | — |
+| `idOrName` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+
+
+
+---
+
+### updateProjectDomain
+
+`domains.updateProjectDomain`
+
+Change a project domain's git branch or redirect (target domain and status code). Pass null to clear a field.
+
+**Risk:** `write`
+
+```ts
+await corsair.vercel.api.domains.updateProjectDomain({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `idOrName` | `string` | Yes | Project id (prj_…) or project name. |
+| `domain` | `string` | Yes | Domain on the project, e.g. www.example.com. |
+| `gitBranch` | `string \| null` | No | Git branch whose latest preview deployment this domain serves. null clears it. |
+| `redirect` | `string \| null` | No | Domain to redirect to, e.g. example.com. null clears it. |
+| `redirectStatusCode` | `301 \| 302 \| 307 \| 308 \| null` | No | HTTP status for the redirect: 301, 302, 307 or 308. null clears it. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `apexName` | `string \| null` | No | — |
+| `projectId` | `string \| null` | No | — |
+| `redirect` | `string \| null` | No | — |
+| `redirectStatusCode` | `number \| null` | No | — |
+| `gitBranch` | `string \| null` | No | — |
+| `customEnvironmentId` | `string \| null` | No | — |
+| `createdAt` | `number \| null` | No | — |
+| `updatedAt` | `number \| null` | No | — |
+| `verified` | `boolean \| null` | No | — |
+| `verification` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="verification full type">
+
+```ts
+{
+  type?: string | null,
+  domain?: string | null,
+  value?: string | null,
+  reason?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### verifyProjectDomain
+
+`domains.verifyProjectDomain`
+
+Re-check an unverified project domain's verification challenge and mark it verified once the DNS record is in place. Errors if the challenge isn't satisfied yet.
+
+**Risk:** `write`
+
+```ts
+await corsair.vercel.api.domains.verifyProjectDomain({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `idOrName` | `string` | Yes | Project id (prj_…) or project name. |
+| `domain` | `string` | Yes | Domain on the project, e.g. www.example.com. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `apexName` | `string \| null` | No | — |
+| `projectId` | `string \| null` | No | — |
+| `redirect` | `string \| null` | No | — |
+| `redirectStatusCode` | `number \| null` | No | — |
+| `gitBranch` | `string \| null` | No | — |
+| `customEnvironmentId` | `string \| null` | No | — |
+| `createdAt` | `number \| null` | No | — |
+| `updatedAt` | `number \| null` | No | — |
+| `verified` | `boolean \| null` | No | — |
+| `verification` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="verification full type">
+
+```ts
+{
+  type?: string | null,
+  domain?: string | null,
+  value?: string | null,
+  reason?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Edge Config
+
+### getEdgeConfig
+
+`edgeConfig.getEdgeConfig`
+
+Get one Edge Config (Global Config) by id: slug, item count, size and digest.
+
+**Risk:** `read`
+
+```ts
+await corsair.vercel.api.edgeConfig.getEdgeConfig({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `edgeConfigId` | `string` | Yes | Edge Config id (ecfg_…), as listed by getEdgeConfigs. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `slug` | `string \| null` | No | — |
+| `ownerId` | `string \| null` | No | — |
+| `digest` | `string \| null` | No | — |
+| `itemCount` | `number \| null` | No | — |
+| `sizeInBytes` | `number \| null` | No | — |
+| `createdAt` | `number \| null` | No | — |
+| `updatedAt` | `number \| null` | No | — |
+| `createdBy` | `string \| null` | No | — |
+
+
+
+---
+
+### getEdgeConfigItem
+
+`edgeConfig.getEdgeConfigItem`
+
+Read one Edge Config (Global Config) item by key. Returns found: false when the key does not exist.
+
+**Risk:** `read`
+
+```ts
+await corsair.vercel.api.edgeConfig.getEdgeConfigItem({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `edgeConfigId` | `string` | Yes | Edge Config id (ecfg_…), as listed by getEdgeConfigs. |
+| `key` | `string` | Yes | Key of the item to read. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `found` | `boolean` | Yes | false when the Edge Config has no item with this key. |
+| `item` | `object \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  key: string,
+  value?: any,
+  description?: string | null,
+  edgeConfigId?: string | null,
+  createdAt?: number | null,
+  updatedAt?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getEdgeConfigItems
+
+`edgeConfig.getEdgeConfigItems`
+
+List every item (key, JSON value, description) stored in an Edge Config (Global Config).
+
+**Risk:** `read`
+
+```ts
+await corsair.vercel.api.edgeConfig.getEdgeConfigItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `edgeConfigId` | `string` | Yes | Edge Config id (ecfg_…), as listed by getEdgeConfigs. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  key: string,
+  value?: any,
+  description?: string | null,
+  edgeConfigId?: string | null,
+  createdAt?: number | null,
+  updatedAt?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getEdgeConfigs
+
+`edgeConfig.getEdgeConfigs`
+
+List the team’s Edge Configs (called Global Config in Vercel’s API): id, slug, item count and size.
+
+**Risk:** `read`
+
+```ts
+await corsair.vercel.api.edgeConfig.getEdgeConfigs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  slug?: string | null,
+  ownerId?: string | null,
+  digest?: string | null,
+  itemCount?: number | null,
+  sizeInBytes?: number | null,
+  createdAt?: number | null,
+  updatedAt?: number | null,
+  createdBy?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateEdgeConfigItems
+
+`edgeConfig.updateEdgeConfigItems`
+
+Change several Edge Config (Global Config) items in one request: create, update, upsert or delete items by key. A delete removes the item and its value for good.
+
+**Risk:** `write`
+
+```ts
+await corsair.vercel.api.edgeConfig.updateEdgeConfigItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `edgeConfigId` | `string` | Yes | Edge Config id (ecfg_…), as listed by getEdgeConfigs. |
+| `items` | `object[]` | Yes | Changes applied together: create (fails if the key exists), update (fails if it doesn’t), upsert, or delete. |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+(
+  {
+    operation: create,
+    key: string,
+    value: any,
+    description?: string | null
+  } | {
+    operation: update | upsert,
+    key: string,
+    value?: any,
+    description?: string | null
+  } | {
+    operation: delete,
+    key: string
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
 
 
 
@@ -505,26 +2048,46 @@ await corsair.vercel.api.domains.getProjectDomains({});
 
 `envs.createEnvVariable`
 
-Create an environment variable for a project (supports plain, secret, encrypted, and sensitive types)
+Add one or several environment variables to a project (key, value, type, target environments, optional Git branch). Variables that already exist are listed under failed unless upsert is true. Takes effect on the next deployment.
 
 **Risk:** `write`
 
 ```ts
-await corsair.vercel.api.envs.createEnvVariable({});
+await corsair.vercel.api.envs.createEnvVariable({ idOrName: 'my-site', key: 'NEXT_PUBLIC_API_URL', value: 'https://api.example.com', type: 'encrypted', target: ['production', 'preview'] });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `idOrName` | `string` | Yes | — |
-| `key` | `string` | Yes | — |
-| `value` | `string` | Yes | — |
-| `type` | `plain \| secret \| encrypted \| sensitive` | Yes | — |
-| `target` | `production \| preview \| development[]` | Yes | — |
-| `gitBranch` | `string` | No | — |
-| `comment` | `string` | No | — |
-| `teamId` | `string` | No | — |
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `idOrName` | `string` | Yes | Project id (prj_…) or project name. |
+| `key` | `string` | No | Variable name, e.g. DATABASE_URL. |
+| `value` | `string` | No | Variable value. Kept out of event logs and the local store. |
+| `type` | `encrypted \| sensitive \| plain \| system` | No | encrypted: stored encrypted, readable later with getEnvVariable. sensitive: write-only, its value can never be read back. plain: stored and shown in plain text. system: reserved for Vercel system variables. |
+| `target` | `(production \| preview \| development)[]` | No | Environments the variable applies to. Required unless customEnvironmentIds is given. |
+| `gitBranch` | `string \| null` | No | Limit the variable to one Git branch (target must be ["preview"]). |
+| `comment` | `string` | No | Note on what the variable is for. |
+| `customEnvironmentIds` | `string[]` | No | Custom environment ids (env_…) the variable applies to. |
+| `variables` | `object[]` | No | Several variables in one call, each with key, value, type and target. Use instead of the single-variable fields. |
+| `upsert` | `boolean` | No | Overwrite a variable that already exists with the same key and target instead of reporting it under failed. |
+
+<AccordionGroup>
+<Accordion title="variables full type">
+
+```ts
+{
+  key: string,
+  value: string,
+  type: encrypted | sensitive | plain | system,
+  target?: (production | preview | development)[],
+  gitBranch?: string | null,
+  comment?: string,
+  customEnvironmentIds?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -532,40 +2095,102 @@ await corsair.vercel.api.envs.createEnvVariable({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `key` | `string` | Yes | — |
-| `value` | `string` | Yes | — |
-| `type` | `plain \| secret \| encrypted \| sensitive` | Yes | — |
-| `target` | `production \| preview \| development[]` | Yes | — |
-| `gitBranch` | `string` | No | — |
-| `configurationId` | `string` | No | — |
-| `createdAt` | `number` | Yes | — |
-| `updatedAt` | `number` | Yes | — |
-| `createdBy` | `string` | No | — |
-| `updatedBy` | `string` | No | — |
+| `created` | `object \| object[] \| null` | No | — |
+| `failed` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="created full type">
+
+```ts
+{
+  id?: string | null,
+  key: string,
+  type?: string | null,
+  value?: string | null,
+  target?: string[] | string | null,
+  gitBranch?: string | null,
+  comment?: string | null,
+  customEnvironmentIds?: string[] | null,
+  decrypted?: boolean | null,
+  system?: boolean | null,
+  visibility?: string | null,
+  configurationId?: string | null,
+  edgeConfigId?: string | null,
+  edgeConfigTokenId?: string | null,
+  contentHint?: Record<string, any> | null,
+  createdAt?: number | null,
+  updatedAt?: number | null,
+  createdBy?: string | null,
+  updatedBy?: string | null
+} | {
+  id?: string | null,
+  key: string,
+  type?: string | null,
+  value?: string | null,
+  target?: string[] | string | null,
+  gitBranch?: string | null,
+  comment?: string | null,
+  customEnvironmentIds?: string[] | null,
+  decrypted?: boolean | null,
+  system?: boolean | null,
+  visibility?: string | null,
+  configurationId?: string | null,
+  edgeConfigId?: string | null,
+  edgeConfigTokenId?: string | null,
+  contentHint?: Record<string, any> | null,
+  createdAt?: number | null,
+  updatedAt?: number | null,
+  createdBy?: string | null,
+  updatedBy?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="failed full type">
+
+```ts
+{
+  error: {
+    code?: string | null,
+    message?: string | null,
+    key?: string | null,
+    envVarKey?: string | null,
+    envVarId?: string | null,
+    gitBranch?: string | null,
+    action?: string | null,
+    link?: string | null,
+    project?: string | null,
+    target?: string[] | string | null
+  }
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
 ---
 
-### getEnvVariables
+### deleteEnvVariable
 
-`envs.getEnvVariables`
+`envs.deleteEnvVariable`
 
-Get environment variables for a project (may include secret/sensitive values)
+Delete an environment variable by id. Its value is gone for good; deployments built after this no longer get it.
 
-**Risk:** `read`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.vercel.api.envs.getEnvVariables({});
+await corsair.vercel.api.envs.deleteEnvVariable({});
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `idOrName` | `string` | Yes | — |
-| `teamId` | `string` | No | — |
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `idOrName` | `string` | Yes | Project id (prj_…) or project name. |
+| `id` | `string` | Yes | Environment variable id, as listed by getEnvVariables. |
+| `customEnvironmentId` | `string` | No | Custom environment (env_…) the variable belongs to, if any. |
 
 
 
@@ -573,22 +2198,33 @@ await corsair.vercel.api.envs.getEnvVariables({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `envs` | `object[]` | No | — |
+| `deleted` | `boolean` | Yes | — |
+| `idOrName` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `removed` | `object[]` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="envs full type">
+<Accordion title="removed full type">
 
 ```ts
 {
-  id: string,
+  id?: string | null,
   key: string,
-  value: string,
-  type: plain | secret | encrypted | sensitive,
-  target: production | preview | development[],
+  type?: string | null,
+  value?: string | null,
+  target?: string[] | string | null,
   gitBranch?: string | null,
+  comment?: string | null,
+  customEnvironmentIds?: string[] | null,
+  decrypted?: boolean | null,
+  system?: boolean | null,
+  visibility?: string | null,
   configurationId?: string | null,
-  createdAt: number,
-  updatedAt: number,
+  edgeConfigId?: string | null,
+  edgeConfigTokenId?: string | null,
+  contentHint?: Record<string, any> | null,
+  createdAt?: number | null,
+  updatedAt?: number | null,
   createdBy?: string | null,
   updatedBy?: string | null
 }[]
@@ -600,13 +2236,330 @@ await corsair.vercel.api.envs.getEnvVariables({});
 
 ---
 
+### getEnvVariable
+
+`envs.getEnvVariable`
+
+Get one environment variable by id, including its DECRYPTED value (the secret itself) for encrypted and plain variables. Sensitive variables never return a value.
+
+**Risk:** `read`
+
+```ts
+await corsair.vercel.api.envs.getEnvVariable({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `idOrName` | `string` | Yes | Project id (prj_…) or project name. |
+| `id` | `string` | Yes | Environment variable id, as listed by getEnvVariables. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `key` | `string` | Yes | — |
+| `type` | `string \| null` | No | — |
+| `value` | `string \| null` | No | — |
+| `target` | `string[] \| string \| null` | No | — |
+| `gitBranch` | `string \| null` | No | — |
+| `comment` | `string \| null` | No | — |
+| `customEnvironmentIds` | `string[] \| null` | No | — |
+| `decrypted` | `boolean \| null` | No | — |
+| `system` | `boolean \| null` | No | — |
+| `visibility` | `string \| null` | No | — |
+| `configurationId` | `string \| null` | No | — |
+| `edgeConfigId` | `string \| null` | No | — |
+| `edgeConfigTokenId` | `string \| null` | No | — |
+| `contentHint` | `Record<string, any> \| null` | No | — |
+| `createdAt` | `number \| null` | No | — |
+| `updatedAt` | `number \| null` | No | — |
+| `createdBy` | `string \| null` | No | — |
+| `updatedBy` | `string \| null` | No | — |
+
+
+
+---
+
+### getEnvVariables
+
+`envs.getEnvVariables`
+
+List a project’s environment variables: key, type, targets, Git branch and id. Values of encrypted and sensitive variables come back encrypted (plain ones as is); use getEnvVariable to read one decrypted value.
+
+**Risk:** `read`
+
+```ts
+await corsair.vercel.api.envs.getEnvVariables({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `idOrName` | `string` | Yes | Project id (prj_…) or project name. |
+| `gitBranch` | `string` | No | Only variables for this Git branch (preview target). |
+| `customEnvironmentId` | `string` | No | Only variables of this custom environment (env_…). |
+| `customEnvironmentSlug` | `string` | No | Only variables of the custom environment with this slug. |
+| `source` | `string` | No | The source that is calling the endpoint (Vercel’s `source` parameter). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `envs` | `object[]` | No | — |
+| `pagination` | `object \| null` | No | — |
+| `hiddenProductionEnvCount` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="envs full type">
+
+```ts
+{
+  id?: string | null,
+  key: string,
+  type?: string | null,
+  value?: string | null,
+  target?: string[] | string | null,
+  gitBranch?: string | null,
+  comment?: string | null,
+  customEnvironmentIds?: string[] | null,
+  decrypted?: boolean | null,
+  system?: boolean | null,
+  visibility?: string | null,
+  configurationId?: string | null,
+  edgeConfigId?: string | null,
+  edgeConfigTokenId?: string | null,
+  contentHint?: Record<string, any> | null,
+  createdAt?: number | null,
+  updatedAt?: number | null,
+  createdBy?: string | null,
+  updatedBy?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  count?: number,
+  next?: number | null,
+  prev?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateEnvVariable
+
+`envs.updateEnvVariable`
+
+Change an environment variable by id: its value, key, type, targets, Git branch or comment. Takes effect on the next deployment.
+
+**Risk:** `write`
+
+```ts
+await corsair.vercel.api.envs.updateEnvVariable({ idOrName: 'my-site', id: 'env_abc123', value: 'https://api2.example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `idOrName` | `string` | Yes | Project id (prj_…) or project name. |
+| `id` | `string` | Yes | Environment variable id, as listed by getEnvVariables. |
+| `key` | `string` | No | Variable name, e.g. DATABASE_URL. |
+| `value` | `string` | No | Variable value. Kept out of event logs and the local store. |
+| `type` | `encrypted \| sensitive \| plain \| system` | No | encrypted: stored encrypted, readable later with getEnvVariable. sensitive: write-only, its value can never be read back. plain: stored and shown in plain text. system: reserved for Vercel system variables. |
+| `target` | `(production \| preview \| development)[]` | No | Environments the variable applies to. An empty list removes all of them (e.g. to keep only customEnvironmentIds). |
+| `gitBranch` | `string \| null` | No | Git branch to limit the variable to. null removes the limit. |
+| `comment` | `string` | No | Note on what the variable is for. |
+| `customEnvironmentIds` | `string[]` | No | Custom environment ids (env_…). An empty list removes the variable from all of them. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `key` | `string` | Yes | — |
+| `type` | `string \| null` | No | — |
+| `value` | `string \| null` | No | — |
+| `target` | `string[] \| string \| null` | No | — |
+| `gitBranch` | `string \| null` | No | — |
+| `comment` | `string \| null` | No | — |
+| `customEnvironmentIds` | `string[] \| null` | No | — |
+| `decrypted` | `boolean \| null` | No | — |
+| `system` | `boolean \| null` | No | — |
+| `visibility` | `string \| null` | No | — |
+| `configurationId` | `string \| null` | No | — |
+| `edgeConfigId` | `string \| null` | No | — |
+| `edgeConfigTokenId` | `string \| null` | No | — |
+| `contentHint` | `Record<string, any> \| null` | No | — |
+| `createdAt` | `number \| null` | No | — |
+| `updatedAt` | `number \| null` | No | — |
+| `createdBy` | `string \| null` | No | — |
+| `updatedBy` | `string \| null` | No | — |
+
+
+
+---
+
 ## Projects
+
+### createProject
+
+`projects.createProject`
+
+Create a project, optionally connected to a Git repo and with initial environment variables.
+
+**Risk:** `write`
+
+```ts
+await corsair.vercel.api.projects.createProject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `name` | `string` | Yes | Project name. |
+| `framework` | `string \| null` | No | Framework preset slug, e.g. nextjs, vite, astro. null for none. |
+| `buildCommand` | `string \| null` | No | — |
+| `devCommand` | `string \| null` | No | — |
+| `installCommand` | `string \| null` | No | — |
+| `outputDirectory` | `string \| null` | No | — |
+| `rootDirectory` | `string \| null` | No | — |
+| `commandForIgnoringBuildStep` | `string \| null` | No | — |
+| `publicSource` | `boolean \| null` | No | — |
+| `serverlessFunctionRegion` | `string \| null` | No | — |
+| `previewDeploymentsDisabled` | `boolean \| null` | No | — |
+| `skipGitConnectDuringLink` | `boolean` | No | — |
+| `gitRepository` | `object` | No | Git repository to connect. |
+| `environmentVariables` | `object[]` | No | Environment variables to create with the project. |
+
+<AccordionGroup>
+<Accordion title="gitRepository full type">
+
+```ts
+{
+  type: github | gitlab | bitbucket,
+  repo: string
+}
+```
+</Accordion>
+
+<Accordion title="environmentVariables full type">
+
+```ts
+{
+  key: string,
+  value: string,
+  target: production | preview | development | (production | preview | development)[],
+  type?: system | secret | encrypted | plain | sensitive,
+  gitBranch?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `accountId` | `string \| null` | No | — |
+| `createdAt` | `number \| null` | No | — |
+| `updatedAt` | `number \| null` | No | — |
+| `framework` | `string \| null` | No | — |
+| `nodeVersion` | `string \| null` | No | — |
+| `buildCommand` | `string \| null` | No | — |
+| `devCommand` | `string \| null` | No | — |
+| `installCommand` | `string \| null` | No | — |
+| `outputDirectory` | `string \| null` | No | — |
+| `rootDirectory` | `string \| null` | No | — |
+| `live` | `boolean \| null` | No | — |
+| `link` | `Record<string, any> \| null` | No | — |
+| `latestDeployments` | `any[] \| null` | No | — |
+| `targets` | `Record<string, any> \| null` | No | — |
+| `alias` | `any[] \| null` | No | — |
+| `lastAliasRequest` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="lastAliasRequest full type">
+
+```ts
+{
+  type?: string | null,
+  jobStatus?: string | null,
+  toDeploymentId?: string | null,
+  fromDeploymentId?: string | null,
+  requestedAt?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteProject
+
+`projects.deleteProject`
+
+Delete a project with all its deployments, domains and environment variables. Cannot be undone.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.vercel.api.projects.deleteProject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `idOrName` | `string` | Yes | Project id (prj_…) or project name. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean` | Yes | — |
+| `idOrName` | `string` | Yes | — |
+
+
+
+---
 
 ### getProject
 
 `projects.getProject`
 
-Get project details
+Get a project by id or name, with its settings and latest deployments.
 
 **Risk:** `read`
 
@@ -618,8 +2571,9 @@ await corsair.vercel.api.projects.getProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `idOrName` | `string` | Yes | — |
-| `teamId` | `string` | No | — |
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `idOrName` | `string` | Yes | Project id (prj_…) or project name. |
+| `rollbackInfo` | `boolean` | No | true: include lastAliasRequest, the status of the last promote or rollback (jobStatus pending, in-progress, succeeded, failed). |
 
 
 
@@ -629,37 +2583,100 @@ await corsair.vercel.api.projects.getProject({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `accountId` | `string` | Yes | — |
-| `createdAt` | `number` | Yes | — |
-| `updatedAt` | `number` | Yes | — |
-| `framework` | `string` | No | — |
-| `link` | `object` | No | — |
-| `latestDeployments` | `any[]` | No | — |
-| `targets` | `object` | No | — |
+| `accountId` | `string \| null` | No | — |
+| `createdAt` | `number \| null` | No | — |
+| `updatedAt` | `number \| null` | No | — |
+| `framework` | `string \| null` | No | — |
+| `nodeVersion` | `string \| null` | No | — |
+| `buildCommand` | `string \| null` | No | — |
+| `devCommand` | `string \| null` | No | — |
+| `installCommand` | `string \| null` | No | — |
+| `outputDirectory` | `string \| null` | No | — |
+| `rootDirectory` | `string \| null` | No | — |
+| `live` | `boolean \| null` | No | — |
+| `link` | `Record<string, any> \| null` | No | — |
+| `latestDeployments` | `any[] \| null` | No | — |
+| `targets` | `Record<string, any> \| null` | No | — |
+| `alias` | `any[] \| null` | No | — |
+| `lastAliasRequest` | `object \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="link full type">
+<Accordion title="lastAliasRequest full type">
 
 ```ts
 {
-  type: string,
-  repo: string,
-  repoId?: number,
-  org?: string | null,
-  gitCredentialId?: string | null,
-  productionBranch?: string | null,
-  createdAt?: number | null,
-  updatedAt?: number | null,
-  deployHooks?: any[] | null
-}
+  type?: string | null,
+  jobStatus?: string | null,
+  toDeploymentId?: string | null,
+  fromDeploymentId?: string | null,
+  requestedAt?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getProjectMembers
+
+`projects.getProjectMembers`
+
+List the members of a project and their project roles.
+
+**Risk:** `read`
+
+```ts
+await corsair.vercel.api.projects.getProjectMembers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `idOrName` | `string` | Yes | Project id (prj_…) or project name. |
+| `limit` | `number` | No | Maximum number of results to return. |
+| `since` | `number` | No | Only results created after this timestamp (ms). |
+| `until` | `number` | No | Only results created before this timestamp (ms). Pass the previous page’s pagination.next to get the next page. |
+| `search` | `string` | No | Search members by name, username or email. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `members` | `object[]` | No | — |
+| `pagination` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  uid: string,
+  username?: string | null,
+  email?: string | null,
+  name?: string | null,
+  avatar?: string | null,
+  role?: string | null,
+  computedProjectRole?: string | null,
+  teamRole?: string | null,
+  createdAt?: number | null
+}[]
 ```
 </Accordion>
 
-<Accordion title="targets full type">
+<Accordion title="pagination full type">
 
 ```ts
 {
-}
+  count?: number,
+  next?: number | null,
+  prev?: number | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -672,7 +2689,7 @@ await corsair.vercel.api.projects.getProject({});
 
 `projects.getProjects`
 
-Get all projects
+List projects in the team, newest first, with optional search and repo filters.
 
 **Risk:** `read`
 
@@ -684,10 +2701,17 @@ await corsair.vercel.api.projects.getProjects({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `limit` | `number` | No | — |
-| `until` | `number` | No | — |
-| `since` | `number` | No | — |
-| `teamId` | `string` | No | — |
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `limit` | `number` | No | Maximum number of results to return. |
+| `since` | `number` | No | Only results created after this timestamp (ms). |
+| `until` | `number` | No | Only results created before this timestamp (ms). Pass the previous page’s pagination.next to get the next page. |
+| `from` | `string` | No | Continuation token or timestamp: projects updated after it. |
+| `search` | `string` | No | Search projects by name. |
+| `repo` | `string` | No | Filter by connected Git repo. |
+| `repoId` | `string` | No | — |
+| `repoUrl` | `string` | No | — |
+| `excludeRepos` | `string` | No | Comma-separated repos to leave out. |
+| `edgeConfigId` | `string` | No | Only projects connected to this Edge Config. |
 
 
 
@@ -696,7 +2720,7 @@ await corsair.vercel.api.projects.getProjects({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `projects` | `object[]` | Yes | — |
-| `pagination` | `object` | Yes | — |
+| `pagination` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="projects full type">
@@ -705,23 +2729,27 @@ await corsair.vercel.api.projects.getProjects({});
 {
   id: string,
   name: string,
-  accountId: string,
-  createdAt: number,
-  updatedAt: number,
+  accountId?: string | null,
+  createdAt?: number | null,
+  updatedAt?: number | null,
   framework?: string | null,
-  link?: {
-    type: string,
-    repo: string,
-    repoId?: number,
-    org?: string | null,
-    gitCredentialId?: string | null,
-    productionBranch?: string | null,
-    createdAt?: number | null,
-    updatedAt?: number | null,
-    deployHooks?: any[] | null
-  } | null,
+  nodeVersion?: string | null,
+  buildCommand?: string | null,
+  devCommand?: string | null,
+  installCommand?: string | null,
+  outputDirectory?: string | null,
+  rootDirectory?: string | null,
+  live?: boolean | null,
+  link?: Record<string, any> | null,
   latestDeployments?: any[] | null,
-  targets?: {
+  targets?: Record<string, any> | null,
+  alias?: any[] | null,
+  lastAliasRequest?: {
+    type?: string | null,
+    jobStatus?: string | null,
+    toDeploymentId?: string | null,
+    fromDeploymentId?: string | null,
+    requestedAt?: number | null
   } | null
 }[]
 ```
@@ -731,10 +2759,237 @@ await corsair.vercel.api.projects.getProjects({});
 
 ```ts
 {
-  count: number,
+  count?: number,
   next?: number | null,
   prev?: number | null
-}
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pauseProject
+
+`projects.pauseProject`
+
+Pause a project: its production deployment stops serving until unpaused.
+
+**Risk:** `write`
+
+```ts
+await corsair.vercel.api.projects.pauseProject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `projectId` | `string` | Yes | Project id (prj_…) or name. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `paused` | `boolean` | Yes | — |
+
+
+
+---
+
+### promoteDeployment
+
+`projects.promoteDeployment`
+
+Make an existing production build (an earlier or staged production deployment) the live production deployment, without rebuilding. Vercel refuses preview deployments (422); redeploy those with target production instead. Runs in the background: getProject with rollbackInfo shows its jobStatus.
+
+**Risk:** `write`
+
+```ts
+await corsair.vercel.api.projects.promoteDeployment({ projectId: 'prj_abc123', deploymentId: 'dpl_abc123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `projectId` | `string` | Yes | Project id (prj_…) or name. |
+| `deploymentId` | `string` | Yes | Deployment to promote to production (no rebuild). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `deploymentId` | `string` | Yes | — |
+| `requested` | `boolean` | Yes | — |
+
+
+
+---
+
+### rollbackDeployment
+
+`projects.rollbackDeployment`
+
+Roll production back to an earlier deployment (Instant Rollback).
+
+**Risk:** `write`
+
+```ts
+await corsair.vercel.api.projects.rollbackDeployment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `projectId` | `string` | Yes | Project id (prj_…) or name. |
+| `deploymentId` | `string` | Yes | Earlier deployment to roll back to. |
+| `description` | `string` | No | Reason for the rollback. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `deploymentId` | `string` | Yes | — |
+| `requested` | `boolean` | Yes | — |
+
+
+
+---
+
+### unpauseProject
+
+`projects.unpauseProject`
+
+Unpause a paused project so production serves again.
+
+**Risk:** `write`
+
+```ts
+await corsair.vercel.api.projects.unpauseProject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `projectId` | `string` | Yes | Project id (prj_…) or name. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `paused` | `boolean` | Yes | — |
+
+
+
+---
+
+### updateProject
+
+`projects.updateProject`
+
+Update project settings: name, framework, build/dev/install commands, Node version, protection.
+
+**Risk:** `write`
+
+```ts
+await corsair.vercel.api.projects.updateProject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `idOrName` | `string` | Yes | Project id (prj_…) or project name. |
+| `name` | `string` | No | — |
+| `framework` | `string \| null` | No | Framework preset slug, e.g. nextjs, vite, astro. null for none. |
+| `buildCommand` | `string \| null` | No | — |
+| `devCommand` | `string \| null` | No | — |
+| `installCommand` | `string \| null` | No | — |
+| `outputDirectory` | `string \| null` | No | — |
+| `rootDirectory` | `string \| null` | No | — |
+| `commandForIgnoringBuildStep` | `string \| null` | No | — |
+| `publicSource` | `boolean \| null` | No | — |
+| `serverlessFunctionRegion` | `string \| null` | No | — |
+| `previewDeploymentsDisabled` | `boolean \| null` | No | — |
+| `skipGitConnectDuringLink` | `boolean` | No | — |
+| `nodeVersion` | `26.x \| 24.x \| 22.x \| 20.x \| 18.x` | No | Node.js version for builds and functions. |
+| `autoExposeSystemEnvs` | `boolean` | No | — |
+| `autoAssignCustomDomains` | `boolean` | No | — |
+| `gitForkProtection` | `boolean` | No | — |
+| `directoryListing` | `boolean` | No | — |
+| `sourceFilesOutsideRootDirectory` | `boolean` | No | — |
+| `enableAffectedProjectsDeployments` | `boolean` | No | — |
+| `ssoProtection` | `object \| null` | No | Vercel Authentication. null turns it off. |
+
+<AccordionGroup>
+<Accordion title="ssoProtection full type">
+
+```ts
+{
+  deploymentType: all | preview | prod_deployment_urls_and_all_previews | all_except_custom_domains
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `accountId` | `string \| null` | No | — |
+| `createdAt` | `number \| null` | No | — |
+| `updatedAt` | `number \| null` | No | — |
+| `framework` | `string \| null` | No | — |
+| `nodeVersion` | `string \| null` | No | — |
+| `buildCommand` | `string \| null` | No | — |
+| `devCommand` | `string \| null` | No | — |
+| `installCommand` | `string \| null` | No | — |
+| `outputDirectory` | `string \| null` | No | — |
+| `rootDirectory` | `string \| null` | No | — |
+| `live` | `boolean \| null` | No | — |
+| `link` | `Record<string, any> \| null` | No | — |
+| `latestDeployments` | `any[] \| null` | No | — |
+| `targets` | `Record<string, any> \| null` | No | — |
+| `alias` | `any[] \| null` | No | — |
+| `lastAliasRequest` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="lastAliasRequest full type">
+
+```ts
+{
+  type?: string | null,
+  jobStatus?: string | null,
+  toDeploymentId?: string | null,
+  fromDeploymentId?: string | null,
+  requestedAt?: number | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -745,11 +3000,138 @@ await corsair.vercel.api.projects.getProjects({});
 
 ## Teams
 
+### getTeam
+
+`teams.getTeam`
+
+Get a team by id or slug (default: the connected team): name, slug, plan, creation date and the user’s membership.
+
+**Risk:** `read`
+
+```ts
+await corsair.vercel.api.teams.getTeam({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug. Defaults to the connected team. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `slug` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `avatar` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `creatorId` | `string \| null` | No | — |
+| `createdAt` | `number \| null` | No | — |
+| `updatedAt` | `number \| null` | No | — |
+| `limited` | `boolean \| null` | No | — |
+| `stagingPrefix` | `string \| null` | No | — |
+| `billing` | `Record<string, any> \| null` | No | — |
+| `membership` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="membership full type">
+
+```ts
+{
+  uid?: string | null,
+  role?: string | null,
+  confirmed?: boolean | null,
+  createdAt?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTeamMembers
+
+`teams.getTeamMembers`
+
+List a team’s members (default: the connected team) with their role, username and email. Filter by role or search by name, username or email.
+
+**Risk:** `read`
+
+```ts
+await corsair.vercel.api.teams.getTeamMembers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug. Defaults to the connected team. |
+| `limit` | `number` | No | Maximum number of results to return. |
+| `since` | `number` | No | Only results created after this timestamp (ms). |
+| `until` | `number` | No | Only results created before this timestamp (ms). Pass the previous page’s pagination.next to get the next page. |
+| `search` | `string` | No | Search members by name, username or email. |
+| `role` | `OWNER \| MEMBER \| DEVELOPER \| SECURITY \| BILLING \| VIEWER \| VIEWER_FOR_PLUS \| CONTRIBUTOR` | No | Only members with this team role. |
+| `excludeProject` | `string` | No | Leave out members of this project (id or name). |
+| `eligibleMembersForProjectId` | `string` | No | Only members who can be added to this project. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `members` | `object[]` | Yes | — |
+| `emailInviteCodes` | `any[] \| null` | No | — |
+| `pagination` | `object \| null` | No | — |
+| `totalCount` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  uid: string,
+  username?: string | null,
+  name?: string | null,
+  email?: string | null,
+  avatar?: string | null,
+  role?: string | null,
+  confirmed?: boolean | null,
+  membershipSource?: string | null,
+  createdAt?: number | null,
+  accessRequestedAt?: number | null,
+  projects?: any[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  count?: number,
+  next?: number | null,
+  prev?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ### getTeams
 
 `teams.getTeams`
 
-Get all teams
+List the teams the token’s user belongs to, with each team’s id, slug, name and the user’s role.
 
 **Risk:** `read`
 
@@ -761,7 +3143,9 @@ await corsair.vercel.api.teams.getTeams({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `teamId` | `string` | No | — |
+| `limit` | `number` | No | Maximum number of results to return. |
+| `since` | `number` | No | Only results created after this timestamp (ms). |
+| `until` | `number` | No | Only results created before this timestamp (ms). Pass the previous page’s pagination.next to get the next page. |
 
 
 
@@ -770,7 +3154,7 @@ await corsair.vercel.api.teams.getTeams({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `teams` | `object[]` | Yes | — |
-| `pagination` | `object` | Yes | — |
+| `pagination` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="teams full type">
@@ -778,16 +3162,22 @@ await corsair.vercel.api.teams.getTeams({});
 ```ts
 {
   id: string,
-  slug: string,
-  name: string,
-  createdAt: number,
-  updatedAt?: number | null,
+  slug?: string | null,
+  name?: string | null,
   avatar?: string | null,
-  membership: {
-    uid: string,
-    role: OWNER | MEMBER | DEVELOPER | BILLING | VIEWER | string,
-    createdAt: number
-  }
+  description?: string | null,
+  creatorId?: string | null,
+  createdAt?: number | null,
+  updatedAt?: number | null,
+  limited?: boolean | null,
+  stagingPrefix?: string | null,
+  billing?: Record<string, any> | null,
+  membership?: {
+    uid?: string | null,
+    role?: string | null,
+    confirmed?: boolean | null,
+    createdAt?: number | null
+  } | null
 }[]
 ```
 </Accordion>
@@ -796,9 +3186,58 @@ await corsair.vercel.api.teams.getTeams({});
 
 ```ts
 {
-  count: number,
+  count?: number,
   next?: number | null,
   prev?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## User
+
+### getUser
+
+`user.getUser`
+
+Get the user the token belongs to: id, username, name, email and default team id.
+
+**Risk:** `read`
+
+```ts
+await corsair.vercel.api.user.getUser({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: string,
+  email?: string | null,
+  name?: string | null,
+  username?: string | null,
+  avatar?: string | null,
+  defaultTeamId?: string | null,
+  createdAt?: number | null,
+  limited?: boolean | null,
+  stagingPrefix?: string | null,
+  version?: string | null,
+  billing?: Record<string, any> | null,
+  softBlock?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -814,7 +3253,7 @@ await corsair.vercel.api.teams.getTeams({});
 
 `webhooks.createWebhook`
 
-Create a webhook
+Register a URL to receive Vercel events (deployments, projects, domains, env vars and more), for all projects or chosen ones. Returns the signing secret used to verify deliveries; it is shown only once, so store it.
 
 **Risk:** `write`
 
@@ -826,10 +3265,10 @@ await corsair.vercel.api.webhooks.createWebhook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `url` | `string` | Yes | — |
-| `events` | `(deployment.created \| deployment.succeeded \| deployment.ready \| deployment.error \| deployment.canceled \| deployment.promoted \| project.created \| project.removed \| domain.created \| integration-configuration.scope-change-confirmed \| integration-configuration.removed \| integration-configuration.permission-upgraded \| string)[]` | Yes | — |
-| `projectIds` | `string[]` | No | — |
-| `teamId` | `string` | No | — |
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `url` | `string` | Yes | HTTPS (or HTTP) endpoint Vercel POSTs events to. |
+| `events` | `(budget.reached \| domain.created \| domain.dns.records.changed \| domain.transfer-in.started \| domain.transfer-in.completed \| domain.transfer-in.failed \| domain.certificate.add \| domain.certificate.add.failed \| domain.certificate.renew \| domain.certificate.renew.failed \| domain.certificate.deleted \| domain.renewal \| domain.renewal.failed \| domain.auto-renew.changed \| deployment.created \| deployment.build-requested \| deployment.cleanup \| deployment.error \| deployment.blocked \| deployment.canceled \| deployment.succeeded \| deployment.ready \| deployment.check-rerequested \| deployment.promoted \| deployment.rollback \| deployment.integration.action.start \| deployment.integration.action.cancel \| deployment.integration.action.cleanup \| deployment.checkrun.start \| deployment.checkrun.cancel \| edge-config.created \| edge-config.deleted \| edge-config.items.updated \| firewall.attack \| firewall.system-rule-anomaly \| firewall.custom-rule-anomaly \| function.archival-required \| function.removal-required \| alerts.triggered \| integration-configuration.permission-upgraded \| integration-configuration.removed \| integration-configuration.scope-change-confirmed \| integration-configuration.transferred \| integration-resource.project-connected \| integration-resource.project-disconnected \| project.created \| project.removed \| project.renamed \| project.env-variable.created \| project.env-variable.updated \| project.env-variable.deleted \| project.domain.created \| project.domain.updated \| project.domain.deleted \| project.domain.verified \| project.domain.unverified \| project.domain.moved \| project.rolling-release.started \| project.rolling-release.aborted \| project.rolling-release.completed \| project.rolling-release.approved \| deployment.checks.failed \| deployment.checks.succeeded \| deployment-checks-completed \| deployment-ready \| deployment-prepared \| deployment-error \| deployment-check-rerequested \| deployment-canceled \| project-created \| project-removed \| domain-created \| deployment \| integration-configuration-permission-updated \| integration-configuration-removed \| integration-configuration-scope-change-confirmed \| marketplace.member.changed \| marketplace.invoice.created \| marketplace.invoice.paid \| marketplace.invoice.notpaid \| marketplace.invoice.overdue \| marketplace.invoice.refunded \| ai-gateway.balance-depleted \| ai-gateway.auto-reload.limit-reached \| ai-gateway.budget.updated \| observability.anomaly \| observability.anomaly-error \| observability.usage-anomaly \| observability.error-anomaly \| botid.anomaly \| flag.created \| flag.updated \| flag.deleted \| flag.segment.created \| flag.segment.updated \| flag.segment.deleted \| test-webhook \| message.created \| message.updated \| message.deleted \| thread.resolved \| thread.unresolved \| message.reaction-added \| message.reaction-removed \| message.mentioned \| comment.created \| comment.updated \| comment.deleted \| comment.resolved \| comment.unresolved \| comment.reaction-added \| comment.reaction-removed \| comment.mentioned \| string)[]` | Yes | Events to deliver, e.g. deployment.succeeded, deployment.error, project.created. |
+| `projectIds` | `string[]` | No | Only these projects (ids, up to 50). Leave out for every project in the team. |
 
 
 
@@ -838,12 +3277,86 @@ await corsair.vercel.api.webhooks.createWebhook({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `url` | `string` | Yes | — |
-| `events` | `(deployment.created \| deployment.succeeded \| deployment.ready \| deployment.error \| deployment.canceled \| deployment.promoted \| project.created \| project.removed \| domain.created \| integration-configuration.scope-change-confirmed \| integration-configuration.removed \| integration-configuration.permission-upgraded \| string)[]` | Yes | — |
-| `ownerId` | `string` | Yes | — |
-| `projectIds` | `string[]` | No | — |
-| `createdAt` | `number` | Yes | — |
-| `updatedAt` | `number` | Yes | — |
+| `url` | `string \| null` | No | — |
+| `events` | `string[] \| null` | No | — |
+| `ownerId` | `string \| null` | No | — |
+| `projectIds` | `string[] \| null` | No | — |
+| `projectsMetadata` | `any[] \| null` | No | — |
+| `alertRuleIds` | `string[] \| null` | No | — |
+| `createdAt` | `number \| null` | No | — |
+| `updatedAt` | `number \| null` | No | — |
+| `secret` | `string \| null` | No | Signing secret for the x-vercel-signature header. Returned only here, at creation. |
+
+
+
+---
+
+### deleteWebhook
+
+`webhooks.deleteWebhook`
+
+Delete a webhook: Vercel stops sending events to its URL. A replacement gets a new id and signing secret.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.vercel.api.webhooks.deleteWebhook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `id` | `string` | Yes | Webhook id, as listed by getWebhooks. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### getWebhook
+
+`webhooks.getWebhook`
+
+Get one webhook by id: URL, events and projects.
+
+**Risk:** `read`
+
+```ts
+await corsair.vercel.api.webhooks.getWebhook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `id` | `string` | Yes | Webhook id, as listed by getWebhooks. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `url` | `string \| null` | No | — |
+| `events` | `string[] \| null` | No | — |
+| `ownerId` | `string \| null` | No | — |
+| `projectIds` | `string[] \| null` | No | — |
+| `projectsMetadata` | `any[] \| null` | No | — |
+| `alertRuleIds` | `string[] \| null` | No | — |
+| `createdAt` | `number \| null` | No | — |
+| `updatedAt` | `number \| null` | No | — |
 
 
 
@@ -853,7 +3366,7 @@ await corsair.vercel.api.webhooks.createWebhook({});
 
 `webhooks.getWebhooks`
 
-Get all webhooks
+List the team’s webhooks: URL, subscribed events and the projects each covers. Filter by project.
 
 **Risk:** `read`
 
@@ -865,7 +3378,8 @@ await corsair.vercel.api.webhooks.getWebhooks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `teamId` | `string` | No | — |
+| `teamId` | `string` | No | Team id (team_…) or team slug to run against. Defaults to the connected team. |
+| `projectId` | `string` | No | Only webhooks that cover this project (prj_…). |
 
 
 
@@ -877,14 +3391,14 @@ await corsair.vercel.api.webhooks.getWebhooks({});
 ```ts
 {
   id: string,
-  url: string,
-  events: (
-    deployment.created | deployment.succeeded | deployment.ready | deployment.error | deployment.canceled | deployment.promoted | project.created | project.removed | domain.created | integration-configuration.scope-change-confirmed | integration-configuration.removed | integration-configuration.permission-upgraded | string
-  )[],
-  ownerId: string,
-  projectIds?: string[],
-  createdAt: number,
-  updatedAt: number
+  url?: string | null,
+  events?: string[] | null,
+  ownerId?: string | null,
+  projectIds?: string[] | null,
+  projectsMetadata?: any[] | null,
+  alertRuleIds?: string[] | null,
+  createdAt?: number | null,
+  updatedAt?: number | null
 }[]
 ```
 </Accordion>

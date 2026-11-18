@@ -1,6 +1,7 @@
 ---
-title: Database
-description: "PagerDuty local sync: searchable entities, `.search()` filters, and operators."
+title: "PagerDuty database"
+sidebarTitle: "Database"
+description: "PagerDuty local sync in Corsair: the entities stored in your database, the `.search()` filters each one accepts, and the filter operators."
 ---
 
 The PagerDuty plugin syncs data locally. Use `corsair.pagerduty.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
@@ -29,6 +30,8 @@ const rows = await corsair.pagerduty.db.incidents.search({
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `incident_number` | `number` | equals, gt, gte, lt, lte, in |
 | `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `urgency` | `string` | equals, contains, startsWith, endsWith, in |
 | `html_url` | `string` | equals, contains, startsWith, endsWith, in |
 | `created_at` | `date` | equals, before, after, between |
 | `updated_at` | `date` | equals, before, after, between |

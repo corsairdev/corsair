@@ -1,0 +1,13 @@
+displayName: Imejis.io
+description: Image generation API for rendering designs from templates into images or PDFs.
+domain: imejis.io
+examples:
+  read:
+    path: designs.render
+    title: Render a design
+    args:
+      designId: design_123
+dbExample:
+  entity: renders
+  note: Search synced renders without hitting Imejis.io.
+  limit: 50

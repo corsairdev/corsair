@@ -65,8 +65,9 @@
           },
           {
             "key": "init_image_mode",
-            "optional": false,
-            "type": "IMAGE_STRENGTH | STEP_SCHEDULE"
+            "optional": true,
+            "type": "IMAGE_STRENGTH | STEP_SCHEDULE",
+            "description": "Defaults to \"IMAGE_STRENGTH\"."
           },
           {
             "key": "image_strength",
@@ -254,6 +255,11 @@
           "field": "description",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         }
       ]
     },
@@ -268,6 +274,11 @@
         },
         {
           "field": "base64",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "finishReason",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

@@ -1,6 +1,7 @@
 ---
-title: Overview
-description: "Writer plugin for Corsair"
+title: "Writer plugin"
+sidebarTitle: "Overview"
+description: "Enterprise generative AI API for chat and text completions, knowledge graphs, file management, PDF parsing, translation, AI content detection, and web search."
 ---
 
 Use **Writer** through Corsair: one client, typed API calls.
@@ -16,16 +17,20 @@ Use **Writer** through Corsair: one client, typed API calls.
 <Step title="Install">
 <CodeGroup>
 ```bash npm
-npm install corsair @corsair-dev/writer
+npm install corsair @corsair-dev/writer better-sqlite3
+npm install --save-dev @types/better-sqlite3
 ```
 ```bash yarn
-yarn add corsair @corsair-dev/writer
+yarn add corsair @corsair-dev/writer better-sqlite3
+yarn add --dev @types/better-sqlite3
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/writer
+pnpm install corsair @corsair-dev/writer better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
 ```
 ```bash bun
-bun add corsair @corsair-dev/writer
+bun add corsair @corsair-dev/writer better-sqlite3
+bun add --dev @types/better-sqlite3
 ```
 </CodeGroup>
 
@@ -43,6 +48,7 @@ export const corsair = createCorsair({
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
 	hub: {
 		projectApiKey: process.env.CORSAIR_API_KEY!,
 		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
@@ -50,7 +56,7 @@ export const corsair = createCorsair({
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
@@ -58,7 +64,7 @@ Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See 
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+Store the Writer API key before the first call: `pnpm corsair setup --plugin=writer --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
 
 ```ts
 writer()
@@ -88,19 +94,22 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`applications.list`**
+**List models**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.writer.api.applications.list({});
+await tenant.writer.api.models.list({});
 ```
 
 
-**`chat.create`**
+**Create a chat completion**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.writer.api.chat.create({});
+await tenant.writer.api.chat.create({
+	model: 'palmyra-x5',
+	messages: [{ role: 'user', content: 'Write a one-line product tagline.' }],
+});
 ```
 
 

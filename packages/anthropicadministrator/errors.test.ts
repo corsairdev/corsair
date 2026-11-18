@@ -1,225 +1,231 @@
-import { ApiError, request } from 'corsair/http';
 import {
 	AnthropicAdministratorAPIError,
 	makeAnthropicAdministratorRequest,
 } from './client';
 import { errorHandlers } from './error-handlers';
+import { anthropicAdministratorEndpointsNested as api } from './index';
+import {
+	jsonResponse,
+	makeContext,
+	sentRequest,
+	stubFetch,
+} from './test-helpers';
 
-jest.mock('corsair/http', () => {
-	const actual = jest.requireActual('corsair/http');
-	return { ...actual, request: jest.fn() };
-});
+const USER = {
+	id: 'user_1',
+	added_at: '2026-01-01T00:00:00Z',
+	email: 'ada@acme.dev',
+	name: 'Ada',
+	role: 'developer',
+	type: 'user',
+};
 
-const mockRequest = request as jest.Mock;
+function anthropicError(status: number, type: string, message: string) {
+	return jsonResponse(status, { type: 'error', error: { type, message } });
+}
 
-beforeEach(() => {
-	mockRequest.mockReset();
-});
-
-/** Builds the error corsair/http actually throws for a given status. */
-function transportError(status: number, message: string, retryAfter?: number) {
-	return new ApiError(
-		{ method: 'GET', url: '/v1/organizations/users' } as never,
+function rateLimited(retryAfterSeconds: string) {
+	return jsonResponse(
+		429,
 		{
-			url: '/v1/organizations/users',
-			ok: false,
-			status,
-			statusText: message,
-			body: { type: 'error', error: { type: 'rate_limit_error', message } },
-		} as never,
-		message,
-		retryAfter === undefined ? undefined : { retryAfter },
+			type: 'error',
+			error: { type: 'rate_limit_error', message: 'Rate limited' },
+		},
+		{ 'retry-after': retryAfterSeconds },
 	);
 }
 
-/** Wraps it the way client.ts does. */
-function wrapped(
-	status: number,
-	message: string,
-	method: 'GET' | 'POST' | 'DELETE' = 'GET',
-	retryAfter?: number,
-) {
-	const cause = transportError(status, message, retryAfter);
-	return new AnthropicAdministratorAPIError(cause.message, { cause, method });
+/** Runs `promise` while fake time advances, so retry sleeps finish instantly. */
+async function settle<T>(promise: Promise<T>, ms: number) {
+	const outcome = promise.then(
+		(value) => ({ ok: true as const, value }),
+		(error: Error) => ({ ok: false as const, error }),
+	);
+	await jest.advanceTimersByTimeAsync(ms);
+	return outcome;
 }
 
-describe('client-side retry returns the successful attempt', () => {
-	const okBody = { id: 'org_1', name: 'Acme', type: 'organization' };
+beforeEach(() => {
+	jest.useFakeTimers();
+	jest.spyOn(console, 'error').mockImplementation(() => {});
+});
 
-	function rateLimited(retryAfterMs?: number) {
-		return transportError(429, 'Too Many Requests', retryAfterMs);
-	}
+afterEach(() => {
+	jest.useRealTimers();
+	jest.restoreAllMocks();
+});
 
-	it('returns the retry result instead of the first failure', async () => {
-		mockRequest
-			.mockRejectedValueOnce(rateLimited(1))
-			.mockResolvedValueOnce(okBody);
+describe('401 authentication failure', () => {
+	it('fails once with the status and Anthropic error type', async () => {
+		const fetchMock = stubFetch(
+			anthropicError(401, 'authentication_error', 'invalid x-api-key'),
+		);
+		const { ctx } = makeContext();
 
-		await expect(
-			makeAnthropicAdministratorRequest('/v1/organizations/me', 'k'),
-		).resolves.toEqual(okBody);
-		expect(mockRequest).toHaveBeenCalledTimes(2);
-	});
+		const outcome = await settle(
+			api.users.getUser(ctx, { user_id: 'user_1' }),
+			0,
+		);
 
-	it('retries a 429 on a mutation too — it was rejected before being applied', async () => {
-		mockRequest
-			.mockRejectedValueOnce(rateLimited(1))
-			.mockResolvedValueOnce({ ok: true });
-
-		await expect(
-			makeAnthropicAdministratorRequest('/v1/organizations/invites', 'k', {
-				method: 'POST',
-				body: { email: 'a@b.com', role: 'user' },
-			}),
-		).resolves.toEqual({ ok: true });
-		expect(mockRequest).toHaveBeenCalledTimes(2);
-	});
-
-	it('never replays a 5xx on a mutation', async () => {
-		mockRequest.mockRejectedValue(transportError(503, 'Service Unavailable'));
-
-		await expect(
-			makeAnthropicAdministratorRequest('/v1/organizations/invites', 'k', {
-				method: 'POST',
-			}),
-		).rejects.toThrow('Service Unavailable');
-		expect(mockRequest).toHaveBeenCalledTimes(1);
-	});
-
-	it('retries a 5xx on GET', async () => {
-		mockRequest
-			.mockRejectedValueOnce(transportError(500, 'Internal Server Error'))
-			.mockResolvedValueOnce(okBody);
-
-		await expect(
-			makeAnthropicAdministratorRequest('/v1/organizations/me', 'k'),
-		).resolves.toEqual(okBody);
-		expect(mockRequest).toHaveBeenCalledTimes(2);
-	});
-
-	it('gives up after the attempt budget and surfaces the failure', async () => {
-		mockRequest.mockRejectedValue(rateLimited(1));
-
-		await expect(
-			makeAnthropicAdministratorRequest('/v1/organizations/me', 'k'),
-		).rejects.toThrow('Too Many Requests');
-		expect(mockRequest).toHaveBeenCalledTimes(3);
-	});
-
-	it('does not retry an auth failure', async () => {
-		mockRequest.mockRejectedValue(transportError(401, 'Unauthorized'));
-
-		await expect(
-			makeAnthropicAdministratorRequest('/v1/organizations/me', 'k'),
-		).rejects.toThrow('Unauthorized');
-		expect(mockRequest).toHaveBeenCalledTimes(1);
+		expect(outcome.ok).toBe(false);
+		if (outcome.ok) return;
+		expect(outcome.error).toBeInstanceOf(AnthropicAdministratorAPIError);
+		expect(outcome.error).toMatchObject({
+			status: 401,
+			errorType: 'authentication_error',
+			method: 'GET',
+		});
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		expect(errorHandlers.AUTH_ERROR.match(outcome.error)).toBe(true);
 	});
 });
 
-describe('request path bounds', () => {
-	it('rejects an over-long path before it reaches the transport', async () => {
-		const huge = `/v1/organizations/users/${'a'.repeat(600)}`;
+describe('429 with Retry-After', () => {
+	it('waits the Retry-After interval, then returns the retried result', async () => {
+		const fetchMock = stubFetch(rateLimited('2'), jsonResponse(200, USER));
+		const { ctx } = makeContext();
 
-		await expect(makeAnthropicAdministratorRequest(huge, 'k')).rejects.toThrow(
-			'exceeds 512 characters',
-		);
-		expect(mockRequest).not.toHaveBeenCalled();
+		const pending = api.users.getUser(ctx, { user_id: 'user_1' });
+		await jest.advanceTimersByTimeAsync(1999);
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+
+		const outcome = await settle(pending, 1);
+		expect(outcome).toEqual({ ok: true, value: USER });
+		expect(fetchMock).toHaveBeenCalledTimes(2);
 	});
 
-	it('never forwards unmatched braces to the transport', async () => {
-		// Paths are built by interpolating percent-encoded IDs, so a brace can
-		// never survive into the request path.
-		mockRequest.mockResolvedValueOnce({});
-		const { anthropicAdministratorEndpointsNested: ops } = await import(
-			'./index'
+	it('retries a 429 on a mutation, since it was rejected before being applied', async () => {
+		const fetchMock = stubFetch(
+			rateLimited('1'),
+			jsonResponse(200, { ...USER, role: 'admin' }),
 		);
-		const groups = ops as unknown as Record<
-			string,
-			Record<string, (c: unknown, i: unknown) => Promise<unknown>>
-		>;
+		const { ctx } = makeContext();
 
-		const getUser = groups.users?.getUser;
-		if (!getUser) throw new Error('missing endpoint');
-		await getUser(
-			{ key: 'k', options: {}, db: {} },
-			{ user_id: '{a'.repeat(50) },
+		const outcome = await settle(
+			api.users.updateUser(ctx, { user_id: 'user_1', role: 'admin' }),
+			1000,
 		);
 
-		const url = mockRequest.mock.calls[0]?.[1]?.url as string;
-		expect(url).not.toContain('{');
-		expect(url).not.toContain('}');
+		expect(outcome).toEqual({ ok: true, value: { ...USER, role: 'admin' } });
+		expect(sentRequest(fetchMock, 1).body).toEqual({ role: 'admin' });
 	});
 
-	it('accepts a normal path', async () => {
-		mockRequest.mockResolvedValueOnce({});
-		await expect(
-			makeAnthropicAdministratorRequest('/v1/organizations/me', 'k'),
-		).resolves.toEqual({});
+	it('gives up after three attempts and surfaces the rate limit', async () => {
+		const fetchMock = stubFetch(
+			rateLimited('1'),
+			rateLimited('1'),
+			rateLimited('1'),
+		);
+		const { ctx } = makeContext();
+
+		const outcome = await settle(
+			api.users.getUser(ctx, { user_id: 'user_1' }),
+			5000,
+		);
+
+		expect(fetchMock).toHaveBeenCalledTimes(3);
+		expect(outcome.ok).toBe(false);
+		if (outcome.ok) return;
+		expect(outcome.error).toMatchObject({
+			status: 429,
+			retryAfter: 1000,
+			errorType: 'rate_limit_error',
+		});
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(outcome.error)).toBe(true);
+	});
+});
+
+describe('5xx', () => {
+	it('retries a GET', async () => {
+		const fetchMock = stubFetch(
+			anthropicError(529, 'overloaded_error', 'Overloaded'),
+			jsonResponse(200, USER),
+		);
+		const { ctx } = makeContext();
+
+		const outcome = await settle(
+			api.users.getUser(ctx, { user_id: 'user_1' }),
+			1000,
+		);
+
+		expect(outcome).toEqual({ ok: true, value: USER });
+		expect(fetchMock).toHaveBeenCalledTimes(2);
+	});
+
+	it('never replays a mutation, which may already have been applied', async () => {
+		const fetchMock = stubFetch(
+			anthropicError(500, 'api_error', 'Internal server error'),
+		);
+		const { ctx } = makeContext();
+
+		const outcome = await settle(
+			api.users.updateUser(ctx, { user_id: 'user_1', role: 'admin' }),
+			5000,
+		);
+
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		expect(outcome.ok).toBe(false);
+		if (outcome.ok) return;
+		expect(outcome.error).toMatchObject({ status: 500, method: 'POST' });
+		expect(errorHandlers.SERVER_ERROR.match(outcome.error)).toBe(true);
 	});
 });
 
 describe('error classification', () => {
-	it('classifies a 429 by status, not by message text', () => {
-		// corsair throws 429 with the literal message "Too Many Requests" — it
-		// contains neither "429" nor "rate_limited", so status must be preserved.
-		const error = wrapped(429, 'Too Many Requests', 'GET', 30_000);
+	function apiError(status: number) {
+		const fetchMock = stubFetch(anthropicError(status, 'x_error', 'failed'));
+		return settle(
+			makeAnthropicAdministratorRequest('/v1/organizations/me', 'k', {
+				method: 'POST',
+			}),
+			0,
+		).then((outcome) => {
+			fetchMock.mockRestore();
+			if (outcome.ok) throw new Error('expected a failure');
+			return outcome.error;
+		});
+	}
 
-		expect(error.message).toBe('Too Many Requests');
-		expect(error.status).toBe(429);
-		expect(error.retryAfter).toBe(30_000);
-		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
-	});
-
-	it('asks the binder for no retries — the client already retried', async () => {
-		// Delegating retries to the shared binder would discard a successful
-		// retry and rethrow the original failure.
-		// AUTH_ERROR logs guidance; keep the assertion output clean.
-		const consoleError = jest
-			.spyOn(console, 'error')
-			.mockImplementation(() => {});
-
-		// Handlers have mixed arity; drive them uniformly.
-		const handlers = [
-			errorHandlers.RATE_LIMIT_ERROR,
-			errorHandlers.SERVER_ERROR,
-			errorHandlers.AUTH_ERROR,
-			errorHandlers.NOT_FOUND_ERROR,
-			errorHandlers.INVALID_REQUEST_ERROR,
-			errorHandlers.DEFAULT,
-		] as unknown as Array<{
-			handler: (error: Error) => Promise<{ maxRetries: number }>;
-		}>;
-
-		for (const { handler } of handlers) {
-			expect(
-				(await handler(wrapped(500, 'Internal Server Error'))).maxRetries,
-			).toBe(0);
-		}
-
-		consoleError.mockRestore();
-	});
-
-	it('matches auth, not-found, invalid-request and server errors by status', () => {
-		expect(errorHandlers.AUTH_ERROR.match(wrapped(401, 'Unauthorized'))).toBe(
+	it('matches not-found and invalid-request errors by status', async () => {
+		expect(errorHandlers.NOT_FOUND_ERROR.match(await apiError(404))).toBe(true);
+		expect(errorHandlers.INVALID_REQUEST_ERROR.match(await apiError(400))).toBe(
 			true,
 		);
-		expect(errorHandlers.AUTH_ERROR.match(wrapped(403, 'Forbidden'))).toBe(
-			true,
-		);
-		expect(errorHandlers.NOT_FOUND_ERROR.match(wrapped(404, 'Not Found'))).toBe(
-			true,
-		);
-		expect(
-			errorHandlers.INVALID_REQUEST_ERROR.match(wrapped(400, 'Bad Request')),
-		).toBe(true);
-		expect(
-			errorHandlers.SERVER_ERROR.match(wrapped(503, 'Service Unavailable')),
-		).toBe(true);
+		expect(errorHandlers.AUTH_ERROR.match(await apiError(403))).toBe(true);
 	});
 
-	it('surfaces the Anthropic error type from the response body', () => {
-		expect(wrapped(429, 'Too Many Requests').errorType).toBe(
-			'rate_limit_error',
+	it('asks the binder for no retries, since the client already retried', async () => {
+		const error = await apiError(500);
+		await expect(errorHandlers.RATE_LIMIT_ERROR.handler()).resolves.toEqual({
+			maxRetries: 0,
+		});
+		await expect(errorHandlers.AUTH_ERROR.handler(error)).resolves.toEqual({
+			maxRetries: 0,
+		});
+		await expect(errorHandlers.SERVER_ERROR.handler()).resolves.toEqual({
+			maxRetries: 0,
+		});
+	});
+});
+
+describe('request path bounds', () => {
+	it('rejects an over-long path before any request is sent', async () => {
+		const fetchMock = stubFetch();
+
+		await expect(
+			makeAnthropicAdministratorRequest(`/v1/x/${'a'.repeat(600)}`, 'k'),
+		).rejects.toThrow('exceeds 512 characters');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('percent-encodes IDs so braces never reach the request path', async () => {
+		const fetchMock = stubFetch(jsonResponse(200, USER));
+		const { ctx } = makeContext();
+
+		await settle(api.users.getUser(ctx, { user_id: '{a}' }), 0);
+
+		expect(sentRequest(fetchMock).url).toBe(
+			'https://api.anthropic.com/v1/organizations/users/%7Ba%7D',
 		);
 	});
 });

@@ -1,6 +1,7 @@
 ---
-title: Webhooks
-description: "Razorpay incoming webhooks: event paths, payloads, and response data."
+title: "Razorpay webhooks"
+sidebarTitle: "Webhooks"
+description: "Razorpay incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
 ---
 
 The Razorpay plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/razorpay/overview) for setup context and the exact URL shape).
@@ -27,9 +28,23 @@ import { corsair } from "@/server/corsair";
 
 export async function POST(request: Request) {
     const headers = Object.fromEntries(request.headers);
-    const body = await request.json();
-    const result = await processWebhook(corsair, headers, body);
-    return result.response;
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
 }
 ```
 
@@ -71,8 +86,7 @@ A Razorpay order was paid
       offer_id?: string | null,
       status: string,
       attempts?: number,
-      notes?: {
-      } | any[],
+      notes?: Record<string, string> | any[],
       created_at?: number
     }
   },
@@ -90,8 +104,7 @@ A Razorpay order was paid
       description?: string | null,
       email?: string | null,
       contact?: string | null,
-      notes?: {
-      } | any[],
+      notes?: Record<string, string> | any[],
       created_at?: number
     }
   }
@@ -125,8 +138,7 @@ A Razorpay order was paid
         offer_id?: string | null,
         status: string,
         attempts?: number,
-        notes?: {
-        } | any[],
+        notes?: Record<string, string> | any[],
         created_at?: number
       }
     },
@@ -144,8 +156,7 @@ A Razorpay order was paid
         description?: string | null,
         email?: string | null,
         contact?: string | null,
-        notes?: {
-        } | any[],
+        notes?: Record<string, string> | any[],
         created_at?: number
       }
     }
@@ -213,8 +224,7 @@ A Razorpay payment was captured
       description?: string | null,
       email?: string | null,
       contact?: string | null,
-      notes?: {
-      } | any[],
+      notes?: Record<string, string> | any[],
       created_at?: number
     }
   }
@@ -250,8 +260,7 @@ A Razorpay payment was captured
         description?: string | null,
         email?: string | null,
         contact?: string | null,
-        notes?: {
-        } | any[],
+        notes?: Record<string, string> | any[],
         created_at?: number
       }
     }
@@ -317,8 +326,7 @@ A Razorpay payment failed
       description?: string | null,
       email?: string | null,
       contact?: string | null,
-      notes?: {
-      } | any[],
+      notes?: Record<string, string> | any[],
       created_at?: number
     }
   }
@@ -354,8 +362,7 @@ A Razorpay payment failed
         description?: string | null,
         email?: string | null,
         contact?: string | null,
-        notes?: {
-        } | any[],
+        notes?: Record<string, string> | any[],
         created_at?: number
       }
     }
@@ -416,8 +423,7 @@ A Razorpay refund was processed
       payment_id: string,
       amount: number,
       currency?: string | null,
-      notes?: {
-      } | any[],
+      notes?: Record<string, string> | any[],
       receipt?: string | null,
       speed_processed?: string | null,
       speed_requested?: string | null,
@@ -439,8 +445,7 @@ A Razorpay refund was processed
       description?: string | null,
       email?: string | null,
       contact?: string | null,
-      notes?: {
-      } | any[],
+      notes?: Record<string, string> | any[],
       created_at?: number
     }
   }
@@ -469,8 +474,7 @@ A Razorpay refund was processed
         payment_id: string,
         amount: number,
         currency?: string | null,
-        notes?: {
-        } | any[],
+        notes?: Record<string, string> | any[],
         receipt?: string | null,
         speed_processed?: string | null,
         speed_requested?: string | null,
@@ -492,8 +496,7 @@ A Razorpay refund was processed
         description?: string | null,
         email?: string | null,
         contact?: string | null,
-        notes?: {
-        } | any[],
+        notes?: Record<string, string> | any[],
         created_at?: number
       }
     }

@@ -1,0 +1,156 @@
+---
+title: "Echtpost plugin"
+sidebarTitle: "Overview"
+description: "Send real printed postcards with EchtPost. Manage contacts and groups, pick motives and templates, create, list and cancel cards, and check the credit balance."
+---
+
+Use **Echtpost** through Corsair: one client, typed API calls, local DB sync.
+
+Create an API key in the EchtPost web app under Account &gt; API keys; the plugin sends it in the `X-Api-Key` header. A key starting `ep_live_` sends real cards. A key starting `ep_test_` is a sandbox key: its cards, contacts and groups are stored apart and are never printed or billed, so use one while building.
+
+Things to know:
+
+- **Creating a card sends a postcard and costs money.** `cards.create` and `cards.createFromTemplate` print and post a card to every recipient and bill the account per card, so they are `destructive`; with a permissions mode such as `permissions: { mode: 'cautious' }` they wait for approval. Check `account.credits` first.
+- **Recipients.** Pass saved contacts in `recipient_ids`, whole groups in `group_ids`, or new postal addresses in `recipients`. `{anrede}` in the text becomes each recipient's salutation (see `greeting_style` on a contact).
+- **Motives.** A motive is the front design. `motives.get` says which text fields it allows (`content_available`, `content_ps_available`, `vertical_text_available`); text the motive does not allow is refused with 422.
+- **Check the text first.** `cards.previewFit` says whether the text fits at a font and size, and suggests a size when it does not. It creates nothing.
+- **Delivery.** `deliver_at` takes `YYYY-MM-DD`, `today`, `asap`, `tomorrow` or `N-days-from-now`, at most 90 days out; weekends and printer holidays move to the next print date unless `move_to_next_print_date` is false.
+- **Cancelling.** `cards.cancel` works while the card is still `cancelable`; it runs asynchronously and cannot be undone.
+- **Errors** are RFC 7807 problem details; a failed call drops its request body (names, addresses) from the error. Events log ids only.
+
+**What you get:**
+
+- 22 typed API operations
+- 1 synced entity (`templates`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/echtpost better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/echtpost better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/echtpost better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/echtpost better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { echtpost } from '@corsair-dev/echtpost';
+
+export const corsair = createCorsair({
+	plugins: [
+		echtpost(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Echtpost API key before the first call: `pnpm corsair setup --plugin=echtpost --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+echtpost()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'echtpost',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List scheduled cards**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.echtpost.api.cards.list({ status: 'scheduled', per_page: 20 });
+```
+
+
+**Add a recipient**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.echtpost.api.contacts.create({
+	first_name: 'Max',
+	last_name: 'Mustermann',
+	street: 'Hauptstr. 1',
+	zip: '10115',
+	city: 'Berlin',
+	country_code: 'DE',
+});
+```
+
+
+See the full list on the [API](/plugins/echtpost/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.echtpost.db.<entity>.search()` and `.list()`: `templates`.
+
+See [Database](/plugins/echtpost/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/echtpost/api">
+    Every `echtpost.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/echtpost/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

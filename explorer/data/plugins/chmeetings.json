@@ -1,7 +1,7 @@
 {
   "id": "chmeetings",
   "displayName": "ChMeetings",
-  "description": "ChMeetings plugin for Corsair",
+  "description": "Church management platform. Manage people, families, groups, organizations, and events, and read attendance, notes, and settings.",
   "npmPackageName": "@corsair-dev/chmeetings",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -100,17 +100,17 @@
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "start_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "schedule",
@@ -120,22 +120,22 @@
           {
             "key": "recurrence",
             "optional": true,
-            "type": "{}"
+            "type": "{} | null"
           },
           {
             "key": "location",
             "optional": true,
-            "type": "{ name?: string | null, formatted_address?: string | null, latitude?: number | string | null, longitude?: number | string | null }"
+            "type": "{ name?: string | null, formatted_address?: string | null, latitude?: number | string | null, longitude?: number | string | null } | null"
           },
           {
             "key": "visibility",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "image_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -263,7 +263,7 @@
           {
             "key": "members",
             "optional": true,
-            "type": "{ id?: string | number, person_id?: string | number, first_name?: string | null, last_name?: string | null, full_name?: string | null, family_role?: string | null }[]"
+            "type": "{ id?: string | number, person_id?: string | number, first_name?: string | null, last_name?: string | null, full_name?: string | null, family_role?: string | null }[] | null"
           }
         ]
       }
@@ -320,7 +320,7 @@
           {
             "key": "members",
             "optional": true,
-            "type": "{ id?: string | number, person_id?: string | number, first_name?: string | null, last_name?: string | null, full_name?: string | null, family_role?: string | null }[]"
+            "type": "{ id?: string | number, person_id?: string | number, first_name?: string | null, last_name?: string | null, full_name?: string | null, family_role?: string | null }[] | null"
           }
         ]
       }
@@ -458,12 +458,12 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "privacy",
@@ -498,7 +498,7 @@
           {
             "key": "created_on",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -555,12 +555,12 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "privacy",
@@ -595,7 +595,7 @@
           {
             "key": "created_on",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -717,12 +717,12 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "privacy",
@@ -757,7 +757,7 @@
           {
             "key": "created_on",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -855,7 +855,7 @@
           {
             "key": "id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
@@ -865,17 +865,17 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "parent_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_on",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_main",
@@ -1204,187 +1204,187 @@
           {
             "key": "first_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "middle_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "last_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "full_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "nick_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "native_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "photo",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "birth_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "mobile",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "do_not_text",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "do_not_email",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "created_on",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_on",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "facebook",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "gender",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "social_status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "marriage_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "engagement_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "job_title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "work_place",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "qualification",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "education_level",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "school",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "father_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "church",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_deacon",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "rank",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "bishop_donor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "family_role",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "family",
             "optional": true,
-            "type": "{ id?: string | number, person_id?: string | number, first_name?: string | null, last_name?: string | null, full_name?: string | null, family_role?: string | null }[]"
+            "type": "{ id?: string | number, person_id?: string | number, first_name?: string | null, last_name?: string | null, full_name?: string | null, family_role?: string | null }[] | null"
           },
           {
             "key": "baptism_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "baptism_location",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "grade",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "graduation_year",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "telephone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "talents_and_hobbies",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_archived",
@@ -1394,17 +1394,17 @@
           {
             "key": "archived_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "address",
             "optional": true,
-            "type": "{ country?: string | null, state?: string | null, city?: string | null, building?: string | null, address_line?: string | null, address_line2?: string | null, floor?: string | null, flat?: string | null, zip_code?: string | null }"
+            "type": "{ country?: string | null, state?: string | null, city?: string | null, building?: string | null, address_line?: string | null, address_line2?: string | null, floor?: string | null, flat?: string | null, zip_code?: string | null } | null"
           },
           {
             "key": "additional_fields",
             "optional": true,
-            "type": "{ field_type: string }[]"
+            "type": "{ field_type: string }[] | null"
           }
         ]
       }
@@ -1461,187 +1461,187 @@
           {
             "key": "first_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "middle_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "last_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "full_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "nick_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "native_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "photo",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "birth_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "mobile",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "do_not_text",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "do_not_email",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "created_on",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_on",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "facebook",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "gender",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "social_status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "marriage_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "engagement_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "job_title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "work_place",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "qualification",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "education_level",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "school",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "father_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "church",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_deacon",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "rank",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "bishop_donor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "family_role",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "family",
             "optional": true,
-            "type": "{ id?: string | number, person_id?: string | number, first_name?: string | null, last_name?: string | null, full_name?: string | null, family_role?: string | null }[]"
+            "type": "{ id?: string | number, person_id?: string | number, first_name?: string | null, last_name?: string | null, full_name?: string | null, family_role?: string | null }[] | null"
           },
           {
             "key": "baptism_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "baptism_location",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "grade",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "graduation_year",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "telephone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "talents_and_hobbies",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_archived",
@@ -1651,17 +1651,17 @@
           {
             "key": "archived_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "address",
             "optional": true,
-            "type": "{ country?: string | null, state?: string | null, city?: string | null, building?: string | null, address_line?: string | null, address_line2?: string | null, floor?: string | null, flat?: string | null, zip_code?: string | null }"
+            "type": "{ country?: string | null, state?: string | null, city?: string | null, building?: string | null, address_line?: string | null, address_line2?: string | null, floor?: string | null, flat?: string | null, zip_code?: string | null } | null"
           },
           {
             "key": "additional_fields",
             "optional": true,
-            "type": "{ field_type: string }[]"
+            "type": "{ field_type: string }[] | null"
           }
         ]
       }
@@ -2049,6 +2049,11 @@
         },
         {
           "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

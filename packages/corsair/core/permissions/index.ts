@@ -9,23 +9,40 @@ import type {
 	PermissionMode,
 	PermissionPolicy,
 } from '../plugins';
+import { PermissionRequiredError } from './errors/permission-required';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Readonly Enforcement Scope
+// Permission Mode Scope
 // ─────────────────────────────────────────────────────────────────────────────
+
+/** Per-account modes: plugin id → account (its id, ref or label) → mode. */
+export type AccountModes = Record<string, Record<string, PermissionMode>>;
+
+/** A caller's mode: one for every call, or a default with modes per account. */
+export type ModeScope =
+	| PermissionMode
+	| { mode?: PermissionMode; accounts?: AccountModes };
+
+/** The names an account answers to, any of which a mode can be keyed by. */
+export type AccountNames = { id: string; ref?: string; label?: string };
+
+type ScopeEntry = { mode?: PermissionMode; accounts?: AccountModes };
 
 /**
- * Ambient flag propagated via AsyncLocalStorage that forces every endpoint call
- * made inside the scope to be read-only, regardless of the developer's configured
- * permission mode or overrides.
- *
- * This is intentionally a *runtime* scope rather than a permission mode: it applies
- * to every plugin call — including plugins that have no `permissions` config and
- * therefore skip the normal permission guard — and it takes strict precedence over
- * whatever the developer configured. It is used by the MCP `run_script` tool to run
- * agent-authored scripts under a hard read-only guarantee.
+ * The modes the caller set for the current call, outermost first. Applies to
+ * every endpoint call inside the scope, including plugins that carry no mode
+ * of their own, and composes with one that does.
  */
-const readonlyScope = new AsyncLocalStorage<true>();
+const modeScope = new AsyncLocalStorage<ScopeEntry[]>();
+
+// A scalar works only because PERMISSION_MATRIX is monotonic in this order at
+// every risk level.
+const STRICTNESS: Record<PermissionMode, number> = {
+	open: 0,
+	cautious: 1,
+	strict: 2,
+	readonly: 3,
+};
 
 /**
  * Thrown when a write or destructive operation is attempted inside a
@@ -47,18 +64,112 @@ export class ReadonlyForbiddenError extends Error {
 	}
 }
 
+/** Whichever of the two forbids more. */
+export function stricterMode(
+	a: PermissionMode | undefined,
+	b: PermissionMode | undefined,
+): PermissionMode | undefined {
+	if (a === undefined) return b;
+	if (b === undefined) return a;
+	return STRICTNESS[a] >= STRICTNESS[b] ? a : b;
+}
+
+/**
+ * The mode keyed to this account by its id or ref. Never by label: a label
+ * can be a display name its owner renames, which must not pick up a mode.
+ */
+export function accountMode(
+	modes: Record<string, PermissionMode> | undefined,
+	names: AccountNames | undefined,
+): PermissionMode | undefined {
+	if (!modes || !names) return undefined;
+	let found: PermissionMode | undefined;
+	for (const [key, mode] of Object.entries(modes)) {
+		if (key === names.id || key === names.ref)
+			found = stricterMode(found, mode);
+	}
+	return found;
+}
+
+/** The strictest of a set of modes. */
+export function strictestMode(
+	modes: Record<string, PermissionMode> | undefined,
+	floor?: PermissionMode,
+): PermissionMode | undefined {
+	return Object.values(modes ?? {}).reduce<PermissionMode | undefined>(
+		stricterMode,
+		floor,
+	);
+}
+
+// Without the account, the strictest mode any of its accounts could get.
+function entryMode(
+	entry: ScopeEntry,
+	plugin: string | undefined,
+	names: AccountNames | undefined,
+): PermissionMode | undefined {
+	if (names && plugin) {
+		return accountMode(entry.accounts?.[plugin], names) ?? entry.mode;
+	}
+	const maps = plugin
+		? [entry.accounts?.[plugin]]
+		: Object.values(entry.accounts ?? {});
+	return maps
+		.flatMap((m) => Object.values(m ?? {}))
+		.reduce<PermissionMode | undefined>(stricterMode, entry.mode);
+}
+
+/**
+ * Runs `fn` under `scope`. Nesting never widens: each call takes the stricter
+ * of what every open scope gives its account.
+ */
+export function runWithMode<T>(scope: ModeScope, fn: () => T): T {
+	const entry = typeof scope === 'string' ? { mode: scope } : scope;
+	return modeScope.run([...(modeScope.getStore() ?? []), entry], fn);
+}
+
+/**
+ * The mode in effect for the current async context, if any. Given the plugin
+ * and the account a call is for, that account's own mode counts; without
+ * them, the strictest any account could get.
+ */
+export function activeMode(
+	plugin?: string,
+	names?: AccountNames,
+): PermissionMode | undefined {
+	return (modeScope.getStore() ?? []).reduce<PermissionMode | undefined>(
+		(mode, entry) => stricterMode(mode, entryMode(entry, plugin, names)),
+		undefined,
+	);
+}
+
+/** Whether an open scope sets a mode for some account of this plugin. */
+export function hasAccountModes(plugin: string): boolean {
+	return (modeScope.getStore() ?? []).some(
+		(e) => Object.keys(e.accounts?.[plugin] ?? {}).length > 0,
+	);
+}
+
+/** The open scopes, outermost first, for a server to run the same call under. */
+export function currentModeScopes(): ModeScope[] {
+	return [...(modeScope.getStore() ?? [])];
+}
+
 /**
  * Runs `fn` in a scope where every Corsair endpoint call is forced to read-only.
  * Any write/destructive endpoint invoked within (including in nested async calls)
  * throws {@link ReadonlyForbiddenError}.
  */
 export function runReadonly<T>(fn: () => T): T {
-	return readonlyScope.run(true, fn);
+	return runWithMode('readonly', fn);
 }
 
 /** Whether the current async context is inside a {@link runReadonly} scope. */
-export function isReadonlyScopeActive(): boolean {
-	return readonlyScope.getStore() === true;
+export function isReadonlyScopeActive(
+	plugin?: string,
+	names?: AccountNames,
+): boolean {
+	return activeMode(plugin, names) === 'readonly';
 }
 
 /**
@@ -69,10 +180,34 @@ export function isReadonlyScopeActive(): boolean {
 export function assertReadonlyAllowed(
 	endpointPath: string,
 	riskLevel: EndpointRiskLevel,
+	plugin?: string,
+	names?: AccountNames,
 ): void {
-	if (isReadonlyScopeActive() && riskLevel !== 'read') {
+	if (isReadonlyScopeActive(plugin, names) && riskLevel !== 'read') {
 		throw new ReadonlyForbiddenError(endpointPath, riskLevel);
 	}
+}
+
+/**
+ * Guard for paths that reach data without the endpoint binding layer: the
+ * entity store and the cloud entity proxy. Neither records approval state, so
+ * anything short of `allow` is refused rather than held.
+ */
+export function assertModeAllows(
+	endpointPath: string,
+	riskLevel: EndpointRiskLevel,
+	plugin?: string,
+	names?: AccountNames,
+): void {
+	assertReadonlyAllowed(endpointPath, riskLevel, plugin, names);
+	const mode = activeMode(plugin, names);
+	if (mode === undefined || evaluatePermission(riskLevel, mode) === 'allow') {
+		return;
+	}
+	throw new PermissionRequiredError(
+		`Action '${endpointPath}' is a '${riskLevel}' operation and permission mode '${mode}' does not allow it. The entity store cannot wait for approval.`,
+		'policy',
+	);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -88,6 +223,22 @@ const PERMISSION_MATRIX: Record<
 	strict: { read: 'allow', write: 'require_approval', destructive: 'deny' },
 	readonly: { read: 'allow', write: 'deny', destructive: 'deny' },
 };
+
+// allow < require_approval < deny.
+const POLICY_RANK: Record<PermissionPolicy, number> = {
+	allow: 0,
+	require_approval: 1,
+	deny: 2,
+};
+
+/** Whichever of the two forbids more. */
+export function stricterPolicy(
+	a: PermissionPolicy | undefined,
+	b: PermissionPolicy,
+): PermissionPolicy {
+	if (a === undefined) return b;
+	return POLICY_RANK[a] >= POLICY_RANK[b] ? a : b;
+}
 
 /** Resolves the effective permission policy for an endpoint. The override (from permissions.overrides) takes precedence. */
 export function evaluatePermission(
@@ -333,7 +484,7 @@ export async function enforcePermission(
 		console.log(
 			`[corsair/${opts.pluginId}] '${opts.endpointPath}' blocked — denied by permission mode '${opts.mode}'.`,
 			`\n  Action: ${description}`,
-			`\n  To allow this, update the permission mode or add an override in your corsair config.`,
+			`\n  To allow this, widen the permission mode in force for this call.`,
 		);
 		return { result: 'blocked', reason: 'policy' };
 	}

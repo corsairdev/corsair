@@ -116,7 +116,7 @@
           {
             "key": "item",
             "optional": false,
-            "type": "{ id: number, name: string, sku: string, barcode: string, photo_url?: string | null, attrs: { id: number, type: text | date | number | barcode, name: string, value: string | number }[], cost: string, price: string, quantity: number, quantities: { location_id: number, quantity: number }[] }"
+            "type": "{ id: number, name: string, sku: string, barcode: string, photo_url: string | null, attrs: { id: number, type: text | date | number | barcode, name: string, value: string | number }[], cost: string, price: string, quantity: number, quantities: { location_id: number, quantity: number }[] }"
           }
         ]
       }
@@ -157,7 +157,7 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ id: number, name: string, sku: string, barcode: string, photo_url?: string | null, attrs: { id: number, type: text | date | number | barcode, name: string, value: string | number }[], cost: string, price: string, quantity: number, quantities: { location_id: number, quantity: number }[] }[]"
+            "type": "{ id: number, name: string, sku: string, barcode: string, photo_url: string | null, attrs: { id: number, type: text | date | number | barcode, name: string, value: string | number }[], cost: string, price: string, quantity: number, quantities: { location_id: number, quantity: number }[] }[]"
           },
           {
             "key": "count",
@@ -171,8 +171,8 @@
           },
           {
             "key": "cursor",
-            "optional": true,
-            "type": "number"
+            "optional": false,
+            "type": "number | null"
           },
           {
             "key": "has_more",
@@ -350,8 +350,8 @@
           },
           {
             "key": "cursor",
-            "optional": true,
-            "type": "number"
+            "optional": false,
+            "type": "number | null"
           },
           {
             "key": "has_more",
@@ -390,13 +390,13 @@
           },
           {
             "key": "currency_symbol",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "currency_code",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "price_decimal_places",
@@ -405,8 +405,8 @@
           },
           {
             "key": "memo",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           }
         ]
       }
@@ -456,8 +456,8 @@
           },
           {
             "key": "cursor",
-            "optional": true,
-            "type": "number"
+            "optional": false,
+            "type": "number | null"
           },
           {
             "key": "has_more",
@@ -512,8 +512,8 @@
           },
           {
             "key": "cursor",
-            "optional": true,
-            "type": "number"
+            "optional": false,
+            "type": "number | null"
           },
           {
             "key": "has_more",
@@ -539,6 +539,11 @@
           "field": "id",
           "type": "number",
           "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "attr_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
           "field": "attr_name",
@@ -652,6 +657,11 @@
           "field": "name",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "role",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         }
       ]
     },
@@ -666,6 +676,11 @@
         },
         {
           "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "type",
           "type": "number",
           "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
         },
@@ -714,6 +729,11 @@
           "field": "name",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "mode",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
         },
         {
           "field": "currency_symbol",

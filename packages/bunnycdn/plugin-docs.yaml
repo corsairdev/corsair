@@ -1,0 +1,12 @@
+displayName: bunny.net
+description: Edge platform API for managing pull zones, storage zones, DNS zones, Shield security, and Magic Containers, purging cache, and reading statistics and billing.
+domain: bunny.net
+examples:
+  read:
+    path: pullZone.list
+    title: List pull zones
+  write:
+    path: purge.url
+    title: Purge a URL from the cache
+    args:
+      url: https://example.b-cdn.net/image.png
