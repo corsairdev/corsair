@@ -1071,7 +1071,7 @@ await corsair.googlecontacts.api.contacts.list({});
 | `pageToken` | `string` | No | — |
 | `sortOrder` | `LAST_MODIFIED_ASCENDING \| LAST_MODIFIED_DESCENDING \| FIRST_NAME_ASCENDING \| LAST_NAME_ASCENDING` | No | — |
 | `requestSyncToken` | `boolean` | No | Return a nextSyncToken for incremental reads. Expires after 7 days. |
-| `syncToken` | `string` | No | Return only changes since this token. Expired tokens 400; re-list in full. |
+| `syncToken` | `string` | No | Return only changes since this token. An expired token answers 410 EXPIRED_SYNC_TOKEN; re-list in full. |
 
 
 
@@ -2326,7 +2326,7 @@ await corsair.googlecontacts.api.otherContacts.search({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `query` | `string` | Yes | — |
-| `readMask` | `(emailAddresses \| metadata \| names \| phoneNumbers \| photos)[]` | No | — |
+| `readMask` | `(emailAddresses \| metadata \| names \| phoneNumbers)[]` | No | — |
 | `pageSize` | `number` | No | — |
 
 
