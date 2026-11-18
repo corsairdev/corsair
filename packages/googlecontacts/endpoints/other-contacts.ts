@@ -1,7 +1,15 @@
 import { logEventFromContext } from 'corsair/core';
-import { joinFieldMask, makeAuthenticatedPeopleRequest } from '../client';
+import {
+	joinFieldMask,
+	makeAuthenticatedPeopleRequest,
+	resourcePath,
+} from '../client';
 import type { GoogleContactsEndpoints } from '../index';
-import { persistContact, persistContacts } from './persist';
+import {
+	DEFAULT_PERSON_FIELDS,
+	persistContact,
+	persistContacts,
+} from './persist';
 import type { GoogleContactsEndpointOutputs } from './types';
 
 /** Google serves only these fields for other contacts. */
@@ -33,7 +41,7 @@ export const list: GoogleContactsEndpoints['otherContactsList'] = async (
 	await logEventFromContext(
 		ctx,
 		'googlecontacts.otherContacts.list',
-		{ ...input },
+		{},
 		'completed',
 	);
 	return result;
@@ -65,7 +73,7 @@ export const search: GoogleContactsEndpoints['otherContactsSearch'] = async (
 	await logEventFromContext(
 		ctx,
 		'googlecontacts.otherContacts.search',
-		{ ...input },
+		{},
 		'completed',
 	);
 	return result;
@@ -73,17 +81,22 @@ export const search: GoogleContactsEndpoints['otherContactsSearch'] = async (
 
 export const copyToContacts: GoogleContactsEndpoints['otherContactsCopyToContacts'] =
 	async (ctx, input) => {
+		const personFields = input.personFields ?? DEFAULT_PERSON_FIELDS;
 		const result = await makeAuthenticatedPeopleRequest<
 			GoogleContactsEndpointOutputs['otherContactsCopyToContacts']
-		>(`/${input.resourceName}:copyOtherContactToMyContactsGroup`, ctx, {
-			method: 'POST',
-			body: {
-				copyMask: joinFieldMask(
-					input.copyMask ?? ['names', 'emailAddresses', 'phoneNumbers'],
-				),
-				readMask: joinFieldMask(input.personFields),
+		>(
+			`${resourcePath('otherContacts', input.resourceName)}:copyOtherContactToMyContactsGroup`,
+			ctx,
+			{
+				method: 'POST',
+				body: {
+					copyMask: joinFieldMask(
+						input.copyMask ?? ['names', 'emailAddresses', 'phoneNumbers'],
+					),
+					readMask: joinFieldMask(personFields),
+				},
 			},
-		});
+		);
 
 		// The copy lands under a new people/ id; leaving the otherContacts row
 		// behind would surface the same human twice in a synced search.
@@ -95,11 +108,11 @@ export const copyToContacts: GoogleContactsEndpoints['otherContactsCopyToContact
 			}
 		}
 
-		await persistContact(ctx, result);
+		await persistContact(ctx, result, personFields);
 		await logEventFromContext(
 			ctx,
 			'googlecontacts.otherContacts.copyToContacts',
-			{ ...input },
+			{ resourceName: input.resourceName, copiedTo: result.resourceName },
 			'completed',
 		);
 		return result;

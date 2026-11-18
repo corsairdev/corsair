@@ -1,5 +1,9 @@
 import { logEventFromContext } from 'corsair/core';
-import { joinFieldMask, makeAuthenticatedPeopleRequest } from '../client';
+import {
+	joinFieldMask,
+	makeAuthenticatedPeopleRequest,
+	resourcePath,
+} from '../client';
 import type { GoogleContactsEndpoints } from '../index';
 import {
 	DEFAULT_PERSON_FIELDS,
@@ -31,7 +35,7 @@ export const list: GoogleContactsEndpoints['contactsList'] = async (
 	await logEventFromContext(
 		ctx,
 		'googlecontacts.contacts.list',
-		{ ...input },
+		{},
 		'completed',
 	);
 	return result;
@@ -44,7 +48,7 @@ export const get: GoogleContactsEndpoints['contactsGet'] = async (
 	const personFields = input.personFields ?? DEFAULT_PERSON_FIELDS;
 	const result = await makeAuthenticatedPeopleRequest<
 		GoogleContactsEndpointOutputs['contactsGet']
-	>(`/${input.resourceName}`, ctx, {
+	>(resourcePath('people', input.resourceName), ctx, {
 		method: 'GET',
 		query: { personFields: joinFieldMask(personFields) },
 	});
@@ -53,7 +57,7 @@ export const get: GoogleContactsEndpoints['contactsGet'] = async (
 	await logEventFromContext(
 		ctx,
 		'googlecontacts.contacts.get',
-		{ ...input },
+		{ resourceName: input.resourceName },
 		'completed',
 	);
 	return result;
@@ -85,7 +89,7 @@ export const search: GoogleContactsEndpoints['contactsSearch'] = async (
 	await logEventFromContext(
 		ctx,
 		'googlecontacts.contacts.search',
-		{ ...input },
+		{},
 		'completed',
 	);
 	return result;
@@ -108,7 +112,7 @@ export const create: GoogleContactsEndpoints['contactsCreate'] = async (
 	await logEventFromContext(
 		ctx,
 		'googlecontacts.contacts.create',
-		{ ...input },
+		{ resourceName: result.resourceName },
 		'completed',
 	);
 	return result;
@@ -121,7 +125,7 @@ export const update: GoogleContactsEndpoints['contactsUpdate'] = async (
 	const personFields = input.personFields ?? DEFAULT_PERSON_FIELDS;
 	const result = await makeAuthenticatedPeopleRequest<
 		GoogleContactsEndpointOutputs['contactsUpdate']
-	>(`/${input.resourceName}:updateContact`, ctx, {
+	>(`${resourcePath('people', input.resourceName)}:updateContact`, ctx, {
 		method: 'PATCH',
 		body: { etag: input.etag, ...input.person },
 		query: {
@@ -134,7 +138,7 @@ export const update: GoogleContactsEndpoints['contactsUpdate'] = async (
 	await logEventFromContext(
 		ctx,
 		'googlecontacts.contacts.update',
-		{ ...input },
+		{ resourceName: input.resourceName },
 		'completed',
 	);
 	return result;
@@ -145,7 +149,7 @@ export const deleteContact: GoogleContactsEndpoints['contactsDelete'] = async (
 	input,
 ) => {
 	await makeAuthenticatedPeopleRequest<void>(
-		`/${input.resourceName}:deleteContact`,
+		`${resourcePath('people', input.resourceName)}:deleteContact`,
 		ctx,
 		{ method: 'DELETE' },
 	);
@@ -161,10 +165,17 @@ export const deleteContact: GoogleContactsEndpoints['contactsDelete'] = async (
 	await logEventFromContext(
 		ctx,
 		'googlecontacts.contacts.delete',
-		{ ...input },
+		{ resourceName: input.resourceName },
 		'completed',
 	);
 };
+
+// A photo change should refresh the stored photoUrl, so the response mask
+// always carries photos.
+function withPhotos(fields: string[] | undefined): string[] {
+	const base = fields ?? DEFAULT_PERSON_FIELDS;
+	return base.includes('photos') ? base : [...base, 'photos'];
+}
 
 type PhotoMutateResponse = {
 	person?: GoogleContactsEndpointOutputs['contactsGet'];
@@ -172,11 +183,11 @@ type PhotoMutateResponse = {
 
 export const updatePhoto: GoogleContactsEndpoints['contactsUpdatePhoto'] =
 	async (ctx, input) => {
-		const personFields = input.personFields ?? DEFAULT_PERSON_FIELDS;
+		const personFields = withPhotos(input.personFields);
 		// updateContactPhoto takes the mask in the body; deleteContactPhoto
 		// takes it in the query.
 		const response = await makeAuthenticatedPeopleRequest<PhotoMutateResponse>(
-			`/${input.resourceName}:updateContactPhoto`,
+			`${resourcePath('people', input.resourceName)}:updateContactPhoto`,
 			ctx,
 			{
 				method: 'PATCH',
@@ -197,7 +208,7 @@ export const updatePhoto: GoogleContactsEndpoints['contactsUpdatePhoto'] =
 		await logEventFromContext(
 			ctx,
 			'googlecontacts.contacts.updatePhoto',
-			{ ...input, photoBytes: '[redacted]' },
+			{ resourceName: input.resourceName },
 			'completed',
 		);
 		return response.person;
@@ -205,9 +216,9 @@ export const updatePhoto: GoogleContactsEndpoints['contactsUpdatePhoto'] =
 
 export const deletePhoto: GoogleContactsEndpoints['contactsDeletePhoto'] =
 	async (ctx, input) => {
-		const personFields = input.personFields ?? DEFAULT_PERSON_FIELDS;
+		const personFields = withPhotos(input.personFields);
 		const response = await makeAuthenticatedPeopleRequest<PhotoMutateResponse>(
-			`/${input.resourceName}:deleteContactPhoto`,
+			`${resourcePath('people', input.resourceName)}:deleteContactPhoto`,
 			ctx,
 			{
 				method: 'DELETE',
@@ -225,7 +236,7 @@ export const deletePhoto: GoogleContactsEndpoints['contactsDeletePhoto'] =
 		await logEventFromContext(
 			ctx,
 			'googlecontacts.contacts.deletePhoto',
-			{ ...input },
+			{ resourceName: input.resourceName },
 			'completed',
 		);
 		return response.person;

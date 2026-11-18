@@ -1,4 +1,6 @@
-import { request } from 'corsair/http';
+import { logEventFromContext } from 'corsair/core';
+import { ApiError, request } from 'corsair/http';
+import { errorHandlers } from './error-handlers';
 import { googlecontacts } from './index';
 
 jest.mock('corsair/http', () => ({
@@ -29,7 +31,7 @@ const PERSON = {
 };
 
 describe('Google Contacts plugin', () => {
-	const plugin = googlecontacts({ key: 'test-token' }) as any;
+	const plugin = googlecontacts() as any;
 	const upsertContact = jest.fn();
 	const deleteContact = jest.fn();
 	const findContact = jest.fn();
@@ -54,6 +56,7 @@ describe('Google Contacts plugin', () => {
 
 	beforeEach(() => {
 		mockRequest.mockReset();
+		(logEventFromContext as jest.Mock).mockClear();
 		upsertContact.mockReset().mockResolvedValue({ id: 'entity-1' });
 		deleteContact.mockReset().mockResolvedValue(undefined);
 		findContact.mockReset().mockResolvedValue(null);
@@ -506,6 +509,167 @@ describe('Google Contacts plugin', () => {
 					resourceName: 'people/c1',
 				}),
 			).rejects.toThrow('returned no person');
+		});
+	});
+
+	describe('review fixes', () => {
+		it.each([
+			['contacts.get', 'contacts', 'get', { resourceName: 'people/c1/../me' }],
+			[
+				'contacts.delete',
+				'contacts',
+				'delete',
+				{ resourceName: 'people/c1?x=1' },
+			],
+			[
+				'contactGroups.get',
+				'contactGroups',
+				'get',
+				{ resourceName: 'people/c1' },
+			],
+			[
+				'otherContacts.copyToContacts',
+				'otherContacts',
+				'copyToContacts',
+				{ resourceName: 'contactGroups/abc' },
+			],
+		])(
+			'%s refuses a resource name outside its collection',
+			async (_name, group, op, input) => {
+				await expect(plugin.endpoints[group][op](ctx, input)).rejects.toThrow(
+					'Invalid',
+				);
+				expect(mockRequest).not.toHaveBeenCalled();
+			},
+		);
+
+		it('keeps contact details out of the event log', async () => {
+			mockRequest.mockResolvedValueOnce(PERSON);
+
+			await plugin.endpoints.contacts.create(ctx, {
+				person: {
+					names: [{ givenName: 'Ada' }],
+					emailAddresses: [{ value: 'ada@example.com' }],
+				},
+			});
+
+			const payload = (logEventFromContext as jest.Mock).mock.calls[0]?.[2];
+			expect(payload).toEqual({ resourceName: 'people/c1' });
+			expect(JSON.stringify(payload)).not.toContain('example.com');
+		});
+
+		it('keeps search queries out of the event log', async () => {
+			mockRequest.mockResolvedValueOnce({ results: [] });
+
+			await plugin.endpoints.contacts.search(ctx, { query: 'ada@example.com' });
+
+			const payload = (logEventFromContext as jest.Mock).mock.calls[0]?.[2];
+			expect(JSON.stringify(payload)).not.toContain('ada@example.com');
+		});
+
+		it('drops the submitted contact from a failed write error', async () => {
+			mockRequest.mockRejectedValueOnce(
+				new ApiError(
+					{
+						method: 'POST',
+						url: '/people:createContact',
+						body: { emailAddresses: [{ value: 'ada@example.com' }] },
+					},
+					{
+						url: 'https://people.googleapis.com/v1/people:createContact',
+						ok: false,
+						status: 400,
+						statusText: 'Bad Request',
+						body: { error: { code: 400 } },
+					},
+					'Bad Request',
+				),
+			);
+
+			const error = await plugin.endpoints.contacts
+				.create(ctx, {
+					person: { emailAddresses: [{ value: 'ada@example.com' }] },
+				})
+				.catch((e: unknown) => e);
+
+			expect(error).toBeInstanceOf(ApiError);
+			expect(error.status).toBe(400);
+			expect(error.request.body).toBeUndefined();
+		});
+
+		it('asks for photos when a photo changes and skips the letter avatar', async () => {
+			mockRequest.mockResolvedValueOnce({
+				person: {
+					...PERSON,
+					photos: [{ url: 'https://example.com/letter.png', default: true }],
+				},
+			});
+
+			await plugin.endpoints.contacts.deletePhoto(ctx, {
+				resourceName: 'people/c1',
+			});
+
+			expect(lastCall().query.personFields).toBe(
+				'names,emailAddresses,phoneNumbers,photos',
+			);
+			const row = upsertContact.mock.calls[0]?.[1];
+			expect(row).toHaveProperty('photoUrl', undefined);
+		});
+
+		it('reads the copied contact back with the default mask', async () => {
+			mockRequest.mockResolvedValueOnce({
+				...PERSON,
+				resourceName: 'people/c9',
+			});
+
+			await plugin.endpoints.otherContacts.copyToContacts(ctx, {
+				resourceName: 'otherContacts/c5',
+			});
+
+			expect(lastCall().body.readMask).toBe(
+				'names,emailAddresses,phoneNumbers',
+			);
+		});
+
+		it('keeps stored group fields that the groupFields mask left out', async () => {
+			findGroup.mockResolvedValueOnce({
+				data: {
+					resourceName: 'contactGroups/abc',
+					groupType: 'USER_CONTACT_GROUP',
+					memberCount: 4,
+					name: 'Old',
+				},
+			});
+			mockRequest.mockResolvedValueOnce({
+				resourceName: 'contactGroups/abc',
+				name: 'New',
+				formattedName: 'New',
+			});
+
+			await plugin.endpoints.contactGroups.get(ctx, {
+				resourceName: 'contactGroups/abc',
+				groupFields: ['name'],
+			});
+
+			const row = upsertGroup.mock.calls[0]?.[1];
+			expect(row).toMatchObject({
+				name: 'New',
+				groupType: 'USER_CONTACT_GROUP',
+				memberCount: 4,
+			});
+		});
+
+		it('does not stack its own 429 retries on top of core', async () => {
+			const result = await errorHandlers.RATE_LIMIT_ERROR.handler(
+				new Error('429'),
+			);
+			expect(result.maxRetries).toBe(0);
+		});
+
+		it('takes the token only from the stored OAuth connection', async () => {
+			await expect(
+				plugin.keyBuilder({ authType: 'api_key' }),
+			).rejects.toThrow();
 		});
 	});
 

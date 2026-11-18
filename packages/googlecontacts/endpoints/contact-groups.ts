@@ -1,7 +1,15 @@
 import { logEventFromContext } from 'corsair/core';
-import { joinFieldMask, makeAuthenticatedPeopleRequest } from '../client';
+import {
+	joinFieldMask,
+	makeAuthenticatedPeopleRequest,
+	resourcePath,
+} from '../client';
 import type { GoogleContactsEndpoints } from '../index';
-import { persistContactGroup } from './persist';
+import {
+	DEFAULT_GROUP_FIELDS,
+	persistContactGroup,
+	WRITE_GROUP_FIELDS,
+} from './persist';
 import type { GoogleContactsEndpointOutputs } from './types';
 
 export const list: GoogleContactsEndpoints['contactGroupsList'] = async (
@@ -20,13 +28,14 @@ export const list: GoogleContactsEndpoints['contactGroupsList'] = async (
 		},
 	});
 
+	const groupFields = input.groupFields ?? DEFAULT_GROUP_FIELDS;
 	for (const group of result.contactGroups ?? []) {
-		await persistContactGroup(ctx, group);
+		await persistContactGroup(ctx, group, groupFields);
 	}
 	await logEventFromContext(
 		ctx,
 		'googlecontacts.contactGroups.list',
-		{ ...input },
+		{},
 		'completed',
 	);
 	return result;
@@ -38,7 +47,7 @@ export const get: GoogleContactsEndpoints['contactGroupsGet'] = async (
 ) => {
 	const result = await makeAuthenticatedPeopleRequest<
 		GoogleContactsEndpointOutputs['contactGroupsGet']
-	>(`/${input.resourceName}`, ctx, {
+	>(resourcePath('contactGroups', input.resourceName), ctx, {
 		method: 'GET',
 		query: {
 			maxMembers: input.maxMembers,
@@ -46,11 +55,15 @@ export const get: GoogleContactsEndpoints['contactGroupsGet'] = async (
 		},
 	});
 
-	await persistContactGroup(ctx, result);
+	await persistContactGroup(
+		ctx,
+		result,
+		input.groupFields ?? DEFAULT_GROUP_FIELDS,
+	);
 	await logEventFromContext(
 		ctx,
 		'googlecontacts.contactGroups.get',
-		{ ...input },
+		{ resourceName: input.resourceName },
 		'completed',
 	);
 	return result;
@@ -67,11 +80,11 @@ export const create: GoogleContactsEndpoints['contactGroupsCreate'] = async (
 		body: { contactGroup: { name: input.name } },
 	});
 
-	await persistContactGroup(ctx, result);
+	await persistContactGroup(ctx, result, WRITE_GROUP_FIELDS);
 	await logEventFromContext(
 		ctx,
 		'googlecontacts.contactGroups.create',
-		{ ...input },
+		{ resourceName: result.resourceName },
 		'completed',
 	);
 	return result;
@@ -83,7 +96,7 @@ export const update: GoogleContactsEndpoints['contactGroupsUpdate'] = async (
 ) => {
 	const result = await makeAuthenticatedPeopleRequest<
 		GoogleContactsEndpointOutputs['contactGroupsUpdate']
-	>(`/${input.resourceName}`, ctx, {
+	>(resourcePath('contactGroups', input.resourceName), ctx, {
 		method: 'PUT',
 		body: {
 			contactGroup: {
@@ -94,11 +107,11 @@ export const update: GoogleContactsEndpoints['contactGroupsUpdate'] = async (
 		},
 	});
 
-	await persistContactGroup(ctx, result);
+	await persistContactGroup(ctx, result, WRITE_GROUP_FIELDS);
 	await logEventFromContext(
 		ctx,
 		'googlecontacts.contactGroups.update',
-		{ ...input },
+		{ resourceName: input.resourceName },
 		'completed',
 	);
 	return result;
@@ -106,10 +119,14 @@ export const update: GoogleContactsEndpoints['contactGroupsUpdate'] = async (
 
 export const deleteGroup: GoogleContactsEndpoints['contactGroupsDelete'] =
 	async (ctx, input) => {
-		await makeAuthenticatedPeopleRequest<void>(`/${input.resourceName}`, ctx, {
-			method: 'DELETE',
-			query: { deleteContacts: input.deleteContacts },
-		});
+		await makeAuthenticatedPeopleRequest<void>(
+			resourcePath('contactGroups', input.resourceName),
+			ctx,
+			{
+				method: 'DELETE',
+				query: { deleteContacts: input.deleteContacts },
+			},
+		);
 
 		if (ctx.db.contactGroups) {
 			try {
@@ -122,7 +139,10 @@ export const deleteGroup: GoogleContactsEndpoints['contactGroupsDelete'] =
 		await logEventFromContext(
 			ctx,
 			'googlecontacts.contactGroups.delete',
-			{ ...input },
+			{
+				resourceName: input.resourceName,
+				deleteContacts: input.deleteContacts,
+			},
 			'completed',
 		);
 	};
@@ -131,18 +151,22 @@ export const modifyMembers: GoogleContactsEndpoints['contactGroupsModifyMembers'
 	async (ctx, input) => {
 		const result = await makeAuthenticatedPeopleRequest<
 			GoogleContactsEndpointOutputs['contactGroupsModifyMembers']
-		>(`/${input.resourceName}/members:modify`, ctx, {
-			method: 'POST',
-			body: {
-				resourceNamesToAdd: input.resourceNamesToAdd,
-				resourceNamesToRemove: input.resourceNamesToRemove,
+		>(
+			`${resourcePath('contactGroups', input.resourceName)}/members:modify`,
+			ctx,
+			{
+				method: 'POST',
+				body: {
+					resourceNamesToAdd: input.resourceNamesToAdd,
+					resourceNamesToRemove: input.resourceNamesToRemove,
+				},
 			},
-		});
+		);
 
 		await logEventFromContext(
 			ctx,
 			'googlecontacts.contactGroups.modifyMembers',
-			{ ...input },
+			{ resourceName: input.resourceName },
 			'completed',
 		);
 		return result;

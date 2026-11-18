@@ -65,7 +65,9 @@ export async function persistContact(
 			.filter((v): v is string => !!v),
 		organization: organization?.name,
 		jobTitle: organization?.title,
-		photoUrl: primaryOf(person.photos)?.url,
+		// Google returns a generated letter avatar (default: true) when the
+		// contact has no photo; that is not a photo of the contact.
+		photoUrl: primaryOf(person.photos?.filter((p) => !p.default))?.url,
 	};
 
 	// A field the caller asked for but Google returned empty has been cleared
@@ -105,9 +107,28 @@ export async function persistContacts(
 	}
 }
 
+/** Google's response mask for contactGroups.list and get when groupFields is unset. */
+export const DEFAULT_GROUP_FIELDS = [
+	'metadata',
+	'groupType',
+	'memberCount',
+	'name',
+];
+
+/** Response mask for contactGroups.create and update (readGroupFields unset). */
+export const WRITE_GROUP_FIELDS = ['metadata', 'groupType', 'name'];
+
+/** Row keys derived from each contact group field. */
+const ROW_KEYS_BY_GROUP_FIELD: Record<string, string[]> = {
+	name: ['name', 'formattedName'],
+	groupType: ['groupType'],
+	memberCount: ['memberCount'],
+};
+
 export async function persistContactGroup(
 	ctx: GoogleContactsContext,
 	group: ContactGroup,
+	requestedFields: string[] = DEFAULT_GROUP_FIELDS,
 ): Promise<void> {
 	if (!ctx.db.contactGroups) return;
 
@@ -116,12 +137,20 @@ export async function persistContactGroup(
 		return;
 	}
 
-	const incoming: Record<string, unknown> = {
+	const derived: Record<string, unknown> = {
 		name: group.name,
 		formattedName: group.formattedName,
 		groupType: group.groupType,
 		memberCount: group.memberCount,
 	};
+	// Same rule as contacts: only fields in the response mask may overwrite
+	// the stored row.
+	const incoming: Record<string, unknown> = {};
+	for (const field of requestedFields) {
+		for (const key of ROW_KEYS_BY_GROUP_FIELD[field] ?? []) {
+			incoming[key] = derived[key];
+		}
+	}
 	if (group.etag !== undefined) incoming.etag = group.etag;
 
 	try {
