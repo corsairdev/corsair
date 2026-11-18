@@ -119,12 +119,9 @@ export const ReportOrPendingSchema = z.union([
 	z.object({ result: ReportPendingSchema }).loose(),
 	// A body carrying retryTtl is a pending notice; if its retryTtl is not a
 	// number it must fail rather than pass as a loose report.
-	ReportResponseSchema.refine(
-		(body) =>
-			(body.result as Record<string, unknown> | null | undefined)?.retryTtl ===
-			undefined,
-		{ message: 'retryTtl must be a number of seconds' },
-	),
+	ReportResponseSchema.refine((body) => !('retryTtl' in (body.result ?? {})), {
+		message: 'retryTtl must be a number of seconds',
+	}),
 ]);
 export type HypeAuditorReportOrPending = z.infer<typeof ReportOrPendingSchema>;
 
