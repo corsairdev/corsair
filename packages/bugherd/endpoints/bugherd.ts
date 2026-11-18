@@ -36,6 +36,8 @@ function store(ctx: BugherdContext) {
 	return ctx.database ? ctx.db : undefined;
 }
 
+// The part of core's entity table these helpers use. Return values they
+// ignore are unknown; a stored row's data is whatever an earlier save wrote.
 type Table<T> = {
 	upsertByEntityId: (id: string, row: T) => Promise<unknown>;
 	deleteByEntityId: (id: string) => Promise<unknown>;
@@ -635,6 +637,7 @@ export const deleteTask: Endpoint<'deleteTask'> = async (ctx, input) => {
 
 export const moveTasks: Endpoint<'moveTasks'> = async (ctx, input) => {
 	const { project_id, destination_project_id, task_ids } = input;
+	// unknown: BugHerd documents no response body for this route.
 	const body = await makeBugherdRequest<unknown>(
 		`${projectPath(project_id)}/move_tasks.json`,
 		ctx.key,
@@ -839,7 +842,7 @@ async function oneColumn(
 	path: string,
 	event: string,
 	method: 'GET' | 'POST' | 'PUT' = 'GET',
-	// Zod-checked input, wrapped as BugHerd expects ({ task: ... }).
+	// Zod-checked input, wrapped as BugHerd expects ({ column: ... }).
 	body?: Record<string, unknown>,
 ): Promise<BugherdEndpointOutputs['showColumn']> {
 	const result = await makeBugherdRequest<BugherdEndpointOutputs['showColumn']>(
