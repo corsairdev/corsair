@@ -290,12 +290,41 @@ export const FileOutputSchema = z.object({
 		.describe(
 			'Set when the content was left out: the caller did not ask for it, or the file was over the limit.',
 		),
+	fileId: z
+		.string()
+		.optional()
+		.describe(
+			'Where the host saved the file, in place of its content, when it was over the limit. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text.',
+		),
 });
 
 export type FileOutput = z.infer<typeof FileOutputSchema>;
 
 /** Default most bytes returned inline: under the 1 MB a hosted script result may carry, once base64 adds a third. */
 export const FILE_OUTPUT_MAX_BYTES = 700_000;
+
+/**
+ * Where a host keeps a file too large to return inline. Called synchronously
+ * with the bytes; returns the id the output carries as `fileId`, or nothing to
+ * leave the content out as before. The host stores the file after the call
+ * returns: on Corsair it holds the bytes and swaps the id for a Files id.
+ */
+export type FileSink = (file: {
+	bytes: Uint8Array;
+	contentType: string;
+	filename?: string;
+}) => string | null | undefined;
+
+let currentSink: () => FileSink | undefined = () => undefined;
+
+/**
+ * For a host: how toFileOutput finds the sink for the operation it is running
+ * in, usually an AsyncLocalStorage's getStore. Core keeps no async context of
+ * its own, so this module stays free of Node-only imports.
+ */
+export function setFileSink(find: () => FileSink | undefined): void {
+	currentSink = find;
+}
 
 // Media types that hold text besides text/*. The +json and +xml suffixes count too.
 const TEXT_MEDIA_TYPES = new Set([
@@ -397,7 +426,8 @@ function asUtf8(bytes: Uint8Array): string | undefined {
 /**
  * Shapes downloaded bytes as a `FileOutput`. The content goes in when it was
  * asked for and fits `maxBytes`; the size and type are always reported, so a
- * caller that got no content still knows what it would be.
+ * caller that got no content still knows what it would be. Over the limit, a
+ * host's sink (setFileSink) may keep the file and the output carries its `fileId`.
  *
  * A text file in UTF-8 comes back as `text` instead of base64, so a caller can
  * read a CSV or JSON file as it is. A file served as application/octet-stream
@@ -425,7 +455,10 @@ export function toFileOutput(
 		return { ...base, contentOmitted: 'not_requested' };
 	}
 	if (bytes.byteLength > (options.maxBytes ?? FILE_OUTPUT_MAX_BYTES)) {
-		return { ...base, contentOmitted: 'over_limit' };
+		const fileId = currentSink()?.({ ...base, bytes });
+		return fileId
+			? { ...base, fileId }
+			: { ...base, contentOmitted: 'over_limit' };
 	}
 	const text =
 		options.text !== false && holdsText(base.contentType, options.filename)

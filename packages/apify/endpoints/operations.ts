@@ -1,4 +1,4 @@
-import type { EndpointRiskLevel } from 'corsair/core';
+import type { EndpointJob, EndpointRiskLevel } from 'corsair/core';
 
 export type ApifyOperationMethod =
 	| 'GET'
@@ -17,11 +17,42 @@ export type ApifyOperationDefinition = {
 	irreversible?: boolean;
 	description: string;
 	slug: string;
+	/** Set on an operation that starts a run or build; see EndpointJob. */
+	job?: EndpointJob;
 };
 
 export type ApifyOperationTree = {
 	readonly [key: string]: ApifyOperationDefinition | ApifyOperationTree;
 };
+
+// Runs and builds go on after the call that starts them returns, and each
+// answers `{ data: { id, status, ... } }`. Statuses are Apify's documented
+// lifecycle (docs.apify.com/platform/actors/running/runs-and-builds):
+// READY, RUNNING, TIMING-OUT and ABORTING are still going; jobs.test.ts holds
+// the list. Responses aren't schema-typed here (ApifyOperationOutputSchema).
+const RUN_JOB = {
+	idPath: 'data.id',
+	status: {
+		op: 'actorRuns.getActorRun',
+		idArg: 'runId',
+		statusPath: 'data.status',
+		done: ['SUCCEEDED'],
+		failed: ['FAILED', 'TIMED-OUT', 'ABORTED'],
+	},
+	cancel: { op: 'actorRuns.abortActorRun', idArg: 'runId' },
+} as const satisfies EndpointJob;
+
+const BUILD_JOB = {
+	idPath: 'data.id',
+	status: {
+		op: 'actorBuilds.getActorBuild',
+		idArg: 'buildId',
+		statusPath: 'data.status',
+		done: ['SUCCEEDED'],
+		failed: ['FAILED', 'TIMED-OUT', 'ABORTED'],
+	},
+	cancel: { op: 'actorBuilds.abortActorBuild', idArg: 'buildId' },
+} as const satisfies EndpointJob;
 
 export const apifyOperations = {
 	actorBuilds: {
@@ -318,6 +349,7 @@ export const apifyOperations = {
 			description:
 				'Tool to run a specific Actor task asynchronously. Use when you need to trigger a task run without waiting for completion and immediately retrieve its run details.',
 			slug: 'APIFY_RUN_TASK',
+			job: RUN_JOB,
 		},
 		runTaskSyncGetDatasetItems: {
 			method: 'GET',
@@ -471,6 +503,7 @@ export const apifyOperations = {
 			description:
 				"Tool to build an Actor with specified configuration. Use when you need to create a new build of an Actor with a specific version. The build process compiles the Actor's source code into a Docker image.",
 			slug: 'APIFY_ACT_BUILDS_POST',
+			job: BUILD_JOB,
 		},
 		createActor: {
 			method: 'POST',
@@ -706,6 +739,7 @@ export const apifyOperations = {
 			description:
 				'Tool to run a specific Actor asynchronously. Use when you need to trigger an Actor run without waiting for completion and retrieve its run details immediately.',
 			slug: 'APIFY_RUN_ACTOR',
+			job: RUN_JOB,
 		},
 		runActorSync: {
 			method: 'POST',
