@@ -17,7 +17,6 @@ const RUNNING: Record<string, string[]> = {
 	'lipsync.get': ['pending', 'running'],
 	'hyperframes.get': ['queued', 'rendering'],
 	'aiClipping.get': ['pending', 'running'],
-	'videoAgents.getSession': ['thinking', 'reviewing', 'generating'],
 };
 
 const OUTPUT_FOR: Record<string, z.ZodType> = {
@@ -33,9 +32,6 @@ const OUTPUT_FOR: Record<string, z.ZodType> = {
 	'hyperframes.get': HeygenEndpointOutputSchemas.hyperframesGet,
 	'aiClipping.create': HeygenEndpointOutputSchemas.aiClippingCreate,
 	'aiClipping.get': HeygenEndpointOutputSchemas.aiClippingGet,
-	'videoAgents.createSession':
-		HeygenEndpointOutputSchemas.videoAgentsCreateSession,
-	'videoAgents.getSession': HeygenEndpointOutputSchemas.videoAgentsGetSession,
 };
 
 const unwrap = (schema: z.ZodType | undefined): z.ZodType | undefined => {
@@ -61,13 +57,12 @@ const jobs = Object.entries(meta).filter(
 );
 
 describe('HeyGen jobs', () => {
-	it('declares a job on every operation that starts a render, translation, lipsync, clipping job or agent session', () => {
+	it('declares a job on every operation that starts a render, translation, lipsync or clipping job', () => {
 		expect(jobs.map(([op]) => op).sort()).toEqual([
 			'aiClipping.create',
 			'hyperframes.create',
 			'lipsync.create',
 			'proofread.generateVideo',
-			'videoAgents.createSession',
 			'videos.createWebm',
 			'videos.generate',
 			'videos.templateGenerate',

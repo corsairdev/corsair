@@ -1016,21 +1016,10 @@ const CLIPPING_JOB = {
 	},
 } as const;
 
-// waiting_for_input means the agent stopped for a reply and nothing is
-// rendering; in the default generate mode its reserved video has failed. The
-// session goes no further until videoAgents.sendMessage, so the job counts it
-// as ended without a video.
-const AGENT_JOB = {
-	idPath: 'data.session_id',
-	status: {
-		op: 'videoAgents.getSession',
-		idArg: 'session_id',
-		statusPath: 'data.status',
-		done: ['completed'],
-		failed: ['failed', 'waiting_for_input'],
-	},
-	cancel: { op: 'videoAgents.stopSession', idArg: 'session_id' },
-} as const;
+// videoAgents.createSession declares no job. Its session's waiting_for_input
+// means the reserved video failed in generate mode but is a pause for
+// videoAgents.sendMessage in chat mode, and a job's status values can't depend
+// on the session's mode.
 
 const heygenEndpointMeta = {
 	'videos.generate': {
@@ -1517,7 +1506,6 @@ const heygenEndpointMeta = {
 		riskLevel: 'write',
 		description:
 			'Create a video agent session that generates a video from a text prompt',
-		job: AGENT_JOB,
 	},
 	'videoAgents.listStyles': {
 		riskLevel: 'read',
