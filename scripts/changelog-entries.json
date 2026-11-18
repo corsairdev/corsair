@@ -9529,5 +9529,11 @@
         "title": "Less repeated work per plugin call"
       }
     ]
+  },
+  {
+    "date": "2026-11-18",
+    "package": "cloud",
+    "version": "0.2.9",
+    "changes": []
   }
 ]
