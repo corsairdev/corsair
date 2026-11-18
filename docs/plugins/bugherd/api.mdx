@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Bugherd: every `bugherd.api.*` operation with input and output types."
+title: "BugHerd API reference"
+sidebarTitle: "API"
+description: "API reference for the BugHerd plugin in Corsair: every `bugherd.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `bugherd.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -15,21 +14,20 @@ Every `bugherd.api.*` operation is listed below with parameter shapes and return
 
 `columns.create`
 
-Create a new column
+Add a custom column at the end of a project board.
 
 **Risk:** `write`
 
 ```ts
-await corsair.bugherd.api.columns.create({});
+await corsair.bugherd.api.columns.create({ project_id: 552668, name: 'In Review' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `project_id` | `number` | Yes | — |
-| `name` | `string` | Yes | — |
-| `position` | `number` | No | — |
+| `project_id` | `number` | Yes | BugHerd project id. |
+| `name` | `string` | Yes | Column name. It is added at the end of the board. |
 
 
 
@@ -45,11 +43,12 @@ await corsair.bugherd.api.columns.create({});
 ```ts
 {
   id: number,
-  name: string,
-  project_id: number,
-  position: number,
-  created_at: string,
-  updated_at: string
+  name?: string | null,
+  project_id?: number | null,
+  position?: number | null,
+  tasks_count?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }
 ```
 </Accordion>
@@ -59,23 +58,54 @@ await corsair.bugherd.api.columns.create({});
 
 ---
 
-### list
+### delete
 
-`columns.list`
+`columns.delete`
 
-List columns in a project
+Delete an empty column. Cannot be undone.
 
-**Risk:** `read`
+**Risk:** `destructive`
 
 ```ts
-await corsair.bugherd.api.columns.list({});
+await corsair.bugherd.api.columns.delete({ project_id: 552668, column_id: 55 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `project_id` | `number` | Yes | — |
+| `project_id` | `number` | Yes | BugHerd project id. |
+| `column_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+
+
+
+---
+
+### list
+
+`columns.list`
+
+List the columns on a project board, built-in and custom.
+
+**Risk:** `read`
+
+```ts
+await corsair.bugherd.api.columns.list({ project_id: 552668 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | BugHerd project id. |
 
 
 
@@ -91,11 +121,12 @@ await corsair.bugherd.api.columns.list({});
 ```ts
 {
   id: number,
-  name: string,
-  project_id: number,
-  position: number,
-  created_at: string,
-  updated_at: string
+  name?: string | null,
+  project_id?: number | null,
+  position?: number | null,
+  tasks_count?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }[]
 ```
 </Accordion>
@@ -109,18 +140,19 @@ await corsair.bugherd.api.columns.list({});
 
 `columns.show`
 
-Show column details
+Get one column.
 
 **Risk:** `read`
 
 ```ts
-await corsair.bugherd.api.columns.show({});
+await corsair.bugherd.api.columns.show({ project_id: 552668, column_id: 55 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `project_id` | `number` | Yes | BugHerd project id. |
 | `column_id` | `number` | Yes | — |
 
 
@@ -137,11 +169,12 @@ await corsair.bugherd.api.columns.show({});
 ```ts
 {
   id: number,
-  name: string,
-  project_id: number,
-  position: number,
-  created_at: string,
-  updated_at: string
+  name?: string | null,
+  project_id?: number | null,
+  position?: number | null,
+  tasks_count?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }
 ```
 </Accordion>
@@ -155,21 +188,21 @@ await corsair.bugherd.api.columns.show({});
 
 `columns.update`
 
-Update a column
+Rename a custom column.
 
 **Risk:** `write`
 
 ```ts
-await corsair.bugherd.api.columns.update({});
+await corsair.bugherd.api.columns.update({ project_id: 552668, column_id: 55, name: 'QA' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `project_id` | `number` | Yes | BugHerd project id. |
 | `column_id` | `number` | Yes | — |
-| `name` | `string` | No | — |
-| `position` | `number` | No | — |
+| `name` | `string` | Yes | — |
 
 
 
@@ -185,11 +218,12 @@ await corsair.bugherd.api.columns.update({});
 ```ts
 {
   id: number,
-  name: string,
-  project_id: number,
-  position: number,
-  created_at: string,
-  updated_at: string
+  name?: string | null,
+  project_id?: number | null,
+  position?: number | null,
+  tasks_count?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }
 ```
 </Accordion>
@@ -205,7 +239,7 @@ await corsair.bugherd.api.columns.update({});
 
 `organization.show`
 
-Show organization details
+Get the organization name and id.
 
 **Risk:** `read`
 
@@ -228,9 +262,7 @@ await corsair.bugherd.api.organization.show({});
 ```ts
 {
   id: number,
-  name: string,
-  created_at: string,
-  updated_at: string
+  name?: string | null
 }
 ```
 </Accordion>
@@ -246,21 +278,21 @@ await corsair.bugherd.api.organization.show({});
 
 `projects.addGuest`
 
-Add a guest to a project
+Add a guest (client) to a project by user id, or invite one by email. An email invite sends the person a message.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
-await corsair.bugherd.api.projects.addGuest({});
+await corsair.bugherd.api.projects.addGuest({ project_id: 552668, user_id: 123 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `project_id` | `number` | Yes | — |
-| `email` | `string` | Yes | — |
-| `role` | `guest \| client \| member` | No | — |
+| `project_id` | `number` | Yes | BugHerd project id. |
+| `user_id` | `number` | No | Id of an existing user. |
+| `email` | `string` | No | Invite a new guest by email. BugHerd emails them an invitation. |
 
 
 
@@ -268,20 +300,51 @@ await corsair.bugherd.api.projects.addGuest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `user` | `object` | Yes | — |
+| `project` | `object` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="user full type">
+<Accordion title="project full type">
 
 ```ts
 {
   id: number,
-  email: string,
-  first_name?: string | null,
-  last_name?: string | null,
-  name: string,
-  created_at: string,
-  updated_at: string
+  name?: string | null,
+  created_at?: string | null,
+  tasks?: boolean | null,
+  devurl?: string | null,
+  is_active?: boolean | null,
+  is_public?: boolean | null,
+  has_custom_columns?: boolean | null,
+  guests_see_guests?: boolean | null,
+  owner_name?: string | null,
+  sites?: string[] | null,
+  allow_guests_change_task_status?: boolean | null,
+  assign_guests?: boolean | null,
+  allow_project_summary_email?: boolean | null,
+  allow_task_done_email?: boolean | null,
+  allow_project_owner_notifications?: boolean | null,
+  change_guest_default_column?: boolean | null,
+  members?: {
+    id: number,
+    email?: string | null,
+    display_name?: string | null,
+    avatar_url?: string | null
+  }[] | null,
+  guests?: {
+    id: number,
+    email?: string | null,
+    display_name?: string | null,
+    avatar_url?: string | null
+  }[] | null,
+  columns?: {
+    id: number,
+    name?: string | null,
+    project_id?: number | null,
+    position?: number | null,
+    tasks_count?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null
 }
 ```
 </Accordion>
@@ -295,21 +358,20 @@ await corsair.bugherd.api.projects.addGuest({});
 
 `projects.addMember`
 
-Add a member to a project
+Add one or more organization members to a project.
 
 **Risk:** `write`
 
 ```ts
-await corsair.bugherd.api.projects.addMember({});
+await corsair.bugherd.api.projects.addMember({ project_id: 552668, user_id: 4561 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `project_id` | `number` | Yes | — |
-| `user_id` | `number` | Yes | — |
-| `role` | `member \| manager` | No | — |
+| `project_id` | `number` | Yes | BugHerd project id. |
+| `user_id` | `number \| number[]` | Yes | Id of an organization member, or a list of ids. |
 
 
 
@@ -317,20 +379,51 @@ await corsair.bugherd.api.projects.addMember({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `user` | `object` | Yes | — |
+| `project` | `object` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="user full type">
+<Accordion title="project full type">
 
 ```ts
 {
   id: number,
-  email: string,
-  first_name?: string | null,
-  last_name?: string | null,
-  name: string,
-  created_at: string,
-  updated_at: string
+  name?: string | null,
+  created_at?: string | null,
+  tasks?: boolean | null,
+  devurl?: string | null,
+  is_active?: boolean | null,
+  is_public?: boolean | null,
+  has_custom_columns?: boolean | null,
+  guests_see_guests?: boolean | null,
+  owner_name?: string | null,
+  sites?: string[] | null,
+  allow_guests_change_task_status?: boolean | null,
+  assign_guests?: boolean | null,
+  allow_project_summary_email?: boolean | null,
+  allow_task_done_email?: boolean | null,
+  allow_project_owner_notifications?: boolean | null,
+  change_guest_default_column?: boolean | null,
+  members?: {
+    id: number,
+    email?: string | null,
+    display_name?: string | null,
+    avatar_url?: string | null
+  }[] | null,
+  guests?: {
+    id: number,
+    email?: string | null,
+    display_name?: string | null,
+    avatar_url?: string | null
+  }[] | null,
+  columns?: {
+    id: number,
+    name?: string | null,
+    project_id?: number | null,
+    position?: number | null,
+    tasks_count?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null
 }
 ```
 </Accordion>
@@ -344,24 +437,23 @@ await corsair.bugherd.api.projects.addMember({});
 
 `projects.create`
 
-Create a new project
+Create a project for a website. Members and guests are added separately.
 
 **Risk:** `write`
 
 ```ts
-await corsair.bugherd.api.projects.create({});
+await corsair.bugherd.api.projects.create({ name: 'Marketing site', devurl: 'https://www.example.com' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `name` | `string` | Yes | — |
+| `name` | `string` | Yes | Project name. |
+| `devurl` | `string` | Yes | The website the project gives feedback on. |
 | `is_active` | `boolean` | No | — |
-| `is_public` | `boolean` | No | — |
-| `description` | `string` | No | — |
-| `technical_contact_email` | `string` | No | — |
-| `guest_default_role` | `string` | No | — |
+| `is_public` | `boolean` | No | Let anyone leave feedback without a login. |
+| `guests_see_guests` | `boolean` | No | Let guests see other guests' feedback. |
 
 
 
@@ -377,17 +469,43 @@ await corsair.bugherd.api.projects.create({});
 ```ts
 {
   id: number,
-  name: string,
-  is_active: boolean,
-  is_public: boolean,
-  created_at: string,
-  updated_at: string,
-  deleted_at?: string | null,
-  description?: string | null,
-  technical_contact_email?: string | null,
-  guest_default_role?: string | null,
-  settings?: {
-  }
+  name?: string | null,
+  created_at?: string | null,
+  tasks?: boolean | null,
+  devurl?: string | null,
+  is_active?: boolean | null,
+  is_public?: boolean | null,
+  has_custom_columns?: boolean | null,
+  guests_see_guests?: boolean | null,
+  owner_name?: string | null,
+  sites?: string[] | null,
+  allow_guests_change_task_status?: boolean | null,
+  assign_guests?: boolean | null,
+  allow_project_summary_email?: boolean | null,
+  allow_task_done_email?: boolean | null,
+  allow_project_owner_notifications?: boolean | null,
+  change_guest_default_column?: boolean | null,
+  members?: {
+    id: number,
+    email?: string | null,
+    display_name?: string | null,
+    avatar_url?: string | null
+  }[] | null,
+  guests?: {
+    id: number,
+    email?: string | null,
+    display_name?: string | null,
+    avatar_url?: string | null
+  }[] | null,
+  columns?: {
+    id: number,
+    name?: string | null,
+    project_id?: number | null,
+    position?: number | null,
+    tasks_count?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null
 }
 ```
 </Accordion>
@@ -401,23 +519,28 @@ await corsair.bugherd.api.projects.create({});
 
 `projects.delete`
 
-Delete a project
+Delete a project and all its tasks. Cannot be undone.
 
 **Risk:** `destructive`
 
 ```ts
-await corsair.bugherd.api.projects.delete({});
+await corsair.bugherd.api.projects.delete({ project_id: 552668 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `project_id` | `number` | Yes | — |
+| `project_id` | `number` | Yes | BugHerd project id. |
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+
 
 
 ---
@@ -426,20 +549,19 @@ await corsair.bugherd.api.projects.delete({});
 
 `projects.list`
 
-List all projects
+List every project in the organization, active and inactive. 100 per page.
 
 **Risk:** `read`
 
 ```ts
-await corsair.bugherd.api.projects.list({});
+await corsair.bugherd.api.projects.list({ page: 1 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `page` | `number` | No | — |
-| `per_page` | `number` | No | — |
+| `page` | `number` | No | Page number, from 1. Pages hold up to 100 records. |
 
 
 
@@ -456,17 +578,43 @@ await corsair.bugherd.api.projects.list({});
 ```ts
 {
   id: number,
-  name: string,
-  is_active: boolean,
-  is_public: boolean,
-  created_at: string,
-  updated_at: string,
-  deleted_at?: string | null,
-  description?: string | null,
-  technical_contact_email?: string | null,
-  guest_default_role?: string | null,
-  settings?: {
-  }
+  name?: string | null,
+  created_at?: string | null,
+  tasks?: boolean | null,
+  devurl?: string | null,
+  is_active?: boolean | null,
+  is_public?: boolean | null,
+  has_custom_columns?: boolean | null,
+  guests_see_guests?: boolean | null,
+  owner_name?: string | null,
+  sites?: string[] | null,
+  allow_guests_change_task_status?: boolean | null,
+  assign_guests?: boolean | null,
+  allow_project_summary_email?: boolean | null,
+  allow_task_done_email?: boolean | null,
+  allow_project_owner_notifications?: boolean | null,
+  change_guest_default_column?: boolean | null,
+  members?: {
+    id: number,
+    email?: string | null,
+    display_name?: string | null,
+    avatar_url?: string | null
+  }[] | null,
+  guests?: {
+    id: number,
+    email?: string | null,
+    display_name?: string | null,
+    avatar_url?: string | null
+  }[] | null,
+  columns?: {
+    id: number,
+    name?: string | null,
+    project_id?: number | null,
+    position?: number | null,
+    tasks_count?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null
 }[]
 ```
 </Accordion>
@@ -475,9 +623,7 @@ await corsair.bugherd.api.projects.list({});
 
 ```ts
 {
-  current_page: number,
-  total_pages: number,
-  total_count: number
+  count?: number | null
 }
 ```
 </Accordion>
@@ -491,7 +637,7 @@ await corsair.bugherd.api.projects.list({});
 
 `projects.listActive`
 
-List active projects
+List active projects only. 100 per page.
 
 **Risk:** `read`
 
@@ -503,8 +649,7 @@ await corsair.bugherd.api.projects.listActive({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `page` | `number` | No | — |
-| `per_page` | `number` | No | — |
+| `page` | `number` | No | Page number, from 1. Pages hold up to 100 records. |
 
 
 
@@ -521,17 +666,43 @@ await corsair.bugherd.api.projects.listActive({});
 ```ts
 {
   id: number,
-  name: string,
-  is_active: boolean,
-  is_public: boolean,
-  created_at: string,
-  updated_at: string,
-  deleted_at?: string | null,
-  description?: string | null,
-  technical_contact_email?: string | null,
-  guest_default_role?: string | null,
-  settings?: {
-  }
+  name?: string | null,
+  created_at?: string | null,
+  tasks?: boolean | null,
+  devurl?: string | null,
+  is_active?: boolean | null,
+  is_public?: boolean | null,
+  has_custom_columns?: boolean | null,
+  guests_see_guests?: boolean | null,
+  owner_name?: string | null,
+  sites?: string[] | null,
+  allow_guests_change_task_status?: boolean | null,
+  assign_guests?: boolean | null,
+  allow_project_summary_email?: boolean | null,
+  allow_task_done_email?: boolean | null,
+  allow_project_owner_notifications?: boolean | null,
+  change_guest_default_column?: boolean | null,
+  members?: {
+    id: number,
+    email?: string | null,
+    display_name?: string | null,
+    avatar_url?: string | null
+  }[] | null,
+  guests?: {
+    id: number,
+    email?: string | null,
+    display_name?: string | null,
+    avatar_url?: string | null
+  }[] | null,
+  columns?: {
+    id: number,
+    name?: string | null,
+    project_id?: number | null,
+    position?: number | null,
+    tasks_count?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null
 }[]
 ```
 </Accordion>
@@ -540,9 +711,7 @@ await corsair.bugherd.api.projects.listActive({});
 
 ```ts
 {
-  current_page: number,
-  total_pages: number,
-  total_count: number
+  count?: number | null
 }
 ```
 </Accordion>
@@ -556,19 +725,19 @@ await corsair.bugherd.api.projects.listActive({});
 
 `projects.show`
 
-Show project details
+Get one project with its members, guests and columns.
 
 **Risk:** `read`
 
 ```ts
-await corsair.bugherd.api.projects.show({});
+await corsair.bugherd.api.projects.show({ project_id: 552668 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `project_id` | `number` | Yes | — |
+| `project_id` | `number` | Yes | BugHerd project id. |
 
 
 
@@ -584,17 +753,43 @@ await corsair.bugherd.api.projects.show({});
 ```ts
 {
   id: number,
-  name: string,
-  is_active: boolean,
-  is_public: boolean,
-  created_at: string,
-  updated_at: string,
-  deleted_at?: string | null,
-  description?: string | null,
-  technical_contact_email?: string | null,
-  guest_default_role?: string | null,
-  settings?: {
-  }
+  name?: string | null,
+  created_at?: string | null,
+  tasks?: boolean | null,
+  devurl?: string | null,
+  is_active?: boolean | null,
+  is_public?: boolean | null,
+  has_custom_columns?: boolean | null,
+  guests_see_guests?: boolean | null,
+  owner_name?: string | null,
+  sites?: string[] | null,
+  allow_guests_change_task_status?: boolean | null,
+  assign_guests?: boolean | null,
+  allow_project_summary_email?: boolean | null,
+  allow_task_done_email?: boolean | null,
+  allow_project_owner_notifications?: boolean | null,
+  change_guest_default_column?: boolean | null,
+  members?: {
+    id: number,
+    email?: string | null,
+    display_name?: string | null,
+    avatar_url?: string | null
+  }[] | null,
+  guests?: {
+    id: number,
+    email?: string | null,
+    display_name?: string | null,
+    avatar_url?: string | null
+  }[] | null,
+  columns?: {
+    id: number,
+    name?: string | null,
+    project_id?: number | null,
+    position?: number | null,
+    tasks_count?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null
 }
 ```
 </Accordion>
@@ -608,25 +803,25 @@ await corsair.bugherd.api.projects.show({});
 
 `projects.update`
 
-Update a project
+Change a project's name, URL or settings. Only the fields given change.
 
 **Risk:** `write`
 
 ```ts
-await corsair.bugherd.api.projects.update({});
+await corsair.bugherd.api.projects.update({ project_id: 552668, is_public: false });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `project_id` | `number` | Yes | — |
+| `project_id` | `number` | Yes | BugHerd project id. |
 | `name` | `string` | No | — |
+| `devurl` | `string` | No | — |
 | `is_active` | `boolean` | No | — |
 | `is_public` | `boolean` | No | — |
-| `description` | `string` | No | — |
-| `technical_contact_email` | `string` | No | — |
-| `guest_default_role` | `string` | No | — |
+| `has_custom_columns` | `boolean` | No | — |
+| `guests_see_guests` | `boolean` | No | — |
 
 
 
@@ -642,17 +837,43 @@ await corsair.bugherd.api.projects.update({});
 ```ts
 {
   id: number,
-  name: string,
-  is_active: boolean,
-  is_public: boolean,
-  created_at: string,
-  updated_at: string,
-  deleted_at?: string | null,
-  description?: string | null,
-  technical_contact_email?: string | null,
-  guest_default_role?: string | null,
-  settings?: {
-  }
+  name?: string | null,
+  created_at?: string | null,
+  tasks?: boolean | null,
+  devurl?: string | null,
+  is_active?: boolean | null,
+  is_public?: boolean | null,
+  has_custom_columns?: boolean | null,
+  guests_see_guests?: boolean | null,
+  owner_name?: string | null,
+  sites?: string[] | null,
+  allow_guests_change_task_status?: boolean | null,
+  assign_guests?: boolean | null,
+  allow_project_summary_email?: boolean | null,
+  allow_task_done_email?: boolean | null,
+  allow_project_owner_notifications?: boolean | null,
+  change_guest_default_column?: boolean | null,
+  members?: {
+    id: number,
+    email?: string | null,
+    display_name?: string | null,
+    avatar_url?: string | null
+  }[] | null,
+  guests?: {
+    id: number,
+    email?: string | null,
+    display_name?: string | null,
+    avatar_url?: string | null
+  }[] | null,
+  columns?: {
+    id: number,
+    name?: string | null,
+    project_id?: number | null,
+    position?: number | null,
+    tasks_count?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null
 }
 ```
 </Accordion>
@@ -668,28 +889,28 @@ await corsair.bugherd.api.projects.update({});
 
 `tasks.create`
 
-Create a new task
+Create a task in a project. Without a status it lands in the Feedback panel.
 
 **Risk:** `write`
 
 ```ts
-await corsair.bugherd.api.tasks.create({});
+await corsair.bugherd.api.tasks.create({ project_id: 552668, description: 'Login button does nothing on Safari', priority: 'important', status: 'todo', tag_names: ['safari'] });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `project_id` | `number` | Yes | — |
-| `description` | `string` | Yes | — |
-| `priority` | `critical \| high \| normal \| low` | No | — |
-| `status` | `string` | No | — |
-| `tag_list` | `string[]` | No | — |
-| `assignee_id` | `number` | No | — |
-| `reporter_id` | `number` | No | — |
-| `external_id` | `string` | No | — |
-| `due_date` | `string` | No | — |
-| `column_id` | `number` | No | — |
+| `project_id` | `number` | Yes | BugHerd project id. |
+| `description` | `string` | Yes | What the task is about. |
+| `priority` | `not set \| critical \| important \| normal \| minor` | No | Task priority. |
+| `status` | `string` | No | Column name. Leave it out to put the task in the Feedback panel. |
+| `requester_id` | `number` | No | — |
+| `requester_email` | `string` | No | — |
+| `assigned_to_id` | `number` | No | — |
+| `assigned_to_email` | `string` | No | Must be a member of the project. |
+| `tag_names` | `string[]` | No | — |
+| `external_id` | `string` | No | Your own reference for the task. |
 
 
 
@@ -705,22 +926,54 @@ await corsair.bugherd.api.tasks.create({});
 ```ts
 {
   id: number,
-  description: string,
-  status: string,
-  priority?: string | null,
-  tag_list: string[],
-  created_at: string,
-  updated_at: string,
+  local_task_id?: number | null,
+  project_id?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
   closed_at?: string | null,
-  project_id: number,
-  reporter_id?: number | null,
-  assignee_id?: number | null,
+  deleted_at?: string | null,
+  title?: string | null,
+  description?: string | null,
+  status?: string | null,
+  status_id?: number | null,
+  priority?: string | null,
+  priority_id?: number | null,
+  site?: string | null,
+  url?: string | null,
+  tag_names?: string[] | null,
   external_id?: string | null,
-  attachments_count: number,
-  comments_count: number,
-  due_date?: string | null,
-  duedate?: string | null,
-  column_id?: number | null
+  requester_email?: string | null,
+  attachments?: {
+    id: number,
+    file_name?: string | null,
+    url?: string | null,
+    created_at?: string | null
+  }[] | null,
+  screenshot_url?: string | null,
+  secret_link?: string | null,
+  admin_link?: string | null,
+  assigned_to?: {
+    id?: number | null,
+    email?: string | null,
+    display_name?: string | null
+  } | null,
+  requester?: {
+    id?: number | null,
+    email?: string | null,
+    display_name?: string | null
+  } | null,
+  project_name?: string | null,
+  due_at?: string | null,
+  assignee_ids?: number[] | null,
+  assignees?: {
+    id?: number | null,
+    email?: string | null,
+    display_name?: string | null
+  }[] | null,
+  assigned_to_id?: number | null,
+  requester_id?: number | null,
+  column_id?: number | null,
+  metadata?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -734,23 +987,22 @@ await corsair.bugherd.api.tasks.create({});
 
 `tasks.createAttachment`
 
-Create an attachment reference
+Attach a file to a task from a public URL. BugHerd keeps a copy.
 
 **Risk:** `write`
 
 ```ts
-await corsair.bugherd.api.tasks.createAttachment({});
+await corsair.bugherd.api.tasks.createAttachment({ project_id: 552668, task_id: 98765, file_name: 'screenshot.png', url: 'https://example.com/screenshot.png' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `task_id` | `number` | Yes | — |
-| `file_name` | `string` | No | — |
-| `file_size` | `number` | No | — |
-| `content_type` | `string` | No | — |
-| `url` | `string` | No | — |
+| `project_id` | `number` | Yes | BugHerd project id. |
+| `task_id` | `number` | Yes | Global task id (the `id` field, not the #number shown in the UI). |
+| `file_name` | `string` | Yes | Name to show for the file. |
+| `url` | `string` | Yes | Public URL of the file. BugHerd downloads and keeps a copy. |
 
 
 
@@ -766,14 +1018,9 @@ await corsair.bugherd.api.tasks.createAttachment({});
 ```ts
 {
   id: number,
-  file_name: string,
-  file_size: number,
-  content_type: string,
-  url: string,
-  created_at: string,
-  updated_at: string,
-  task_id: number,
-  user_id: number
+  file_name?: string | null,
+  url?: string | null,
+  created_at?: string | null
 }
 ```
 </Accordion>
@@ -787,20 +1034,24 @@ await corsair.bugherd.api.tasks.createAttachment({});
 
 `tasks.createComment`
 
-Create a comment on a task
+Comment on a task, optionally visible to team members only.
 
 **Risk:** `write`
 
 ```ts
-await corsair.bugherd.api.tasks.createComment({});
+await corsair.bugherd.api.tasks.createComment({ project_id: 552668, task_id: 98765, text: 'Fixed in the next release.', is_private: true });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `task_id` | `number` | Yes | — |
-| `body` | `string` | Yes | — |
+| `project_id` | `number` | Yes | BugHerd project id. |
+| `task_id` | `number` | Yes | Global task id (the `id` field, not the #number shown in the UI). |
+| `text` | `string` | Yes | Comment text. |
+| `user_id` | `number` | No | Who the comment is from. |
+| `email` | `string` | No | Who the comment is from, by email, instead of user_id. |
+| `is_private` | `boolean` | No | Visible to team members only, not guests. |
 
 
 
@@ -816,11 +1067,10 @@ await corsair.bugherd.api.tasks.createComment({});
 ```ts
 {
   id: number,
-  body: string,
-  created_at: string,
-  updated_at: string,
-  task_id: number,
-  user_id: number
+  text?: string | null,
+  created_at?: string | null,
+  user_id?: number | null,
+  is_private?: boolean | null
 }
 ```
 </Accordion>
@@ -830,25 +1080,24 @@ await corsair.bugherd.api.tasks.createComment({});
 
 ---
 
-### listAttachments
+### delete
 
-`tasks.listAttachments`
+`tasks.delete`
 
-List attachments for a task
+Delete a task. Cannot be undone.
 
-**Risk:** `read`
+**Risk:** `destructive`
 
 ```ts
-await corsair.bugherd.api.tasks.listAttachments({});
+await corsair.bugherd.api.tasks.delete({ project_id: 552668, task_id: 98765 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `task_id` | `number` | Yes | — |
-| `page` | `number` | No | — |
-| `per_page` | `number` | No | — |
+| `project_id` | `number` | Yes | BugHerd project id. |
+| `task_id` | `number` | Yes | Global task id (the `id` field, not the #number shown in the UI). |
 
 
 
@@ -856,62 +1105,69 @@ await corsair.bugherd.api.tasks.listAttachments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `attachments` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="attachments full type">
-
-```ts
-{
-  id: number,
-  file_name: string,
-  file_size: number,
-  content_type: string,
-  url: string,
-  created_at: string,
-  updated_at: string,
-  task_id: number,
-  user_id: number
-}[]
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-  current_page: number,
-  total_pages: number,
-  total_count: number
-}
-```
-</Accordion>
-</AccordionGroup>
+| `success` | `boolean \| null` | No | — |
 
 
 
 ---
 
-### listForUser
+### deleteAttachment
 
-`tasks.listForUser`
+`tasks.deleteAttachment`
 
-List tasks assigned to a user
+Remove an attachment from a task. Cannot be undone.
 
-**Risk:** `read`
+**Risk:** `destructive`
 
 ```ts
-await corsair.bugherd.api.tasks.listForUser({});
+await corsair.bugherd.api.tasks.deleteAttachment({ project_id: 552668, task_id: 98765, attachment_id: 331 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `user_id` | `number` | Yes | — |
-| `page` | `number` | No | — |
-| `per_page` | `number` | No | — |
+| `project_id` | `number` | Yes | BugHerd project id. |
+| `task_id` | `number` | Yes | Global task id (the `id` field, not the #number shown in the UI). |
+| `attachment_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+
+
+
+---
+
+### list
+
+`tasks.list`
+
+List tasks in a project, filtered by status, priority, tag, assignee, external id or date. 100 per page.
+
+**Risk:** `read`
+
+```ts
+await corsair.bugherd.api.tasks.list({ project_id: 552668, status: 'todo', priority: 'critical' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | BugHerd project id. |
+| `updated_since` | `string` | No | Only records updated after this ISO 8601 timestamp. |
+| `created_since` | `string` | No | Only records created after this ISO 8601 timestamp. |
+| `status` | `string` | No | Column name: backlog, todo, doing, done, closed or a custom column. |
+| `priority` | `not set \| critical \| important \| normal \| minor` | No | Task priority. |
+| `tag` | `string` | No | Only tasks with this tag. |
+| `assigned_to_id` | `number` | No | Only tasks assigned to this user. |
+| `external_id` | `string` | No | — |
+| `page` | `number` | No | Page number, from 1. Pages hold up to 100 records. |
 
 
 
@@ -928,22 +1184,54 @@ await corsair.bugherd.api.tasks.listForUser({});
 ```ts
 {
   id: number,
-  description: string,
-  status: string,
-  priority?: string | null,
-  tag_list: string[],
-  created_at: string,
-  updated_at: string,
+  local_task_id?: number | null,
+  project_id?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
   closed_at?: string | null,
-  project_id: number,
-  reporter_id?: number | null,
-  assignee_id?: number | null,
+  deleted_at?: string | null,
+  title?: string | null,
+  description?: string | null,
+  status?: string | null,
+  status_id?: number | null,
+  priority?: string | null,
+  priority_id?: number | null,
+  site?: string | null,
+  url?: string | null,
+  tag_names?: string[] | null,
   external_id?: string | null,
-  attachments_count: number,
-  comments_count: number,
-  due_date?: string | null,
-  duedate?: string | null,
-  column_id?: number | null
+  requester_email?: string | null,
+  attachments?: {
+    id: number,
+    file_name?: string | null,
+    url?: string | null,
+    created_at?: string | null
+  }[] | null,
+  screenshot_url?: string | null,
+  secret_link?: string | null,
+  admin_link?: string | null,
+  assigned_to?: {
+    id?: number | null,
+    email?: string | null,
+    display_name?: string | null
+  } | null,
+  requester?: {
+    id?: number | null,
+    email?: string | null,
+    display_name?: string | null
+  } | null,
+  project_name?: string | null,
+  due_at?: string | null,
+  assignee_ids?: number[] | null,
+  assignees?: {
+    id?: number | null,
+    email?: string | null,
+    display_name?: string | null
+  }[] | null,
+  assigned_to_id?: number | null,
+  requester_id?: number | null,
+  column_id?: number | null,
+  metadata?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -952,9 +1240,646 @@ await corsair.bugherd.api.tasks.listForUser({});
 
 ```ts
 {
-  current_page: number,
-  total_pages: number,
-  total_count: number
+  count?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listArchived
+
+`tasks.listArchived`
+
+List closed and archived tasks in a project.
+
+**Risk:** `read`
+
+```ts
+await corsair.bugherd.api.tasks.listArchived({ project_id: 552668 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | BugHerd project id. |
+| `page` | `number` | No | Page number, from 1. Pages hold up to 100 records. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tasks` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="tasks full type">
+
+```ts
+{
+  id: number,
+  local_task_id?: number | null,
+  project_id?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  closed_at?: string | null,
+  deleted_at?: string | null,
+  title?: string | null,
+  description?: string | null,
+  status?: string | null,
+  status_id?: number | null,
+  priority?: string | null,
+  priority_id?: number | null,
+  site?: string | null,
+  url?: string | null,
+  tag_names?: string[] | null,
+  external_id?: string | null,
+  requester_email?: string | null,
+  attachments?: {
+    id: number,
+    file_name?: string | null,
+    url?: string | null,
+    created_at?: string | null
+  }[] | null,
+  screenshot_url?: string | null,
+  secret_link?: string | null,
+  admin_link?: string | null,
+  assigned_to?: {
+    id?: number | null,
+    email?: string | null,
+    display_name?: string | null
+  } | null,
+  requester?: {
+    id?: number | null,
+    email?: string | null,
+    display_name?: string | null
+  } | null,
+  project_name?: string | null,
+  due_at?: string | null,
+  assignee_ids?: number[] | null,
+  assignees?: {
+    id?: number | null,
+    email?: string | null,
+    display_name?: string | null
+  }[] | null,
+  assigned_to_id?: number | null,
+  requester_id?: number | null,
+  column_id?: number | null,
+  metadata?: Record<string, any> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  count?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listAttachments
+
+`tasks.listAttachments`
+
+List the files attached to a task.
+
+**Risk:** `read`
+
+```ts
+await corsair.bugherd.api.tasks.listAttachments({ project_id: 552668, task_id: 98765 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | BugHerd project id. |
+| `task_id` | `number` | Yes | Global task id (the `id` field, not the #number shown in the UI). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attachments` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="attachments full type">
+
+```ts
+{
+  id: number,
+  file_name?: string | null,
+  url?: string | null,
+  created_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  count?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listComments
+
+`tasks.listComments`
+
+List the comments on a task.
+
+**Risk:** `read`
+
+```ts
+await corsair.bugherd.api.tasks.listComments({ project_id: 552668, task_id: 98765 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | BugHerd project id. |
+| `task_id` | `number` | Yes | Global task id (the `id` field, not the #number shown in the UI). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comments` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="comments full type">
+
+```ts
+{
+  id: number,
+  text?: string | null,
+  created_at?: string | null,
+  user_id?: number | null,
+  is_private?: boolean | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  count?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listFeedback
+
+`tasks.listFeedback`
+
+List tasks in the Feedback panel (new, not yet triaged).
+
+**Risk:** `read`
+
+```ts
+await corsair.bugherd.api.tasks.listFeedback({ project_id: 552668 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | BugHerd project id. |
+| `page` | `number` | No | Page number, from 1. Pages hold up to 100 records. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tasks` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="tasks full type">
+
+```ts
+{
+  id: number,
+  local_task_id?: number | null,
+  project_id?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  closed_at?: string | null,
+  deleted_at?: string | null,
+  title?: string | null,
+  description?: string | null,
+  status?: string | null,
+  status_id?: number | null,
+  priority?: string | null,
+  priority_id?: number | null,
+  site?: string | null,
+  url?: string | null,
+  tag_names?: string[] | null,
+  external_id?: string | null,
+  requester_email?: string | null,
+  attachments?: {
+    id: number,
+    file_name?: string | null,
+    url?: string | null,
+    created_at?: string | null
+  }[] | null,
+  screenshot_url?: string | null,
+  secret_link?: string | null,
+  admin_link?: string | null,
+  assigned_to?: {
+    id?: number | null,
+    email?: string | null,
+    display_name?: string | null
+  } | null,
+  requester?: {
+    id?: number | null,
+    email?: string | null,
+    display_name?: string | null
+  } | null,
+  project_name?: string | null,
+  due_at?: string | null,
+  assignee_ids?: number[] | null,
+  assignees?: {
+    id?: number | null,
+    email?: string | null,
+    display_name?: string | null
+  }[] | null,
+  assigned_to_id?: number | null,
+  requester_id?: number | null,
+  column_id?: number | null,
+  metadata?: Record<string, any> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  count?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForUser
+
+`tasks.listForUser`
+
+List tasks assigned to a user across all projects.
+
+**Risk:** `read`
+
+```ts
+await corsair.bugherd.api.tasks.listForUser({ user_id: 4561 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number` | Yes | BugHerd user id. |
+| `updated_since` | `string` | No | Only records updated after this ISO 8601 timestamp. |
+| `created_since` | `string` | No | Only records created after this ISO 8601 timestamp. |
+| `priority` | `not set \| critical \| important \| normal \| minor` | No | Task priority. |
+| `tag` | `string` | No | Only tasks with this tag. |
+| `assigned_to_id` | `number` | No | Only tasks assigned to this user. |
+| `page` | `number` | No | Page number, from 1. Pages hold up to 100 records. |
+
+`GET /users/{user_id}/tasks.json`. BugHerd answers with a bare array; the plugin returns it as `{ tasks }` like the other task lists.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tasks` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="tasks full type">
+
+```ts
+{
+  id: number,
+  local_task_id?: number | null,
+  project_id?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  closed_at?: string | null,
+  deleted_at?: string | null,
+  title?: string | null,
+  description?: string | null,
+  status?: string | null,
+  status_id?: number | null,
+  priority?: string | null,
+  priority_id?: number | null,
+  site?: string | null,
+  url?: string | null,
+  tag_names?: string[] | null,
+  external_id?: string | null,
+  requester_email?: string | null,
+  attachments?: {
+    id: number,
+    file_name?: string | null,
+    url?: string | null,
+    created_at?: string | null
+  }[] | null,
+  screenshot_url?: string | null,
+  secret_link?: string | null,
+  admin_link?: string | null,
+  assigned_to?: {
+    id?: number | null,
+    email?: string | null,
+    display_name?: string | null
+  } | null,
+  requester?: {
+    id?: number | null,
+    email?: string | null,
+    display_name?: string | null
+  } | null,
+  project_name?: string | null,
+  due_at?: string | null,
+  assignee_ids?: number[] | null,
+  assignees?: {
+    id?: number | null,
+    email?: string | null,
+    display_name?: string | null
+  }[] | null,
+  assigned_to_id?: number | null,
+  requester_id?: number | null,
+  column_id?: number | null,
+  metadata?: Record<string, any> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  count?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listTaskboard
+
+`tasks.listTaskboard`
+
+List the active tasks on the project taskboard.
+
+**Risk:** `read`
+
+```ts
+await corsair.bugherd.api.tasks.listTaskboard({ project_id: 552668 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | BugHerd project id. |
+| `page` | `number` | No | Page number, from 1. Pages hold up to 100 records. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tasks` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="tasks full type">
+
+```ts
+{
+  id: number,
+  local_task_id?: number | null,
+  project_id?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  closed_at?: string | null,
+  deleted_at?: string | null,
+  title?: string | null,
+  description?: string | null,
+  status?: string | null,
+  status_id?: number | null,
+  priority?: string | null,
+  priority_id?: number | null,
+  site?: string | null,
+  url?: string | null,
+  tag_names?: string[] | null,
+  external_id?: string | null,
+  requester_email?: string | null,
+  attachments?: {
+    id: number,
+    file_name?: string | null,
+    url?: string | null,
+    created_at?: string | null
+  }[] | null,
+  screenshot_url?: string | null,
+  secret_link?: string | null,
+  admin_link?: string | null,
+  assigned_to?: {
+    id?: number | null,
+    email?: string | null,
+    display_name?: string | null
+  } | null,
+  requester?: {
+    id?: number | null,
+    email?: string | null,
+    display_name?: string | null
+  } | null,
+  project_name?: string | null,
+  due_at?: string | null,
+  assignee_ids?: number[] | null,
+  assignees?: {
+    id?: number | null,
+    email?: string | null,
+    display_name?: string | null
+  }[] | null,
+  assigned_to_id?: number | null,
+  requester_id?: number | null,
+  column_id?: number | null,
+  metadata?: Record<string, any> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  count?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### move
+
+`tasks.move`
+
+Move tasks to another project, by their #numbers.
+
+**Risk:** `write`
+
+```ts
+await corsair.bugherd.api.tasks.move({ project_id: 552668, destination_project_id: 552669, task_ids: [42, 43] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | The project the tasks are in now. |
+| `destination_project_id` | `number` | Yes | The project to move them to. |
+| `task_ids` | `number[]` | Yes | The tasks' #numbers (local_task_id), not their global ids. |
+
+`POST /projects/{project_id}/move_tasks.json`. BugHerd notes the route may not be enabled on every account (404).
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### show
+
+`tasks.show`
+
+Get one task by its global id, with or without the project id.
+
+**Risk:** `read`
+
+```ts
+await corsair.bugherd.api.tasks.show({ task_id: 98765 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `number` | Yes | Global task id (the `id` field, not the #number shown in the UI). |
+| `project_id` | `number` | No | Project id. Without it the task is looked up by its global id alone. |
+
+`GET /projects/{project_id}/tasks/{task_id}.json`, or `GET /tasks/{task_id}.json` when no project id is given.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="task full type">
+
+```ts
+{
+  id: number,
+  local_task_id?: number | null,
+  project_id?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  closed_at?: string | null,
+  deleted_at?: string | null,
+  title?: string | null,
+  description?: string | null,
+  status?: string | null,
+  status_id?: number | null,
+  priority?: string | null,
+  priority_id?: number | null,
+  site?: string | null,
+  url?: string | null,
+  tag_names?: string[] | null,
+  external_id?: string | null,
+  requester_email?: string | null,
+  attachments?: {
+    id: number,
+    file_name?: string | null,
+    url?: string | null,
+    created_at?: string | null
+  }[] | null,
+  screenshot_url?: string | null,
+  secret_link?: string | null,
+  admin_link?: string | null,
+  assigned_to?: {
+    id?: number | null,
+    email?: string | null,
+    display_name?: string | null
+  } | null,
+  requester?: {
+    id?: number | null,
+    email?: string | null,
+    display_name?: string | null
+  } | null,
+  project_name?: string | null,
+  due_at?: string | null,
+  assignee_ids?: number[] | null,
+  assignees?: {
+    id?: number | null,
+    email?: string | null,
+    display_name?: string | null
+  }[] | null,
+  assigned_to_id?: number | null,
+  requester_id?: number | null,
+  column_id?: number | null,
+  metadata?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -968,18 +1893,20 @@ await corsair.bugherd.api.tasks.listForUser({});
 
 `tasks.showAttachment`
 
-Show attachment details
+Get one attachment on a task.
 
 **Risk:** `read`
 
 ```ts
-await corsair.bugherd.api.tasks.showAttachment({});
+await corsair.bugherd.api.tasks.showAttachment({ project_id: 552668, task_id: 98765, attachment_id: 331 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `project_id` | `number` | Yes | BugHerd project id. |
+| `task_id` | `number` | Yes | Global task id (the `id` field, not the #number shown in the UI). |
 | `attachment_id` | `number` | Yes | — |
 
 
@@ -996,14 +1923,9 @@ await corsair.bugherd.api.tasks.showAttachment({});
 ```ts
 {
   id: number,
-  file_name: string,
-  file_size: number,
-  content_type: string,
-  url: string,
-  created_at: string,
-  updated_at: string,
-  task_id: number,
-  user_id: number
+  file_name?: string | null,
+  url?: string | null,
+  created_at?: string | null
 }
 ```
 </Accordion>
@@ -1013,32 +1935,24 @@ await corsair.bugherd.api.tasks.showAttachment({});
 
 ---
 
-### update
+### showByLocalId
 
-`tasks.update`
+`tasks.showByLocalId`
 
-Update a task
+Get a task by the #number shown in the BugHerd UI.
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
-await corsair.bugherd.api.tasks.update({});
+await corsair.bugherd.api.tasks.showByLocalId({ project_id: 552668, local_task_id: 42 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `task_id` | `number` | Yes | — |
-| `description` | `string` | No | — |
-| `priority` | `critical \| high \| normal \| low` | No | — |
-| `status` | `string` | No | — |
-| `tag_list` | `string[]` | No | — |
-| `assignee_id` | `number` | No | — |
-| `reporter_id` | `number` | No | — |
-| `external_id` | `string` | No | — |
-| `due_date` | `string` | No | — |
-| `column_id` | `number` | No | — |
+| `project_id` | `number` | Yes | BugHerd project id. |
+| `local_task_id` | `number` | Yes | The #number shown in the BugHerd UI. |
 
 
 
@@ -1054,22 +1968,155 @@ await corsair.bugherd.api.tasks.update({});
 ```ts
 {
   id: number,
-  description: string,
-  status: string,
-  priority?: string | null,
-  tag_list: string[],
-  created_at: string,
-  updated_at: string,
+  local_task_id?: number | null,
+  project_id?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
   closed_at?: string | null,
-  project_id: number,
-  reporter_id?: number | null,
-  assignee_id?: number | null,
+  deleted_at?: string | null,
+  title?: string | null,
+  description?: string | null,
+  status?: string | null,
+  status_id?: number | null,
+  priority?: string | null,
+  priority_id?: number | null,
+  site?: string | null,
+  url?: string | null,
+  tag_names?: string[] | null,
   external_id?: string | null,
-  attachments_count: number,
-  comments_count: number,
-  due_date?: string | null,
-  duedate?: string | null,
-  column_id?: number | null
+  requester_email?: string | null,
+  attachments?: {
+    id: number,
+    file_name?: string | null,
+    url?: string | null,
+    created_at?: string | null
+  }[] | null,
+  screenshot_url?: string | null,
+  secret_link?: string | null,
+  admin_link?: string | null,
+  assigned_to?: {
+    id?: number | null,
+    email?: string | null,
+    display_name?: string | null
+  } | null,
+  requester?: {
+    id?: number | null,
+    email?: string | null,
+    display_name?: string | null
+  } | null,
+  project_name?: string | null,
+  due_at?: string | null,
+  assignee_ids?: number[] | null,
+  assignees?: {
+    id?: number | null,
+    email?: string | null,
+    display_name?: string | null
+  }[] | null,
+  assigned_to_id?: number | null,
+  requester_id?: number | null,
+  column_id?: number | null,
+  metadata?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`tasks.update`
+
+Change a task: status (column), priority, assignees, tags, description.
+
+**Risk:** `write`
+
+```ts
+await corsair.bugherd.api.tasks.update({ project_id: 552668, task_id: 98765, status: 'doing', assigned_to_id: 4561 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | BugHerd project id. |
+| `task_id` | `number` | Yes | Global task id (the `id` field, not the #number shown in the UI). |
+| `description` | `string` | No | — |
+| `priority` | `not set \| critical \| important \| normal \| minor` | No | Task priority. |
+| `status` | `string` | No | Column name, or `feedback` to move it back to the Feedback panel. |
+| `assigned_to_id` | `number` | No | Assign this project member. Use unassign_user to remove one. |
+| `assigned_to_email` | `string` | No | — |
+| `unassign_user` | `number` | No | Remove this assignee from the task. |
+| `tag_names` | `string[]` | No | — |
+| `external_id` | `string` | No | — |
+| `site` | `string` | No | — |
+| `url` | `string` | No | — |
+| `updater_email` | `string` | No | Who to credit the change to in the task history. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="task full type">
+
+```ts
+{
+  id: number,
+  local_task_id?: number | null,
+  project_id?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  closed_at?: string | null,
+  deleted_at?: string | null,
+  title?: string | null,
+  description?: string | null,
+  status?: string | null,
+  status_id?: number | null,
+  priority?: string | null,
+  priority_id?: number | null,
+  site?: string | null,
+  url?: string | null,
+  tag_names?: string[] | null,
+  external_id?: string | null,
+  requester_email?: string | null,
+  attachments?: {
+    id: number,
+    file_name?: string | null,
+    url?: string | null,
+    created_at?: string | null
+  }[] | null,
+  screenshot_url?: string | null,
+  secret_link?: string | null,
+  admin_link?: string | null,
+  assigned_to?: {
+    id?: number | null,
+    email?: string | null,
+    display_name?: string | null
+  } | null,
+  requester?: {
+    id?: number | null,
+    email?: string | null,
+    display_name?: string | null
+  } | null,
+  project_name?: string | null,
+  due_at?: string | null,
+  assignee_ids?: number[] | null,
+  assignees?: {
+    id?: number | null,
+    email?: string | null,
+    display_name?: string | null
+  }[] | null,
+  assigned_to_id?: number | null,
+  requester_id?: number | null,
+  column_id?: number | null,
+  metadata?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -1083,20 +2130,40 @@ await corsair.bugherd.api.tasks.update({});
 
 `tasks.uploadAttachment`
 
-Upload an attachment file
+Upload a file to a task (a URL, or base64 for a small file).
 
 **Risk:** `write`
 
 ```ts
-await corsair.bugherd.api.tasks.uploadAttachment({});
+await corsair.bugherd.api.tasks.uploadAttachment({ project_id: 552668, task_id: 98765, file: { url: 'https://example.com/report.pdf' } });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `task_id` | `number` | Yes | — |
-| `file` | `custom` | Yes | — |
+| `project_id` | `number` | Yes | BugHerd project id. |
+| `task_id` | `number` | Yes | Global task id (the `id` field, not the #number shown in the UI). |
+| `file` | `string \| object` | Yes | A file: a public URL to it, or &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125; for a small one. |
+
+`POST /projects/{project_id}/tasks/{task_id}/attachments/upload` as multipart form data. BugHerd allows about 30 seconds per upload; use `tasks.createAttachment` with a URL for large files.
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1112,14 +2179,9 @@ await corsair.bugherd.api.tasks.uploadAttachment({});
 ```ts
 {
   id: number,
-  file_name: string,
-  file_size: number,
-  content_type: string,
-  url: string,
-  created_at: string,
-  updated_at: string,
-  task_id: number,
-  user_id: number
+  file_name?: string | null,
+  url?: string | null,
+  created_at?: string | null
 }
 ```
 </Accordion>
@@ -1135,20 +2197,20 @@ await corsair.bugherd.api.tasks.uploadAttachment({});
 
 `users.list`
 
-List users
+List everyone in the organization, members and guests.
 
 **Risk:** `read`
 
 ```ts
-await corsair.bugherd.api.users.list({});
+await corsair.bugherd.api.users.list({ updated_since: '2026-11-01T00:00:00Z' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `page` | `number` | No | — |
-| `per_page` | `number` | No | — |
+| `updated_since` | `string` | No | Only records updated after this ISO 8601 timestamp. |
+| `page` | `number` | No | Page number, from 1. Pages hold up to 100 records. |
 
 
 
@@ -1165,12 +2227,9 @@ await corsair.bugherd.api.users.list({});
 ```ts
 {
   id: number,
-  email: string,
-  first_name?: string | null,
-  last_name?: string | null,
-  name: string,
-  created_at: string,
-  updated_at: string
+  email?: string | null,
+  display_name?: string | null,
+  avatar_url?: string | null
 }[]
 ```
 </Accordion>
@@ -1179,9 +2238,115 @@ await corsair.bugherd.api.users.list({});
 
 ```ts
 {
-  current_page: number,
-  total_pages: number,
-  total_count: number
+  count?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listGuests
+
+`users.listGuests`
+
+List guests (clients) across all projects.
+
+**Risk:** `read`
+
+```ts
+await corsair.bugherd.api.users.listGuests({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, from 1. Pages hold up to 100 records. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id: number,
+  email?: string | null,
+  display_name?: string | null,
+  avatar_url?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  count?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listMembers
+
+`users.listMembers`
+
+List team members (not guests).
+
+**Risk:** `read`
+
+```ts
+await corsair.bugherd.api.users.listMembers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, from 1. Pages hold up to 100 records. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id: number,
+  email?: string | null,
+  display_name?: string | null,
+  avatar_url?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  count?: number | null
 }
 ```
 </Accordion>
@@ -1195,21 +2360,22 @@ await corsair.bugherd.api.users.list({});
 
 `users.listProjects`
 
-List projects for a user
+List the projects a user belongs to.
 
 **Risk:** `read`
 
 ```ts
-await corsair.bugherd.api.users.listProjects({});
+await corsair.bugherd.api.users.listProjects({ user_id: 4561, is_active: true });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `user_id` | `number` | Yes | — |
-| `page` | `number` | No | — |
-| `per_page` | `number` | No | — |
+| `user_id` | `number` | Yes | BugHerd user id. |
+| `is_active` | `boolean` | No | Only active or inactive projects. |
+| `created_since` | `string` | No | Only records created after this ISO 8601 timestamp. |
+| `page` | `number` | No | Page number, from 1. Pages hold up to 100 records. |
 
 
 
@@ -1226,17 +2392,43 @@ await corsair.bugherd.api.users.listProjects({});
 ```ts
 {
   id: number,
-  name: string,
-  is_active: boolean,
-  is_public: boolean,
-  created_at: string,
-  updated_at: string,
-  deleted_at?: string | null,
-  description?: string | null,
-  technical_contact_email?: string | null,
-  guest_default_role?: string | null,
-  settings?: {
-  }
+  name?: string | null,
+  created_at?: string | null,
+  tasks?: boolean | null,
+  devurl?: string | null,
+  is_active?: boolean | null,
+  is_public?: boolean | null,
+  has_custom_columns?: boolean | null,
+  guests_see_guests?: boolean | null,
+  owner_name?: string | null,
+  sites?: string[] | null,
+  allow_guests_change_task_status?: boolean | null,
+  assign_guests?: boolean | null,
+  allow_project_summary_email?: boolean | null,
+  allow_task_done_email?: boolean | null,
+  allow_project_owner_notifications?: boolean | null,
+  change_guest_default_column?: boolean | null,
+  members?: {
+    id: number,
+    email?: string | null,
+    display_name?: string | null,
+    avatar_url?: string | null
+  }[] | null,
+  guests?: {
+    id: number,
+    email?: string | null,
+    display_name?: string | null,
+    avatar_url?: string | null
+  }[] | null,
+  columns?: {
+    id: number,
+    name?: string | null,
+    project_id?: number | null,
+    position?: number | null,
+    tasks_count?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null
 }[]
 ```
 </Accordion>
@@ -1245,9 +2437,7 @@ await corsair.bugherd.api.users.listProjects({});
 
 ```ts
 {
-  current_page: number,
-  total_pages: number,
-  total_count: number
+  count?: number | null
 }
 ```
 </Accordion>
@@ -1263,21 +2453,21 @@ await corsair.bugherd.api.users.listProjects({});
 
 `webhooks.create`
 
-Create a new webhook
+Subscribe a URL to one BugHerd event, for one project or all of them.
 
 **Risk:** `write`
 
 ```ts
-await corsair.bugherd.api.webhooks.create({});
+await corsair.bugherd.api.webhooks.create({ target_url: 'https://example.com/bugherd', event: 'task_create', project_id: 552668 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `project_id` | `number` | Yes | — |
-| `url` | `string` | Yes | — |
-| `events` | `string[]` | Yes | — |
+| `target_url` | `string` | Yes | Where BugHerd POSTs the event. |
+| `event` | `project_create \| task_create \| task_update \| comment \| task_destroy` | Yes | — |
+| `project_id` | `number` | No | Leave out for every project. |
 
 
 
@@ -1293,11 +2483,17 @@ await corsair.bugherd.api.webhooks.create({});
 ```ts
 {
   id: number,
-  url: string,
-  project_id: number,
-  events: string[],
-  created_at: string,
-  updated_at: string
+  target_url?: string | null,
+  event?: string | null,
+  project_id?: number | null,
+  project_name?: string | null,
+  success_count?: number | null,
+  error_count?: number | null,
+  last_error_code?: number | null,
+  last_error_at?: string | null,
+  first_error_at?: string | null,
+  first_success_at?: string | null,
+  last_success_at?: string | null
 }
 ```
 </Accordion>
@@ -1307,25 +2503,23 @@ await corsair.bugherd.api.webhooks.create({});
 
 ---
 
-### list
+### delete
 
-`webhooks.list`
+`webhooks.delete`
 
-List webhooks for a project
+Remove a webhook subscription. Cannot be undone.
 
-**Risk:** `read`
+**Risk:** `destructive`
 
 ```ts
-await corsair.bugherd.api.webhooks.list({});
+await corsair.bugherd.api.webhooks.delete({ webhook_id: 22649 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `project_id` | `number` | Yes | — |
-| `page` | `number` | No | — |
-| `per_page` | `number` | No | — |
+| `webhook_id` | `number` | Yes | — |
 
 
 
@@ -1333,8 +2527,32 @@ await corsair.bugherd.api.webhooks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List the organization webhooks with their delivery counts.
+
+**Risk:** `read`
+
+```ts
+await corsair.bugherd.api.webhooks.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
 | `webhooks` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhooks full type">
@@ -1342,23 +2560,18 @@ await corsair.bugherd.api.webhooks.list({});
 ```ts
 {
   id: number,
-  url: string,
-  project_id: number,
-  events: string[],
-  created_at: string,
-  updated_at: string
+  target_url?: string | null,
+  event?: string | null,
+  project_id?: number | null,
+  project_name?: string | null,
+  success_count?: number | null,
+  error_count?: number | null,
+  last_error_code?: number | null,
+  last_error_at?: string | null,
+  first_error_at?: string | null,
+  first_success_at?: string | null,
+  last_success_at?: string | null
 }[]
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-  current_page: number,
-  total_pages: number,
-  total_count: number
-}
 ```
 </Accordion>
 </AccordionGroup>

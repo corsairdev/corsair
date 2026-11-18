@@ -1029,7 +1029,7 @@
                 ]
               },
               {
-                "group": "Bugherd",
+                "group": "BugHerd",
                 "pages": [
                   "plugins/bugherd/overview",
                   "plugins/bugherd/api",

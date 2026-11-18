@@ -1,13 +1,22 @@
 ---
-title: Overview
-description: "Bugherd plugin for Corsair"
+title: "BugHerd plugin"
+sidebarTitle: "Overview"
+description: "Work with BugHerd website feedback and bug reports. List and triage tasks, move them across the board, comment, attach files, and manage projects, columns and webhooks."
 ---
 
-Use **Bugherd** through Corsair: one client, typed API calls, local DB sync.
+Use **BugHerd** through Corsair: one client, typed API calls, local DB sync.
+
+The [BugHerd API v2](https://docs.bugherd.com/api) authenticates with your organization's API key (Settings &gt; organization &gt; Authentication Token). It is sent as HTTP Basic with the key as the username and `x` as the password, and it can see every project in the organization.
+
+Tasks have two ids: the global `id` that every task route takes, and `local_task_id`, the #number shown in the BugHerd UI. Use `tasks.showByLocalId` to turn a #number into a task, and `tasks.move` takes #numbers. A task's `status` is its column name (`backlog`, `todo`, `doing`, `done`, `closed` or a custom column); a task with no status sits in the Feedback panel.
+
+Lists return up to 100 records per page; pass `page` to get the next one. An empty list means there are no more. BugHerd allows 60 requests a minute.
+
+**Risk.** Deletes (projects, tasks, columns, attachments, webhooks) cannot be undone, and `projects.addGuest` with an email sends that person an invitation, so these are `destructive`. Projects come back without the project's widget `api_key`, which lets anyone post feedback into the project.
 
 **What you get:**
 
-- 25 typed API operations
+- 39 typed API operations
 - 8 synced entities (`attachments`, `columns`, `comments`, `organization`, `projects`, `tasks`, and 2 more) for fast `.search()` / `.list()`
 
 ## Setup
@@ -17,16 +26,20 @@ Use **Bugherd** through Corsair: one client, typed API calls, local DB sync.
 <Step title="Install">
 <CodeGroup>
 ```bash npm
-npm install corsair @corsair-dev/bugherd
+npm install corsair @corsair-dev/bugherd better-sqlite3
+npm install --save-dev @types/better-sqlite3
 ```
 ```bash yarn
-yarn add corsair @corsair-dev/bugherd
+yarn add corsair @corsair-dev/bugherd better-sqlite3
+yarn add --dev @types/better-sqlite3
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/bugherd
+pnpm install corsair @corsair-dev/bugherd better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
 ```
 ```bash bun
-bun add corsair @corsair-dev/bugherd
+bun add corsair @corsair-dev/bugherd better-sqlite3
+bun add --dev @types/better-sqlite3
 ```
 </CodeGroup>
 
@@ -44,6 +57,7 @@ export const corsair = createCorsair({
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
 	hub: {
 		projectApiKey: process.env.CORSAIR_API_KEY!,
 		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
@@ -51,7 +65,7 @@ export const corsair = createCorsair({
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
@@ -59,7 +73,7 @@ Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See 
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+Store the BugHerd API key before the first call: `pnpm corsair setup --plugin=bugherd --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
 
 ```ts
 bugherd()
@@ -89,19 +103,24 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`columns.list`**
+**Open tasks in a project**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.bugherd.api.columns.list({});
+await tenant.bugherd.api.tasks.list({ project_id: 552668, status: 'todo' });
 ```
 
 
-**`columns.create`**
+**Move a task to Doing and assign it**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.bugherd.api.columns.create({});
+await tenant.bugherd.api.tasks.update({
+	project_id: 552668,
+	task_id: 98765,
+	status: 'doing',
+	assigned_to_id: 4561,
+});
 ```
 
 
