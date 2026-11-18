@@ -16,11 +16,11 @@ pnpm add @corsair-dev/hypeauditor
 | `account.unlockedReports` | `hypeauditor.api.account.unlockedReports` | `read` | List the reports unlocked on the account, with `refunded` marking a credit returned after a failed build |
 | `discovery.keywords` | `hypeauditor.api.discovery.keywords` | `read` | Read the posts behind a keyword search by their content IDs, which is free and safe to repeat |
 | `discovery.search` | `hypeauditor.api.discovery.search` | `read` | Search creators with the documented filters, 20 per page; each page costs one discovery call, and `sandbox` answers sample data without spending one |
-| `history.instagram` | `hypeauditor.api.history.instagram` | `read` | Read the Instagram metrics history for a username, which is free and safe to repeat |
-| `history.tiktok` | `hypeauditor.api.history.tiktok` | `read` | Read the TikTok metrics history for a channel, which is free and safe to repeat |
-| `history.twitch` | `hypeauditor.api.history.twitch` | `read` | Read the Twitch metrics history for a channel, which is free and safe to repeat |
-| `history.twitter` | `hypeauditor.api.history.twitter` | `read` | Read the Twitter metrics history for a channel, which is free and safe to repeat |
-| `history.youtube` | `hypeauditor.api.history.youtube` | `read` | Read the YouTube metrics history for a channel, which is free and safe to repeat |
+| `history.instagram` | `hypeauditor.api.history.instagram` | `read` | Read the Instagram metrics history for a username; the first request for a creator unlocks its report and spends a credit |
+| `history.tiktok` | `hypeauditor.api.history.tiktok` | `read` | Read the TikTok metrics history for a channel; the first request for a creator unlocks its report and spends a credit |
+| `history.twitch` | `hypeauditor.api.history.twitch` | `read` | Read the Twitch metrics history for a channel; the first request for a creator unlocks its report and spends a credit |
+| `history.twitter` | `hypeauditor.api.history.twitter` | `read` | Read the Twitter metrics history for a channel; the first request for a creator unlocks its report and spends a credit |
+| `history.youtube` | `hypeauditor.api.history.youtube` | `read` | Read the YouTube metrics history for a channel; history calls unlock the report on the other networks, so treat the first request as spending a credit |
 | `lists.add` | `hypeauditor.api.lists.add` | `write` | Add a report to a saved list; repeating it leaves the report in the list, so it is safe to retry |
 | `lists.items` | `hypeauditor.api.lists.items` | `read` | Read the reports saved in one list, up to 100 per page, which is free and safe to repeat |
 | `lists.list` | `hypeauditor.api.lists.list` | `read` | List the saved lists in the account; the default "Recent searches" list is `id: 0` |

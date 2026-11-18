@@ -117,7 +117,14 @@ export type HypeAuditorReportPending = z.infer<typeof ReportPendingSchema>;
 // field optional, so it would also match a pending body and skip the retryTtl check.
 export const ReportOrPendingSchema = z.union([
 	z.object({ result: ReportPendingSchema }).loose(),
-	ReportResponseSchema,
+	// A body carrying retryTtl is a pending notice; if its retryTtl is not a
+	// number it must fail rather than pass as a loose report.
+	ReportResponseSchema.refine(
+		(body) =>
+			(body.result as Record<string, unknown> | null | undefined)?.retryTtl ===
+			undefined,
+		{ message: 'retryTtl must be a number of seconds' },
+	),
 ]);
 export type HypeAuditorReportOrPending = z.infer<typeof ReportOrPendingSchema>;
 
@@ -487,11 +494,15 @@ export const SuggesterInputSchema = z
 		st: z
 			.string()
 			.optional()
-			.describe('A social network code to restrict the suggestion to.'),
+			.describe(
+				'A network title to restrict the suggestion to: instagram, youtube, twitter, tiktok, twitch or snapchat.',
+			),
 		exclSt: z
 			.string()
 			.optional()
-			.describe('A social network code to leave out of the suggestion.'),
+			.describe(
+				'Comma-separated network titles to leave out, e.g. `instagram,twitter`.',
+			),
 	})
 	.strict();
 export type SuggesterInput = z.input<typeof SuggesterInputSchema>;

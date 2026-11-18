@@ -175,6 +175,10 @@ describe('makeHypeAuditorRequest', () => {
 			result: { retryTtl: 30, restTokens: 5 },
 		});
 		expect(pending.success && 'retryTtl' in pending.data.result).toBe(true);
+		expect(
+			ReportOrPendingSchema.safeParse({ result: { retryTtl: 'later' } })
+				.success,
+		).toBe(false);
 		const report = ReportOrPendingSchema.parse({
 			result: { report_state: 'READY' },
 		});

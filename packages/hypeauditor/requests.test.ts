@@ -360,10 +360,11 @@ describe('request shape', () => {
 		},
 		{
 			name: 'suggester.get',
-			run: (ctx) => endpoints.suggester.get(ctx, { search: 'nas', st: 'IG' }),
+			run: (ctx) =>
+				endpoints.suggester.get(ctx, { search: 'nas', st: 'instagram' }),
 			method: 'GET',
 			path: '/api/method/auditor.suggester',
-			query: { search: 'nas', st: 'IG', v: '2' },
+			query: { search: 'nas', st: 'instagram', v: '2' },
 			response: { result: [] },
 		},
 		{

@@ -41,8 +41,10 @@ export type HypeAuditorContext = CorsairPluginContext<
 	HypeAuditorPluginOptions
 >;
 
-export type HypeAuditorKeyBuilderContext =
-	KeyBuilderContext<HypeAuditorPluginOptions>;
+export type HypeAuditorKeyBuilderContext = KeyBuilderContext<
+	HypeAuditorPluginOptions,
+	typeof hypeauditorAuthConfig
+>;
 
 export type HypeAuditorBoundEndpoints = BindEndpoints<
 	typeof hypeauditorEndpointsNested
@@ -308,27 +310,27 @@ export const hypeauditorEndpointMeta = {
 	'history.instagram': {
 		riskLevel: 'read',
 		description:
-			'Read the Instagram metrics history for a username, which is free and safe to repeat',
+			'Read the Instagram metrics history for a username. HypeAuditor unlocks the creator’s report on this call, so the first request for a creator spends a credit; repeating it is free',
 	},
 	'history.youtube': {
 		riskLevel: 'read',
 		description:
-			'Read the YouTube metrics history for a channel, which is free and safe to repeat',
+			'Read the YouTube metrics history for a channel. HypeAuditor documents that history calls unlock the creator’s report on the other networks, so treat the first request as spending a credit; repeating it is free',
 	},
 	'history.tiktok': {
 		riskLevel: 'read',
 		description:
-			'Read the TikTok metrics history for a channel, which is free and safe to repeat',
+			'Read the TikTok metrics history for a channel. HypeAuditor unlocks the creator’s report on this call, so the first request for a creator spends a credit; repeating it is free',
 	},
 	'history.twitch': {
 		riskLevel: 'read',
 		description:
-			'Read the Twitch metrics history for a channel, which is free and safe to repeat',
+			'Read the Twitch metrics history for a channel. HypeAuditor unlocks the creator’s report on this call, so the first request for a creator spends a credit; repeating it is free',
 	},
 	'history.twitter': {
 		riskLevel: 'read',
 		description:
-			'Read the Twitter metrics history for a channel, which is free and safe to repeat',
+			'Read the Twitter metrics history for a channel. HypeAuditor unlocks the creator’s report on this call, so the first request for a creator spends a credit; repeating it is free',
 	},
 	'mentions.youtube': {
 		riskLevel: 'read',
@@ -401,7 +403,8 @@ export type BaseHypeAuditorPlugin<T extends HypeAuditorPluginOptions> =
 		typeof hypeauditorEndpointsNested,
 		{},
 		T,
-		typeof defaultAuthType
+		typeof defaultAuthType,
+		typeof hypeauditorAuthConfig
 	>;
 
 export type InternalHypeAuditorPlugin =
