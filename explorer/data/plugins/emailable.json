@@ -1,0 +1,249 @@
+{
+  "id": "emailable",
+  "displayName": "Emailable",
+  "description": "Verify email addresses one at a time or in bulk batches with Emailable, and read the account's credits.",
+  "npmPackageName": "@corsair-dev/emailable",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 4,
+    "webhooks": 0,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "emailable.api.account.get",
+      "shortPath": "account.get",
+      "description": "Get the credits left on the account. The owner email is not stored.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account",
+            "optional": false,
+            "type": "{ id: account, availableCredits?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emailable.api.batches.create",
+      "shortPath": "batches.create",
+      "description": "Start verifying a list of up to 50,000 addresses. Uses one credit per address. Poll batches.get for the results.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emails",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "HTTPS URL Emailable POSTs the results to when the batch finishes."
+          },
+          {
+            "key": "responseFields",
+            "optional": true,
+            "type": "(accept_all | birth_year | did_you_mean | disposable | domain | email | first_name | free | full_name | gender | last_name | mailbox_full | mx_record | no_reply | reason | role | score | smtp_provider | state | tag | user)[]",
+            "description": "Only return these fields per address."
+          },
+          {
+            "key": "retries",
+            "optional": true,
+            "type": "boolean",
+            "description": "Retry unclear mail-server answers (default true). Off is faster."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "batch",
+            "optional": false,
+            "type": "{ id: string, message?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emailable.api.batches.get",
+      "shortPath": "batches.get",
+      "description": "Get a batch: progress, counts per state and reason, and each address's result (up to 1,000 addresses) or a download link (larger batches).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "partial",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return results verified so far (batches of up to 1,000 only)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "batch",
+            "optional": false,
+            "type": "{ id: string, message?: string, processed?: number, total?: number, done: boolean, emails?: { email?: string, state?: string | null, reason?: string | null, score?: number | null, domain?: string | null, user?: string | null, tag?: string | null, did_you_mean?: string | null, accept_all?: boolean | null, disposable?: boolean | null, free?: boolean | null, role?: boolean | null, no_reply?: boolean | null, mailbox_full?: boolean | null, smtp_provider?: string | null, mx_record?: string | null, duration?: number | null }[], downloadFile?: string, totalCounts?: Record<string, number>, reasonCounts?: Record<string, number> }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emailable.api.verifications.verify",
+      "shortPath": "verifications.verify",
+      "description": "Verify one email address: state (deliverable, undeliverable, risky, unknown), reason, score, and flags such as disposable, free, role and accept-all, plus a did-you-mean suggestion. Uses one credit. If `pending` is true, call again within 5 minutes at no extra cost.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "smtp",
+            "optional": true,
+            "type": "boolean",
+            "description": "Run the SMTP check (default true). Off is faster but less accurate."
+          },
+          {
+            "key": "acceptAll",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also run the accept-all check (default false). Slower."
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number",
+            "description": "Seconds to wait for a result (2-10, default 5)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "verification",
+            "optional": true,
+            "type": "{ email: string, state?: string | null, reason?: string | null, score?: number | null, domain?: string | null, user?: string | null, tag?: string | null, did_you_mean?: string | null, accept_all?: boolean | null, disposable?: boolean | null, free?: boolean | null, role?: boolean | null, no_reply?: boolean | null, mailbox_full?: boolean | null, smtp_provider?: string | null, mx_record?: string | null, duration?: number | null }"
+          },
+          {
+            "key": "pending",
+            "optional": false,
+            "type": "boolean",
+            "description": "True when Emailable is still verifying (HTTP 249). Call again within 5 minutes; repeats in that window are free."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "emailable.db.accounts.search",
+      "entityName": "accounts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "availableCredits",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "emailable.db.batches.search",
+      "entityName": "batches",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "message",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "emailable.db.verifications.search",
+      "entityName": "verifications",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "score",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "reason",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,830 @@
+---
+title: "Serply API reference"
+sidebarTitle: "API"
+description: "API reference for the Serply plugin in Corsair: every `serply.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Articles
+
+### search
+
+`articles.search`
+
+Search Google Scholar articles and store them. Each uncached call spends Serply credits.
+
+**Risk:** `read`
+
+```ts
+await corsair.serply.api.articles.search({ q: 'large language model agents' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `num` | `number` | No | Results per page, up to 200 |
+| `start` | `number` | No | Zero-based offset for the next page |
+
+GET /v1/scholar?q=. Pages with `num` (up to 200) and `start`. A row is stored when id is present. Author names are not stored.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `articles` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="articles full type">
+
+```ts
+{
+  id: string,
+  title?: string,
+  link?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Bing
+
+### search
+
+`bing.search`
+
+Search Bing. Each uncached call spends Serply credits.
+
+**Risk:** `read`
+
+```ts
+await corsair.serply.api.bing.search({ q: 'typescript zod' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `proxy_location` | `EU \| CA \| US \| IE \| GB \| FR \| DE \| SE \| IN \| JP \| KR \| SG \| AU \| BR` | No | Region the search runs from (X-Proxy-Location) |
+| `device` | `desktop \| mobile` | No | Device Google sees (X-User-Agent); desktop by default |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `ads` | `object[] \| null` | No | — |
+| `shoppingAds` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  title?: string | null,
+  link?: string | null,
+  description?: string | null,
+  position?: number | null,
+  realPosition?: number | null,
+  result_type?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="ads full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+
+<Accordion title="shoppingAds full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Ebay
+
+### search
+
+`ebay.search`
+
+Search eBay listings with price, condition and seller. Each uncached call spends Serply credits.
+
+**Risk:** `read`
+
+```ts
+await corsair.serply.api.ebay.search({ q: 'vinyl records' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `proxy_location` | `EU \| CA \| US \| IE \| GB \| FR \| DE \| SE \| IN \| JP \| KR \| SG \| AU \| BR` | No | Region the search runs from (X-Proxy-Location) |
+| `device` | `desktop \| mobile` | No | Device Google sees (X-User-Agent); desktop by default |
+
+Serply returned no listings for common queries in an 11-17 live run; the call itself succeeds.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `total` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  title?: string | null,
+  link?: string | null,
+  description?: string | null,
+  position?: number | null,
+  realPosition?: number | null,
+  result_type?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Images
+
+### search
+
+`images.search`
+
+Search Google Images (up to 20 per call) and store the results. Each uncached call spends Serply credits.
+
+**Risk:** `read`
+
+```ts
+await corsair.serply.api.images.search({ q: 'bicycle' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `num` | `number` | No | — |
+
+GET /v1/image?q=. Up to 20 images per call; Serply ignores `num` here. Rows are keyed by the original image URL (the thumbnail, then the hosting page, when it is missing).
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `images` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="images full type">
+
+```ts
+{
+  id: string,
+  src?: string,
+  alt?: string,
+  title?: string,
+  domain?: string,
+  originalSrc?: string,
+  width?: string,
+  height?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Jobs
+
+### search
+
+`jobs.search`
+
+Search Google Jobs by title and location. Each uncached call spends Serply credits.
+
+**Risk:** `read`
+
+```ts
+await corsair.serply.api.jobs.search({ q: 'typescript developer remote' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `proxy_location` | `EU \| CA \| US \| IE \| GB \| FR \| DE \| SE \| IN \| JP \| KR \| SG \| AU \| BR` | No | Region the search runs from (X-Proxy-Location) |
+| `device` | `desktop \| mobile` | No | Device Google sees (X-User-Agent); desktop by default |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobs` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="jobs full type">
+
+```ts
+{
+  position?: string | null,
+  employer?: string | null,
+  location?: string | null,
+  link?: string | null,
+  posted_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## News
+
+### search
+
+`news.search`
+
+Search Google News, optionally resolving links to the publisher URL. Each uncached call spends Serply credits.
+
+**Risk:** `read`
+
+```ts
+await corsair.serply.api.news.search({ q: 'open source ai agents', ceid: 'US:en' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `ceid` | `string` | No | Country and language edition, e.g. US:en or GB:en |
+| `resolve_links` | `boolean` | No | Replace Google News redirect links with the publisher URL (2-3 s slower) |
+| `proxy_location` | `EU \| CA \| US \| IE \| GB \| FR \| DE \| SE \| IN \| JP \| KR \| SG \| AU \| BR` | No | Region the search runs from (X-Proxy-Location) |
+| `device` | `desktop \| mobile` | No | Device Google sees (X-User-Agent); desktop by default |
+
+`ceid` picks the edition (US:en, GB:en, DE:de). `resolve_links: true` swaps Google News redirect links for the publisher URL and takes 2-3 s longer.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `feed` | `object \| null` | No | — |
+| `entries` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="feed full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="entries full type">
+
+```ts
+{
+  title?: string | null,
+  link?: string | null,
+  published?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Pages
+
+### fetch
+
+`pages.fetch`
+
+Fetch a web page through Serply as markdown or HTML. Each uncached call spends Serply credits.
+
+**Risk:** `read`
+
+```ts
+await corsair.serply.api.pages.fetch({ url: 'https://serply.io/', response_type: 'markdown' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Page to fetch |
+| `response_type` | `markdown \| full` | Yes | markdown (good for agents) or full HTML |
+
+POST /v1/request. Spends a credit like a search.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `string` | Yes | Page content as markdown or HTML |
+| `status` | `number \| null` | No | HTTP status of the fetched page |
+| `headers` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Places
+
+### search
+
+`places.search`
+
+Search Google Maps places and store them. Each uncached call spends Serply credits.
+
+**Risk:** `read`
+
+```ts
+await corsair.serply.api.places.search({ q: 'coffee berlin' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+
+GET /v1/maps/search/&#123;query&#125;. A row is stored when place_id or data_id is present.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `places` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="places full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  latitude?: number,
+  longitude?: number,
+  rating?: number,
+  address?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Products
+
+### search
+
+`products.search`
+
+Search products with prices, ratings and links. Each uncached call spends Serply credits.
+
+**Risk:** `read`
+
+```ts
+await corsair.serply.api.products.search({ q: 'mechanical keyboard' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `proxy_location` | `EU \| CA \| US \| IE \| GB \| FR \| DE \| SE \| IN \| JP \| KR \| SG \| AU \| BR` | No | Region the search runs from (X-Proxy-Location) |
+| `device` | `desktop \| mobile` | No | Device Google sees (X-User-Agent); desktop by default |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `products` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="products full type">
+
+```ts
+{
+  title?: string | null,
+  link?: string | null,
+  price?: number | string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reddit
+
+### comments
+
+`reddit.comments`
+
+Get the comment thread of a Reddit post. Each uncached call spends Serply credits.
+
+**Risk:** `read`
+
+```ts
+await corsair.serply.api.reddit.comments({ id: '1ul97v0' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Post id from the post URL, e.g. 1vfemi1 |
+| `sort` | `string` | No | confidence (default), top, new, ... |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  kind?: string | null,
+  data: {
+    after?: string | null,
+    children?: {
+      kind?: string | null,
+      data?: {
+      } | null
+    }[] | null
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### post
+
+`reddit.post`
+
+Get one Reddit post, optionally with its comments. Each uncached call spends Serply credits.
+
+**Risk:** `read`
+
+```ts
+await corsair.serply.api.reddit.post({ id: '1ul97v0', with_comments: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Post id from the post URL, e.g. 1vfemi1 |
+| `sort` | `string` | No | — |
+| `with_comments` | `boolean` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### subredditAbout
+
+`reddit.subredditAbout`
+
+Get a subreddit description and subscriber count. Each uncached call spends Serply credits.
+
+**Risk:** `read`
+
+```ts
+await corsair.serply.api.reddit.subredditAbout({ subreddit: 'typescript' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subreddit` | `string` | Yes | Subreddit name without r/ |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### subredditPosts
+
+`reddit.subredditPosts`
+
+List posts in a subreddit, sorted and paged. Each uncached call spends Serply credits.
+
+**Risk:** `read`
+
+```ts
+await corsair.serply.api.reddit.subredditPosts({ subreddit: 'typescript', sort: 'top', t: 'week', limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subreddit` | `string` | Yes | Subreddit name without r/ |
+| `limit` | `number` | No | — |
+| `sort` | `string` | No | hot, new, top, ... |
+| `t` | `hour \| day \| week \| month \| year \| all` | No | Time window for top |
+| `after` | `string` | No | Cursor: the previous page data.after |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  after?: string | null,
+  children?: {
+    kind?: string | null,
+    data?: {
+    } | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### userPosts
+
+`reddit.userPosts`
+
+List a Reddit user public posts and comments. Each uncached call spends Serply credits.
+
+**Risk:** `read`
+
+```ts
+await corsair.serply.api.reddit.userPosts({ username: 'spez', limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | Username without u/ |
+| `limit` | `number` | No | — |
+| `sort` | `string` | No | hot, new, top, ... |
+| `t` | `hour \| day \| week \| month \| year \| all` | No | Time window for top |
+| `after` | `string` | No | Cursor: the previous page data.after |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  after?: string | null,
+  children?: {
+    kind?: string | null,
+    data?: {
+    } | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Videos
+
+### search
+
+`videos.search`
+
+Search Google Videos. Each uncached call spends Serply credits.
+
+**Risk:** `read`
+
+```ts
+await corsair.serply.api.videos.search({ q: 'zod tutorial' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `proxy_location` | `EU \| CA \| US \| IE \| GB \| FR \| DE \| SE \| IN \| JP \| KR \| SG \| AU \| BR` | No | Region the search runs from (X-Proxy-Location) |
+| `device` | `desktop \| mobile` | No | Device Google sees (X-User-Agent); desktop by default |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  title?: string | null,
+  link?: string | null,
+  description?: string | null,
+  position?: number | null,
+  realPosition?: number | null,
+  result_type?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Web
+
+### search
+
+`web.search`
+
+Search Google: organic results, ads, AI overview and related questions. Each uncached call spends Serply credits.
+
+**Risk:** `read`
+
+```ts
+await corsair.serply.api.web.search({ q: 'integration platform for ai agents', num: 10, gl: 'us' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | Search terms; Google operators work |
+| `num` | `number` | No | Results per page; Google serves about 10 at most |
+| `start` | `number` | No | Zero-based offset: 10 for the second page |
+| `gl` | `string` | No | Country code, e.g. us or de |
+| `hl` | `string` | No | Interface language, e.g. en |
+| `proxy_location` | `EU \| CA \| US \| IE \| GB \| FR \| DE \| SE \| IN \| JP \| KR \| SG \| AU \| BR` | No | Region the search runs from (X-Proxy-Location) |
+| `device` | `desktop \| mobile` | No | Device Google sees (X-User-Agent); desktop by default |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `ads` | `object[] \| null` | No | — |
+| `ai_overview` | `object \| null` | No | — |
+| `related_questions` | `object[] \| null` | No | — |
+| `total` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  title?: string | null,
+  link?: string | null,
+  description?: string | null,
+  position?: number | null,
+  realPosition?: number | null,
+  result_type?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="ads full type">
+
+```ts
+{
+  title?: string | null,
+  link?: string | null,
+  description?: string | null,
+  position?: number | null,
+  realPosition?: number | null,
+  result_type?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="ai_overview full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="related_questions full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

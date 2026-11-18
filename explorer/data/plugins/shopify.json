@@ -1,0 +1,1169 @@
+{
+  "id": "shopify",
+  "displayName": "Shopify",
+  "description": "Read and manage products, variants, inventory, collections, orders and customers in a Shopify store, and verify the webhooks Shopify sends.",
+  "npmPackageName": "@corsair-dev/shopify",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 28,
+    "webhooks": 1,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": [
+        "api_key",
+        "webhook_signature",
+        "shop_domain",
+        "client_id",
+        "client_secret",
+        "expires_at"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "shopify.api.collections.addProducts",
+      "shortPath": "collections.addProducts",
+      "description": "Add products to a collection; the whole call fails if any is already present",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Collection GID."
+          },
+          {
+            "key": "productIds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection",
+            "optional": false,
+            "type": "{ id: string, title: string, handle: string, descriptionHtml?: string | null, updatedAt: string, sortOrder?: string | null, productsCount?: { count: number } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shopify.api.collections.create",
+      "shortPath": "collections.create",
+      "description": "Create a manual collection with a title and handle",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "descriptionHtml",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection",
+            "optional": false,
+            "type": "{ id: string, title: string, handle: string, descriptionHtml?: string | null, updatedAt: string, sortOrder?: string | null, productsCount?: { count: number } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shopify.api.collections.get",
+      "shortPath": "collections.get",
+      "description": "Read one collection by GID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection",
+            "optional": true,
+            "type": "{ id: string, title: string, handle: string, descriptionHtml?: string | null, updatedAt: string, sortOrder?: string | null, productsCount?: { count: number } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shopify.api.collections.list",
+      "shortPath": "collections.list",
+      "description": "List collections with their product counts, cursor-paged",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "first",
+            "optional": true,
+            "type": "number",
+            "description": "Page size. Defaults to 50; the maximum is 250."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor from a previous page."
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collections",
+            "optional": false,
+            "type": "{ edges: { node: { id: string, title: string, handle: string, descriptionHtml?: string | null, updatedAt: string, sortOrder?: string | null, productsCount?: { count: number } | null }, cursor?: string | null }[], pageInfo: { hasNextPage: boolean, hasPreviousPage?: boolean | null, endCursor?: string | null, startCursor?: string | null } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shopify.api.customers.create",
+      "shortPath": "customers.create",
+      "description": "Create a customer with an email, name and tags",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "taxExempt",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customer",
+            "optional": false,
+            "type": "{ id: string, firstName?: string | null, lastName?: string | null, state: string, note?: string | null, tags: string[], createdAt: string, updatedAt: string, numberOfOrders: string, taxExempt?: boolean | null, verifiedEmail?: boolean | null, defaultEmailAddress?: { emailAddress: string, marketingState?: string | null } | null, defaultPhoneNumber?: { phoneNumber: string } | null, amountSpent?: { amount: string, currencyCode: string } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shopify.api.customers.get",
+      "shortPath": "customers.get",
+      "description": "Read one customer by GID, including addresses and spend",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "{ id: string, firstName?: string | null, lastName?: string | null, state: string, note?: string | null, tags: string[], createdAt: string, updatedAt: string, numberOfOrders: string, taxExempt?: boolean | null, verifiedEmail?: boolean | null, defaultEmailAddress?: { emailAddress: string, marketingState?: string | null } | null, defaultPhoneNumber?: { phoneNumber: string } | null, amountSpent?: { amount: string, currencyCode: string } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shopify.api.customers.list",
+      "shortPath": "customers.list",
+      "description": "List customers with order counts and spend, cursor-paged and filtered",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "first",
+            "optional": true,
+            "type": "number",
+            "description": "Page size. Defaults to 50; the maximum is 250."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor from a previous page."
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customers",
+            "optional": false,
+            "type": "{ edges: { node: { id: string, firstName?: string | null, lastName?: string | null, state: string, note?: string | null, tags: string[], createdAt: string, updatedAt: string, numberOfOrders: string, taxExempt?: boolean | null, verifiedEmail?: boolean | null, defaultEmailAddress?: { emailAddress: string, marketingState?: string | null } | null, defaultPhoneNumber?: { phoneNumber: string } | null, amountSpent?: { amount: string, currencyCode: string } | null }, cursor?: string | null }[], pageInfo: { hasNextPage: boolean, hasPreviousPage?: boolean | null, endCursor?: string | null, startCursor?: string | null } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shopify.api.customers.update",
+      "shortPath": "customers.update",
+      "description": "Update a customer, overwriting tags when tags are passed",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "taxExempt",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customer",
+            "optional": false,
+            "type": "{ id: string, firstName?: string | null, lastName?: string | null, state: string, note?: string | null, tags: string[], createdAt: string, updatedAt: string, numberOfOrders: string, taxExempt?: boolean | null, verifiedEmail?: boolean | null, defaultEmailAddress?: { emailAddress: string, marketingState?: string | null } | null, defaultPhoneNumber?: { phoneNumber: string } | null, amountSpent?: { amount: string, currencyCode: string } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shopify.api.inventory.adjust",
+      "shortPath": "inventory.adjust",
+      "description": "Adjust available stock by a signed delta at one location, with a reason",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inventoryItemId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "locationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "delta",
+            "optional": false,
+            "type": "number",
+            "description": "Signed change: positive adds stock, negative removes it."
+          },
+          {
+            "key": "reason",
+            "optional": false,
+            "type": "string",
+            "description": "Inventory change reason, e.g. \"correction\" or \"received\"."
+          },
+          {
+            "key": "changeFromQuantity",
+            "optional": true,
+            "type": "number | null",
+            "description": "Expected quantity before the change. Set it to turn the write into a compare-and-swap, which fails when the current quantity differs. Omit it to skip that check."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Key that makes this adjustment safe to repeat. A new key is generated for each call when omitted, so two identical adjustments both apply; pass the same key again only when retrying the same adjustment."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inventoryAdjustmentGroup",
+            "optional": true,
+            "type": "{ createdAt?: string | null, reason?: string | null, changes?: { name: string, delta: number }[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shopify.api.inventory.list",
+      "shortPath": "inventory.list",
+      "description": "Read the available stock of one inventory item at every active location",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "first",
+            "optional": true,
+            "type": "number",
+            "description": "Locations per page. Defaults to 50; the maximum is 250."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor from a previous page."
+          },
+          {
+            "key": "inventoryItemId",
+            "optional": false,
+            "type": "string",
+            "description": "InventoryItem GID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inventoryItem",
+            "optional": true,
+            "type": "{ id: string, sku?: string | null, tracked: boolean, inventoryLevels: { edges: { node: { id: string, isActive: boolean, updatedAt?: string | null, item: { id: string, sku?: string | null }, location: { id: string, name: string }, quantities: { name: string, quantity: number }[] }, cursor?: string | null }[], pageInfo: { hasNextPage: boolean, hasPreviousPage?: boolean | null, endCursor?: string | null, startCursor?: string | null } } } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shopify.api.orders.cancel",
+      "shortPath": "orders.cancel",
+      "description": "Cancel an order, optionally restocking and notifying the customer; does not refund",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "CUSTOMER | DECLINED | FRAUD | INVENTORY | OTHER | STAFF"
+          },
+          {
+            "key": "restock",
+            "optional": true,
+            "type": "boolean",
+            "description": "Restock the order items."
+          },
+          {
+            "key": "notifyCustomer",
+            "optional": true,
+            "type": "boolean",
+            "description": "Email the customer about the cancellation."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order",
+            "optional": false,
+            "type": "{ id: string, name: string, createdAt: string, updatedAt?: string | null, processedAt?: string | null, cancelledAt?: string | null, closedAt?: string | null, email?: string | null, phone?: string | null, note?: string | null, tags: string[], currencyCode: string, displayFinancialStatus?: string | null, displayFulfillmentStatus: string, cancelReason?: string | null, totalPriceSet: { shopMoney: { amount: string, currencyCode: string }, presentmentMoney?: { amount: string, currencyCode: string } | null }, totalTaxSet?: { shopMoney: { amount: string, currencyCode: string }, presentmentMoney?: { amount: string, currencyCode: string } | null } | null, subtotalPriceSet?: { shopMoney: { amount: string, currencyCode: string }, presentmentMoney?: { amount: string, currencyCode: string } | null } | null, totalDiscountsSet?: { shopMoney: { amount: string, currencyCode: string }, presentmentMoney?: { amount: string, currencyCode: string } | null } | null, customer?: { id: string, defaultEmailAddress?: { emailAddress: string } | null } | null, lineItems?: { edges: { node: { id?: string | null, title?: string | null, quantity?: number | null, sku?: string | null, variant?: { id: string } | null, originalUnitPriceSet?: { shopMoney: { amount: string, currencyCode: string }, presentmentMoney?: { amount: string, currencyCode: string } | null } | null }, cursor?: string | null }[], pageInfo: { hasNextPage: boolean, hasPreviousPage?: boolean | null, endCursor?: string | null, startCursor?: string | null } } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shopify.api.orders.close",
+      "shortPath": "orders.close",
+      "description": "Close a completed or cancelled order so it no longer counts as open",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order",
+            "optional": false,
+            "type": "{ id: string, name: string, createdAt: string, updatedAt?: string | null, processedAt?: string | null, cancelledAt?: string | null, closedAt?: string | null, email?: string | null, phone?: string | null, note?: string | null, tags: string[], currencyCode: string, displayFinancialStatus?: string | null, displayFulfillmentStatus: string, cancelReason?: string | null, totalPriceSet: { shopMoney: { amount: string, currencyCode: string }, presentmentMoney?: { amount: string, currencyCode: string } | null }, totalTaxSet?: { shopMoney: { amount: string, currencyCode: string }, presentmentMoney?: { amount: string, currencyCode: string } | null } | null, subtotalPriceSet?: { shopMoney: { amount: string, currencyCode: string }, presentmentMoney?: { amount: string, currencyCode: string } | null } | null, totalDiscountsSet?: { shopMoney: { amount: string, currencyCode: string }, presentmentMoney?: { amount: string, currencyCode: string } | null } | null, customer?: { id: string, defaultEmailAddress?: { emailAddress: string } | null } | null, lineItems?: { edges: { node: { id?: string | null, title?: string | null, quantity?: number | null, sku?: string | null, variant?: { id: string } | null, originalUnitPriceSet?: { shopMoney: { amount: string, currencyCode: string }, presentmentMoney?: { amount: string, currencyCode: string } | null } | null }, cursor?: string | null }[], pageInfo: { hasNextPage: boolean, hasPreviousPage?: boolean | null, endCursor?: string | null, startCursor?: string | null } } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shopify.api.orders.get",
+      "shortPath": "orders.get",
+      "description": "Read one order by GID with its customer and a page of its line items",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lineItemsFirst",
+            "optional": true,
+            "type": "number",
+            "description": "Line items per page. Defaults to 20; the maximum is 250."
+          },
+          {
+            "key": "lineItemsAfter",
+            "optional": true,
+            "type": "string",
+            "description": "Line-item cursor from a previous page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order",
+            "optional": true,
+            "type": "{ id: string, name: string, createdAt: string, updatedAt?: string | null, processedAt?: string | null, cancelledAt?: string | null, closedAt?: string | null, email?: string | null, phone?: string | null, note?: string | null, tags: string[], currencyCode: string, displayFinancialStatus?: string | null, displayFulfillmentStatus: string, cancelReason?: string | null, totalPriceSet: { shopMoney: { amount: string, currencyCode: string }, presentmentMoney?: { amount: string, currencyCode: string } | null }, totalTaxSet?: { shopMoney: { amount: string, currencyCode: string }, presentmentMoney?: { amount: string, currencyCode: string } | null } | null, subtotalPriceSet?: { shopMoney: { amount: string, currencyCode: string }, presentmentMoney?: { amount: string, currencyCode: string } | null } | null, totalDiscountsSet?: { shopMoney: { amount: string, currencyCode: string }, presentmentMoney?: { amount: string, currencyCode: string } | null } | null, customer?: { id: string, defaultEmailAddress?: { emailAddress: string } | null } | null, lineItems?: { edges: { node: { id?: string | null, title?: string | null, quantity?: number | null, sku?: string | null, variant?: { id: string } | null, originalUnitPriceSet?: { shopMoney: { amount: string, currencyCode: string }, presentmentMoney?: { amount: string, currencyCode: string } | null } | null }, cursor?: string | null }[], pageInfo: { hasNextPage: boolean, hasPreviousPage?: boolean | null, endCursor?: string | null, startCursor?: string | null } } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shopify.api.orders.list",
+      "shortPath": "orders.list",
+      "description": "List orders with totals and line items, filtered and sorted, cursor-paged",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "first",
+            "optional": true,
+            "type": "number",
+            "description": "Page size. Defaults to 50; the maximum is 250."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor from a previous page."
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "Shopify search syntax, e.g. \"financial_status:paid\"."
+          },
+          {
+            "key": "sortKey",
+            "optional": true,
+            "type": "CREATED_AT | CURRENT_TOTAL_PRICE | CUSTOMER_NAME | DESTINATION | FINANCIAL_STATUS | FULFILLMENT_STATUS | ID | ORDER_NUMBER | PO_NUMBER | PROCESSED_AT | RELEVANCE | TOTAL_ITEMS_QUANTITY | TOTAL_PRICE | UPDATED_AT"
+          },
+          {
+            "key": "reverse",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orders",
+            "optional": false,
+            "type": "{ edges: { node: { id: string, name: string, createdAt: string, updatedAt?: string | null, processedAt?: string | null, cancelledAt?: string | null, closedAt?: string | null, email?: string | null, phone?: string | null, note?: string | null, tags: string[], currencyCode: string, displayFinancialStatus?: string | null, displayFulfillmentStatus: string, cancelReason?: string | null, totalPriceSet: { shopMoney: { amount: string, currencyCode: string }, presentmentMoney?: { amount: string, currencyCode: string } | null }, totalTaxSet?: { shopMoney: { amount: string, currencyCode: string }, presentmentMoney?: { amount: string, currencyCode: string } | null } | null, subtotalPriceSet?: { shopMoney: { amount: string, currencyCode: string }, presentmentMoney?: { amount: string, currencyCode: string } | null } | null, totalDiscountsSet?: { shopMoney: { amount: string, currencyCode: string }, presentmentMoney?: { amount: string, currencyCode: string } | null } | null, customer?: { id: string, defaultEmailAddress?: { emailAddress: string } | null } | null, lineItems?: { edges: { node: { id?: string | null, title?: string | null, quantity?: number | null, sku?: string | null, variant?: { id: string } | null, originalUnitPriceSet?: { shopMoney: { amount: string, currencyCode: string }, presentmentMoney?: { amount: string, currencyCode: string } | null } | null }, cursor?: string | null }[], pageInfo: { hasNextPage: boolean, hasPreviousPage?: boolean | null, endCursor?: string | null, startCursor?: string | null } } | null }, cursor?: string | null }[], pageInfo: { hasNextPage: boolean, hasPreviousPage?: boolean | null, endCursor?: string | null, startCursor?: string | null } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shopify.api.orders.listLineItems",
+      "shortPath": "orders.listLineItems",
+      "description": "Read one page of an order line items, cursor-paged, for orders with more than one page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Order GID."
+          },
+          {
+            "key": "first",
+            "optional": true,
+            "type": "number",
+            "description": "Line items per page. Defaults to 50; the maximum is 250."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor from a previous page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lineItems",
+            "optional": false,
+            "type": "{ edges: { node: { id?: string | null, title?: string | null, quantity?: number | null, sku?: string | null, variant?: { id: string } | null, originalUnitPriceSet?: { shopMoney: { amount: string, currencyCode: string }, presentmentMoney?: { amount: string, currencyCode: string } | null } | null }, cursor?: string | null }[], pageInfo: { hasNextPage: boolean, hasPreviousPage?: boolean | null, endCursor?: string | null, startCursor?: string | null } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shopify.api.orders.markAsPaid",
+      "shortPath": "orders.markAsPaid",
+      "description": "Mark an order as paid: captures an existing payment authorization, or records a manual payment for the outstanding amount",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order",
+            "optional": false,
+            "type": "{ id: string, name: string, createdAt: string, updatedAt?: string | null, processedAt?: string | null, cancelledAt?: string | null, closedAt?: string | null, email?: string | null, phone?: string | null, note?: string | null, tags: string[], currencyCode: string, displayFinancialStatus?: string | null, displayFulfillmentStatus: string, cancelReason?: string | null, totalPriceSet: { shopMoney: { amount: string, currencyCode: string }, presentmentMoney?: { amount: string, currencyCode: string } | null }, totalTaxSet?: { shopMoney: { amount: string, currencyCode: string }, presentmentMoney?: { amount: string, currencyCode: string } | null } | null, subtotalPriceSet?: { shopMoney: { amount: string, currencyCode: string }, presentmentMoney?: { amount: string, currencyCode: string } | null } | null, totalDiscountsSet?: { shopMoney: { amount: string, currencyCode: string }, presentmentMoney?: { amount: string, currencyCode: string } | null } | null, customer?: { id: string, defaultEmailAddress?: { emailAddress: string } | null } | null, lineItems?: { edges: { node: { id?: string | null, title?: string | null, quantity?: number | null, sku?: string | null, variant?: { id: string } | null, originalUnitPriceSet?: { shopMoney: { amount: string, currencyCode: string }, presentmentMoney?: { amount: string, currencyCode: string } | null } | null }, cursor?: string | null }[], pageInfo: { hasNextPage: boolean, hasPreviousPage?: boolean | null, endCursor?: string | null, startCursor?: string | null } } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shopify.api.products.create",
+      "shortPath": "products.create",
+      "description": "Create a product with its title and catalog fields; variants are added separately",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "descriptionHtml",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vendor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "productType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "ACTIVE | ARCHIVED | DRAFT | UNLISTED"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product",
+            "optional": false,
+            "type": "{ id: string, title: string, handle: string, status: string, vendor: string, productType: string, tags: string[], createdAt: string, updatedAt: string, publishedAt?: string | null, descriptionHtml?: string | null, totalInventory?: number | null, onlineStoreUrl?: string | null, variants?: { edges: { node: { id: string, title: string, sku?: string | null, price?: string | null, compareAtPrice?: string | null, inventoryQuantity?: number | null }, cursor?: string | null }[], pageInfo: { hasNextPage: boolean, hasPreviousPage?: boolean | null, endCursor?: string | null, startCursor?: string | null } } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shopify.api.products.delete",
+      "shortPath": "products.delete",
+      "description": "Permanently delete a product with its variants, media and inventory items",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "synchronous",
+            "optional": true,
+            "type": "boolean",
+            "description": "Delete synchronously. Defaults to true."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deletedProductId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "productDeleteOperation",
+            "optional": true,
+            "type": "{ id: string, status: string, deletedProductId?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shopify.api.products.get",
+      "shortPath": "products.get",
+      "description": "Read one product by GID, including its first variants and inventory totals",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Product GID, e.g. gid://shopify/Product/1."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product",
+            "optional": true,
+            "type": "{ id: string, title: string, handle: string, status: string, vendor: string, productType: string, tags: string[], createdAt: string, updatedAt: string, publishedAt?: string | null, descriptionHtml?: string | null, totalInventory?: number | null, onlineStoreUrl?: string | null, variants?: { edges: { node: { id: string, title: string, sku?: string | null, price?: string | null, compareAtPrice?: string | null, inventoryQuantity?: number | null }, cursor?: string | null }[], pageInfo: { hasNextPage: boolean, hasPreviousPage?: boolean | null, endCursor?: string | null, startCursor?: string | null } } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shopify.api.products.list",
+      "shortPath": "products.list",
+      "description": "List products with their first variants, cursor-paged and filtered with Shopify search syntax",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "first",
+            "optional": true,
+            "type": "number",
+            "description": "Page size. Defaults to 50; the maximum is 250."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor from a previous page."
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "Shopify search syntax, e.g. \"status:active\" or \"title:boots\"."
+          },
+          {
+            "key": "sortKey",
+            "optional": true,
+            "type": "CREATED_AT | ID | INVENTORY_TOTAL | PRODUCT_TYPE | PUBLISHED_AT | RELEVANCE | TITLE | UPDATED_AT | VENDOR"
+          },
+          {
+            "key": "reverse",
+            "optional": true,
+            "type": "boolean",
+            "description": "Reverse the sort order."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "products",
+            "optional": false,
+            "type": "{ edges: { node: { id: string, title: string, handle: string, status: string, vendor: string, productType: string, tags: string[], createdAt: string, updatedAt: string, publishedAt?: string | null, descriptionHtml?: string | null, totalInventory?: number | null, onlineStoreUrl?: string | null, variants?: { edges: { node: { id: string, title: string, sku?: string | null, price?: string | null, compareAtPrice?: string | null, inventoryQuantity?: number | null }, cursor?: string | null }[], pageInfo: { hasNextPage: boolean, hasPreviousPage?: boolean | null, endCursor?: string | null, startCursor?: string | null } } | null }, cursor?: string | null }[], pageInfo: { hasNextPage: boolean, hasPreviousPage?: boolean | null, endCursor?: string | null, startCursor?: string | null } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shopify.api.products.update",
+      "shortPath": "products.update",
+      "description": "Update a product, changing only the fields that are passed",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descriptionHtml",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vendor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "productType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "ACTIVE | ARCHIVED | DRAFT | UNLISTED"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product",
+            "optional": false,
+            "type": "{ id: string, title: string, handle: string, status: string, vendor: string, productType: string, tags: string[], createdAt: string, updatedAt: string, publishedAt?: string | null, descriptionHtml?: string | null, totalInventory?: number | null, onlineStoreUrl?: string | null, variants?: { edges: { node: { id: string, title: string, sku?: string | null, price?: string | null, compareAtPrice?: string | null, inventoryQuantity?: number | null }, cursor?: string | null }[], pageInfo: { hasNextPage: boolean, hasPreviousPage?: boolean | null, endCursor?: string | null, startCursor?: string | null } } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shopify.api.shop.get",
+      "shortPath": "shop.get",
+      "description": "Read the shop name, domain, currency and plan for the configured token",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shop",
+            "optional": false,
+            "type": "{ id: string, name: string, myshopifyDomain: string, currencyCode: string, ianaTimezone?: string | null, email?: string | null, description?: string | null, plan?: { displayName?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shopify.api.shop.listLocations",
+      "shortPath": "shop.listLocations",
+      "description": "List the inventory locations of the shop, for use with inventory.adjust",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "first",
+            "optional": true,
+            "type": "number",
+            "description": "Page size. Defaults to 50; the maximum is 250."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor from a previous page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "locations",
+            "optional": false,
+            "type": "{ edges: { node: { id: string, name: string, isActive: boolean, address: { address1?: string | null, city?: string | null, province?: string | null, countryCode?: string | null, zip?: string | null } }, cursor?: string | null }[], pageInfo: { hasNextPage: boolean, hasPreviousPage?: boolean | null, endCursor?: string | null, startCursor?: string | null } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shopify.api.variants.list",
+      "shortPath": "variants.list",
+      "description": "List the variants of one product, cursor-paged, with price and stock",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "first",
+            "optional": true,
+            "type": "number",
+            "description": "Page size. Defaults to 50; the maximum is 250."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor from a previous page."
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "Shopify search syntax."
+          },
+          {
+            "key": "productId",
+            "optional": false,
+            "type": "string",
+            "description": "Product GID to list variants for."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "productVariants",
+            "optional": false,
+            "type": "{ edges: { node: { id: string, title: string, sku?: string | null, price?: string | null, compareAtPrice?: string | null, inventoryQuantity?: number | null, inventoryItem?: { id: string } | null }, cursor?: string | null }[], pageInfo: { hasNextPage: boolean, hasPreviousPage?: boolean | null, endCursor?: string | null, startCursor?: string | null } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shopify.api.variants.update",
+      "shortPath": "variants.update",
+      "description": "Update price, SKU, barcode or inventory policy on one variant",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "productId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Product variant GID."
+          },
+          {
+            "key": "price",
+            "optional": true,
+            "type": "string",
+            "description": "Decimal string, e.g. \"19.99\"."
+          },
+          {
+            "key": "compareAtPrice",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sku",
+            "optional": true,
+            "type": "string",
+            "description": "SKU for this variant. Sent as inventoryItem.sku, which is where the API stores it."
+          },
+          {
+            "key": "barcode",
+            "optional": true,
+            "type": "string",
+            "description": "Barcode value; sent in the barcodes list, not the deprecated barcode field."
+          },
+          {
+            "key": "barcodeType",
+            "optional": true,
+            "type": "UPC | EAN | ISBN | GTIN | ASIN | NS_PID",
+            "description": "Barcode standard. When omitted the value is stored without a type and is not checked against a standard."
+          },
+          {
+            "key": "inventoryPolicy",
+            "optional": true,
+            "type": "DENY | CONTINUE"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "productVariants",
+            "optional": false,
+            "type": "{ id: string, price?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shopify.api.webhookSubscriptions.create",
+      "shortPath": "webhookSubscriptions.create",
+      "description": "Register a JSON webhook subscription for one topic and URI",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "topic",
+            "optional": false,
+            "type": "string",
+            "description": "Topic, e.g. ORDERS_CREATE."
+          },
+          {
+            "key": "uri",
+            "optional": false,
+            "type": "string",
+            "description": "HTTPS endpoint Shopify delivers to."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookSubscription",
+            "optional": false,
+            "type": "{ id: string, topic: string, uri: string, format: string, createdAt?: string | null, updatedAt?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shopify.api.webhookSubscriptions.delete",
+      "shortPath": "webhookSubscriptions.delete",
+      "description": "Delete a webhook subscription, stopping further deliveries for that topic",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "WebhookSubscription GID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deletedWebhookSubscriptionId",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shopify.api.webhookSubscriptions.list",
+      "shortPath": "webhookSubscriptions.list",
+      "description": "List shop-scoped webhook subscriptions, optionally filtered by topic",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "first",
+            "optional": true,
+            "type": "number",
+            "description": "Page size. Defaults to 50; the maximum is 250."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor from a previous page."
+          },
+          {
+            "key": "topic",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by topic, e.g. ORDERS_CREATE."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookSubscriptions",
+            "optional": false,
+            "type": "{ edges: { node: { id: string, topic: string, uri: string, format: string, createdAt?: string | null, updatedAt?: string | null }, cursor?: string | null }[], pageInfo: { hasNextPage: boolean, hasPreviousPage?: boolean | null, endCursor?: string | null, startCursor?: string | null } }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "shopify.webhooks.shopify.receive",
+      "shortPath": "shopify.receive",
+      "description": "A verified delivery for one topic; the topic header selects the payload schema",
+      "payload": {
+        "kind": "inline",
+        "type": "{ id: string | number, admin_graphql_api_id?: string, name?: string | null, email?: string | null, created_at?: string | null, updated_at?: string | null, currency?: string | null, financial_status?: string | null, fulfillment_status?: string | null, cancelled_at?: string | null, current_total_price?: string | null, total_price?: string | null, order_number?: number | null, line_items?: { id?: string | number, title?: string | null, quantity?: number | null, sku?: string | null }[] | null, customer?: { id?: string | number | null, email?: string | null, first_name?: string | null, last_name?: string | null } | null } | { id: string | number, admin_graphql_api_id?: string, title?: string | null, handle?: string | null, status?: string | null, vendor?: string | null, product_type?: string | null, tags?: string | string[] | null, created_at?: string | null, updated_at?: string | null, variants?: { id?: string | number, title?: string | null, sku?: string | null, price?: string | null, inventory_quantity?: number | null }[] | null } | { id: string | number, admin_graphql_api_id?: string, email?: string | null, first_name?: string | null, last_name?: string | null, phone?: string | null, state?: string | null, created_at?: string | null, updated_at?: string | null, orders_count?: number | null, tags?: string | string[] | null }"
+      },
+      "responseType": "{ topic: string, shopDomain: string | null, resourceId: string, signatureVerified: boolean }",
+      "usageExample": "shopify({\n    webhookHooks: {\n        shopify: {\n            receive: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": []
+}

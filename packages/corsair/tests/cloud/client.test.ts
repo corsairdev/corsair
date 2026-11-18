@@ -248,6 +248,31 @@ describe('the caller mode over the wire', () => {
 		expect(sentMode(fetchMock)).toBe('strict');
 	});
 
+	it('sends per-account modes, and the strictest of them for an older server', async () => {
+		const { client, fetchMock } = harness();
+		const scope = {
+			mode: 'cautious' as const,
+			accounts: { slack: { 'ops@x.com': 'readonly' as const } },
+		};
+		await runWithMode(scope, () => client.slack.api.messages.post({}));
+		expect(sentMode(fetchMock)).toBe('readonly');
+		expect(
+			JSON.parse(fetchMock.mock.calls[0][1].headers['x-corsair-mode-scopes']),
+		).toEqual([scope]);
+	});
+
+	it('keeps the per-account header ASCII for a non-ASCII label', async () => {
+		const { client, fetchMock } = harness();
+		const scope = {
+			mode: 'cautious' as const,
+			accounts: { slack: { 東京: 'readonly' as const } },
+		};
+		await runWithMode(scope, () => client.slack.api.messages.post({}));
+		const header = fetchMock.mock.calls[0][1].headers['x-corsair-mode-scopes'];
+		expect(header).toMatch(/^[\x00-\x7f]*$/);
+		expect(JSON.parse(header)).toEqual([scope]);
+	});
+
 	it('refuses an entity delete before it reaches the wire', async () => {
 		const { client, fetchMock } = harness();
 		await expect(

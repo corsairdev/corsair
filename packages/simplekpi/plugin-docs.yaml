@@ -1,0 +1,122 @@
+displayName: SimpleKPI
+description: KPIs from SimpleKPI - create and manage KPIs, categories and units, write actuals and targets as entries one at a time or in bulk, read aggregated reports, and look up users, frequencies, icons and breakdowns.
+domain: simplekpi.com
+recommendedAuth: api_key
+overviewNote: |
+  Create an API key in SimpleKPI under Settings, then API Access. It starts with `skpi_`, is shown only once, and is sent as `Authorization: Bearer skpi_...`. Pass it as the plugin's `key` option or store it on the account.
+
+  Each key carries scopes, and a scope decides which operations work. `kpis:read` and `kpis:write` cover KPIs, categories, units, frequencies and icons; `entries:read` and `entries:write` cover entries and reports; `breakdownitems:read` and `breakdownitems:write` cover breakdowns; `users:read` covers users. Write does not imply read, so a key that can push entries still cannot list them back.
+
+  Things to know before you write:
+
+  - **PUT replaces the whole object.** Anything left out is reset to its default rather than kept, so a rename has to send the rest of the KPI back too. `kpis.update` documents the full body for that reason.
+  - **A KPI needs real icon and unit ids.** The contract does not mark `icon_id` and `unit_id` mandatory, but the API validates whatever arrives, and a missing one becomes 0, which fails with a 400. Read the ids from `kpiIcons.list` and `kpiUnits.list` first.
+  - **Enums are case sensitive.** `aggregate_function` is `SUM` or `AVG`, `value_direction` is `U`, `D` or `N`, and a `frequency_id` is `D`, `W`, `M`, `Q` or `Y`. Lower case is rejected.
+  - **Entries are upserts.** `kpi_id`, `source_id` and `entry_date` identify an entry, so sending the same trio again updates it rather than duplicating. `201` means a new entry and `200` an updated one.
+  - **A write can store nothing.** A valid entry whose actual, target and notes are all empty answers `200` with `{ stored: false }` instead of an entry. The output models both shapes, and the stored flag says which one arrived.
+  - **The set flags choose what is written.** `setActual: false` leaves a stored actual untouched while a target is written, which is the only way to change a target without clearing the value. `addToActual: true` adds instead of replacing, which is how you feed in events as they happen.
+  - **A batch answers 200 even when every row failed.** `rows_rejected` is the only signal. A batch that stored nothing throws, so a caller cannot mistake it for success.
+  - **Dates have to suit the frequency.** A weekly KPI rejects a mid-week `entry_date`, and the API reports that as a rejected row rather than a failed request.
+  - **Paging.** Lists are plain arrays with no total count. `page` counts from 1 and `rows` defaults to 500, so page until a response comes back short.
+  - **The live API sends a trace id.** Errors are RFC 7807 problem details with `application/problem+json`; a 400 caused by the request carries an `errors` map from field name to messages, which the plugin surfaces as `fieldErrors`.
+examples:
+  read:
+    path: reports.allDataEntries
+    title: Read actuals and targets for one KPI
+    args:
+      kpiIDs:
+        - 1234
+      dateFrom: '2026-08-01'
+      dateTo: '2026-08-31'
+  write:
+    path: kpiEntries.create
+    title: Record a weekly actual
+    args:
+      kpi_id: 1234
+      entry_date: '2026-08-03'
+      actual: 42
+      setActual: true
+apiExamples:
+  kpis.list:
+    call: "{ page: 1, rows: 100 }"
+  kpis.create:
+    call: "{ name: 'New Sales', icon_id: 1, unit_id: 123, frequency_id: 'W', value_direction: 'U', aggregate_function: 'SUM', category_id: 5478 }"
+  kpis.get:
+    call: "{ id: 1234 }"
+  kpis.update:
+    call: "{ id: 1234, name: 'New Sales', icon_id: 1, unit_id: 123, frequency_id: 'W', value_direction: 'U', aggregate_function: 'SUM' }"
+  kpis.delete:
+    call: "{ id: 1234 }"
+  kpiCategories.list: {}
+  kpiCategories.create:
+    call: "{ name: 'Sales' }"
+  kpiCategories.get:
+    call: "{ id: 5478 }"
+  kpiCategories.update:
+    call: "{ id: 5478, name: 'Revenue' }"
+  kpiCategories.delete:
+    call: "{ id: 5478 }"
+  kpiCategories.kpis.list:
+    call: "{ category_id: 5478 }"
+  kpiCategories.kpis.create:
+    call: "{ category_id: 5478, name: 'New Sales', icon_id: 1, unit_id: 123, frequency_id: 'W', value_direction: 'U', aggregate_function: 'SUM' }"
+  kpiCategories.kpis.get:
+    call: "{ category_id: 5478, id: 1234 }"
+  kpiCategories.kpis.update:
+    call: "{ category_id: 5478, id: 1234, name: 'New Sales', icon_id: 1, unit_id: 123, frequency_id: 'W', value_direction: 'U', aggregate_function: 'SUM' }"
+  kpiCategories.kpis.delete:
+    call: "{ category_id: 5478, id: 1234 }"
+  breakdownItems.list:
+    call: "{ page: 1, rows: 100 }"
+  breakdownItems.create:
+    call: "{ name: 'EMEA', breakdown_id: 12 }"
+  breakdownItems.get:
+    call: "{ id: 77 }"
+  breakdownItems.update:
+    call: "{ id: 77, name: 'EMEA North' }"
+  breakdownItems.delete:
+    call: "{ id: 77 }"
+  kpiEntries.list:
+    call: "{ kpiId: 1234, dateFrom: '2026-08-01', dateTo: '2026-08-31', rows: 100 }"
+  kpiEntries.create:
+    call: "{ kpi_id: 1234, entry_date: '2026-08-03', actual: 42, target: 50, setActual: true, setTarget: true }"
+  kpiEntries.get:
+    call: "{ id: 987654 }"
+  kpiEntries.update:
+    call: "{ id: 987654, kpi_id: 1234, entry_date: '2026-08-03', actual: 50, setActual: true }"
+  kpiEntries.delete:
+    call: "{ id: 987654 }"
+  kpiEntries.createBatch:
+    call: "{ entries: [{ kpi_id: 1234, entry_date: '2026-08-03', actual: 1 }], hasActuals: true }"
+  kpiFrequencies.list: {}
+  kpiFrequencies.get:
+    call: "{ id: 'W' }"
+  kpiIcons.list: {}
+  kpiIcons.get:
+    call: "{ id: 1 }"
+  kpiUnits.list: {}
+  kpiUnits.create:
+    call: "{ name: 'Pounds', entry_format: '#,##0.00', display_format: '#,##0' }"
+  kpiUnits.get:
+    call: "{ id: 123 }"
+  kpiUnits.update:
+    call: "{ id: 123, name: 'Pounds', entry_format: '#,##0.00', display_format: '#,##0' }"
+  kpiUnits.delete:
+    call: "{ id: 123 }"
+  reports.allDataEntries:
+    call: "{ kpiIDs: [1234], dateFrom: '2026-08-01', dateTo: '2026-08-31' }"
+  users.list: {}
+  users.get:
+    call: "{ id: 12 }"
+apiNotes:
+  breakdownItems.delete: 'SimpleKPI answers 204 but keeps the item, archived (`is_archived: true`), rather than removing it (live, 11-16).'
+  breakdownItems.list: 'The API has no breakdown filter, so page through the items and filter on `breakdown_id` yourself.'
+  kpis.create: 'icon_id and unit_id must be real ids: the contract does not mark them mandatory, but the API validates them and a missing one becomes 0, which fails with a 400.'
+  kpis.update: 'PUT replaces the whole object. A field left out is reset to its default, not kept, so read the KPI first and send it back changed.'
+  kpiEntries.create: 'An upsert on kpi_id, source_id and entry_date. A write with every value empty answers 200 with `{ stored: false }`, which the output models alongside the entry shape.'
+  kpiEntries.createBatch: 'The route answers 200 even when every row was rejected, so rows_added is the signal. A batch that stored nothing throws rather than reporting success.'
+  kpiEntries.list: 'All filters are optional, but narrow by kpiId and a date range or the response gets large. Filters are camelCase on this route, unlike the bodies.'
+  reports.allDataEntries: 'The kpiIDs filter is sent as a comma separated list, which is how this one route takes an array.'
+  kpiCategories.kpis.get: 'A KPI under a different category answers 404, which is how the API keeps a caller on the right parent.'
+  users.list: 'Read-only: there is no users:write scope, and people are added and changed in the app.'
+  kpiUnits.create: 'Both formats use digits and # as placeholders, with comma grouping and one decimal group, such as #,##0.00 or 0.##.'

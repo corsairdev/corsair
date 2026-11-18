@@ -1,0 +1,2404 @@
+---
+title: "Storyblok API reference"
+sidebarTitle: "API"
+description: "API reference for the Storyblok plugin in Corsair: every `storyblok.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Assets
+
+### bulkDelete
+
+`assets.bulkDelete`
+
+Delete several assets in one call, with the same effect as deleting each
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.storyblok.api.assets.bulkDelete({ ids: [900, 901] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `number[]` | Yes | The asset ids to delete. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`assets.delete`
+
+Delete one asset, so any content referencing it shows a broken file
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.storyblok.api.assets.delete({ asset_id: 900 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset_id` | `number` | Yes | A Storyblok numeric id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="asset full type">
+
+```ts
+{
+  id?: number | null,
+  filename?: string | null,
+  short_filename?: string | null,
+  space_id?: number | null,
+  asset_folder_id?: number | null,
+  content_type?: string | null,
+  content_length?: number | null,
+  alt?: string | null,
+  copyright?: string | null,
+  title?: string | null,
+  source?: string | null,
+  focus?: string | null,
+  locked?: boolean | null,
+  is_private?: boolean | null,
+  publish_at?: string | null,
+  expire_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  deleted_at?: string | null,
+  file?: Record<string, any> | null,
+  meta_data?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`assets.get`
+
+Read one asset with its file details and metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.storyblok.api.assets.get({ asset_id: 900 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset_id` | `number` | Yes | A Storyblok numeric id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="asset full type">
+
+```ts
+{
+  id?: number | null,
+  filename?: string | null,
+  short_filename?: string | null,
+  space_id?: number | null,
+  asset_folder_id?: number | null,
+  content_type?: string | null,
+  content_length?: number | null,
+  alt?: string | null,
+  copyright?: string | null,
+  title?: string | null,
+  source?: string | null,
+  focus?: string | null,
+  locked?: boolean | null,
+  is_private?: boolean | null,
+  publish_at?: string | null,
+  expire_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  deleted_at?: string | null,
+  file?: Record<string, any> | null,
+  meta_data?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`assets.list`
+
+List assets with a search and a folder filter
+
+**Risk:** `read`
+
+```ts
+await corsair.storyblok.api.assets.list({ search: 'logo' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, from 1. |
+| `per_page` | `number` | No | Entries per page, up to 1000. Defaults to 25. |
+| `search` | `string` | No | — |
+| `in_folder` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `assets` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="assets full type">
+
+```ts
+{
+  id?: number | null,
+  filename?: string | null,
+  short_filename?: string | null,
+  space_id?: number | null,
+  asset_folder_id?: number | null,
+  content_type?: string | null,
+  content_length?: number | null,
+  alt?: string | null,
+  copyright?: string | null,
+  title?: string | null,
+  source?: string | null,
+  focus?: string | null,
+  locked?: boolean | null,
+  is_private?: boolean | null,
+  publish_at?: string | null,
+  expire_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  deleted_at?: string | null,
+  file?: Record<string, any> | null,
+  meta_data?: Record<string, any> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`assets.update`
+
+Change an asset's metadata: alt text, title, copyright, focus point, privacy and publish window. Uploading new bytes is a separate flow and is not wrapped
+
+**Risk:** `write`
+
+```ts
+await corsair.storyblok.api.assets.update({ asset_id: 900, alt: 'Company logo', title: 'Logo' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset_id` | `number` | Yes | A Storyblok numeric id. |
+| `filename` | `string` | No | — |
+| `alt` | `string \| null` | No | — |
+| `copyright` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `focus` | `string \| null` | No | — |
+| `is_private` | `boolean` | No | — |
+| `publish_at` | `string \| null` | No | — |
+| `expire_at` | `string \| null` | No | — |
+
+Metadata only: alt text, title, copyright, focus point, privacy and the publish window. Uploading new bytes is a separate signed-upload flow that is not wrapped.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="asset full type">
+
+```ts
+{
+  id?: number | null,
+  filename?: string | null,
+  short_filename?: string | null,
+  space_id?: number | null,
+  asset_folder_id?: number | null,
+  content_type?: string | null,
+  content_length?: number | null,
+  alt?: string | null,
+  copyright?: string | null,
+  title?: string | null,
+  source?: string | null,
+  focus?: string | null,
+  locked?: boolean | null,
+  is_private?: boolean | null,
+  publish_at?: string | null,
+  expire_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  deleted_at?: string | null,
+  file?: Record<string, any> | null,
+  meta_data?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Components
+
+### create
+
+`components.create`
+
+Create a component, which is the field schema a content type uses. Its name is the key content references
+
+**Risk:** `write`
+
+```ts
+await corsair.storyblok.api.components.create({ name: 'page', display_name: 'Page', schema: { title: { type: 'text' } }, is_root: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The technical name, which content uses as its component key. |
+| `display_name` | `string \| null` | No | — |
+| `schema` | `Record<string, any>` | Yes | Field name to its definition, such as &#123; title: &#123; type: "text" &#125; &#125;. |
+| `is_root` | `boolean` | No | — |
+| `is_nestable` | `boolean` | No | — |
+| `preview_field` | `string \| null` | No | — |
+| `preview_tmpl` | `string \| null` | No | — |
+| `icon` | `string \| null` | No | — |
+| `color` | `string \| null` | No | — |
+| `component_group_uuid` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `component` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="component full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  display_name?: string | null,
+  real_name?: string | null,
+  schema?: Record<string, any> | null,
+  image?: string | null,
+  preview_field?: string | null,
+  preview_tmpl?: string | null,
+  is_root?: boolean | null,
+  is_nestable?: boolean | null,
+  icon?: string | null,
+  color?: string | null,
+  component_group_uuid?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`components.delete`
+
+Delete a component. Content that uses it can no longer render, and this cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.storyblok.api.components.delete({ component_id: 12345 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `component_id` | `number` | Yes | A Storyblok numeric id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `component` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="component full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  display_name?: string | null,
+  real_name?: string | null,
+  schema?: Record<string, any> | null,
+  image?: string | null,
+  preview_field?: string | null,
+  preview_tmpl?: string | null,
+  is_root?: boolean | null,
+  is_nestable?: boolean | null,
+  icon?: string | null,
+  color?: string | null,
+  component_group_uuid?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`components.list`
+
+List the components that define content types, with their field schemas
+
+**Risk:** `read`
+
+```ts
+await corsair.storyblok.api.components.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, from 1. |
+| `per_page` | `number` | No | Entries per page, up to 1000. Defaults to 25. |
+| `search` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `components` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="components full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  display_name?: string | null,
+  real_name?: string | null,
+  schema?: Record<string, any> | null,
+  image?: string | null,
+  preview_field?: string | null,
+  preview_tmpl?: string | null,
+  is_root?: boolean | null,
+  is_nestable?: boolean | null,
+  icon?: string | null,
+  color?: string | null,
+  component_group_uuid?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`components.update`
+
+Replace a component's field schema. Existing content is not migrated: a removed field's values stay in stories, hidden, until a migration removes them
+
+**Risk:** `write`
+
+```ts
+await corsair.storyblok.api.components.update({ component_id: 12345, name: 'page', schema: { title: { type: 'text' }, subtitle: { type: 'text' } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `component_id` | `number` | Yes | A Storyblok numeric id. |
+| `name` | `string` | Yes | The technical name, which content uses as its component key. |
+| `display_name` | `string \| null` | No | — |
+| `schema` | `Record<string, any>` | Yes | Field name to its definition, such as &#123; title: &#123; type: "text" &#125; &#125;. |
+| `is_root` | `boolean` | No | — |
+| `is_nestable` | `boolean` | No | — |
+| `preview_field` | `string \| null` | No | — |
+| `preview_tmpl` | `string \| null` | No | — |
+| `icon` | `string \| null` | No | — |
+| `color` | `string \| null` | No | — |
+| `component_group_uuid` | `string \| null` | No | — |
+
+Replacing a component's schema changes the shape every story of that type is parsed against, and a removed field's values stay in existing stories, hidden from the editor, until a migration removes them.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `component` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="component full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  display_name?: string | null,
+  real_name?: string | null,
+  schema?: Record<string, any> | null,
+  image?: string | null,
+  preview_field?: string | null,
+  preview_tmpl?: string | null,
+  is_root?: boolean | null,
+  is_nestable?: boolean | null,
+  icon?: string | null,
+  color?: string | null,
+  component_group_uuid?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Datasource Entries
+
+### create
+
+`datasourceEntries.create`
+
+Add an entry to a datasource
+
+**Risk:** `write`
+
+```ts
+await corsair.storyblok.api.datasourceEntries.create({ name: 'Netherlands', value: 'nl', datasource_id: 777 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `value` | `string` | Yes | — |
+| `datasource_id` | `number` | Yes | The datasource this entry belongs to. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasource_entry` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="datasource_entry full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  value?: string | null,
+  dimension_value?: string | null,
+  position?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`datasourceEntries.delete`
+
+Delete a datasource entry; content using that option loses it
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.storyblok.api.datasourceEntries.delete({ datasource_entry_id: 888 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasource_entry_id` | `number` | Yes | A Storyblok numeric id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | The id (or, for a tag, the id or name) that was deleted. |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`datasourceEntries.get`
+
+Read one datasource entry with its name, value and position
+
+**Risk:** `read`
+
+```ts
+await corsair.storyblok.api.datasourceEntries.get({ datasource_entry_id: 888 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasource_entry_id` | `number` | Yes | A Storyblok numeric id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasource_entry` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="datasource_entry full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  value?: string | null,
+  dimension_value?: string | null,
+  position?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`datasourceEntries.list`
+
+List datasource entries, optionally only those of one datasource or one dimension value
+
+**Risk:** `read`
+
+```ts
+await corsair.storyblok.api.datasourceEntries.list({ datasource_id: 777 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, from 1. |
+| `per_page` | `number` | No | Entries per page, up to 1000. Defaults to 25. |
+| `datasource_id` | `number` | No | Only entries of this datasource. |
+| `dimension` | `number \| string` | No | The numeric id of a dimension; entries then carry that dimension_value. Send it with datasource_id: Storyblok only resolves dimension values within one datasource. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasource_entries` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="datasource_entries full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  value?: string | null,
+  dimension_value?: string | null,
+  position?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`datasourceEntries.update`
+
+Replace a datasource entry's name and value
+
+**Risk:** `write`
+
+```ts
+await corsair.storyblok.api.datasourceEntries.update({ datasource_entry_id: 888, name: 'The Netherlands', value: 'nl', datasource_id: 777 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasource_entry_id` | `number` | Yes | A Storyblok numeric id. |
+| `name` | `string` | Yes | — |
+| `value` | `string` | Yes | — |
+| `datasource_id` | `number` | Yes | The datasource this entry belongs to. |
+| `dimension_value` | `string` | No | The value for the dimension named by dimension_id. |
+| `dimension_id` | `number` | No | The dimension whose value dimension_value sets. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasource_entry` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="datasource_entry full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  value?: string | null,
+  dimension_value?: string | null,
+  position?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Datasources
+
+### create
+
+`datasources.create`
+
+Create a datasource, whose slug is what content uses to reference it
+
+**Risk:** `write`
+
+```ts
+await corsair.storyblok.api.datasources.create({ name: 'Countries', slug: 'countries' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `slug` | `string` | Yes | The identifier content uses to reference the datasource. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasource` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="datasource full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  slug?: string | null,
+  dimensions?: Record<string, any>[] | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`datasources.delete`
+
+Delete a datasource along with its entries. Content that references it is left pointing at nothing
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.storyblok.api.datasources.delete({ datasource_id: 777 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasource_id` | `number` | Yes | A Storyblok numeric id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | The id (or, for a tag, the id or name) that was deleted. |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`datasources.get`
+
+Read one datasource with its dimensions
+
+**Risk:** `read`
+
+```ts
+await corsair.storyblok.api.datasources.get({ datasource_id: 777 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasource_id` | `number` | Yes | A Storyblok numeric id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasource` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="datasource full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  slug?: string | null,
+  dimensions?: Record<string, any>[] | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`datasources.list`
+
+List the datasources on the space, such as reusable option lists
+
+**Risk:** `read`
+
+```ts
+await corsair.storyblok.api.datasources.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, from 1. |
+| `per_page` | `number` | No | Entries per page, up to 1000. Defaults to 25. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasources` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="datasources full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  slug?: string | null,
+  dimensions?: Record<string, any>[] | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`datasources.update`
+
+Replace a datasource name and slug
+
+**Risk:** `write`
+
+```ts
+await corsair.storyblok.api.datasources.update({ datasource_id: 777, name: 'Countries', slug: 'countries-v2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasource_id` | `number` | Yes | A Storyblok numeric id. |
+| `name` | `string` | Yes | — |
+| `slug` | `string` | Yes | The identifier content uses to reference the datasource. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasource` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="datasource full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  slug?: string | null,
+  dimensions?: Record<string, any>[] | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Releases
+
+### create
+
+`releases.create`
+
+Create a release that stories can be grouped into and published together
+
+**Risk:** `write`
+
+```ts
+await corsair.storyblok.api.releases.create({ name: 'Spring launch', release_at: '2026-03-01T09:00:00.000Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `release_at` | `string \| null` | No | When to release it, ISO 8601. |
+| `timezone` | `string \| null` | No | — |
+| `public` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `release` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="release full type">
+
+```ts
+{
+  id?: number | null,
+  uuid?: string | null,
+  name?: string | null,
+  release_at?: string | null,
+  released?: boolean | null,
+  timezone?: string | null,
+  public?: boolean | null,
+  owner_id?: number | null,
+  branches_to_deploy?: number[] | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`releases.delete`
+
+Delete a release. The stories grouped in it stay, but the grouping is gone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.storyblok.api.releases.delete({ release_id: 321 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `release_id` | `number` | Yes | A Storyblok numeric id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `release` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="release full type">
+
+```ts
+{
+  id?: number | null,
+  uuid?: string | null,
+  name?: string | null,
+  release_at?: string | null,
+  released?: boolean | null,
+  timezone?: string | null,
+  public?: boolean | null,
+  owner_id?: number | null,
+  branches_to_deploy?: number[] | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`releases.get`
+
+Read one release with its schedule, released state and the branches it deploys
+
+**Risk:** `read`
+
+```ts
+await corsair.storyblok.api.releases.get({ release_id: 321 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `release_id` | `number` | Yes | A Storyblok numeric id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `release` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="release full type">
+
+```ts
+{
+  id?: number | null,
+  uuid?: string | null,
+  name?: string | null,
+  release_at?: string | null,
+  released?: boolean | null,
+  timezone?: string | null,
+  public?: boolean | null,
+  owner_id?: number | null,
+  branches_to_deploy?: number[] | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`releases.list`
+
+List releases with their schedules and released state
+
+**Risk:** `read`
+
+```ts
+await corsair.storyblok.api.releases.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, from 1. |
+| `per_page` | `number` | No | Entries per page, up to 1000. Defaults to 25. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `releases` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="releases full type">
+
+```ts
+{
+  id?: number | null,
+  uuid?: string | null,
+  name?: string | null,
+  release_at?: string | null,
+  released?: boolean | null,
+  timezone?: string | null,
+  public?: boolean | null,
+  owner_id?: number | null,
+  branches_to_deploy?: number[] | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`releases.update`
+
+Change a release, or publish it in the same call with do_release
+
+**Risk:** `write`
+
+```ts
+await corsair.storyblok.api.releases.update({ release_id: 321, name: 'Spring launch', do_release: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `release_id` | `number` | Yes | A Storyblok numeric id. |
+| `name` | `string` | Yes | — |
+| `release_at` | `string \| null` | No | When to release it, ISO 8601. |
+| `timezone` | `string \| null` | No | — |
+| `public` | `boolean` | No | — |
+| `do_release` | `boolean` | No | Release now rather than saving the schedule. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `release` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="release full type">
+
+```ts
+{
+  id?: number | null,
+  uuid?: string | null,
+  name?: string | null,
+  release_at?: string | null,
+  released?: boolean | null,
+  timezone?: string | null,
+  public?: boolean | null,
+  owner_id?: number | null,
+  branches_to_deploy?: number[] | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Spaces
+
+### get
+
+`spaces.get`
+
+Read the configured space: its plan, counts, environments and defaults
+
+**Risk:** `read`
+
+```ts
+await corsair.storyblok.api.spaces.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `space` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="space full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  domain?: string | null,
+  uniq_domain?: string | null,
+  plan?: string | null,
+  plan_level?: number | null,
+  role?: string | null,
+  owner_id?: number | null,
+  parent_id?: number | null,
+  stories_count?: number | null,
+  assets_count?: number | null,
+  trial?: boolean | null,
+  default_root?: string | null,
+  created_at?: string | null,
+  limits?: Record<string, any> | null,
+  options?: Record<string, any> | null,
+  environments?: Record<string, any>[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`spaces.list`
+
+List the spaces the token can reach, which is how a space id is found
+
+**Risk:** `read`
+
+```ts
+await corsair.storyblok.api.spaces.list({ per_page: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, from 1. |
+| `per_page` | `number` | No | Entries per page, up to 1000. Defaults to 25. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `spaces` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="spaces full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  domain?: string | null,
+  uniq_domain?: string | null,
+  plan?: string | null,
+  plan_level?: number | null,
+  role?: string | null,
+  owner_id?: number | null,
+  parent_id?: number | null,
+  stories_count?: number | null,
+  assets_count?: number | null,
+  trial?: boolean | null,
+  default_root?: string | null,
+  created_at?: string | null,
+  limits?: Record<string, any> | null,
+  options?: Record<string, any> | null,
+  environments?: Record<string, any>[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Stories
+
+### create
+
+`stories.create`
+
+Create a story, optionally publishing it or grouping it in a release in the same call
+
+**Risk:** `write`
+
+```ts
+await corsair.storyblok.api.stories.create({ name: 'Home', slug: 'home', content: { component: 'page', title: 'Welcome' }, publish: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The story name, which the UI shows. |
+| `slug` | `string` | Yes | The URL segment. Storyblok derives full_slug from this and the parent. |
+| `content` | `Record<string, any>` | Yes | The story content: a component key naming the content type plus that component's fields, keyed by field name, such as &#123; component: "page", title: "Welcome" &#125;. |
+| `parent_id` | `number \| null` | No | — |
+| `group_id` | `string \| null` | No | — |
+| `is_startpage` | `boolean` | No | — |
+| `disable_fe_editor` | `boolean` | No | — |
+| `meta_data` | `Record<string, any> \| null` | No | — |
+| `tag_list` | `string[] \| null` | No | — |
+| `publish` | `boolean` | No | Publish in the same call rather than leaving a draft. |
+| `release_id` | `number` | No | Group the story in this release instead of publishing it. |
+
+Storyblok requires both content and slug. content is the schema's own JSON: one object per component field with a component key naming the content type.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `story` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="story full type">
+
+```ts
+{
+  id?: number | null,
+  uuid?: string | null,
+  name?: string | null,
+  slug?: string | null,
+  full_slug?: string | null,
+  path?: string | null,
+  parent_id?: number | null,
+  group_id?: string | null,
+  is_folder?: boolean | null,
+  is_startpage?: boolean | null,
+  published?: boolean | null,
+  published_at?: string | null,
+  first_published_at?: string | null,
+  unpublished_changes?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  deleted_at?: string | null,
+  sort_by_date?: string | null,
+  tag_list?: string[] | null,
+  release_ids?: number[] | null,
+  position?: number | null,
+  content?: Record<string, any> | null,
+  meta_data?: Record<string, any> | null,
+  alternates?: Record<string, any>[] | null,
+  breadcrumbs?: Record<string, any>[] | null,
+  translated_slugs?: Record<string, any>[] | null,
+  localized_paths?: Record<string, any>[] | null,
+  default_root?: string | null,
+  disable_fe_editor?: boolean | null,
+  preview_token?: Record<string, any> | null,
+  stage?: Record<string, any> | null,
+  last_author?: Record<string, any> | null,
+  last_author_id?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`stories.delete`
+
+Delete a story and trash it. Storyblok keeps it in the trash, but this plugin does not wrap a restore, so treat it as permanent
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.storyblok.api.stories.delete({ story_id: 369689 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `story_id` | `number` | Yes | The numeric story id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `story` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="story full type">
+
+```ts
+{
+  id?: number | null,
+  uuid?: string | null,
+  name?: string | null,
+  slug?: string | null,
+  full_slug?: string | null,
+  path?: string | null,
+  parent_id?: number | null,
+  group_id?: string | null,
+  is_folder?: boolean | null,
+  is_startpage?: boolean | null,
+  published?: boolean | null,
+  published_at?: string | null,
+  first_published_at?: string | null,
+  unpublished_changes?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  deleted_at?: string | null,
+  sort_by_date?: string | null,
+  tag_list?: string[] | null,
+  release_ids?: number[] | null,
+  position?: number | null,
+  content?: Record<string, any> | null,
+  meta_data?: Record<string, any> | null,
+  alternates?: Record<string, any>[] | null,
+  breadcrumbs?: Record<string, any>[] | null,
+  translated_slugs?: Record<string, any>[] | null,
+  localized_paths?: Record<string, any>[] | null,
+  default_root?: string | null,
+  disable_fe_editor?: boolean | null,
+  preview_token?: Record<string, any> | null,
+  stage?: Record<string, any> | null,
+  last_author?: Record<string, any> | null,
+  last_author_id?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`stories.get`
+
+Read one story with its full content, published state, tags and version ids
+
+**Risk:** `read`
+
+```ts
+await corsair.storyblok.api.stories.get({ story_id: 369689 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `story_id` | `number` | Yes | The numeric story id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `story` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="story full type">
+
+```ts
+{
+  id?: number | null,
+  uuid?: string | null,
+  name?: string | null,
+  slug?: string | null,
+  full_slug?: string | null,
+  path?: string | null,
+  parent_id?: number | null,
+  group_id?: string | null,
+  is_folder?: boolean | null,
+  is_startpage?: boolean | null,
+  published?: boolean | null,
+  published_at?: string | null,
+  first_published_at?: string | null,
+  unpublished_changes?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  deleted_at?: string | null,
+  sort_by_date?: string | null,
+  tag_list?: string[] | null,
+  release_ids?: number[] | null,
+  position?: number | null,
+  content?: Record<string, any> | null,
+  meta_data?: Record<string, any> | null,
+  alternates?: Record<string, any>[] | null,
+  breadcrumbs?: Record<string, any>[] | null,
+  translated_slugs?: Record<string, any>[] | null,
+  localized_paths?: Record<string, any>[] | null,
+  default_root?: string | null,
+  disable_fe_editor?: boolean | null,
+  preview_token?: Record<string, any> | null,
+  stage?: Record<string, any> | null,
+  last_author?: Record<string, any> | null,
+  last_author_id?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`stories.list`
+
+List stories with filters for slug, tag, parent, publication state and release. This route omits each story's content unless with_summary is set
+
+**Risk:** `read`
+
+```ts
+await corsair.storyblok.api.stories.list({ by_slugs: 'posts/*', is_published: true, per_page: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, from 1. |
+| `per_page` | `number` | No | Entries per page, up to 1000. Defaults to 25. |
+| `text_search` | `string` | No | Search the name, slug and content of every story. |
+| `by_slugs` | `string` | No | Full slugs to include, comma separated. A trailing * matches a prefix, as in posts/*. |
+| `excluding_slugs` | `string` | No | — |
+| `by_ids` | `string` | No | Story ids, comma separated. |
+| `by_uuids` | `string` | No | Story UUIDs, comma separated. |
+| `with_tag` | `string` | No | Tag names, comma separated. |
+| `is_published` | `boolean` | No | True for published stories only, false for drafts only. |
+| `folder_only` | `boolean` | No | — |
+| `story_only` | `boolean` | No | — |
+| `with_parent` | `number` | No | Only stories under this parent id. |
+| `starts_with` | `string` | No | Only slugs starting with this value. |
+| `in_trash` | `boolean` | No | Only deleted stories. |
+| `in_release` | `number` | No | Only stories grouped in this release. |
+| `with_summary` | `boolean` | No | Include a content_summary. Without it this route omits the content field entirely. |
+| `sort_by` | `string` | No | Sorting, such as created_at:desc or content.my_field:asc:float. |
+| `favourite` | `boolean` | No | — |
+
+This route returns stories without their content; use with_summary for a summary or stories.get for the full story. Storyblok reports total and per_page in response headers, which this client cannot return with the body, so page until an array comes back short or empty.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stories` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="stories full type">
+
+```ts
+{
+  id?: number | null,
+  uuid?: string | null,
+  name?: string | null,
+  slug?: string | null,
+  full_slug?: string | null,
+  path?: string | null,
+  parent_id?: number | null,
+  group_id?: string | null,
+  is_folder?: boolean | null,
+  is_startpage?: boolean | null,
+  published?: boolean | null,
+  published_at?: string | null,
+  first_published_at?: string | null,
+  unpublished_changes?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  deleted_at?: string | null,
+  sort_by_date?: string | null,
+  tag_list?: string[] | null,
+  release_ids?: number[] | null,
+  position?: number | null,
+  content?: Record<string, any> | null,
+  meta_data?: Record<string, any> | null,
+  alternates?: Record<string, any>[] | null,
+  breadcrumbs?: Record<string, any>[] | null,
+  translated_slugs?: Record<string, any>[] | null,
+  localized_paths?: Record<string, any>[] | null,
+  default_root?: string | null,
+  disable_fe_editor?: boolean | null,
+  preview_token?: Record<string, any> | null,
+  stage?: Record<string, any> | null,
+  last_author?: Record<string, any> | null,
+  last_author_id?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### publish
+
+`stories.publish`
+
+Publish a story, or add it to a release with release_id. Storyblok implements this as a GET, but it changes published state
+
+**Risk:** `write`
+
+```ts
+await corsair.storyblok.api.stories.publish({ story_id: 369689 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `story_id` | `number` | Yes | A Storyblok numeric id. |
+| `release_id` | `number` | No | Add the story to this release instead of publishing it now. |
+
+Served as a GET, but it changes published state, so it is a write here and a retry repeats the change. Pass release_id to group the story in a release instead.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `story` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="story full type">
+
+```ts
+{
+  id?: number | null,
+  uuid?: string | null,
+  name?: string | null,
+  slug?: string | null,
+  full_slug?: string | null,
+  path?: string | null,
+  parent_id?: number | null,
+  group_id?: string | null,
+  is_folder?: boolean | null,
+  is_startpage?: boolean | null,
+  published?: boolean | null,
+  published_at?: string | null,
+  first_published_at?: string | null,
+  unpublished_changes?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  deleted_at?: string | null,
+  sort_by_date?: string | null,
+  tag_list?: string[] | null,
+  release_ids?: number[] | null,
+  position?: number | null,
+  content?: Record<string, any> | null,
+  meta_data?: Record<string, any> | null,
+  alternates?: Record<string, any>[] | null,
+  breadcrumbs?: Record<string, any>[] | null,
+  translated_slugs?: Record<string, any>[] | null,
+  localized_paths?: Record<string, any>[] | null,
+  default_root?: string | null,
+  disable_fe_editor?: boolean | null,
+  preview_token?: Record<string, any> | null,
+  stage?: Record<string, any> | null,
+  last_author?: Record<string, any> | null,
+  last_author_id?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unpublish
+
+`stories.unpublish`
+
+Unpublish a story, so the Content Delivery API stops serving it. Storyblok implements this as a GET
+
+**Risk:** `write`
+
+```ts
+await corsair.storyblok.api.stories.unpublish({ story_id: 369689 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `story_id` | `number` | Yes | The numeric story id. |
+
+Served as a GET, but it stops the Content Delivery API serving the story.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `story` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="story full type">
+
+```ts
+{
+  id?: number | null,
+  uuid?: string | null,
+  name?: string | null,
+  slug?: string | null,
+  full_slug?: string | null,
+  path?: string | null,
+  parent_id?: number | null,
+  group_id?: string | null,
+  is_folder?: boolean | null,
+  is_startpage?: boolean | null,
+  published?: boolean | null,
+  published_at?: string | null,
+  first_published_at?: string | null,
+  unpublished_changes?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  deleted_at?: string | null,
+  sort_by_date?: string | null,
+  tag_list?: string[] | null,
+  release_ids?: number[] | null,
+  position?: number | null,
+  content?: Record<string, any> | null,
+  meta_data?: Record<string, any> | null,
+  alternates?: Record<string, any>[] | null,
+  breadcrumbs?: Record<string, any>[] | null,
+  translated_slugs?: Record<string, any>[] | null,
+  localized_paths?: Record<string, any>[] | null,
+  default_root?: string | null,
+  disable_fe_editor?: boolean | null,
+  preview_token?: Record<string, any> | null,
+  stage?: Record<string, any> | null,
+  last_author?: Record<string, any> | null,
+  last_author_id?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`stories.update`
+
+Replace a story's fields and content. Sending publish also publishes it; without it the change stays a draft
+
+**Risk:** `write`
+
+```ts
+await corsair.storyblok.api.stories.update({ story_id: 369689, name: 'Home', slug: 'home', content: { component: 'page', title: 'Hello' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `story_id` | `number` | Yes | A Storyblok numeric id. |
+| `name` | `string` | Yes | The story name, which the UI shows. |
+| `slug` | `string` | Yes | The URL segment. Storyblok derives full_slug from this and the parent. |
+| `content` | `Record<string, any>` | Yes | The story content: a component key naming the content type plus that component's fields, keyed by field name, such as &#123; component: "page", title: "Welcome" &#125;. |
+| `parent_id` | `number \| null` | No | — |
+| `group_id` | `string \| null` | No | — |
+| `is_startpage` | `boolean` | No | — |
+| `disable_fe_editor` | `boolean` | No | — |
+| `meta_data` | `Record<string, any> \| null` | No | — |
+| `tag_list` | `string[] \| null` | No | — |
+| `publish` | `boolean` | No | — |
+| `release_id` | `number` | No | — |
+| `lang` | `string` | No | Update this language version rather than the default one. |
+| `force_update` | `string` | No | Storyblok's own override flag, passed through as sent. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `story` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="story full type">
+
+```ts
+{
+  id?: number | null,
+  uuid?: string | null,
+  name?: string | null,
+  slug?: string | null,
+  full_slug?: string | null,
+  path?: string | null,
+  parent_id?: number | null,
+  group_id?: string | null,
+  is_folder?: boolean | null,
+  is_startpage?: boolean | null,
+  published?: boolean | null,
+  published_at?: string | null,
+  first_published_at?: string | null,
+  unpublished_changes?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  deleted_at?: string | null,
+  sort_by_date?: string | null,
+  tag_list?: string[] | null,
+  release_ids?: number[] | null,
+  position?: number | null,
+  content?: Record<string, any> | null,
+  meta_data?: Record<string, any> | null,
+  alternates?: Record<string, any>[] | null,
+  breadcrumbs?: Record<string, any>[] | null,
+  translated_slugs?: Record<string, any>[] | null,
+  localized_paths?: Record<string, any>[] | null,
+  default_root?: string | null,
+  disable_fe_editor?: boolean | null,
+  preview_token?: Record<string, any> | null,
+  stage?: Record<string, any> | null,
+  last_author?: Record<string, any> | null,
+  last_author_id?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tags
+
+### create
+
+`tags.create`
+
+Create a tag, optionally attaching it to a story as it is created
+
+**Risk:** `write`
+
+```ts
+await corsair.storyblok.api.tags.create({ name: 'landing', story_id: 369689 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `story_id` | `number` | No | Attach the new tag to this story as it is created. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tag full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  taggings_count?: number | null,
+  tag_on_stories?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`tags.delete`
+
+Delete a tag, removing it from every story that carried it. This cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.storyblok.api.tags.delete({ tag_id: '5' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag_id` | `string` | Yes | The tag id or name. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | The id (or, for a tag, the id or name) that was deleted. |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### list
+
+`tags.list`
+
+List the tags on the space with how many stories carry each
+
+**Risk:** `read`
+
+```ts
+await corsair.storyblok.api.tags.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, from 1. |
+| `per_page` | `number` | No | Entries per page, up to 1000. Defaults to 25. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tags` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  taggings_count?: number | null,
+  tag_on_stories?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`tags.update`
+
+Rename a tag, which updates every story that carries it
+
+**Risk:** `write`
+
+```ts
+await corsair.storyblok.api.tags.update({ tag_id: '5', name: 'landing-page' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tag full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  taggings_count?: number | null,
+  tag_on_stories?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Register a webhook endpoint for the given actions, optionally with a secret Storyblok signs each delivery with
+
+**Risk:** `write`
+
+```ts
+await corsair.storyblok.api.webhooks.create({ name: 'Rebuild Website', endpoint: 'https://example.com/hooks/storyblok', actions: ['story.published'], secret: 'shared-secret' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `endpoint` | `string` | Yes | The HTTPS URL Storyblok posts to. |
+| `actions` | `string[]` | Yes | The events to send, such as story.published. webhooks.listActions returns the accepted values. |
+| `activated` | `boolean` | No | Defaults to true when creating. |
+| `secret` | `string \| null` | No | When set, Storyblok signs each delivery with it. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_endpoint` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhook_endpoint full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  description?: string | null,
+  endpoint?: string | null,
+  space_id?: number | null,
+  secret?: string | null,
+  actions?: string[] | null,
+  activated?: boolean | null,
+  deleted_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Delete a webhook endpoint, so Storyblok stops posting to its URL
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.storyblok.api.webhooks.delete({ webhook_endpoint_id: 4569 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_endpoint_id` | `number` | Yes | A Storyblok numeric id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_endpoint` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhook_endpoint full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  description?: string | null,
+  endpoint?: string | null,
+  space_id?: number | null,
+  secret?: string | null,
+  actions?: string[] | null,
+  activated?: boolean | null,
+  deleted_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`webhooks.get`
+
+Read one webhook endpoint with its actions and activation
+
+**Risk:** `read`
+
+```ts
+await corsair.storyblok.api.webhooks.get({ webhook_endpoint_id: 4569 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_endpoint_id` | `number` | Yes | A Storyblok numeric id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_endpoint` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhook_endpoint full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  description?: string | null,
+  endpoint?: string | null,
+  space_id?: number | null,
+  secret?: string | null,
+  actions?: string[] | null,
+  activated?: boolean | null,
+  deleted_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List the webhook endpoints on the space
+
+**Risk:** `read`
+
+```ts
+await corsair.storyblok.api.webhooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, from 1. |
+| `per_page` | `number` | No | Entries per page, up to 1000. Defaults to 25. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_endpoints` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhook_endpoints full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  description?: string | null,
+  endpoint?: string | null,
+  space_id?: number | null,
+  secret?: string | null,
+  actions?: string[] | null,
+  activated?: boolean | null,
+  deleted_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listActions
+
+`webhooks.listActions`
+
+List the action names a webhook may subscribe to, read from Storyblok so a new event needs no plugin change
+
+**Risk:** `read`
+
+```ts
+await corsair.storyblok.api.webhooks.listActions({});
+```
+
+**Input:** _empty object_
+
+Reads the accepted action names from Storyblok rather than hardcoding them, so a new event needs no plugin change.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `allowed_actions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="allowed_actions full type">
+
+```ts
+{
+  action: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Replace a webhook endpoint, its action list or its activation
+
+**Risk:** `write`
+
+```ts
+await corsair.storyblok.api.webhooks.update({ webhook_endpoint_id: 4569, name: 'Rebuild Website', endpoint: 'https://example.com/hooks/storyblok', actions: ['story.published', 'story.unpublished'], activated: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_endpoint_id` | `number` | Yes | A Storyblok numeric id. |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `endpoint` | `string` | Yes | The HTTPS URL Storyblok posts to. |
+| `actions` | `string[]` | Yes | The events to send, such as story.published. webhooks.listActions returns the accepted values. |
+| `activated` | `boolean` | No | Defaults to true when creating. |
+| `secret` | `string \| null` | No | When set, Storyblok signs each delivery with it. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_endpoint` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhook_endpoint full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  description?: string | null,
+  endpoint?: string | null,
+  space_id?: number | null,
+  secret?: string | null,
+  actions?: string[] | null,
+  activated?: boolean | null,
+  deleted_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

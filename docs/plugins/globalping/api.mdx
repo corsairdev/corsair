@@ -1,0 +1,350 @@
+---
+title: "Globalping API reference"
+sidebarTitle: "API"
+description: "API reference for the Globalping plugin in Corsair: every `globalping.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Health
+
+### get
+
+`health.get`
+
+Read the Globalping health check.
+
+**Risk:** `read`
+
+```ts
+await corsair.globalping.api.health.get({});
+```
+
+**Input:** _empty object_
+
+GET /health. Stores the text body.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `health` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="health full type">
+
+```ts
+{
+  id: string,
+  status: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Limits
+
+### get
+
+`limits.get`
+
+Read the current measurement rate limit.
+
+**Risk:** `read`
+
+```ts
+await corsair.globalping.api.limits.get({});
+```
+
+**Input:** _empty object_
+
+GET /v1/limits. Stores the measurements.create bucket.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="limit full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  limit?: number,
+  remaining?: number,
+  reset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Measurements
+
+### create
+
+`measurements.create`
+
+Start a ping, traceroute, dns, mtr or http test from Globalping probes, picked by location. Uses the hourly measurement allowance, then account credits.
+
+**Risk:** `write`
+
+```ts
+await corsair.globalping.api.measurements.create({ type: 'ping', target: 'example.com', locations: [{ magic: 'Germany', limit: 2 }], measurementOptions: { packets: 3 } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `ping \| traceroute \| dns \| mtr \| http` | Yes | — |
+| `target` | `string` | Yes | — |
+| `locations` | `object[] \| string` | No | — |
+| `limit` | `number` | No | — |
+| `timeout` | `number` | No | — |
+| `measurementOptions` | `object` | No | — |
+
+POST /v1/measurements. locations takes filters such as &#123; magic: 'Germany', limit: 2 &#125; or &#123; country: 'US' &#125;, or the id of an earlier measurement to reuse its probes. measurementOptions holds the options for the chosen type (packets, protocol, port, query, resolver, request). The test runs in the background: read it with measurements.get. Stores id, probesCount, and type.
+
+<AccordionGroup>
+<Accordion title="locations full type">
+
+```ts
+{
+  magic?: string,
+  continent?: string,
+  region?: string,
+  country?: string,
+  state?: string,
+  city?: string,
+  asn?: number,
+  network?: string,
+  tags?: string[],
+  limit?: number
+}[] | string
+```
+</Accordion>
+
+<Accordion title="measurementOptions full type">
+
+```ts
+{
+  packets?: number,
+  protocol?: ICMP | TCP | UDP | HTTP | HTTPS | HTTP2,
+  port?: number,
+  ipVersion?: 4 | 6,
+  query?: {
+    type: string
+  },
+  resolver?: string,
+  trace?: boolean,
+  request?: {
+    host?: string,
+    path?: string,
+    query?: string,
+    method?: HEAD | GET | OPTIONS,
+    headers?: Record<string, string>
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `measurement` | `object` | Yes | — |
+| `target` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="measurement full type">
+
+```ts
+{
+  id: string,
+  probesCount?: number,
+  type?: string,
+  status?: string
+}
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+  probe: {
+    continent?: string,
+    region?: string,
+    country?: string,
+    state?: string | null,
+    city?: string,
+    asn?: number,
+    network?: string,
+    latitude?: number,
+    longitude?: number,
+    tags?: string[]
+  },
+  result: {
+    status: string,
+    rawOutput?: string | null,
+    resolvedAddress?: string | null,
+    resolvedHostname?: string | null,
+    statusCode?: number,
+    statusCodeName?: string,
+    stats?: Record<string, number | null>
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`measurements.get`
+
+Read a measurement by id with each probe's result. Poll until status is finished. Results are not stored.
+
+**Risk:** `read`
+
+```ts
+await corsair.globalping.api.measurements.get({ id: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+GET /v1/measurements/&#123;id&#125;. Returns one result per probe (probe location plus status, rawOutput, resolvedAddress, stats and the type's timings, hops or answers). While status is in-progress, wait at least 500 ms and read again. Stores id, type, status, and probesCount; results are returned but not stored.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `measurement` | `object` | Yes | — |
+| `target` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="measurement full type">
+
+```ts
+{
+  id: string,
+  probesCount?: number,
+  type?: string,
+  status?: string
+}
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+  probe: {
+    continent?: string,
+    region?: string,
+    country?: string,
+    state?: string | null,
+    city?: string,
+    asn?: number,
+    network?: string,
+    latitude?: number,
+    longitude?: number,
+    tags?: string[]
+  },
+  result: {
+    status: string,
+    rawOutput?: string | null,
+    resolvedAddress?: string | null,
+    resolvedHostname?: string | null,
+    statusCode?: number,
+    statusCodeName?: string,
+    stats?: Record<string, number | null>
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Probes
+
+### list
+
+`probes.list`
+
+List online Globalping probes. Probe rows are not stored.
+
+**Risk:** `read`
+
+```ts
+await corsair.globalping.api.probes.list({});
+```
+
+**Input:** _empty object_
+
+GET /v1/probes. Resolver addresses are not returned.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `probes` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="probes full type">
+
+```ts
+{
+  version?: string,
+  continent?: string,
+  region?: string,
+  country?: string,
+  city?: string,
+  network?: string,
+  asn?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

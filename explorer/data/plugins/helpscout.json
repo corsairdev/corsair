@@ -1,0 +1,2527 @@
+{
+  "id": "helpscout",
+  "displayName": "Help Scout",
+  "description": "Manage mailboxes, conversations, customer profiles, threads, tags, saved replies, and reports with Help Scout Mailbox API 2.0.",
+  "npmPackageName": "@corsair-dev/helpscout",
+  "authTypes": ["oauth_2", "api_key"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 55,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature"
+      ]
+    },
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": [
+        "api_key",
+        "webhook_signature",
+        "client_id",
+        "client_secret",
+        "expires_at"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "helpscout.api.conversations.create",
+      "shortPath": "conversations.create",
+      "description": "Create a new conversation with initial thread",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subject",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "email | chat | phone"
+          },
+          {
+            "key": "mailboxId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "customer",
+            "optional": false,
+            "type": "{ id?: number, email?: string, firstName?: string, lastName?: string }"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "active | pending | closed | spam"
+          },
+          {
+            "key": "assignTo",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "imported",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "autoReply",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "threads",
+            "optional": false,
+            "type": "{ type: customer | reply | note | phone | chat, text: string, customer?: { id?: number, email?: string }, user?: number, draft?: boolean, attachments?: { fileName: string, mimeType: string, data: string }[] }[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ id: number, value: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpscout.api.conversations.delete",
+      "shortPath": "conversations.delete",
+      "description": "Delete a conversation permanently",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversationId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "helpscout.api.conversations.get",
+      "shortPath": "conversations.get",
+      "description": "Get a specific Help Scout conversation by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversationId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "embed",
+            "optional": true,
+            "type": "threads"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "threadsCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "folderId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "preview",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mailboxId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "{ id?: number, type?: string, first?: string, last?: string, email?: string } | null"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "{ id?: number, type?: string, first?: string, last?: string, email?: string } | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "closedBy",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "closedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "userUpdatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "{ id?: number, first?: string, last?: string, email?: string } | null"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "{ type?: string, via?: string }"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "(string | { id?: number, tag: string, slug?: string })[]"
+          },
+          {
+            "key": "_embedded",
+            "optional": true,
+            "type": "{ threads?: Record<string, any>[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpscout.api.conversations.list",
+      "shortPath": "conversations.list",
+      "description": "List and filter conversations in Help Scout",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailbox",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "folder",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "all | active | open | closed | pending | spam"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assigned_to",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "modifiedSince",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sortField",
+            "optional": true,
+            "type": "createdAt | modifiedAt | number | status"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "embed",
+            "optional": true,
+            "type": "threads"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_embedded",
+            "optional": false,
+            "type": "{ conversations: { id: number, number?: number, threadsCount?: number, type?: string, folderId?: number, status?: string, state?: string, subject?: string, preview?: string, mailboxId?: number, assignee?: { id?: number, type?: string, first?: string, last?: string, email?: string } | null, createdBy?: { id?: number, type?: string, first?: string, last?: string, email?: string } | null, createdAt?: string, closedBy?: number | null, closedAt?: string | null, userUpdatedAt?: string, customer?: { id?: number, first?: string, last?: string, email?: string } | null, source?: { type?: string, via?: string }, tags?: (string | { id?: number, tag: string, slug?: string })[], _embedded?: { threads?: Record<string, any>[] } }[] }"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ self?: { href: string }, first?: { href: string }, last?: { href: string }, next?: { href: string }, previous?: { href: string }, page?: { href: string } }"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ size?: number, totalElements?: number, totalPages?: number, number?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpscout.api.conversations.update",
+      "shortPath": "conversations.update",
+      "description": "Update fields of a conversation via JSON Patch",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversationId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "op",
+            "optional": false,
+            "type": "replace | add | remove | move"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "/subject | /primaryCustomer.id | /draft | /mailboxId | /status | /assignTo"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "string | number | boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "helpscout.api.conversations.updateFields",
+      "shortPath": "conversations.updateFields",
+      "description": "Update custom field values on a conversation",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversationId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "{ id: number, value: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "helpscout.api.conversations.updateTags",
+      "shortPath": "conversations.updateTags",
+      "description": "Update tags assigned to a conversation",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversationId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "helpscout.api.customers.create",
+      "shortPath": "customers.create",
+      "description": "Create a new customer profile",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "photoUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "photoType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "background",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "age",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "male | female | unknown"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "{ value: string, type?: work | home | other }[]"
+          },
+          {
+            "key": "phones",
+            "optional": true,
+            "type": "{ value: string, type?: work | home | mobile | fax | pager | other }[]"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ lines?: string[], city?: string, state?: string, postalCode?: string, country?: string }"
+          },
+          {
+            "key": "chats",
+            "optional": true,
+            "type": "{ value: string, type?: aim | gtalk | icq | msn | other | qq | skype | xmpp | yahoo }[]"
+          },
+          {
+            "key": "socialProfiles",
+            "optional": true,
+            "type": "{ value: string, type?: string }[]"
+          },
+          {
+            "key": "websites",
+            "optional": true,
+            "type": "{ value: string }[]"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "Record<string, string | number>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpscout.api.customers.createAddress",
+      "shortPath": "customers.createAddress",
+      "description": "Create customer physical address",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "lines",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postalCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "helpscout.api.customers.createChat",
+      "shortPath": "customers.createChat",
+      "description": "Add a chat handle to a customer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpscout.api.customers.createEmail",
+      "shortPath": "customers.createEmail",
+      "description": "Add an email address to a customer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "work | home | other"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpscout.api.customers.createPhone",
+      "shortPath": "customers.createPhone",
+      "description": "Add a phone number to a customer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "work | home | mobile | fax | pager | other"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpscout.api.customers.createSocialProfile",
+      "shortPath": "customers.createSocialProfile",
+      "description": "Add a social profile to a customer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpscout.api.customers.createWebsite",
+      "shortPath": "customers.createWebsite",
+      "description": "Add a website URL to a customer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpscout.api.customers.delete",
+      "shortPath": "customers.delete",
+      "description": "Delete a customer with their conversations and survey responses (cannot be undone)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "helpscout.api.customers.deleteAddress",
+      "shortPath": "customers.deleteAddress",
+      "description": "Delete customer physical address",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "helpscout.api.customers.deleteChat",
+      "shortPath": "customers.deleteChat",
+      "description": "Delete a chat handle from a customer",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "chatId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "helpscout.api.customers.deleteEmail",
+      "shortPath": "customers.deleteEmail",
+      "description": "Delete an email address from a customer",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "emailId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "helpscout.api.customers.deletePhone",
+      "shortPath": "customers.deletePhone",
+      "description": "Delete a phone number from a customer",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "phoneId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "helpscout.api.customers.deleteSocialProfile",
+      "shortPath": "customers.deleteSocialProfile",
+      "description": "Delete a social profile from a customer",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "helpscout.api.customers.deleteWebsite",
+      "shortPath": "customers.deleteWebsite",
+      "description": "Delete a website URL from a customer",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "websiteId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "helpscout.api.customers.get",
+      "shortPath": "customers.get",
+      "description": "Get details of a specific customer by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "photoUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "photoType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "age",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "_embedded",
+            "optional": true,
+            "type": "{ emails?: { id?: number, value: string, type?: string }[], phones?: { id?: number, value: string, type?: string }[], address?: { id?: number, city?: string, state?: string, postalCode?: string, country?: string, lines?: string[], address?: string, address2?: string } | null, chats?: { id?: number, value: string, type?: string }[], socialProfiles?: { id?: number, value: string, type?: string }[], websites?: { id?: number, value: string, type?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpscout.api.customers.list",
+      "shortPath": "customers.list",
+      "description": "List and search customers in Help Scout",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailbox",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedSince",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortField",
+            "optional": true,
+            "type": "createdAt | firstName | lastName | modifiedAt"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_embedded",
+            "optional": false,
+            "type": "{ customers: { id: number, firstName?: string | null, lastName?: string | null, jobTitle?: string | null, company?: string | null, photoUrl?: string | null, photoType?: string | null, gender?: string | null, age?: string | null, organization?: string | null, createdAt?: string, updatedAt?: string, _embedded?: { emails?: { id?: number, value: string, type?: string }[], phones?: { id?: number, value: string, type?: string }[], address?: { id?: number, city?: string, state?: string, postalCode?: string, country?: string, lines?: string[], address?: string, address2?: string } | null, chats?: { id?: number, value: string, type?: string }[], socialProfiles?: { id?: number, value: string, type?: string }[], websites?: { id?: number, value: string, type?: string }[] } }[] }"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ self?: { href: string }, first?: { href: string }, last?: { href: string }, next?: { href: string }, previous?: { href: string }, page?: { href: string } }"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ size?: number, totalElements?: number, totalPages?: number, number?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpscout.api.customers.patch",
+      "shortPath": "customers.patch",
+      "description": "Partially update customer profile fields",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "op",
+            "optional": false,
+            "type": "replace | add | remove"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "string | number | boolean | string[] | { type?: string, value: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "helpscout.api.customers.update",
+      "shortPath": "customers.update",
+      "description": "Overwrite an existing customer profile",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "photoUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "photoType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "background",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "age",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "helpscout.api.customers.updateAddress",
+      "shortPath": "customers.updateAddress",
+      "description": "Update customer physical address",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "lines",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postalCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "helpscout.api.customers.updateChat",
+      "shortPath": "customers.updateChat",
+      "description": "Update an existing customer chat handle",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "chatId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "helpscout.api.customers.updateEmail",
+      "shortPath": "customers.updateEmail",
+      "description": "Update an existing customer email address",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "emailId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "work | home | other"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "helpscout.api.customers.updatePhone",
+      "shortPath": "customers.updatePhone",
+      "description": "Update an existing customer phone number",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "phoneId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "work | home | mobile | fax | pager | other"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "helpscout.api.customers.updateSocialProfile",
+      "shortPath": "customers.updateSocialProfile",
+      "description": "Update an existing customer social profile",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "helpscout.api.customers.updateWebsite",
+      "shortPath": "customers.updateWebsite",
+      "description": "Update an existing customer website URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "websiteId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "helpscout.api.customFields.list",
+      "shortPath": "customFields.list",
+      "description": "List custom fields configured on a mailbox",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailboxId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_embedded",
+            "optional": false,
+            "type": "{ fields: { id: number, name: string, type?: string, required?: boolean, order?: number, options?: { id: number, label: string, order?: number }[] }[] }"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ self?: { href: string }, first?: { href: string }, last?: { href: string }, next?: { href: string }, previous?: { href: string }, page?: { href: string } }"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ size?: number, totalElements?: number, totalPages?: number, number?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpscout.api.folders.list",
+      "shortPath": "folders.list",
+      "description": "List folders belonging to a mailbox",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailboxId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_embedded",
+            "optional": false,
+            "type": "{ folders: { id: number, name: string, type?: string, userId?: number, totalCount?: number, activeCount?: number, modifiedAt?: string }[] }"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ self?: { href: string }, first?: { href: string }, last?: { href: string }, next?: { href: string }, previous?: { href: string }, page?: { href: string } }"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ size?: number, totalElements?: number, totalPages?: number, number?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpscout.api.mailboxes.get",
+      "shortPath": "mailboxes.get",
+      "description": "Get details of a specific Help Scout mailbox",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailboxId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpscout.api.mailboxes.list",
+      "shortPath": "mailboxes.list",
+      "description": "List mailboxes in Help Scout",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_embedded",
+            "optional": false,
+            "type": "{ mailboxes: { id: number, name: string, slug?: string, email: string, createdAt?: string, updatedAt?: string }[] }"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ self?: { href: string }, first?: { href: string }, last?: { href: string }, next?: { href: string }, previous?: { href: string }, page?: { href: string } }"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ size?: number, totalElements?: number, totalPages?: number, number?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpscout.api.reports.getChat",
+      "shortPath": "reports.getChat",
+      "description": "Get live chat channel report metrics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "previousStart",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previousEnd",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mailboxes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "types",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "folders",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "helpscout.api.reports.getCompany",
+      "shortPath": "reports.getCompany",
+      "description": "Get overall company performance report metrics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "previousStart",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previousEnd",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mailboxes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "types",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "folders",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "helpscout.api.reports.getConversations",
+      "shortPath": "reports.getConversations",
+      "description": "Get aggregate conversations report metrics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "previousStart",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previousEnd",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mailboxes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "types",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "folders",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "helpscout.api.reports.getDocs",
+      "shortPath": "reports.getDocs",
+      "description": "Get Help Scout Docs knowledge base report metrics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "previousStart",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previousEnd",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sites",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "helpscout.api.reports.getEmail",
+      "shortPath": "reports.getEmail",
+      "description": "Get email channel performance report metrics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "previousStart",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previousEnd",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mailboxes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "types",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "folders",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "helpscout.api.savedReplies.create",
+      "shortPath": "savedReplies.create",
+      "description": "Create a saved reply in a mailbox",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailboxId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "chatText",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpscout.api.savedReplies.delete",
+      "shortPath": "savedReplies.delete",
+      "description": "Delete a saved reply from a mailbox",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailboxId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "savedReplyId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "helpscout.api.savedReplies.get",
+      "shortPath": "savedReplies.get",
+      "description": "Get a saved reply by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailboxId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "savedReplyId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "preview",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "chatPreview",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "chatText",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpscout.api.savedReplies.list",
+      "shortPath": "savedReplies.list",
+      "description": "List saved replies for a mailbox",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailboxId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "includeChatReplies",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name: string, preview?: string, chatPreview?: string, text?: string, chatText?: string }[] | { _embedded: { savedReplies: { id: number, name: string, preview?: string, chatPreview?: string, text?: string, chatText?: string }[] }, _links?: { self?: { href: string }, first?: { href: string }, last?: { href: string }, next?: { href: string }, previous?: { href: string }, page?: { href: string } }, page?: { size?: number, totalElements?: number, totalPages?: number, number?: number } }"
+      }
+    },
+    {
+      "path": "helpscout.api.savedReplies.update",
+      "shortPath": "savedReplies.update",
+      "description": "Update an existing saved reply",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailboxId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "savedReplyId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "chatText",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "helpscout.api.tags.get",
+      "shortPath": "tags.get",
+      "description": "Get details of a tag by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tagId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tag",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ticketCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpscout.api.tags.list",
+      "shortPath": "tags.list",
+      "description": "List all tags used across mailboxes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_embedded",
+            "optional": false,
+            "type": "{ tags: { id: number, tag: string, slug?: string, ticketCount?: number, createdAt?: string, updatedAt?: string }[] }"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ self?: { href: string }, first?: { href: string }, last?: { href: string }, next?: { href: string }, previous?: { href: string }, page?: { href: string } }"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ size?: number, totalElements?: number, totalPages?: number, number?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpscout.api.threads.createChat",
+      "shortPath": "threads.createChat",
+      "description": "Create a chat thread on a conversation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversationId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "customer",
+            "optional": false,
+            "type": "{ id?: number, email?: string }"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "{ fileName: string, mimeType: string, data: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpscout.api.threads.createCustomer",
+      "shortPath": "threads.createCustomer",
+      "description": "Create a customer message thread on a conversation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversationId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "customer",
+            "optional": false,
+            "type": "{ id?: number, email?: string }"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "{ fileName: string, mimeType: string, data: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpscout.api.threads.createNote",
+      "shortPath": "threads.createNote",
+      "description": "Create an internal note thread on a conversation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversationId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | pending | closed | spam"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "{ fileName: string, mimeType: string, data: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpscout.api.threads.createPhone",
+      "shortPath": "threads.createPhone",
+      "description": "Create a phone call log thread on a conversation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversationId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "customer",
+            "optional": false,
+            "type": "{ id?: number, email?: string }"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "{ fileName: string, mimeType: string, data: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpscout.api.threads.createReply",
+      "shortPath": "threads.createReply",
+      "description": "Create a reply thread sent to the customer",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversationId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "customer",
+            "optional": false,
+            "type": "{ id?: number, email?: string }"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "draft",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "imported",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | pending | closed | spam"
+          },
+          {
+            "key": "assignTo",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cc",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "bcc",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "{ fileName: string, mimeType: string, data: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpscout.api.threads.getOriginalSource",
+      "shortPath": "threads.getOriginalSource",
+      "description": "Get original email source of a thread",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversationId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "threadId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "original",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpscout.api.threads.list",
+      "shortPath": "threads.list",
+      "description": "List all threads in a conversation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversationId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_embedded",
+            "optional": false,
+            "type": "{ threads: { id: number, type?: string, status?: string, state?: string, action?: { type?: string, text?: string }, body?: string, source?: { type?: string, via?: string }, customer?: { id?: number, first?: string, last?: string, email?: string } | null, createdBy?: { id?: number, type?: string, first?: string, last?: string, email?: string } | null, assignedTo?: { id?: number, type?: string, first?: string, last?: string, email?: string } | null, createdAt?: string }[] }"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ self?: { href: string }, first?: { href: string }, last?: { href: string }, next?: { href: string }, previous?: { href: string }, page?: { href: string } }"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ size?: number, totalElements?: number, totalPages?: number, number?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpscout.api.threads.update",
+      "shortPath": "threads.update",
+      "description": "Update thread text or visibility",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversationId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "threadId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "op",
+            "optional": false,
+            "type": "replace"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "/text | /hidden"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string | boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

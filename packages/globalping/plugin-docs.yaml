@@ -1,0 +1,33 @@
+displayName: Globalping
+description: List Globalping probes, limits, and health, and create or read a measurement.
+domain: globalping.io
+recommendedAuth: api_key
+overviewNote: |
+  Probes, limits, and health are public. GET /v1/probes and GET /v1/limits returned HTTP 200. GET /health returned the text Alive. GET /v1/measurements/does-not-exist returned HTTP 404. A connected key is sent as Bearer and is not required. Probes have no stable id and are not stored. Measurement results and the target are not stored. Creating a measurement spends credits.
+examples:
+  read:
+    path: limits.get
+    title: Read limits
+    args: {}
+apiNotes:
+  probes.list: |
+    GET /v1/probes. Resolver addresses are not returned.
+  limits.get: |
+    GET /v1/limits. Stores the measurements.create bucket.
+  health.get: |
+    GET /health. Stores the text body.
+  measurements.create: |
+    POST /v1/measurements. locations takes filters such as { magic: 'Germany', limit: 2 } or { country: 'US' }, or the id of an earlier measurement to reuse its probes. measurementOptions holds the options for the chosen type (packets, protocol, port, query, resolver, request). The test runs in the background: read it with measurements.get. Stores id, probesCount, and type.
+  measurements.get: |
+    GET /v1/measurements/{id}. Returns one result per probe (probe location plus status, rawOutput, resolvedAddress, stats and the type's timings, hops or answers). While status is in-progress, wait at least 500 ms and read again. Stores id, type, status, and probesCount; results are returned but not stored.
+apiExamples:
+  probes.list:
+    call: "{}"
+  limits.get:
+    call: "{}"
+  health.get:
+    call: "{}"
+  measurements.create:
+    call: "{ type: 'ping', target: 'example.com', locations: [{ magic: 'Germany', limit: 2 }], measurementOptions: { packets: 3 } }"
+  measurements.get:
+    call: "{ id: 'example' }"

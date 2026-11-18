@@ -1,0 +1,1239 @@
+{
+  "id": "paperform",
+  "displayName": "Paperform",
+  "description": "Read Paperform forms, fields and submissions, and manage a form's products, coupons and webhooks.",
+  "npmPackageName": "@corsair-dev/paperform",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 24,
+    "webhooks": 0,
+    "db": 4
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "paperform.api.coupons.create",
+      "shortPath": "coupons.create",
+      "description": "Create a coupon code on a form, with a fixed amount or percentage off.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form",
+            "optional": false,
+            "type": "string",
+            "description": "Form slug, custom slug or id (from forms.list)."
+          },
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string",
+            "description": "Coupon code."
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "target",
+            "optional": true,
+            "type": "price | subscription",
+            "description": "What the discount applies to."
+          },
+          {
+            "key": "discountAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "discountPercentage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO date-time the coupon stops working. null never expires."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "coupon",
+            "optional": false,
+            "type": "{ code: string, enabled?: boolean, target?: string | null, discountAmount?: number | null, discountPercentage?: number | null, expiresAt?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paperform.api.coupons.delete",
+      "shortPath": "coupons.delete",
+      "description": "Delete a coupon code from a form.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form",
+            "optional": false,
+            "type": "string",
+            "description": "Form slug, custom slug or id (from forms.list)."
+          },
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string",
+            "description": "Coupon code."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paperform.api.coupons.get",
+      "shortPath": "coupons.get",
+      "description": "Get one coupon on a form by code.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form",
+            "optional": false,
+            "type": "string",
+            "description": "Form slug, custom slug or id (from forms.list)."
+          },
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string",
+            "description": "Coupon code."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "coupon",
+            "optional": false,
+            "type": "{ code: string, enabled?: boolean, target?: string | null, discountAmount?: number | null, discountPercentage?: number | null, expiresAt?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paperform.api.coupons.list",
+      "shortPath": "coupons.list",
+      "description": "List the coupon codes on a form.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form",
+            "optional": false,
+            "type": "string",
+            "description": "Form slug, custom slug or id (from forms.list)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "coupons",
+            "optional": false,
+            "type": "{ code: string, enabled?: boolean, target?: string | null, discountAmount?: number | null, discountPercentage?: number | null, expiresAt?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paperform.api.coupons.update",
+      "shortPath": "coupons.update",
+      "description": "Change a coupon (enable or disable, discount, expiry). Fields you leave out stay as they are.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form",
+            "optional": false,
+            "type": "string",
+            "description": "Form slug, custom slug or id (from forms.list)."
+          },
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string",
+            "description": "Coupon code."
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "target",
+            "optional": true,
+            "type": "price | subscription",
+            "description": "What the discount applies to."
+          },
+          {
+            "key": "discountAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "discountPercentage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO date-time the coupon stops working. null never expires."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "coupon",
+            "optional": false,
+            "type": "{ code: string, enabled?: boolean, target?: string | null, discountAmount?: number | null, discountPercentage?: number | null, expiresAt?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paperform.api.fields.list",
+      "shortPath": "fields.list",
+      "description": "List the questions on a form: each field key, title and type. Submission answers are keyed by these field keys.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form",
+            "optional": false,
+            "type": "string",
+            "description": "Form slug, custom slug or id (from forms.list)."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Text to search for."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "{ key: string, title?: string | null, type?: string | null, required?: boolean | null, custom_key?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paperform.api.files.sign",
+      "shortPath": "files.sign",
+      "description": "Get a signed download link for a file uploaded in a submission. Links last 7 days.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "File URL from a submission answer (a paperform.co file link)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileUrl",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "storageUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paperform.api.forms.get",
+      "shortPath": "forms.get",
+      "description": "Get one form by slug, custom slug or id.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form",
+            "optional": false,
+            "type": "string",
+            "description": "Form slug, custom slug or id (from forms.list)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form",
+            "optional": false,
+            "type": "{ id: string, slug?: string | null, custom_slug?: string | null, space_id?: string, title?: string | null, description?: string | null, url?: string | null, live?: boolean, submission_count?: number, created_at_utc?: string | null, updated_at_utc?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paperform.api.forms.list",
+      "shortPath": "forms.list",
+      "description": "List forms, newest first by default. Filter with search, page with limit and skip.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Text to search for."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page. Paperform defaults to 20."
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "Results to skip."
+          },
+          {
+            "key": "afterId",
+            "optional": true,
+            "type": "string",
+            "description": "Only results after this id."
+          },
+          {
+            "key": "beforeId",
+            "optional": true,
+            "type": "string",
+            "description": "Only results before this id."
+          },
+          {
+            "key": "afterDate",
+            "optional": true,
+            "type": "string",
+            "description": "Only results created after this date (YYYY-MM-DD or ISO)."
+          },
+          {
+            "key": "beforeDate",
+            "optional": true,
+            "type": "string",
+            "description": "Only results created before this date (YYYY-MM-DD or ISO)."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "ASC | DESC",
+            "description": "Order by creation date."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "forms",
+            "optional": false,
+            "type": "{ id: string, slug?: string | null, custom_slug?: string | null, space_id?: string, title?: string | null, description?: string | null, url?: string | null, live?: boolean, submission_count?: number, created_at_utc?: string | null, updated_at_utc?: string | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "{ total?: number, hasMore?: boolean, limit?: number, skip?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paperform.api.partialSubmissions.get",
+      "shortPath": "partialSubmissions.get",
+      "description": "Get one partial submission of a form.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form",
+            "optional": false,
+            "type": "string",
+            "description": "Form slug, custom slug or id (from forms.list)."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Submission id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "partialSubmission",
+            "optional": false,
+            "type": "{ id: string, form_id?: string | null, data?: Record<string, any>, last_answered?: string | null, submitted_at_utc?: string | null, created_at_utc?: string | null, updated_at_utc?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paperform.api.partialSubmissions.list",
+      "shortPath": "partialSubmissions.list",
+      "description": "List partial (unfinished) submissions of a form. Paperform keeps them only when partial submissions are turned on for the form.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form",
+            "optional": false,
+            "type": "string",
+            "description": "Form slug, custom slug or id (from forms.list)."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page. Paperform defaults to 20."
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "Results to skip."
+          },
+          {
+            "key": "afterId",
+            "optional": true,
+            "type": "string",
+            "description": "Only results after this id."
+          },
+          {
+            "key": "beforeId",
+            "optional": true,
+            "type": "string",
+            "description": "Only results before this id."
+          },
+          {
+            "key": "afterDate",
+            "optional": true,
+            "type": "string",
+            "description": "Only results created after this date (YYYY-MM-DD or ISO)."
+          },
+          {
+            "key": "beforeDate",
+            "optional": true,
+            "type": "string",
+            "description": "Only results created before this date (YYYY-MM-DD or ISO)."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "ASC | DESC",
+            "description": "Order by creation date."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "partialSubmissions",
+            "optional": false,
+            "type": "{ id: string, form_id?: string | null, data?: Record<string, any>, last_answered?: string | null, submitted_at_utc?: string | null, created_at_utc?: string | null, updated_at_utc?: string | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "{ total?: number, hasMore?: boolean, limit?: number, skip?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paperform.api.products.get",
+      "shortPath": "products.get",
+      "description": "Get one product on a form by SKU.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form",
+            "optional": false,
+            "type": "string",
+            "description": "Form slug, custom slug or id (from forms.list)."
+          },
+          {
+            "key": "sku",
+            "optional": false,
+            "type": "string",
+            "description": "Product SKU."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product",
+            "optional": false,
+            "type": "{ SKU?: string | null, name?: string | null, price?: number | string | null, quantity?: number | string | null, minimum?: number | string | null, maximum?: number | string | null, discountable?: boolean | null, sold?: number | string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paperform.api.products.list",
+      "shortPath": "products.list",
+      "description": "List the products sold on a form, with price and stock.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form",
+            "optional": false,
+            "type": "string",
+            "description": "Form slug, custom slug or id (from forms.list)."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Text to search for."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "products",
+            "optional": false,
+            "type": "{ SKU?: string | null, name?: string | null, price?: number | string | null, quantity?: number | string | null, minimum?: number | string | null, maximum?: number | string | null, discountable?: boolean | null, sold?: number | string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paperform.api.products.update",
+      "shortPath": "products.update",
+      "description": "Change a product on a form (name, price, stock, min/max per order). Fields you leave out stay as they are.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form",
+            "optional": false,
+            "type": "string",
+            "description": "Form slug, custom slug or id (from forms.list)."
+          },
+          {
+            "key": "sku",
+            "optional": false,
+            "type": "string",
+            "description": "Product SKU."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "price",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "quantity",
+            "optional": true,
+            "type": "number | null",
+            "description": "Stock left. null removes the limit."
+          },
+          {
+            "key": "minimum",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "maximum",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "discountable",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product",
+            "optional": false,
+            "type": "{ SKU?: string | null, name?: string | null, price?: number | string | null, quantity?: number | string | null, minimum?: number | string | null, maximum?: number | string | null, discountable?: boolean | null, sold?: number | string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paperform.api.spaces.forms",
+      "shortPath": "spaces.forms",
+      "description": "List the forms in one space.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "forms",
+            "optional": false,
+            "type": "{ id: string, slug?: string | null, custom_slug?: string | null, space_id?: string, title?: string | null, description?: string | null, url?: string | null, live?: boolean, submission_count?: number, created_at_utc?: string | null, updated_at_utc?: string | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "{ total?: number, hasMore?: boolean, limit?: number, skip?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paperform.api.spaces.get",
+      "shortPath": "spaces.get",
+      "description": "Get one space by id.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "space",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, created_at_utc?: string | null, updated_at_utc?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paperform.api.spaces.list",
+      "shortPath": "spaces.list",
+      "description": "List spaces (folders of forms).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Text to search for."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page. Paperform defaults to 20."
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "Results to skip."
+          },
+          {
+            "key": "afterId",
+            "optional": true,
+            "type": "string",
+            "description": "Only results after this id."
+          },
+          {
+            "key": "beforeId",
+            "optional": true,
+            "type": "string",
+            "description": "Only results before this id."
+          },
+          {
+            "key": "afterDate",
+            "optional": true,
+            "type": "string",
+            "description": "Only results created after this date (YYYY-MM-DD or ISO)."
+          },
+          {
+            "key": "beforeDate",
+            "optional": true,
+            "type": "string",
+            "description": "Only results created before this date (YYYY-MM-DD or ISO)."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "ASC | DESC",
+            "description": "Order by creation date."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "spaces",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, created_at_utc?: string | null, updated_at_utc?: string | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "{ total?: number, hasMore?: boolean, limit?: number, skip?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paperform.api.submissions.delete",
+      "shortPath": "submissions.delete",
+      "description": "Delete one submission. It cannot be recovered.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form",
+            "optional": false,
+            "type": "string",
+            "description": "Form slug, custom slug or id (from forms.list)."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Submission id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paperform.api.submissions.get",
+      "shortPath": "submissions.get",
+      "description": "Get one submission of a form, with its answers.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form",
+            "optional": false,
+            "type": "string",
+            "description": "Form slug, custom slug or id (from forms.list)."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Submission id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "submission",
+            "optional": false,
+            "type": "{ id: string, form_id?: string | null, data?: Record<string, any>, device?: any, charge?: any, pdfs?: any, created_at_utc?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paperform.api.submissions.list",
+      "shortPath": "submissions.list",
+      "description": "List the completed submissions of a form, with their answers keyed by field key. Filter by date or id, page with limit and skip.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form",
+            "optional": false,
+            "type": "string",
+            "description": "Form slug, custom slug or id (from forms.list)."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page. Paperform defaults to 20."
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "Results to skip."
+          },
+          {
+            "key": "afterId",
+            "optional": true,
+            "type": "string",
+            "description": "Only results after this id."
+          },
+          {
+            "key": "beforeId",
+            "optional": true,
+            "type": "string",
+            "description": "Only results before this id."
+          },
+          {
+            "key": "afterDate",
+            "optional": true,
+            "type": "string",
+            "description": "Only results created after this date (YYYY-MM-DD or ISO)."
+          },
+          {
+            "key": "beforeDate",
+            "optional": true,
+            "type": "string",
+            "description": "Only results created before this date (YYYY-MM-DD or ISO)."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "ASC | DESC",
+            "description": "Order by creation date."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "submissions",
+            "optional": false,
+            "type": "{ id: string, form_id?: string | null, data?: Record<string, any>, device?: any, charge?: any, pdfs?: any, created_at_utc?: string | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "{ total?: number, hasMore?: boolean, limit?: number, skip?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paperform.api.translations.list",
+      "shortPath": "translations.list",
+      "description": "List form translations (title and language). The mapping text is not stored.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page. Paperform defaults to 20."
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "Results to skip."
+          },
+          {
+            "key": "afterId",
+            "optional": true,
+            "type": "string",
+            "description": "Only results after this id."
+          },
+          {
+            "key": "beforeId",
+            "optional": true,
+            "type": "string",
+            "description": "Only results before this id."
+          },
+          {
+            "key": "afterDate",
+            "optional": true,
+            "type": "string",
+            "description": "Only results created after this date (YYYY-MM-DD or ISO)."
+          },
+          {
+            "key": "beforeDate",
+            "optional": true,
+            "type": "string",
+            "description": "Only results created before this date (YYYY-MM-DD or ISO)."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "ASC | DESC",
+            "description": "Order by creation date."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "translations",
+            "optional": false,
+            "type": "{ id: string, title?: string | null, language?: string | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "{ total?: number, hasMore?: boolean, limit?: number, skip?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paperform.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Add a webhook that posts each new submission (and optionally partial submission) of a form to an https URL.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form",
+            "optional": false,
+            "type": "string",
+            "description": "Form slug, custom slug or id (from forms.list)."
+          },
+          {
+            "key": "targetUrl",
+            "optional": false,
+            "type": "string",
+            "description": "HTTPS URL Paperform posts each submission to."
+          },
+          {
+            "key": "triggers",
+            "optional": false,
+            "type": "(submission | partial_submission)[]",
+            "description": "Events that fire the webhook."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ id: string, target_url?: string | null, triggers?: string[], created_at_utc?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paperform.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Delete a webhook by id.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Webhook id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paperform.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List a form's webhooks.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form",
+            "optional": false,
+            "type": "string",
+            "description": "Form slug, custom slug or id (from forms.list)."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page. Paperform defaults to 20."
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "Results to skip."
+          },
+          {
+            "key": "afterId",
+            "optional": true,
+            "type": "string",
+            "description": "Only results after this id."
+          },
+          {
+            "key": "beforeId",
+            "optional": true,
+            "type": "string",
+            "description": "Only results before this id."
+          },
+          {
+            "key": "afterDate",
+            "optional": true,
+            "type": "string",
+            "description": "Only results created after this date (YYYY-MM-DD or ISO)."
+          },
+          {
+            "key": "beforeDate",
+            "optional": true,
+            "type": "string",
+            "description": "Only results created before this date (YYYY-MM-DD or ISO)."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "ASC | DESC",
+            "description": "Order by creation date."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhooks",
+            "optional": false,
+            "type": "{ id: string, target_url?: string | null, triggers?: string[], created_at_utc?: string | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "{ total?: number, hasMore?: boolean, limit?: number, skip?: number }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "paperform.db.forms.search",
+      "entityName": "forms",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "slug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "spaceId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "live",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "submissionCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "paperform.db.spaces.search",
+      "entityName": "spaces",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "paperform.db.submissions.search",
+      "entityName": "submissions",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "formId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "paperform.db.translations.search",
+      "entityName": "translations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "language",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

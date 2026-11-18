@@ -1,0 +1,140 @@
+---
+title: "Nasdaq Data Link plugin"
+sidebarTitle: "Overview"
+description: "Query Nasdaq Data Link tables with column filters and cursor paging, read a table's columns and filterable fields, and queue bulk csv exports."
+---
+
+Use **Nasdaq Data Link** through Corsair: one client, typed API calls.
+
+A key comes from https://data.nasdaq.com/account/profile while signed in, under the account profile page. The free tier is 50 calls a day and a trial key works on every free table.
+
+Four things decide whether a call works:
+
+- **A table is addressed as `{vendor}/{table}`**, e.g. `NDAQ/RTAT10`. Both parts are required, and the slash stays literal in the path.
+- **Rows are arrays, not objects.** Nasdaq sends `datatable.data` as a list of arrays whose positions match `datatable.columns`, so a caller reads a cell by column index. Use `tables.metadata` first to get the column order and the names that can filter.
+- **Only some columns can filter a query.** `tables.metadata` lists them in `filters`. Operators append to the column name and pass through `filters` untouched: `{ 'date.gte': '2024-01-01', 'ticker.in[]': 'AAPL,MSFT' }`.
+- **Paging is a signed cursor, not a page number.** Pass the `next_cursor_id` from one response as `cursor_id` on the next. It is null (or absent) on the last page, so check for either; that is the only end signal. An expired cursor answers 400 `QESx06`, so a stored cursor cannot be reused later.
+
+Worth knowing before you call:
+
+- **A 403 may not be an auth failure.** Nasdaq answers a bad key with a 400 carrying `quandl_error.code` `QEAx01`, while its Incapsula gateway answers 403 with an HTML page and no JSON on the `/datasets/` time-series routes for non-browser clients. This plugin wraps the `/datatables/` routes, which work. The old `/databases` catalogue route answers 410 Gone, so it is not wrapped. A 403 is reported as a gateway block rather than a bad key, because telling a caller to re-enter a working key is the wrong fix.
+- **A bulk export is a two-step**: the first call usually answers `status: 'creating'` with a null link, and a later poll answers `'fresh'` with a signed URL valid for 30 minutes. The values arrive lowercase although Nasdaq's docs capitalise them. Nasdaq caps this endpoint at 60 calls an hour.
+- **The Tables API caps a page at 10,000 rows** whatever `per_page` says. A larger table needs the cursor or the export endpoint.
+- **Rate limits differ by plan**: 50 calls a day on the free tier, 300 per 10 seconds and 50,000 a day for a key without premium subscriptions. `QEAx06` is the daily cap, which no retry clears, and `QEAx07` asks for a 30-second wait, which the plugin retries twice.
+
+**What you get:**
+
+- 3 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/nasdaq better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/nasdaq better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/nasdaq better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/nasdaq better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { nasdaq } from '@corsair-dev/nasdaq';
+
+export const corsair = createCorsair({
+	plugins: [
+		nasdaq(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Nasdaq Data Link API key before the first call: `pnpm corsair setup --plugin=nasdaq --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+nasdaq()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'nasdaq',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read two rows from a table**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.nasdaq.api.tables.rows({ table: 'NDAQ/RTAT10', per_page: 2 });
+```
+
+
+**Write**
+
+_No write-style endpoint inferred; pick any operation from the [API](/plugins/nasdaq/api) reference._
+
+
+See the full list on the [API](/plugins/nasdaq/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/nasdaq/api">
+    Every `nasdaq.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

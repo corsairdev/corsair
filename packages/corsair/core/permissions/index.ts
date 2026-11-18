@@ -15,12 +15,25 @@ import { PermissionRequiredError } from './errors/permission-required';
 // Permission Mode Scope
 // ─────────────────────────────────────────────────────────────────────────────
 
+/** Per-account modes: plugin id → account (its id, ref or label) → mode. */
+export type AccountModes = Record<string, Record<string, PermissionMode>>;
+
+/** A caller's mode: one for every call, or a default with modes per account. */
+export type ModeScope =
+	| PermissionMode
+	| { mode?: PermissionMode; accounts?: AccountModes };
+
+/** The names an account answers to, any of which a mode can be keyed by. */
+export type AccountNames = { id: string; ref?: string; label?: string };
+
+type ScopeEntry = { mode?: PermissionMode; accounts?: AccountModes };
+
 /**
- * The permission mode the caller set for the current call. Applies to every
- * endpoint call inside the scope, including plugins that carry no mode of
- * their own, and composes with one that does.
+ * The modes the caller set for the current call, outermost first. Applies to
+ * every endpoint call inside the scope, including plugins that carry no mode
+ * of their own, and composes with one that does.
  */
-const modeScope = new AsyncLocalStorage<PermissionMode>();
+const modeScope = new AsyncLocalStorage<ScopeEntry[]>();
 
 // A scalar works only because PERMISSION_MATRIX is monotonic in this order at
 // every risk level.
@@ -61,14 +74,85 @@ export function stricterMode(
 	return STRICTNESS[a] >= STRICTNESS[b] ? a : b;
 }
 
-/** Runs `fn` under `mode`. Nesting never widens: the stricter of the two wins. */
-export function runWithMode<T>(mode: PermissionMode, fn: () => T): T {
-	return modeScope.run(stricterMode(modeScope.getStore(), mode) ?? mode, fn);
+/**
+ * The mode keyed to this account by its id or ref. Never by label: a label
+ * can be a display name its owner renames, which must not pick up a mode.
+ */
+export function accountMode(
+	modes: Record<string, PermissionMode> | undefined,
+	names: AccountNames | undefined,
+): PermissionMode | undefined {
+	if (!modes || !names) return undefined;
+	let found: PermissionMode | undefined;
+	for (const [key, mode] of Object.entries(modes)) {
+		if (key === names.id || key === names.ref)
+			found = stricterMode(found, mode);
+	}
+	return found;
 }
 
-/** The mode in effect for the current async context, if any. */
-export function activeMode(): PermissionMode | undefined {
-	return modeScope.getStore();
+/** The strictest of a set of modes. */
+export function strictestMode(
+	modes: Record<string, PermissionMode> | undefined,
+	floor?: PermissionMode,
+): PermissionMode | undefined {
+	return Object.values(modes ?? {}).reduce<PermissionMode | undefined>(
+		stricterMode,
+		floor,
+	);
+}
+
+// Without the account, the strictest mode any of its accounts could get.
+function entryMode(
+	entry: ScopeEntry,
+	plugin: string | undefined,
+	names: AccountNames | undefined,
+): PermissionMode | undefined {
+	if (names && plugin) {
+		return accountMode(entry.accounts?.[plugin], names) ?? entry.mode;
+	}
+	const maps = plugin
+		? [entry.accounts?.[plugin]]
+		: Object.values(entry.accounts ?? {});
+	return maps
+		.flatMap((m) => Object.values(m ?? {}))
+		.reduce<PermissionMode | undefined>(stricterMode, entry.mode);
+}
+
+/**
+ * Runs `fn` under `scope`. Nesting never widens: each call takes the stricter
+ * of what every open scope gives its account.
+ */
+export function runWithMode<T>(scope: ModeScope, fn: () => T): T {
+	const entry = typeof scope === 'string' ? { mode: scope } : scope;
+	return modeScope.run([...(modeScope.getStore() ?? []), entry], fn);
+}
+
+/**
+ * The mode in effect for the current async context, if any. Given the plugin
+ * and the account a call is for, that account's own mode counts; without
+ * them, the strictest any account could get.
+ */
+export function activeMode(
+	plugin?: string,
+	names?: AccountNames,
+): PermissionMode | undefined {
+	return (modeScope.getStore() ?? []).reduce<PermissionMode | undefined>(
+		(mode, entry) => stricterMode(mode, entryMode(entry, plugin, names)),
+		undefined,
+	);
+}
+
+/** Whether an open scope sets a mode for some account of this plugin. */
+export function hasAccountModes(plugin: string): boolean {
+	return (modeScope.getStore() ?? []).some(
+		(e) => Object.keys(e.accounts?.[plugin] ?? {}).length > 0,
+	);
+}
+
+/** The open scopes, outermost first, for a server to run the same call under. */
+export function currentModeScopes(): ModeScope[] {
+	return [...(modeScope.getStore() ?? [])];
 }
 
 /**
@@ -81,8 +165,11 @@ export function runReadonly<T>(fn: () => T): T {
 }
 
 /** Whether the current async context is inside a {@link runReadonly} scope. */
-export function isReadonlyScopeActive(): boolean {
-	return modeScope.getStore() === 'readonly';
+export function isReadonlyScopeActive(
+	plugin?: string,
+	names?: AccountNames,
+): boolean {
+	return activeMode(plugin, names) === 'readonly';
 }
 
 /**
@@ -93,8 +180,10 @@ export function isReadonlyScopeActive(): boolean {
 export function assertReadonlyAllowed(
 	endpointPath: string,
 	riskLevel: EndpointRiskLevel,
+	plugin?: string,
+	names?: AccountNames,
 ): void {
-	if (isReadonlyScopeActive() && riskLevel !== 'read') {
+	if (isReadonlyScopeActive(plugin, names) && riskLevel !== 'read') {
 		throw new ReadonlyForbiddenError(endpointPath, riskLevel);
 	}
 }
@@ -107,9 +196,11 @@ export function assertReadonlyAllowed(
 export function assertModeAllows(
 	endpointPath: string,
 	riskLevel: EndpointRiskLevel,
+	plugin?: string,
+	names?: AccountNames,
 ): void {
-	assertReadonlyAllowed(endpointPath, riskLevel);
-	const mode = activeMode();
+	assertReadonlyAllowed(endpointPath, riskLevel, plugin, names);
+	const mode = activeMode(plugin, names);
 	if (mode === undefined || evaluatePermission(riskLevel, mode) === 'allow') {
 		return;
 	}

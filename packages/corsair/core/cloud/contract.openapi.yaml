@@ -378,6 +378,9 @@ components:
             type: object
             properties:
               integrationName: { type: string }
+              accountId: { type: string }
+              ref: { type: string }
+              label: { type: string }
               hasCredentials: { type: boolean }
     PluginInfo:
       type: object
