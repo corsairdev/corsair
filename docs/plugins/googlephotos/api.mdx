@@ -1,0 +1,891 @@
+---
+title: "Google Photos API reference"
+sidebarTitle: "API"
+description: "API reference for Google Photos: every `googlephotos.api.*` operation with input and output types."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Albums
+
+### addEnrichment
+
+`albums.addEnrichment`
+
+Add a text note or a location to an app-created album, at a chosen position
+
+**Risk:** `write`
+
+```ts
+await corsair.googlephotos.api.albums.addEnrichment({ albumId: 'ABcDeFgHiJkLmNoP', text: 'Day one' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `albumId` | `string` | Yes | An album id from albums.create or albums.list |
+| `text` | `string \| null` | No | A text note to add |
+| `location` | `object \| null` | No | — |
+| `position` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+  locationName?: string | null,
+  latlng?: {
+    latitude: number,
+    longitude: number
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="position full type">
+
+```ts
+{
+  position: POSITION_TYPE_UNSPECIFIED | FIRST_IN_ALBUM | LAST_IN_ALBUM | AFTER_MEDIA_ITEM | AFTER_ENRICHMENT_ITEM,
+  relativeMediaItemId?: string | null,
+  relativeEnrichmentItemId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `enrichmentItem` | `object \| null` | No | The new enrichment, named by its id |
+
+<AccordionGroup>
+<Accordion title="enrichmentItem full type">
+
+```ts
+{
+  id?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### batchAddMediaItems
+
+`albums.batchAddMediaItems`
+
+Add up to 50 media items to an app-created album
+
+**Risk:** `write`
+
+```ts
+await corsair.googlephotos.api.albums.batchAddMediaItems({ albumId: 'ABcDeFgHiJkLmNoP', mediaItemIds: ['AbCdEf123'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `albumId` | `string` | Yes | An album id from albums.create or albums.list |
+| `mediaItemIds` | `string[]` | Yes | 1 to 50 ids per call |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### batchRemoveMediaItems
+
+`albums.batchRemoveMediaItems`
+
+Remove up to 50 media items from an album. The items stay in the library, so this is reversible by adding them back
+
+**Risk:** `destructive`
+
+```ts
+await corsair.googlephotos.api.albums.batchRemoveMediaItems({ albumId: 'ABcDeFgHiJkLmNoP', mediaItemIds: ['AbCdEf123'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `albumId` | `string` | Yes | An album id from albums.create or albums.list |
+| `mediaItemIds` | `string[]` | Yes | 1 to 50 ids per call |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### create
+
+`albums.create`
+
+Create an album with a title
+
+**Risk:** `write`
+
+```ts
+await corsair.googlephotos.api.albums.create({ title: 'Holiday 2026' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | The album name, at most 500 characters. The only writable field |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | A persistent album id |
+| `title` | `string \| null` | No | At most 500 characters |
+| `productUrl` | `string \| null` | No | — |
+| `isWriteable` | `boolean \| null` | No | True when the granted scopes allow adding items |
+| `mediaItemsCount` | `string \| null` | No | int64 as a string, not a number |
+| `coverPhotoBaseUrl` | `string \| null` | No | A prefix that needs a size parameter, like a media baseUrl |
+| `coverPhotoMediaItemId` | `string \| null` | No | — |
+| `shareInfo` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="shareInfo full type">
+
+```ts
+{
+  sharedAlbumOptions?: {
+    isCollaborative?: boolean | null,
+    isCommentable?: boolean | null
+  } | null,
+  shareableUrl?: string | null,
+  shareToken?: string | null,
+  isOwned?: boolean | null,
+  isJoinable?: boolean | null,
+  isJoined?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`albums.get`
+
+Read one album
+
+**Risk:** `read`
+
+```ts
+await corsair.googlephotos.api.albums.get({ albumId: 'ABcDeFgHiJkLmNoP' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `albumId` | `string` | Yes | An album id from albums.create or albums.list |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | A persistent album id |
+| `title` | `string \| null` | No | At most 500 characters |
+| `productUrl` | `string \| null` | No | — |
+| `isWriteable` | `boolean \| null` | No | True when the granted scopes allow adding items |
+| `mediaItemsCount` | `string \| null` | No | int64 as a string, not a number |
+| `coverPhotoBaseUrl` | `string \| null` | No | A prefix that needs a size parameter, like a media baseUrl |
+| `coverPhotoMediaItemId` | `string \| null` | No | — |
+| `shareInfo` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="shareInfo full type">
+
+```ts
+{
+  sharedAlbumOptions?: {
+    isCollaborative?: boolean | null,
+    isCommentable?: boolean | null
+  } | null,
+  shareableUrl?: string | null,
+  shareToken?: string | null,
+  isOwned?: boolean | null,
+  isJoinable?: boolean | null,
+  isJoined?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`albums.list`
+
+List the account's albums. Without a scope Google removed in 2025, only app-created albums are readable
+
+**Risk:** `read`
+
+```ts
+await corsair.googlephotos.api.albums.list({ pageSize: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number \| null` | No | 1 to 50. The API default is 20 |
+| `pageToken` | `string \| null` | No | nextPageToken from a previous page of the same call |
+| `excludeNonAppCreatedData` | `boolean \| null` | No | Leave out albums the app did not create. Reads of the user's whole library need a scope Google removed in April 2025, so this is effectively the only data a current scope can see |
+
+Only albums this app created are readable; the wide-read scope was removed in 2025.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `albums` | `object[] \| null` | No | Absent when the account has no albums |
+| `nextPageToken` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="albums full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  productUrl?: string | null,
+  isWriteable?: boolean | null,
+  mediaItemsCount?: string | null,
+  coverPhotoBaseUrl?: string | null,
+  coverPhotoMediaItemId?: string | null,
+  shareInfo?: {
+    sharedAlbumOptions?: {
+      isCollaborative?: boolean | null,
+      isCommentable?: boolean | null
+    } | null,
+    shareableUrl?: string | null,
+    shareToken?: string | null,
+    isOwned?: boolean | null,
+    isJoinable?: boolean | null,
+    isJoined?: boolean | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`albums.update`
+
+Rename an album; the title is the only field the API lets an update change
+
+**Risk:** `write`
+
+```ts
+await corsair.googlephotos.api.albums.update({ albumId: 'ABcDeFgHiJkLmNoP', title: 'Holiday 2026 (edited)' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `albumId` | `string` | Yes | An album id from albums.create or albums.list |
+| `title` | `string` | Yes | — |
+
+Sends PATCH with the `title` mask, the only field the API documents as writable.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | A persistent album id |
+| `title` | `string \| null` | No | At most 500 characters |
+| `productUrl` | `string \| null` | No | — |
+| `isWriteable` | `boolean \| null` | No | True when the granted scopes allow adding items |
+| `mediaItemsCount` | `string \| null` | No | int64 as a string, not a number |
+| `coverPhotoBaseUrl` | `string \| null` | No | A prefix that needs a size parameter, like a media baseUrl |
+| `coverPhotoMediaItemId` | `string \| null` | No | — |
+| `shareInfo` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="shareInfo full type">
+
+```ts
+{
+  sharedAlbumOptions?: {
+    isCollaborative?: boolean | null,
+    isCommentable?: boolean | null
+  } | null,
+  shareableUrl?: string | null,
+  shareToken?: string | null,
+  isOwned?: boolean | null,
+  isJoinable?: boolean | null,
+  isJoined?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Media Items
+
+### batchGet
+
+`mediaItems.batchGet`
+
+Read up to one page of media items by id, with a per-id status
+
+**Risk:** `read`
+
+```ts
+await corsair.googlephotos.api.mediaItems.batchGet({ mediaItemIds: ['AbCdEf123', 'GhIjKl456'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mediaItemIds` | `string[]` | Yes | The ids to read in one call |
+
+Each requested id gets an entry, and a failed id carries a status instead of an item.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mediaItemResults` | `object[]` | Yes | One entry per requested id. An entry can carry a status error instead of an item |
+
+<AccordionGroup>
+<Accordion title="mediaItemResults full type">
+
+```ts
+{
+  status?: {
+    code?: number | null,
+    message?: string | null,
+    details?: Record<string, any>[] | null
+  } | null,
+  mediaItem?: {
+    id: string,
+    filename?: string | null,
+    mimeType?: string | null,
+    description?: string | null,
+    productUrl?: string | null,
+    baseUrl?: string | null,
+    mediaMetadata?: {
+      creationTime?: string | null,
+      width?: string | null,
+      height?: string | null,
+      photo?: {
+        cameraMake?: string | null,
+        cameraModel?: string | null,
+        focalLength?: number | null,
+        apertureFNumber?: number | null,
+        isoEquivalent?: number | null,
+        exposureTime?: string | null
+      } | null,
+      video?: {
+        cameraMake?: string | null,
+        cameraModel?: string | null,
+        fps?: number | null,
+        status?: UNSPECIFIED | PROCESSING | READY | FAILED | null
+      } | null
+    } | null,
+    contributorInfo?: {
+      profilePictureBaseUrl?: string | null,
+      displayName?: string | null
+    } | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`mediaItems.create`
+
+Upload bytes and create up to 50 media items, optionally in an album; uploads count toward the user's Google storage past 25MB
+
+**Risk:** `write`
+
+```ts
+await corsair.googlephotos.api.mediaItems.create({ newMediaItems: [{ fileName: 'beach.jpg', contentType: 'image/jpeg', bytes: '<base64>' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `newMediaItems` | `object[]` | Yes | 1 to 50 items per call; the API refuses more |
+| `albumId` | `string \| null` | No | Also add the items to this album, which must be app-created |
+| `albumPosition` | `object \| null` | No | — |
+
+Bytes are base64. The endpoint uploads them, then creates up to 50 items from the returned tokens.
+
+<AccordionGroup>
+<Accordion title="newMediaItems full type">
+
+```ts
+{
+  fileName: string,
+  contentType: string,
+  bytes: string,
+  description?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="albumPosition full type">
+
+```ts
+{
+  position: POSITION_TYPE_UNSPECIFIED | FIRST_IN_ALBUM | LAST_IN_ALBUM | AFTER_MEDIA_ITEM | AFTER_ENRICHMENT_ITEM,
+  relativeMediaItemId?: string | null,
+  relativeEnrichmentItemId?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `newMediaItemResults` | `object[]` | Yes | One entry per submitted item, in the order they were sent, each with its own status |
+
+<AccordionGroup>
+<Accordion title="newMediaItemResults full type">
+
+```ts
+{
+  uploadToken?: string | null,
+  status?: {
+    code?: number | null,
+    message?: string | null,
+    details?: Record<string, any>[] | null
+  } | null,
+  mediaItem?: {
+    id: string,
+    filename?: string | null,
+    mimeType?: string | null,
+    description?: string | null,
+    productUrl?: string | null,
+    baseUrl?: string | null,
+    mediaMetadata?: {
+      creationTime?: string | null,
+      width?: string | null,
+      height?: string | null,
+      photo?: {
+        cameraMake?: string | null,
+        cameraModel?: string | null,
+        focalLength?: number | null,
+        apertureFNumber?: number | null,
+        isoEquivalent?: number | null,
+        exposureTime?: string | null
+      } | null,
+      video?: {
+        cameraMake?: string | null,
+        cameraModel?: string | null,
+        fps?: number | null,
+        status?: UNSPECIFIED | PROCESSING | READY | FAILED | null
+      } | null
+    } | null,
+    contributorInfo?: {
+      profilePictureBaseUrl?: string | null,
+      displayName?: string | null
+    } | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`mediaItems.get`
+
+Read one media item
+
+**Risk:** `read`
+
+```ts
+await corsair.googlephotos.api.mediaItems.get({ mediaItemId: 'AbCdEf123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mediaItemId` | `string` | Yes | A media item id from a search or a batchCreate result |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | A persistent id, stable between sessions |
+| `filename` | `string \| null` | No | — |
+| `mimeType` | `string \| null` | No | e.g. `image/jpeg` |
+| `description` | `string \| null` | No | — |
+| `productUrl` | `string \| null` | No | A Google Photos link the user can open when signed in |
+| `baseUrl` | `string \| null` | No | A prefix for the bytes. A size parameter must be appended before it can be fetched; see the media.bytes helper |
+| `mediaMetadata` | `object \| null` | No | — |
+| `contributorInfo` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="mediaMetadata full type">
+
+```ts
+{
+  creationTime?: string | null,
+  width?: string | null,
+  height?: string | null,
+  photo?: {
+    cameraMake?: string | null,
+    cameraModel?: string | null,
+    focalLength?: number | null,
+    apertureFNumber?: number | null,
+    isoEquivalent?: number | null,
+    exposureTime?: string | null
+  } | null,
+  video?: {
+    cameraMake?: string | null,
+    cameraModel?: string | null,
+    fps?: number | null,
+    status?: UNSPECIFIED | PROCESSING | READY | FAILED | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="contributorInfo full type">
+
+```ts
+{
+  profilePictureBaseUrl?: string | null,
+  displayName?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`mediaItems.list`
+
+List the library in the order Google returns it, 25 by default
+
+**Risk:** `read`
+
+```ts
+await corsair.googlephotos.api.mediaItems.list({ pageSize: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number \| null` | No | 1 to 100. The API default is 25 |
+| `pageToken` | `string \| null` | No | nextPageToken from a previous page of the same call |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mediaItems` | `object[] \| null` | No | — |
+| `nextPageToken` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="mediaItems full type">
+
+```ts
+{
+  id: string,
+  filename?: string | null,
+  mimeType?: string | null,
+  description?: string | null,
+  productUrl?: string | null,
+  baseUrl?: string | null,
+  mediaMetadata?: {
+    creationTime?: string | null,
+    width?: string | null,
+    height?: string | null,
+    photo?: {
+      cameraMake?: string | null,
+      cameraModel?: string | null,
+      focalLength?: number | null,
+      apertureFNumber?: number | null,
+      isoEquivalent?: number | null,
+      exposureTime?: string | null
+    } | null,
+    video?: {
+      cameraMake?: string | null,
+      cameraModel?: string | null,
+      fps?: number | null,
+      status?: UNSPECIFIED | PROCESSING | READY | FAILED | null
+    } | null
+  } | null,
+  contributorInfo?: {
+    profilePictureBaseUrl?: string | null,
+    displayName?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`mediaItems.search`
+
+Search the library with date, content, feature and media-type filters, or list one album
+
+**Risk:** `read`
+
+```ts
+await corsair.googlephotos.api.mediaItems.search({ albumId: 'ABcDeFgHiJkLmNoP', pageSize: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `albumId` | `string \| null` | No | Search inside one album. Cannot be combined with filters |
+| `filters` | `object \| null` | No | — |
+| `orderBy` | `MediaMetadata.creation_time desc \| MediaMetadata.creation_time \| null` | No | Only usable with a date filter. `desc` is newest first, which is also the default |
+| `pageSize` | `number \| null` | No | 1 to 100. The API default is 25 |
+| `pageToken` | `string \| null` | No | nextPageToken from a previous page of the same call |
+
+Send `albumId` or `filters`, never both; the API answers 400 for that combination.
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  dateFilter?: {
+    dates?: {
+      year?: number | null,
+      month?: number | null,
+      day?: number | null
+    }[],
+    ranges?: {
+      startDate?: {
+        year?: number | null,
+        month?: number | null,
+        day?: number | null
+      },
+      endDate?: {
+        year?: number | null,
+        month?: number | null,
+        day?: number | null
+      }
+    }[]
+  },
+  contentFilter?: {
+    includedContentCategories?: (NONE | LANDSCAPES | RECEIPTS | CITYSCAPES | LANDMARKS | SELFIES | PEOPLE | PETS | WEDDINGS | BIRTHDAYS | DOCUMENTS | TRAVEL | ANIMALS | FOOD | SPORT | NIGHT | PERFORMANCES | WHITEBOARDS | SCREENSHOTS | UTILITY | ARTS | CRAFTS | FASHION | HOUSES | GARDENS | FLOWERS | HOLIDAYS)[],
+    excludedContentCategories?: (NONE | LANDSCAPES | RECEIPTS | CITYSCAPES | LANDMARKS | SELFIES | PEOPLE | PETS | WEDDINGS | BIRTHDAYS | DOCUMENTS | TRAVEL | ANIMALS | FOOD | SPORT | NIGHT | PERFORMANCES | WHITEBOARDS | SCREENSHOTS | UTILITY | ARTS | CRAFTS | FASHION | HOUSES | GARDENS | FLOWERS | HOLIDAYS)[]
+  },
+  mediaTypeFilter?: {
+    mediaTypes?: (ALL_MEDIA | VIDEO | PHOTO)[]
+  },
+  featureFilter?: {
+    includedFeatures?: (NONE | FAVORITES)[]
+  },
+  includeArchivedMedia?: boolean,
+  excludeNonAppCreatedData?: boolean
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mediaItems` | `object[] \| null` | No | Absent when nothing matched |
+| `nextPageToken` | `string \| null` | No | Its presence is the only reliable sign that more pages exist |
+
+<AccordionGroup>
+<Accordion title="mediaItems full type">
+
+```ts
+{
+  id: string,
+  filename?: string | null,
+  mimeType?: string | null,
+  description?: string | null,
+  productUrl?: string | null,
+  baseUrl?: string | null,
+  mediaMetadata?: {
+    creationTime?: string | null,
+    width?: string | null,
+    height?: string | null,
+    photo?: {
+      cameraMake?: string | null,
+      cameraModel?: string | null,
+      focalLength?: number | null,
+      apertureFNumber?: number | null,
+      isoEquivalent?: number | null,
+      exposureTime?: string | null
+    } | null,
+    video?: {
+      cameraMake?: string | null,
+      cameraModel?: string | null,
+      fps?: number | null,
+      status?: UNSPECIFIED | PROCESSING | READY | FAILED | null
+    } | null
+  } | null,
+  contributorInfo?: {
+    profilePictureBaseUrl?: string | null,
+    displayName?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`mediaItems.update`
+
+Change a media item's description, the only editable field
+
+**Risk:** `write`
+
+```ts
+await corsair.googlephotos.api.mediaItems.update({ mediaItemId: 'AbCdEf123', description: 'Sunset over the bay' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mediaItemId` | `string` | Yes | A media item id from a search or a batchCreate result |
+| `description` | `string` | Yes | The new description. The only field the API lets an update change |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | A persistent id, stable between sessions |
+| `filename` | `string \| null` | No | — |
+| `mimeType` | `string \| null` | No | e.g. `image/jpeg` |
+| `description` | `string \| null` | No | — |
+| `productUrl` | `string \| null` | No | A Google Photos link the user can open when signed in |
+| `baseUrl` | `string \| null` | No | A prefix for the bytes. A size parameter must be appended before it can be fetched; see the media.bytes helper |
+| `mediaMetadata` | `object \| null` | No | — |
+| `contributorInfo` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="mediaMetadata full type">
+
+```ts
+{
+  creationTime?: string | null,
+  width?: string | null,
+  height?: string | null,
+  photo?: {
+    cameraMake?: string | null,
+    cameraModel?: string | null,
+    focalLength?: number | null,
+    apertureFNumber?: number | null,
+    isoEquivalent?: number | null,
+    exposureTime?: string | null
+  } | null,
+  video?: {
+    cameraMake?: string | null,
+    cameraModel?: string | null,
+    fps?: number | null,
+    status?: UNSPECIFIED | PROCESSING | READY | FAILED | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="contributorInfo full type">
+
+```ts
+{
+  profilePictureBaseUrl?: string | null,
+  displayName?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

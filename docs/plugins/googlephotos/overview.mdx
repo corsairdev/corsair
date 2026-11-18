@@ -1,0 +1,147 @@
+---
+title: "Google Photos plugin"
+sidebarTitle: "Overview"
+description: "Read albums and media items, upload photos and videos, and manage album membership through the Google Photos Library API."
+---
+
+Use **Google Photos** through Corsair: one client, typed API calls.
+
+The Google Photos Library API manages a user's albums and media items: it lists and searches them, uploads new bytes, and adds or removes items from albums an app created.
+
+**Read this before you build on it.** On 31 March 2025 Google removed the `photoslibrary`, `photoslibrary.readonly` and `photoslibrary.sharing` scopes and restricted the Library API to content the app created. Three things follow, and this plugin is shaped around them:
+
+- The scopes that remain are `photoslibrary.appendonly`, `photoslibrary.readonly.appcreateddata` and `photoslibrary.edit.appcreateddata`. All three are requested here.
+- Reads only reach albums and media items this app created. A library-wide search needs the Google Photos Picker API instead, which is a different API with a different flow and is not part of this plugin.
+- `albums.share`, `albums.unshare` and every `sharedAlbums.*` method were removed. The plugin exposes none of them.
+
+Things to know before you call:
+
+- **Uploading is two steps, done here in one call.** `mediaItems.create` posts the bytes to `/uploads`, reads back an upload token, then sends up to 50 tokens to `mediaItems:batchCreate`. Bytes are passed base64-encoded with their MIME type.
+- **Uploads count toward the user's storage past 25MB.** Google asks an app to tell the user this.
+- **Google asks for a different request shape per list.** Albums default to 20 per page and cap at 50; media items default to 25 and cap at 100. Both are paginated with `nextPageToken`.
+- **`filters` and `albumId` cannot be combined.** The API answers 400, so the plugin refuses it before the request.
+- **`orderBy` only works with a date filter.** The two accepted values are `MediaMetadata.creation_time desc` (newest first, the default) and `MediaMetadata.creation_time`.
+- **A base URL is not fetchable.** A size parameter must be appended: `=d` for the original bytes, or `=w<width>-h<height>` for a scaled copy with an optional `-c` to crop. `mediaBytesUrl` builds it.
+- **A description is the only thing an update can change**, on both an album (title) and a media item (description), and the plugin sends exactly that mask.
+- **A 429 needs at least 30 seconds before a retry.** That is the upload guide's rule; the plugin uses it as the no-header delay and lets a real `Retry-After` override it.
+- **No service accounts.** Google states the Library API does not support them, so every call is made as a signed-in user.
+
+**What you get:**
+
+- 13 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/googlephotos better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/googlephotos better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/googlephotos better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/googlephotos better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { googlephotos } from '@corsair-dev/googlephotos';
+
+export const corsair = createCorsair({
+	plugins: [
+		googlephotos(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="OAuth 2.0 (Recommended)">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Google Photos OAuth app.
+
+```ts
+googlephotos()
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'googlephotos',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Find the photos in an app-created album**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.googlephotos.api.mediaItems.search({ albumId: 'ABcDeFgHiJkLmNoP' });
+```
+
+
+**Create an album**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.googlephotos.api.albums.create({ title: 'Holiday 2026' });
+```
+
+
+See the full list on the [API](/plugins/googlephotos/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/googlephotos/api">
+    Every `googlephotos.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

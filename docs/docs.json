@@ -2782,6 +2782,14 @@
                 ]
               },
               {
+                "group": "Google Photos",
+                "pages": [
+                  "plugins/googlephotos/overview",
+                  "plugins/googlephotos/api",
+                  "plugins/googlephotos/database"
+                ]
+              },
+              {
                 "group": "Google Sheets",
                 "pages": [
                   "plugins/googlesheets/overview",
