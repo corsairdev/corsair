@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-17T17:01:13.332Z",
-  "corsairVersion": "0.2.4",
+  "generatedAt": "2026-11-18T09:25:47.767Z",
+  "corsairVersion": "0.2.7",
   "catalogVersion": 2,
   "plugins": [
     {
@@ -1595,6 +1595,21 @@
         "api": 10,
         "webhooks": 0,
         "db": 1
+      }
+    },
+    {
+      "id": "bugherd",
+      "displayName": "BugHerd",
+      "description": "Work with BugHerd website feedback and bug reports. List and triage tasks, move them across the board, comment, attach files, and manage projects, columns and webhooks.",
+      "npmPackageName": "@corsair-dev/bugherd",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 39,
+        "webhooks": 0,
+        "db": 8
       }
     },
     {
@@ -4697,6 +4712,21 @@
       }
     },
     {
+      "id": "googlecontacts",
+      "displayName": "Google Contacts",
+      "description": "Read and manage a user's Google contacts, contact groups, and auto-saved \"other contacts\" through the People API.",
+      "npmPackageName": "@corsair-dev/googlecontacts",
+      "authTypes": [
+        "oauth_2"
+      ],
+      "defaultAuthType": "oauth_2",
+      "counts": {
+        "api": 17,
+        "webhooks": 0,
+        "db": 2
+      }
+    },
+    {
       "id": "googledocs",
       "displayName": "Google Docs",
       "description": "Online document editor for creating, sharing, and collaborating on text documents.",
@@ -5104,6 +5134,21 @@
       }
     },
     {
+      "id": "honeybadger",
+      "displayName": "Honeybadger",
+      "description": "Error tracking, uptime monitoring, check-ins, deploys and Insights queries from Honeybadger's v3 API.",
+      "npmPackageName": "@corsair-dev/honeybadger",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 62,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "honeyhive",
       "displayName": "HoneyHive",
       "description": "AI agent observability and evaluation platform for tracing, evaluating, monitoring, and improving LLM applications.",
@@ -5221,6 +5266,21 @@
       "defaultAuthType": "api_key",
       "counts": {
         "api": 160,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "hypeauditor",
+      "displayName": "HypeAuditor",
+      "description": "HypeAuditor influencer data - reports, media, audience history, brand mentions, discovery search and saved lists.",
+      "npmPackageName": "@corsair-dev/hypeauditor",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 26,
         "webhooks": 0,
         "db": 0
       }
@@ -6435,6 +6495,21 @@
       "defaultAuthType": "api_key",
       "counts": {
         "api": 19,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "nango",
+      "displayName": "Nango",
+      "description": "Manage Nango integrations, connections, Connect sessions, syncs and synced records, call tools, and proxy requests to your end users' APIs.",
+      "npmPackageName": "@corsair-dev/nango",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 35,
         "webhooks": 0,
         "db": 0
       }
@@ -9985,6 +10060,21 @@
       }
     },
     {
+      "id": "twittrapi",
+      "displayName": "TwittrAPI",
+      "description": "Read public X (Twitter) data through TwittrAPI (twittrapi.com) and get new tweets of the accounts you watch by signed webhook.",
+      "npmPackageName": "@corsair-dev/twittrapi",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 42,
+        "webhooks": 2,
+        "db": 10
+      }
+    },
+    {
       "id": "twocaptcha",
       "displayName": "2Captcha",
       "description": "Create captcha-solving tasks, read their results, check the account balance, and report tasks as correct or incorrect.",
@@ -10855,6 +10945,21 @@
         "api": 58,
         "webhooks": 0,
         "db": 6
+      }
+    },
+    {
+      "id": "zohoinvoice",
+      "displayName": "Zoho Invoice",
+      "description": "Create and send invoices and quotes, record payments, and manage customers and items in Zoho Invoice.",
+      "npmPackageName": "@corsair-dev/zohoinvoice",
+      "authTypes": [
+        "oauth_2"
+      ],
+      "defaultAuthType": "oauth_2",
+      "counts": {
+        "api": 34,
+        "webhooks": 0,
+        "db": 5
       }
     },
     {
@@ -36289,6 +36394,240 @@
       "kind": "api",
       "shortPath": "workflows.runGet",
       "haystack": "workflows.runget bubble.api.workflows.runget run an api workflow with query-string parameters (workflow api get) write"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "columns.create",
+      "haystack": "columns.create bugherd.api.columns.create add a custom column at the end of a project board. write"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "columns.delete",
+      "haystack": "columns.delete bugherd.api.columns.delete delete an empty column. cannot be undone. destructive"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "columns.list",
+      "haystack": "columns.list bugherd.api.columns.list list the columns on a project board, built-in and custom. read"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "columns.show",
+      "haystack": "columns.show bugherd.api.columns.show get one column. read"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "columns.update",
+      "haystack": "columns.update bugherd.api.columns.update rename a custom column. write"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "organization.show",
+      "haystack": "organization.show bugherd.api.organization.show get the organization name and id. read"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "projects.addGuest",
+      "haystack": "projects.addguest bugherd.api.projects.addguest add a guest (client) to a project by user id, or invite one by email. an email invite sends the person a message. destructive"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "projects.addMember",
+      "haystack": "projects.addmember bugherd.api.projects.addmember add one or more organization members to a project. write"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "projects.create",
+      "haystack": "projects.create bugherd.api.projects.create create a project for a website. members and guests are added separately. write"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "projects.delete",
+      "haystack": "projects.delete bugherd.api.projects.delete delete a project and all its tasks. cannot be undone. destructive"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "projects.list",
+      "haystack": "projects.list bugherd.api.projects.list list every project in the organization, active and inactive. 100 per page. read"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "projects.listActive",
+      "haystack": "projects.listactive bugherd.api.projects.listactive list active projects only. 100 per page. read"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "projects.show",
+      "haystack": "projects.show bugherd.api.projects.show get one project with its members, guests and columns. read"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "projects.update",
+      "haystack": "projects.update bugherd.api.projects.update change a project's name, url or settings. only the fields given change. write"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "tasks.create",
+      "haystack": "tasks.create bugherd.api.tasks.create create a task in a project. without a status it lands in the feedback panel. write"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "tasks.createAttachment",
+      "haystack": "tasks.createattachment bugherd.api.tasks.createattachment attach a file to a task from a public url. bugherd keeps a copy. write"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "tasks.createComment",
+      "haystack": "tasks.createcomment bugherd.api.tasks.createcomment comment on a task, optionally visible to team members only. write"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "tasks.delete",
+      "haystack": "tasks.delete bugherd.api.tasks.delete delete a task. cannot be undone. destructive"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "tasks.deleteAttachment",
+      "haystack": "tasks.deleteattachment bugherd.api.tasks.deleteattachment remove an attachment from a task. cannot be undone. destructive"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "tasks.list",
+      "haystack": "tasks.list bugherd.api.tasks.list list tasks in a project, filtered by status, priority, tag, assignee, external id or date. 100 per page. read"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "tasks.listArchived",
+      "haystack": "tasks.listarchived bugherd.api.tasks.listarchived list closed and archived tasks in a project. read"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "tasks.listAttachments",
+      "haystack": "tasks.listattachments bugherd.api.tasks.listattachments list the files attached to a task. read"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "tasks.listComments",
+      "haystack": "tasks.listcomments bugherd.api.tasks.listcomments list the comments on a task. read"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "tasks.listFeedback",
+      "haystack": "tasks.listfeedback bugherd.api.tasks.listfeedback list tasks in the feedback panel (new, not yet triaged). read"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "tasks.listForUser",
+      "haystack": "tasks.listforuser bugherd.api.tasks.listforuser list tasks assigned to a user across all projects. read"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "tasks.listTaskboard",
+      "haystack": "tasks.listtaskboard bugherd.api.tasks.listtaskboard list the active tasks on the project taskboard. read"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "tasks.move",
+      "haystack": "tasks.move bugherd.api.tasks.move move tasks to another project, by their #numbers. write"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "tasks.show",
+      "haystack": "tasks.show bugherd.api.tasks.show get one task by its global id, with or without the project id. read"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "tasks.showAttachment",
+      "haystack": "tasks.showattachment bugherd.api.tasks.showattachment get one attachment on a task. read"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "tasks.showByLocalId",
+      "haystack": "tasks.showbylocalid bugherd.api.tasks.showbylocalid get a task by the #number shown in the bugherd ui. read"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "tasks.update",
+      "haystack": "tasks.update bugherd.api.tasks.update change a task: status (column), priority, assignees, tags, description. write"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "tasks.uploadAttachment",
+      "haystack": "tasks.uploadattachment bugherd.api.tasks.uploadattachment upload a file to a task (a url, or base64 for a small file). write"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "users.list",
+      "haystack": "users.list bugherd.api.users.list list everyone in the organization, members and guests. read"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "users.listGuests",
+      "haystack": "users.listguests bugherd.api.users.listguests list guests (clients) across all projects. read"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "users.listMembers",
+      "haystack": "users.listmembers bugherd.api.users.listmembers list team members (not guests). read"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "users.listProjects",
+      "haystack": "users.listprojects bugherd.api.users.listprojects list the projects a user belongs to. read"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "webhooks.create",
+      "haystack": "webhooks.create bugherd.api.webhooks.create subscribe a url to one bugherd event, for one project or all of them. write"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "webhooks.delete",
+      "haystack": "webhooks.delete bugherd.api.webhooks.delete remove a webhook subscription. cannot be undone. destructive"
+    },
+    {
+      "pluginId": "bugherd",
+      "kind": "api",
+      "shortPath": "webhooks.list",
+      "haystack": "webhooks.list bugherd.api.webhooks.list list the organization webhooks with their delivery counts. read"
     },
     {
       "pluginId": "bugsnag",
@@ -95697,6 +96036,108 @@
       "haystack": "referenceimages.list googlecloudvision.api.referenceimages.list list reference images read"
     },
     {
+      "pluginId": "googlecontacts",
+      "kind": "api",
+      "shortPath": "contactGroups.create",
+      "haystack": "contactgroups.create googlecontacts.api.contactgroups.create create a contact group write"
+    },
+    {
+      "pluginId": "googlecontacts",
+      "kind": "api",
+      "shortPath": "contactGroups.delete",
+      "haystack": "contactgroups.delete googlecontacts.api.contactgroups.delete delete a contact group, optionally with its contacts [destructive · irreversible] destructive"
+    },
+    {
+      "pluginId": "googlecontacts",
+      "kind": "api",
+      "shortPath": "contactGroups.get",
+      "haystack": "contactgroups.get googlecontacts.api.contactgroups.get get a single contact group read"
+    },
+    {
+      "pluginId": "googlecontacts",
+      "kind": "api",
+      "shortPath": "contactGroups.list",
+      "haystack": "contactgroups.list googlecontacts.api.contactgroups.list list contact groups read"
+    },
+    {
+      "pluginId": "googlecontacts",
+      "kind": "api",
+      "shortPath": "contactGroups.modifyMembers",
+      "haystack": "contactgroups.modifymembers googlecontacts.api.contactgroups.modifymembers add or remove contacts from a group write"
+    },
+    {
+      "pluginId": "googlecontacts",
+      "kind": "api",
+      "shortPath": "contactGroups.update",
+      "haystack": "contactgroups.update googlecontacts.api.contactgroups.update rename a contact group write"
+    },
+    {
+      "pluginId": "googlecontacts",
+      "kind": "api",
+      "shortPath": "contacts.create",
+      "haystack": "contacts.create googlecontacts.api.contacts.create create a new contact write"
+    },
+    {
+      "pluginId": "googlecontacts",
+      "kind": "api",
+      "shortPath": "contacts.delete",
+      "haystack": "contacts.delete googlecontacts.api.contacts.delete permanently delete a contact [destructive · irreversible] destructive"
+    },
+    {
+      "pluginId": "googlecontacts",
+      "kind": "api",
+      "shortPath": "contacts.deletePhoto",
+      "haystack": "contacts.deletephoto googlecontacts.api.contacts.deletephoto remove a contact's photo [destructive] destructive"
+    },
+    {
+      "pluginId": "googlecontacts",
+      "kind": "api",
+      "shortPath": "contacts.get",
+      "haystack": "contacts.get googlecontacts.api.contacts.get get a single contact read"
+    },
+    {
+      "pluginId": "googlecontacts",
+      "kind": "api",
+      "shortPath": "contacts.list",
+      "haystack": "contacts.list googlecontacts.api.contacts.list list the user's contacts read"
+    },
+    {
+      "pluginId": "googlecontacts",
+      "kind": "api",
+      "shortPath": "contacts.search",
+      "haystack": "contacts.search googlecontacts.api.contacts.search search contacts by name, email or phone. google warms this index per account, so the first call after authorizing can return nothing; retry. read"
+    },
+    {
+      "pluginId": "googlecontacts",
+      "kind": "api",
+      "shortPath": "contacts.update",
+      "haystack": "contacts.update googlecontacts.api.contacts.update update an existing contact write"
+    },
+    {
+      "pluginId": "googlecontacts",
+      "kind": "api",
+      "shortPath": "contacts.updatePhoto",
+      "haystack": "contacts.updatephoto googlecontacts.api.contacts.updatephoto set or replace a contact's photo write"
+    },
+    {
+      "pluginId": "googlecontacts",
+      "kind": "api",
+      "shortPath": "otherContacts.copyToContacts",
+      "haystack": "othercontacts.copytocontacts googlecontacts.api.othercontacts.copytocontacts copy an auto-saved contact into the saved contacts write"
+    },
+    {
+      "pluginId": "googlecontacts",
+      "kind": "api",
+      "shortPath": "otherContacts.list",
+      "haystack": "othercontacts.list googlecontacts.api.othercontacts.list list auto-saved contacts the user never filed read"
+    },
+    {
+      "pluginId": "googlecontacts",
+      "kind": "api",
+      "shortPath": "otherContacts.search",
+      "haystack": "othercontacts.search googlecontacts.api.othercontacts.search search auto-saved contacts read"
+    },
+    {
       "pluginId": "googledocs",
       "kind": "api",
       "shortPath": "documents.copyDocument",
@@ -103095,6 +103536,378 @@
       "haystack": "requests.completed higgsfield.webhooks.requests.completed a request reached completed (with its output), failed or nsfw. signed with standard webhooks; only signed deliveries are accepted."
     },
     {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "account.get",
+      "haystack": "account.get honeybadger.api.account.get read the account the token belongs to, with its name and primary email read"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "account.usage",
+      "haystack": "account.usage honeybadger.api.account.usage read the account quota and how much of it is used, for errors, uptime and check-ins read"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "checkIns.create",
+      "haystack": "checkins.create honeybadger.api.checkins.create create a check-in on a simple period or a cron schedule; a simple schedule needs `report_period` and a cron schedule needs `cron_schedule` write"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "checkIns.delete",
+      "haystack": "checkins.delete honeybadger.api.checkins.delete delete a check-in, which stops monitoring that scheduled job destructive"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "checkIns.events",
+      "haystack": "checkins.events honeybadger.api.checkins.events list a check-in's state changes newest first, paging backwards on a timestamp read"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "checkIns.get",
+      "haystack": "checkins.get honeybadger.api.checkins.get read one check-in with its schedule, last report and next expected report read"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "checkIns.list",
+      "haystack": "checkins.list honeybadger.api.checkins.list list a project's check-ins with their state and next expected report read"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "checkIns.replace",
+      "haystack": "checkins.replace honeybadger.api.checkins.replace replace the project's whole set of check-ins by slug; every check-in the list does not name is deleted destructive"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "checkIns.update",
+      "haystack": "checkins.update honeybadger.api.checkins.update change a check-in's name, slug, schedule or grace period; switching schedule type clears the other one's fields write"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "comments.create",
+      "haystack": "comments.create honeybadger.api.comments.create comment on a fault; `@mentions` notify the named project members write"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "comments.delete",
+      "haystack": "comments.delete honeybadger.api.comments.delete permanently delete a comment from a fault destructive"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "comments.get",
+      "haystack": "comments.get honeybadger.api.comments.get read one comment on a fault, with its author and body read"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "comments.list",
+      "haystack": "comments.list honeybadger.api.comments.list list a fault's comments newest first, paging backwards with a cursor read"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "comments.update",
+      "haystack": "comments.update honeybadger.api.comments.update replace the text of a comment on a fault; other comment fields cannot be changed write"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "deploys.delete",
+      "haystack": "deploys.delete honeybadger.api.deploys.delete delete a deploy record; the deploy is not re-read anywhere destructive"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "deploys.get",
+      "haystack": "deploys.get honeybadger.api.deploys.get read one deploy record, with its environment, revision and author read"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "deploys.list",
+      "haystack": "deploys.list honeybadger.api.deploys.list list deploys oldest-page-first with cursors, optionally by exact environment or deploy username read"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "environments.bulkDelete",
+      "haystack": "environments.bulkdelete honeybadger.api.environments.bulkdelete delete several environments at once; if any id is not one of the project's, nothing is deleted destructive"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "environments.bulkUpdate",
+      "haystack": "environments.bulkupdate honeybadger.api.environments.bulkupdate turn notifications on or off for several environments at once; if any id is not one of the project's, nothing changes write"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "environments.create",
+      "haystack": "environments.create honeybadger.api.environments.create create an environment; names are unique per project and case-sensitive write"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "environments.delete",
+      "haystack": "environments.delete honeybadger.api.environments.delete delete an environment; its faults and notices stay, and the next notice under that name recreates it with notifications on destructive"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "environments.get",
+      "haystack": "environments.get honeybadger.api.environments.get read one environment and whether its errors send notifications read"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "environments.list",
+      "haystack": "environments.list honeybadger.api.environments.list list a project's environments and whether each sends notifications read"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "environments.update",
+      "haystack": "environments.update honeybadger.api.environments.update change whether an environment notifies; an environment cannot be renamed write"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "faults.affectedUsers",
+      "haystack": "faults.affectedusers honeybadger.api.faults.affectedusers read the 500 users a fault affected most, ranked by notice count read"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "faults.assign",
+      "haystack": "faults.assign honeybadger.api.faults.assign assign a fault to a project member, who is notified of it write"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "faults.delete",
+      "haystack": "faults.delete honeybadger.api.faults.delete permanently delete a fault; its notices stay readable by id until retention removes them destructive"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "faults.get",
+      "haystack": "faults.get honeybadger.api.faults.get read one fault by id; a merged fault redirects to the fault it was merged into read"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "faults.ignore",
+      "haystack": "faults.ignore honeybadger.api.faults.ignore ignore faults, which stops data collection for them, by id or by query with `all: true` write"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "faults.list",
+      "haystack": "faults.list honeybadger.api.faults.list list faults with error search, sorting and time filters; occurrence counts cover the requested window read"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "faults.merge",
+      "haystack": "faults.merge honeybadger.api.faults.merge merge one fault into another in the background; the merged fault keeps its tags, assignee and state on neither side, and its id redirects for the retention period destructive"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "faults.occurrences",
+      "haystack": "faults.occurrences honeybadger.api.faults.occurrences read occurrence counts for one fault over a window, one bucket per interval including empty ones read"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "faults.pauseRecording",
+      "haystack": "faults.pauserecording honeybadger.api.faults.pauserecording stop recording a fault for an hour, a day or a week, discarding notices during the pause write"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "faults.resolve",
+      "haystack": "faults.resolve honeybadger.api.faults.resolve resolve named faults, or every fault a query and time filter match with `all: true`; `dry_run` reports what would change write"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "faults.resumeRecording",
+      "haystack": "faults.resumerecording honeybadger.api.faults.resumerecording resume recording a fault; a fault that is not paused is unchanged write"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "faults.snooze",
+      "haystack": "faults.snooze honeybadger.api.faults.snooze snooze notifications for a duration or an occurrence count, replacing any existing snooze write"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "faults.summary",
+      "haystack": "faults.summary honeybadger.api.faults.summary read fault counts grouped by environment and resolved or ignored state, with the same filters as the fault list read"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "faults.unassign",
+      "haystack": "faults.unassign honeybadger.api.faults.unassign remove the assignment from a fault, leaving it unowned write"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "faults.unignore",
+      "haystack": "faults.unignore honeybadger.api.faults.unignore stop ignoring faults, so collection resumes, by id or by query with `all: true` write"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "faults.unresolve",
+      "haystack": "faults.unresolve honeybadger.api.faults.unresolve mark faults unresolved, by id or by query with `all: true`; `dry_run` reports what would change write"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "faults.unsnooze",
+      "haystack": "faults.unsnooze honeybadger.api.faults.unsnooze remove a fault's snooze, so notifications resume from the next occurrence write"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "faults.update",
+      "haystack": "faults.update honeybadger.api.faults.update change a fault resolved or ignored state, assignee, tags, or whether it resolves on the next deploy write"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "insights.query",
+      "haystack": "insights.query honeybadger.api.insights.query run a badgerql query over the project event streams and return its rows; a post that changes nothing read"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "notices.get",
+      "haystack": "notices.get honeybadger.api.notices.get read one notice by its uuid, without naming its project or fault read"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "notices.list",
+      "haystack": "notices.list honeybadger.api.notices.list list a fault's notices newest first, with source-mapped backtraces unless `unmapped` is set read"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "occurrences.list",
+      "haystack": "occurrences.list honeybadger.api.occurrences.list read notice counts for every project the token can see, ordered by project name read"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "projects.create",
+      "haystack": "projects.create honeybadger.api.projects.create create a project, optionally in a team; `team_id` requires `team:write` and rejects the whole request without it write"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "projects.delete",
+      "haystack": "projects.delete honeybadger.api.projects.delete permanently delete a project and all its data destructive"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "projects.get",
+      "haystack": "projects.get honeybadger.api.projects.get read one project by id, including its fault counts and environment names read"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "projects.list",
+      "haystack": "projects.list honeybadger.api.projects.list list projects the token can reach, optionally filtered by exact name, with paging read"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "projects.occurrences",
+      "haystack": "projects.occurrences honeybadger.api.projects.occurrences read notice counts for one project over an hour, day, week or month, one count per interval read"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "projects.stats",
+      "haystack": "projects.stats honeybadger.api.projects.stats read a project fault and notice counts for the last day, week and month read"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "projects.update",
+      "haystack": "projects.update honeybadger.api.projects.update change a project's settings; a null clears a nullable field and a field left out keeps its value write"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "sites.checks",
+      "haystack": "sites.checks honeybadger.api.sites.checks list a site's individual uptime check results, newest page first read"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "sites.create",
+      "haystack": "sites.create honeybadger.api.sites.create create an uptime site; `match` is required for every match type except `success`, which refuses it, and `timeout` must be shorter than the check interval write"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "sites.delete",
+      "haystack": "sites.delete honeybadger.api.sites.delete delete an uptime site and stop monitoring it destructive"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "sites.get",
+      "haystack": "sites.get honeybadger.api.sites.get read one uptime site with its url, match rule and current state read"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "sites.list",
+      "haystack": "sites.list honeybadger.api.sites.list list a project's uptime monitoring sites with their urls and current state read"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "sites.outages",
+      "haystack": "sites.outages honeybadger.api.sites.outages list a site's outage periods, with the status and reason each failed read"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "sites.update",
+      "haystack": "sites.update honeybadger.api.sites.update change an uptime site's url, matching, headers, locations, frequency or active state write"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "streams.list",
+      "haystack": "streams.list honeybadger.api.streams.list list event streams; the id is what `insights.query` takes in `stream_ids` read"
+    },
+    {
+      "pluginId": "honeybadger",
+      "kind": "api",
+      "shortPath": "token.get",
+      "haystack": "token.get honeybadger.api.token.get report what the current token is: its kind, scopes, account and the projects it can reach. needs no scope read"
+    },
+    {
       "pluginId": "honeyhive",
       "kind": "api",
       "shortPath": "configurations.create",
@@ -105955,6 +106768,162 @@
       "kind": "api",
       "shortPath": "webhooks.update",
       "haystack": "webhooks.update hunterio.api.webhooks.update update a webhook write"
+    },
+    {
+      "pluginId": "hypeauditor",
+      "kind": "api",
+      "shortPath": "account.planInfo",
+      "haystack": "account.planinfo hypeauditor.api.account.planinfo read the report credits and discovery calls left in the plan; api subscriptions only read"
+    },
+    {
+      "pluginId": "hypeauditor",
+      "kind": "api",
+      "shortPath": "account.unlockedReports",
+      "haystack": "account.unlockedreports hypeauditor.api.account.unlockedreports list the reports unlocked on the account, with `refunded` marking a credit returned after a failed build read"
+    },
+    {
+      "pluginId": "hypeauditor",
+      "kind": "api",
+      "shortPath": "discovery.keywords",
+      "haystack": "discovery.keywords hypeauditor.api.discovery.keywords read the posts behind a keyword search by their content ids, which is free and safe to repeat read"
+    },
+    {
+      "pluginId": "hypeauditor",
+      "kind": "api",
+      "shortPath": "discovery.search",
+      "haystack": "discovery.search hypeauditor.api.discovery.search search creators with the documented filters, 20 per page; each page costs one discovery call, and `sandbox` answers sample data without spending one read"
+    },
+    {
+      "pluginId": "hypeauditor",
+      "kind": "api",
+      "shortPath": "history.instagram",
+      "haystack": "history.instagram hypeauditor.api.history.instagram read the instagram metrics history for a username. hypeauditor unlocks the creator’s report on this call, so the first request for a creator spends a credit; repeating it is free read"
+    },
+    {
+      "pluginId": "hypeauditor",
+      "kind": "api",
+      "shortPath": "history.tiktok",
+      "haystack": "history.tiktok hypeauditor.api.history.tiktok read the tiktok metrics history for a channel. hypeauditor unlocks the creator’s report on this call, so the first request for a creator spends a credit; repeating it is free read"
+    },
+    {
+      "pluginId": "hypeauditor",
+      "kind": "api",
+      "shortPath": "history.twitch",
+      "haystack": "history.twitch hypeauditor.api.history.twitch read the twitch metrics history for a channel. hypeauditor unlocks the creator’s report on this call, so the first request for a creator spends a credit; repeating it is free read"
+    },
+    {
+      "pluginId": "hypeauditor",
+      "kind": "api",
+      "shortPath": "history.twitter",
+      "haystack": "history.twitter hypeauditor.api.history.twitter read the twitter metrics history for a channel. hypeauditor unlocks the creator’s report on this call, so the first request for a creator spends a credit; repeating it is free read"
+    },
+    {
+      "pluginId": "hypeauditor",
+      "kind": "api",
+      "shortPath": "history.youtube",
+      "haystack": "history.youtube hypeauditor.api.history.youtube read the youtube metrics history for a channel. hypeauditor documents that history calls unlock the creator’s report on the other networks, so treat the first request as spending a credit; repeating it is free read"
+    },
+    {
+      "pluginId": "hypeauditor",
+      "kind": "api",
+      "shortPath": "lists.add",
+      "haystack": "lists.add hypeauditor.api.lists.add add a report to a saved list; repeating it leaves the report in the list, so it is safe to retry write"
+    },
+    {
+      "pluginId": "hypeauditor",
+      "kind": "api",
+      "shortPath": "lists.items",
+      "haystack": "lists.items hypeauditor.api.lists.items read the reports saved in one list, up to 100 per page, which is free and safe to repeat read"
+    },
+    {
+      "pluginId": "hypeauditor",
+      "kind": "api",
+      "shortPath": "lists.list",
+      "haystack": "lists.list hypeauditor.api.lists.list list the saved lists in the account; the default \"recent searches\" list is `id: 0` read"
+    },
+    {
+      "pluginId": "hypeauditor",
+      "kind": "api",
+      "shortPath": "lists.remove",
+      "haystack": "lists.remove hypeauditor.api.lists.remove remove a report from a saved list; the default \"recent searches\" list cannot be changed write"
+    },
+    {
+      "pluginId": "hypeauditor",
+      "kind": "api",
+      "shortPath": "media.instagram",
+      "haystack": "media.instagram hypeauditor.api.media.instagram read an instagram account’s recent media, which is free and safe to repeat read"
+    },
+    {
+      "pluginId": "hypeauditor",
+      "kind": "api",
+      "shortPath": "media.tiktok",
+      "haystack": "media.tiktok hypeauditor.api.media.tiktok read a tiktok account’s media by channel id, which is free and safe to repeat read"
+    },
+    {
+      "pluginId": "hypeauditor",
+      "kind": "api",
+      "shortPath": "media.youtube",
+      "haystack": "media.youtube hypeauditor.api.media.youtube read a youtube channel’s media, one page at a time, which is free and safe to repeat read"
+    },
+    {
+      "pluginId": "hypeauditor",
+      "kind": "api",
+      "shortPath": "mentions.tiktok",
+      "haystack": "mentions.tiktok hypeauditor.api.mentions.tiktok read the brands a tiktok account’s videos mention, which is free and safe to repeat read"
+    },
+    {
+      "pluginId": "hypeauditor",
+      "kind": "api",
+      "shortPath": "mentions.youtube",
+      "haystack": "mentions.youtube hypeauditor.api.mentions.youtube read the brands a youtube channel’s videos mention, which is free and safe to repeat read"
+    },
+    {
+      "pluginId": "hypeauditor",
+      "kind": "api",
+      "shortPath": "reports.instagram",
+      "haystack": "reports.instagram hypeauditor.api.reports.instagram read the instagram report by username or user id; the first request for a creator spends a credit, and a 202 answer carries `retryttl` read"
+    },
+    {
+      "pluginId": "hypeauditor",
+      "kind": "api",
+      "shortPath": "reports.snapchat",
+      "haystack": "reports.snapchat hypeauditor.api.reports.snapchat read the snapchat report by username; the first request for a creator spends a credit, and a 202 answer carries `retryttl` read"
+    },
+    {
+      "pluginId": "hypeauditor",
+      "kind": "api",
+      "shortPath": "reports.tiktok",
+      "haystack": "reports.tiktok hypeauditor.api.reports.tiktok read the tiktok report by username or user id; the first request for a creator spends a credit, and a 202 answer carries `retryttl` read"
+    },
+    {
+      "pluginId": "hypeauditor",
+      "kind": "api",
+      "shortPath": "reports.twitch",
+      "haystack": "reports.twitch hypeauditor.api.reports.twitch read the twitch report by username; the first request for a creator spends a credit, and a 202 answer carries `retryttl` read"
+    },
+    {
+      "pluginId": "hypeauditor",
+      "kind": "api",
+      "shortPath": "reports.twitter",
+      "haystack": "reports.twitter hypeauditor.api.reports.twitter read the twitter report by username; the first request for a creator spends a credit, and a 202 answer carries `retryttl` read"
+    },
+    {
+      "pluginId": "hypeauditor",
+      "kind": "api",
+      "shortPath": "reports.youtube",
+      "haystack": "reports.youtube hypeauditor.api.reports.youtube read the youtube report by channel id or username; the first request for a creator spends a credit, and a 202 answer carries `retryttl` read"
+    },
+    {
+      "pluginId": "hypeauditor",
+      "kind": "api",
+      "shortPath": "suggester.get",
+      "haystack": "suggester.get hypeauditor.api.suggester.get suggest a channel name from a partial one, which is free and safe to repeat read"
+    },
+    {
+      "pluginId": "hypeauditor",
+      "kind": "api",
+      "shortPath": "taxonomy.get",
+      "haystack": "taxonomy.get hypeauditor.api.taxonomy.get read the category, thematics and language ids the discovery filters take read"
     },
     {
       "pluginId": "hyperbrowser",
@@ -121309,6 +122278,216 @@
       "kind": "api",
       "shortPath": "scrapers.manualRerunBulk",
       "haystack": "scrapers.manualrerunbulk mrscraper.api.scrapers.manualrerunbulk re-run a manual scraper against multiple urls write"
+    },
+    {
+      "pluginId": "nango",
+      "kind": "api",
+      "shortPath": "actions.trigger",
+      "haystack": "actions.trigger nango.api.actions.trigger run a legacy action for a connection synchronously. actions can write to the end customer's account. destructive"
+    },
+    {
+      "pluginId": "nango",
+      "kind": "api",
+      "shortPath": "connections.delete",
+      "haystack": "connections.delete nango.api.connections.delete delete a connection and its stored credentials. destructive"
+    },
+    {
+      "pluginId": "nango",
+      "kind": "api",
+      "shortPath": "connections.get",
+      "haystack": "connections.get nango.api.connections.get get one connection. pass include_credentials: true to also return its live third-party credentials (access token, api key, password); they are dropped otherwise. read"
+    },
+    {
+      "pluginId": "nango",
+      "kind": "api",
+      "shortPath": "connections.import",
+      "haystack": "connections.import nango.api.connections.import create a connection from credentials you already hold, or overwrite an existing connection's credentials when connection_id matches. the credentials are not returned. destructive"
+    },
+    {
+      "pluginId": "nango",
+      "kind": "api",
+      "shortPath": "connections.list",
+      "haystack": "connections.list nango.api.connections.list list connections (no credentials), filtered by connection id or tags, with page and limit. read"
+    },
+    {
+      "pluginId": "nango",
+      "kind": "api",
+      "shortPath": "connections.patch",
+      "haystack": "connections.patch nango.api.connections.patch edit a connection: replace its tags or set a webhook url override. write"
+    },
+    {
+      "pluginId": "nango",
+      "kind": "api",
+      "shortPath": "connections.setMetadata",
+      "haystack": "connections.setmetadata nango.api.connections.setmetadata replace the whole metadata object of one or more connections; keys not passed are removed. destructive"
+    },
+    {
+      "pluginId": "nango",
+      "kind": "api",
+      "shortPath": "connections.updateMetadata",
+      "haystack": "connections.updatemetadata nango.api.connections.updatemetadata merge keys into the metadata of one or more connections. write"
+    },
+    {
+      "pluginId": "nango",
+      "kind": "api",
+      "shortPath": "environment.getVariables",
+      "haystack": "environment.getvariables nango.api.environment.getvariables get the environment variables set in the nango dashboard, values in plain text (they often hold secrets). read"
+    },
+    {
+      "pluginId": "nango",
+      "kind": "api",
+      "shortPath": "functions.delete",
+      "haystack": "functions.delete nango.api.functions.delete delete a deployed function, e.g. a catalog sync enabled in the dashboard; functions deployed from a repo with the nango cli cannot be deleted here. destructive"
+    },
+    {
+      "pluginId": "nango",
+      "kind": "api",
+      "shortPath": "functions.get",
+      "haystack": "functions.get nango.api.functions.get get one function of an integration, with its schema and deployment state. read"
+    },
+    {
+      "pluginId": "nango",
+      "kind": "api",
+      "shortPath": "functions.getCode",
+      "haystack": "functions.getcode nango.api.functions.getcode get a function's typescript source code. read"
+    },
+    {
+      "pluginId": "nango",
+      "kind": "api",
+      "shortPath": "functions.list",
+      "haystack": "functions.list nango.api.functions.list list an integration's functions (syncs, tools, on-event functions), including nango catalog tools. read"
+    },
+    {
+      "pluginId": "nango",
+      "kind": "api",
+      "shortPath": "integrations.create",
+      "haystack": "integrations.create nango.api.integrations.create create an integration for a provider, optionally with developer app credentials or integration_config. write"
+    },
+    {
+      "pluginId": "nango",
+      "kind": "api",
+      "shortPath": "integrations.delete",
+      "haystack": "integrations.delete nango.api.integrations.delete delete an integration and every connection that uses it. destructive"
+    },
+    {
+      "pluginId": "nango",
+      "kind": "api",
+      "shortPath": "integrations.get",
+      "haystack": "integrations.get nango.api.integrations.get get an integration. include: [\"credentials\"] also returns the developer app client secret and private key. read"
+    },
+    {
+      "pluginId": "nango",
+      "kind": "api",
+      "shortPath": "integrations.list",
+      "haystack": "integrations.list nango.api.integrations.list list the integrations configured in this environment. read"
+    },
+    {
+      "pluginId": "nango",
+      "kind": "api",
+      "shortPath": "integrations.update",
+      "haystack": "integrations.update nango.api.integrations.update edit an integration; fields left out keep their value. write"
+    },
+    {
+      "pluginId": "nango",
+      "kind": "api",
+      "shortPath": "providers.get",
+      "haystack": "providers.get nango.api.providers.get get one provider's auth mode, proxy settings and required connection fields. read"
+    },
+    {
+      "pluginId": "nango",
+      "kind": "api",
+      "shortPath": "providers.list",
+      "haystack": "providers.list nango.api.providers.list list the apis nango supports; filter with search (the full list has over 1,000). read"
+    },
+    {
+      "pluginId": "nango",
+      "kind": "api",
+      "shortPath": "proxy.delete",
+      "haystack": "proxy.delete nango.api.proxy.delete send a delete through nango's proxy to the end customer's api with the connection's credentials. destructive"
+    },
+    {
+      "pluginId": "nango",
+      "kind": "api",
+      "shortPath": "proxy.get",
+      "haystack": "proxy.get nango.api.proxy.get send a get through nango's proxy to the end customer's api with the connection's credentials. read"
+    },
+    {
+      "pluginId": "nango",
+      "kind": "api",
+      "shortPath": "proxy.patch",
+      "haystack": "proxy.patch nango.api.proxy.patch send a patch through nango's proxy to the end customer's api with the connection's credentials. destructive"
+    },
+    {
+      "pluginId": "nango",
+      "kind": "api",
+      "shortPath": "proxy.post",
+      "haystack": "proxy.post nango.api.proxy.post send a post through nango's proxy to the end customer's api with the connection's credentials. destructive"
+    },
+    {
+      "pluginId": "nango",
+      "kind": "api",
+      "shortPath": "proxy.put",
+      "haystack": "proxy.put nango.api.proxy.put send a put through nango's proxy to the end customer's api with the connection's credentials. destructive"
+    },
+    {
+      "pluginId": "nango",
+      "kind": "api",
+      "shortPath": "records.list",
+      "haystack": "records.list nango.api.records.list list the records a sync stored for a connection and model, paginated with next_cursor. read"
+    },
+    {
+      "pluginId": "nango",
+      "kind": "api",
+      "shortPath": "scripts.getConfig",
+      "haystack": "scripts.getconfig nango.api.scripts.getconfig get the configuration of every deployed function in the environment, in nango or openai tool format. read"
+    },
+    {
+      "pluginId": "nango",
+      "kind": "api",
+      "shortPath": "sessions.create",
+      "haystack": "sessions.create nango.api.sessions.create create a connect session; returns a short-lived token and a connect link an end user opens to authorize an integration. write"
+    },
+    {
+      "pluginId": "nango",
+      "kind": "api",
+      "shortPath": "sessions.reconnect",
+      "haystack": "sessions.reconnect nango.api.sessions.reconnect create a connect session that re-authorizes an existing connection, keeping its connection id. write"
+    },
+    {
+      "pluginId": "nango",
+      "kind": "api",
+      "shortPath": "syncs.pause",
+      "haystack": "syncs.pause nango.api.syncs.pause pause the schedule of syncs for one connection or all. write"
+    },
+    {
+      "pluginId": "nango",
+      "kind": "api",
+      "shortPath": "syncs.start",
+      "haystack": "syncs.start nango.api.syncs.start start the schedule of syncs for one connection or all; they run now and then on their frequency. write"
+    },
+    {
+      "pluginId": "nango",
+      "kind": "api",
+      "shortPath": "syncs.status",
+      "haystack": "syncs.status nango.api.syncs.status get the status, schedule, last result and record counts of syncs. read"
+    },
+    {
+      "pluginId": "nango",
+      "kind": "api",
+      "shortPath": "syncs.trigger",
+      "haystack": "syncs.trigger nango.api.syncs.trigger run syncs once now, for one connection or all; reset starts from scratch. write"
+    },
+    {
+      "pluginId": "nango",
+      "kind": "api",
+      "shortPath": "syncs.updateFrequency",
+      "haystack": "syncs.updatefrequency nango.api.syncs.updatefrequency override a sync's frequency for one connection, or restore the default with null. write"
+    },
+    {
+      "pluginId": "nango",
+      "kind": "api",
+      "shortPath": "tools.call",
+      "haystack": "tools.call nango.api.tools.call call a deployed tool for a connection and return its output. tools can write to the end customer's account. destructive"
     },
     {
       "pluginId": "nanonets",
@@ -167019,6 +168198,270 @@
       "haystack": "tweets.filtermatch twitterapiio.webhooks.tweets.filtermatch a tweet matched a configured filter rule"
     },
     {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "balance.get",
+      "haystack": "balance.get twittrapi.api.balance.get get the api key balance (free, not billed) read"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "communities.getById",
+      "haystack": "communities.getbyid twittrapi.api.communities.getbyid get community details by id read"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "communities.getMembers",
+      "haystack": "communities.getmembers twittrapi.api.communities.getmembers get members of a community read"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "communities.getModerators",
+      "haystack": "communities.getmoderators twittrapi.api.communities.getmoderators get moderators of a community read"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "communities.getTweets",
+      "haystack": "communities.gettweets twittrapi.api.communities.gettweets get tweets posted in a community read"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "communities.search",
+      "haystack": "communities.search twittrapi.api.communities.search search x communities by keyword read"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "lists.getDetails",
+      "haystack": "lists.getdetails twittrapi.api.lists.getdetails get x list details by list id read"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "lists.getFollowers",
+      "haystack": "lists.getfollowers twittrapi.api.lists.getfollowers get followers of an x list read"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "lists.getMembers",
+      "haystack": "lists.getmembers twittrapi.api.lists.getmembers get members of an x list read"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "lists.getTweets",
+      "haystack": "lists.gettweets twittrapi.api.lists.gettweets get tweets from an x list timeline read"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "monitors.addAccounts",
+      "haystack": "monitors.addaccounts twittrapi.api.monitors.addaccounts watch x accounts for new tweets (up to 100 per request) write"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "monitors.createWebhook",
+      "haystack": "monitors.createwebhook twittrapi.api.monitors.createwebhook add a webhook for watched-account tweet events write"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "monitors.deleteWebhook",
+      "haystack": "monitors.deletewebhook twittrapi.api.monitors.deletewebhook remove an account-monitoring webhook destructive"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "monitors.getDeliveries",
+      "haystack": "monitors.getdeliveries twittrapi.api.monitors.getdeliveries show latest monitor events with delivery status read"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "monitors.getEvents",
+      "haystack": "monitors.getevents twittrapi.api.monitors.getevents pull monitor events after an event id (7-day retention) read"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "monitors.getPlan",
+      "haystack": "monitors.getplan twittrapi.api.monitors.getplan get the account-monitoring plan and webhooks read"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "monitors.getWebhook",
+      "haystack": "monitors.getwebhook twittrapi.api.monitors.getwebhook get one account-monitoring webhook read"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "monitors.listAccounts",
+      "haystack": "monitors.listaccounts twittrapi.api.monitors.listaccounts list watched x accounts and plan usage read"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "monitors.listWebhooks",
+      "haystack": "monitors.listwebhooks twittrapi.api.monitors.listwebhooks list account-monitoring webhooks, oldest first read"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "monitors.removeAccount",
+      "haystack": "monitors.removeaccount twittrapi.api.monitors.removeaccount stop watching an x account destructive"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "monitors.testWebhook",
+      "haystack": "monitors.testwebhook twittrapi.api.monitors.testwebhook send a signed test event to a webhook write"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "monitors.updateAccount",
+      "haystack": "monitors.updateaccount twittrapi.api.monitors.updateaccount change a watched account's reply/retweet/quote filters write"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "monitors.updateWebhook",
+      "haystack": "monitors.updatewebhook twittrapi.api.monitors.updatewebhook change a webhook url, filter, secret, or active flag write"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "trends.getByLocation",
+      "haystack": "trends.getbylocation twittrapi.api.trends.getbylocation get trending topics by location (woeid, 1 = worldwide) read"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "trends.getLocations",
+      "haystack": "trends.getlocations twittrapi.api.trends.getlocations list available trend locations (woeids) read"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "tweets.getById",
+      "haystack": "tweets.getbyid twittrapi.api.tweets.getbyid get a single tweet by id read"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "tweets.getQuotes",
+      "haystack": "tweets.getquotes twittrapi.api.tweets.getquotes get quote tweets for a tweet read"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "tweets.getReplies",
+      "haystack": "tweets.getreplies twittrapi.api.tweets.getreplies get a tweet with its replies in display order read"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "tweets.getRetweeters",
+      "haystack": "tweets.getretweeters twittrapi.api.tweets.getretweeters get users who retweeted a tweet read"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "tweets.search",
+      "haystack": "tweets.search twittrapi.api.tweets.search search x tweets (top, latest, photos, videos tabs) read"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "users.batchGetByIds",
+      "haystack": "users.batchgetbyids twittrapi.api.users.batchgetbyids batch fetch up to 500 user profiles by ids read"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "users.getById",
+      "haystack": "users.getbyid twittrapi.api.users.getbyid get a user profile by numeric id (or handle via username) read"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "users.getByUsername",
+      "haystack": "users.getbyusername twittrapi.api.users.getbyusername get a user profile by handle read"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "users.getFollowers",
+      "haystack": "users.getfollowers twittrapi.api.users.getfollowers get a user's followers read"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "users.getFollowings",
+      "haystack": "users.getfollowings twittrapi.api.users.getfollowings get users that a user is following read"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "users.getFriendship",
+      "haystack": "users.getfriendship twittrapi.api.users.getfriendship show the relationship between two accounts read"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "users.getLikes",
+      "haystack": "users.getlikes twittrapi.api.users.getlikes get a user's liked tweets read"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "users.getMedia",
+      "haystack": "users.getmedia twittrapi.api.users.getmedia get media tweets from a user's timeline read"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "users.getTweets",
+      "haystack": "users.gettweets twittrapi.api.users.gettweets get a user's tweets read"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "users.getTweetsAndReplies",
+      "haystack": "users.gettweetsandreplies twittrapi.api.users.gettweetsandreplies get a user's tweets and replies read"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "users.getVerifiedFollowers",
+      "haystack": "users.getverifiedfollowers twittrapi.api.users.getverifiedfollowers get a user's verified followers read"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "api",
+      "shortPath": "users.resolveIds",
+      "haystack": "users.resolveids twittrapi.api.users.resolveids resolve up to 100 handles to user ids read"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "webhook",
+      "shortPath": "tweets.test",
+      "haystack": "tweets.test twittrapi.webhooks.tweets.test test event sent from post /monitors/webhooks/{id}/test"
+    },
+    {
+      "pluginId": "twittrapi",
+      "kind": "webhook",
+      "shortPath": "tweets.tweet",
+      "haystack": "tweets.tweet twittrapi.webhooks.tweets.tweet a watched x account posted a new tweet"
+    },
+    {
       "pluginId": "twocaptcha",
       "kind": "api",
       "shortPath": "account.balance",
@@ -176275,6 +177718,210 @@
       "kind": "api",
       "shortPath": "users.getCurrent",
       "haystack": "users.getcurrent zohoinventory.api.users.getcurrent get the current authenticated user read"
+    },
+    {
+      "pluginId": "zohoinvoice",
+      "kind": "api",
+      "shortPath": "customers.create",
+      "haystack": "customers.create zohoinvoice.api.customers.create create a zoho invoice customer write"
+    },
+    {
+      "pluginId": "zohoinvoice",
+      "kind": "api",
+      "shortPath": "customers.delete",
+      "haystack": "customers.delete zohoinvoice.api.customers.delete delete a customer. cannot be undone destructive"
+    },
+    {
+      "pluginId": "zohoinvoice",
+      "kind": "api",
+      "shortPath": "customers.get",
+      "haystack": "customers.get zohoinvoice.api.customers.get get a zoho invoice customer read"
+    },
+    {
+      "pluginId": "zohoinvoice",
+      "kind": "api",
+      "shortPath": "customers.list",
+      "haystack": "customers.list zohoinvoice.api.customers.list list zoho invoice customers read"
+    },
+    {
+      "pluginId": "zohoinvoice",
+      "kind": "api",
+      "shortPath": "customers.update",
+      "haystack": "customers.update zohoinvoice.api.customers.update update a zoho invoice customer write"
+    },
+    {
+      "pluginId": "zohoinvoice",
+      "kind": "api",
+      "shortPath": "estimates.create",
+      "haystack": "estimates.create zohoinvoice.api.estimates.create create a zoho invoice estimate write"
+    },
+    {
+      "pluginId": "zohoinvoice",
+      "kind": "api",
+      "shortPath": "estimates.delete",
+      "haystack": "estimates.delete zohoinvoice.api.estimates.delete delete an estimate. cannot be undone destructive"
+    },
+    {
+      "pluginId": "zohoinvoice",
+      "kind": "api",
+      "shortPath": "estimates.email",
+      "haystack": "estimates.email zohoinvoice.api.estimates.email email an estimate to the customer destructive"
+    },
+    {
+      "pluginId": "zohoinvoice",
+      "kind": "api",
+      "shortPath": "estimates.get",
+      "haystack": "estimates.get zohoinvoice.api.estimates.get get a zoho invoice estimate read"
+    },
+    {
+      "pluginId": "zohoinvoice",
+      "kind": "api",
+      "shortPath": "estimates.list",
+      "haystack": "estimates.list zohoinvoice.api.estimates.list list zoho invoice estimates read"
+    },
+    {
+      "pluginId": "zohoinvoice",
+      "kind": "api",
+      "shortPath": "estimates.markAccepted",
+      "haystack": "estimates.markaccepted zohoinvoice.api.estimates.markaccepted mark an estimate as accepted by the customer write"
+    },
+    {
+      "pluginId": "zohoinvoice",
+      "kind": "api",
+      "shortPath": "estimates.markDeclined",
+      "haystack": "estimates.markdeclined zohoinvoice.api.estimates.markdeclined mark an estimate as declined by the customer write"
+    },
+    {
+      "pluginId": "zohoinvoice",
+      "kind": "api",
+      "shortPath": "estimates.markSent",
+      "haystack": "estimates.marksent zohoinvoice.api.estimates.marksent mark a draft estimate as sent without emailing it write"
+    },
+    {
+      "pluginId": "zohoinvoice",
+      "kind": "api",
+      "shortPath": "estimates.update",
+      "haystack": "estimates.update zohoinvoice.api.estimates.update update a zoho invoice estimate write"
+    },
+    {
+      "pluginId": "zohoinvoice",
+      "kind": "api",
+      "shortPath": "invoices.create",
+      "haystack": "invoices.create zohoinvoice.api.invoices.create create a zoho invoice invoice write"
+    },
+    {
+      "pluginId": "zohoinvoice",
+      "kind": "api",
+      "shortPath": "invoices.delete",
+      "haystack": "invoices.delete zohoinvoice.api.invoices.delete delete a zoho invoice invoice. cannot be undone destructive"
+    },
+    {
+      "pluginId": "zohoinvoice",
+      "kind": "api",
+      "shortPath": "invoices.email",
+      "haystack": "invoices.email zohoinvoice.api.invoices.email email an invoice to the customer destructive"
+    },
+    {
+      "pluginId": "zohoinvoice",
+      "kind": "api",
+      "shortPath": "invoices.get",
+      "haystack": "invoices.get zohoinvoice.api.invoices.get get a zoho invoice invoice read"
+    },
+    {
+      "pluginId": "zohoinvoice",
+      "kind": "api",
+      "shortPath": "invoices.list",
+      "haystack": "invoices.list zohoinvoice.api.invoices.list list zoho invoice invoices read"
+    },
+    {
+      "pluginId": "zohoinvoice",
+      "kind": "api",
+      "shortPath": "invoices.listPayments",
+      "haystack": "invoices.listpayments zohoinvoice.api.invoices.listpayments list the payments recorded against an invoice read"
+    },
+    {
+      "pluginId": "zohoinvoice",
+      "kind": "api",
+      "shortPath": "invoices.markSent",
+      "haystack": "invoices.marksent zohoinvoice.api.invoices.marksent mark a draft invoice as sent without emailing it write"
+    },
+    {
+      "pluginId": "zohoinvoice",
+      "kind": "api",
+      "shortPath": "invoices.remind",
+      "haystack": "invoices.remind zohoinvoice.api.invoices.remind email the customer a payment reminder for an invoice destructive"
+    },
+    {
+      "pluginId": "zohoinvoice",
+      "kind": "api",
+      "shortPath": "invoices.update",
+      "haystack": "invoices.update zohoinvoice.api.invoices.update update a zoho invoice invoice write"
+    },
+    {
+      "pluginId": "zohoinvoice",
+      "kind": "api",
+      "shortPath": "invoices.void",
+      "haystack": "invoices.void zohoinvoice.api.invoices.void void an invoice; it stops counting toward the balance destructive"
+    },
+    {
+      "pluginId": "zohoinvoice",
+      "kind": "api",
+      "shortPath": "items.create",
+      "haystack": "items.create zohoinvoice.api.items.create create a zoho invoice item write"
+    },
+    {
+      "pluginId": "zohoinvoice",
+      "kind": "api",
+      "shortPath": "items.delete",
+      "haystack": "items.delete zohoinvoice.api.items.delete delete an item. cannot be undone destructive"
+    },
+    {
+      "pluginId": "zohoinvoice",
+      "kind": "api",
+      "shortPath": "items.get",
+      "haystack": "items.get zohoinvoice.api.items.get get a zoho invoice item read"
+    },
+    {
+      "pluginId": "zohoinvoice",
+      "kind": "api",
+      "shortPath": "items.list",
+      "haystack": "items.list zohoinvoice.api.items.list list zoho invoice items read"
+    },
+    {
+      "pluginId": "zohoinvoice",
+      "kind": "api",
+      "shortPath": "items.update",
+      "haystack": "items.update zohoinvoice.api.items.update update a zoho invoice item write"
+    },
+    {
+      "pluginId": "zohoinvoice",
+      "kind": "api",
+      "shortPath": "organizations.list",
+      "haystack": "organizations.list zohoinvoice.api.organizations.list list the zoho invoice organizations the account can use, with their ids read"
+    },
+    {
+      "pluginId": "zohoinvoice",
+      "kind": "api",
+      "shortPath": "payments.create",
+      "haystack": "payments.create zohoinvoice.api.payments.create record a customer payment, optionally applied to invoices write"
+    },
+    {
+      "pluginId": "zohoinvoice",
+      "kind": "api",
+      "shortPath": "payments.delete",
+      "haystack": "payments.delete zohoinvoice.api.payments.delete delete a recorded customer payment. cannot be undone destructive"
+    },
+    {
+      "pluginId": "zohoinvoice",
+      "kind": "api",
+      "shortPath": "payments.get",
+      "haystack": "payments.get zohoinvoice.api.payments.get get a zoho invoice customer payment read"
+    },
+    {
+      "pluginId": "zohoinvoice",
+      "kind": "api",
+      "shortPath": "payments.list",
+      "haystack": "payments.list zohoinvoice.api.payments.list list zoho invoice customer payments read"
     },
     {
       "pluginId": "zohomail",
