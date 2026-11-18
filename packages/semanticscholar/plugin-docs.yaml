@@ -1,0 +1,20 @@
+displayName: Semantic Scholar
+description: Academic search API for papers, authors, citations, references, paper recommendations, text snippets, and dataset releases.
+domain: semanticscholar.org
+examples:
+  read:
+    path: papers.search
+    title: Search papers
+    args:
+      query: attention is all you need
+  write:
+    path: authors.search
+    title: Search authors
+    args:
+      query: Geoffrey Hinton
+dbExample:
+  entity: paper
+  note: >-
+    This table exists, but Semantic Scholar calls don't fill it yet. This
+    returns only rows you have written yourself.
+  limit: 50

@@ -1,0 +1,14 @@
+displayName: Mailcheck
+description: Email verification API for validating email addresses and email domains.
+domain: mailcheck.co
+examples:
+  read:
+    path: domain.validate
+    title: Validate a domain
+    args:
+      domain: example.com
+  write:
+    path: email.verify
+    title: Verify an email address
+    args:
+      email: you@example.com

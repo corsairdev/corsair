@@ -1,7 +1,7 @@
 {
   "id": "hookdeck",
   "displayName": "Hookdeck",
-  "description": "Hookdeck plugin for Corsair",
+  "description": "Webhook infrastructure platform, with endpoints for creating and managing connections that route events from sources to destinations.",
   "npmPackageName": "@corsair-dev/hookdeck",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -63,8 +63,8 @@
           },
           {
             "key": "name",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "full_name",
@@ -73,13 +73,13 @@
           },
           {
             "key": "disabled_at",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "paused_at",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "created_at",
@@ -155,8 +155,8 @@
           },
           {
             "key": "name",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "full_name",
@@ -165,13 +165,13 @@
           },
           {
             "key": "disabled_at",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "paused_at",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "created_at",
@@ -232,7 +232,7 @@
           {
             "key": "models",
             "optional": false,
-            "type": "{ id: string, team_id: string, name?: string | null, full_name: string, disabled_at?: string | null, paused_at?: string | null, created_at: string, updated_at: string, rules?: { type: string, count?: number, interval?: number, strategy?: string }[] }[]"
+            "type": "{ id: string, team_id: string, name: string | null, full_name: string, disabled_at: string | null, paused_at: string | null, created_at: string, updated_at: string, rules?: { type: string, count?: number, interval?: number, strategy?: string }[] }[]"
           },
           {
             "key": "count",
@@ -287,8 +287,8 @@
           },
           {
             "key": "name",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "full_name",
@@ -297,13 +297,13 @@
           },
           {
             "key": "disabled_at",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "paused_at",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "created_at",

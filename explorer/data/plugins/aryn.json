@@ -1,7 +1,7 @@
 {
   "id": "aryn",
   "displayName": "Aryn",
-  "description": "Aryn plugin for Corsair",
+  "description": "Document intelligence API for partitioning documents with DocParse, managing DocSets and documents, tracking async tasks, and generating query plans.",
   "npmPackageName": "@corsair-dev/aryn",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -39,7 +39,7 @@
           {
             "key": "tasks",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, { action: string, task_status: done | abort | cancel | run | queue }>"
           }
         ]
       }
@@ -65,12 +65,12 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "prompts",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -95,17 +95,17 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "schema",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "size",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -146,17 +146,17 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "schema",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "size",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -197,17 +197,17 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "schema",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "size",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -263,12 +263,12 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "binary_data",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -355,17 +355,17 @@
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "elements",
             "optional": true,
-            "type": "{ type?: string, bbox?: number[], properties?: { score?: number, page_number?: number } | null, text_representation?: string | null, binary_representation?: any }[]"
+            "type": "{ type?: string, bbox?: number[], properties?: { score?: number, page_number?: number } | null, text_representation?: string | null, binary_representation?: any }[] | null"
           },
           {
             "key": "markdown",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -452,7 +452,7 @@
           {
             "key": "nodes",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, { node_id: number, node_type?: string | null, description?: string | null, inputs?: number[] }>"
           },
           {
             "key": "result_node",
@@ -462,12 +462,12 @@
           {
             "key": "llm_prompt",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "llm_plan",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }

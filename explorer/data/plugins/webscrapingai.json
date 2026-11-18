@@ -1,7 +1,7 @@
 {
   "id": "webscrapingai",
   "displayName": "WebScraping.AI",
-  "description": "WebScraping.AI plugin for Corsair",
+  "description": "Web scraping API that returns rendered HTML, text, or selected elements from pages, answers questions about a page, and extracts structured fields.",
   "npmPackageName": "@corsair-dev/webscrapingai",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -114,7 +114,7 @@
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "js_script",
@@ -199,7 +199,7 @@
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "js_script",
@@ -224,13 +224,13 @@
           {
             "key": "fields",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -284,7 +284,7 @@
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "js_script",
@@ -364,7 +364,7 @@
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "js_script",
@@ -449,7 +449,7 @@
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "js_script",
@@ -480,7 +480,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "string | string[] | {}"
+        "type": "string | string[] | Record<string, string>"
       }
     },
     {
@@ -534,7 +534,7 @@
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "js_script",

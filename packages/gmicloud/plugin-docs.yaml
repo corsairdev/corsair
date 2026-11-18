@@ -1,0 +1,24 @@
+displayName: GMI Cloud
+description: GPU cloud for AI - serverless LLM, image, video, and audio inference, the GMI Router, GPU containers and bare-metal servers, and code sandboxes.
+domain: gmicloud.ai
+overviewNote: |
+  GMI Cloud API keys have a scope. An `ie_model` key calls inference (models, chat, router, media requests, uploads) and `apiKeys.getCurrent`. A `ce_resource` key calls GPU compute (containers, bare metal, elastic IPs, firewalls, images, templates, VPCs) and sandboxes. `idcs.list` works with either. Create the key that matches what you need under Organization Settings, API Keys.
+examples:
+  read:
+    path: models.list
+    title: List LLMs
+  write:
+    path: chat.createCompletion
+    title: Create a chat completion
+    args:
+      model: deepseek-ai/DeepSeek-V4-Flash
+      messages:
+        - role: user
+          content: Summarize this ticket in one sentence.
+
+dbExample:
+  entity: mediaRequests
+  note: 'Look up queued and finished media jobs without calling GMI Cloud.'
+  data:
+    status: success
+  limit: 20

@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Gmail: every `gmail.api.*` operation with input and output types."
+title: "Gmail API reference"
+sidebarTitle: "API"
+description: "API reference for the Gmail plugin in Corsair: every `gmail.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `gmail.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -78,7 +77,21 @@ await corsair.gmail.api.drafts.create({});
       size?: number,
       data?: string
     },
-    parts: lazy
+    parts: {
+      partId?: string,
+      mimeType?: string,
+      filename?: string,
+      headers?: {
+        name?: string,
+        value?: string
+      }[],
+      body?: {
+        attachmentId?: string,
+        size?: number,
+        data?: string
+      },
+      parts: (recursive)
+    }[]
   },
   raw?: string
 }
@@ -170,7 +183,21 @@ await corsair.gmail.api.drafts.get({});
       size?: number,
       data?: string
     },
-    parts: lazy
+    parts: {
+      partId?: string,
+      mimeType?: string,
+      filename?: string,
+      headers?: {
+        name?: string,
+        value?: string
+      }[],
+      body?: {
+        attachmentId?: string,
+        size?: number,
+        data?: string
+      },
+      parts: (recursive)
+    }[]
   },
   raw?: string
 }
@@ -240,7 +267,21 @@ await corsair.gmail.api.drafts.list({});
         size?: number,
         data?: string
       },
-      parts: lazy
+      parts: {
+        partId?: string,
+        mimeType?: string,
+        filename?: string,
+        headers?: {
+          name?: string,
+          value?: string
+        }[],
+        body?: {
+          attachmentId?: string,
+          size?: number,
+          data?: string
+        },
+        parts: (recursive)
+      }[]
     },
     raw?: string
   }
@@ -296,7 +337,7 @@ await corsair.gmail.api.drafts.send({});
 | `labelIds` | `string[]` | No | — |
 | `snippet` | `string` | No | — |
 | `historyId` | `string` | No | — |
-| `internalDate` | `string \| number \| Date` | No | — |
+| `internalDate` | `string \| number \| Date \| null` | No | — |
 | `sizeEstimate` | `number` | No | — |
 | `payload` | `object` | No | — |
 | `raw` | `string` | No | Full RFC 2822 message in base64url encoding (when format=raw). Not plain text — decode base64url before reading headers/body. |
@@ -318,7 +359,21 @@ await corsair.gmail.api.drafts.send({});
     size?: number,
     data?: string
   },
-  parts: lazy
+  parts: {
+    partId?: string,
+    mimeType?: string,
+    filename?: string,
+    headers?: {
+      name?: string,
+      value?: string
+    }[],
+    body?: {
+      attachmentId?: string,
+      size?: number,
+      data?: string
+    },
+    parts: (recursive)
+  }[]
 }
 ```
 </Accordion>
@@ -396,7 +451,21 @@ await corsair.gmail.api.drafts.update({});
       size?: number,
       data?: string
     },
-    parts: lazy
+    parts: {
+      partId?: string,
+      mimeType?: string,
+      filename?: string,
+      headers?: {
+        name?: string,
+        value?: string
+      }[],
+      body?: {
+        attachmentId?: string,
+        size?: number,
+        data?: string
+      },
+      parts: (recursive)
+    }[]
   },
   raw?: string
 }
@@ -742,7 +811,7 @@ await corsair.gmail.api.messages.get({});
 | `labelIds` | `string[]` | No | — |
 | `snippet` | `string` | No | — |
 | `historyId` | `string` | No | — |
-| `internalDate` | `string \| number \| Date` | No | — |
+| `internalDate` | `string \| number \| Date \| null` | No | — |
 | `sizeEstimate` | `number` | No | — |
 | `payload` | `object` | No | — |
 | `raw` | `string` | No | Full RFC 2822 message in base64url encoding (when format=raw). Not plain text — decode base64url before reading headers/body. |
@@ -764,7 +833,21 @@ await corsair.gmail.api.messages.get({});
     size?: number,
     data?: string
   },
-  parts: lazy
+  parts: {
+    partId?: string,
+    mimeType?: string,
+    filename?: string,
+    headers?: {
+      name?: string,
+      value?: string
+    }[],
+    body?: {
+      attachmentId?: string,
+      size?: number,
+      data?: string
+    },
+    parts: (recursive)
+  }[]
 }
 ```
 </Accordion>
@@ -832,7 +915,21 @@ await corsair.gmail.api.messages.list({});
       size?: number,
       data?: string
     },
-    parts: lazy
+    parts: {
+      partId?: string,
+      mimeType?: string,
+      filename?: string,
+      headers?: {
+        name?: string,
+        value?: string
+      }[],
+      body?: {
+        attachmentId?: string,
+        size?: number,
+        data?: string
+      },
+      parts: (recursive)
+    }[]
   },
   raw?: string
 }[]
@@ -876,7 +973,7 @@ await corsair.gmail.api.messages.modify({});
 | `labelIds` | `string[]` | No | — |
 | `snippet` | `string` | No | — |
 | `historyId` | `string` | No | — |
-| `internalDate` | `string \| number \| Date` | No | — |
+| `internalDate` | `string \| number \| Date \| null` | No | — |
 | `sizeEstimate` | `number` | No | — |
 | `payload` | `object` | No | — |
 | `raw` | `string` | No | Full RFC 2822 message in base64url encoding (when format=raw). Not plain text — decode base64url before reading headers/body. |
@@ -898,7 +995,21 @@ await corsair.gmail.api.messages.modify({});
     size?: number,
     data?: string
   },
-  parts: lazy
+  parts: {
+    partId?: string,
+    mimeType?: string,
+    filename?: string,
+    headers?: {
+      name?: string,
+      value?: string
+    }[],
+    body?: {
+      attachmentId?: string,
+      size?: number,
+      data?: string
+    },
+    parts: (recursive)
+  }[]
 }
 ```
 </Accordion>
@@ -939,7 +1050,7 @@ await corsair.gmail.api.messages.send({});
 | `labelIds` | `string[]` | No | — |
 | `snippet` | `string` | No | — |
 | `historyId` | `string` | No | — |
-| `internalDate` | `string \| number \| Date` | No | — |
+| `internalDate` | `string \| number \| Date \| null` | No | — |
 | `sizeEstimate` | `number` | No | — |
 | `payload` | `object` | No | — |
 | `raw` | `string` | No | Full RFC 2822 message in base64url encoding (when format=raw). Not plain text — decode base64url before reading headers/body. |
@@ -961,7 +1072,21 @@ await corsair.gmail.api.messages.send({});
     size?: number,
     data?: string
   },
-  parts: lazy
+  parts: {
+    partId?: string,
+    mimeType?: string,
+    filename?: string,
+    headers?: {
+      name?: string,
+      value?: string
+    }[],
+    body?: {
+      attachmentId?: string,
+      size?: number,
+      data?: string
+    },
+    parts: (recursive)
+  }[]
 }
 ```
 </Accordion>
@@ -1001,7 +1126,7 @@ await corsair.gmail.api.messages.trash({});
 | `labelIds` | `string[]` | No | — |
 | `snippet` | `string` | No | — |
 | `historyId` | `string` | No | — |
-| `internalDate` | `string \| number \| Date` | No | — |
+| `internalDate` | `string \| number \| Date \| null` | No | — |
 | `sizeEstimate` | `number` | No | — |
 | `payload` | `object` | No | — |
 | `raw` | `string` | No | Full RFC 2822 message in base64url encoding (when format=raw). Not plain text — decode base64url before reading headers/body. |
@@ -1023,7 +1148,21 @@ await corsair.gmail.api.messages.trash({});
     size?: number,
     data?: string
   },
-  parts: lazy
+  parts: {
+    partId?: string,
+    mimeType?: string,
+    filename?: string,
+    headers?: {
+      name?: string,
+      value?: string
+    }[],
+    body?: {
+      attachmentId?: string,
+      size?: number,
+      data?: string
+    },
+    parts: (recursive)
+  }[]
 }
 ```
 </Accordion>
@@ -1063,7 +1202,7 @@ await corsair.gmail.api.messages.untrash({});
 | `labelIds` | `string[]` | No | — |
 | `snippet` | `string` | No | — |
 | `historyId` | `string` | No | — |
-| `internalDate` | `string \| number \| Date` | No | — |
+| `internalDate` | `string \| number \| Date \| null` | No | — |
 | `sizeEstimate` | `number` | No | — |
 | `payload` | `object` | No | — |
 | `raw` | `string` | No | Full RFC 2822 message in base64url encoding (when format=raw). Not plain text — decode base64url before reading headers/body. |
@@ -1085,7 +1224,21 @@ await corsair.gmail.api.messages.untrash({});
     size?: number,
     data?: string
   },
-  parts: lazy
+  parts: {
+    partId?: string,
+    mimeType?: string,
+    filename?: string,
+    headers?: {
+      name?: string,
+      value?: string
+    }[],
+    body?: {
+      attachmentId?: string,
+      size?: number,
+      data?: string
+    },
+    parts: (recursive)
+  }[]
 }
 ```
 </Accordion>
@@ -1154,7 +1307,21 @@ await corsair.gmail.api.threads.get({});
       size?: number,
       data?: string
     },
-    parts: lazy
+    parts: {
+      partId?: string,
+      mimeType?: string,
+      filename?: string,
+      headers?: {
+        name?: string,
+        value?: string
+      }[],
+      body?: {
+        attachmentId?: string,
+        size?: number,
+        data?: string
+      },
+      parts: (recursive)
+    }[]
   },
   raw?: string
 }[]
@@ -1228,7 +1395,21 @@ await corsair.gmail.api.threads.list({});
         size?: number,
         data?: string
       },
-      parts: lazy
+      parts: {
+        partId?: string,
+        mimeType?: string,
+        filename?: string,
+        headers?: {
+          name?: string,
+          value?: string
+        }[],
+        body?: {
+          attachmentId?: string,
+          size?: number,
+          data?: string
+        },
+        parts: (recursive)
+      }[]
     },
     raw?: string
   }[]
@@ -1298,7 +1479,21 @@ await corsair.gmail.api.threads.modify({});
       size?: number,
       data?: string
     },
-    parts: lazy
+    parts: {
+      partId?: string,
+      mimeType?: string,
+      filename?: string,
+      headers?: {
+        name?: string,
+        value?: string
+      }[],
+      body?: {
+        attachmentId?: string,
+        size?: number,
+        data?: string
+      },
+      parts: (recursive)
+    }[]
   },
   raw?: string
 }[]
@@ -1365,7 +1560,21 @@ await corsair.gmail.api.threads.trash({});
       size?: number,
       data?: string
     },
-    parts: lazy
+    parts: {
+      partId?: string,
+      mimeType?: string,
+      filename?: string,
+      headers?: {
+        name?: string,
+        value?: string
+      }[],
+      body?: {
+        attachmentId?: string,
+        size?: number,
+        data?: string
+      },
+      parts: (recursive)
+    }[]
   },
   raw?: string
 }[]
@@ -1432,7 +1641,21 @@ await corsair.gmail.api.threads.untrash({});
       size?: number,
       data?: string
     },
-    parts: lazy
+    parts: {
+      partId?: string,
+      mimeType?: string,
+      filename?: string,
+      headers?: {
+        name?: string,
+        value?: string
+      }[],
+      body?: {
+        attachmentId?: string,
+        size?: number,
+        data?: string
+      },
+      parts: (recursive)
+    }[]
   },
   raw?: string
 }[]

@@ -1,0 +1,1176 @@
+---
+title: "Radar API reference"
+sidebarTitle: "API"
+description: "API reference for the Radar plugin in Corsair: every `radar.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Events
+
+### conversion
+
+`events.conversion`
+
+Log a named conversion with optional revenue and metadata against a user, device or install id
+
+**Risk:** `write`
+
+```ts
+await corsair.radar.api.events.conversion({ name: 'in_app_purchase', user_id: 'user-1', revenue: 499 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | A generic name, such as `in_app_purchase`. |
+| `user_id` | `string` | No | — |
+| `device_id` | `string` | No | — |
+| `install_id` | `string` | No | — |
+| `revenue` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `metadata` | `Record<string, string \| number \| boolean>` | No | — |
+
+Requires the Enterprise plan. The name may only contain letters, digits and underscores, and one identifier is required.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="event full type">
+
+```ts
+{
+  _id?: string | null,
+  name?: string | null,
+  userId?: string | null,
+  createdAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Geocode
+
+### forward
+
+`geocode.forward`
+
+Turn an address into coordinates, returning every match with its layer and confidence
+
+**Risk:** `read`
+
+```ts
+await corsair.radar.api.geocode.forward({ query: '20 Jay Street, Brooklyn', layers: ['address'], country: ['US'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | The address to geocode. |
+| `layers` | `(place \| address \| postalCode \| locality \| county \| state \| country \| coarse \| fine)[]` | No | Layer filters, sent comma-separated. `coarse` covers every admin layer and `fine` the address and place layers. |
+| `country` | `string[]` | No | Two-letter country codes to restrict the search to. |
+| `lang` | `ar \| de \| en \| es \| fr \| it \| ja \| ko \| nl \| pt \| ru \| zh` | No | — |
+
+Layers and countries are comma-separated on the wire; the confidence is `exact`, `interpolated` or `fallback`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `addresses` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="addresses full type">
+
+```ts
+{
+  latitude?: number | null,
+  longitude?: number | null,
+  geometry?: {
+    type?: string | null,
+    coordinates?: number[] | null
+  } | null,
+  addressLabel?: string | null,
+  formattedAddress?: string | null,
+  country?: string | null,
+  countryCode?: string | null,
+  countryFlag?: string | null,
+  state?: string | null,
+  stateCode?: string | null,
+  postalCode?: string | null,
+  city?: string | null,
+  county?: string | null,
+  number?: string | null,
+  street?: string | null,
+  layer?: string | null,
+  distance?: number | null,
+  confidence?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reverse
+
+`geocode.reverse`
+
+Turn `latitude,longitude` into an address, with the admin layers that contain it
+
+**Risk:** `read`
+
+```ts
+await corsair.radar.api.geocode.reverse({ coordinates: '40.70390,-73.98670' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `coordinates` | `string` | Yes | `latitude,longitude`, such as `40.70390,-73.98670`. |
+| `layers` | `(place \| address \| postalCode \| locality \| county \| state \| country \| coarse \| fine)[]` | No | Layer filters, sent comma-separated. `coarse` covers every admin layer and `fine` the address and place layers. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `addresses` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="addresses full type">
+
+```ts
+{
+  latitude?: number | null,
+  longitude?: number | null,
+  geometry?: {
+    type?: string | null,
+    coordinates?: number[] | null
+  } | null,
+  addressLabel?: string | null,
+  formattedAddress?: string | null,
+  country?: string | null,
+  countryCode?: string | null,
+  countryFlag?: string | null,
+  state?: string | null,
+  stateCode?: string | null,
+  postalCode?: string | null,
+  city?: string | null,
+  county?: string | null,
+  number?: string | null,
+  street?: string | null,
+  layer?: string | null,
+  distance?: number | null,
+  confidence?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Geofences
+
+### delete
+
+`geofences.delete`
+
+Delete a geofence permanently; the API keeps no copy
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.radar.api.geofences.delete({ geofence_id: '5e4a1b2c3d4e5f6a7b8c9d0e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `geofence_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `geofence_id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`geofences.get`
+
+Fetch one geofence with its geometry, radius and metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.radar.api.geofences.get({ geofence_id: '5e4a1b2c3d4e5f6a7b8c9d0e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `geofence_id` | `string` | Yes | The Radar `_id` of the geofence. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `geofence` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="geofence full type">
+
+```ts
+{
+  _id?: string | null,
+  live?: boolean | null,
+  tag?: string | null,
+  externalId?: string | null,
+  description?: string | null,
+  type?: string | null,
+  geometryType?: string | null,
+  geometryRadius?: number | null,
+  geometryCenter?: {
+    type?: string | null,
+    coordinates?: number[] | null
+  } | null,
+  geometryCoordinates?: number[][] | null,
+  metadata?: Record<string, string | number | boolean> | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`geofences.list`
+
+List geofences with tag and external-id filters, paging by update time
+
+**Risk:** `read`
+
+```ts
+await corsair.radar.api.geofences.list({ tag: 'store', limit: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Records per page, 1 to 1000. Radar defaults to 100. |
+| `updated_before` | `string` | No | A date or ISO string: return records updated before it. Pass the last row’s timestamp to page. |
+| `updated_after` | `string` | No | A date or ISO string: return records updated after it. |
+| `tag` | `string` | No | — |
+| `external_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `geofences` | `object[]` | Yes | — |
+| `has_more` | `boolean` | Yes | True when Radar supplies meta.hasMore. Users and geofences page with updated_before; trips use created_before and sort_by: createdAt. |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="geofences full type">
+
+```ts
+{
+  _id?: string | null,
+  live?: boolean | null,
+  tag?: string | null,
+  externalId?: string | null,
+  description?: string | null,
+  type?: string | null,
+  geometryType?: string | null,
+  geometryRadius?: number | null,
+  geometryCenter?: {
+    type?: string | null,
+    coordinates?: number[] | null
+  } | null,
+  geometryCoordinates?: number[][] | null,
+  metadata?: Record<string, string | number | boolean> | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  code?: number | null,
+  hasMore?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upsert
+
+`geofences.upsert`
+
+Create or replace a geofence by tag and external id, or by Radar id: a circle, a polygon or an isochrone
+
+**Risk:** `write`
+
+```ts
+await corsair.radar.api.geofences.upsert({ tag: 'store', external_id: 'store-42', description: 'Brooklyn store', type: 'circle', center: [-73.9867, 40.7039], radius: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `geofence_id` | `string` | No | Radar `_id`, for an update by id rather than by tag and external id. |
+| `tag` | `string` | Yes | The geofence group. |
+| `external_id` | `string` | Yes | A stable id within the tag. |
+| `description` | `string` | Yes | — |
+| `type` | `(circle \| polygon \| isochrone) & string` | Yes | — |
+| `mode` | `foot \| bike \| car` | No | Required travel mode for an isochrone. |
+| `radius` | `number` | No | Required for circle in meters, or isochrone in travel minutes. |
+| `center` | `number[]` | No | [longitude, latitude] for a circle or isochrone. |
+| `ring` | `number[][]` | No | A closed ring of [longitude, latitude] pairs for a polygon, first point repeated last. |
+| `address` | `string` | No | — |
+| `metadata` | `Record<string, string \| number \| boolean>` | No | — |
+
+A polygon takes a closed `ring`; geometry is `[longitude, latitude]`. An isochrone requires `mode`, and its `radius` is travel minutes.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `geofence` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="geofence full type">
+
+```ts
+{
+  _id?: string | null,
+  live?: boolean | null,
+  tag?: string | null,
+  externalId?: string | null,
+  description?: string | null,
+  type?: string | null,
+  geometryType?: string | null,
+  geometryRadius?: number | null,
+  geometryCenter?: {
+    type?: string | null,
+    coordinates?: number[] | null
+  } | null,
+  geometryCoordinates?: number[][] | null,
+  metadata?: Record<string, string | number | boolean> | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Search
+
+### geofences
+
+`search.geofences`
+
+Search geofences near a point, filtered by tag
+
+**Risk:** `read`
+
+```ts
+await corsair.radar.api.search.geofences({ near: '40.70390,-73.98670', radius: 500, tags: ['store'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `near` | `string` | Yes | `latitude,longitude` for the search centre. |
+| `radius` | `number` | No | Search radius in meters. |
+| `tags` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `geofences` | `object[]` | Yes | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="geofences full type">
+
+```ts
+{
+  _id?: string | null,
+  live?: boolean | null,
+  tag?: string | null,
+  externalId?: string | null,
+  description?: string | null,
+  type?: string | null,
+  geometryType?: string | null,
+  geometryRadius?: number | null,
+  geometryCenter?: {
+    type?: string | null,
+    coordinates?: number[] | null
+  } | null,
+  geometryCoordinates?: number[][] | null,
+  metadata?: Record<string, string | number | boolean> | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  code?: number | null,
+  hasMore?: boolean | null,
+  message?: string | null,
+  param?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### places
+
+`search.places`
+
+Search the places database near a point, filtered by chain or category within a radius
+
+**Risk:** `read`
+
+```ts
+await corsair.radar.api.search.places({ near: '40.70390,-73.98670', categories: ['coffee-shop'], limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `near` | `string` | Yes | `latitude,longitude` for the search centre. |
+| `chains` | `string[]` | No | — |
+| `categories` | `string[]` | No | — |
+| `radius` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `places` | `object[]` | Yes | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="places full type">
+
+```ts
+{
+  _id?: string | null,
+  name?: string | null,
+  location?: {
+    type?: string | null,
+    coordinates?: number[] | null
+  } | null,
+  categories?: string[] | null,
+  chain?: {
+    name?: string | null,
+    slug?: string | null,
+    externalId?: string | null,
+    metadata?: Record<string, string | number | boolean> | null
+  } | null,
+  address?: {
+    latitude?: number | null,
+    longitude?: number | null,
+    geometry?: {
+      type?: string | null,
+      coordinates?: number[] | null
+    } | null,
+    addressLabel?: string | null,
+    formattedAddress?: string | null,
+    country?: string | null,
+    countryCode?: string | null,
+    countryFlag?: string | null,
+    state?: string | null,
+    stateCode?: string | null,
+    postalCode?: string | null,
+    city?: string | null,
+    county?: string | null,
+    number?: string | null,
+    street?: string | null,
+    layer?: string | null,
+    distance?: number | null,
+    confidence?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  code?: number | null,
+  hasMore?: boolean | null,
+  message?: string | null,
+  param?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Track
+
+### update
+
+`track.update`
+
+Submit a location update, which creates the user when none matches and may generate geofence events
+
+**Risk:** `write`
+
+```ts
+await corsair.radar.api.track.update({ device_id: 'device-1', latitude: 40.7039, longitude: -73.9867, accuracy: 10, user_id: 'user-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `device_id` | `string` | Yes | The device identifier; Radar keys a logged-out user by it. |
+| `latitude` | `number` | Yes | — |
+| `longitude` | `number` | Yes | — |
+| `accuracy` | `number` | Yes | The accuracy in meters. Radar uses it to decide geofence confidence. |
+| `user_id` | `string` | No | A stable user id. With `device_id` it identifies a logged-in user; a new one is created when none matches. |
+| `foreground` | `boolean` | No | — |
+| `stopped` | `boolean` | No | — |
+| `description` | `string` | No | — |
+| `device_type` | `iOS \| Android \| Web` | No | — |
+| `device_os` | `string` | No | — |
+| `device_make` | `string` | No | — |
+| `device_model` | `string` | No | — |
+| `altitude` | `number` | No | — |
+| `vertical_accuracy` | `number` | No | — |
+| `updated_at` | `string` | No | — |
+| `replayed` | `boolean` | No | — |
+| `metadata` | `Record<string, string \| number \| boolean>` | No | Up to 32 keys of your own user attributes. |
+
+Creates or updates the user; a positive `accuracy` is required and a replay is never attempted.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `track` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="track full type">
+
+```ts
+{
+  user?: {
+    _id?: string | null,
+    live?: boolean | null,
+    userId?: string | null,
+    deviceId?: string | null,
+    description?: string | null,
+    deviceType?: string | null,
+    platform?: string | null,
+    foreground?: boolean | null,
+    stopped?: boolean | null,
+    location?: {
+      latitude?: number | null,
+      longitude?: number | null,
+      accuracy?: number | null,
+      speed?: number | null,
+      altitude?: number | null,
+      updatedAt?: string | null
+    } | null,
+    geofences?: {
+      _id?: string | null,
+      live?: boolean | null,
+      tag?: string | null,
+      externalId?: string | null,
+      description?: string | null,
+      type?: string | null,
+      geometryType?: string | null,
+      geometryRadius?: number | null,
+      geometryCenter?: {
+        type?: string | null,
+        coordinates?: number[] | null
+      } | null,
+      geometryCoordinates?: number[][] | null,
+      metadata?: Record<string, string | number | boolean> | null,
+      createdAt?: string | null,
+      updatedAt?: string | null
+    }[] | null,
+    metadata?: Record<string, string | number | boolean> | null,
+    createdAt?: string | null,
+    updatedAt?: string | null
+  } | null,
+  events?: {
+    _id?: string | null,
+    type?: string | null,
+    createdAt?: string | null,
+    live?: boolean | null,
+    geofenceId?: string | null,
+    userId?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Trips
+
+### create
+
+`trips.create`
+
+Create a trip for a user with its destination geofence, travel mode and approaching threshold
+
+**Risk:** `write`
+
+```ts
+await corsair.radar.api.trips.create({ external_id: 'order-42', user_id: 'user-1', destination_geofence_tag: 'store', destination_geofence_external_id: 'store-42' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `external_id` | `string` | Yes | A stable id for the trip, such as an order id. |
+| `mode` | `foot \| bike \| car` | No | — |
+| `user_id` | `string` | No | The user's external id, as tracked by the SDK. |
+| `destination_geofence_tag` | `string` | No | — |
+| `destination_geofence_external_id` | `string` | No | — |
+| `approaching_threshold` | `number` | No | — |
+| `scheduled_arrival_at` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `trip` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="trip full type">
+
+```ts
+{
+  _id?: string | null,
+  live?: boolean | null,
+  externalId?: string | null,
+  status?: string | null,
+  mode?: string | null,
+  userId?: string | null,
+  deviceId?: string | null,
+  destinationGeofenceTag?: string | null,
+  destinationGeofenceExternalId?: string | null,
+  destinationLocation?: {
+    type?: string | null,
+    coordinates?: number[] | null
+  } | null,
+  eta?: {
+    duration?: number | null,
+    distance?: number | null
+  } | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  locations?: {
+    latitude?: number | null,
+    longitude?: number | null,
+    accuracy?: number | null,
+    speed?: number | null,
+    altitude?: number | null,
+    updatedAt?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`trips.get`
+
+Fetch one trip with its status, destination and live ETA
+
+**Risk:** `read`
+
+```ts
+await corsair.radar.api.trips.get({ trip_id: '6f5b2c3d4e5f6a7b8c9d0e1f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `trip_id` | `string` | Yes | The Radar `_id` of the trip. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `trip` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="trip full type">
+
+```ts
+{
+  _id?: string | null,
+  live?: boolean | null,
+  externalId?: string | null,
+  status?: string | null,
+  mode?: string | null,
+  userId?: string | null,
+  deviceId?: string | null,
+  destinationGeofenceTag?: string | null,
+  destinationGeofenceExternalId?: string | null,
+  destinationLocation?: {
+    type?: string | null,
+    coordinates?: number[] | null
+  } | null,
+  eta?: {
+    duration?: number | null,
+    distance?: number | null
+  } | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  locations?: {
+    latitude?: number | null,
+    longitude?: number | null,
+    accuracy?: number | null,
+    speed?: number | null,
+    altitude?: number | null,
+    updatedAt?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`trips.list`
+
+List trips by status, user, destination or time window, optionally with their location trace
+
+**Risk:** `read`
+
+```ts
+await corsair.radar.api.trips.list({ status: ['started'], user_id: 'user-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Records per page, 1 to 1000. Radar defaults to 100. |
+| `status` | `(pending \| started \| approaching \| arrived \| completed \| canceled \| expired)[]` | No | Sent comma-separated. |
+| `user_id` | `string` | No | The Radar `_id` of the user. |
+| `external_id` | `string[]` | No | — |
+| `destination_geofence_tag` | `string` | No | — |
+| `destination_geofence_external_id` | `string` | No | — |
+| `include_locations` | `boolean` | No | — |
+| `created_after` | `string` | No | — |
+| `created_before` | `string` | No | — |
+| `sort_by` | `createdAt \| updatedAt` | No | — |
+| `delayed` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `trips` | `object[]` | Yes | — |
+| `has_more` | `boolean` | Yes | True when Radar supplies meta.hasMore. Users and geofences page with updated_before; trips use created_before and sort_by: createdAt. |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="trips full type">
+
+```ts
+{
+  _id?: string | null,
+  live?: boolean | null,
+  externalId?: string | null,
+  status?: string | null,
+  mode?: string | null,
+  userId?: string | null,
+  deviceId?: string | null,
+  destinationGeofenceTag?: string | null,
+  destinationGeofenceExternalId?: string | null,
+  destinationLocation?: {
+    type?: string | null,
+    coordinates?: number[] | null
+  } | null,
+  eta?: {
+    duration?: number | null,
+    distance?: number | null
+  } | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  locations?: {
+    latitude?: number | null,
+    longitude?: number | null,
+    accuracy?: number | null,
+    speed?: number | null,
+    altitude?: number | null,
+    updatedAt?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  code?: number | null,
+  hasMore?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`trips.update`
+
+Update a trip: its status, mode, destination or approaching threshold
+
+**Risk:** `write`
+
+```ts
+await corsair.radar.api.trips.update({ trip_id: '6f5b2c3d4e5f6a7b8c9d0e1f', status: 'arrived' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `trip_id` | `string` | Yes | — |
+| `status` | `pending \| started \| approaching \| arrived \| completed \| canceled` | Yes | — |
+| `mode` | `foot \| bike \| car` | No | — |
+| `destination_geofence_tag` | `string` | No | — |
+| `destination_geofence_external_id` | `string` | No | — |
+| `approaching_threshold` | `number` | No | — |
+| `scheduled_arrival_at` | `string` | No | — |
+
+The status values are validated before the request, because Radar rejects an unknown one.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `trip` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="trip full type">
+
+```ts
+{
+  _id?: string | null,
+  live?: boolean | null,
+  externalId?: string | null,
+  status?: string | null,
+  mode?: string | null,
+  userId?: string | null,
+  deviceId?: string | null,
+  destinationGeofenceTag?: string | null,
+  destinationGeofenceExternalId?: string | null,
+  destinationLocation?: {
+    type?: string | null,
+    coordinates?: number[] | null
+  } | null,
+  eta?: {
+    duration?: number | null,
+    distance?: number | null
+  } | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  locations?: {
+    latitude?: number | null,
+    longitude?: number | null,
+    accuracy?: number | null,
+    speed?: number | null,
+    altitude?: number | null,
+    updatedAt?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### get
+
+`users.get`
+
+Fetch one user by Radar id, user id or device id, including their location and metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.radar.api.users.get({ user_id: '56db1f4613012711002229f4' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | Yes | A Radar `_id`, `userId` or `deviceId`; all three resolve. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  _id?: string | null,
+  live?: boolean | null,
+  userId?: string | null,
+  deviceId?: string | null,
+  description?: string | null,
+  deviceType?: string | null,
+  platform?: string | null,
+  foreground?: boolean | null,
+  stopped?: boolean | null,
+  location?: {
+    latitude?: number | null,
+    longitude?: number | null,
+    accuracy?: number | null,
+    speed?: number | null,
+    altitude?: number | null,
+    updatedAt?: string | null
+  } | null,
+  geofences?: {
+    _id?: string | null,
+    live?: boolean | null,
+    tag?: string | null,
+    externalId?: string | null,
+    description?: string | null,
+    type?: string | null,
+    geometryType?: string | null,
+    geometryRadius?: number | null,
+    geometryCenter?: {
+      type?: string | null,
+      coordinates?: number[] | null
+    } | null,
+    geometryCoordinates?: number[][] | null,
+    metadata?: Record<string, string | number | boolean> | null,
+    createdAt?: string | null,
+    updatedAt?: string | null
+  }[] | null,
+  metadata?: Record<string, string | number | boolean> | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`users.list`
+
+List tracked users with their last location and geofences, paging by update time
+
+**Risk:** `read`
+
+```ts
+await corsair.radar.api.users.list({ limit: 100, updated_before: '2026-11-01T00:00:00.000Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Records per page, 1 to 1000. Radar defaults to 100. |
+| `updated_before` | `string` | No | A date or ISO string: return records updated before it. Pass the last row’s timestamp to page. |
+| `updated_after` | `string` | No | A date or ISO string: return records updated after it. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | Yes | — |
+| `has_more` | `boolean` | Yes | True when Radar supplies meta.hasMore. Users and geofences page with updated_before; trips use created_before and sort_by: createdAt. |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  _id?: string | null,
+  live?: boolean | null,
+  userId?: string | null,
+  deviceId?: string | null,
+  description?: string | null,
+  deviceType?: string | null,
+  platform?: string | null,
+  foreground?: boolean | null,
+  stopped?: boolean | null,
+  location?: {
+    latitude?: number | null,
+    longitude?: number | null,
+    accuracy?: number | null,
+    speed?: number | null,
+    altitude?: number | null,
+    updatedAt?: string | null
+  } | null,
+  geofences?: {
+    _id?: string | null,
+    live?: boolean | null,
+    tag?: string | null,
+    externalId?: string | null,
+    description?: string | null,
+    type?: string | null,
+    geometryType?: string | null,
+    geometryRadius?: number | null,
+    geometryCenter?: {
+      type?: string | null,
+      coordinates?: number[] | null
+    } | null,
+    geometryCoordinates?: number[][] | null,
+    metadata?: Record<string, string | number | boolean> | null,
+    createdAt?: string | null,
+    updatedAt?: string | null
+  }[] | null,
+  metadata?: Record<string, string | number | boolean> | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  code?: number | null,
+  hasMore?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

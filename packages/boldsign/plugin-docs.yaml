@@ -1,0 +1,25 @@
+displayName: BoldSign
+description: Electronic signature platform. Send and list documents, extend expiry, manage brands and custom fields, create embedded request links, and check API credits.
+domain: boldsign.com
+examples:
+  read:
+    path: documents.list
+    title: List documents
+    args:
+      page: 1
+  write:
+    path: documents.send
+    title: Send a document for signature
+    args:
+      title: Service agreement
+      message: Please review and sign.
+      fileUrls:
+        - https://example.com/agreement.pdf
+      signers:
+        - name: Octo Cat
+          emailAddress: you@example.com
+dbExample:
+  entity: documents
+  note: >-
+    These tables exist, but BoldSign calls don't fill them yet. This returns only rows you have written yourself.
+  limit: 50

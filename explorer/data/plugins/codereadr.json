@@ -1,0 +1,1518 @@
+{
+  "id": "codereadr",
+  "displayName": "CodeREADr",
+  "description": "Barcode scanning and data capture with CodeREADr - search and delete scan records, manage validation services, databases and app users, and read the scan uploads and API limits.",
+  "npmPackageName": "@corsair-dev/codereadr",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 24,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "codereadr.api.databases.clear",
+      "shortPath": "databases.clear",
+      "description": "Delete every value in a database while keeping the database itself; the values cannot be restored",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "database_id",
+            "optional": false,
+            "type": "number",
+            "description": "The database to act on."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "codereadr.api.databases.create",
+      "shortPath": "databases.create",
+      "description": "Create a database for validating barcode values; case sensitivity is fixed at creation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "database_name",
+            "optional": false,
+            "type": "string",
+            "description": "Name for the new database."
+          },
+          {
+            "key": "case_sensitivity",
+            "optional": true,
+            "type": "boolean",
+            "description": "Case-sensitive validation. Cannot be changed after creation. Defaults to false."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "database_id",
+            "optional": false,
+            "type": "number",
+            "description": "The new database."
+          }
+        ]
+      }
+    },
+    {
+      "path": "codereadr.api.databases.delete",
+      "shortPath": "databases.delete",
+      "description": "Permanently delete a database and every value in it; refused while a service still uses it",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "database_id",
+            "optional": false,
+            "type": "number",
+            "description": "The database to act on."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "codereadr.api.databases.list",
+      "shortPath": "databases.list",
+      "description": "List validation databases with their stored value count and linked services, optionally at a lighter info level",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "database_id",
+            "optional": true,
+            "type": "number[] | all",
+            "description": "Databases to list. `all` by default."
+          },
+          {
+            "key": "info_level",
+            "optional": true,
+            "type": "names | services",
+            "description": "`names` returns names only, `services` adds linked services. Both skip the slower value count."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "databases",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, count?: number | null, service_ids?: number[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "codereadr.api.databases.showValues",
+      "shortPath": "databases.showValues",
+      "description": "Search and page through the barcode values stored in a database, with exact and partial match filters and a validity filter",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "database_id",
+            "optional": false,
+            "type": "number",
+            "description": "The database to read."
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "string",
+            "description": "Exact match on the stored value."
+          },
+          {
+            "key": "valuelike",
+            "optional": true,
+            "type": "string",
+            "description": "Partial match on the stored value."
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "string",
+            "description": "Exact match on the response text."
+          },
+          {
+            "key": "responselike",
+            "optional": true,
+            "type": "string",
+            "description": "Partial match on the response text."
+          },
+          {
+            "key": "validity",
+            "optional": true,
+            "type": "1 | 0",
+            "description": "`1` only valid values, `0` only invalid ones."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to skip. Needs `limit`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null",
+            "description": "Rows in this response."
+          },
+          {
+            "key": "values",
+            "optional": false,
+            "type": "{ value?: string | null, response?: string | null, validity?: number | null }[]"
+          },
+          {
+            "key": "next_offset",
+            "optional": true,
+            "type": "number | null",
+            "description": "Pass as `offset` for the next page while this page came back full."
+          }
+        ]
+      }
+    },
+    {
+      "path": "codereadr.api.databases.update",
+      "shortPath": "databases.update",
+      "description": "Rename a validation database; its stored barcode values and linked services are unchanged",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "database_id",
+            "optional": false,
+            "type": "number",
+            "description": "The database to rename."
+          },
+          {
+            "key": "database_name",
+            "optional": false,
+            "type": "string",
+            "description": "New name."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "database_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "codereadr.api.databases.upsertValue",
+      "shortPath": "databases.upsertValue",
+      "description": "Insert or update one barcode value with its response text and validity, without checking whether it already exists",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "database_id",
+            "optional": false,
+            "type": "number",
+            "description": "The database to write the value to."
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string",
+            "description": "The barcode value. Longer than 500 characters is truncated without an error."
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "string",
+            "description": "Text shown when the value is scanned."
+          },
+          {
+            "key": "validity",
+            "optional": true,
+            "type": "1 | 0",
+            "description": "`1` valid, `0` invalid. Defaults to 1."
+          },
+          {
+            "key": "trim_value",
+            "optional": true,
+            "type": "boolean",
+            "description": "Trim surrounding whitespace. Defaults to true."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "codereadr.api.databases.upsertValues",
+      "shortPath": "databases.upsertValues",
+      "description": "Insert or update up to 100 barcode values in one request, each with its own database, response text, validity and trim setting",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "database_id",
+            "optional": true,
+            "type": "number",
+            "description": "Database for every value that does not name its own. A value with neither is skipped."
+          },
+          {
+            "key": "trim_value",
+            "optional": true,
+            "type": "boolean",
+            "description": "Trim surrounding whitespace for values that do not set their own."
+          },
+          {
+            "key": "values",
+            "optional": false,
+            "type": "{ database_id?: number, value: string, response?: string, validity?: 1 | 0, trim_value?: boolean }[]",
+            "description": "Up to 100 values to insert or update in one request."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "codereadr.api.devices.list",
+      "shortPath": "devices.list",
+      "description": "List the devices that have activated the app, with their UDID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "device_id",
+            "optional": true,
+            "type": "number[] | all",
+            "description": "Devices to list. `all` by default."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "devices",
+            "optional": false,
+            "type": "{ id?: number | null, udid?: string | null, name?: string | null, created?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "codereadr.api.devices.update",
+      "shortPath": "devices.update",
+      "description": "Rename a device, which changes how the device appears in scan records and the account device list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "device_id",
+            "optional": false,
+            "type": "number",
+            "description": "The device to rename."
+          },
+          {
+            "key": "device_name",
+            "optional": false,
+            "type": "string",
+            "description": "New name for the device."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "device_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "codereadr.api.limits.retrieve",
+      "shortPath": "limits.retrieve",
+      "description": "Read the account API request limits remaining for the current minute and day",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "minute",
+            "optional": true,
+            "type": "{ left?: number | null, limit?: number | null } | null",
+            "description": "Per-minute allowance."
+          },
+          {
+            "key": "day",
+            "optional": true,
+            "type": "{ left?: number | null, limit?: number | null } | null",
+            "description": "Per-day allowance."
+          }
+        ]
+      }
+    },
+    {
+      "path": "codereadr.api.questions.create",
+      "shortPath": "questions.create",
+      "description": "Create a data collection question, shown to the app user before or after a scan; choice types need answer options added separately",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "question_text",
+            "optional": false,
+            "type": "string",
+            "description": "The question shown to the app user."
+          },
+          {
+            "key": "question_type",
+            "optional": true,
+            "type": "barcode | barcodemultiline | barcodenumeric | checkbox | dropboximage | dropdown | gps | manual | manualmultiline | manualnumeric | option | webcollect",
+            "description": "Defaults to `manual`. A value outside this list is rejected here before the request is sent. `checkbox`, `dropdown`, `option` and `webcollect` need answer options added afterward."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "question_id",
+            "optional": false,
+            "type": "number",
+            "description": "The new question."
+          }
+        ]
+      }
+    },
+    {
+      "path": "codereadr.api.questions.list",
+      "shortPath": "questions.list",
+      "description": "List data collection questions with their type and answer options",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "question_id",
+            "optional": true,
+            "type": "number[] | all",
+            "description": "Questions to list. `all` by default."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "questions",
+            "optional": false,
+            "type": "{ id?: number | null, text?: string | null, type?: string | null, answers?: { id?: number | null, name?: string | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "codereadr.api.scans.delete",
+      "shortPath": "scans.delete",
+      "description": "Permanently delete one or more scan records; deleted scans cannot be restored",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scan_id",
+            "optional": false,
+            "type": "number[]",
+            "description": "The scans to delete. Deletion cannot be undone."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "scan_ids",
+            "optional": false,
+            "type": "number[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "codereadr.api.scans.list",
+      "shortPath": "scans.list",
+      "description": "Search and page through scan records with filters on date, service, device, user, status, barcode value and scan properties, returning each scan with its answers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keyword",
+            "optional": true,
+            "type": "string",
+            "description": "Free-text search across scans."
+          },
+          {
+            "key": "service_id",
+            "optional": true,
+            "type": "number[] | all",
+            "description": "Services to search. `all` by default."
+          },
+          {
+            "key": "device_id",
+            "optional": true,
+            "type": "number[] | all",
+            "description": "Devices that made the scans. `all` by default."
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number[] | all",
+            "description": "Users who made the scans. `all` by default."
+          },
+          {
+            "key": "scan_id",
+            "optional": true,
+            "type": "number[] | all",
+            "description": "Only these scans."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "(1 | 0 | -1 | 0 | 1 | -1)[]",
+            "description": "`1` valid, `0` invalid, `-1` could not be validated offline, as numbers or strings. All statuses by default."
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string",
+            "description": "YYYY-MM-DD. Scans made on or after this date."
+          },
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "string",
+            "description": "HH:mm:ss, 24-hour. Only valid with `start_date`."
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string",
+            "description": "YYYY-MM-DD. Scans made on or before this date."
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "string",
+            "description": "HH:mm:ss, 24-hour. Only valid with `end_date`."
+          },
+          {
+            "key": "upload_id",
+            "optional": true,
+            "type": "number[] | all",
+            "description": "Only scans from these uploads."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size. Defaults to 10000."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to skip. The API ignores it without `limit`, so the default 10000 is sent when `limit` is omitted."
+          },
+          {
+            "key": "show_properties",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include each scan's stored properties. Defaults to false."
+          },
+          {
+            "key": "include_property",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only scans carrying these properties."
+          },
+          {
+            "key": "exclude_property",
+            "optional": true,
+            "type": "string[]",
+            "description": "Drop scans carrying any of these properties."
+          },
+          {
+            "key": "with_property",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Exact-match property filters, such as `{ mode: \"auto\" }`."
+          },
+          {
+            "key": "without_property",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Exact-match property exclusions, such as `{ mode: \"auto\" }`."
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "string",
+            "description": "Exact match on the scanned barcode value."
+          },
+          {
+            "key": "valuelike",
+            "optional": true,
+            "type": "string",
+            "description": "Partial match on the scanned barcode value."
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "string",
+            "description": "Exact match on the scan response text."
+          },
+          {
+            "key": "responselike",
+            "optional": true,
+            "type": "string",
+            "description": "Partial match on the scan response text."
+          },
+          {
+            "key": "timestamp_received",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include when CodeREADr received each scan; also filters the dates on that timestamp."
+          },
+          {
+            "key": "timestamp_modified",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include when each scan was last edited; also filters the dates on that timestamp."
+          },
+          {
+            "key": "modified_diff",
+            "optional": true,
+            "type": "string",
+            "description": "Filter on the gap between creation and last edit, such as `< 2 minute` or `> 1 hour`."
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string",
+            "description": "IANA name for the returned timestamps, such as `Europe/London`. Defaults to `America/New_York`, not the account timezone; pass `account` to use the one set on the account."
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string",
+            "description": "Sort keys, comma-separated, such as `timestamp_desc`. Append `_desc` for descending. Keys: barcode, device_name, device_id, response, scan_id, service_id, service_name, status, timestamp, timestamp_received, timestamp_modified, user_id, user_name."
+          },
+          {
+            "key": "only_recent",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return only the most recent scan per barcode. Defaults to false."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null",
+            "description": "Rows in this response."
+          },
+          {
+            "key": "scans",
+            "optional": false,
+            "type": "{ id?: number | null, barcode_value?: string | null, response?: string | null, status?: string | null, timestamp?: string | null, timestamp_received?: string | null, timestamp_modified?: string | null, device?: { id?: number | null, name?: string | null } | null, service?: { id?: number | null, name?: string | null } | null, user?: { id?: number | null, name?: string | null } | null, answers?: { question_id?: number | null, question_text?: string | null, answer?: string | null }[] | null, properties?: Record<string, string> | null }[]"
+          },
+          {
+            "key": "next_offset",
+            "optional": true,
+            "type": "number | null",
+            "description": "Pass as `offset` for the next page while this page came back full; absent on the last page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "codereadr.api.services.create",
+      "shortPath": "services.create",
+      "description": "Create a service: how scans are validated (record, database, postback, webview) plus scan behaviour such as symbologies, auto-sync and scanner configuration",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "validation_method",
+            "optional": false,
+            "type": "record | ondevicerecord | database | ondevicedatabase | webview | postback",
+            "description": "How scans are validated."
+          },
+          {
+            "key": "database_id",
+            "optional": true,
+            "type": "number",
+            "description": "Required when `validation_method` is `database` or `ondevicedatabase`."
+          },
+          {
+            "key": "postback_url",
+            "optional": true,
+            "type": "string",
+            "description": "Required when `validation_method` is `postback`."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Web content for `webview` services: HTML, or a URL wrapped as `<curl>https://…</curl>`."
+          },
+          {
+            "key": "service_name",
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to `Service N` for the next free number."
+          },
+          {
+            "key": "duplicate_value",
+            "optional": true,
+            "type": "0 | 1",
+            "description": "Status to give a duplicate scan. Defaults to 1 (valid)."
+          },
+          {
+            "key": "device_duplicate_value",
+            "optional": true,
+            "type": "0 | 1",
+            "description": "Status to give a duplicate scan found on the device."
+          },
+          {
+            "key": "period_start_date",
+            "optional": true,
+            "type": "string",
+            "description": "YYYY-MM-DD or MM/DD/YYYY. Defaults to always active."
+          },
+          {
+            "key": "period_start_time",
+            "optional": true,
+            "type": "string",
+            "description": "hh:mm:ss or hh:mma. Defaults to 12:00AM on the start date."
+          },
+          {
+            "key": "period_end_date",
+            "optional": true,
+            "type": "string",
+            "description": "YYYY-MM-DD or MM/DD/YYYY. Defaults to always active."
+          },
+          {
+            "key": "period_end_time",
+            "optional": true,
+            "type": "string",
+            "description": "hh:mm:ss or hh:mma. Defaults to 11:59:59PM on the end date."
+          },
+          {
+            "key": "upload_email",
+            "optional": true,
+            "type": "string",
+            "description": "Email address that receives a CSV of scans after each upload."
+          },
+          {
+            "key": "upload_email_format",
+            "optional": true,
+            "type": "regular | properties",
+            "description": "Whether the emailed CSV carries scan properties. Defaults to `regular`."
+          },
+          {
+            "key": "view_other_scans",
+            "optional": true,
+            "type": "boolean",
+            "description": "Let an authorized user see every scan on the service. Defaults to true."
+          },
+          {
+            "key": "direct_history_url",
+            "optional": true,
+            "type": "string",
+            "description": "Page opened by the app's History button. Empty disables it."
+          },
+          {
+            "key": "direct_lookup_url",
+            "optional": true,
+            "type": "string",
+            "description": "Page opened by the app's Lookup button. Empty disables it."
+          },
+          {
+            "key": "enable_direct_scan",
+            "optional": true,
+            "type": "boolean",
+            "description": "Postback services only: send scans straight to your server. Defaults to false."
+          },
+          {
+            "key": "postback_receiver_only",
+            "optional": true,
+            "type": "boolean",
+            "description": "Set when the postback URL cannot answer with the expected XML. Defaults to false."
+          },
+          {
+            "key": "postback_real_time_scans",
+            "optional": true,
+            "type": "boolean",
+            "description": "Post each online scan to `postback_url` on a non-postback service."
+          },
+          {
+            "key": "postback_uploaded_scans",
+            "optional": true,
+            "type": "boolean",
+            "description": "Post each uploaded on-device scan to `postback_url` on a non-postback service."
+          },
+          {
+            "key": "regex_response_pattern",
+            "optional": true,
+            "type": "string",
+            "description": "Regex applied to the response text. Needs `regex_response_replacement`."
+          },
+          {
+            "key": "regex_response_replacement",
+            "optional": true,
+            "type": "string",
+            "description": "Replacement for `regex_response_pattern`."
+          },
+          {
+            "key": "regex_scan_pattern",
+            "optional": true,
+            "type": "string",
+            "description": "Regex applied to the scanned value. Needs `regex_scan_replacement`."
+          },
+          {
+            "key": "regex_scan_replacement",
+            "optional": true,
+            "type": "string",
+            "description": "Replacement for `regex_scan_pattern`."
+          },
+          {
+            "key": "symbologies",
+            "optional": true,
+            "type": "number[]",
+            "description": "Symbology IDs the app will decode. Omitting this on an update resets the service to the default set."
+          },
+          {
+            "key": "auto_next_scan",
+            "optional": true,
+            "type": "0 | 1 | 2 | 3",
+            "description": "0 off, 1 only when valid, 2 always and save on error, 3 always and discard on error."
+          },
+          {
+            "key": "auto_next_scan_delay",
+            "optional": true,
+            "type": "number",
+            "description": "Seconds before Auto-Next Scan fires. Only with `auto_next_scan`."
+          },
+          {
+            "key": "enable_gps",
+            "optional": true,
+            "type": "boolean",
+            "description": "Attach the device location to every scan as a property. Defaults to false."
+          },
+          {
+            "key": "block_camera_scan",
+            "optional": true,
+            "type": "boolean",
+            "description": "Prevent scanning with the device camera. Defaults to false."
+          },
+          {
+            "key": "block_manual_scan",
+            "optional": true,
+            "type": "boolean",
+            "description": "Prevent typing a value by hand. Defaults to false."
+          },
+          {
+            "key": "block_db_search",
+            "optional": true,
+            "type": "boolean",
+            "description": "Prevent looking values up in the database. Defaults to false."
+          },
+          {
+            "key": "auto_sync",
+            "optional": true,
+            "type": "boolean",
+            "description": "Sync on-device scans up and database updates down. On-device databases are capped at 50,000 values."
+          },
+          {
+            "key": "auto_sync_up_url",
+            "optional": true,
+            "type": "string",
+            "description": "Sync scans straight to your own URL instead of CodeREADr. Only with `auto_sync`."
+          },
+          {
+            "key": "auto_sync_up_delay",
+            "optional": true,
+            "type": "number",
+            "description": "Seconds between upload attempts. Defaults to 2. Only with `auto_sync`."
+          },
+          {
+            "key": "auto_sync_down_url",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether database updates download automatically. Only with `auto_sync`."
+          },
+          {
+            "key": "auto_sync_down_delay",
+            "optional": true,
+            "type": "number",
+            "description": "Seconds between database update checks. Defaults to 120. Only with `auto_sync`."
+          },
+          {
+            "key": "decoder_config",
+            "optional": true,
+            "type": "string",
+            "description": "Scanner configuration as a JSON string, produced by the website UI. An empty object `{}` clears it. Setting this locks the scanner settings for the service."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "service_id",
+            "optional": false,
+            "type": "number",
+            "description": "The new service."
+          }
+        ]
+      }
+    },
+    {
+      "path": "codereadr.api.services.delete",
+      "shortPath": "services.delete",
+      "description": "Permanently delete one or more services, or every service with `all`; deleted services cannot be restored",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "service_id",
+            "optional": false,
+            "type": "number[] | all",
+            "description": "The services to delete. `all` deletes every service on the account."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "codereadr.api.services.list",
+      "shortPath": "services.list",
+      "description": "List services with their validation method, postback URL, linked database and authorized users and questions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "service_id",
+            "optional": true,
+            "type": "number[] | all",
+            "description": "Services to list. `all` by default."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "services",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, validation_method?: string | null, postback_url?: string | null, database_id?: number | null, duplicate_scan_value?: number | null, user_ids?: number[] | null, question_ids?: number[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "codereadr.api.services.update",
+      "shortPath": "services.update",
+      "description": "Update a service; omitted variables keep their current value, except symbologies, which reset to the default set when left out",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "service_id",
+            "optional": false,
+            "type": "number",
+            "description": "The service to update."
+          },
+          {
+            "key": "service_name",
+            "optional": true,
+            "type": "string",
+            "description": "New name for the service."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "New description for the service."
+          },
+          {
+            "key": "database_id",
+            "optional": true,
+            "type": "number",
+            "description": "Database to validate against."
+          },
+          {
+            "key": "postback_url",
+            "optional": true,
+            "type": "string",
+            "description": "Where scans are forwarded."
+          },
+          {
+            "key": "duplicate_value",
+            "optional": true,
+            "type": "0 | 1",
+            "description": "Status to give a duplicate scan."
+          },
+          {
+            "key": "device_duplicate_value",
+            "optional": true,
+            "type": "0 | 1",
+            "description": "Status to give a duplicate scan found on the device."
+          },
+          {
+            "key": "period_start_date",
+            "optional": true,
+            "type": "string",
+            "description": "YYYY-MM-DD or MM/DD/YYYY. Defaults to always active."
+          },
+          {
+            "key": "period_start_time",
+            "optional": true,
+            "type": "string",
+            "description": "hh:mm:ss or hh:mma. Defaults to 12:00AM on the start date."
+          },
+          {
+            "key": "period_end_date",
+            "optional": true,
+            "type": "string",
+            "description": "YYYY-MM-DD or MM/DD/YYYY. Defaults to always active."
+          },
+          {
+            "key": "period_end_time",
+            "optional": true,
+            "type": "string",
+            "description": "hh:mm:ss or hh:mma. Defaults to 11:59:59PM on the end date."
+          },
+          {
+            "key": "upload_email",
+            "optional": true,
+            "type": "string",
+            "description": "Email address that receives a CSV of scans after each upload."
+          },
+          {
+            "key": "upload_email_format",
+            "optional": true,
+            "type": "regular | properties",
+            "description": "Whether the emailed CSV carries scan properties. Defaults to `regular`."
+          },
+          {
+            "key": "view_other_scans",
+            "optional": true,
+            "type": "boolean",
+            "description": "Let an authorized user see every scan on the service. Defaults to true."
+          },
+          {
+            "key": "direct_history_url",
+            "optional": true,
+            "type": "string",
+            "description": "Page opened by the app's History button. Empty disables it."
+          },
+          {
+            "key": "direct_lookup_url",
+            "optional": true,
+            "type": "string",
+            "description": "Page opened by the app's Lookup button. Empty disables it."
+          },
+          {
+            "key": "enable_direct_scan",
+            "optional": true,
+            "type": "boolean",
+            "description": "Postback services only: send scans straight to your server. Defaults to false."
+          },
+          {
+            "key": "postback_receiver_only",
+            "optional": true,
+            "type": "boolean",
+            "description": "Set when the postback URL cannot answer with the expected XML. Defaults to false."
+          },
+          {
+            "key": "postback_real_time_scans",
+            "optional": true,
+            "type": "boolean",
+            "description": "Post each online scan to `postback_url` on a non-postback service."
+          },
+          {
+            "key": "postback_uploaded_scans",
+            "optional": true,
+            "type": "boolean",
+            "description": "Post each uploaded on-device scan to `postback_url` on a non-postback service."
+          },
+          {
+            "key": "regex_response_pattern",
+            "optional": true,
+            "type": "string",
+            "description": "Regex applied to the response text. Needs `regex_response_replacement`."
+          },
+          {
+            "key": "regex_response_replacement",
+            "optional": true,
+            "type": "string",
+            "description": "Replacement for `regex_response_pattern`."
+          },
+          {
+            "key": "regex_scan_pattern",
+            "optional": true,
+            "type": "string",
+            "description": "Regex applied to the scanned value. Needs `regex_scan_replacement`."
+          },
+          {
+            "key": "regex_scan_replacement",
+            "optional": true,
+            "type": "string",
+            "description": "Replacement for `regex_scan_pattern`."
+          },
+          {
+            "key": "symbologies",
+            "optional": true,
+            "type": "number[]",
+            "description": "Symbology IDs the app will decode. Omitting this on an update resets the service to the default set."
+          },
+          {
+            "key": "auto_next_scan",
+            "optional": true,
+            "type": "0 | 1 | 2 | 3",
+            "description": "0 off, 1 only when valid, 2 always and save on error, 3 always and discard on error."
+          },
+          {
+            "key": "auto_next_scan_delay",
+            "optional": true,
+            "type": "number",
+            "description": "Seconds before Auto-Next Scan fires. Only with `auto_next_scan`."
+          },
+          {
+            "key": "enable_gps",
+            "optional": true,
+            "type": "boolean",
+            "description": "Attach the device location to every scan as a property. Defaults to false."
+          },
+          {
+            "key": "block_camera_scan",
+            "optional": true,
+            "type": "boolean",
+            "description": "Prevent scanning with the device camera. Defaults to false."
+          },
+          {
+            "key": "block_manual_scan",
+            "optional": true,
+            "type": "boolean",
+            "description": "Prevent typing a value by hand. Defaults to false."
+          },
+          {
+            "key": "block_db_search",
+            "optional": true,
+            "type": "boolean",
+            "description": "Prevent looking values up in the database. Defaults to false."
+          },
+          {
+            "key": "auto_sync",
+            "optional": true,
+            "type": "boolean",
+            "description": "Sync on-device scans up and database updates down. On-device databases are capped at 50,000 values."
+          },
+          {
+            "key": "auto_sync_up_url",
+            "optional": true,
+            "type": "string",
+            "description": "Sync scans straight to your own URL instead of CodeREADr. Only with `auto_sync`."
+          },
+          {
+            "key": "auto_sync_up_delay",
+            "optional": true,
+            "type": "number",
+            "description": "Seconds between upload attempts. Defaults to 2. Only with `auto_sync`."
+          },
+          {
+            "key": "auto_sync_down_url",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether database updates download automatically. Only with `auto_sync`."
+          },
+          {
+            "key": "auto_sync_down_delay",
+            "optional": true,
+            "type": "number",
+            "description": "Seconds between database update checks. Defaults to 120. Only with `auto_sync`."
+          },
+          {
+            "key": "decoder_config",
+            "optional": true,
+            "type": "string",
+            "description": "Scanner configuration as a JSON string, produced by the website UI. An empty object `{}` clears it. Setting this locks the scanner settings for the service."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "service_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "codereadr.api.uploads.list",
+      "shortPath": "uploads.list",
+      "description": "List scan uploads from devices, with the device, service, user, status and scan count for each",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "service_id",
+            "optional": true,
+            "type": "number[] | all",
+            "description": "Services to read uploads from. `all` by default."
+          },
+          {
+            "key": "device_id",
+            "optional": true,
+            "type": "number[] | all",
+            "description": "Devices that made the uploads. `all` by default."
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number[] | all",
+            "description": "Users who made the uploads. `all` by default."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to skip. Needs `limit`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null",
+            "description": "Rows in this response."
+          },
+          {
+            "key": "uploads",
+            "optional": false,
+            "type": "{ id?: number | null, device_id?: number | null, service_id?: number | null, user_id?: number | null, status?: number | null, count?: number | null, timestamp?: string | null }[]"
+          },
+          {
+            "key": "next_offset",
+            "optional": true,
+            "type": "number | null",
+            "description": "Pass as `offset` for the next page while this page came back full."
+          }
+        ]
+      }
+    },
+    {
+      "path": "codereadr.api.users.create",
+      "shortPath": "users.create",
+      "description": "Create an app user; an email address sends an invitation and requires the user to accept it before signing in",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "Identifying name. An email address sends an invitation and ignores `password`; otherwise `password` is required."
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string",
+            "description": "Required unless `username` is an email address."
+          },
+          {
+            "key": "device_limit",
+            "optional": true,
+            "type": "number",
+            "description": "Devices allowed per billing period. `0` unlimited (the default), `-1` blocks sign-in entirely."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number",
+            "description": "The new user."
+          }
+        ]
+      }
+    },
+    {
+      "path": "codereadr.api.users.delete",
+      "shortPath": "users.delete",
+      "description": "Permanently delete app users, or every app user with `all`; the account owner cannot be deleted",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number[] | all",
+            "description": "The users to delete. `all` deletes every app user except the account owner."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "codereadr.api.users.list",
+      "shortPath": "users.list",
+      "description": "List app users with their authorized services, device limit and creation date",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number[] | all",
+            "description": "Users to list. `all` by default."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ id?: number | null, username?: string | null, service_ids?: number[] | null, device_limit?: number | null, created?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "codereadr.api.users.update",
+      "shortPath": "users.update",
+      "description": "Update an app user: rename, change the password, or set the device limit",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number",
+            "description": "The user to update."
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string",
+            "description": "Rename the user."
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string",
+            "description": "New password."
+          },
+          {
+            "key": "device_limit",
+            "optional": true,
+            "type": "number",
+            "description": "Devices allowed per billing period. `0` removes the limit, `-1` blocks sign-in. Works on its own."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

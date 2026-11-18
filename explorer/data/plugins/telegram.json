@@ -470,6 +470,11 @@
           "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
         },
         {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "title",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]

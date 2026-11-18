@@ -1,0 +1,76 @@
+displayName: Imgix
+description: >-
+  Manage Imgix sources, asset metadata, direct uploads, upload sessions, edge cache
+  purging, daily analytics reports, and AI video/alt-text generations with API-key authentication.
+recommendedAuth: api_key
+overviewNote: >-
+  The Imgix plugin provides complete management of Imgix resources using the official
+  Management and Generations REST APIs (v1). Webhook notifications and URL-based
+  rendering query parameters are excluded from this integration.
+apiExamples:
+  sources.list:
+    page_size: 10
+  sources.create:
+    call: >-
+      { name: "Production Image Store", deployment_type: "webfolder",
+      webfolder_base_url: "https://images.example.com/", imgix_subdomains: ["production-images"] }
+  sources.get:
+    source_id: "src_1234567890abcdef"
+  sources.update:
+    source_id: "src_1234567890abcdef"
+    name: "Updated Image Store"
+  assets.list:
+    source_id: "src_1234567890abcdef"
+    page_size: 25
+  assets.get:
+    source_id: "src_1234567890abcdef"
+    origin_path: "products/hero.jpg"
+  assets.update:
+    source_id: "src_1234567890abcdef"
+    origin_path: "products/hero.jpg"
+    custom_fields:
+      category: "apparel"
+  assets.addFromOrigin:
+    source_id: "src_1234567890abcdef"
+    origin_path: "products/hero.jpg"
+  assets.upload:
+    source_id: "src_1234567890abcdef"
+    origin_path: "uploads/banner.png"
+    content_base64: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="
+  uploadSessions.create:
+    source_id: "src_1234567890abcdef"
+    origin_path: "videos/presentation.mp4"
+  uploadSessions.getStatus:
+    source_id: "src_1234567890abcdef"
+    session_id: "sess_1234567890abcdef"
+  uploadSessions.close:
+    source_id: "src_1234567890abcdef"
+    session_id: "sess_1234567890abcdef"
+  uploadSessions.cancel:
+    source_id: "src_1234567890abcdef"
+    session_id: "sess_1234567890abcdef"
+  purges.create:
+    url: "https://images.example.com/products/hero.jpg"
+  reports.list:
+    page_size: 10
+  reports.get:
+    report_id: "rep_1234567890abcdef"
+  generations.createVideo:
+    url: "https://your-subdomain.imgix.net/mountain.jpg"
+    prompt: "Slow cinematic pan across a mountain vista"
+  generations.getVideoJob:
+    job_id: "job_1234567890abcdef"
+  generations.getAltText:
+    url: "https://images.example.com/mountain.jpg"
+    language: "en"
+  generations.overrideAltText:
+    url: "https://images.example.com/mountain.jpg"
+    alt_text:
+      en: "Snow-covered peaks at sunrise"
+apiNotes:
+  sources.create: >-
+    Creates and deploys a new Imgix source for cloud storage (S3, GCS, Azure, S3-compatible) or a web folder origin. imgix_subdomains needs at least one *.imgix.net subdomain, given without the domain. The API cannot delete a source: disable it with sources.update (enabled false) or delete it in the dashboard.
+  generations.createVideo: >-
+    Asynchronously transforms an image into a video using AI motion generation. The image must be on an imgix Source with Image to Video enabled. Poll generations.getVideoJob with the returned data.id every 5 to 10 seconds until data.attributes.status is ready (video at data.attributes.result.url) or errored.
+  purges.create: >-
+    Purges an asset URL and all its derived variants globally from the Imgix CDN edge cache.

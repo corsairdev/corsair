@@ -53,32 +53,32 @@
           {
             "key": "ErrorMessage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "AvailablePages",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "MaxPages",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "LastProcessingTime",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "SubcriptionPlan",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ExpirationDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -134,8 +134,9 @@
           },
           {
             "key": "language",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"english\"."
           },
           {
             "key": "pagerange",
@@ -185,37 +186,37 @@
           {
             "key": "ErrorMessage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "AvailablePages",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "ProcessedPages",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "OCRText",
             "optional": true,
-            "type": "string[][]"
+            "type": "string[][] | null"
           },
           {
             "key": "OutputFileUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "TaskDescription",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "Reserved",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           }
         ]
       }

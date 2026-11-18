@@ -1,0 +1,628 @@
+{
+  "id": "stormglass",
+  "displayName": "Stormglass",
+  "description": "Global weather, marine, tide, astronomy, solar, bio and elevation data for any coordinate, from the Stormglass API.",
+  "npmPackageName": "@corsair-dev/stormglass",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 10,
+    "webhooks": 0,
+    "db": 4
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "stormglass.api.astronomy.get",
+      "shortPath": "astronomy.get",
+      "description": "Get sunrise, sunset, dawn, dusk, moonrise, moonset and moon phase per day for one coordinate.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "lng",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string | number",
+            "description": "First hour, UTC. UNIX seconds or ISO (2024-01-01 or 2024-01-01T06)."
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string | number",
+            "description": "Last hour, UTC. UNIX seconds or ISO. At most 10 days after start."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "days",
+            "optional": false,
+            "type": "{ time: string, sunrise?: string | null, sunset?: string | null, moonrise?: string | null, moonset?: string | null, moonFraction?: number, moonPhase?: { current?: { text?: string, time?: string, value?: number }, closest?: { text?: string, time?: string, value?: number } }, astronomicalDawn?: string | null, astronomicalDusk?: string | null, civilDawn?: string | null, civilDusk?: string | null, nauticalDawn?: string | null, nauticalDusk?: string | null }[]"
+          },
+          {
+            "key": "quota",
+            "optional": false,
+            "type": "{ id: string, dailyQuota?: number, requestCount?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormglass.api.bio.get",
+      "shortPath": "bio.get",
+      "description": "Get hourly bio data (water chemistry, salinity, soil moisture and temperature) for one coordinate.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "lng",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "params",
+            "optional": false,
+            "type": "string",
+            "description": "Comma-separated parameters, e.g. airTemperature,waveHeight."
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string | number",
+            "description": "First hour, UTC. UNIX seconds or ISO (2024-01-01 or 2024-01-01T06)."
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string | number",
+            "description": "Last hour, UTC. UNIX seconds or ISO. At most 10 days after start."
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated sources, e.g. sg or noaa,dwd. The first one fills `values`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hours",
+            "optional": false,
+            "type": "{ time: string, values: Record<string, number>, sources: Record<string, Record<string, number>> }[]"
+          },
+          {
+            "key": "quota",
+            "optional": false,
+            "type": "{ id: string, dailyQuota?: number, requestCount?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormglass.api.elevation.get",
+      "shortPath": "elevation.get",
+      "description": "Get elevation (land) or depth (sea, negative) in meters for one coordinate.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "lng",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "point",
+            "optional": false,
+            "type": "{ id: string, elevation?: number }"
+          },
+          {
+            "key": "quota",
+            "optional": false,
+            "type": "{ id: string, dailyQuota?: number, requestCount?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormglass.api.solar.get",
+      "shortPath": "solar.get",
+      "description": "Get hourly solar values (uvIndex, radiation) for one coordinate.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "lng",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "params",
+            "optional": false,
+            "type": "string",
+            "description": "Comma-separated parameters, e.g. airTemperature,waveHeight."
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string | number",
+            "description": "First hour, UTC. UNIX seconds or ISO (2024-01-01 or 2024-01-01T06)."
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string | number",
+            "description": "Last hour, UTC. UNIX seconds or ISO. At most 10 days after start."
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated sources, e.g. sg or noaa,dwd. The first one fills `values`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hours",
+            "optional": false,
+            "type": "{ time: string, values: Record<string, number>, sources: Record<string, Record<string, number>> }[]"
+          },
+          {
+            "key": "quota",
+            "optional": false,
+            "type": "{ id: string, dailyQuota?: number, requestCount?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormglass.api.stations.area",
+      "shortPath": "stations.area",
+      "description": "List tide stations inside a bounding box (lat,lng:lat,lng).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "box",
+            "optional": false,
+            "type": "string",
+            "description": "Top-right and bottom-left corners as lat,lng:lat,lng."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stations",
+            "optional": false,
+            "type": "{ id: string, name?: string, lat?: number, lng?: number, source?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormglass.api.stations.list",
+      "shortPath": "stations.list",
+      "description": "List every tide station Stormglass has data for.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stations",
+            "optional": false,
+            "type": "{ id: string, name?: string, lat?: number, lng?: number, source?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormglass.api.tides.extremes",
+      "shortPath": "tides.extremes",
+      "description": "Get high and low tide times and heights near a coordinate, up to 10 days, from the nearest tide station.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "lng",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string | number",
+            "description": "First hour, UTC. UNIX seconds or ISO (2024-01-01 or 2024-01-01T06)."
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string | number",
+            "description": "Last hour, UTC. UNIX seconds or ISO. At most 10 days after start."
+          },
+          {
+            "key": "datum",
+            "optional": true,
+            "type": "HAT | MHHW | MHW | MSL | MLW | MLLW | LAT",
+            "description": "Reference level the heights are relative to. Stormglass defaults to MSL."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "extremes",
+            "optional": false,
+            "type": "{ id: string, time?: string, type?: string, height?: number }[]"
+          },
+          {
+            "key": "station",
+            "optional": true,
+            "type": "{ name?: string, source?: string, distance?: number, lat?: number, lng?: number }"
+          },
+          {
+            "key": "quota",
+            "optional": false,
+            "type": "{ id: string, dailyQuota?: number, requestCount?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormglass.api.tides.seaLevel",
+      "shortPath": "tides.seaLevel",
+      "description": "Get the hourly astronomical sea level near a coordinate, up to 10 days, from the nearest tide station.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "lng",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string | number",
+            "description": "First hour, UTC. UNIX seconds or ISO (2024-01-01 or 2024-01-01T06)."
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string | number",
+            "description": "Last hour, UTC. UNIX seconds or ISO. At most 10 days after start."
+          },
+          {
+            "key": "datum",
+            "optional": true,
+            "type": "HAT | MHHW | MHW | MSL | MLW | MLLW | LAT",
+            "description": "Reference level the heights are relative to. Stormglass defaults to MSL."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "levels",
+            "optional": false,
+            "type": "{ time: string, height?: number, sources: Record<string, number> }[]"
+          },
+          {
+            "key": "station",
+            "optional": true,
+            "type": "{ name?: string, source?: string, distance?: number, lat?: number, lng?: number }"
+          },
+          {
+            "key": "quota",
+            "optional": false,
+            "type": "{ id: string, dailyQuota?: number, requestCount?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormglass.api.weather.get",
+      "shortPath": "weather.get",
+      "description": "Get hourly weather and marine forecast values (wind, waves, swell, temperature, ...) for one coordinate. Covers the past 14 days and up to 10 days ahead.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "lng",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "params",
+            "optional": false,
+            "type": "string",
+            "description": "Comma-separated parameters, e.g. airTemperature,waveHeight."
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string | number",
+            "description": "First hour, UTC. UNIX seconds or ISO (2024-01-01 or 2024-01-01T06)."
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string | number",
+            "description": "Last hour, UTC. UNIX seconds or ISO. At most 10 days after start."
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated sources, e.g. sg or noaa,dwd. The first one fills `values`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hours",
+            "optional": false,
+            "type": "{ time: string, values: Record<string, number>, sources: Record<string, Record<string, number>> }[]"
+          },
+          {
+            "key": "quota",
+            "optional": false,
+            "type": "{ id: string, dailyQuota?: number, requestCount?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormglass.api.weather.historical",
+      "shortPath": "weather.historical",
+      "description": "Get hourly historical weather for one coordinate from 2014 to about a week ago, up to 10 days per call. Needs start or end.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "lng",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "params",
+            "optional": false,
+            "type": "string",
+            "description": "Comma-separated parameters, e.g. airTemperature,waveHeight."
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string | number",
+            "description": "First hour, UTC. UNIX seconds or ISO (2024-01-01 or 2024-01-01T06)."
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string | number",
+            "description": "Last hour, UTC. UNIX seconds or ISO. At most 10 days after start."
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated sources, e.g. sg or noaa,dwd. The first one fills `values`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hours",
+            "optional": false,
+            "type": "{ time: string, values: Record<string, number>, sources: Record<string, Record<string, number>> }[]"
+          },
+          {
+            "key": "quota",
+            "optional": false,
+            "type": "{ id: string, dailyQuota?: number, requestCount?: number }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "stormglass.db.extremes.search",
+      "entityName": "extremes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "time",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "height",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "stormglass.db.points.search",
+      "entityName": "points",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "elevation",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "stormglass.db.quotas.search",
+      "entityName": "quotas",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dailyQuota",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "requestCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "stormglass.db.stations.search",
+      "entityName": "stations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lat",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "lng",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "source",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

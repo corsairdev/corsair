@@ -64,7 +64,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "{ id?: string, threadId?: string, labelIds?: string[], snippet?: string, historyId?: string, internalDate?: string | number | Date | null, sizeEstimate?: number, payload?: { partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: lazy }, raw?: string }"
+            "type": "{ id?: string, threadId?: string, labelIds?: string[], snippet?: string, historyId?: string, internalDate?: string | number | Date | null, sizeEstimate?: number, payload?: { partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: { partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: (recursive) }[] }, raw?: string }"
           }
         ]
       }
@@ -130,7 +130,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "{ id?: string, threadId?: string, labelIds?: string[], snippet?: string, historyId?: string, internalDate?: string | number | Date | null, sizeEstimate?: number, payload?: { partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: lazy }, raw?: string }"
+            "type": "{ id?: string, threadId?: string, labelIds?: string[], snippet?: string, historyId?: string, internalDate?: string | number | Date | null, sizeEstimate?: number, payload?: { partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: { partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: (recursive) }[] }, raw?: string }"
           }
         ]
       }
@@ -171,7 +171,7 @@
           {
             "key": "drafts",
             "optional": true,
-            "type": "{ id?: string, message?: { id?: string, threadId?: string, labelIds?: string[], snippet?: string, historyId?: string, internalDate?: string | number | Date | null, sizeEstimate?: number, payload?: { partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: lazy }, raw?: string } }[]"
+            "type": "{ id?: string, message?: { id?: string, threadId?: string, labelIds?: string[], snippet?: string, historyId?: string, internalDate?: string | number | Date | null, sizeEstimate?: number, payload?: { partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: { partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: (recursive) }[] }, raw?: string } }[]"
           },
           {
             "key": "nextPageToken",
@@ -243,7 +243,7 @@
           {
             "key": "internalDate",
             "optional": true,
-            "type": "string | number | Date"
+            "type": "string | number | Date | null"
           },
           {
             "key": "sizeEstimate",
@@ -253,7 +253,7 @@
           {
             "key": "payload",
             "optional": true,
-            "type": "{ partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: lazy }"
+            "type": "{ partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: { partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: (recursive) }[] }"
           },
           {
             "key": "raw",
@@ -301,7 +301,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "{ id?: string, threadId?: string, labelIds?: string[], snippet?: string, historyId?: string, internalDate?: string | number | Date | null, sizeEstimate?: number, payload?: { partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: lazy }, raw?: string }"
+            "type": "{ id?: string, threadId?: string, labelIds?: string[], snippet?: string, historyId?: string, internalDate?: string | number | Date | null, sizeEstimate?: number, payload?: { partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: { partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: (recursive) }[] }, raw?: string }"
           }
         ]
       }
@@ -686,7 +686,7 @@
           {
             "key": "internalDate",
             "optional": true,
-            "type": "string | number | Date"
+            "type": "string | number | Date | null"
           },
           {
             "key": "sizeEstimate",
@@ -696,7 +696,7 @@
           {
             "key": "payload",
             "optional": true,
-            "type": "{ partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: lazy }"
+            "type": "{ partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: { partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: (recursive) }[] }"
           },
           {
             "key": "raw",
@@ -753,7 +753,7 @@
           {
             "key": "messages",
             "optional": true,
-            "type": "{ id?: string, threadId?: string, labelIds?: string[], snippet?: string, historyId?: string, internalDate?: string | number | Date | null, sizeEstimate?: number, payload?: { partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: lazy }, raw?: string }[]"
+            "type": "{ id?: string, threadId?: string, labelIds?: string[], snippet?: string, historyId?: string, internalDate?: string | number | Date | null, sizeEstimate?: number, payload?: { partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: { partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: (recursive) }[] }, raw?: string }[]"
           },
           {
             "key": "nextPageToken",
@@ -829,7 +829,7 @@
           {
             "key": "internalDate",
             "optional": true,
-            "type": "string | number | Date"
+            "type": "string | number | Date | null"
           },
           {
             "key": "sizeEstimate",
@@ -839,7 +839,7 @@
           {
             "key": "payload",
             "optional": true,
-            "type": "{ partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: lazy }"
+            "type": "{ partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: { partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: (recursive) }[] }"
           },
           {
             "key": "raw",
@@ -907,7 +907,7 @@
           {
             "key": "internalDate",
             "optional": true,
-            "type": "string | number | Date"
+            "type": "string | number | Date | null"
           },
           {
             "key": "sizeEstimate",
@@ -917,7 +917,7 @@
           {
             "key": "payload",
             "optional": true,
-            "type": "{ partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: lazy }"
+            "type": "{ partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: { partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: (recursive) }[] }"
           },
           {
             "key": "raw",
@@ -979,7 +979,7 @@
           {
             "key": "internalDate",
             "optional": true,
-            "type": "string | number | Date"
+            "type": "string | number | Date | null"
           },
           {
             "key": "sizeEstimate",
@@ -989,7 +989,7 @@
           {
             "key": "payload",
             "optional": true,
-            "type": "{ partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: lazy }"
+            "type": "{ partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: { partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: (recursive) }[] }"
           },
           {
             "key": "raw",
@@ -1051,7 +1051,7 @@
           {
             "key": "internalDate",
             "optional": true,
-            "type": "string | number | Date"
+            "type": "string | number | Date | null"
           },
           {
             "key": "sizeEstimate",
@@ -1061,7 +1061,7 @@
           {
             "key": "payload",
             "optional": true,
-            "type": "{ partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: lazy }"
+            "type": "{ partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: { partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: (recursive) }[] }"
           },
           {
             "key": "raw",
@@ -1123,7 +1123,7 @@
           {
             "key": "messages",
             "optional": true,
-            "type": "{ id?: string, threadId?: string, labelIds?: string[], snippet?: string, historyId?: string, internalDate?: string | number | Date | null, sizeEstimate?: number, payload?: { partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: lazy }, raw?: string }[]"
+            "type": "{ id?: string, threadId?: string, labelIds?: string[], snippet?: string, historyId?: string, internalDate?: string | number | Date | null, sizeEstimate?: number, payload?: { partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: { partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: (recursive) }[] }, raw?: string }[]"
           }
         ]
       }
@@ -1174,7 +1174,7 @@
           {
             "key": "threads",
             "optional": true,
-            "type": "{ id?: string, snippet?: string, historyId?: string, messages?: { id?: string, threadId?: string, labelIds?: string[], snippet?: string, historyId?: string, internalDate?: string | number | Date | null, sizeEstimate?: number, payload?: { partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: lazy }, raw?: string }[] }[]"
+            "type": "{ id?: string, snippet?: string, historyId?: string, messages?: { id?: string, threadId?: string, labelIds?: string[], snippet?: string, historyId?: string, internalDate?: string | number | Date | null, sizeEstimate?: number, payload?: { partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: { partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: (recursive) }[] }, raw?: string }[] }[]"
           },
           {
             "key": "nextPageToken",
@@ -1240,7 +1240,7 @@
           {
             "key": "messages",
             "optional": true,
-            "type": "{ id?: string, threadId?: string, labelIds?: string[], snippet?: string, historyId?: string, internalDate?: string | number | Date | null, sizeEstimate?: number, payload?: { partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: lazy }, raw?: string }[]"
+            "type": "{ id?: string, threadId?: string, labelIds?: string[], snippet?: string, historyId?: string, internalDate?: string | number | Date | null, sizeEstimate?: number, payload?: { partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: { partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: (recursive) }[] }, raw?: string }[]"
           }
         ]
       }
@@ -1286,7 +1286,7 @@
           {
             "key": "messages",
             "optional": true,
-            "type": "{ id?: string, threadId?: string, labelIds?: string[], snippet?: string, historyId?: string, internalDate?: string | number | Date | null, sizeEstimate?: number, payload?: { partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: lazy }, raw?: string }[]"
+            "type": "{ id?: string, threadId?: string, labelIds?: string[], snippet?: string, historyId?: string, internalDate?: string | number | Date | null, sizeEstimate?: number, payload?: { partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: { partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: (recursive) }[] }, raw?: string }[]"
           }
         ]
       }
@@ -1332,7 +1332,7 @@
           {
             "key": "messages",
             "optional": true,
-            "type": "{ id?: string, threadId?: string, labelIds?: string[], snippet?: string, historyId?: string, internalDate?: string | number | Date | null, sizeEstimate?: number, payload?: { partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: lazy }, raw?: string }[]"
+            "type": "{ id?: string, threadId?: string, labelIds?: string[], snippet?: string, historyId?: string, internalDate?: string | number | Date | null, sizeEstimate?: number, payload?: { partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: { partId?: string, mimeType?: string, filename?: string, headers?: { name?: string, value?: string }[], body?: { attachmentId?: string, size?: number, data?: string }, parts: (recursive) }[] }, raw?: string }[]"
           }
         ]
       }
@@ -1349,7 +1349,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "{ data?: string, attributes?: {}, messageId?: string, publishTime?: string }"
+            "type": "{ data?: string, attributes?: Record<string, string>, messageId?: string, publishTime?: string }"
           },
           {
             "key": "subscription",
@@ -1410,6 +1410,21 @@
         },
         {
           "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "messageListVisibility",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "labelListVisibility",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

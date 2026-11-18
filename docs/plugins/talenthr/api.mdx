@@ -1,0 +1,1491 @@
+---
+title: "TalentHR API reference"
+sidebarTitle: "API"
+description: "API reference for the TalentHR plugin in Corsair: every `talenthr.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Departments
+
+### create
+
+`departments.create`
+
+Create a department with a name that is unique in the company
+
+**Risk:** `write`
+
+```ts
+await corsair.talenthr.api.departments.create({ name: 'Engineering' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The name, up to 255 characters. TalentHR requires it to be unique in its collection. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `object_type` | `string \| null` | No | — |
+| `field_data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="field_data full type">
+
+```ts
+{
+  address?: string | null,
+  is_remote?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`departments.delete`
+
+Delete a department; TalentHR refuses while an active job position uses it
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.talenthr.api.departments.delete({ id: 6 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The record ID. |
+
+TalentHR refuses the delete while an active job position uses the department.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### list
+
+`departments.list`
+
+List the departments of the company
+
+**Risk:** `read`
+
+```ts
+await corsair.talenthr.api.departments.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  object_type?: string | null,
+  field_data?: {
+    address?: string | null,
+    is_remote?: boolean | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Divisions
+
+### create
+
+`divisions.create`
+
+Create a division with a name that is unique in the company
+
+**Risk:** `write`
+
+```ts
+await corsair.talenthr.api.divisions.create({ name: 'North America' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The name, up to 255 characters. TalentHR requires it to be unique in its collection. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `object_type` | `string \| null` | No | — |
+| `field_data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="field_data full type">
+
+```ts
+{
+  address?: string | null,
+  is_remote?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`divisions.delete`
+
+Delete a division; TalentHR refuses while an active job position uses it, and clears it from other records
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.talenthr.api.divisions.delete({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The record ID. |
+
+TalentHR refuses the delete while an active job position uses the division.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`divisions.get`
+
+Read one division by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.talenthr.api.divisions.get({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The record ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `object_type` | `string \| null` | No | — |
+| `field_data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="field_data full type">
+
+```ts
+{
+  address?: string | null,
+  is_remote?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`divisions.list`
+
+List the divisions of the company
+
+**Risk:** `read`
+
+```ts
+await corsair.talenthr.api.divisions.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  object_type?: string | null,
+  field_data?: {
+    address?: string | null,
+    is_remote?: boolean | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`divisions.update`
+
+Rename a division
+
+**Risk:** `write`
+
+```ts
+await corsair.talenthr.api.divisions.update({ id: 12, name: 'North America East' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The record to rename. |
+| `name` | `string` | Yes | The new name, up to 255 characters. TalentHR requires it to be unique in its collection. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `object_type` | `string \| null` | No | — |
+| `field_data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="field_data full type">
+
+```ts
+{
+  address?: string | null,
+  is_remote?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Employees
+
+### delete
+
+`employees.delete`
+
+Permanently delete an employee; use terminate when the employment history must be kept
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.talenthr.api.employees.delete({ employeeId: 34 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `employeeId` | `number` | Yes | The employee ID, from `employees.directory` or `employees.hire`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### directory
+
+`employees.directory`
+
+List employees with their job, contact and org details, filtered and paged; the response carries the total match count
+
+**Risk:** `read`
+
+```ts
+await corsair.talenthr.api.employees.directory({ limit: 50, offset: 0, filter: 'department_id:6' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Rows per page. Defaults to 10; TalentHR caps it at 100. |
+| `offset` | `number` | No | Rows to skip. Defaults to 0. |
+| `filter` | `string` | No | Filter IDs joined by commas, in the form `field:id` (for example `department_id:6,division_id:13`). TalentHR lists the filter IDs at `GET /directory/filters`, which this plugin does not wrap; the IDs come from the division, department, location and job title lists. |
+| `customFields` | `string` | No | Custom field slugs joined by commas, as set up in TalentHR (its `GET /custom-fields`, which this plugin does not wrap). TalentHR returns them under each row. |
+
+limit defaults to 10 and caps at 100; filter takes field:id pairs separated by commas, with IDs from the directory filters endpoint.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | Yes | — |
+| `rows` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="rows full type">
+
+```ts
+{
+  id: number,
+  user_id?: number | null,
+  u_id?: number | null,
+  reports_to_employee_id?: number | null,
+  photo_url?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  division_id?: number | null,
+  division?: string | null,
+  employment_status_id?: number | null,
+  employment_status_name?: string | null,
+  department_id?: number | null,
+  department?: string | null,
+  job_title_id?: number | null,
+  job_title?: string | null,
+  location_id?: number | null,
+  location?: string | null,
+  termination_date?: string | null,
+  hire_date?: string | null,
+  linked_in_url?: string | null,
+  work_phone?: string | null,
+  address?: string | null,
+  city?: string | null,
+  postal_code?: string | null,
+  country?: string | null,
+  sec_address?: string | null,
+  sec_city?: string | null,
+  sec_postal_code?: string | null,
+  sec_country?: string | null,
+  custom_fields?: {
+    custom_field_id?: number | null,
+    custom_field_slug?: string | null,
+    custom_field_name?: string | null,
+    values?: {
+      value?: string | null
+    }[] | null
+  }[] | null,
+  user_role?: {
+    id?: number | null,
+    name?: string | null,
+    slug?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### employmentStatuses
+
+`employees.employmentStatuses`
+
+List an employee’s employment status records, each with its effective date and status name
+
+**Risk:** `read`
+
+```ts
+await corsair.talenthr.api.employees.employmentStatuses({ employeeId: 15 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `employeeId` | `number` | Yes | The employee ID, from `employees.directory` or `employees.hire`. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  employee_id?: number | null,
+  cycle_id?: number | null,
+  effective_date?: string | null,
+  employment_status_id?: number | null,
+  is_hire_event?: boolean | number | null,
+  working_hours?: number | null,
+  end_date?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  deleted_at?: string | null,
+  termination_reason?: string | null,
+  termination_type?: string | null,
+  regrettable_status?: string | null,
+  employment_status?: {
+    id?: number | null,
+    name?: string | null,
+    object_type?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`employees.get`
+
+Read one employee, including their user role, seniority, custom fields and manager
+
+**Risk:** `read`
+
+```ts
+await corsair.talenthr.api.employees.get({ employeeId: 15 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `employeeId` | `number` | Yes | The employee ID, from `employees.directory` or `employees.hire`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `ssn` | `string \| null` | No | — |
+| `birth_date` | `string \| null` | No | — |
+| `hire_date` | `string \| null` | No | — |
+| `hire_date_utc` | `string \| null` | No | — |
+| `personal_email` | `string \| null` | No | — |
+| `marital_status` | `string \| null` | No | — |
+| `nationality` | `string \| null` | No | — |
+| `work_phone` | `string \| null` | No | — |
+| `mobile_phone` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `address` | `string \| null` | No | — |
+| `postal_code` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `linked_in_url` | `string \| null` | No | — |
+| `photo_url` | `string \| null` | No | — |
+| `citizenship` | `string \| null` | No | — |
+| `termination_date` | `string \| null` | No | — |
+| `gender` | `string \| null` | No | — |
+| `job_title_id` | `number \| null` | No | — |
+| `division_id` | `number \| null` | No | — |
+| `department_id` | `number \| null` | No | — |
+| `location_id` | `number \| null` | No | — |
+| `employee_number` | `string \| null` | No | — |
+| `user_role` | `object \| null` | No | — |
+| `seniority` | `object \| null` | No | — |
+| `termination_reason` | `string \| null` | No | — |
+| `custom_fields` | `object[] \| null` | No | — |
+| `default_avatar` | `boolean \| null` | No | — |
+| `location_name` | `string \| null` | No | — |
+| `division_name` | `string \| null` | No | — |
+| `department_name` | `string \| null` | No | — |
+| `job_title_name` | `string \| null` | No | — |
+| `is_terminated` | `boolean \| null` | No | — |
+| `visa_status` | `string \| null` | No | — |
+| `user` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="user_role full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  slug?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="seniority full type">
+
+```ts
+{
+  years?: number | null,
+  months?: number | null,
+  days?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="custom_fields full type">
+
+```ts
+{
+  custom_field_id?: number | null,
+  custom_field_slug?: string | null,
+  custom_field_name?: string | null,
+  values?: {
+    value?: string | null
+  }[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="user full type">
+
+```ts
+{
+  first_name?: string | null,
+  last_name?: string | null,
+  middle_name?: string | null,
+  email?: string | null,
+  last_login_at?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### hire
+
+`employees.hire`
+
+Create an employee with a hire date, employment status and optional job, pay and emergency contact records; TalentHR emails the new employee unless prevent_email is set
+
+**Risk:** `destructive`
+
+```ts
+await corsair.talenthr.api.employees.hire({ first_name: 'Ada', last_name: 'Lovelace', email: 'ada@example.com', hire_date: '2026-12-01', employment_status: { employment_status_id: 1 }, reports_to_employee_id: 15 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `first_name` | `string` | Yes | The employee first name. |
+| `last_name` | `string` | Yes | The employee last name. |
+| `email` | `string` | Yes | The work email. TalentHR requires a valid address that no other employee uses. |
+| `hire_date` | `string` | Yes | The hire date. |
+| `employment_status` | `object` | Yes | The starting status. Get the ID from `referenceData.employmentStatuses`. |
+| `reports_to_employee_id` | `number \| null` | Yes | The manager employee ID. Send `null` to make this employee the head of the company. |
+| `job_record` | `object` | No | Job title, location, division and department. Get each ID from its list route. |
+| `compensation_record` | `object` | No | The initial pay record. |
+| `emergency_contact` | `object` | No | The emergency contact. |
+| `employee_number` | `string` | No | — |
+| `prevent_email` | `boolean` | No | When true, TalentHR sends no welcome email. |
+
+reports_to_employee_id is required and accepts null for the head of the company; prevent_email stops the welcome email.
+
+<AccordionGroup>
+<Accordion title="employment_status full type">
+
+```ts
+{
+  employment_status_id: number
+}
+```
+</Accordion>
+
+<Accordion title="job_record full type">
+
+```ts
+{
+  job_title_id?: number | null,
+  location_id?: number | null,
+  division_id?: number | null,
+  department_id?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="compensation_record full type">
+
+```ts
+{
+  pay_rate: number,
+  pay_rate_period?: hour | day | week | month | quarter | year,
+  pay_rate_schedule?: once-per-month | twice-per-month | every-other-week,
+  overtime_status?: exempt | non-exempt
+}
+```
+</Accordion>
+
+<Accordion title="emergency_contact full type">
+
+```ts
+{
+  full_name: string,
+  relationship_type_id: number,
+  phone?: string,
+  address?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `ssn` | `string \| null` | No | — |
+| `birth_date` | `string \| null` | No | — |
+| `hire_date` | `string \| null` | No | — |
+| `hire_date_utc` | `string \| null` | No | — |
+| `personal_email` | `string \| null` | No | — |
+| `marital_status` | `string \| null` | No | — |
+| `nationality` | `string \| null` | No | — |
+| `work_phone` | `string \| null` | No | — |
+| `mobile_phone` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `address` | `string \| null` | No | — |
+| `postal_code` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `linked_in_url` | `string \| null` | No | — |
+| `photo_url` | `string \| null` | No | — |
+| `citizenship` | `string \| null` | No | — |
+| `termination_date` | `string \| null` | No | — |
+| `gender` | `string \| null` | No | — |
+| `job_title_id` | `number \| null` | No | — |
+| `division_id` | `number \| null` | No | — |
+| `department_id` | `number \| null` | No | — |
+| `location_id` | `number \| null` | No | — |
+| `employee_number` | `string \| null` | No | — |
+| `user_role` | `object \| null` | No | — |
+| `seniority` | `object \| null` | No | — |
+| `termination_reason` | `string \| null` | No | — |
+| `custom_fields` | `object[] \| null` | No | — |
+| `default_avatar` | `boolean \| null` | No | — |
+| `location_name` | `string \| null` | No | — |
+| `division_name` | `string \| null` | No | — |
+| `department_name` | `string \| null` | No | — |
+| `job_title_name` | `string \| null` | No | — |
+| `is_terminated` | `boolean \| null` | No | — |
+| `visa_status` | `string \| null` | No | — |
+| `user` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="user_role full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  slug?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="seniority full type">
+
+```ts
+{
+  years?: number | null,
+  months?: number | null,
+  days?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="custom_fields full type">
+
+```ts
+{
+  custom_field_id?: number | null,
+  custom_field_slug?: string | null,
+  custom_field_name?: string | null,
+  values?: {
+    value?: string | null
+  }[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="user full type">
+
+```ts
+{
+  first_name?: string | null,
+  last_name?: string | null,
+  middle_name?: string | null,
+  email?: string | null,
+  last_login_at?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### rehire
+
+`employees.rehire`
+
+Return a terminated employee to active status from a new hire date, with a manager and employment status; TalentHR sends a rehire email unless prevent_email is set
+
+**Risk:** `destructive`
+
+```ts
+await corsair.talenthr.api.employees.rehire({ employeeId: 34, hire_date: '2027-01-15', reports_to_employee_id: 15, employment_status: { employment_status_id: 1 } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `employeeId` | `number` | Yes | The employee ID, from `employees.directory` or `employees.hire`. |
+| `hire_date` | `string` | Yes | The new hire date. It must fall after the latest termination date. |
+| `reports_to_employee_id` | `number` | Yes | The manager employee ID. It must be active and not this employee. |
+| `employment_status` | `object` | Yes | The status the employee returns to. |
+| `job_record` | `object` | No | — |
+| `prevent_email` | `boolean` | No | When true, TalentHR sends no rehire notification email. |
+
+hire_date must fall after the latest termination date, and reports_to_employee_id must be an active employee.
+
+<AccordionGroup>
+<Accordion title="employment_status full type">
+
+```ts
+{
+  employment_status_id: number
+}
+```
+</Accordion>
+
+<Accordion title="job_record full type">
+
+```ts
+{
+  job_title_id?: number | null,
+  location_id?: number | null,
+  division_id?: number | null,
+  department_id?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `employee_id` | `number` | Yes | — |
+
+
+
+---
+
+### terminate
+
+`employees.terminate`
+
+Terminate an employee from a given date, recording the reason and whether the departure was regrettable; TalentHR emails the people given offboarding tasks
+
+**Risk:** `destructive`
+
+```ts
+await corsair.talenthr.api.employees.terminate({ employeeId: 34, effective_date: '2026-12-31', termination_reason: 'Relocation' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `employeeId` | `number` | Yes | The employee ID, from `employees.directory` or `employees.hire`. |
+| `effective_date` | `string` | Yes | The date the termination starts. |
+| `termination_reason` | `string` | Yes | The reason for the dismissal. |
+| `termination_type` | `string` | No | The kind of termination. TalentHR defaults it to "termination". |
+| `regrettable_status` | `string` | No | Whether the termination is regrettable. |
+
+effective_date must be YYYY-MM-DD; termination_reason accepts up to 4000 characters.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `employee_id` | `number \| null` | No | — |
+| `effective_date` | `string \| null` | No | — |
+| `employment_status_id` | `number \| null` | No | — |
+| `is_active` | `boolean \| number \| null` | No | — |
+| `end_date` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `deleted_at` | `string \| null` | No | — |
+| `termination_reason` | `string \| null` | No | — |
+| `termination_type` | `string \| null` | No | — |
+| `regrettable_status` | `string \| null` | No | — |
+| `employment_status` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="employment_status full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  object_type?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`employees.update`
+
+Change an employee’s name, contact, address, SSN, birth date, manager or emergency contact
+
+**Risk:** `write`
+
+```ts
+await corsair.talenthr.api.employees.update({ employeeId: 15, first_name: 'Ada', last_name: 'Lovelace', email: 'ada@example.com', city: 'Athens', work_phone: '+30 210 0000000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `employeeId` | `number` | Yes | The employee ID, from `employees.directory` or `employees.hire`. |
+| `first_name` | `string` | Yes | — |
+| `last_name` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `ssn` | `string` | No | — |
+| `birth_date` | `string` | No | A calendar date as "YYYY-MM-DD". |
+| `personal_email` | `string` | No | — |
+| `marital_status` | `Single \| Separated \| Married \| Widowed` | No | — |
+| `gender` | `Male \| Female \| Non-binary` | No | — |
+| `nationality` | `string` | No | — |
+| `citizenship` | `string` | No | — |
+| `work_phone` | `string` | No | — |
+| `mobile_phone` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `address` | `string` | No | — |
+| `country` | `string` | No | — |
+| `postal_code` | `string` | No | — |
+| `city` | `string` | No | — |
+| `reports_to_employee_id` | `number \| null` | No | — |
+| `linked_in_url` | `string` | No | — |
+| `employee_number` | `string` | No | — |
+| `emergency_contact` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="emergency_contact full type">
+
+```ts
+{
+  full_name: string,
+  relationship_type_id: number,
+  phone?: string,
+  address?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `ssn` | `string \| null` | No | — |
+| `birth_date` | `string \| null` | No | — |
+| `hire_date` | `string \| null` | No | — |
+| `hire_date_utc` | `string \| null` | No | — |
+| `personal_email` | `string \| null` | No | — |
+| `marital_status` | `string \| null` | No | — |
+| `nationality` | `string \| null` | No | — |
+| `work_phone` | `string \| null` | No | — |
+| `mobile_phone` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `address` | `string \| null` | No | — |
+| `postal_code` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `linked_in_url` | `string \| null` | No | — |
+| `photo_url` | `string \| null` | No | — |
+| `citizenship` | `string \| null` | No | — |
+| `termination_date` | `string \| null` | No | — |
+| `gender` | `string \| null` | No | — |
+| `job_title_id` | `number \| null` | No | — |
+| `division_id` | `number \| null` | No | — |
+| `department_id` | `number \| null` | No | — |
+| `location_id` | `number \| null` | No | — |
+| `employee_number` | `string \| null` | No | — |
+| `user_role` | `object \| null` | No | — |
+| `seniority` | `object \| null` | No | — |
+| `termination_reason` | `string \| null` | No | — |
+| `custom_fields` | `object[] \| null` | No | — |
+| `default_avatar` | `boolean \| null` | No | — |
+| `location_name` | `string \| null` | No | — |
+| `division_name` | `string \| null` | No | — |
+| `department_name` | `string \| null` | No | — |
+| `job_title_name` | `string \| null` | No | — |
+| `is_terminated` | `boolean \| null` | No | — |
+| `visa_status` | `string \| null` | No | — |
+| `user` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="user_role full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  slug?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="seniority full type">
+
+```ts
+{
+  years?: number | null,
+  months?: number | null,
+  days?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="custom_fields full type">
+
+```ts
+{
+  custom_field_id?: number | null,
+  custom_field_slug?: string | null,
+  custom_field_name?: string | null,
+  values?: {
+    value?: string | null
+  }[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="user full type">
+
+```ts
+{
+  first_name?: string | null,
+  last_name?: string | null,
+  middle_name?: string | null,
+  email?: string | null,
+  last_login_at?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Job Titles
+
+### list
+
+`jobTitles.list`
+
+List the job titles of the company
+
+**Risk:** `read`
+
+```ts
+await corsair.talenthr.api.jobTitles.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  object_type?: string | null,
+  field_data?: {
+    address?: string | null,
+    is_remote?: boolean | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Locations
+
+### list
+
+`locations.list`
+
+List the work locations with their address and whether they are remote
+
+**Risk:** `read`
+
+```ts
+await corsair.talenthr.api.locations.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  object_type?: string | null,
+  field_data?: {
+    address?: string | null,
+    is_remote?: boolean | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Reference Data
+
+### employmentStatuses
+
+`referenceData.employmentStatuses`
+
+List the employment statuses, whose IDs employees.hire and employees.rehire take
+
+**Risk:** `read`
+
+```ts
+await corsair.talenthr.api.referenceData.employmentStatuses({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Time Off
+
+### budgets
+
+`timeOff.budgets`
+
+Read one employee’s time off budgets per type, including used and carried-over amounts
+
+**Risk:** `read`
+
+```ts
+await corsair.talenthr.api.timeOff.budgets({ employeeId: 15 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `employeeId` | `number` | Yes | The employee ID, from `employees.directory` or `employees.hire`. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  employee_id?: number | null,
+  budget?: string | null,
+  time_off_cycle_id?: number | null,
+  timeoff_type_id?: number | null,
+  timeoff_type_name?: string | null,
+  timeoff_type_slug?: string | null,
+  timeoff_allow_exceeding?: boolean | number | null,
+  original_budget?: string | null,
+  used_budget?: string | null,
+  paid?: boolean | number | null,
+  has_unlimited_timeoff?: boolean | number | null,
+  unlimited_used_budget?: string | null,
+  employee_has_accrual?: boolean | number | null,
+  accrual_original_budget?: string | null,
+  accrual_budget?: string | null,
+  accrual_used_budget?: string | null,
+  accrual_carry_on_budget?: string | null,
+  accrual_carry_on_used_budget?: string | null,
+  accrual_carry_on_original_budget?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### create
+
+`timeOff.create`
+
+Book time off for an employee, either preapproved or sent to their manager for approval by email
+
+**Risk:** `destructive`
+
+```ts
+await corsair.talenthr.api.timeOff.create({ employeeId: 15, start_date: '2026-12-01', end_date: '2026-12-03', timeoff_type_id: 1, note: 'Family trip' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `employeeId` | `number` | Yes | The employee ID, from `employees.directory` or `employees.hire`. |
+| `start_date` | `string` | Yes | The first day of the absence. |
+| `end_date` | `string` | Yes | The last day of the absence. |
+| `timeoff_type_id` | `number` | Yes | The time off type. Get the ID from `timeOff.types`. |
+| `preapproved` | `boolean` | No | When true, TalentHR approves the request without manager action if the caller may. Otherwise it emails the manager for approval. |
+| `note` | `string` | No | A note on the request. |
+| `amountOptions` | `object` | No | Per-day amounts keyed by "YYYY-MM-DD", covering every day from start_date through end_date. Use a number for days, or `{ amount_days, amount_hours }`. |
+
+The route is multipart/form-data; amountOptions is sent as a JSON string and must cover every day from start_date through end_date.
+
+<AccordionGroup>
+<Accordion title="amountOptions full type">
+
+```ts
+Record<string, number | {
+  amount_days?: number | null,
+  amount_hours?: number | null
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `timeoff_type_id` | `number \| null` | No | — |
+| `start_date` | `string \| null` | No | — |
+| `end_date` | `string \| null` | No | — |
+| `employee_id` | `number \| null` | No | — |
+| `budget` | `number \| string \| null` | No | — |
+| `approved` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `deleted_at` | `string \| null` | No | — |
+| `working_hours` | `number \| string \| null` | No | — |
+| `budget_days` | `number \| string \| null` | No | — |
+| `budget_hours` | `number \| string \| null` | No | — |
+| `attachment_url` | `string \| null` | No | — |
+| `attachment_name` | `string \| null` | No | — |
+| `time_off_type` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="time_off_type full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  slug?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`timeOff.delete`
+
+Cancel a time off request, which frees its budget back to the employee
+
+**Risk:** `destructive`
+
+```ts
+await corsair.talenthr.api.timeOff.delete({ employeeId: 15, timeOffRequestId: 2402 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `employeeId` | `number` | Yes | The employee ID, from `employees.directory` or `employees.hire`. |
+| `timeOffRequestId` | `number` | Yes | The time off request. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### list
+
+`timeOff.list`
+
+List one employee’s time off requests with their type, dates, budget and approval state
+
+**Risk:** `read`
+
+```ts
+await corsair.talenthr.api.timeOff.list({ employeeId: 15, limit: 10, offset: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `employeeId` | `number` | Yes | The employee ID, from `employees.directory` or `employees.hire`. |
+| `limit` | `number` | No | Rows per page. |
+| `offset` | `number` | No | Rows to skip. |
+| `sort` | `string` | No | The column to sort by, for example `start_date`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | Yes | — |
+| `rows` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="rows full type">
+
+```ts
+{
+  id: number,
+  approved?: boolean | null,
+  note?: string | null,
+  budget?: string | null,
+  is_canceled?: boolean | null,
+  start_date?: string | null,
+  end_date?: string | null,
+  employee_id?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  deleted_at?: string | null,
+  timeoff_type_id?: number | null,
+  timeoff_type_name?: string | null,
+  timeoff_type_slug?: string | null,
+  allow_cancel?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reply
+
+`timeOff.reply`
+
+Approve or reject a time off request on behalf of the manager; TalentHR emails the employee the outcome
+
+**Risk:** `destructive`
+
+```ts
+await corsair.talenthr.api.timeOff.reply({ employeeId: 15, timeOffRequestId: 2402, accept: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `employeeId` | `number` | Yes | The employee ID, from `employees.directory` or `employees.hire`. |
+| `timeOffRequestId` | `number` | Yes | The time off request. |
+| `accept` | `boolean` | Yes | True approves the request, false rejects it. |
+
+accept is a boolean: true approves, false rejects.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### types
+
+`timeOff.types`
+
+List the time off types with their budgets, whether they are paid and whether they need approval
+
+**Risk:** `read`
+
+```ts
+await corsair.talenthr.api.timeOff.types({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  slug?: string | null,
+  budget?: string | null,
+  period?: string | null,
+  paid?: boolean | null,
+  is_default?: boolean | null,
+  is_disabled?: boolean | null,
+  needs_approval?: boolean | null,
+  calendar_blocking?: boolean | null,
+  visible_internally?: boolean | null,
+  allow_exceeding?: boolean | null,
+  use_calendar_days?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  deleted_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

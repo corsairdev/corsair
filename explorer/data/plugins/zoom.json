@@ -96,7 +96,7 @@
           {
             "key": "meetings",
             "optional": true,
-            "type": "{ id?: string, meeting_id?: string, topic?: string, type?: number, start_time?: string, file_count?: number, file_size?: number, status?: string, archive_files?: {}[] }[]"
+            "type": "{ id?: string, meeting_id?: string, topic?: string, type?: number, start_time?: string, file_count?: number, file_size?: number, status?: string, archive_files?: Record<string, any>[] }[]"
           }
         ]
       }
@@ -541,7 +541,7 @@
           {
             "key": "summary_details",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "next_steps",
@@ -551,7 +551,7 @@
           {
             "key": "edited_summary",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }

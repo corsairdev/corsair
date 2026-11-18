@@ -1,18 +1,17 @@
 import type { AnthropicAdministratorEndpoints } from '../index';
-import { cacheEntity, cacheList, callAdminApi, compact } from './shared';
-import type {
-	ApiKey,
-	AnthropicAdministratorEndpointOutputs as Outputs,
-} from './types';
+import { cacheEntity, cacheList, callAdminApi } from './shared';
+import type { ApiKey } from './types/index';
+import { AnthropicAdministratorEndpointOutputSchemas as OutputSchemas } from './types/index';
 
 const BASE = '/v1/organizations/api_keys';
 
 /** GET /v1/organizations/api_keys */
 export const listApiKeys: AnthropicAdministratorEndpoints['listApiKeys'] =
 	async (ctx, input) => {
-		const response = await callAdminApi<Outputs['listApiKeys']>(
+		const response = await callAdminApi(
 			ctx,
 			'apiKeys.listApiKeys',
+			OutputSchemas.listApiKeys,
 			BASE,
 			{
 				method: 'GET',
@@ -36,9 +35,10 @@ export const getApiKey: AnthropicAdministratorEndpoints['getApiKey'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await callAdminApi<Outputs['getApiKey']>(
+	const response = await callAdminApi(
 		ctx,
 		'apiKeys.getApiKey',
+		OutputSchemas.getApiKey,
 		`${BASE}/${encodeURIComponent(input.api_key_id)}`,
 		{ method: 'GET' },
 		{ api_key_id: input.api_key_id },
@@ -51,13 +51,14 @@ export const getApiKey: AnthropicAdministratorEndpoints['getApiKey'] = async (
 /** POST /v1/organizations/api_keys/{api_key_id} */
 export const updateApiKey: AnthropicAdministratorEndpoints['updateApiKey'] =
 	async (ctx, input) => {
-		const response = await callAdminApi<Outputs['updateApiKey']>(
+		const response = await callAdminApi(
 			ctx,
 			'apiKeys.updateApiKey',
+			OutputSchemas.updateApiKey,
 			`${BASE}/${encodeURIComponent(input.api_key_id)}`,
 			{
 				method: 'POST',
-				body: compact({ name: input.name, status: input.status }),
+				body: { name: input.name, status: input.status },
 			},
 			{ api_key_id: input.api_key_id },
 		);

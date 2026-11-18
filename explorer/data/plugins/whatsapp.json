@@ -175,7 +175,7 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{ phoneNumberId?: string, messaging_product: whatsapp, recipient_type?: individual, to: string, context?: { message_id: string }, type: text, text: { preview_url?: boolean, body: string } } | { phoneNumberId?: string, messaging_product: whatsapp, recipient_type?: individual, to: string, context?: { message_id: string }, type: image, image: { id?: string, link?: string, caption?: string, filename?: string } } | { phoneNumberId?: string, messaging_product: whatsapp, recipient_type?: individual, to: string, context?: { message_id: string }, type: audio, audio: { id?: string, link?: string } } | { phoneNumberId?: string, messaging_product: whatsapp, recipient_type?: individual, to: string, context?: { message_id: string }, type: document, document: { id?: string, link?: string, caption?: string, filename?: string } } | { phoneNumberId?: string, messaging_product: whatsapp, recipient_type?: individual, to: string, context?: { message_id: string }, type: video, video: { id?: string, link?: string, caption?: string } } | { phoneNumberId?: string, messaging_product: whatsapp, recipient_type?: individual, to: string, context?: { message_id: string }, type: template, template: { name: string, language: { code: string, policy?: deterministic }, components?: {}[] } } | { phoneNumberId?: string, messaging_product: whatsapp, recipient_type?: individual, to: string, context?: { message_id: string }, type: interactive, interactive: { type: button | list | product | product_list | flow, body?: { text?: string } } } | { phoneNumberId?: string, messaging_product: whatsapp, recipient_type?: individual, to: string, context?: { message_id: string }, type: location, location: { longitude: number, latitude: number, name?: string, address?: string } } | { phoneNumberId?: string, messaging_product: whatsapp, recipient_type?: individual, to: string, context?: { message_id: string }, type: contacts, contacts: { name: { formatted_name: string, first_name?: string }, phones?: { phone?: string, type?: string, wa_id?: string }[] }[] }"
+        "type": "{ phoneNumberId?: string, messaging_product: whatsapp, recipient_type?: individual, to: string, context?: { message_id: string }, type: text, text: { preview_url?: boolean, body: string } } | { phoneNumberId?: string, messaging_product: whatsapp, recipient_type?: individual, to: string, context?: { message_id: string }, type: image, image: { id?: string, link?: string, caption?: string, filename?: string } } | { phoneNumberId?: string, messaging_product: whatsapp, recipient_type?: individual, to: string, context?: { message_id: string }, type: audio, audio: { id?: string, link?: string } } | { phoneNumberId?: string, messaging_product: whatsapp, recipient_type?: individual, to: string, context?: { message_id: string }, type: document, document: { id?: string, link?: string, caption?: string, filename?: string } } | { phoneNumberId?: string, messaging_product: whatsapp, recipient_type?: individual, to: string, context?: { message_id: string }, type: video, video: { id?: string, link?: string, caption?: string } } | { phoneNumberId?: string, messaging_product: whatsapp, recipient_type?: individual, to: string, context?: { message_id: string }, type: template, template: { name: string, language: { code: string, policy?: deterministic }, components?: Record<string, any>[] } } | { phoneNumberId?: string, messaging_product: whatsapp, recipient_type?: individual, to: string, context?: { message_id: string }, type: interactive, interactive: { type: button | list | product | product_list | flow, body?: { text?: string } } } | { phoneNumberId?: string, messaging_product: whatsapp, recipient_type?: individual, to: string, context?: { message_id: string }, type: location, location: { longitude: number, latitude: number, name?: string, address?: string } } | { phoneNumberId?: string, messaging_product: whatsapp, recipient_type?: individual, to: string, context?: { message_id: string }, type: contacts, contacts: { name: { formatted_name: string, first_name?: string }, phones?: { phone?: string, type?: string, wa_id?: string }[] }[] }"
       },
       "output": {
         "kind": "object",
@@ -229,7 +229,7 @@
           {
             "key": "components",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
@@ -311,7 +311,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -337,7 +337,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -419,7 +419,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, display_phone_number?: string, verified_name?: string, quality_rating?: string, code_verification_status?: string, platform_type?: string, throughput?: {} }[]"
+            "type": "{ id: string, display_phone_number?: string, verified_name?: string, quality_rating?: string, code_verification_status?: string, platform_type?: string, throughput?: Record<string, any> }[]"
           }
         ]
       }
@@ -456,11 +456,11 @@
           {
             "key": "messages",
             "optional": false,
-            "type": "{ id: string, from: string, timestamp: string, type: string, context?: { from?: string, id?: string, referred_product?: {} }, text?: { body: string }, image?: { caption?: string }, audio?: {}, document?: { caption?: string }, video?: { caption?: string }, sticker?: {}, location?: {}, contacts?: {}[], interactive?: { button_reply?: { title?: string }, list_reply?: { title?: string } }, button?: { text?: string }, order?: {}, referral?: {}, errors?: {}[] }[]"
+            "type": "{ id: string, from: string, timestamp: string, type: string, context?: { from?: string, id?: string, referred_product?: Record<string, any> }, text?: { body: string }, image?: { caption?: string }, audio?: Record<string, any>, document?: { caption?: string }, video?: { caption?: string }, sticker?: Record<string, any>, location?: Record<string, any>, contacts?: Record<string, any>[], interactive?: { button_reply?: { title?: string }, list_reply?: { title?: string } }, button?: { text?: string }, order?: Record<string, any>, referral?: Record<string, any>, errors?: Record<string, any>[] }[]"
           }
         ]
       },
-      "responseType": "{ businessAccountId: string, phoneNumberId: string, displayPhoneNumber: string, contacts: { wa_id: string, profile?: { name?: string } }[], messages: { id: string, from: string, timestamp: string, type: string, context?: { from?: string, id?: string, referred_product?: {} }, text?: { body: string }, image?: { caption?: string }, audio?: {}, document?: { caption?: string }, video?: { caption?: string }, sticker?: {}, location?: {}, contacts?: {}[], interactive?: { button_reply?: { title?: string }, list_reply?: { title?: string } }, button?: { text?: string }, order?: {}, referral?: {}, errors?: {}[] }[] }",
+      "responseType": "{ businessAccountId: string, phoneNumberId: string, displayPhoneNumber: string, contacts: { wa_id: string, profile?: { name?: string } }[], messages: { id: string, from: string, timestamp: string, type: string, context?: { from?: string, id?: string, referred_product?: Record<string, any> }, text?: { body: string }, image?: { caption?: string }, audio?: Record<string, any>, document?: { caption?: string }, video?: { caption?: string }, sticker?: Record<string, any>, location?: Record<string, any>, contacts?: Record<string, any>[], interactive?: { button_reply?: { title?: string }, list_reply?: { title?: string } }, button?: { text?: string }, order?: Record<string, any>, referral?: Record<string, any>, errors?: Record<string, any>[] }[] }",
       "usageExample": "whatsapp({\n    webhookHooks: {\n        messages: {\n            received: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -488,16 +488,16 @@
           {
             "key": "statuses",
             "optional": false,
-            "type": "{ id: string, status: sent | delivered | read | failed | deleted, timestamp: string, recipient_id?: string, conversation?: {}, pricing?: {}, errors?: { code?: number, title?: string, message?: string, error_data?: { details?: string } }[] }[]"
+            "type": "{ id: string, status: sent | delivered | read | failed | deleted, timestamp: string, recipient_id?: string, conversation?: Record<string, any>, pricing?: Record<string, any>, errors?: { code?: number, title?: string, message?: string, error_data?: { details?: string } }[] }[]"
           },
           {
             "key": "errors",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
-      "responseType": "{ businessAccountId: string, phoneNumberId: string, displayPhoneNumber: string, statuses: { id: string, status: sent | delivered | read | failed | deleted, timestamp: string, recipient_id?: string, conversation?: {}, pricing?: {}, errors?: { code?: number, title?: string, message?: string, error_data?: { details?: string } }[] }[], errors: {}[] }",
+      "responseType": "{ businessAccountId: string, phoneNumberId: string, displayPhoneNumber: string, statuses: { id: string, status: sent | delivered | read | failed | deleted, timestamp: string, recipient_id?: string, conversation?: Record<string, any>, pricing?: Record<string, any>, errors?: { code?: number, title?: string, message?: string, error_data?: { details?: string } }[] }[], errors: Record<string, any>[] }",
       "usageExample": "whatsapp({\n    webhookHooks: {\n        messages: {\n            statusChanged: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     }
   ],
@@ -625,6 +625,11 @@
         },
         {
           "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "direction",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

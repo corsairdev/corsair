@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: "Google Docs plugin"
+sidebarTitle: "Overview"
 description: "Online document editor for creating, sharing, and collaborating on text documents."
 ---
 
@@ -20,16 +21,20 @@ Google Docs exposes document creation and editing, text operations, structure (h
 <Step title="Install">
 <CodeGroup>
 ```bash npm
-npm install corsair @corsair-dev/googledocs
+npm install corsair @corsair-dev/googledocs better-sqlite3
+npm install --save-dev @types/better-sqlite3
 ```
 ```bash yarn
-yarn add corsair @corsair-dev/googledocs
+yarn add corsair @corsair-dev/googledocs better-sqlite3
+yarn add --dev @types/better-sqlite3
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/googledocs
+pnpm install corsair @corsair-dev/googledocs better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
 ```
 ```bash bun
-bun add corsair @corsair-dev/googledocs
+bun add corsair @corsair-dev/googledocs better-sqlite3
+bun add --dev @types/better-sqlite3
 ```
 </CodeGroup>
 
@@ -47,6 +52,7 @@ export const corsair = createCorsair({
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
 	hub: {
 		projectApiKey: process.env.CORSAIR_API_KEY!,
 		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
@@ -54,7 +60,7 @@ export const corsair = createCorsair({
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 

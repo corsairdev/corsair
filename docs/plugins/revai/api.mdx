@@ -1,0 +1,183 @@
+---
+title: "Rev AI API reference"
+sidebarTitle: "API"
+description: "API reference for the Rev AI plugin in Corsair: every `revai.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Jobs
+
+### getJob
+
+`jobs.getJob`
+
+Get an async job
+
+**Risk:** `read`
+
+```ts
+await corsair.revai.api.jobs.getJob({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `in_progress \| transcribed \| failed` | No | — |
+| `created_on` | `string \| null` | No | — |
+| `completed_on` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `type` | `async \| human_tc \| stream` | No | — |
+| `metadata` | `string \| null` | No | — |
+| `media_url` | `string \| null` | No | — |
+| `callback_url` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `transcriber` | `string \| null` | No | — |
+| `failure` | `string \| null` | No | — |
+| `failure_detail` | `string \| null` | No | — |
+| `duration_seconds` | `number \| null` | No | — |
+| `stream_duration_seconds` | `number \| null` | No | — |
+| `delete_after_seconds` | `number \| null` | No | — |
+| `skip_diarization` | `boolean \| null` | No | — |
+| `skip_postprocessing` | `boolean \| null` | No | — |
+| `skip_punctuation` | `boolean \| null` | No | — |
+| `remove_disfluencies` | `boolean \| null` | No | — |
+| `remove_atmospherics` | `boolean \| null` | No | — |
+| `filter_profanity` | `boolean \| null` | No | — |
+| `custom_vocabulary_id` | `string \| null` | No | — |
+| `speaker_channels_count` | `number \| null` | No | — |
+| `enable_multilingual` | `boolean \| null` | No | — |
+
+
+
+---
+
+### getTranscript
+
+`jobs.getTranscript`
+
+Get transcript of a job
+
+**Risk:** `read`
+
+```ts
+await corsair.revai.api.jobs.getTranscript({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `accept` | `application/vnd.rev.transcript.v1.0+json \| text/plain` | No | — |
+
+
+
+**Output:** `object \| string`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  monologues: {
+    speaker?: number,
+    elements: {
+      type: string,
+      value: string,
+      ts?: number | null,
+      end_ts?: number | null,
+      confidence?: number | null
+    }[]
+  }[]
+} | string
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### submitJob
+
+`jobs.submitJob`
+
+Submit an async job
+
+**Risk:** `write`
+
+```ts
+await corsair.revai.api.jobs.submitJob({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `media_url` | `string` | Yes | — |
+| `metadata` | `string` | No | — |
+| `language` | `string` | No | — |
+| `notification_config` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="notification_config full type">
+
+```ts
+{
+  url: string,
+  auth_headers?: {
+    Authorization: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `in_progress \| transcribed \| failed` | No | — |
+| `created_on` | `string \| null` | No | — |
+| `completed_on` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `type` | `async \| human_tc \| stream` | No | — |
+| `metadata` | `string \| null` | No | — |
+| `media_url` | `string \| null` | No | — |
+| `callback_url` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `transcriber` | `string \| null` | No | — |
+| `failure` | `string \| null` | No | — |
+| `failure_detail` | `string \| null` | No | — |
+| `duration_seconds` | `number \| null` | No | — |
+| `stream_duration_seconds` | `number \| null` | No | — |
+| `delete_after_seconds` | `number \| null` | No | — |
+| `skip_diarization` | `boolean \| null` | No | — |
+| `skip_postprocessing` | `boolean \| null` | No | — |
+| `skip_punctuation` | `boolean \| null` | No | — |
+| `remove_disfluencies` | `boolean \| null` | No | — |
+| `remove_atmospherics` | `boolean \| null` | No | — |
+| `filter_profanity` | `boolean \| null` | No | — |
+| `custom_vocabulary_id` | `string \| null` | No | — |
+| `speaker_channels_count` | `number \| null` | No | — |
+| `enable_multilingual` | `boolean \| null` | No | — |
+
+
+
+---
+

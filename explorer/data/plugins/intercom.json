@@ -215,7 +215,7 @@
           {
             "key": "activity_logs",
             "optional": false,
-            "type": "{ id: string, performed_by?: { type?: string, id?: string, email?: string }, metadata?: {}, created_at?: number, activity_type?: string, activity_description?: string }[]"
+            "type": "{ id: string, performed_by?: { type?: string, id?: string, email?: string }, metadata?: Record<string, any>, created_at?: number, activity_type?: string, activity_description?: string }[]"
           }
         ]
       }
@@ -362,12 +362,12 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "author_id",
@@ -392,7 +392,7 @@
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -469,12 +469,12 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "author_id",
@@ -499,7 +499,7 @@
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -677,12 +677,12 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "author_id",
@@ -707,7 +707,7 @@
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -738,7 +738,7 @@
           {
             "key": "parent_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       },
@@ -763,7 +763,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
@@ -778,12 +778,12 @@
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "icon",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "order",
@@ -793,7 +793,7 @@
           {
             "key": "help_center_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -870,7 +870,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
@@ -885,12 +885,12 @@
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "icon",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "order",
@@ -900,7 +900,7 @@
           {
             "key": "help_center_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -1007,7 +1007,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
@@ -1022,12 +1022,12 @@
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "icon",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "order",
@@ -1037,7 +1037,7 @@
           {
             "key": "help_center_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -1093,7 +1093,7 @@
           {
             "key": "custom_attributes",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1148,17 +1148,17 @@
           {
             "key": "size",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "website",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "industry",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1265,17 +1265,17 @@
           {
             "key": "size",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "website",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "industry",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1494,17 +1494,17 @@
           {
             "key": "size",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "website",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "industry",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1718,17 +1718,17 @@
           {
             "key": "size",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "website",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "industry",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1901,17 +1901,17 @@
           {
             "key": "size",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "website",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "industry",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1947,12 +1947,12 @@
           {
             "key": "external_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "user_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
@@ -1962,12 +1962,12 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "role",
@@ -1987,7 +1987,7 @@
           {
             "key": "last_seen_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "unsubscribed_from_emails",
@@ -2279,12 +2279,12 @@
           {
             "key": "external_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "user_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
@@ -2294,12 +2294,12 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "role",
@@ -2319,7 +2319,7 @@
           {
             "key": "last_seen_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "unsubscribed_from_emails",
@@ -2467,7 +2467,7 @@
           {
             "key": "custom_attributes",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2487,12 +2487,12 @@
           {
             "key": "external_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "user_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
@@ -2502,12 +2502,12 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "role",
@@ -2527,7 +2527,7 @@
           {
             "key": "last_seen_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "unsubscribed_from_emails",
@@ -2603,12 +2603,12 @@
           {
             "key": "waiting_since",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "snoozed_until",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "state",
@@ -2699,12 +2699,12 @@
           {
             "key": "waiting_since",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "snoozed_until",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "state",
@@ -2785,12 +2785,12 @@
           {
             "key": "waiting_since",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "snoozed_until",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "state",
@@ -2871,12 +2871,12 @@
           {
             "key": "waiting_since",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "snoozed_until",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "state",
@@ -3028,12 +3028,12 @@
           {
             "key": "waiting_since",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "snoozed_until",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "state",
@@ -3139,12 +3139,12 @@
           {
             "key": "waiting_since",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "snoozed_until",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "state",
@@ -3327,8 +3327,8 @@
           },
           {
             "key": "id",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "app_id",
@@ -3348,7 +3348,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ type?: string, item: {} }"
+            "type": "{ type?: string, item: Record<string, any> }"
           }
         ]
       },
@@ -3374,8 +3374,8 @@
           },
           {
             "key": "id",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "app_id",
@@ -3395,7 +3395,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ type?: string, item: {} }"
+            "type": "{ type?: string, item: Record<string, any> }"
           }
         ]
       },
@@ -3421,8 +3421,8 @@
           },
           {
             "key": "id",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "app_id",
@@ -3442,7 +3442,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ type?: string, item: {} }"
+            "type": "{ type?: string, item: Record<string, any> }"
           }
         ]
       },
@@ -3468,8 +3468,8 @@
           },
           {
             "key": "id",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "app_id",
@@ -3489,7 +3489,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ type?: string, item: {} }"
+            "type": "{ type?: string, item: Record<string, any> }"
           }
         ]
       },
@@ -3515,8 +3515,8 @@
           },
           {
             "key": "id",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "app_id",
@@ -3536,7 +3536,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ type?: string, item: {} }"
+            "type": "{ type?: string, item: Record<string, any> }"
           }
         ]
       },
@@ -3562,8 +3562,8 @@
           },
           {
             "key": "id",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "app_id",
@@ -3583,7 +3583,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ type?: string, item: {} }"
+            "type": "{ type?: string, item: Record<string, any> }"
           }
         ]
       },
@@ -3609,8 +3609,8 @@
           },
           {
             "key": "id",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "app_id",
@@ -3630,7 +3630,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ type?: string, item: {} }"
+            "type": "{ type?: string, item: Record<string, any> }"
           }
         ]
       },

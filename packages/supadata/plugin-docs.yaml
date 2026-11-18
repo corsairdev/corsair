@@ -1,0 +1,18 @@
+displayName: Supadata
+description: Video data API for transcripts and metadata, YouTube videos, channels, playlists and search, and web page scraping and site mapping.
+domain: supadata.ai
+examples:
+  read:
+    path: account.me
+    title: Get account usage
+  write:
+    path: transcript.get
+    title: Get a video transcript
+    args:
+      url: https://www.youtube.com/watch?v=dQw4w9WgXcQ
+dbExample:
+  entity: transcripts
+  note: >-
+    This table exists, but Supadata calls don't fill it yet. This returns only
+    rows you have written yourself.
+  limit: 50

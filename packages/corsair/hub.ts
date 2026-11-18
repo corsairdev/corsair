@@ -100,6 +100,7 @@ export {
 	resolveHubConfigInput,
 	resolveHubDeliveryUrl,
 	resolveHubOAuthCallbackUrl,
+	resolveManagedPricingApiKey,
 	respondToHubDelivery,
 	respondToHubDeliveryFromRequest,
 	type ServerDeliveryAckBody,

@@ -1,7 +1,7 @@
 {
   "id": "currentsapi",
-  "displayName": "CurrentsApi",
-  "description": "CurrentsApi plugin for Corsair",
+  "displayName": "Currents API",
+  "description": "News API that returns latest news, searches articles, and lists the available categories, languages, and regions.",
   "npmPackageName": "@corsair-dev/currentsapi",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -63,7 +63,7 @@
           {
             "key": "languages",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "description",
@@ -88,8 +88,9 @@
         "fields": [
           {
             "key": "language",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"en\"."
           },
           {
             "key": "category",
@@ -189,7 +190,7 @@
           {
             "key": "regions",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "description",
@@ -224,8 +225,9 @@
           },
           {
             "key": "language",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"en\"."
           },
           {
             "key": "category",

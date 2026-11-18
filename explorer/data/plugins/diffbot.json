@@ -192,7 +192,7 @@
           {
             "key": "jobs",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -391,7 +391,7 @@
           {
             "key": "jobs",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "response",
@@ -519,7 +519,7 @@
           {
             "key": "rules",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Extraction rules and CSS selector definitions"
           }
         ]
@@ -608,12 +608,12 @@
           {
             "key": "customApis",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "apis",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -679,12 +679,12 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -774,17 +774,17 @@
           {
             "key": "request_ctx",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -827,7 +827,7 @@
           {
             "key": "coverage",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -894,7 +894,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -938,7 +938,7 @@
           {
             "key": "objects",
             "optional": false,
-            "type": "{ type?: job, title?: string, description?: string, company?: {}, locations?: string[], employmentType?: string, compensation?: {}, requirements?: string[], skills?: string[], postedDate?: string, pageUrl?: string, humanLanguage?: string, diffbotUri?: string }[]"
+            "type": "{ type?: job, title?: string, description?: string, company?: Record<string, any>, locations?: string[], employmentType?: string, compensation?: Record<string, any>, requirements?: string[], skills?: string[], postedDate?: string, pageUrl?: string, humanLanguage?: string, diffbotUri?: string }[]"
           }
         ]
       }
@@ -982,7 +982,7 @@
           {
             "key": "objects",
             "optional": false,
-            "type": "{ type?: list, title?: string, numItems?: number, items?: {}[], pageUrl?: string, humanLanguage?: string }[]"
+            "type": "{ type?: list, title?: string, numItems?: number, items?: Record<string, any>[], pageUrl?: string, humanLanguage?: string }[]"
           }
         ]
       }
@@ -1054,7 +1054,7 @@
           {
             "key": "objects",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1116,7 +1116,7 @@
           {
             "key": "objects",
             "optional": false,
-            "type": "{ type?: article, title?: string, text?: string, html?: string, date?: string, estimatedDate?: string, author?: string, authorUrl?: string, siteName?: string, pageUrl?: string, resolvedPageUrl?: string, humanLanguage?: string, numPages?: number, nextPage?: string, nextPages?: string[], images?: { url?: string, title?: string, width?: number, height?: number, naturalWidth?: number, naturalHeight?: number, primary?: boolean, xpath?: string, attrTitle?: string, attrAlt?: string, caption?: string }[], videos?: {}[], tags?: { id?: number, label: string, uri?: string, types?: string[], score?: number, count?: number, prevalence?: number, rdfTypes?: string[] }[], links?: string[], breadcrumb?: { link?: string, name?: string }[], publisherRegion?: string, publisherCountry?: string, sentiment?: number, diffbotUri?: string }[]"
+            "type": "{ type?: article, title?: string, text?: string, html?: string, date?: string, estimatedDate?: string, author?: string, authorUrl?: string, siteName?: string, pageUrl?: string, resolvedPageUrl?: string, humanLanguage?: string, numPages?: number, nextPage?: string, nextPages?: string[], images?: { url?: string, title?: string, width?: number, height?: number, naturalWidth?: number, naturalHeight?: number, primary?: boolean, xpath?: string, attrTitle?: string, attrAlt?: string, caption?: string }[], videos?: Record<string, any>[], tags?: { id?: number, label: string, uri?: string, types?: string[], score?: number, count?: number, prevalence?: number, rdfTypes?: string[] }[], links?: string[], breadcrumb?: { link?: string, name?: string }[], publisherRegion?: string, publisherCountry?: string, sentiment?: number, diffbotUri?: string }[]"
           }
         ]
       }
@@ -1166,7 +1166,7 @@
           {
             "key": "objects",
             "optional": false,
-            "type": "{ type?: discussion, title?: string, text?: string, numPosts?: number, numParticipants?: number, participants?: string[], rssUrl?: string, posts?: {}[], pageUrl?: string, humanLanguage?: string, diffbotUri?: string }[]"
+            "type": "{ type?: discussion, title?: string, text?: string, numPosts?: number, numParticipants?: number, participants?: string[], rssUrl?: string, posts?: Record<string, any>[], pageUrl?: string, humanLanguage?: string, diffbotUri?: string }[]"
           }
         ]
       }
@@ -1210,7 +1210,7 @@
           {
             "key": "objects",
             "optional": false,
-            "type": "{ type?: event, title?: string, description?: string, startDate?: string, endDate?: string, location?: string, venue?: {}, organizer?: string, ticketUrl?: string, pageUrl?: string, humanLanguage?: string, diffbotUri?: string }[]"
+            "type": "{ type?: event, title?: string, description?: string, startDate?: string, endDate?: string, location?: string, venue?: Record<string, any>, organizer?: string, ticketUrl?: string, pageUrl?: string, humanLanguage?: string, diffbotUri?: string }[]"
           }
         ]
       }
@@ -1304,7 +1304,7 @@
           {
             "key": "objects",
             "optional": false,
-            "type": "{ type?: product, title?: string, text?: string, brand?: string, offerPrice?: string, offerPriceDetails?: { amount?: number, symbol?: string, text?: string }, regularPrice?: string, saveAmount?: string, shippingAmount?: string, availability?: boolean, sku?: string, mpn?: string, upc?: string, isbn?: string, images?: { url?: string, title?: string, width?: number, height?: number, naturalWidth?: number, naturalHeight?: number, primary?: boolean, xpath?: string, attrTitle?: string, attrAlt?: string, caption?: string }[], offers?: {}[], colors?: string[], pageUrl?: string, humanLanguage?: string, tags?: { id?: number, label: string, uri?: string, types?: string[], score?: number, count?: number, prevalence?: number, rdfTypes?: string[] }[], diffbotUri?: string }[]"
+            "type": "{ type?: product, title?: string, text?: string, brand?: string, offerPrice?: string, offerPriceDetails?: { amount?: number, symbol?: string, text?: string }, regularPrice?: string, saveAmount?: string, shippingAmount?: string, availability?: boolean, sku?: string, mpn?: string, upc?: string, isbn?: string, images?: { url?: string, title?: string, width?: number, height?: number, naturalWidth?: number, naturalHeight?: number, primary?: boolean, xpath?: string, attrTitle?: string, attrAlt?: string, caption?: string }[], offers?: Record<string, any>[], colors?: string[], pageUrl?: string, humanLanguage?: string, tags?: { id?: number, label: string, uri?: string, types?: string[], score?: number, count?: number, prevalence?: number, rdfTypes?: string[] }[], diffbotUri?: string }[]"
           }
         ]
       }
@@ -1505,7 +1505,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "raw",
@@ -1547,7 +1547,7 @@
           {
             "key": "jobStatus",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "total",
@@ -1616,7 +1616,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "raw",
@@ -1664,12 +1664,12 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "entity",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1689,12 +1689,12 @@
           {
             "key": "jobs",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "bulkjobs",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1813,12 +1813,12 @@
           {
             "key": "facet",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "cursor",
@@ -1873,7 +1873,7 @@
           {
             "key": "results",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "numResults",
@@ -1963,6 +1963,11 @@
         },
         {
           "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
@@ -2079,6 +2084,11 @@
         },
         {
           "field": "bulkjobId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "kind",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
@@ -2291,6 +2301,11 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "pageUrl",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
@@ -2348,6 +2363,11 @@
         },
         {
           "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
@@ -2424,6 +2444,11 @@
         },
         {
           "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
@@ -2524,6 +2549,11 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "pageUrl",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
@@ -2585,6 +2615,11 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "pageUrl",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
@@ -2632,6 +2667,11 @@
         },
         {
           "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
@@ -2802,6 +2842,11 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "diffbotUri",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
@@ -2913,6 +2958,11 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "pageUrl",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
@@ -3010,6 +3060,11 @@
         },
         {
           "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

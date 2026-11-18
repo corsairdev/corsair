@@ -35,7 +35,7 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "include_errors",
@@ -76,7 +76,7 @@
           {
             "key": "filter",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "records_limit",
@@ -137,7 +137,7 @@
           {
             "key": "zone_types",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, { country_codes: string[] }>"
           }
         ]
       }
@@ -180,7 +180,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[] | string"
+        "type": "Record<string, any>[] | string"
       }
     },
     {
@@ -295,7 +295,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "string | { general?: {}, input?: {}, organic?: {}[] }"
+        "type": "string | { general?: Record<string, any>, input?: Record<string, any>, organic?: Record<string, any>[] }"
       }
     },
     {
@@ -335,7 +335,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "string | { status_code?: number, headers?: {}, body?: any }"
+        "type": "string | { status_code?: number, headers?: Record<string, any>, body?: any }"
       }
     }
   ],
@@ -416,6 +416,11 @@
         },
         {
           "field": "dataset_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         }

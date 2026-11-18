@@ -65,8 +65,8 @@
           },
           {
             "key": "next_cursor",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "has_more",
@@ -81,7 +81,7 @@
           {
             "key": "page_or_database",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "request_id",
@@ -131,8 +131,8 @@
           },
           {
             "key": "next_cursor",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "has_more",
@@ -147,7 +147,7 @@
           {
             "key": "page_or_database",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "request_id",
@@ -173,7 +173,7 @@
           {
             "key": "properties",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -213,12 +213,12 @@
           {
             "key": "cover",
             "optional": true,
-            "type": "{ type: string, external?: { url: string }, file?: { url: string } }"
+            "type": "{ type: string, external?: { url: string }, file?: { url: string } } | null"
           },
           {
             "key": "icon",
             "optional": true,
-            "type": "{ type: string, external?: { url: string }, emoji?: string }"
+            "type": "{ type: string, external?: { url: string }, emoji?: string } | null"
           },
           {
             "key": "parent",
@@ -243,7 +243,7 @@
           {
             "key": "properties",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "url",
@@ -253,7 +253,7 @@
           {
             "key": "public_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -309,12 +309,12 @@
           {
             "key": "cover",
             "optional": true,
-            "type": "{ type: string, external?: { url: string }, file?: { url: string } }"
+            "type": "{ type: string, external?: { url: string }, file?: { url: string } } | null"
           },
           {
             "key": "icon",
             "optional": true,
-            "type": "{ type: string, external?: { url: string }, emoji?: string }"
+            "type": "{ type: string, external?: { url: string }, emoji?: string } | null"
           },
           {
             "key": "parent",
@@ -339,7 +339,7 @@
           {
             "key": "properties",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "url",
@@ -349,7 +349,7 @@
           {
             "key": "public_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -400,12 +400,12 @@
           {
             "key": "results",
             "optional": false,
-            "type": "{ object: page, id: string, created_time: string, created_by?: { object: user, id: string }, last_edited_time: string, last_edited_by?: { object: user, id: string }, cover?: { type: string, external?: { url: string }, file?: { url: string } } | null, icon?: { type: string, external?: { url: string }, emoji?: string } | null, parent: { type: workspace, workspace: boolean } | { type: page_id, page_id: string } | { type: database_id, database_id: string } | { type: block_id, block_id: string }, archived: boolean, in_trash?: boolean, is_locked?: boolean, properties: {}, url: string, public_url?: string | null }[]"
+            "type": "{ object: page, id: string, created_time: string, created_by?: { object: user, id: string }, last_edited_time: string, last_edited_by?: { object: user, id: string }, cover?: { type: string, external?: { url: string }, file?: { url: string } } | null, icon?: { type: string, external?: { url: string }, emoji?: string } | null, parent: { type: workspace, workspace: boolean } | { type: page_id, page_id: string } | { type: database_id, database_id: string } | { type: block_id, block_id: string }, archived: boolean, in_trash?: boolean, is_locked?: boolean, properties: Record<string, any>, url: string, public_url?: string | null }[]"
           },
           {
             "key": "next_cursor",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "has_more",
@@ -420,7 +420,7 @@
           {
             "key": "page_or_database",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "request_id",
@@ -446,7 +446,7 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "archived",
@@ -491,12 +491,12 @@
           {
             "key": "cover",
             "optional": true,
-            "type": "{ type: string, external?: { url: string }, file?: { url: string } }"
+            "type": "{ type: string, external?: { url: string }, file?: { url: string } } | null"
           },
           {
             "key": "icon",
             "optional": true,
-            "type": "{ type: string, external?: { url: string }, emoji?: string }"
+            "type": "{ type: string, external?: { url: string }, emoji?: string } | null"
           },
           {
             "key": "parent",
@@ -521,7 +521,7 @@
           {
             "key": "properties",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "url",
@@ -531,7 +531,7 @@
           {
             "key": "public_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -567,12 +567,12 @@
           {
             "key": "cover",
             "optional": true,
-            "type": "{ type: string, external?: { url: string } }"
+            "type": "{ type: string, external?: { url: string } } | null"
           },
           {
             "key": "icon",
             "optional": true,
-            "type": "{ type: string, external?: { url: string }, emoji?: string }"
+            "type": "{ type: string, external?: { url: string }, emoji?: string } | null"
           },
           {
             "key": "created_time",
@@ -612,7 +612,7 @@
           {
             "key": "properties",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "parent",
@@ -627,7 +627,7 @@
           {
             "key": "public_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "archived",
@@ -673,12 +673,12 @@
           {
             "key": "results",
             "optional": false,
-            "type": "{ object: database, id: string, cover?: { type: string, external?: { url: string } } | null, icon?: { type: string, external?: { url: string }, emoji?: string } | null, created_time: string, created_by?: { object: user, id: string }, last_edited_time: string, last_edited_by?: { object: user, id: string }, title: { type: string, text?: { content: string, link?: { url: string } | null }, annotations?: { bold?: boolean, italic?: boolean, strikethrough?: boolean, underline?: boolean, code?: boolean, color?: string }, plain_text?: string, href?: string | null }[], description: { type: string, text?: { content: string, link?: { url: string } | null }, annotations?: { bold?: boolean, italic?: boolean, strikethrough?: boolean, underline?: boolean, code?: boolean, color?: string }, plain_text?: string, href?: string | null }[], is_inline: boolean, properties: {}, parent: { type: workspace, workspace: boolean } | { type: page_id, page_id: string } | { type: database_id, database_id: string } | { type: block_id, block_id: string }, url: string, public_url?: string | null, archived: boolean, in_trash?: boolean }[]"
+            "type": "{ object: database, id: string, cover?: { type: string, external?: { url: string } } | null, icon?: { type: string, external?: { url: string }, emoji?: string } | null, created_time: string, created_by?: { object: user, id: string }, last_edited_time: string, last_edited_by?: { object: user, id: string }, title: { type: string, text?: { content: string, link?: { url: string } | null }, annotations?: { bold?: boolean, italic?: boolean, strikethrough?: boolean, underline?: boolean, code?: boolean, color?: string }, plain_text?: string, href?: string | null }[], description: { type: string, text?: { content: string, link?: { url: string } | null }, annotations?: { bold?: boolean, italic?: boolean, strikethrough?: boolean, underline?: boolean, code?: boolean, color?: string }, plain_text?: string, href?: string | null }[], is_inline: boolean, properties: Record<string, any>, parent: { type: workspace, workspace: boolean } | { type: page_id, page_id: string } | { type: database_id, database_id: string } | { type: block_id, block_id: string }, url: string, public_url?: string | null, archived: boolean, in_trash?: boolean }[]"
           },
           {
             "key": "next_cursor",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "has_more",
@@ -693,7 +693,7 @@
           {
             "key": "page_or_database",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "request_id",
@@ -749,12 +749,12 @@
           {
             "key": "results",
             "optional": false,
-            "type": "{ object: database, id: string, cover?: { type: string, external?: { url: string } } | null, icon?: { type: string, external?: { url: string }, emoji?: string } | null, created_time: string, created_by?: { object: user, id: string }, last_edited_time: string, last_edited_by?: { object: user, id: string }, title: { type: string, text?: { content: string, link?: { url: string } | null }, annotations?: { bold?: boolean, italic?: boolean, strikethrough?: boolean, underline?: boolean, code?: boolean, color?: string }, plain_text?: string, href?: string | null }[], description: { type: string, text?: { content: string, link?: { url: string } | null }, annotations?: { bold?: boolean, italic?: boolean, strikethrough?: boolean, underline?: boolean, code?: boolean, color?: string }, plain_text?: string, href?: string | null }[], is_inline: boolean, properties: {}, parent: { type: workspace, workspace: boolean } | { type: page_id, page_id: string } | { type: database_id, database_id: string } | { type: block_id, block_id: string }, url: string, public_url?: string | null, archived: boolean, in_trash?: boolean }[]"
+            "type": "{ object: database, id: string, cover?: { type: string, external?: { url: string } } | null, icon?: { type: string, external?: { url: string }, emoji?: string } | null, created_time: string, created_by?: { object: user, id: string }, last_edited_time: string, last_edited_by?: { object: user, id: string }, title: { type: string, text?: { content: string, link?: { url: string } | null }, annotations?: { bold?: boolean, italic?: boolean, strikethrough?: boolean, underline?: boolean, code?: boolean, color?: string }, plain_text?: string, href?: string | null }[], description: { type: string, text?: { content: string, link?: { url: string } | null }, annotations?: { bold?: boolean, italic?: boolean, strikethrough?: boolean, underline?: boolean, code?: boolean, color?: string }, plain_text?: string, href?: string | null }[], is_inline: boolean, properties: Record<string, any>, parent: { type: workspace, workspace: boolean } | { type: page_id, page_id: string } | { type: database_id, database_id: string } | { type: block_id, block_id: string }, url: string, public_url?: string | null, archived: boolean, in_trash?: boolean }[]"
           },
           {
             "key": "next_cursor",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "has_more",
@@ -769,7 +769,7 @@
           {
             "key": "page_or_database",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "request_id",
@@ -830,12 +830,12 @@
           {
             "key": "cover",
             "optional": true,
-            "type": "{ type: string, external?: { url: string }, file?: { url: string } }"
+            "type": "{ type: string, external?: { url: string }, file?: { url: string } } | null"
           },
           {
             "key": "icon",
             "optional": true,
-            "type": "{ type: string, external?: { url: string }, emoji?: string }"
+            "type": "{ type: string, external?: { url: string }, emoji?: string } | null"
           },
           {
             "key": "parent",
@@ -860,7 +860,7 @@
           {
             "key": "properties",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "url",
@@ -870,7 +870,7 @@
           {
             "key": "public_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -891,7 +891,7 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "children",
@@ -936,12 +936,12 @@
           {
             "key": "cover",
             "optional": true,
-            "type": "{ type: string, external?: { url: string }, file?: { url: string } }"
+            "type": "{ type: string, external?: { url: string }, file?: { url: string } } | null"
           },
           {
             "key": "icon",
             "optional": true,
-            "type": "{ type: string, external?: { url: string }, emoji?: string }"
+            "type": "{ type: string, external?: { url: string }, emoji?: string } | null"
           },
           {
             "key": "parent",
@@ -966,7 +966,7 @@
           {
             "key": "properties",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "url",
@@ -976,7 +976,7 @@
           {
             "key": "public_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1027,12 +1027,12 @@
           {
             "key": "results",
             "optional": false,
-            "type": "({ object: page, id: string, created_time: string, created_by?: { object: user, id: string }, last_edited_time: string, last_edited_by?: { object: user, id: string }, cover?: { type: string, external?: { url: string }, file?: { url: string } } | null, icon?: { type: string, external?: { url: string }, emoji?: string } | null, parent: { type: workspace, workspace: boolean } | { type: page_id, page_id: string } | { type: database_id, database_id: string } | { type: block_id, block_id: string }, archived: boolean, in_trash?: boolean, is_locked?: boolean, properties: {}, url: string, public_url?: string | null } | { object: database, id: string, cover?: { type: string, external?: { url: string } } | null, icon?: { type: string, external?: { url: string }, emoji?: string } | null, created_time: string, created_by?: { object: user, id: string }, last_edited_time: string, last_edited_by?: { object: user, id: string }, title: { type: string, text?: { content: string, link?: { url: string } | null }, annotations?: { bold?: boolean, italic?: boolean, strikethrough?: boolean, underline?: boolean, code?: boolean, color?: string }, plain_text?: string, href?: string | null }[], description: { type: string, text?: { content: string, link?: { url: string } | null }, annotations?: { bold?: boolean, italic?: boolean, strikethrough?: boolean, underline?: boolean, code?: boolean, color?: string }, plain_text?: string, href?: string | null }[], is_inline: boolean, properties: {}, parent: { type: workspace, workspace: boolean } | { type: page_id, page_id: string } | { type: database_id, database_id: string } | { type: block_id, block_id: string }, url: string, public_url?: string | null, archived: boolean, in_trash?: boolean })[]"
+            "type": "({ object: page, id: string, created_time: string, created_by?: { object: user, id: string }, last_edited_time: string, last_edited_by?: { object: user, id: string }, cover?: { type: string, external?: { url: string }, file?: { url: string } } | null, icon?: { type: string, external?: { url: string }, emoji?: string } | null, parent: { type: workspace, workspace: boolean } | { type: page_id, page_id: string } | { type: database_id, database_id: string } | { type: block_id, block_id: string }, archived: boolean, in_trash?: boolean, is_locked?: boolean, properties: Record<string, any>, url: string, public_url?: string | null } | { object: database, id: string, cover?: { type: string, external?: { url: string } } | null, icon?: { type: string, external?: { url: string }, emoji?: string } | null, created_time: string, created_by?: { object: user, id: string }, last_edited_time: string, last_edited_by?: { object: user, id: string }, title: { type: string, text?: { content: string, link?: { url: string } | null }, annotations?: { bold?: boolean, italic?: boolean, strikethrough?: boolean, underline?: boolean, code?: boolean, color?: string }, plain_text?: string, href?: string | null }[], description: { type: string, text?: { content: string, link?: { url: string } | null }, annotations?: { bold?: boolean, italic?: boolean, strikethrough?: boolean, underline?: boolean, code?: boolean, color?: string }, plain_text?: string, href?: string | null }[], is_inline: boolean, properties: Record<string, any>, parent: { type: workspace, workspace: boolean } | { type: page_id, page_id: string } | { type: database_id, database_id: string } | { type: block_id, block_id: string }, url: string, public_url?: string | null, archived: boolean, in_trash?: boolean })[]"
           },
           {
             "key": "next_cursor",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "has_more",
@@ -1047,7 +1047,7 @@
           {
             "key": "page_or_database",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "request_id",
@@ -1092,8 +1092,8 @@
           },
           {
             "key": "next_cursor",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "has_more",
@@ -1108,7 +1108,7 @@
           {
             "key": "page_or_database",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "request_id",
@@ -1154,12 +1154,12 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "avatar_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1523,6 +1523,11 @@
         },
         {
           "field": "object",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

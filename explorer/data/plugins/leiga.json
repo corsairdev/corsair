@@ -1,0 +1,1012 @@
+{
+  "id": "leiga",
+  "displayName": "Leiga",
+  "description": "Project and issue tracking with Leiga - list projects and issues, read issue detail by id or number, and pull sprints, workflow steps, tags and project members.",
+  "npmPackageName": "@corsair-dev/leiga",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 15,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": [
+        "api_key",
+        "webhook_signature",
+        "client_id",
+        "access_token"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "leiga.api.issues.fields",
+      "shortPath": "issues.fields",
+      "description": "List the fields one issue type exposes, including custom ones",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number",
+            "description": "Leiga numeric id"
+          },
+          {
+            "key": "issueTypeId",
+            "optional": false,
+            "type": "number",
+            "description": "Leiga numeric id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "{ fieldName: string, fieldCode: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "leiga.api.issues.get",
+      "shortPath": "issues.get",
+      "description": "Get one issue by id, with its fields and tags",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issueId",
+            "optional": false,
+            "type": "number",
+            "description": "Issue id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Leiga numeric id"
+          },
+          {
+            "key": "issueNumber",
+            "optional": true,
+            "type": "string | null",
+            "description": "Human-readable, e.g. SAMPL-23"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "number | null",
+            "description": "Leiga numeric id"
+          },
+          {
+            "key": "issueTypeId",
+            "optional": true,
+            "type": "number | null",
+            "description": "Leiga numeric id"
+          },
+          {
+            "key": "issueTypeName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "statusId",
+            "optional": true,
+            "type": "number | null",
+            "description": "Leiga numeric id"
+          },
+          {
+            "key": "statusName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "statusType",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "priorityId",
+            "optional": true,
+            "type": "number | null",
+            "description": "Leiga numeric id"
+          },
+          {
+            "key": "priorityName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "assigneeId",
+            "optional": true,
+            "type": "number | null",
+            "description": "Leiga numeric id"
+          },
+          {
+            "key": "assigneeName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "assigneeVO",
+            "optional": true,
+            "type": "{ userId?: number | null, userName?: string | null, profilePicture?: string | null, accountEnabled?: number | null } | null"
+          },
+          {
+            "key": "createBy",
+            "optional": true,
+            "type": "number | null",
+            "description": "Leiga numeric id"
+          },
+          {
+            "key": "createByVO",
+            "optional": true,
+            "type": "{ userId?: number | null, userName?: string | null, profilePicture?: string | null, accountEnabled?: number | null } | null"
+          },
+          {
+            "key": "createTime",
+            "optional": true,
+            "type": "number | null",
+            "description": "Unix epoch milliseconds"
+          },
+          {
+            "key": "updateBy",
+            "optional": true,
+            "type": "number | null",
+            "description": "Leiga numeric id"
+          },
+          {
+            "key": "updateByVO",
+            "optional": true,
+            "type": "{ userId?: number | null, userName?: string | null, profilePicture?: string | null, accountEnabled?: number | null } | null"
+          },
+          {
+            "key": "updateTime",
+            "optional": true,
+            "type": "number | null",
+            "description": "Unix epoch milliseconds"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "number | null",
+            "description": "Unix epoch milliseconds"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "number | null",
+            "description": "Unix epoch milliseconds"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "HTML"
+          },
+          {
+            "key": "sprint",
+            "optional": true,
+            "type": "string | number | null",
+            "description": "Sprint id, absent when the issue is not in one"
+          },
+          {
+            "key": "estimateLabour",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalRemainingLabour",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "isArchived",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "issueNumberOrAlias",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ id?: number | null, tagName?: string | null }[] | null"
+          },
+          {
+            "key": "customFieldData",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Custom field values keyed by field code, e.g. customfield_213979997"
+          }
+        ]
+      }
+    },
+    {
+      "path": "leiga.api.issues.getByNumber",
+      "shortPath": "issues.getByNumber",
+      "description": "Get one issue by its human-readable number, such as LGC-12",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issueNumber",
+            "optional": false,
+            "type": "string",
+            "description": "Issue number, e.g. LGC-12"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Leiga numeric id"
+          },
+          {
+            "key": "issueNumber",
+            "optional": true,
+            "type": "string | null",
+            "description": "Human-readable, e.g. SAMPL-23"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "number | null",
+            "description": "Leiga numeric id"
+          },
+          {
+            "key": "issueTypeId",
+            "optional": true,
+            "type": "number | null",
+            "description": "Leiga numeric id"
+          },
+          {
+            "key": "issueTypeName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "statusId",
+            "optional": true,
+            "type": "number | null",
+            "description": "Leiga numeric id"
+          },
+          {
+            "key": "statusName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "statusType",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "priorityId",
+            "optional": true,
+            "type": "number | null",
+            "description": "Leiga numeric id"
+          },
+          {
+            "key": "priorityName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "assigneeId",
+            "optional": true,
+            "type": "number | null",
+            "description": "Leiga numeric id"
+          },
+          {
+            "key": "assigneeName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "assigneeVO",
+            "optional": true,
+            "type": "{ userId?: number | null, userName?: string | null, profilePicture?: string | null, accountEnabled?: number | null } | null"
+          },
+          {
+            "key": "createBy",
+            "optional": true,
+            "type": "number | null",
+            "description": "Leiga numeric id"
+          },
+          {
+            "key": "createByVO",
+            "optional": true,
+            "type": "{ userId?: number | null, userName?: string | null, profilePicture?: string | null, accountEnabled?: number | null } | null"
+          },
+          {
+            "key": "createTime",
+            "optional": true,
+            "type": "number | null",
+            "description": "Unix epoch milliseconds"
+          },
+          {
+            "key": "updateBy",
+            "optional": true,
+            "type": "number | null",
+            "description": "Leiga numeric id"
+          },
+          {
+            "key": "updateByVO",
+            "optional": true,
+            "type": "{ userId?: number | null, userName?: string | null, profilePicture?: string | null, accountEnabled?: number | null } | null"
+          },
+          {
+            "key": "updateTime",
+            "optional": true,
+            "type": "number | null",
+            "description": "Unix epoch milliseconds"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "number | null",
+            "description": "Unix epoch milliseconds"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "number | null",
+            "description": "Unix epoch milliseconds"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "HTML"
+          },
+          {
+            "key": "sprint",
+            "optional": true,
+            "type": "string | number | null",
+            "description": "Sprint id, absent when the issue is not in one"
+          },
+          {
+            "key": "estimateLabour",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalRemainingLabour",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "isArchived",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "issueNumberOrAlias",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ id?: number | null, tagName?: string | null }[] | null"
+          },
+          {
+            "key": "customFieldData",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Custom field values keyed by field code, e.g. customfield_213979997"
+          }
+        ]
+      }
+    },
+    {
+      "path": "leiga.api.issues.list",
+      "shortPath": "issues.list",
+      "description": "Query the issues in a project, with filters and paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number",
+            "description": "Project to query"
+          },
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Page size"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string",
+            "description": "Filter on summary text"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "createTime | updateTime",
+            "description": "Field to sort by"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "ASC | DESC",
+            "description": "Sort direction"
+          },
+          {
+            "key": "statusTypes",
+            "optional": true,
+            "type": "number[]",
+            "description": "Status types to include: 2 not started, 3 in progress, 4 done"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issues",
+            "optional": false,
+            "type": "{ id: number, summary: string, issueTypeId?: number | null, issueTypeName?: string | null, issueTypeVO?: { id?: number | null, code?: string | null, name?: string | null } | null, priorityId?: number | null, priorityName?: string | null, statusType?: number | null, statusName?: string | null, assigneeId?: number | null, assigneeName?: string | null, assigneeVO?: { userId?: number | null, userName?: string | null, profilePicture?: string | null, accountEnabled?: number | null } | null, updateBy?: number | null, updateByVO?: { userId?: number | null, userName?: string | null, profilePicture?: string | null, accountEnabled?: number | null } | null, updateTime?: number | null, dueDate?: number | null, sprintName?: string | null, tags?: { id?: number | null, tagName?: string | null }[] | null, customFieldData?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "leiga.api.issues.types",
+      "shortPath": "issues.types",
+      "description": "List the issue types a project offers, such as bug or task",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number",
+            "description": "Leiga numeric id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issueTypes",
+            "optional": false,
+            "type": "{ id: number, code?: string | null, name?: string | null, workflowId?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "leiga.api.members.list",
+      "shortPath": "members.list",
+      "description": "List the members of a project with their roles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number",
+            "description": "Leiga numeric id"
+          },
+          {
+            "key": "keyword",
+            "optional": true,
+            "type": "string",
+            "description": "Filter on a name or email"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "members",
+            "optional": false,
+            "type": "{ userId: number, userName?: string | null, orgEmail?: string | null, head?: string | null, departmentVOList?: { id?: number | null, deptName?: string | null }[] | null, roleVOList?: { id?: number | null, roleCode?: string | null, roleName?: string | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "leiga.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Get one project by id, with its metadata",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number",
+            "description": "Leiga numeric id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Leiga numeric id"
+          },
+          {
+            "key": "projectName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "leader",
+            "optional": true,
+            "type": "string | null",
+            "description": "Leader display name"
+          },
+          {
+            "key": "leaderId",
+            "optional": true,
+            "type": "number | null",
+            "description": "Leiga numeric id"
+          },
+          {
+            "key": "avatar",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Console URL for the project"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "projectCategory",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "createBy",
+            "optional": true,
+            "type": "number | null",
+            "description": "Leiga numeric id"
+          },
+          {
+            "key": "createTime",
+            "optional": true,
+            "type": "number | null",
+            "description": "Unix epoch milliseconds"
+          },
+          {
+            "key": "updateTime",
+            "optional": true,
+            "type": "number | null",
+            "description": "Unix epoch milliseconds"
+          }
+        ]
+      }
+    },
+    {
+      "path": "leiga.api.projects.getByKey",
+      "shortPath": "projects.getByKey",
+      "description": "Get one project by its key, such as LGC",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectKey",
+            "optional": false,
+            "type": "string",
+            "description": "Project key, e.g. LGC"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Leiga numeric id"
+          },
+          {
+            "key": "projectName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "leader",
+            "optional": true,
+            "type": "string | null",
+            "description": "Leader display name"
+          },
+          {
+            "key": "leaderId",
+            "optional": true,
+            "type": "number | null",
+            "description": "Leiga numeric id"
+          },
+          {
+            "key": "avatar",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Console URL for the project"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "projectCategory",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "createBy",
+            "optional": true,
+            "type": "number | null",
+            "description": "Leiga numeric id"
+          },
+          {
+            "key": "createTime",
+            "optional": true,
+            "type": "number | null",
+            "description": "Unix epoch milliseconds"
+          },
+          {
+            "key": "updateTime",
+            "optional": true,
+            "type": "number | null",
+            "description": "Unix epoch milliseconds"
+          }
+        ]
+      }
+    },
+    {
+      "path": "leiga.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List the projects in the organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projects",
+            "optional": false,
+            "type": "{ id: number, pname: string, pkey: string, archived?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "leiga.api.projects.templates",
+      "shortPath": "projects.templates",
+      "description": "List the project templates available for new projects",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templates",
+            "optional": false,
+            "type": "{ code: string, name?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "leiga.api.sprints.get",
+      "shortPath": "sprints.get",
+      "description": "Get one sprint by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sprintId",
+            "optional": false,
+            "type": "number",
+            "description": "Leiga numeric id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Leiga numeric id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "goal",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "number | null",
+            "description": "Leiga numeric id"
+          },
+          {
+            "key": "assigneeName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "number | null",
+            "description": "Unix epoch milliseconds"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "number | null",
+            "description": "Unix epoch milliseconds"
+          },
+          {
+            "key": "started",
+            "optional": true,
+            "type": "number | null",
+            "description": "1 once the sprint has started"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | null",
+            "description": "1 planned, 2 active, 3 closed"
+          },
+          {
+            "key": "estimatePointTotal",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "issueTypeCountMap",
+            "optional": true,
+            "type": "Record<string, number> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "leiga.api.sprints.list",
+      "shortPath": "sprints.list",
+      "description": "List a project sprints with per-issue-type counts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number",
+            "description": "Leiga numeric id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sprints",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, goal?: string | null, projectId?: string | number | null, assignee?: number | null, assigneeName?: string | null, startDate?: number | null, endDate?: number | null, started?: number | null, status?: number | null, estimatePointTotal?: number | null, issueTypeCountMap?: Record<string, number> | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "leiga.api.tags.list",
+      "shortPath": "tags.list",
+      "description": "List the tags defined in a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number",
+            "description": "Leiga numeric id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "{ id: number, tagName: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "leiga.api.workflows.list",
+      "shortPath": "workflows.list",
+      "description": "List the workflow steps a project uses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number",
+            "description": "Leiga numeric id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflows",
+            "optional": false,
+            "type": "{ id: number, workflowName: string, workflowDesc?: string | null, defaultValue?: boolean | null, issueTypes?: { id?: number | null, code?: string | null, name?: string | null, description?: string | null }[] | null, states?: { stateId: number, stateName?: string | null, stateCategory?: number | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "leiga.api.workflows.nextStates",
+      "shortPath": "workflows.nextStates",
+      "description": "List the states an issue can move to from its current one",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number",
+            "description": "Leiga numeric id"
+          },
+          {
+            "key": "stateId",
+            "optional": false,
+            "type": "number",
+            "description": "Current state id, from a workflow states entry"
+          },
+          {
+            "key": "defId",
+            "optional": false,
+            "type": "number",
+            "description": "Workflow definition id, the workflow itself"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "states",
+            "optional": false,
+            "type": "{ stateId: number, stateName?: string | null, stateCategory?: number | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

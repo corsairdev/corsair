@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { splitKeyAndSecret } from './client';
 import { Clusters, Spaces } from './endpoints';
 import type {
 	BonsaiEndpointInputs,
@@ -162,8 +163,13 @@ export function bonsai<const T extends BonsaiPluginOptions>(
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const apiKey = await ctx.keys.get_api_key();
-				const apiSecret = await ctx.keys.get_api_secret();
+				const storedKey = await ctx.keys.get_api_key();
+				const storedSecret = await ctx.keys.get_api_secret();
+				// No secret stored: the key field may hold both, as `key:secret`.
+				const pair =
+					storedKey && !storedSecret ? splitKeyAndSecret(storedKey) : null;
+				const apiKey = pair?.apiKey ?? storedKey;
+				const apiSecret = pair?.apiSecret ?? storedSecret;
 				if (!apiKey || !apiSecret) {
 					throw new AuthMissingError('bonsai', 'api_key');
 				}

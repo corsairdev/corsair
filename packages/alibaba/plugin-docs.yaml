@@ -1,0 +1,13 @@
+displayName: Alibaba Cloud Model Studio
+description: Generative AI API for creating images with Qwen-Image and Wan, starting Wan video generation and editing tasks, and checking task status.
+domain: alibabacloud.com
+examples:
+  read:
+    path: tasks.get
+    title: Check a task
+    args:
+      task_id: 0385dc79-5ff8-4d82-bcb6-xxxxxxxxxxxx
+dbExample:
+  entity: images
+  note: Search synced images without hitting Alibaba Cloud.
+  limit: 50

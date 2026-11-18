@@ -19,6 +19,7 @@ import {
 	createCorsair,
 	createIntegrationKeyManager,
 } from '../core';
+import { findAccountRow } from '../core/account-lookup';
 // Direct source-module imports (not the ./core barrel) to avoid a circular
 // chunk dependency between setup and core/index.
 import type {
@@ -224,6 +225,7 @@ export async function setupCorsair<
 			database: db,
 			kek: internal.kek,
 			multiTenancy: true,
+			...(internal.encryptDataAtRest ? { encryptDataAtRest: true } : {}),
 		}).withTenant(tenantScope.tenantId);
 		await runBackfill(instance, internal.plugins, authReadyPlugins, log, warn);
 		log('[corsair:setup] Backfill complete.');
@@ -436,12 +438,10 @@ async function ensurePluginRowsAndDeks(
 
 		if (provisionAccounts) {
 			// ── Account row ─────────────────────────────────────────────────────
-			let account = await db
-				.selectFrom('corsair_accounts')
-				.selectAll()
-				.where('tenant_id', '=', tenantId)
-				.where('integration_id', '=', integration.id)
-				.executeTakeFirst();
+			let account = await findAccountRow(db, {
+				tenantId,
+				integrationId: integration.id,
+			});
 
 			if (!account) {
 				const id = crypto.randomUUID();

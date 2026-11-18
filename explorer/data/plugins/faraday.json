@@ -74,7 +74,7 @@
           {
             "key": "archived_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_changed_at",
@@ -84,7 +84,7 @@
           {
             "key": "status_error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "last_read_input_at",
@@ -211,7 +211,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -325,7 +325,7 @@
           {
             "key": "archived_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_changed_at",
@@ -335,7 +335,7 @@
           {
             "key": "status_error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "last_read_input_at",
@@ -462,7 +462,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -510,7 +510,7 @@
           {
             "key": "archived_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_changed_at",
@@ -520,7 +520,7 @@
           {
             "key": "status_error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "last_read_input_at",
@@ -581,7 +581,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -715,7 +715,7 @@
           {
             "key": "archived_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_changed_at",
@@ -725,7 +725,7 @@
           {
             "key": "status_error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "last_read_input_at",
@@ -792,7 +792,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }[] | {}"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }[] | Record<string, any>"
       }
     },
     {
@@ -806,7 +806,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -826,7 +826,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -906,7 +906,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -986,7 +986,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -1066,7 +1066,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -1146,7 +1146,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -1166,7 +1166,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }[] | {}"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }[] | Record<string, any>"
       }
     },
     {
@@ -1180,7 +1180,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -1260,7 +1260,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -1274,7 +1274,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -1354,7 +1354,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -1434,7 +1434,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -1514,7 +1514,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -1594,7 +1594,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -1614,7 +1614,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }[] | {}"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }[] | Record<string, any>"
       }
     },
     {
@@ -1694,7 +1694,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -1708,7 +1708,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -1728,7 +1728,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -1808,7 +1808,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -1888,7 +1888,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -1968,7 +1968,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -2048,7 +2048,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -2068,7 +2068,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }[] | {}"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }[] | Record<string, any>"
       }
     },
     {
@@ -2082,7 +2082,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -2162,7 +2162,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -2182,7 +2182,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }[] | {}"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }[] | Record<string, any>"
       }
     },
     {
@@ -2216,7 +2216,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }[] | {}"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }[] | Record<string, any>"
       }
     },
     {
@@ -2230,7 +2230,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -2250,7 +2250,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -2330,7 +2330,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -2410,7 +2410,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -2490,7 +2490,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -2510,7 +2510,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }[] | {}"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }[] | Record<string, any>"
       }
     },
     {
@@ -2524,7 +2524,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -2604,7 +2604,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -2618,7 +2618,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -2638,7 +2638,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -2718,7 +2718,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -2798,7 +2798,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -2878,7 +2878,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -2958,7 +2958,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -3038,7 +3038,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -3058,7 +3058,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }[] | {}"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }[] | Record<string, any>"
       }
     },
     {
@@ -3072,7 +3072,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -3152,7 +3152,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -3166,7 +3166,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -3186,7 +3186,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -3266,7 +3266,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -3346,7 +3346,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -3426,7 +3426,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -3446,7 +3446,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }[] | {}"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }[] | Record<string, any>"
       }
     },
     {
@@ -3460,7 +3460,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -3540,7 +3540,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -3560,7 +3560,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }[] | {}"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }[] | Record<string, any>"
       }
     },
     {
@@ -3574,7 +3574,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -3594,7 +3594,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -3674,7 +3674,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -3754,7 +3754,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -3834,7 +3834,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -3914,7 +3914,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -3994,7 +3994,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -4074,7 +4074,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -4154,7 +4154,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -4234,7 +4234,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -4314,7 +4314,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -4394,7 +4394,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -4474,7 +4474,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -4554,7 +4554,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -4634,7 +4634,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -4654,7 +4654,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }[] | {}"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }[] | Record<string, any>"
       }
     },
     {
@@ -4668,7 +4668,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -4748,7 +4748,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -4762,7 +4762,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -4782,7 +4782,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -4862,7 +4862,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -4942,7 +4942,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -5022,7 +5022,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -5102,7 +5102,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -5122,7 +5122,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }[] | {}"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }[] | Record<string, any>"
       }
     },
     {
@@ -5136,7 +5136,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -5216,7 +5216,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -5230,7 +5230,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -5250,7 +5250,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -5270,7 +5270,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -5350,7 +5350,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -5430,7 +5430,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -5510,7 +5510,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -5590,7 +5590,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -5610,7 +5610,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }[] | {}"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }[] | Record<string, any>"
       }
     },
     {
@@ -5690,7 +5690,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -5704,7 +5704,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -5724,7 +5724,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -5804,7 +5804,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -5818,7 +5818,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -5898,7 +5898,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -5978,7 +5978,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -6058,7 +6058,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -6098,7 +6098,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }[] | {}"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }[] | Record<string, any>"
       }
     },
     {
@@ -6112,7 +6112,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -6192,7 +6192,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -6217,7 +6217,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -6242,7 +6242,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ content: string } | {}"
+        "type": "{ content: string } | Record<string, any>"
       }
     },
     {
@@ -6256,7 +6256,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }[] | {}"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }[] | Record<string, any>"
       }
     },
     {
@@ -6270,7 +6270,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -6289,13 +6289,13 @@
           {
             "key": "enabled_events",
             "optional": false,
-            "type": "resource.errored | resource.ready_with_update[]"
+            "type": "(resource.errored | resource.ready_with_update)[]"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -6375,7 +6375,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ok: true } | {} | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
+        "type": "{ ok: true } | Record<string, any> | { id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }"
       }
     },
     {
@@ -6455,7 +6455,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     },
     {
@@ -6475,7 +6475,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }[] | {}"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null }[] | Record<string, any>"
       }
     },
     {
@@ -6504,13 +6504,13 @@
           {
             "key": "enabled_events",
             "optional": true,
-            "type": "resource.errored | resource.ready_with_update[]"
+            "type": "(resource.errored | resource.ready_with_update)[]"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | {} | { ok: true }"
+        "type": "{ id?: string, name?: string, resource_type?: string, status?: string, created_at?: string, updated_at?: string, archived_at?: string | null } | Record<string, any> | { ok: true }"
       }
     }
   ],
@@ -6537,6 +6537,11 @@
         },
         {
           "field": "resource_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
@@ -6622,6 +6627,11 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "created_at",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
@@ -6688,6 +6698,11 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "created_at",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
@@ -6750,6 +6765,11 @@
         },
         {
           "field": "resource_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
@@ -6871,6 +6891,11 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "created_at",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
@@ -6933,6 +6958,11 @@
         },
         {
           "field": "resource_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
@@ -7003,6 +7033,11 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "created_at",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
@@ -7065,6 +7100,11 @@
         },
         {
           "field": "resource_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
@@ -7135,6 +7175,11 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "created_at",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
@@ -7197,6 +7242,11 @@
         },
         {
           "field": "resource_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
@@ -7267,6 +7317,11 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "created_at",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
@@ -7324,6 +7379,11 @@
         },
         {
           "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

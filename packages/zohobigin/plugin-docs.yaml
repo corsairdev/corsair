@@ -1,0 +1,17 @@
+displayName: Zoho Bigin
+description: Small business CRM that manages records, notes, tags, attachments, bulk operations, notifications, and users, with webhooks.
+domain: bigin.com
+examples:
+  read:
+    path: records.get
+    title: List contacts
+    args:
+      module: Contacts
+  write:
+    path: records.add
+    title: Add a contact
+    args:
+      module: Contacts
+      data:
+        - Last_Name: Doe
+          Email: jane@example.com

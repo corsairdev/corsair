@@ -33,17 +33,17 @@
           {
             "key": "choices",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "mappings",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "max_field_lengths",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "email_domain",
@@ -145,7 +145,7 @@
           {
             "key": "message_headers",
             "optional": true,
-            "type": "tuple[]"
+            "type": "[string, string][]"
           }
         ]
       },
@@ -248,27 +248,27 @@
           {
             "key": "processed",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "result",
             "optional": true,
-            "type": "string | {} | null"
+            "type": "string | Record<string, any> | null"
           },
           {
             "key": "json_download_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "csv_download_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "xls_download_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -405,7 +405,7 @@
           {
             "key": "results",
             "optional": false,
-            "type": "{ id: string | number, name?: string, parser?: number, status?: INCOMING | ANALYZING | PROGRESS | PARSEDOK | PARSEDKO | QUOTAEXC | SKIPPED | SPLIT | EXPORTKO | TRANSKO | INVALID | string, received?: string, processed?: string | null, result?: string | {} | null, json_download_url?: string | null, csv_download_url?: string | null, xls_download_url?: string | null }[]"
+            "type": "{ id: string | number, name?: string, parser?: number, status?: INCOMING | ANALYZING | PROGRESS | PARSEDOK | PARSEDKO | QUOTAEXC | SKIPPED | SPLIT | EXPORTKO | TRANSKO | INVALID | string, received?: string, processed?: string | null, result?: string | Record<string, any> | null, json_download_url?: string | null, csv_download_url?: string | null, xls_download_url?: string | null }[]"
           }
         ]
       }
@@ -482,27 +482,27 @@
           {
             "key": "processed",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "result",
             "optional": true,
-            "type": "string | {} | null"
+            "type": "string | Record<string, any> | null"
           },
           {
             "key": "json_download_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "csv_download_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "xls_download_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -594,7 +594,7 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
@@ -609,12 +609,12 @@
           {
             "key": "parser_field_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "parser_field_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "csv_download",
@@ -748,7 +748,7 @@
           {
             "key": "parser_field_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       },
@@ -763,7 +763,7 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
@@ -778,12 +778,12 @@
           {
             "key": "parser_field_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "parser_field_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "csv_download",
@@ -845,7 +845,7 @@
           {
             "key": "ai_instructions",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email_prefix",
@@ -855,7 +855,7 @@
           {
             "key": "attachments_only_override",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "disable_deskew",
@@ -875,7 +875,7 @@
           {
             "key": "input_date_format",
             "optional": true,
-            "type": "MONTH_FIRST | DAY_FIRST"
+            "type": "MONTH_FIRST | DAY_FIRST | null"
           },
           {
             "key": "retention_policy",
@@ -910,7 +910,7 @@
           {
             "key": "ai_instructions",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email_prefix",
@@ -1023,7 +1023,7 @@
           {
             "key": "ai_instructions",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email_prefix",
@@ -1094,7 +1094,7 @@
           {
             "key": "properties",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1176,7 +1176,7 @@
           {
             "key": "ai_instructions",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email_prefix",
@@ -1186,7 +1186,7 @@
           {
             "key": "attachments_only_override",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "disable_deskew",
@@ -1206,7 +1206,7 @@
           {
             "key": "input_date_format",
             "optional": true,
-            "type": "MONTH_FIRST | DAY_FIRST"
+            "type": "MONTH_FIRST | DAY_FIRST | null"
           },
           {
             "key": "retention_policy",
@@ -1246,7 +1246,7 @@
           {
             "key": "ai_instructions",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email_prefix",
@@ -1492,7 +1492,7 @@
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "parser",
@@ -1532,7 +1532,7 @@
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           },
           {
             "key": "category",
@@ -1651,7 +1651,7 @@
           {
             "key": "ai_instructions",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email_prefix",
@@ -1717,12 +1717,12 @@
           {
             "key": "webhook_set",
             "optional": false,
-            "type": "{ id: number, event: document.processed | document.processed.flattened | document.template_needed | document.export_failed | table.processed | string, target: string, name?: string, headers?: {} | null, category: CUSTOM | ZAPIER | MAKE | FLOW | N8N | string, parser_field_set?: string[] }[]"
+            "type": "{ id: number, event: document.processed | document.processed.flattened | document.template_needed | document.export_failed | table.processed | string, target: string, name?: string, headers?: Record<string, string> | null, category: CUSTOM | ZAPIER | MAKE | FLOW | N8N | string, parser_field_set?: string[] }[]"
           },
           {
             "key": "available_webhook_set",
             "optional": false,
-            "type": "{ id: number, event: document.processed | document.processed.flattened | document.template_needed | document.export_failed | table.processed | string, target: string, name?: string, headers?: {} | null, category: CUSTOM | ZAPIER | MAKE | FLOW | N8N | string, parser_field_set?: string[] }[]"
+            "type": "{ id: number, event: document.processed | document.processed.flattened | document.template_needed | document.export_failed | table.processed | string, target: string, name?: string, headers?: Record<string, string> | null, category: CUSTOM | ZAPIER | MAKE | FLOW | N8N | string, parser_field_set?: string[] }[]"
           }
         ]
       }

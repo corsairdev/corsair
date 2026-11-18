@@ -1,0 +1,1036 @@
+{
+  "id": "postonce",
+  "displayName": "PostOnce",
+  "description": "Publish and schedule posts with text and media to LinkedIn, X, Threads, Bluesky, Facebook Pages, Instagram, TikTok, YouTube and Pinterest, keep drafts, upload media, read post analytics and manage cross-posting workflows and webhooks.",
+  "npmPackageName": "@corsair-dev/postonce",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 25,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "postonce.api.accounts.list",
+      "shortPath": "accounts.list",
+      "description": "List connected social accounts (LinkedIn, X, Threads, Bluesky, Facebook Pages, Instagram, TikTok, YouTube, Pinterest) with status, capabilities and media requirements. Their ids are the targets for posts.create.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, platform?: string | null, username?: string | null, avatar_url?: string | null, status?: string | null, capabilities?: { connection_mode?: string | null, destination?: boolean | null, source?: boolean | null, backfill?: boolean | null, text?: boolean | null, images?: boolean | null, video?: boolean | null, replies?: boolean | null, threads?: boolean | null } | null, media_requirements?: { supported_formats?: string[] | null, convertible_formats?: Record<string, string> | null, max_size_bytes?: { image?: number | null, video?: number | null, gif?: number | null } | null, file_constraints?: Record<string, any> | null, required_media?: Record<string, any> | null, max_hashtags?: number | null, min_video_duration_seconds?: number | null, max_video_duration_seconds?: number | null, aspect_ratio?: Record<string, any> | null, thumbnail?: Record<string, any> | null } | null, created_at?: string | null, updated_at?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postonce.api.analytics.get",
+      "shortPath": "analytics.get",
+      "description": "Per-account and per-post views, likes, comments, shares and saves over the last 7, 30 or 90 days, including posts made outside PostOnce, with each post compared to its account's median views.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "days",
+            "optional": true,
+            "type": "7 | 30 | 90",
+            "description": "Range in days: 7, 30 or 90 (default 30)"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string",
+            "description": "Only this connected account"
+          },
+          {
+            "key": "external_user_id",
+            "optional": true,
+            "type": "string",
+            "description": "Only accounts connected for this end user of yours"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ range?: { days?: number, start?: string, end?: string }, accounts?: { id?: string, platform?: string, username?: string | null, metrics_status?: string, posts_with_views?: number, median_views?: number | null, followers?: number | null, followers_observed_at?: string | null }[], posts?: { id?: string, post_id?: string | null, title?: string | null, caption?: string | null }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postonce.api.drafts.create",
+      "shortPath": "drafts.create",
+      "description": "Save text, media and intended accounts as a draft without publishing or scheduling it.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string",
+            "description": "Draft text"
+          },
+          {
+            "key": "candidate_angle",
+            "optional": true,
+            "type": "string",
+            "description": "A note on the angle or hook this draft tries"
+          },
+          {
+            "key": "media",
+            "optional": true,
+            "type": "{ url: string, type: image | video, file_name?: string, mime_type?: string, width?: number, height?: number, size?: number, duration?: number, thumbnail_url?: string | null }[]"
+          },
+          {
+            "key": "selected_account_ids",
+            "optional": true,
+            "type": "string[]",
+            "description": "Connected account ids the draft is meant for"
+          },
+          {
+            "key": "suggested_platforms",
+            "optional": true,
+            "type": "string[]",
+            "description": "Platform names, e.g. linkedin or x"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Sent as the Idempotency-Key header. A repeat with the same body returns the original draft."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, content?: string | null, candidate_angle?: string | null, media?: {}[] | null, selected_account_ids?: string[] | null, suggested_platforms?: string[] | null, source_type?: string | null, status?: string, created_at?: string, updated_at?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postonce.api.drafts.get",
+      "shortPath": "drafts.get",
+      "description": "Get one draft.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Draft id (UUID)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, content?: string | null, candidate_angle?: string | null, media?: {}[] | null, selected_account_ids?: string[] | null, suggested_platforms?: string[] | null, source_type?: string | null, status?: string, created_at?: string, updated_at?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postonce.api.drafts.list",
+      "shortPath": "drafts.list",
+      "description": "List unscheduled drafts, newest first. Page with after = meta.next_after and after_id = meta.next_after_id.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "meta.next_after from the previous page"
+          },
+          {
+            "key": "after_id",
+            "optional": true,
+            "type": "string",
+            "description": "meta.next_after_id from the previous page"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "inbox | ready | archived"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, content?: string | null, candidate_angle?: string | null, media?: {}[] | null, selected_account_ids?: string[] | null, suggested_platforms?: string[] | null, source_type?: string | null, status?: string, created_at?: string, updated_at?: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ has_more?: boolean, next_after?: string | null, next_after_id?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postonce.api.drafts.update",
+      "shortPath": "drafts.update",
+      "description": "Edit, archive, restore or mark a draft ready. Pass the draft's current updated_at as expected_updated_at; a stale value gets a 409.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Draft id (UUID)"
+          },
+          {
+            "key": "expected_updated_at",
+            "optional": false,
+            "type": "string",
+            "description": "The draft's updated_at as last read"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string",
+            "description": "Draft text"
+          },
+          {
+            "key": "candidate_angle",
+            "optional": true,
+            "type": "string",
+            "description": "A note on the angle or hook this draft tries"
+          },
+          {
+            "key": "media",
+            "optional": true,
+            "type": "{ url: string, type: image | video, file_name?: string, mime_type?: string, width?: number, height?: number, size?: number, duration?: number, thumbnail_url?: string | null }[]"
+          },
+          {
+            "key": "selected_account_ids",
+            "optional": true,
+            "type": "string[]",
+            "description": "Connected account ids the draft is meant for"
+          },
+          {
+            "key": "suggested_platforms",
+            "optional": true,
+            "type": "string[]",
+            "description": "Platform names, e.g. linkedin or x"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "inbox | ready | archived",
+            "description": "Move the draft: archived archives it, inbox restores it"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, content?: string | null, candidate_angle?: string | null, media?: {}[] | null, selected_account_ids?: string[] | null, suggested_platforms?: string[] | null, source_type?: string | null, status?: string, created_at?: string, updated_at?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postonce.api.media.createUpload",
+      "shortPath": "media.createUpload",
+      "description": "Get a signed URL to upload an image or video to, and a media_id. After the file is PUT to the URL, media.get gives the public URL that posts and drafts accept.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filename",
+            "optional": false,
+            "type": "string",
+            "description": "File name with extension, e.g. launch.png"
+          },
+          {
+            "key": "content_type",
+            "optional": false,
+            "type": "image/jpeg | image/png | image/webp | video/mp4 | video/quicktime | video/webm"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ media_id: string, content_type?: string, path?: string, upload?: { path?: string, token?: string, signedUrl?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postonce.api.media.get",
+      "shortPath": "media.get",
+      "description": "Turn a media_id into the uploaded file's public URL.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "media_id from media.createUpload"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, path?: string, public_url?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postonce.api.posts.cancel",
+      "shortPath": "posts.cancel",
+      "description": "Cancel a scheduled or still-pending post. The post record is kept with status cancelled; content already published on a network stays live.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Aggregate post id (UUID)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, content?: string | null, external_id?: string | null, media?: { url: string, type?: string | null, width?: number | null, height?: number | null, size?: number | null, duration?: number | null, thumbnail_url?: string | null }[] | null, origin?: string | null, publish_at?: string | null, status?: string | null, created_at?: string | null, targets?: { target_post_id?: string | null, account_id?: string | null, platform?: string | null, target_variant?: string | null, username?: string | null, status?: string | null, error?: string | null, platform_post_id?: string | null, platform_post_url?: string | null, scheduled_time?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postonce.api.posts.create",
+      "shortPath": "posts.create",
+      "description": "Create one post for one or more connected accounts, with text and media URLs. Without publish_at it publishes immediately and cannot be recalled once live; with publish_at it is scheduled. An idempotencyKey makes a retry return the original post.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string",
+            "description": "Post text shared by every target"
+          },
+          {
+            "key": "targets",
+            "optional": false,
+            "type": "{ account_id: string, content_override?: string | null, platform_options?: Record<string, any> | null }[]",
+            "description": "One entry per connected account to publish to"
+          },
+          {
+            "key": "media",
+            "optional": true,
+            "type": "{ url: string, type?: image | video, width?: number, height?: number, size?: number, duration?: number, thumbnail_url?: string }[]",
+            "description": "Images or a video, by URL"
+          },
+          {
+            "key": "publish_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO-8601 date-time to schedule the post; omit to publish immediately"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Your own reference, returned on the post"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Sent as the Idempotency-Key header. A repeat with the same body returns the original post instead of creating a duplicate."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, content?: string | null, external_id?: string | null, media?: { url: string, type?: string | null, width?: number | null, height?: number | null, size?: number | null, duration?: number | null, thumbnail_url?: string | null }[] | null, origin?: string | null, publish_at?: string | null, status?: string | null, created_at?: string | null, targets?: { target_post_id?: string | null, account_id?: string | null, platform?: string | null, target_variant?: string | null, username?: string | null, status?: string | null, error?: string | null, platform_post_id?: string | null, platform_post_url?: string | null, scheduled_time?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postonce.api.posts.get",
+      "shortPath": "posts.get",
+      "description": "Get one post with its per-account delivery state: status, platform post URL and any platform error.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Aggregate post id (UUID)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, content?: string | null, external_id?: string | null, media?: { url: string, type?: string | null, width?: number | null, height?: number | null, size?: number | null, duration?: number | null, thumbnail_url?: string | null }[] | null, origin?: string | null, publish_at?: string | null, status?: string | null, created_at?: string | null, targets?: { target_post_id?: string | null, account_id?: string | null, platform?: string | null, target_variant?: string | null, username?: string | null, status?: string | null, error?: string | null, platform_post_id?: string | null, platform_post_url?: string | null, scheduled_time?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postonce.api.posts.getAnalytics",
+      "shortPath": "posts.getAnalytics",
+      "description": "Views, likes, comments, shares and saves for each published copy of one post (TikTok, Instagram, YouTube and Facebook). Cached for up to an hour.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Aggregate post id (UUID)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, media_url?: string | null, targets?: { account_id?: string, platform?: string, platform_post_id?: string | null, url?: string | null, published_at?: string | null, metrics_status?: string, views?: number | null, likes?: number | null, comments?: number | null, shares?: number | null, saves?: number | null, engagement_rate?: number | null, last_updated?: string | null }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postonce.api.posts.list",
+      "shortPath": "posts.list",
+      "description": "List the profile's posts, newest first, including dashboard and workflow posts. Page with after = meta.next_cursor.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of posts to return (1-100, default 20)"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor from a previous response (meta.next_cursor)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, content?: string | null, external_id?: string | null, media?: { url: string, type?: string | null, width?: number | null, height?: number | null, size?: number | null, duration?: number | null, thumbnail_url?: string | null }[] | null, origin?: string | null, publish_at?: string | null, status?: string | null, created_at?: string | null, targets?: { target_post_id?: string | null, account_id?: string | null, platform?: string | null, target_variant?: string | null, username?: string | null, status?: string | null, error?: string | null, platform_post_id?: string | null, platform_post_url?: string | null, scheduled_time?: string | null }[] | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ next_cursor?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postonce.api.posts.publish",
+      "shortPath": "posts.publish",
+      "description": "Publish a scheduled post right now. It goes live on every target and cannot be recalled.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Aggregate post id (UUID)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, content?: string | null, external_id?: string | null, media?: { url: string, type?: string | null, width?: number | null, height?: number | null, size?: number | null, duration?: number | null, thumbnail_url?: string | null }[] | null, origin?: string | null, publish_at?: string | null, status?: string | null, created_at?: string | null, targets?: { target_post_id?: string | null, account_id?: string | null, platform?: string | null, target_variant?: string | null, username?: string | null, status?: string | null, error?: string | null, platform_post_id?: string | null, platform_post_url?: string | null, scheduled_time?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postonce.api.posts.retryTarget",
+      "shortPath": "posts.retryTarget",
+      "description": "Retry one failed destination of a post (targetId from the post's targets). Published destinations are not posted again.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Aggregate post id (UUID)"
+          },
+          {
+            "key": "targetId",
+            "optional": false,
+            "type": "string",
+            "description": "Id of the failed target, from the post's targets[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, content?: string | null, external_id?: string | null, media?: { url: string, type?: string | null, width?: number | null, height?: number | null, size?: number | null, duration?: number | null, thumbnail_url?: string | null }[] | null, origin?: string | null, publish_at?: string | null, status?: string | null, created_at?: string | null, targets?: { target_post_id?: string | null, account_id?: string | null, platform?: string | null, target_variant?: string | null, username?: string | null, status?: string | null, error?: string | null, platform_post_id?: string | null, platform_post_url?: string | null, scheduled_time?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postonce.api.posts.update",
+      "shortPath": "posts.update",
+      "description": "Change a scheduled post before it runs: text, accounts, media or publish time. Only the fields sent change.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Aggregate post id (UUID)"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string",
+            "description": "New post text"
+          },
+          {
+            "key": "targets",
+            "optional": true,
+            "type": "{ account_id: string, content_override?: string | null, platform_options?: Record<string, any> | null }[]",
+            "description": "Replaces the list of accounts to publish to"
+          },
+          {
+            "key": "media",
+            "optional": true,
+            "type": "{ url: string, type?: image | video, width?: number, height?: number, size?: number, duration?: number, thumbnail_url?: string }[]",
+            "description": "Replaces the images or video"
+          },
+          {
+            "key": "publish_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "New ISO-8601 publish time"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, content?: string | null, external_id?: string | null, media?: { url: string, type?: string | null, width?: number | null, height?: number | null, size?: number | null, duration?: number | null, thumbnail_url?: string | null }[] | null, origin?: string | null, publish_at?: string | null, status?: string | null, created_at?: string | null, targets?: { target_post_id?: string | null, account_id?: string | null, platform?: string | null, target_variant?: string | null, username?: string | null, status?: string | null, error?: string | null, platform_post_id?: string | null, platform_post_url?: string | null, scheduled_time?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postonce.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Register an HTTPS endpoint for signed post.published, post.partially_published and post.failed events (up to 5). The reply is the only time the signing secret is shown.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public HTTPS URL; redirects are not followed"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, url?: string, description?: string | null, events?: string[], created_at?: string, secret?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postonce.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Delete a webhook endpoint and its delivery log.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Webhook id (UUID)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ deleted?: boolean, id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postonce.api.webhooks.get",
+      "shortPath": "webhooks.get",
+      "description": "Get one registered webhook endpoint.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Webhook id (UUID)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, url?: string, description?: string | null, events?: string[], created_at?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postonce.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List registered webhook endpoints (signing secrets are not returned).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, url?: string, description?: string | null, events?: string[], created_at?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postonce.api.workflows.create",
+      "shortPath": "workflows.create",
+      "description": "Create a cross-posting workflow. While active, PostOnce publishes every new post from the source account to the target accounts automatically.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "source_account_id",
+            "optional": false,
+            "type": "string",
+            "description": "Connected account whose new posts are copied"
+          },
+          {
+            "key": "target_account_ids",
+            "optional": false,
+            "type": "string[]",
+            "description": "Connected accounts that get each new post"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "future_content_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ content_filters?: { types?: { text?: boolean, image?: boolean, quote?: boolean, video?: boolean }, hashtags?: { include?: string[], exclude?: string[] } } }"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, profile_id?: string, name?: string | null, description?: string | null, source_account_id?: string | null, target_account_ids?: string[] | null, settings?: {} | null, is_active?: boolean, future_content_enabled?: boolean, created_at?: string, updated_at?: string, last_checked?: string | null, last_enabled_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postonce.api.workflows.delete",
+      "shortPath": "workflows.delete",
+      "description": "Delete a cross-posting workflow and its queued items.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Workflow id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ deleted?: boolean, id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postonce.api.workflows.get",
+      "shortPath": "workflows.get",
+      "description": "Get one cross-posting workflow.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Workflow id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, profile_id?: string, name?: string | null, description?: string | null, source_account_id?: string | null, target_account_ids?: string[] | null, settings?: {} | null, is_active?: boolean, future_content_enabled?: boolean, created_at?: string, updated_at?: string, last_checked?: string | null, last_enabled_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postonce.api.workflows.list",
+      "shortPath": "workflows.list",
+      "description": "List cross-posting workflows: each copies new posts from a source account to target accounts.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, profile_id?: string, name?: string | null, description?: string | null, source_account_id?: string | null, target_account_ids?: string[] | null, settings?: {} | null, is_active?: boolean, future_content_enabled?: boolean, created_at?: string, updated_at?: string, last_checked?: string | null, last_enabled_at?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postonce.api.workflows.update",
+      "shortPath": "workflows.update",
+      "description": "Change a cross-posting workflow: name, accounts, filters or is_active. Turning it on or adding targets makes PostOnce publish future posts to them automatically.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Workflow id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "source_account_id",
+            "optional": true,
+            "type": "string",
+            "description": "Connected account whose new posts are copied"
+          },
+          {
+            "key": "target_account_ids",
+            "optional": true,
+            "type": "string[]",
+            "description": "Connected accounts that get each new post"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "future_content_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ content_filters?: { types?: { text?: boolean, image?: boolean, quote?: boolean, video?: boolean }, hashtags?: { include?: string[], exclude?: string[] } } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, profile_id?: string, name?: string | null, description?: string | null, source_account_id?: string | null, target_account_ids?: string[] | null, settings?: {} | null, is_active?: boolean, future_content_enabled?: boolean, created_at?: string, updated_at?: string, last_checked?: string | null, last_enabled_at?: string | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "postonce.db.accounts.search",
+      "entityName": "accounts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "platform",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "username",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "avatar_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "postonce.db.posts.search",
+      "entityName": "posts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "content",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "external_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "origin",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "publish_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

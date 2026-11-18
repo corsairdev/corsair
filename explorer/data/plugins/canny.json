@@ -1,7 +1,7 @@
 {
   "id": "canny",
   "displayName": "Canny",
-  "description": "Canny plugin for Corsair",
+  "description": "Customer feedback platform. Manage boards, feedback posts, comments, and votes.",
   "npmPackageName": "@corsair-dev/canny",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -217,7 +217,7 @@
           {
             "key": "comments",
             "optional": false,
-            "type": "{ id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board?: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, created: string, deleteStatus?: string | null, imageURLs?: string[], internal?: boolean, likeCount?: number, parentID?: string | null, post?: { id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, category?: { id: string, name: string, url?: string, postCount?: number, parentID?: string | null } | null, commentCount: number, created: string, details?: string, eta?: string | null, imageURLs?: string[], score: number, status: string, tags?: { id: string, name: string, url?: string, postCount?: number }[], title: string, url: string, owner?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, customFields?: {} }, value: string }[]"
+            "type": "{ id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board?: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, created: string, deleteStatus?: string | null, imageURLs?: string[], internal?: boolean, likeCount?: number, parentID?: string | null, post?: { id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, category?: { id: string, name: string, url?: string, postCount?: number, parentID?: string | null } | null, commentCount: number, created: string, details?: string, eta?: string | null, imageURLs?: string[], score: number, status: string, tags?: { id: string, name: string, url?: string, postCount?: number }[], title: string, url: string, owner?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, customFields?: Record<string, string | number | boolean | null> }, value: string }[]"
           },
           {
             "key": "hasMore",
@@ -283,7 +283,7 @@
           {
             "key": "category",
             "optional": true,
-            "type": "{ id: string, name: string, url?: string, postCount?: number, parentID?: string | null }"
+            "type": "{ id: string, name: string, url?: string, postCount?: number, parentID?: string | null } | null"
           },
           {
             "key": "commentCount",
@@ -303,7 +303,7 @@
           {
             "key": "eta",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "imageURLs",
@@ -338,12 +338,12 @@
           {
             "key": "owner",
             "optional": true,
-            "type": "{ id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }"
+            "type": "{ id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null"
           },
           {
             "key": "customFields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean | null>"
           }
         ]
       }
@@ -394,7 +394,7 @@
           {
             "key": "customFields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean | null>"
           },
           {
             "key": "eta",
@@ -521,7 +521,7 @@
           {
             "key": "posts",
             "optional": false,
-            "type": "{ id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, category?: { id: string, name: string, url?: string, postCount?: number, parentID?: string | null } | null, commentCount: number, created: string, details?: string, eta?: string | null, imageURLs?: string[], score: number, status: string, tags?: { id: string, name: string, url?: string, postCount?: number }[], title: string, url: string, owner?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, customFields?: {} }[]"
+            "type": "{ id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, category?: { id: string, name: string, url?: string, postCount?: number, parentID?: string | null } | null, commentCount: number, created: string, details?: string, eta?: string | null, imageURLs?: string[], score: number, status: string, tags?: { id: string, name: string, url?: string, postCount?: number }[], title: string, url: string, owner?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, customFields?: Record<string, string | number | boolean | null> }[]"
           }
         ]
       }
@@ -572,7 +572,7 @@
           {
             "key": "category",
             "optional": true,
-            "type": "{ id: string, name: string, url?: string, postCount?: number, parentID?: string | null }"
+            "type": "{ id: string, name: string, url?: string, postCount?: number, parentID?: string | null } | null"
           },
           {
             "key": "commentCount",
@@ -592,7 +592,7 @@
           {
             "key": "eta",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "imageURLs",
@@ -627,12 +627,12 @@
           {
             "key": "owner",
             "optional": true,
-            "type": "{ id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }"
+            "type": "{ id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null"
           },
           {
             "key": "customFields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean | null>"
           }
         ]
       }
@@ -744,7 +744,7 @@
           {
             "key": "votes",
             "optional": false,
-            "type": "{ id: string, board?: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, by?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, created: string, post?: { id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, category?: { id: string, name: string, url?: string, postCount?: number, parentID?: string | null } | null, commentCount: number, created: string, details?: string, eta?: string | null, imageURLs?: string[], score: number, status: string, tags?: { id: string, name: string, url?: string, postCount?: number }[], title: string, url: string, owner?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, customFields?: {} }, voter?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } }[]"
+            "type": "{ id: string, board?: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, by?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, created: string, post?: { id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, category?: { id: string, name: string, url?: string, postCount?: number, parentID?: string | null } | null, commentCount: number, created: string, details?: string, eta?: string | null, imageURLs?: string[], score: number, status: string, tags?: { id: string, name: string, url?: string, postCount?: number }[], title: string, url: string, owner?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, customFields?: Record<string, string | number | boolean | null> }, voter?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } }[]"
           }
         ]
       }
@@ -776,11 +776,11 @@
           {
             "key": "object",
             "optional": false,
-            "type": "{ id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board?: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, created: string, deleteStatus?: string | null, imageURLs?: string[], internal?: boolean, likeCount?: number, parentID?: string | null, post?: { id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, category?: { id: string, name: string, url?: string, postCount?: number, parentID?: string | null } | null, commentCount: number, created: string, details?: string, eta?: string | null, imageURLs?: string[], score: number, status: string, tags?: { id: string, name: string, url?: string, postCount?: number }[], title: string, url: string, owner?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, customFields?: {} }, value: string }"
+            "type": "{ id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board?: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, created: string, deleteStatus?: string | null, imageURLs?: string[], internal?: boolean, likeCount?: number, parentID?: string | null, post?: { id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, category?: { id: string, name: string, url?: string, postCount?: number, parentID?: string | null } | null, commentCount: number, created: string, details?: string, eta?: string | null, imageURLs?: string[], score: number, status: string, tags?: { id: string, name: string, url?: string, postCount?: number }[], title: string, url: string, owner?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, customFields?: Record<string, string | number | boolean | null> }, value: string }"
           }
         ]
       },
-      "responseType": "{ created: string, objectType: comment, type: comment.created, object: { id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board?: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, created: string, deleteStatus?: string | null, imageURLs?: string[], internal?: boolean, likeCount?: number, parentID?: string | null, post?: { id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, category?: { id: string, name: string, url?: string, postCount?: number, parentID?: string | null } | null, commentCount: number, created: string, details?: string, eta?: string | null, imageURLs?: string[], score: number, status: string, tags?: { id: string, name: string, url?: string, postCount?: number }[], title: string, url: string, owner?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, customFields?: {} }, value: string } }",
+      "responseType": "{ created: string, objectType: comment, type: comment.created, object: { id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board?: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, created: string, deleteStatus?: string | null, imageURLs?: string[], internal?: boolean, likeCount?: number, parentID?: string | null, post?: { id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, category?: { id: string, name: string, url?: string, postCount?: number, parentID?: string | null } | null, commentCount: number, created: string, details?: string, eta?: string | null, imageURLs?: string[], score: number, status: string, tags?: { id: string, name: string, url?: string, postCount?: number }[], title: string, url: string, owner?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, customFields?: Record<string, string | number | boolean | null> }, value: string } }",
       "usageExample": "canny({\n    webhookHooks: {\n        comments: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -808,11 +808,11 @@
           {
             "key": "object",
             "optional": false,
-            "type": "{ id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, category?: { id: string, name: string, url?: string, postCount?: number, parentID?: string | null } | null, commentCount: number, created: string, details?: string, eta?: string | null, imageURLs?: string[], score: number, status: string, tags?: { id: string, name: string, url?: string, postCount?: number }[], title: string, url: string, owner?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, customFields?: {} }"
+            "type": "{ id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, category?: { id: string, name: string, url?: string, postCount?: number, parentID?: string | null } | null, commentCount: number, created: string, details?: string, eta?: string | null, imageURLs?: string[], score: number, status: string, tags?: { id: string, name: string, url?: string, postCount?: number }[], title: string, url: string, owner?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, customFields?: Record<string, string | number | boolean | null> }"
           }
         ]
       },
-      "responseType": "{ created: string, objectType: post, type: post.created, object: { id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, category?: { id: string, name: string, url?: string, postCount?: number, parentID?: string | null } | null, commentCount: number, created: string, details?: string, eta?: string | null, imageURLs?: string[], score: number, status: string, tags?: { id: string, name: string, url?: string, postCount?: number }[], title: string, url: string, owner?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, customFields?: {} } }",
+      "responseType": "{ created: string, objectType: post, type: post.created, object: { id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, category?: { id: string, name: string, url?: string, postCount?: number, parentID?: string | null } | null, commentCount: number, created: string, details?: string, eta?: string | null, imageURLs?: string[], score: number, status: string, tags?: { id: string, name: string, url?: string, postCount?: number }[], title: string, url: string, owner?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, customFields?: Record<string, string | number | boolean | null> } }",
       "usageExample": "canny({\n    webhookHooks: {\n        posts: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -840,11 +840,11 @@
           {
             "key": "object",
             "optional": false,
-            "type": "{ id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, category?: { id: string, name: string, url?: string, postCount?: number, parentID?: string | null } | null, commentCount: number, created: string, details?: string, eta?: string | null, imageURLs?: string[], score: number, status: string, tags?: { id: string, name: string, url?: string, postCount?: number }[], title: string, url: string, owner?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, customFields?: {} }"
+            "type": "{ id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, category?: { id: string, name: string, url?: string, postCount?: number, parentID?: string | null } | null, commentCount: number, created: string, details?: string, eta?: string | null, imageURLs?: string[], score: number, status: string, tags?: { id: string, name: string, url?: string, postCount?: number }[], title: string, url: string, owner?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, customFields?: Record<string, string | number | boolean | null> }"
           }
         ]
       },
-      "responseType": "{ created: string, objectType: post, type: post.status_changed, object: { id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, category?: { id: string, name: string, url?: string, postCount?: number, parentID?: string | null } | null, commentCount: number, created: string, details?: string, eta?: string | null, imageURLs?: string[], score: number, status: string, tags?: { id: string, name: string, url?: string, postCount?: number }[], title: string, url: string, owner?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, customFields?: {} } }",
+      "responseType": "{ created: string, objectType: post, type: post.status_changed, object: { id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, category?: { id: string, name: string, url?: string, postCount?: number, parentID?: string | null } | null, commentCount: number, created: string, details?: string, eta?: string | null, imageURLs?: string[], score: number, status: string, tags?: { id: string, name: string, url?: string, postCount?: number }[], title: string, url: string, owner?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, customFields?: Record<string, string | number | boolean | null> } }",
       "usageExample": "canny({\n    webhookHooks: {\n        posts: {\n            statusChanged: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -872,11 +872,11 @@
           {
             "key": "object",
             "optional": false,
-            "type": "{ id: string, board?: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, by?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, created: string, post?: { id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, category?: { id: string, name: string, url?: string, postCount?: number, parentID?: string | null } | null, commentCount: number, created: string, details?: string, eta?: string | null, imageURLs?: string[], score: number, status: string, tags?: { id: string, name: string, url?: string, postCount?: number }[], title: string, url: string, owner?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, customFields?: {} }, voter?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } }"
+            "type": "{ id: string, board?: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, by?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, created: string, post?: { id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, category?: { id: string, name: string, url?: string, postCount?: number, parentID?: string | null } | null, commentCount: number, created: string, details?: string, eta?: string | null, imageURLs?: string[], score: number, status: string, tags?: { id: string, name: string, url?: string, postCount?: number }[], title: string, url: string, owner?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, customFields?: Record<string, string | number | boolean | null> }, voter?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } }"
           }
         ]
       },
-      "responseType": "{ created: string, objectType: vote, type: vote.created, object: { id: string, board?: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, by?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, created: string, post?: { id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, category?: { id: string, name: string, url?: string, postCount?: number, parentID?: string | null } | null, commentCount: number, created: string, details?: string, eta?: string | null, imageURLs?: string[], score: number, status: string, tags?: { id: string, name: string, url?: string, postCount?: number }[], title: string, url: string, owner?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, customFields?: {} }, voter?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } } }",
+      "responseType": "{ created: string, objectType: vote, type: vote.created, object: { id: string, board?: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, by?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, created: string, post?: { id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, category?: { id: string, name: string, url?: string, postCount?: number, parentID?: string | null } | null, commentCount: number, created: string, details?: string, eta?: string | null, imageURLs?: string[], score: number, status: string, tags?: { id: string, name: string, url?: string, postCount?: number }[], title: string, url: string, owner?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, customFields?: Record<string, string | number | boolean | null> }, voter?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } } }",
       "usageExample": "canny({\n    webhookHooks: {\n        votes: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     }
   ],

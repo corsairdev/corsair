@@ -79,7 +79,7 @@
           {
             "key": "extra_metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "full_history",
@@ -129,7 +129,7 @@
           {
             "key": "generated_images",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "follow_up_questions",

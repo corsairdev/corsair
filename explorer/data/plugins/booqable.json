@@ -1,7 +1,7 @@
 {
   "id": "booqable",
   "displayName": "Booqable",
-  "description": "Booqable plugin for Corsair",
+  "description": "Rental business software. Manage customers, orders, products, product groups, bundles, stock items, inventory, payments, coupons, documents, and locations.",
   "npmPackageName": "@corsair-dev/booqable",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -39,12 +39,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -54,22 +54,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: barcodes, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: barcodes, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -95,12 +95,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -110,22 +110,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: bundle_items, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: bundle_items, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -151,12 +151,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -166,22 +166,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: bundles, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: bundles, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -207,12 +207,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -222,22 +222,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: clusters, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: clusters, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -263,12 +263,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -278,22 +278,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: companies, attributes?: {}, relationships?: {} }"
+            "type": "{ id: string, type: companies, attributes?: Record<string, any>, relationships?: Record<string, any> }"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -319,12 +319,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -334,22 +334,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: coupons, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: coupons, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -375,12 +375,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -390,22 +390,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: customers, attributes?: {}, relationships?: {} }"
+            "type": "{ id: string, type: customers, attributes?: Record<string, any>, relationships?: Record<string, any> }"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -437,18 +437,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{ data: { id: string, type: customers, attributes?: {}, relationships?: {} }, included?: { id: string, type: string, attributes?: {}, relationships?: {} }[], links?: {}, meta?: {} } | { data: null, links?: {}, meta?: {} }"
+        "type": "{ data: { id: string, type: customers, attributes?: Record<string, any>, relationships?: Record<string, any> }, included?: { id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[], links?: Record<string, any>, meta?: Record<string, any> } | { data: null, links?: Record<string, any>, meta?: Record<string, any> }"
       }
     },
     {
@@ -477,12 +477,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -492,22 +492,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: customers, attributes?: {}, relationships?: {} }"
+            "type": "{ id: string, type: customers, attributes?: Record<string, any>, relationships?: Record<string, any> }"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -533,12 +533,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -548,22 +548,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: customers, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: customers, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -589,12 +589,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -604,22 +604,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: customers, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: customers, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -645,12 +645,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -660,22 +660,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: default_properties, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: default_properties, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -701,12 +701,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -716,22 +716,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: documents, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: documents, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -757,12 +757,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -772,22 +772,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: documents, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: documents, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -813,12 +813,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -828,22 +828,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: email_templates, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: email_templates, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -869,12 +869,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -884,22 +884,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: employees, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: employees, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -925,12 +925,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -940,22 +940,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: inventory_breakdowns, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: inventory_breakdowns, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -981,12 +981,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -996,22 +996,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: inventory_levels, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: inventory_levels, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1037,12 +1037,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -1052,22 +1052,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: items, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: items, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1093,12 +1093,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -1108,22 +1108,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: items, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: items, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1149,12 +1149,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -1164,22 +1164,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: lines, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: lines, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1205,12 +1205,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -1220,22 +1220,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: locations, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: locations, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1261,12 +1261,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -1276,22 +1276,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: notes, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: notes, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1317,12 +1317,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -1332,22 +1332,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: orders, attributes?: {}, relationships?: {} }"
+            "type": "{ id: string, type: orders, attributes?: Record<string, any>, relationships?: Record<string, any> }"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1379,18 +1379,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{ data: { id: string, type: orders, attributes?: {}, relationships?: {} }, included?: { id: string, type: string, attributes?: {}, relationships?: {} }[], links?: {}, meta?: {} } | { data: null, links?: {}, meta?: {} }"
+        "type": "{ data: { id: string, type: orders, attributes?: Record<string, any>, relationships?: Record<string, any> }, included?: { id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[], links?: Record<string, any>, meta?: Record<string, any> } | { data: null, links?: Record<string, any>, meta?: Record<string, any> }"
       }
     },
     {
@@ -1414,12 +1414,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -1429,22 +1429,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: orders, attributes?: {}, relationships?: {} }"
+            "type": "{ id: string, type: orders, attributes?: Record<string, any>, relationships?: Record<string, any> }"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1475,12 +1475,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -1490,22 +1490,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: orders, attributes?: {}, relationships?: {} }"
+            "type": "{ id: string, type: orders, attributes?: Record<string, any>, relationships?: Record<string, any> }"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1531,12 +1531,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -1546,22 +1546,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: orders, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: orders, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1587,12 +1587,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -1602,22 +1602,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: orders, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: orders, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1643,12 +1643,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -1658,22 +1658,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: payment_methods, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: payment_methods, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1699,12 +1699,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -1714,22 +1714,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: payments, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: payments, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1755,12 +1755,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -1770,22 +1770,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: photos, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: photos, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1811,12 +1811,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -1826,22 +1826,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: plannings, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: plannings, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1867,12 +1867,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -1882,22 +1882,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: plannings, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: plannings, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1923,12 +1923,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -1938,22 +1938,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: price_rulesets, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: price_rulesets, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1979,12 +1979,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -1994,22 +1994,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: price_structures, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: price_structures, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -2035,12 +2035,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -2050,22 +2050,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: product_groups, attributes?: {}, relationships?: {} }"
+            "type": "{ id: string, type: product_groups, attributes?: Record<string, any>, relationships?: Record<string, any> }"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -2097,18 +2097,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{ data: { id: string, type: product_groups, attributes?: {}, relationships?: {} }, included?: { id: string, type: string, attributes?: {}, relationships?: {} }[], links?: {}, meta?: {} } | { data: null, links?: {}, meta?: {} }"
+        "type": "{ data: { id: string, type: product_groups, attributes?: Record<string, any>, relationships?: Record<string, any> }, included?: { id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[], links?: Record<string, any>, meta?: Record<string, any> } | { data: null, links?: Record<string, any>, meta?: Record<string, any> }"
       }
     },
     {
@@ -2137,12 +2137,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -2152,22 +2152,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: product_groups, attributes?: {}, relationships?: {} }"
+            "type": "{ id: string, type: product_groups, attributes?: Record<string, any>, relationships?: Record<string, any> }"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -2193,12 +2193,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -2208,22 +2208,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: product_groups, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: product_groups, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -2254,12 +2254,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -2269,22 +2269,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: products, attributes?: {}, relationships?: {} }"
+            "type": "{ id: string, type: products, attributes?: Record<string, any>, relationships?: Record<string, any> }"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -2310,12 +2310,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -2325,22 +2325,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: products, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: products, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -2366,12 +2366,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -2381,22 +2381,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: properties, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: properties, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -2422,12 +2422,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -2437,22 +2437,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: provinces, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: provinces, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -2478,12 +2478,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -2493,22 +2493,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: stock_item_plannings, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: stock_item_plannings, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -2534,12 +2534,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -2549,22 +2549,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: stock_items, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: stock_items, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -2590,12 +2590,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -2605,22 +2605,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: tax_rates, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: tax_rates, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -2646,12 +2646,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -2661,22 +2661,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: tax_values, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: tax_values, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -2702,12 +2702,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -2717,22 +2717,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type: users, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: users, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }

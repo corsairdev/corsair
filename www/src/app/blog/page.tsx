@@ -4,9 +4,9 @@ import { ArticleCard } from '@/components/blog/article-card';
 import { getAllPosts } from '@/lib/blog';
 
 export const metadata: Metadata = {
-	title: 'Blog',
+	title: 'Blog: AI agent integrations, MCP and OAuth',
 	description:
-		'Articles on building AI integrations, multi-tenant OAuth, and the Corsair open-source ecosystem.',
+		'Guides and tested comparisons on connecting AI agents to apps: MCP servers, multi-tenant OAuth, permissions and approvals, and the Corsair open-source SDK.',
 	alternates: {
 		canonical: '/blog',
 	},

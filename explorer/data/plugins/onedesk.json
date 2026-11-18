@@ -1,0 +1,4909 @@
+{
+  "id": "onedesk",
+  "displayName": "OneDesk",
+  "description": "Help desk and project management in one platform, with a public API over tickets, tasks, projects, timesheets, invoices, quotes and customer conversations.",
+  "npmPackageName": "@corsair-dev/onedesk",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 79,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "onedesk.api.activities.filterDetails",
+      "shortPath": "activities.filterDetails",
+      "description": "List activity log entries by filter",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]",
+            "description": "Property comparisons to apply."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Index of the first row to return. Defaults to 0."
+          },
+          {
+            "key": "isAsc",
+            "optional": true,
+            "type": "boolean",
+            "description": "Sort by creation time ascending. OneDesk defaults to false, newest first."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ projectExternalId?: string | null, authorExternalId?: string | null, itemExternalId?: string | null, activityType?: string | null, automationTypeName?: string | null, timestamp?: string | null, itemType?: string | null, itemName?: string | null, newValue?: string | null }[]"
+          },
+          {
+            "key": "totalNum",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "appliedPropertyFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "appliedCustomFieldFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "notAppliedPropertyFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "notAppliedCustomFieldFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "nextOffset",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.attachments.attachToItem",
+      "shortPath": "attachments.attachToItem",
+      "description": "Upload a file and attach it to a work item",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileName",
+            "optional": false,
+            "type": "string",
+            "description": "Filename to record, including its extension."
+          },
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "string",
+            "description": "MIME type, for example application/pdf."
+          },
+          {
+            "key": "contentBase64",
+            "optional": false,
+            "type": "string",
+            "description": "The file contents, base64 encoded."
+          },
+          {
+            "key": "externalId",
+            "optional": false,
+            "type": "string",
+            "description": "External id of the item, project, portfolio or organization."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.attachments.attachToOrganization",
+      "shortPath": "attachments.attachToOrganization",
+      "description": "Upload a file and attach it to a customer organization",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileName",
+            "optional": false,
+            "type": "string",
+            "description": "Filename to record, including its extension."
+          },
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "string",
+            "description": "MIME type, for example application/pdf."
+          },
+          {
+            "key": "contentBase64",
+            "optional": false,
+            "type": "string",
+            "description": "The file contents, base64 encoded."
+          },
+          {
+            "key": "externalId",
+            "optional": false,
+            "type": "string",
+            "description": "External id of the item, project, portfolio or organization."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.attachments.attachToPortfolio",
+      "shortPath": "attachments.attachToPortfolio",
+      "description": "Upload a file and attach it to a portfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileName",
+            "optional": false,
+            "type": "string",
+            "description": "Filename to record, including its extension."
+          },
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "string",
+            "description": "MIME type, for example application/pdf."
+          },
+          {
+            "key": "contentBase64",
+            "optional": false,
+            "type": "string",
+            "description": "The file contents, base64 encoded."
+          },
+          {
+            "key": "externalId",
+            "optional": false,
+            "type": "string",
+            "description": "External id of the item, project, portfolio or organization."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.attachments.attachToProject",
+      "shortPath": "attachments.attachToProject",
+      "description": "Upload a file and attach it to a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileName",
+            "optional": false,
+            "type": "string",
+            "description": "Filename to record, including its extension."
+          },
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "string",
+            "description": "MIME type, for example application/pdf."
+          },
+          {
+            "key": "contentBase64",
+            "optional": false,
+            "type": "string",
+            "description": "The file contents, base64 encoded."
+          },
+          {
+            "key": "externalId",
+            "optional": false,
+            "type": "string",
+            "description": "External id of the item, project, portfolio or organization."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.attachments.filter",
+      "shortPath": "attachments.filter",
+      "description": "List attachment external ids by filter",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]",
+            "description": "Property comparisons to apply."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Index of the first row to return. Defaults to 0."
+          },
+          {
+            "key": "isAsc",
+            "optional": true,
+            "type": "boolean",
+            "description": "Sort by creation time ascending. OneDesk defaults to false, newest first."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "totalNum",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "appliedPropertyFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "appliedCustomFieldFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "notAppliedPropertyFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "notAppliedCustomFieldFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "nextOffset",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.attachments.filterDetails",
+      "shortPath": "attachments.filterDetails",
+      "description": "List attachments with their names",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]",
+            "description": "Property comparisons to apply."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Index of the first row to return. Defaults to 0."
+          },
+          {
+            "key": "isAsc",
+            "optional": true,
+            "type": "boolean",
+            "description": "Sort by creation time ascending. OneDesk defaults to false, newest first."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | number | null, name?: string | null, contentType?: string | null, creationDate?: string | null, authorExternalId?: string | null, url?: string | null }[]"
+          },
+          {
+            "key": "totalNum",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "appliedPropertyFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "appliedCustomFieldFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "notAppliedPropertyFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "notAppliedCustomFieldFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "nextOffset",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.attachments.get",
+      "shortPath": "attachments.get",
+      "description": "Read one attachment record by external id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "externalId",
+            "optional": false,
+            "type": "string",
+            "description": "The attachment's external id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number | null, name?: string | null, contentType?: string | null, creationDate?: string | null, authorExternalId?: string | null, url?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.attachments.upload",
+      "shortPath": "attachments.upload",
+      "description": "Upload a file to the account and get its external id for attaching later",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileName",
+            "optional": false,
+            "type": "string",
+            "description": "Filename to record, including its extension."
+          },
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "string",
+            "description": "MIME type, for example application/pdf."
+          },
+          {
+            "key": "contentBase64",
+            "optional": false,
+            "type": "string",
+            "description": "The file contents, base64 encoded."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.conversations.create",
+      "shortPath": "conversations.create",
+      "description": "Open a conversation on a work item or project, optionally with its first messages",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "itemExternalId",
+            "optional": true,
+            "type": "string",
+            "description": "Work item external id."
+          },
+          {
+            "key": "projectExternalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "publicConversation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "messages",
+            "optional": true,
+            "type": "{ content?: string, attachmentIds?: string[] }[]"
+          },
+          {
+            "key": "authorExternalId",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.conversations.filter",
+      "shortPath": "conversations.filter",
+      "description": "List conversation external ids by filter",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]",
+            "description": "Property comparisons to apply."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Index of the first row to return. Defaults to 0."
+          },
+          {
+            "key": "isAsc",
+            "optional": true,
+            "type": "boolean",
+            "description": "Sort by creation time ascending. OneDesk defaults to false, newest first."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "totalNum",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "appliedPropertyFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "appliedCustomFieldFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "notAppliedPropertyFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "notAppliedCustomFieldFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "nextOffset",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.conversations.filterDetails",
+      "shortPath": "conversations.filterDetails",
+      "description": "List conversations with their open and lock state",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]",
+            "description": "Property comparisons to apply."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Index of the first row to return. Defaults to 0."
+          },
+          {
+            "key": "isAsc",
+            "optional": true,
+            "type": "boolean",
+            "description": "Sort by creation time ascending. OneDesk defaults to false, newest first."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | null, authorExternalId?: string | null, lastPostedAuthorExternalId?: string | null, open?: boolean | null, publicConversation?: boolean | null, created?: string | null, lastPosted?: string | null, itemExternalId?: string | null, projectExternalId?: string | null, locked?: boolean | null }[]"
+          },
+          {
+            "key": "totalNum",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "appliedPropertyFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "appliedCustomFieldFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "notAppliedPropertyFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "notAppliedCustomFieldFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "nextOffset",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.conversations.get",
+      "shortPath": "conversations.get",
+      "description": "Read one conversation by external id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "externalId",
+            "optional": false,
+            "type": "string",
+            "description": "The conversation's external id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, authorExternalId?: string | null, lastPostedAuthorExternalId?: string | null, open?: boolean | null, publicConversation?: boolean | null, created?: string | null, lastPosted?: string | null, itemExternalId?: string | null, projectExternalId?: string | null, locked?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.conversations.update",
+      "shortPath": "conversations.update",
+      "description": "Close, reopen or lock a conversation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "externalId",
+            "optional": false,
+            "type": "string",
+            "description": "The conversation's external id."
+          },
+          {
+            "key": "open",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "lock",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.customers.create",
+      "shortPath": "customers.create",
+      "description": "Create a customer, optionally inside a customer organization",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "Email of the customer."
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerOrganization",
+            "optional": true,
+            "type": "string",
+            "description": "Customer organization external id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.customers.filter",
+      "shortPath": "customers.filter",
+      "description": "List customer external ids by filter",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Index of the first row to return. Defaults to 0."
+          },
+          {
+            "key": "isAsc",
+            "optional": true,
+            "type": "boolean",
+            "description": "Sort by creation time ascending. OneDesk defaults to false, newest first."
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]",
+            "description": "Custom field comparisons. Use null as the value to match fields with no value."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "totalNum",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "appliedPropertyFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "appliedCustomFieldFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "notAppliedPropertyFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "notAppliedCustomFieldFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "nextOffset",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.customers.filterDetails",
+      "shortPath": "customers.filterDetails",
+      "description": "List customers with their contact details and organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Index of the first row to return. Defaults to 0."
+          },
+          {
+            "key": "isAsc",
+            "optional": true,
+            "type": "boolean",
+            "description": "Sort by creation time ascending. OneDesk defaults to false, newest first."
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]",
+            "description": "Custom field comparisons. Use null as the value to match fields with no value."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, externalId?: string | null, customerType?: string | null, created?: string | null, priority?: number | null, registered?: boolean | null, profile?: { firstName?: string | null, lastName?: string | null, email?: string | null, phoneWork?: string | null, title?: string | null, language?: string | null } | null, address?: { address1?: string | null, address2?: string | null, city?: string | null, state?: string | null, zip?: string | null, country?: string | null } | null, customFieldsData?: { name?: string | null, value?: string | number | boolean | (string | number | boolean)[] | null }[] | null, customerOrganization?: string | null }[]"
+          },
+          {
+            "key": "totalNum",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "appliedPropertyFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "appliedCustomFieldFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "notAppliedPropertyFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "notAppliedCustomFieldFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "nextOffset",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.customers.get",
+      "shortPath": "customers.get",
+      "description": "Read one customer by external id or numeric id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, externalId?: string | null, customerType?: string | null, created?: string | null, priority?: number | null, registered?: boolean | null, profile?: { firstName?: string | null, lastName?: string | null, email?: string | null, phoneWork?: string | null, title?: string | null, language?: string | null } | null, address?: { address1?: string | null, address2?: string | null, city?: string | null, state?: string | null, zip?: string | null, country?: string | null } | null, customFieldsData?: { name?: string | null, value?: string | number | boolean | (string | number | boolean)[] | null }[] | null, customerOrganization?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.customers.update",
+      "shortPath": "customers.update",
+      "description": "Change a customer, including deactivating them so they can no longer sign in",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phoneNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "0 | 20 | 40 | 60 | 80 | 100",
+            "description": "Star rating: 0, 20, 40, 60, 80 or 100 for zero to five stars. No other value is accepted."
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ address1?: string | null, address2?: string | null, city?: string | null, state?: string | null, zip?: string | null, country?: string | null }"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deactivate",
+            "optional": true,
+            "type": "boolean",
+            "description": "Deactivate the customer, which stops them signing in."
+          },
+          {
+            "key": "pictureAttachmentExternalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerOrganizationExternalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, string | number | boolean | string[]>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.invoices.filter",
+      "shortPath": "invoices.filter",
+      "description": "List invoice external ids by filter",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]",
+            "description": "Property comparisons to apply."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Index of the first row to return. Defaults to 0."
+          },
+          {
+            "key": "isAsc",
+            "optional": true,
+            "type": "boolean",
+            "description": "Sort by creation time ascending. OneDesk defaults to false, newest first."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "totalNum",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "appliedPropertyFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "appliedCustomFieldFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "notAppliedPropertyFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "notAppliedCustomFieldFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "nextOffset",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.invoices.filterDetails",
+      "shortPath": "invoices.filterDetails",
+      "description": "List invoices with their status and totals",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]",
+            "description": "Property comparisons to apply."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Index of the first row to return. Defaults to 0."
+          },
+          {
+            "key": "isAsc",
+            "optional": true,
+            "type": "boolean",
+            "description": "Sort by creation time ascending. OneDesk defaults to false, newest first."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, invoiceExternalId?: string | null, created?: string | null, customerOrganization?: { displayName?: string | null, emailAddress?: string | null, givenName?: string | null, familyName?: string | null } | null, displayNumber?: string | number | null, invoiceStatus?: string | null, type?: string | null, invoiceMonth?: number | null, invoiceYear?: number | null, dateOfIssue?: string | null, dueDate?: string | null, lastSent?: string | null, paidDate?: string | null, serviceLineItems?: { name?: string | null, amount?: number | null }[] | null, basicLineItems?: { name?: string | null, amount?: number | null }[] | null, flatRateLineItems?: { name?: string | null, amount?: number | null }[] | null, prepaidHoursLineItems?: { name?: string | null, amount?: number | null }[] | null, totalAmount?: number | null, billableHours?: number | null, currency?: string | null, calculationLevel?: string | null, integrationType?: string | null, integrationInvoiceId?: string | number | null, companyName?: string | null, customerAddress?: { name?: string | null, address?: string | null, city?: string | null, state?: string | null, country?: string | null, zipCode?: string | null } | null }[]"
+          },
+          {
+            "key": "totalNum",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "appliedPropertyFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "appliedCustomFieldFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "notAppliedPropertyFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "notAppliedCustomFieldFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "nextOffset",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.invoices.get",
+      "shortPath": "invoices.get",
+      "description": "Read one invoice by external id or numeric id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, invoiceExternalId?: string | null, created?: string | null, customerOrganization?: { displayName?: string | null, emailAddress?: string | null, givenName?: string | null, familyName?: string | null } | null, displayNumber?: string | number | null, invoiceStatus?: string | null, type?: string | null, invoiceMonth?: number | null, invoiceYear?: number | null, dateOfIssue?: string | null, dueDate?: string | null, lastSent?: string | null, paidDate?: string | null, serviceLineItems?: { name?: string | null, amount?: number | null }[] | null, basicLineItems?: { name?: string | null, amount?: number | null }[] | null, flatRateLineItems?: { name?: string | null, amount?: number | null }[] | null, prepaidHoursLineItems?: { name?: string | null, amount?: number | null }[] | null, totalAmount?: number | null, billableHours?: number | null, currency?: string | null, calculationLevel?: string | null, integrationType?: string | null, integrationInvoiceId?: string | number | null, companyName?: string | null, customerAddress?: { name?: string | null, address?: string | null, city?: string | null, state?: string | null, country?: string | null, zipCode?: string | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.invoices.update",
+      "shortPath": "invoices.update",
+      "description": "Change an invoice: its status, due date and line items. Setting the status to 'void' cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "displayNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "draft | open | sent | paid | not collectible | void"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "basicLineItemsToAdd",
+            "optional": true,
+            "type": "Record<string, string | number | boolean | null>[]"
+          },
+          {
+            "key": "serviceLineItemsToAdd",
+            "optional": true,
+            "type": "Record<string, string | number | boolean | null>[]"
+          },
+          {
+            "key": "prepaidHoursLineItemToAdd",
+            "optional": true,
+            "type": "Record<string, string | number | boolean | null>[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.items.create",
+      "shortPath": "items.create",
+      "description": "Create a work item such as a ticket or task, optionally with requesters, followers, a project and custom fields",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the work item."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string",
+            "description": "Work item type name, for example 'Ticket'. Read the valid names with organization.itemTypes."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "attachmentExternalIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "projectExternalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "0 | 20 | 40 | 60 | 80 | 100",
+            "description": "Star rating: 0, 20, 40, 60, 80 or 100 for zero to five stars. No other value is accepted."
+          },
+          {
+            "key": "requesterExternalIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "requesterEmails",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "followerExternalIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "plannedHour",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "plannedStart",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "plannedFinish",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, string | number | boolean | string[]>",
+            "description": "Custom field name to value."
+          },
+          {
+            "key": "authorExternalId",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.items.filter",
+      "shortPath": "items.filter",
+      "description": "List work item external ids by type and filter, with paging and a total count",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]",
+            "description": "Property comparisons to apply."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Index of the first row to return. Defaults to 0."
+          },
+          {
+            "key": "isAsc",
+            "optional": true,
+            "type": "boolean",
+            "description": "Sort by creation time ascending. OneDesk defaults to false, newest first."
+          },
+          {
+            "key": "itemType",
+            "optional": false,
+            "type": "string[]",
+            "description": "One or more work item type names, for example ['Ticket']. A bare string is rejected by the API. Read the valid names with organization.itemTypes."
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "totalNum",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "appliedPropertyFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "appliedCustomFieldFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "notAppliedPropertyFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "notAppliedCustomFieldFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "nextOffset",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.items.filterDetails",
+      "shortPath": "items.filterDetails",
+      "description": "List work items with their details by type and filter, including assignees and lifecycle status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]",
+            "description": "Property comparisons to apply."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Index of the first row to return. Defaults to 0."
+          },
+          {
+            "key": "isAsc",
+            "optional": true,
+            "type": "boolean",
+            "description": "Sort by creation time ascending. OneDesk defaults to false, newest first."
+          },
+          {
+            "key": "itemType",
+            "optional": false,
+            "type": "string[]",
+            "description": "One or more work item type names, for example ['Ticket']. A bare string is rejected by the API. Read the valid names with organization.itemTypes."
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, externalId?: string | null, name?: string | null, description?: string | null, type?: { name?: string | null } | null, lifecycleStatus?: { name?: string | null, externalId?: string | null, state?: string | null } | null, priority?: number | null, created?: string | null, edited?: string | null, latestInProgress?: string | null, latestClose?: string | null, author?: { typeName?: string | null, displayName?: string | null, email?: string | null, teamName?: string | null, externalId?: string | null } | null, assignees?: { typeName?: string | null, displayName?: string | null, email?: string | null, teamName?: string | null, externalId?: string | null }[] | null, project?: { externalId?: string | null, name?: string | null } | null, timesheets?: string[] | null, agilePoints?: number | null, assignedTeams?: { name?: string | null, externalId?: string | null }[] | null, published?: boolean | null, attachments?: { id?: string | number | null, name?: string | null, contentType?: string | null, creationDate?: string | null, authorExternalId?: string | null, url?: string | null }[] | null, customFields?: { name?: string | null, value?: string | number | boolean | (string | number | boolean)[] | null }[] | null, sla?: string | null, satisfactionRating?: string | null, incomingEmailQueueName?: string | null, workItemUrl?: string | null }[]"
+          },
+          {
+            "key": "totalNum",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "appliedPropertyFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "appliedCustomFieldFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "notAppliedPropertyFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "notAppliedCustomFieldFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "nextOffset",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.items.get",
+      "shortPath": "items.get",
+      "description": "Read one work item by external id or numeric id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string",
+            "description": "The item's external id."
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number",
+            "description": "The item's numeric id in this organization."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, externalId?: string | null, name?: string | null, description?: string | null, type?: { name?: string | null } | null, lifecycleStatus?: { name?: string | null, externalId?: string | null, state?: string | null } | null, priority?: number | null, created?: string | null, edited?: string | null, latestInProgress?: string | null, latestClose?: string | null, author?: { typeName?: string | null, displayName?: string | null, email?: string | null, teamName?: string | null, externalId?: string | null } | null, assignees?: { typeName?: string | null, displayName?: string | null, email?: string | null, teamName?: string | null, externalId?: string | null }[] | null, project?: { externalId?: string | null, name?: string | null } | null, timesheets?: string[] | null, agilePoints?: number | null, assignedTeams?: { name?: string | null, externalId?: string | null }[] | null, published?: boolean | null, attachments?: { id?: string | number | null, name?: string | null, contentType?: string | null, creationDate?: string | null, authorExternalId?: string | null, url?: string | null }[] | null, customFields?: { name?: string | null, value?: string | number | boolean | (string | number | boolean)[] | null }[] | null, sla?: string | null, satisfactionRating?: string | null, incomingEmailQueueName?: string | null, workItemUrl?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.items.update",
+      "shortPath": "items.update",
+      "description": "Change a work item: name, status, assignment, priority, dates, links and custom fields",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string",
+            "description": "The item's external id."
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number",
+            "description": "The item's numeric id."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectExternalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "agilePoints",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "0 | 20 | 40 | 60 | 80 | 100",
+            "description": "Star rating: 0, 20, 40, 60, 80 or 100 for zero to five stars. No other value is accepted."
+          },
+          {
+            "key": "percentComplete",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "relatedItemExternalIds",
+            "optional": true,
+            "type": "{ replace?: boolean, newValue?: string[], add?: string[], remove?: string[] }"
+          },
+          {
+            "key": "duplicatesItemExternalIds",
+            "optional": true,
+            "type": "{ replace?: boolean, newValue?: string[], add?: string[], remove?: string[] }"
+          },
+          {
+            "key": "duplicatedByItemExternalIds",
+            "optional": true,
+            "type": "{ replace?: boolean, newValue?: string[], add?: string[], remove?: string[] }"
+          },
+          {
+            "key": "blocksItemExternalIds",
+            "optional": true,
+            "type": "{ replace?: boolean, newValue?: string[], add?: string[], remove?: string[] }"
+          },
+          {
+            "key": "blockedByItemExternalIds",
+            "optional": true,
+            "type": "{ replace?: boolean, newValue?: string[], add?: string[], remove?: string[] }"
+          },
+          {
+            "key": "precededByItemExternalIds",
+            "optional": true,
+            "type": "{ replace?: boolean, newValue?: string[], add?: string[], remove?: string[] }"
+          },
+          {
+            "key": "succeededByItemExternalIds",
+            "optional": true,
+            "type": "{ replace?: boolean, newValue?: string[], add?: string[], remove?: string[] }"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, string | number | boolean | string[]>"
+          },
+          {
+            "key": "lifecycleStatusName",
+            "optional": true,
+            "type": "string",
+            "description": "New lifecycle status by name. Read the valid names with organization.lifecycleStatus."
+          },
+          {
+            "key": "attachmentExternalIds",
+            "optional": true,
+            "type": "{ replace?: boolean, newValue?: string[], add?: string[], remove?: string[] }"
+          },
+          {
+            "key": "plannedStart",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "plannedFinish",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "plannedHours",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "actualStart",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "actualFinish",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "actualHours",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "followerUserAndCustomerExternalIds",
+            "optional": true,
+            "type": "{ replace?: boolean, newValue?: string[], add?: string[], remove?: string[] }"
+          },
+          {
+            "key": "followerTeamAndCustomerOrganizationExternalIds",
+            "optional": true,
+            "type": "{ replace?: boolean, newValue?: string[], add?: string[], remove?: string[] }"
+          },
+          {
+            "key": "assignedUserExternalIds",
+            "optional": true,
+            "type": "{ replace?: boolean, newValue?: string[], add?: string[], remove?: string[] }"
+          },
+          {
+            "key": "assignedTeamExternalIds",
+            "optional": true,
+            "type": "{ replace?: boolean, newValue?: string[], add?: string[], remove?: string[] }"
+          },
+          {
+            "key": "requesterUserAndCustomerExternalIds",
+            "optional": true,
+            "type": "{ replace?: boolean, newValue?: string[], add?: string[], remove?: string[] }"
+          },
+          {
+            "key": "requesterTeamAndCustomerOrganizationExternalIds",
+            "optional": true,
+            "type": "{ replace?: boolean, newValue?: string[], add?: string[], remove?: string[] }"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.messages.create",
+      "shortPath": "messages.create",
+      "description": "Post a message into a conversation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversationExternalId",
+            "optional": false,
+            "type": "string",
+            "description": "Conversation to post into."
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "attachmentExternalIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "authorExternalId",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.messages.filter",
+      "shortPath": "messages.filter",
+      "description": "List conversation message external ids by filter",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]",
+            "description": "Property comparisons to apply."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Index of the first row to return. Defaults to 0."
+          },
+          {
+            "key": "isAsc",
+            "optional": true,
+            "type": "boolean",
+            "description": "Sort by creation time ascending. OneDesk defaults to false, newest first."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "totalNum",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "appliedPropertyFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "appliedCustomFieldFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "notAppliedPropertyFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "notAppliedCustomFieldFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "nextOffset",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.messages.filterDetails",
+      "shortPath": "messages.filterDetails",
+      "description": "List conversation messages with their content and author",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]",
+            "description": "Property comparisons to apply."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Index of the first row to return. Defaults to 0."
+          },
+          {
+            "key": "isAsc",
+            "optional": true,
+            "type": "boolean",
+            "description": "Sort by creation time ascending. OneDesk defaults to false, newest first."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | null, authorExternalId?: string | null, conversationId?: string | null, content?: string | null, source?: string | null, creationDate?: string | null, attachments?: { id?: string | number | null, name?: string | null, contentType?: string | null, creationDate?: string | null, authorExternalId?: string | null, url?: string | null }[] | null, deleted?: boolean | null }[]"
+          },
+          {
+            "key": "totalNum",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "appliedPropertyFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "appliedCustomFieldFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "notAppliedPropertyFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "notAppliedCustomFieldFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "nextOffset",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.messages.get",
+      "shortPath": "messages.get",
+      "description": "Read one conversation message by external id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "externalId",
+            "optional": false,
+            "type": "string",
+            "description": "The message's external id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, authorExternalId?: string | null, conversationId?: string | null, content?: string | null, source?: string | null, creationDate?: string | null, attachments?: { id?: string | number | null, name?: string | null, contentType?: string | null, creationDate?: string | null, authorExternalId?: string | null, url?: string | null }[] | null, deleted?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.messages.update",
+      "shortPath": "messages.update",
+      "description": "Change a message body or its attachments",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "externalId",
+            "optional": false,
+            "type": "string",
+            "description": "The message's external id."
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "attachmentExternalIds",
+            "optional": true,
+            "type": "{ replace?: boolean, newValue?: string[], add?: string[], remove?: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.organization.containerTypes",
+      "shortPath": "organization.containerTypes",
+      "description": "List the organization container type names",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ externalId?: string | null, label?: string | null, isPortfolio?: boolean | null, visible?: boolean | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.organization.itemTypes",
+      "shortPath": "organization.itemTypes",
+      "description": "List the organization work item type names that create and filter calls require",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ externalId?: string | null, label?: string | null, iconStyleName?: string | null, iconColor?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.organization.lifecycleStatus",
+      "shortPath": "organization.lifecycleStatus",
+      "description": "List the lifecycle status names an item or project can be moved to",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name?: string | null, externalId?: string | null, state?: string | null, type?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.organization.profile",
+      "shortPath": "organization.profile",
+      "description": "Read the organization profile and its policy settings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ organizationName?: string | null, organizationUri?: string | null, dateFormat?: string | null, defaultThreadVisibilityType?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.organization.userTypes",
+      "shortPath": "organization.userTypes",
+      "description": "List the organization user type names that user create calls accept",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ label?: string | null, iconStyleName?: string | null, iconColor?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.organizations.create",
+      "shortPath": "organizations.create",
+      "description": "Create a customer organization",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the customer organization."
+          },
+          {
+            "key": "domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "customers",
+            "optional": true,
+            "type": "string[]",
+            "description": "Customer external ids."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.organizations.filter",
+      "shortPath": "organizations.filter",
+      "description": "List customer organization external ids by filter",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Index of the first row to return. Defaults to 0."
+          },
+          {
+            "key": "isAsc",
+            "optional": true,
+            "type": "boolean",
+            "description": "Sort by creation time ascending. OneDesk defaults to false, newest first."
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]",
+            "description": "Custom field comparisons. Use null as the value to match fields with no value."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "totalNum",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "appliedPropertyFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "appliedCustomFieldFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "notAppliedPropertyFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "notAppliedCustomFieldFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "nextOffset",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.organizations.filterDetails",
+      "shortPath": "organizations.filterDetails",
+      "description": "List customer organizations with their domains and customers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Index of the first row to return. Defaults to 0."
+          },
+          {
+            "key": "isAsc",
+            "optional": true,
+            "type": "boolean",
+            "description": "Sort by creation time ascending. OneDesk defaults to false, newest first."
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]",
+            "description": "Custom field comparisons. Use null as the value to match fields with no value."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ externalId?: string | null, name?: string | null, profile?: { description?: string | null, phone?: string | null, address?: string | null, city?: string | null, state?: string | null, country?: string | null, zipCode?: string | null, attachments?: { id?: string | number | null, name?: string | null, contentType?: string | null, creationDate?: string | null, authorExternalId?: string | null, url?: string | null }[] | null } | null, invoicePreference?: { firstName?: string | null, lastName?: string | null, email?: string | null, currencySymbol?: string | null, enablePrepaidHours?: boolean | null, remainingPrepaidHoursInMillis?: number | null } | null, customerExternalIds?: string[] | null, domains?: (string | {})[] | null, customFields?: { name?: string | null, value?: string | number | boolean | (string | number | boolean)[] | null }[] | null }[]"
+          },
+          {
+            "key": "totalNum",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "appliedPropertyFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "appliedCustomFieldFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "notAppliedPropertyFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "notAppliedCustomFieldFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "nextOffset",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.organizations.get",
+      "shortPath": "organizations.get",
+      "description": "Read one customer organization by external id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "externalId",
+            "optional": false,
+            "type": "string",
+            "description": "The organization's external id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ externalId?: string | null, name?: string | null, profile?: { description?: string | null, phone?: string | null, address?: string | null, city?: string | null, state?: string | null, country?: string | null, zipCode?: string | null, attachments?: { id?: string | number | null, name?: string | null, contentType?: string | null, creationDate?: string | null, authorExternalId?: string | null, url?: string | null }[] | null } | null, invoicePreference?: { firstName?: string | null, lastName?: string | null, email?: string | null, currencySymbol?: string | null, enablePrepaidHours?: boolean | null, remainingPrepaidHoursInMillis?: number | null } | null, customerExternalIds?: string[] | null, domains?: (string | {})[] | null, customFields?: { name?: string | null, value?: string | number | boolean | (string | number | boolean)[] | null }[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.organizations.update",
+      "shortPath": "organizations.update",
+      "description": "Change a customer organization, its domains or its customers",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "externalId",
+            "optional": false,
+            "type": "string",
+            "description": "The organization's external id."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phoneNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ address1?: string | null, address2?: string | null, city?: string | null, state?: string | null, zip?: string | null, country?: string | null }"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "{ replace?: boolean, newValue?: string[], add?: string[], remove?: string[] }"
+          },
+          {
+            "key": "domains",
+            "optional": true,
+            "type": "{ replace?: boolean, newValue?: string[], add?: string[], remove?: string[] }"
+          },
+          {
+            "key": "customers",
+            "optional": true,
+            "type": "{ replace?: boolean, newValue?: string[], add?: string[], remove?: string[] }"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, string | number | boolean | string[]>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.portfolios.create",
+      "shortPath": "portfolios.create",
+      "description": "Create a portfolio, optionally nested under others",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the portfolio."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string",
+            "description": "Portfolio type label, for example 'Portfolio'. Read the labels with organization.containerTypes (isPortfolio: true)."
+          },
+          {
+            "key": "parentPortfolioExternalIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "attachmentExternalIds",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.portfolios.filter",
+      "shortPath": "portfolios.filter",
+      "description": "List portfolio external ids by filter",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]",
+            "description": "Property comparisons to apply."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Index of the first row to return. Defaults to 0."
+          },
+          {
+            "key": "isAsc",
+            "optional": true,
+            "type": "boolean",
+            "description": "Sort by creation time ascending. OneDesk defaults to false, newest first."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "totalNum",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "appliedPropertyFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "appliedCustomFieldFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "notAppliedPropertyFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "notAppliedCustomFieldFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "nextOffset",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.portfolios.filterDetails",
+      "shortPath": "portfolios.filterDetails",
+      "description": "List portfolios with their details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]",
+            "description": "Property comparisons to apply."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Index of the first row to return. Defaults to 0."
+          },
+          {
+            "key": "isAsc",
+            "optional": true,
+            "type": "boolean",
+            "description": "Sort by creation time ascending. OneDesk defaults to false, newest first."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ externalId?: string | null, created?: string | null, name?: string | null, type?: { label?: string | null } | string | null, parentPortfolioExternalIds?: string[] | null, attachments?: { id?: string | number | null, name?: string | null, contentType?: string | null, creationDate?: string | null, authorExternalId?: string | null, url?: string | null }[] | null }[]"
+          },
+          {
+            "key": "totalNum",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "appliedPropertyFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "appliedCustomFieldFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "notAppliedPropertyFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "notAppliedCustomFieldFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "nextOffset",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.portfolios.get",
+      "shortPath": "portfolios.get",
+      "description": "Read one portfolio by external id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "externalId",
+            "optional": false,
+            "type": "string",
+            "description": "The portfolio's external id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ externalId?: string | null, created?: string | null, name?: string | null, type?: { label?: string | null } | string | null, parentPortfolioExternalIds?: string[] | null, attachments?: { id?: string | number | null, name?: string | null, contentType?: string | null, creationDate?: string | null, authorExternalId?: string | null, url?: string | null }[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.portfolios.update",
+      "shortPath": "portfolios.update",
+      "description": "Change a portfolio name, parents or attachments",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "externalId",
+            "optional": false,
+            "type": "string",
+            "description": "The portfolio's external id."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parentPortfolioExternalIds",
+            "optional": true,
+            "type": "{ replace?: boolean, newValue?: string[], add?: string[], remove?: string[] }"
+          },
+          {
+            "key": "attachmentExternalIds",
+            "optional": true,
+            "type": "{ replace?: boolean, newValue?: string[], add?: string[], remove?: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Create a project, optionally under portfolios",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the project."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parentPortfolioExternalIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "attachmentsExternalIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "userFollowerExternalIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "customerFollowerExternalIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "customerRequesterExternalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoiceType",
+            "optional": true,
+            "type": "actual work performed | flat fee | prepaid hours | no invoice planned"
+          },
+          {
+            "key": "plannedStart",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "authorExternalId",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.projects.filter",
+      "shortPath": "projects.filter",
+      "description": "List project external ids by filter",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Index of the first row to return. Defaults to 0."
+          },
+          {
+            "key": "isAsc",
+            "optional": true,
+            "type": "boolean",
+            "description": "Sort by creation time ascending. OneDesk defaults to false, newest first."
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]",
+            "description": "Custom field comparisons. Use null as the value to match fields with no value."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "totalNum",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "appliedPropertyFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "appliedCustomFieldFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "notAppliedPropertyFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "notAppliedCustomFieldFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "nextOffset",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.projects.filterDetails",
+      "shortPath": "projects.filterDetails",
+      "description": "List projects with their lifecycle status and invoice type",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Index of the first row to return. Defaults to 0."
+          },
+          {
+            "key": "isAsc",
+            "optional": true,
+            "type": "boolean",
+            "description": "Sort by creation time ascending. OneDesk defaults to false, newest first."
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]",
+            "description": "Custom field comparisons. Use null as the value to match fields with no value."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, externalId?: string | null, name?: string | null, description?: string | null, created?: string | null, archivedDate?: string | null, type?: { label?: string | null } | string | null, invoiceType?: string | null, lifecycleStatus?: { name?: string | null, externalId?: string | null, state?: string | null } | null, author?: { typeName?: string | null, displayName?: string | null, email?: string | null, teamName?: string | null, externalId?: string | null } | null, discoverable?: boolean | null, parentExternalIds?: string[] | null, customFields?: { name?: string | null, value?: string | number | boolean | (string | number | boolean)[] | null }[] | null, attachments?: { id?: string | number | null, name?: string | null, contentType?: string | null, creationDate?: string | null, authorExternalId?: string | null, url?: string | null }[] | null, invoices?: string[] | null, archived?: boolean | null, published?: boolean | null, template?: boolean | null, customerFollowers?: { typeName?: string | null, displayName?: string | null, email?: string | null, teamName?: string | null, externalId?: string | null }[] | null, teamsFollowers?: { name?: string | null, externalId?: string | null }[] | null, customerOrganizationsFollowers?: { name?: string | null, externalId?: string | null }[] | null, requesterCustomerOrganization?: { name?: string | null, externalId?: string | null } | null }[]"
+          },
+          {
+            "key": "totalNum",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "appliedPropertyFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "appliedCustomFieldFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "notAppliedPropertyFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "notAppliedCustomFieldFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "nextOffset",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Read one project by external id or numeric id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, externalId?: string | null, name?: string | null, description?: string | null, created?: string | null, archivedDate?: string | null, type?: { label?: string | null } | string | null, invoiceType?: string | null, lifecycleStatus?: { name?: string | null, externalId?: string | null, state?: string | null } | null, author?: { typeName?: string | null, displayName?: string | null, email?: string | null, teamName?: string | null, externalId?: string | null } | null, discoverable?: boolean | null, parentExternalIds?: string[] | null, customFields?: { name?: string | null, value?: string | number | boolean | (string | number | boolean)[] | null }[] | null, attachments?: { id?: string | number | null, name?: string | null, contentType?: string | null, creationDate?: string | null, authorExternalId?: string | null, url?: string | null }[] | null, invoices?: string[] | null, archived?: boolean | null, published?: boolean | null, template?: boolean | null, customerFollowers?: { typeName?: string | null, displayName?: string | null, email?: string | null, teamName?: string | null, externalId?: string | null }[] | null, teamsFollowers?: { name?: string | null, externalId?: string | null }[] | null, customerOrganizationsFollowers?: { name?: string | null, externalId?: string | null }[] | null, requesterCustomerOrganization?: { name?: string | null, externalId?: string | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.projects.update",
+      "shortPath": "projects.update",
+      "description": "Change a project: name, lifecycle status, portfolios and custom fields",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lifecycleStatus",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoiceType",
+            "optional": true,
+            "type": "actual work performed | flat fee | prepaid hours | no invoice planned"
+          },
+          {
+            "key": "portfolioExternalIds",
+            "optional": true,
+            "type": "{ replace?: boolean, newValue?: string[], add?: string[], remove?: string[] }"
+          },
+          {
+            "key": "attachmentExternalIds",
+            "optional": true,
+            "type": "{ replace?: boolean, newValue?: string[], add?: string[], remove?: string[] }"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, string | number | boolean | string[]>"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.quotes.filter",
+      "shortPath": "quotes.filter",
+      "description": "List quote external ids by filter",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]",
+            "description": "Property comparisons to apply."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Index of the first row to return. Defaults to 0."
+          },
+          {
+            "key": "isAsc",
+            "optional": true,
+            "type": "boolean",
+            "description": "Sort by creation time ascending. OneDesk defaults to false, newest first."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "totalNum",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "appliedPropertyFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "appliedCustomFieldFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "notAppliedPropertyFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "notAppliedCustomFieldFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "nextOffset",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.quotes.filterDetails",
+      "shortPath": "quotes.filterDetails",
+      "description": "List quotes with their status and totals",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]",
+            "description": "Property comparisons to apply."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Index of the first row to return. Defaults to 0."
+          },
+          {
+            "key": "isAsc",
+            "optional": true,
+            "type": "boolean",
+            "description": "Sort by creation time ascending. OneDesk defaults to false, newest first."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | number | null, quoteExternalId?: string | null, created?: string | null, customerOrganization?: { displayName?: string | null, emailAddress?: string | null, givenName?: string | null, familyName?: string | null } | null, displayNumber?: string | number | null, quoteStatus?: string | null, quoteIssued?: string | null, quoteLastSent?: string | null, quoteExpiration?: string | null, quoteAccepted?: string | null, serviceLineItems?: { name?: string | null, amount?: number | null }[] | null, basicLineItems?: { name?: string | null, amount?: number | null }[] | null, prepaidHoursLineItems?: { name?: string | null, amount?: number | null }[] | null, totalAmount?: number | null, billableHours?: number | null, currency?: string | null, calculationLevel?: string | null, companyName?: string | null, customerAddress?: { name?: string | null, address?: string | null, city?: string | null, state?: string | null, country?: string | null, zipCode?: string | null } | null }[]"
+          },
+          {
+            "key": "totalNum",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "appliedPropertyFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "appliedCustomFieldFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "notAppliedPropertyFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "notAppliedCustomFieldFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "nextOffset",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.quotes.get",
+      "shortPath": "quotes.get",
+      "description": "Read one quote by external id or numeric id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string",
+            "description": "The quote's id as OneDesk sends it, for example 'Q-1'."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number | null, quoteExternalId?: string | null, created?: string | null, customerOrganization?: { displayName?: string | null, emailAddress?: string | null, givenName?: string | null, familyName?: string | null } | null, displayNumber?: string | number | null, quoteStatus?: string | null, quoteIssued?: string | null, quoteLastSent?: string | null, quoteExpiration?: string | null, quoteAccepted?: string | null, serviceLineItems?: { name?: string | null, amount?: number | null }[] | null, basicLineItems?: { name?: string | null, amount?: number | null }[] | null, prepaidHoursLineItems?: { name?: string | null, amount?: number | null }[] | null, totalAmount?: number | null, billableHours?: number | null, currency?: string | null, calculationLevel?: string | null, companyName?: string | null, customerAddress?: { name?: string | null, address?: string | null, city?: string | null, state?: string | null, country?: string | null, zipCode?: string | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.quotes.update",
+      "shortPath": "quotes.update",
+      "description": "Change a quote: its status, expiration date and line items",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string",
+            "description": "The quote's id as OneDesk sends it, for example 'Q-1'."
+          },
+          {
+            "key": "displayNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "draft | open | sent | accepted | cancelled | convert to invoice"
+          },
+          {
+            "key": "expirationDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "basicLineItemsToAdd",
+            "optional": true,
+            "type": "Record<string, string | number | boolean | null>[]"
+          },
+          {
+            "key": "serviceLineItemsToAdd",
+            "optional": true,
+            "type": "Record<string, string | number | boolean | null>[]"
+          },
+          {
+            "key": "prepaidHoursLineItemToAdd",
+            "optional": true,
+            "type": "Record<string, string | number | boolean | null>[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.teams.create",
+      "shortPath": "teams.create",
+      "description": "Create a team with an initial set of members",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the team."
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "string[]",
+            "description": "User external ids."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.teams.filter",
+      "shortPath": "teams.filter",
+      "description": "List team external ids by filter",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]",
+            "description": "Property comparisons to apply."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Index of the first row to return. Defaults to 0."
+          },
+          {
+            "key": "isAsc",
+            "optional": true,
+            "type": "boolean",
+            "description": "Sort by creation time ascending. OneDesk defaults to false, newest first."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "totalNum",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "appliedPropertyFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "appliedCustomFieldFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "notAppliedPropertyFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "notAppliedCustomFieldFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "nextOffset",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.teams.filterDetails",
+      "shortPath": "teams.filterDetails",
+      "description": "List teams with their members",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]",
+            "description": "Property comparisons to apply."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Index of the first row to return. Defaults to 0."
+          },
+          {
+            "key": "isAsc",
+            "optional": true,
+            "type": "boolean",
+            "description": "Sort by creation time ascending. OneDesk defaults to false, newest first."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, externalId?: string | null, name?: string | null, userExternalIds?: string[] | null }[]"
+          },
+          {
+            "key": "totalNum",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "appliedPropertyFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "appliedCustomFieldFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "notAppliedPropertyFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "notAppliedCustomFieldFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "nextOffset",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.teams.get",
+      "shortPath": "teams.get",
+      "description": "Read one team by external id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "externalId",
+            "optional": false,
+            "type": "string",
+            "description": "The team's external id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, externalId?: string | null, name?: string | null, userExternalIds?: string[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.teams.update",
+      "shortPath": "teams.update",
+      "description": "Rename a team or change its members",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "externalId",
+            "optional": false,
+            "type": "string",
+            "description": "The team's external id."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "{ replace?: boolean, newValue?: string[], add?: string[], remove?: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.timers.cancel",
+      "shortPath": "timers.cancel",
+      "description": "Cancel a work timer, discarding the work recorded in that run",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timerExternalId",
+            "optional": false,
+            "type": "string",
+            "description": "Timer external id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ reason?: string | null, amountOfWork?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.timers.filter",
+      "shortPath": "timers.filter",
+      "description": "List timer external ids by filter",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]",
+            "description": "Property comparisons to apply."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Index of the first row to return. Defaults to 0."
+          },
+          {
+            "key": "isAsc",
+            "optional": true,
+            "type": "boolean",
+            "description": "Sort by creation time ascending. OneDesk defaults to false, newest first."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "totalNum",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "appliedPropertyFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "appliedCustomFieldFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "notAppliedPropertyFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "notAppliedCustomFieldFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "nextOffset",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.timers.filterDetails",
+      "shortPath": "timers.filterDetails",
+      "description": "List timers with their status and accumulated work",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]",
+            "description": "Property comparisons to apply."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Index of the first row to return. Defaults to 0."
+          },
+          {
+            "key": "isAsc",
+            "optional": true,
+            "type": "boolean",
+            "description": "Sort by creation time ascending. OneDesk defaults to false, newest first."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ externalId?: string | null, userExternalId?: string | null, itemExternalId?: string | null, startDate?: string | null, amountOfWork?: number | null, startCurrentTimer?: string | null }[]"
+          },
+          {
+            "key": "totalNum",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "appliedPropertyFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "appliedCustomFieldFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "notAppliedPropertyFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "notAppliedCustomFieldFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "nextOffset",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.timers.get",
+      "shortPath": "timers.get",
+      "description": "Read one timer by external id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "externalId",
+            "optional": false,
+            "type": "string",
+            "description": "The timer's external id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ externalId?: string | null, userExternalId?: string | null, itemExternalId?: string | null, startDate?: string | null, amountOfWork?: number | null, startCurrentTimer?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.timers.pause",
+      "shortPath": "timers.pause",
+      "description": "Pause a running work timer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timerExternalId",
+            "optional": false,
+            "type": "string",
+            "description": "Timer external id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ reason?: string | null, amountOfWork?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.timers.resume",
+      "shortPath": "timers.resume",
+      "description": "Resume a paused work timer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timerExternalId",
+            "optional": false,
+            "type": "string",
+            "description": "Timer external id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ reason?: string | null, amountOfWork?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.timers.start",
+      "shortPath": "timers.start",
+      "description": "Start a work timer on a work item",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timerExternalId",
+            "optional": false,
+            "type": "string",
+            "description": "A UUID you choose for the timer (the spec types it as one); pass the same value to pause, resume or cancel it."
+          },
+          {
+            "key": "itemExternalId",
+            "optional": false,
+            "type": "string",
+            "description": "Work item the timer is for."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ reason?: string | null, amountOfWork?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.timesheets.create",
+      "shortPath": "timesheets.create",
+      "description": "Book work against a work item for a user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userExternalId",
+            "optional": false,
+            "type": "string",
+            "description": "User the work belongs to."
+          },
+          {
+            "key": "taskExternalId",
+            "optional": false,
+            "type": "string",
+            "description": "Work item the time is booked to."
+          },
+          {
+            "key": "works",
+            "optional": false,
+            "type": "number",
+            "description": "Amount of work in hours."
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lifecycleStatusName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "percentCompleted",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "finish",
+            "optional": false,
+            "type": "string",
+            "description": "When the work finished."
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, string | number | boolean | string[]>"
+          },
+          {
+            "key": "authorExternalId",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.timesheets.filter",
+      "shortPath": "timesheets.filter",
+      "description": "List timesheet external ids by filter",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Index of the first row to return. Defaults to 0."
+          },
+          {
+            "key": "isAsc",
+            "optional": true,
+            "type": "boolean",
+            "description": "Sort by creation time ascending. OneDesk defaults to false, newest first."
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]",
+            "description": "Custom field comparisons. Use null as the value to match fields with no value."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "totalNum",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "appliedPropertyFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "appliedCustomFieldFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "notAppliedPropertyFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "notAppliedCustomFieldFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "nextOffset",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.timesheets.filterDetails",
+      "shortPath": "timesheets.filterDetails",
+      "description": "List timesheets with their hours, dates and approval status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Index of the first row to return. Defaults to 0."
+          },
+          {
+            "key": "isAsc",
+            "optional": true,
+            "type": "boolean",
+            "description": "Sort by creation time ascending. OneDesk defaults to false, newest first."
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]",
+            "description": "Custom field comparisons. Use null as the value to match fields with no value."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | number | null, externalId?: string | null, taskName?: string | null, start?: string | null, finish?: string | null, created?: string | null, work?: number | null, invoiceWork?: number | null, percentCompleteReported?: number | null, comments?: string | null, status?: string | null, assignee?: { typeName?: string | null, displayName?: string | null, email?: string | null, teamName?: string | null, externalId?: string | null } | null, taskExternalId?: string | null, projectExternalId?: string | null, billable?: string | boolean | null, serviceType?: string | null, invoiceableCustomerOrganizationExternalId?: string | null, linkedInvoiceExternalId?: string | null, userRequesters?: string[] | null, customerRequesters?: string[] | null, teamRequesters?: { name?: string | null, externalId?: string | null }[] | null, customerOrganizationRequesters?: { name?: string | null, externalId?: string | null }[] | null, customFields?: { name?: string | null, value?: string | number | boolean | (string | number | boolean)[] | null }[] | null }[]"
+          },
+          {
+            "key": "totalNum",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "appliedPropertyFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "appliedCustomFieldFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "notAppliedPropertyFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "notAppliedCustomFieldFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "nextOffset",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.timesheets.get",
+      "shortPath": "timesheets.get",
+      "description": "Read one timesheet by external id or numeric id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string",
+            "description": "The timesheet's id as OneDesk sends it, for example '5-1'."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number | null, externalId?: string | null, taskName?: string | null, start?: string | null, finish?: string | null, created?: string | null, work?: number | null, invoiceWork?: number | null, percentCompleteReported?: number | null, comments?: string | null, status?: string | null, assignee?: { typeName?: string | null, displayName?: string | null, email?: string | null, teamName?: string | null, externalId?: string | null } | null, taskExternalId?: string | null, projectExternalId?: string | null, billable?: string | boolean | null, serviceType?: string | null, invoiceableCustomerOrganizationExternalId?: string | null, linkedInvoiceExternalId?: string | null, userRequesters?: string[] | null, customerRequesters?: string[] | null, teamRequesters?: { name?: string | null, externalId?: string | null }[] | null, customerOrganizationRequesters?: { name?: string | null, externalId?: string | null }[] | null, customFields?: { name?: string | null, value?: string | number | boolean | (string | number | boolean)[] | null }[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.timesheets.update",
+      "shortPath": "timesheets.update",
+      "description": "Change a timesheet, including approving or declining it and marking it billable",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string",
+            "description": "The timesheet's id as OneDesk sends it, for example '5-1'."
+          },
+          {
+            "key": "works",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "approved | not approved yet | declined"
+          },
+          {
+            "key": "completion",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "finish",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoiceWork",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "userAndCustomerRequesterExternalIds",
+            "optional": true,
+            "type": "{ replace?: boolean, newValue?: string[], add?: string[], remove?: string[] }"
+          },
+          {
+            "key": "teamAndCustomerOrganizationRequesterExternalIds",
+            "optional": true,
+            "type": "{ replace?: boolean, newValue?: string[], add?: string[], remove?: string[] }"
+          },
+          {
+            "key": "invoiceableCustomerOrganizationExternalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "serviceType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, string | number | boolean | string[]>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.users.create",
+      "shortPath": "users.create",
+      "description": "Create a user, which sends them an invitation to the account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "Login email of the new user."
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string",
+            "description": "User type name, for example full-time. Read the valid names with organization.userTypes."
+          },
+          {
+            "key": "teams",
+            "optional": true,
+            "type": "string[]",
+            "description": "Team external ids."
+          },
+          {
+            "key": "isAdmin",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.users.filter",
+      "shortPath": "users.filter",
+      "description": "List user external ids by filter",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Index of the first row to return. Defaults to 0."
+          },
+          {
+            "key": "isAsc",
+            "optional": true,
+            "type": "boolean",
+            "description": "Sort by creation time ascending. OneDesk defaults to false, newest first."
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]",
+            "description": "Custom field comparisons. Use null as the value to match fields with no value."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "totalNum",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "appliedPropertyFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "appliedCustomFieldFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "notAppliedPropertyFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "notAppliedCustomFieldFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "nextOffset",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.users.filterDetails",
+      "shortPath": "users.filterDetails",
+      "description": "List users with their profile, address and teams",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Index of the first row to return. Defaults to 0."
+          },
+          {
+            "key": "isAsc",
+            "optional": true,
+            "type": "boolean",
+            "description": "Sort by creation time ascending. OneDesk defaults to false, newest first."
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[]",
+            "description": "Custom field comparisons. Use null as the value to match fields with no value."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, externalId?: string | null, userType?: string | null, created?: string | null, priority?: number | null, registered?: boolean | null, profile?: { firstName?: string | null, lastName?: string | null, email?: string | null, phoneWork?: string | null, title?: string | null, language?: string | null } | null, address?: { address1?: string | null, address2?: string | null, city?: string | null, state?: string | null, zip?: string | null, country?: string | null } | null, customFieldsData?: { name?: string | null, value?: string | number | boolean | (string | number | boolean)[] | null }[] | null, teams?: string[] | null }[]"
+          },
+          {
+            "key": "totalNum",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "appliedPropertyFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "appliedCustomFieldFilters",
+            "optional": true,
+            "type": "{ property: string, operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS, value: string | number | boolean | string[] | number[] | null }[] | null"
+          },
+          {
+            "key": "notAppliedPropertyFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "notAppliedCustomFieldFilters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "nextOffset",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.users.get",
+      "shortPath": "users.get",
+      "description": "Read one user by external id or numeric id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, externalId?: string | null, userType?: string | null, created?: string | null, priority?: number | null, registered?: boolean | null, profile?: { firstName?: string | null, lastName?: string | null, email?: string | null, phoneWork?: string | null, title?: string | null, language?: string | null } | null, address?: { address1?: string | null, address2?: string | null, city?: string | null, state?: string | null, zip?: string | null, country?: string | null } | null, customFieldsData?: { name?: string | null, value?: string | number | boolean | (string | number | boolean)[] | null }[] | null, teams?: string[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "onedesk.api.users.update",
+      "shortPath": "users.update",
+      "description": "Change a user profile, teams or custom fields",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phoneNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "0 | 20 | 40 | 60 | 80 | 100",
+            "description": "Star rating: 0, 20, 40, 60, 80 or 100 for zero to five stars. No other value is accepted."
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ address1?: string | null, address2?: string | null, city?: string | null, state?: string | null, zip?: string | null, country?: string | null }"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pictureAttachmentExternalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "teamExternalIds",
+            "optional": true,
+            "type": "{ replace?: boolean, newValue?: string[], add?: string[], remove?: string[] }"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, string | number | boolean | string[]>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

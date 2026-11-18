@@ -49,7 +49,7 @@
           {
             "key": "notes",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, string> | any[]"
           },
           {
             "key": "fail_existing",
@@ -74,27 +74,27 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "contact",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "gstin",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, string> | any[]"
           },
           {
             "key": "created_at",
@@ -135,27 +135,27 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "contact",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "gstin",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, string> | any[]"
           },
           {
             "key": "created_at",
@@ -201,7 +201,7 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ id: string, entity: customer, name?: string | null, email?: string | null, contact?: string | null, gstin?: string | null, notes?: {} | any[], created_at?: number }[]"
+            "type": "{ id: string, entity: customer, name?: string | null, email?: string | null, contact?: string | null, gstin?: string | null, notes?: Record<string, string> | any[], created_at?: number }[]"
           }
         ]
       }
@@ -242,7 +242,7 @@
           {
             "key": "notes",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, string> | any[]"
           }
         ]
       },
@@ -262,27 +262,27 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "contact",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "gstin",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, string> | any[]"
           },
           {
             "key": "created_at",
@@ -318,7 +318,7 @@
           {
             "key": "notes",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, string> | any[]"
           }
         ]
       },
@@ -343,7 +343,7 @@
           {
             "key": "amount_paid",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "amount_due",
@@ -358,12 +358,12 @@
           {
             "key": "receipt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "offer_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -378,7 +378,7 @@
           {
             "key": "notes",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, string> | any[]"
           },
           {
             "key": "created_at",
@@ -424,7 +424,7 @@
           {
             "key": "amount_paid",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "amount_due",
@@ -439,12 +439,12 @@
           {
             "key": "receipt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "offer_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -459,7 +459,7 @@
           {
             "key": "notes",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, string> | any[]"
           },
           {
             "key": "created_at",
@@ -525,7 +525,7 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ id: string, entity: order, amount: number, amount_paid?: number | null, amount_due?: number, currency: string, receipt?: string | null, offer_id?: string | null, status: string, attempts?: number, notes?: {} | any[], created_at?: number }[]"
+            "type": "{ id: string, entity: order, amount: number, amount_paid?: number | null, amount_due?: number, currency: string, receipt?: string | null, offer_id?: string | null, status: string, attempts?: number, notes?: Record<string, string> | any[], created_at?: number }[]"
           }
         ]
       }
@@ -586,17 +586,17 @@
           {
             "key": "order_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "invoice_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "method",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "captured",
@@ -606,22 +606,22 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "contact",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, string> | any[]"
           },
           {
             "key": "created_at",
@@ -677,17 +677,17 @@
           {
             "key": "order_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "invoice_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "method",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "captured",
@@ -697,22 +697,22 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "contact",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, string> | any[]"
           },
           {
             "key": "created_at",
@@ -768,7 +768,7 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ id: string, entity: payment, amount: number, currency: string, status: string, order_id?: string | null, invoice_id?: string | null, method?: string | null, captured?: boolean, description?: string | null, email?: string | null, contact?: string | null, notes?: {} | any[], created_at?: number }[]"
+            "type": "{ id: string, entity: payment, amount: number, currency: string, status: string, order_id?: string | null, invoice_id?: string | null, method?: string | null, captured?: boolean, description?: string | null, email?: string | null, contact?: string | null, notes?: Record<string, string> | any[], created_at?: number }[]"
           }
         ]
       }
@@ -829,7 +829,7 @@
           {
             "key": "notes",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, string> | any[]"
           }
         ]
       },
@@ -864,7 +864,7 @@
           {
             "key": "notes",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, string> | any[]"
           },
           {
             "key": "fees",
@@ -884,7 +884,7 @@
           {
             "key": "utr",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "mode",
@@ -899,7 +899,7 @@
           {
             "key": "reference_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "debit_account_number",
@@ -909,17 +909,17 @@
           {
             "key": "narration",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "batch_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_details",
             "optional": true,
-            "type": "{ description: string, source: string, reason: string }"
+            "type": "{ description: string, source: string, reason: string } | null"
           },
           {
             "key": "created_at",
@@ -980,7 +980,7 @@
           {
             "key": "notes",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, string> | any[]"
           },
           {
             "key": "fees",
@@ -1000,7 +1000,7 @@
           {
             "key": "utr",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "mode",
@@ -1015,7 +1015,7 @@
           {
             "key": "reference_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "debit_account_number",
@@ -1025,17 +1025,17 @@
           {
             "key": "narration",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "batch_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_details",
             "optional": true,
-            "type": "{ description: string, source: string, reason: string }"
+            "type": "{ description: string, source: string, reason: string } | null"
           },
           {
             "key": "created_at",
@@ -1126,7 +1126,7 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ id: string, entity: payout, fund_account_id: string, amount: number, currency: string, notes?: {} | any[], fees?: number, tax?: number, status: string, utr?: string | null, mode?: string, purpose?: string, reference_id?: string | null, debit_account_number?: string, narration?: string | null, batch_id?: string | null, status_details?: { description: string, source: string, reason: string } | null, created_at?: number, fee_type?: string }[]"
+            "type": "{ id: string, entity: payout, fund_account_id: string, amount: number, currency: string, notes?: Record<string, string> | any[], fees?: number, tax?: number, status: string, utr?: string | null, mode?: string, purpose?: string, reference_id?: string | null, debit_account_number?: string, narration?: string | null, batch_id?: string | null, status_details?: { description: string, source: string, reason: string } | null, created_at?: number, fee_type?: string }[]"
           }
         ]
       }
@@ -1162,7 +1162,7 @@
           {
             "key": "notes",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, string> | any[]"
           }
         ]
       },
@@ -1192,27 +1192,27 @@
           {
             "key": "currency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, string> | any[]"
           },
           {
             "key": "receipt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "speed_processed",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "speed_requested",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -1273,27 +1273,27 @@
           {
             "key": "currency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, string> | any[]"
           },
           {
             "key": "receipt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "speed_processed",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "speed_requested",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -1359,7 +1359,7 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ id: string, entity: refund, payment_id: string, amount: number, currency?: string | null, notes?: {} | any[], receipt?: string | null, speed_processed?: string | null, speed_requested?: string | null, status: string, created_at?: number }[]"
+            "type": "{ id: string, entity: refund, payment_id: string, amount: number, currency?: string | null, notes?: Record<string, string> | any[], receipt?: string | null, speed_processed?: string | null, speed_requested?: string | null, status: string, created_at?: number }[]"
           }
         ]
       }
@@ -1395,7 +1395,7 @@
           {
             "key": "amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "status",
@@ -1405,17 +1405,17 @@
           {
             "key": "fees",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tax",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "utr",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
@@ -1518,7 +1518,7 @@
           {
             "key": "customer_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -1528,37 +1528,37 @@
           {
             "key": "current_start",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "current_end",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "ended_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "charge_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "offer_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "start_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "end_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "auth_attempts",
@@ -1593,12 +1593,12 @@
           {
             "key": "expire_by",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "short_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_scheduled_changes",
@@ -1608,17 +1608,17 @@
           {
             "key": "change_scheduled_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "source",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, string> | any[]"
           },
           {
             "key": "created_at",
@@ -1669,7 +1669,7 @@
           {
             "key": "notes",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, string> | any[]"
           },
           {
             "key": "offer_id",
@@ -1704,7 +1704,7 @@
           {
             "key": "customer_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -1714,37 +1714,37 @@
           {
             "key": "current_start",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "current_end",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "ended_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "charge_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "offer_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "start_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "end_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "auth_attempts",
@@ -1779,12 +1779,12 @@
           {
             "key": "expire_by",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "short_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_scheduled_changes",
@@ -1794,17 +1794,17 @@
           {
             "key": "change_scheduled_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "source",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, string> | any[]"
           },
           {
             "key": "created_at",
@@ -1850,7 +1850,7 @@
           {
             "key": "customer_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -1860,37 +1860,37 @@
           {
             "key": "current_start",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "current_end",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "ended_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "charge_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "offer_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "start_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "end_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "auth_attempts",
@@ -1925,12 +1925,12 @@
           {
             "key": "expire_by",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "short_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_scheduled_changes",
@@ -1940,17 +1940,17 @@
           {
             "key": "change_scheduled_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "source",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, string> | any[]"
           },
           {
             "key": "created_at",
@@ -2011,7 +2011,7 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ id: string, entity: subscription, plan_id: string, customer_id?: string | null, status: string, current_start?: number | null, current_end?: number | null, ended_at?: number | null, charge_at?: number | null, offer_id?: string | null, start_at?: number | null, end_at?: number | null, auth_attempts?: number, quantity?: number, total_count?: number, paid_count?: number, remaining_count?: number, customer_notify?: boolean, expire_by?: number | null, short_url?: string | null, has_scheduled_changes?: boolean, change_scheduled_at?: number | null, source?: string | null, notes?: {} | any[], created_at?: number }[]"
+            "type": "{ id: string, entity: subscription, plan_id: string, customer_id?: string | null, status: string, current_start?: number | null, current_end?: number | null, ended_at?: number | null, charge_at?: number | null, offer_id?: string | null, start_at?: number | null, end_at?: number | null, auth_attempts?: number, quantity?: number, total_count?: number, paid_count?: number, remaining_count?: number, customer_notify?: boolean, expire_by?: number | null, short_url?: string | null, has_scheduled_changes?: boolean, change_scheduled_at?: number | null, source?: string | null, notes?: Record<string, string> | any[], created_at?: number }[]"
           }
         ]
       }
@@ -2057,7 +2057,7 @@
           {
             "key": "customer_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -2067,37 +2067,37 @@
           {
             "key": "current_start",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "current_end",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "ended_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "charge_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "offer_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "start_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "end_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "auth_attempts",
@@ -2132,12 +2132,12 @@
           {
             "key": "expire_by",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "short_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_scheduled_changes",
@@ -2147,17 +2147,17 @@
           {
             "key": "change_scheduled_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "source",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, string> | any[]"
           },
           {
             "key": "created_at",
@@ -2208,7 +2208,7 @@
           {
             "key": "customer_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -2218,37 +2218,37 @@
           {
             "key": "current_start",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "current_end",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "ended_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "charge_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "offer_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "start_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "end_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "auth_attempts",
@@ -2283,12 +2283,12 @@
           {
             "key": "expire_by",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "short_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_scheduled_changes",
@@ -2298,17 +2298,17 @@
           {
             "key": "change_scheduled_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "source",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, string> | any[]"
           },
           {
             "key": "created_at",
@@ -2384,7 +2384,7 @@
           {
             "key": "customer_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -2394,37 +2394,37 @@
           {
             "key": "current_start",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "current_end",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "ended_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "charge_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "offer_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "start_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "end_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "auth_attempts",
@@ -2459,12 +2459,12 @@
           {
             "key": "expire_by",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "short_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_scheduled_changes",
@@ -2474,17 +2474,17 @@
           {
             "key": "change_scheduled_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "source",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, string> | any[]"
           },
           {
             "key": "created_at",
@@ -2531,11 +2531,11 @@
           {
             "key": "payload",
             "optional": false,
-            "type": "{ order: { entity: { id: string, entity: order, amount: number, amount_paid?: number | null, amount_due?: number, currency: string, receipt?: string | null, offer_id?: string | null, status: string, attempts?: number, notes?: {} | any[], created_at?: number } }, payment?: { entity: { id: string, entity: payment, amount: number, currency: string, status: string, order_id?: string | null, invoice_id?: string | null, method?: string | null, captured?: boolean, description?: string | null, email?: string | null, contact?: string | null, notes?: {} | any[], created_at?: number } } }"
+            "type": "{ order: { entity: { id: string, entity: order, amount: number, amount_paid?: number | null, amount_due?: number, currency: string, receipt?: string | null, offer_id?: string | null, status: string, attempts?: number, notes?: Record<string, string> | any[], created_at?: number } }, payment?: { entity: { id: string, entity: payment, amount: number, currency: string, status: string, order_id?: string | null, invoice_id?: string | null, method?: string | null, captured?: boolean, description?: string | null, email?: string | null, contact?: string | null, notes?: Record<string, string> | any[], created_at?: number } } }"
           }
         ]
       },
-      "responseType": "{ entity: event, account_id: string, event: order.paid, contains: string[], created_at: number, payload: { order: { entity: { id: string, entity: order, amount: number, amount_paid?: number | null, amount_due?: number, currency: string, receipt?: string | null, offer_id?: string | null, status: string, attempts?: number, notes?: {} | any[], created_at?: number } }, payment?: { entity: { id: string, entity: payment, amount: number, currency: string, status: string, order_id?: string | null, invoice_id?: string | null, method?: string | null, captured?: boolean, description?: string | null, email?: string | null, contact?: string | null, notes?: {} | any[], created_at?: number } } } }",
+      "responseType": "{ entity: event, account_id: string, event: order.paid, contains: string[], created_at: number, payload: { order: { entity: { id: string, entity: order, amount: number, amount_paid?: number | null, amount_due?: number, currency: string, receipt?: string | null, offer_id?: string | null, status: string, attempts?: number, notes?: Record<string, string> | any[], created_at?: number } }, payment?: { entity: { id: string, entity: payment, amount: number, currency: string, status: string, order_id?: string | null, invoice_id?: string | null, method?: string | null, captured?: boolean, description?: string | null, email?: string | null, contact?: string | null, notes?: Record<string, string> | any[], created_at?: number } } } }",
       "usageExample": "razorpay({\n    webhookHooks: {\n        orders: {\n            paid: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2573,11 +2573,11 @@
           {
             "key": "payload",
             "optional": false,
-            "type": "{ payment: { entity: { id: string, entity: payment, amount: number, currency: string, status: string, order_id?: string | null, invoice_id?: string | null, method?: string | null, captured?: boolean, description?: string | null, email?: string | null, contact?: string | null, notes?: {} | any[], created_at?: number } } }"
+            "type": "{ payment: { entity: { id: string, entity: payment, amount: number, currency: string, status: string, order_id?: string | null, invoice_id?: string | null, method?: string | null, captured?: boolean, description?: string | null, email?: string | null, contact?: string | null, notes?: Record<string, string> | any[], created_at?: number } } }"
           }
         ]
       },
-      "responseType": "{ entity: event, account_id: string, event: payment.captured, contains: string[], created_at: number, payload: { payment: { entity: { id: string, entity: payment, amount: number, currency: string, status: string, order_id?: string | null, invoice_id?: string | null, method?: string | null, captured?: boolean, description?: string | null, email?: string | null, contact?: string | null, notes?: {} | any[], created_at?: number } } } }",
+      "responseType": "{ entity: event, account_id: string, event: payment.captured, contains: string[], created_at: number, payload: { payment: { entity: { id: string, entity: payment, amount: number, currency: string, status: string, order_id?: string | null, invoice_id?: string | null, method?: string | null, captured?: boolean, description?: string | null, email?: string | null, contact?: string | null, notes?: Record<string, string> | any[], created_at?: number } } } }",
       "usageExample": "razorpay({\n    webhookHooks: {\n        payments: {\n            captured: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2615,11 +2615,11 @@
           {
             "key": "payload",
             "optional": false,
-            "type": "{ payment: { entity: { id: string, entity: payment, amount: number, currency: string, status: string, order_id?: string | null, invoice_id?: string | null, method?: string | null, captured?: boolean, description?: string | null, email?: string | null, contact?: string | null, notes?: {} | any[], created_at?: number } } }"
+            "type": "{ payment: { entity: { id: string, entity: payment, amount: number, currency: string, status: string, order_id?: string | null, invoice_id?: string | null, method?: string | null, captured?: boolean, description?: string | null, email?: string | null, contact?: string | null, notes?: Record<string, string> | any[], created_at?: number } } }"
           }
         ]
       },
-      "responseType": "{ entity: event, account_id: string, event: payment.failed, contains: string[], created_at: number, payload: { payment: { entity: { id: string, entity: payment, amount: number, currency: string, status: string, order_id?: string | null, invoice_id?: string | null, method?: string | null, captured?: boolean, description?: string | null, email?: string | null, contact?: string | null, notes?: {} | any[], created_at?: number } } } }",
+      "responseType": "{ entity: event, account_id: string, event: payment.failed, contains: string[], created_at: number, payload: { payment: { entity: { id: string, entity: payment, amount: number, currency: string, status: string, order_id?: string | null, invoice_id?: string | null, method?: string | null, captured?: boolean, description?: string | null, email?: string | null, contact?: string | null, notes?: Record<string, string> | any[], created_at?: number } } } }",
       "usageExample": "razorpay({\n    webhookHooks: {\n        payments: {\n            failed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2657,11 +2657,11 @@
           {
             "key": "payload",
             "optional": false,
-            "type": "{ refund: { entity: { id: string, entity: refund, payment_id: string, amount: number, currency?: string | null, notes?: {} | any[], receipt?: string | null, speed_processed?: string | null, speed_requested?: string | null, status: string, created_at?: number } }, payment?: { entity: { id: string, entity: payment, amount: number, currency: string, status: string, order_id?: string | null, invoice_id?: string | null, method?: string | null, captured?: boolean, description?: string | null, email?: string | null, contact?: string | null, notes?: {} | any[], created_at?: number } } }"
+            "type": "{ refund: { entity: { id: string, entity: refund, payment_id: string, amount: number, currency?: string | null, notes?: Record<string, string> | any[], receipt?: string | null, speed_processed?: string | null, speed_requested?: string | null, status: string, created_at?: number } }, payment?: { entity: { id: string, entity: payment, amount: number, currency: string, status: string, order_id?: string | null, invoice_id?: string | null, method?: string | null, captured?: boolean, description?: string | null, email?: string | null, contact?: string | null, notes?: Record<string, string> | any[], created_at?: number } } }"
           }
         ]
       },
-      "responseType": "{ entity: event, account_id: string, event: refund.processed, contains: string[], created_at: number, payload: { refund: { entity: { id: string, entity: refund, payment_id: string, amount: number, currency?: string | null, notes?: {} | any[], receipt?: string | null, speed_processed?: string | null, speed_requested?: string | null, status: string, created_at?: number } }, payment?: { entity: { id: string, entity: payment, amount: number, currency: string, status: string, order_id?: string | null, invoice_id?: string | null, method?: string | null, captured?: boolean, description?: string | null, email?: string | null, contact?: string | null, notes?: {} | any[], created_at?: number } } } }",
+      "responseType": "{ entity: event, account_id: string, event: refund.processed, contains: string[], created_at: number, payload: { refund: { entity: { id: string, entity: refund, payment_id: string, amount: number, currency?: string | null, notes?: Record<string, string> | any[], receipt?: string | null, speed_processed?: string | null, speed_requested?: string | null, status: string, created_at?: number } }, payment?: { entity: { id: string, entity: payment, amount: number, currency: string, status: string, order_id?: string | null, invoice_id?: string | null, method?: string | null, captured?: boolean, description?: string | null, email?: string | null, contact?: string | null, notes?: Record<string, string> | any[], created_at?: number } } } }",
       "usageExample": "razorpay({\n    webhookHooks: {\n        refunds: {\n            processed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     }
   ],
@@ -2677,6 +2677,11 @@
         },
         {
           "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "entity",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
@@ -2723,6 +2728,11 @@
         },
         {
           "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "entity",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
@@ -2789,6 +2799,11 @@
         },
         {
           "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "entity",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
@@ -2865,6 +2880,11 @@
         },
         {
           "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "entity",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
@@ -2965,6 +2985,11 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "entity",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "payment_id",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
@@ -3026,9 +3051,19 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "entity",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "amount",
           "type": "number",
           "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
           "field": "fees",
@@ -3068,6 +3103,11 @@
         },
         {
           "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "entity",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

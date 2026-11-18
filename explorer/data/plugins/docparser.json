@@ -1,0 +1,543 @@
+{
+  "id": "docparser",
+  "displayName": "Docparser",
+  "description": "Send documents to Docparser parsers and read the data they extract (invoices, orders, bank statements, forms).",
+  "npmPackageName": "@corsair-dev/docparser",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 10,
+    "webhooks": 0,
+    "db": 4
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "docparser.api.documents.fetch",
+      "shortPath": "documents.fetch",
+      "description": "Import a document from a public URL into a parser. Uses parsing credits (one per 5 pages). Parsing takes a few minutes; check documents.status, then read results.get.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parserId",
+            "optional": false,
+            "type": "string",
+            "description": "Parser id from parsers.list."
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Publicly reachable URL of the document (PDF, image, Word, ...)."
+          },
+          {
+            "key": "remoteId",
+            "optional": true,
+            "type": "string",
+            "description": "Your own id for the document; it comes back with the results."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "quotaUsed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "quotaLeft",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "quotaRefill",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docparser.api.documents.reintegrate",
+      "shortPath": "documents.reintegrate",
+      "description": "Send documents' parsed data to the parser's integrations and webhooks again.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parserId",
+            "optional": false,
+            "type": "string",
+            "description": "Parser id from parsers.list."
+          },
+          {
+            "key": "documentIds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scheduled",
+            "optional": false,
+            "type": "number",
+            "description": "How many documents Docparser queued."
+          }
+        ]
+      }
+    },
+    {
+      "path": "docparser.api.documents.reparse",
+      "shortPath": "documents.reparse",
+      "description": "Parse documents again with the parser's current rules, replacing their parsed data. Uses no extra credits.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parserId",
+            "optional": false,
+            "type": "string",
+            "description": "Parser id from parsers.list."
+          },
+          {
+            "key": "documentIds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scheduled",
+            "optional": false,
+            "type": "number",
+            "description": "How many documents Docparser queued."
+          }
+        ]
+      }
+    },
+    {
+      "path": "docparser.api.documents.status",
+      "shortPath": "documents.status",
+      "description": "Check whether a document has been imported and parsed (done), and list any failed jobs.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parserId",
+            "optional": false,
+            "type": "string",
+            "description": "Parser id from parsers.list."
+          },
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string",
+            "description": "Document id from documents.fetch, documents.upload or results."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "{ remote_id?: string | null, filename?: string | null, pages?: number | null, supported?: boolean, importing_in_progress?: boolean, processing_in_progress?: boolean, uploaded_at?: number | null, processed_at?: number | null, failed_jobs?: string[] }"
+          },
+          {
+            "key": "done",
+            "optional": false,
+            "type": "boolean",
+            "description": "True once the document is imported and parsed with no job running."
+          }
+        ]
+      }
+    },
+    {
+      "path": "docparser.api.documents.upload",
+      "shortPath": "documents.upload",
+      "description": "Upload a base64-encoded document into a parser. Uses parsing credits (one per 5 pages). Parsing takes a few minutes; check documents.status, then read results.get.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parserId",
+            "optional": false,
+            "type": "string",
+            "description": "Parser id from parsers.list."
+          },
+          {
+            "key": "fileContent",
+            "optional": false,
+            "type": "string",
+            "description": "The file, base64-encoded."
+          },
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string",
+            "description": "File name with extension, e.g. invoice.pdf."
+          },
+          {
+            "key": "remoteId",
+            "optional": true,
+            "type": "string",
+            "description": "Your own id for the document; it comes back with the results."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "quotaUsed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "quotaLeft",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "quotaRefill",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docparser.api.models.list",
+      "shortPath": "models.list",
+      "description": "List the model layouts of one parser.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parserId",
+            "optional": false,
+            "type": "string",
+            "description": "Parser id from parsers.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "models",
+            "optional": false,
+            "type": "{ id: string, label?: string, parserId: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docparser.api.parsers.list",
+      "shortPath": "parsers.list",
+      "description": "List document parsers (id and label).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parsers",
+            "optional": false,
+            "type": "{ id: string, label?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docparser.api.ping",
+      "shortPath": "ping",
+      "description": "Check that the API key is accepted.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ping",
+            "optional": false,
+            "type": "{ id: ping, msg?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docparser.api.results.get",
+      "shortPath": "results.get",
+      "description": "Get the parsed data of one document.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parserId",
+            "optional": false,
+            "type": "string",
+            "description": "Parser id from parsers.list."
+          },
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string",
+            "description": "Document id from documents.fetch, documents.upload or results."
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "object | flat",
+            "description": "object (default) keeps nested fields; flat returns key/value pairs."
+          },
+          {
+            "key": "includeChildren",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also return documents split off this one during preprocessing."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, document_id?: string, remote_id?: string | null, file_name?: string | null, page_count?: number | null, uploaded_at?: string | null, processed_at?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docparser.api.results.list",
+      "shortPath": "results.list",
+      "description": "Get the parsed data of a parser's documents, newest first (100 by default). Filter by upload or processing date or remote id. Each row holds the fields the parser extracted.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parserId",
+            "optional": false,
+            "type": "string",
+            "description": "Parser id from parsers.list."
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "object | flat",
+            "description": "object (default) keeps nested fields; flat returns key/value pairs."
+          },
+          {
+            "key": "list",
+            "optional": true,
+            "type": "last_uploaded | uploaded_after | processed_after",
+            "description": "last_uploaded (default) returns the newest documents; the other two need date."
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string | number",
+            "description": "ISO 8601 date or UNIX time. Required with uploaded_after or processed_after."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Documents to return. Docparser defaults to 100."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remoteId",
+            "optional": true,
+            "type": "string",
+            "description": "Only documents imported with this remote id."
+          },
+          {
+            "key": "includeProcessingQueue",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also return documents that are not fully processed yet."
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "parsed_at | processed_at | uploaded_at | first_processed_at | imported_at | integrated_at | dispatched_webhook_at | preprocessed_at"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "ASC | DESC"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, document_id?: string, remote_id?: string | null, file_name?: string | null, page_count?: number | null, uploaded_at?: string | null, processed_at?: string | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "docparser.db.models.search",
+      "entityName": "models",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "label",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parserId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "docparser.db.parsers.search",
+      "entityName": "parsers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "label",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "docparser.db.pings.search",
+      "entityName": "pings",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "msg",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "docparser.db.results.search",
+      "entityName": "results",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "documentId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fileName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pageCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "uploadedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "processedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

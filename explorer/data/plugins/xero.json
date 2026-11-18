@@ -1,7 +1,7 @@
 {
   "id": "xero",
   "displayName": "Xero",
-  "description": "Xero plugin for Corsair",
+  "description": "Cloud accounting API for invoices, contacts, payments, bank transactions, credit notes, quotes, purchase orders, journals, reports, and files.",
   "npmPackageName": "@corsair-dev/xero",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "oauth_2",
@@ -214,12 +214,12 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "pagination",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -459,7 +459,7 @@
           {
             "key": "Budgets",
             "optional": false,
-            "type": "{ BudgetID?: string, Type?: string, Description?: string, UpdatedDateUTC?: string, BudgetLines?: {}[] }[]"
+            "type": "{ BudgetID?: string, Type?: string, Description?: string, UpdatedDateUTC?: string, BudgetLines?: Record<string, any>[] }[]"
           }
         ]
       }
@@ -884,7 +884,7 @@
           {
             "key": "Invoices",
             "optional": false,
-            "type": "{ InvoiceID: string, Type: string, InvoiceNumber?: string, Reference?: string, Status?: string, Date?: string, DueDate?: string, CurrencyCode?: string, CurrencyRate?: number, SubTotal?: number, TotalTax?: number, Total?: number, AmountDue?: number, AmountPaid?: number, Contact?: { ContactID: string, Name?: string }, LineItems?: {}[], UpdatedDateUTC?: string }[]"
+            "type": "{ InvoiceID: string, Type: string, InvoiceNumber?: string, Reference?: string, Status?: string, Date?: string, DueDate?: string, CurrencyCode?: string, CurrencyRate?: number, SubTotal?: number, TotalTax?: number, Total?: number, AmountDue?: number, AmountPaid?: number, Contact?: { ContactID: string, Name?: string }, LineItems?: Record<string, any>[], UpdatedDateUTC?: string }[]"
           }
         ]
       }
@@ -915,7 +915,7 @@
           {
             "key": "Invoices",
             "optional": false,
-            "type": "{ InvoiceID: string, Type: string, InvoiceNumber?: string, Reference?: string, Status?: string, Date?: string, DueDate?: string, CurrencyCode?: string, CurrencyRate?: number, SubTotal?: number, TotalTax?: number, Total?: number, AmountDue?: number, AmountPaid?: number, Contact?: { ContactID: string, Name?: string }, LineItems?: {}[], UpdatedDateUTC?: string }[]"
+            "type": "{ InvoiceID: string, Type: string, InvoiceNumber?: string, Reference?: string, Status?: string, Date?: string, DueDate?: string, CurrencyCode?: string, CurrencyRate?: number, SubTotal?: number, TotalTax?: number, Total?: number, AmountDue?: number, AmountPaid?: number, Contact?: { ContactID: string, Name?: string }, LineItems?: Record<string, any>[], UpdatedDateUTC?: string }[]"
           }
         ]
       }
@@ -986,7 +986,7 @@
           {
             "key": "Invoices",
             "optional": false,
-            "type": "{ InvoiceID: string, Type: string, InvoiceNumber?: string, Reference?: string, Status?: string, Date?: string, DueDate?: string, CurrencyCode?: string, CurrencyRate?: number, SubTotal?: number, TotalTax?: number, Total?: number, AmountDue?: number, AmountPaid?: number, Contact?: { ContactID: string, Name?: string }, LineItems?: {}[], UpdatedDateUTC?: string }[]"
+            "type": "{ InvoiceID: string, Type: string, InvoiceNumber?: string, Reference?: string, Status?: string, Date?: string, DueDate?: string, CurrencyCode?: string, CurrencyRate?: number, SubTotal?: number, TotalTax?: number, Total?: number, AmountDue?: number, AmountPaid?: number, Contact?: { ContactID: string, Name?: string }, LineItems?: Record<string, any>[], UpdatedDateUTC?: string }[]"
           }
         ]
       }
@@ -1042,7 +1042,7 @@
           {
             "key": "Invoices",
             "optional": false,
-            "type": "{ InvoiceID: string, Type: string, InvoiceNumber?: string, Reference?: string, Status?: string, Date?: string, DueDate?: string, CurrencyCode?: string, CurrencyRate?: number, SubTotal?: number, TotalTax?: number, Total?: number, AmountDue?: number, AmountPaid?: number, Contact?: { ContactID: string, Name?: string }, LineItems?: {}[], UpdatedDateUTC?: string }[]"
+            "type": "{ InvoiceID: string, Type: string, InvoiceNumber?: string, Reference?: string, Status?: string, Date?: string, DueDate?: string, CurrencyCode?: string, CurrencyRate?: number, SubTotal?: number, TotalTax?: number, Total?: number, AmountDue?: number, AmountPaid?: number, Contact?: { ContactID: string, Name?: string }, LineItems?: Record<string, any>[], UpdatedDateUTC?: string }[]"
           }
         ]
       }
@@ -1108,7 +1108,7 @@
           {
             "key": "Items",
             "optional": false,
-            "type": "{ ItemID: string, Code: string, Name?: string, Description?: string, PurchaseDescription?: string, PurchaseDetails?: {}, SalesDetails?: {}, IsSold?: boolean, IsPurchased?: boolean, IsTrackedAsInventory?: boolean, TotalCostPool?: number, QuantityOnHand?: number, UpdatedDateUTC?: string }[]"
+            "type": "{ ItemID: string, Code: string, Name?: string, Description?: string, PurchaseDescription?: string, PurchaseDetails?: Record<string, any>, SalesDetails?: Record<string, any>, IsSold?: boolean, IsPurchased?: boolean, IsTrackedAsInventory?: boolean, TotalCostPool?: number, QuantityOnHand?: number, UpdatedDateUTC?: string }[]"
           }
         ]
       }
@@ -1139,7 +1139,7 @@
           {
             "key": "Items",
             "optional": false,
-            "type": "{ ItemID: string, Code: string, Name?: string, Description?: string, PurchaseDescription?: string, PurchaseDetails?: {}, SalesDetails?: {}, IsSold?: boolean, IsPurchased?: boolean, IsTrackedAsInventory?: boolean, TotalCostPool?: number, QuantityOnHand?: number, UpdatedDateUTC?: string }[]"
+            "type": "{ ItemID: string, Code: string, Name?: string, Description?: string, PurchaseDescription?: string, PurchaseDetails?: Record<string, any>, SalesDetails?: Record<string, any>, IsSold?: boolean, IsPurchased?: boolean, IsTrackedAsInventory?: boolean, TotalCostPool?: number, QuantityOnHand?: number, UpdatedDateUTC?: string }[]"
           }
         ]
       }
@@ -1185,7 +1185,7 @@
           {
             "key": "Items",
             "optional": false,
-            "type": "{ ItemID: string, Code: string, Name?: string, Description?: string, PurchaseDescription?: string, PurchaseDetails?: {}, SalesDetails?: {}, IsSold?: boolean, IsPurchased?: boolean, IsTrackedAsInventory?: boolean, TotalCostPool?: number, QuantityOnHand?: number, UpdatedDateUTC?: string }[]"
+            "type": "{ ItemID: string, Code: string, Name?: string, Description?: string, PurchaseDescription?: string, PurchaseDetails?: Record<string, any>, SalesDetails?: Record<string, any>, IsSold?: boolean, IsPurchased?: boolean, IsTrackedAsInventory?: boolean, TotalCostPool?: number, QuantityOnHand?: number, UpdatedDateUTC?: string }[]"
           }
         ]
       }
@@ -1241,7 +1241,7 @@
           {
             "key": "Journals",
             "optional": false,
-            "type": "{ JournalID: string, JournalDate: string, JournalNumber: number, CreatedDateUTC: string, JournalLines?: {}[] }[]"
+            "type": "{ JournalID: string, JournalDate: string, JournalNumber: number, CreatedDateUTC: string, JournalLines?: Record<string, any>[] }[]"
           }
         ]
       }
@@ -1272,7 +1272,7 @@
           {
             "key": "ManualJournals",
             "optional": false,
-            "type": "{ ManualJournalID: string, Narration: string, Date?: string, Status?: string, Lines?: {}[] }[]"
+            "type": "{ ManualJournalID: string, Narration: string, Date?: string, Status?: string, Lines?: Record<string, any>[] }[]"
           }
         ]
       }
@@ -1573,7 +1573,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1853,7 +1853,7 @@
           {
             "key": "Reports",
             "optional": false,
-            "type": "{ ReportID?: string, ReportName?: string, ReportType?: string, ReportDate?: string, Rows?: {}[] }[]"
+            "type": "{ ReportID?: string, ReportName?: string, ReportType?: string, ReportDate?: string, Rows?: Record<string, any>[] }[]"
           }
         ]
       }
@@ -1914,7 +1914,7 @@
           {
             "key": "Reports",
             "optional": false,
-            "type": "{ ReportID?: string, ReportName?: string, ReportType?: string, ReportDate?: string, Rows?: {}[] }[]"
+            "type": "{ ReportID?: string, ReportName?: string, ReportType?: string, ReportDate?: string, Rows?: Record<string, any>[] }[]"
           }
         ]
       }
@@ -2091,6 +2091,11 @@
         },
         {
           "field": "BankTransactionID",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Type",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

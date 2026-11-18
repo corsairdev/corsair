@@ -1,0 +1,17 @@
+displayName: Benchmark Email
+description: Email marketing platform. Manage contacts, lists, emails, automations, sign-up forms, polls, surveys, webhooks, and reports, plus account settings and the media archive.
+domain: benchmarkemail.com
+examples:
+  read:
+    path: lists.getContactLists
+    title: List contact lists
+  write:
+    path: contacts.searchContactDetailsByEmail
+    title: Find a contact by email
+    args:
+      search: you@example.com
+dbExample:
+  entity: contacts
+  note: >-
+    These tables exist, but Benchmark Email calls don't fill them yet. This returns only rows you have written yourself.
+  limit: 50

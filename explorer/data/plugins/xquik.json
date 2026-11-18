@@ -187,12 +187,12 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tweets",
             "optional": false,
-            "type": "{ author?: { coverPicture?: string, createdAt?: string, description?: string, followers?: number, following?: number, id: string, location?: string, name: string, profilePicture?: string, statusesCount?: number, username: string, verified?: boolean }, bookmarkCount?: number, conversationId?: string, createdAt?: string, entities?: {}, id: string, inReplyToId?: string, inReplyToUserId?: string, inReplyToUsername?: string, isLimitedReply?: boolean, isNoteTweet?: boolean, isQuoteStatus?: boolean, isReply?: boolean, lang?: string, likeCount?: number, media?: { mediaUrl?: string, type?: animated_gif | photo | video, url?: string }[], quoteCount?: number, replyCount?: number, retweetCount?: number, source?: string, text: string, type?: string, url?: string, viewCount?: number }[]"
+            "type": "{ author?: { coverPicture?: string, createdAt?: string, description?: string, followers?: number, following?: number, id: string, location?: string, name: string, profilePicture?: string, statusesCount?: number, username: string, verified?: boolean }, bookmarkCount?: number, conversationId?: string, createdAt?: string, entities?: Record<string, any>, id: string, inReplyToId?: string, inReplyToUserId?: string, inReplyToUsername?: string, isLimitedReply?: boolean, isNoteTweet?: boolean, isQuoteStatus?: boolean, isReply?: boolean, lang?: string, likeCount?: number, media?: { mediaUrl?: string, type?: animated_gif | photo | video, url?: string }[], quoteCount?: number, replyCount?: number, retweetCount?: number, source?: string, text: string, type?: string, url?: string, viewCount?: number }[]"
           }
         ]
       }
@@ -305,7 +305,7 @@
           {
             "key": "tweet",
             "optional": false,
-            "type": "{ bookmarkCount: number, conversationId?: string, createdAt?: string, entities?: {}, id: string, isNoteTweet?: boolean, isQuoteStatus?: boolean, isReply?: boolean, likeCount: number, media?: { mediaUrl?: string, type?: animated_gif | photo | video, url?: string }[], quoteCount: number, replyCount: number, retweetCount: number, source?: string, text: string, viewCount: number }"
+            "type": "{ bookmarkCount: number, conversationId?: string, createdAt?: string, entities?: Record<string, any>, id: string, isNoteTweet?: boolean, isQuoteStatus?: boolean, isReply?: boolean, likeCount: number, media?: { mediaUrl?: string, type?: animated_gif | photo | video, url?: string }[], quoteCount: number, replyCount: number, retweetCount: number, source?: string, text: string, viewCount: number }"
           }
         ]
       }
@@ -548,12 +548,12 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tweets",
             "optional": false,
-            "type": "{ author?: { coverPicture?: string, createdAt?: string, description?: string, followers?: number, following?: number, id: string, location?: string, name: string, profilePicture?: string, statusesCount?: number, username: string, verified?: boolean }, bookmarkCount?: number, conversationId?: string, createdAt?: string, entities?: {}, id: string, inReplyToId?: string, inReplyToUserId?: string, inReplyToUsername?: string, isLimitedReply?: boolean, isNoteTweet?: boolean, isQuoteStatus?: boolean, isReply?: boolean, lang?: string, likeCount?: number, media?: { mediaUrl?: string, type?: animated_gif | photo | video, url?: string }[], quoteCount?: number, replyCount?: number, retweetCount?: number, source?: string, text: string, type?: string, url?: string, viewCount?: number }[]"
+            "type": "{ author?: { coverPicture?: string, createdAt?: string, description?: string, followers?: number, following?: number, id: string, location?: string, name: string, profilePicture?: string, statusesCount?: number, username: string, verified?: boolean }, bookmarkCount?: number, conversationId?: string, createdAt?: string, entities?: Record<string, any>, id: string, inReplyToId?: string, inReplyToUserId?: string, inReplyToUsername?: string, isLimitedReply?: boolean, isNoteTweet?: boolean, isQuoteStatus?: boolean, isReply?: boolean, lang?: string, likeCount?: number, media?: { mediaUrl?: string, type?: animated_gif | photo | video, url?: string }[], quoteCount?: number, replyCount?: number, retweetCount?: number, source?: string, text: string, type?: string, url?: string, viewCount?: number }[]"
           }
         ]
       }
@@ -615,7 +615,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "users",
@@ -692,7 +692,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "users",
@@ -738,7 +738,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "users",
@@ -860,7 +860,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "users",
@@ -1041,12 +1041,12 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tweets",
             "optional": false,
-            "type": "{ author?: { coverPicture?: string, createdAt?: string, description?: string, followers?: number, following?: number, id: string, location?: string, name: string, profilePicture?: string, statusesCount?: number, username: string, verified?: boolean }, bookmarkCount?: number, conversationId?: string, createdAt?: string, entities?: {}, id: string, inReplyToId?: string, inReplyToUserId?: string, inReplyToUsername?: string, isLimitedReply?: boolean, isNoteTweet?: boolean, isQuoteStatus?: boolean, isReply?: boolean, lang?: string, likeCount?: number, media?: { mediaUrl?: string, type?: animated_gif | photo | video, url?: string }[], quoteCount?: number, replyCount?: number, retweetCount?: number, source?: string, text: string, type?: string, url?: string, viewCount?: number }[]"
+            "type": "{ author?: { coverPicture?: string, createdAt?: string, description?: string, followers?: number, following?: number, id: string, location?: string, name: string, profilePicture?: string, statusesCount?: number, username: string, verified?: boolean }, bookmarkCount?: number, conversationId?: string, createdAt?: string, entities?: Record<string, any>, id: string, inReplyToId?: string, inReplyToUserId?: string, inReplyToUsername?: string, isLimitedReply?: boolean, isNoteTweet?: boolean, isQuoteStatus?: boolean, isReply?: boolean, lang?: string, likeCount?: number, media?: { mediaUrl?: string, type?: animated_gif | photo | video, url?: string }[], quoteCount?: number, replyCount?: number, retweetCount?: number, source?: string, text: string, type?: string, url?: string, viewCount?: number }[]"
           }
         ]
       }
@@ -1093,7 +1093,7 @@
           {
             "key": "eventTypes",
             "optional": false,
-            "type": "tweet.new | tweet.quote | tweet.reply | tweet.retweet[]"
+            "type": "(tweet.new | tweet.quote | tweet.reply | tweet.retweet)[]"
           },
           {
             "key": "url",
@@ -1113,7 +1113,7 @@
           {
             "key": "eventTypes",
             "optional": false,
-            "type": "tweet.new | tweet.quote | tweet.reply | tweet.retweet[]"
+            "type": "(tweet.new | tweet.quote | tweet.reply | tweet.retweet)[]"
           },
           {
             "key": "id",
@@ -1205,7 +1205,7 @@
           {
             "key": "webhooks",
             "optional": false,
-            "type": "{ createdAt: string, eventTypes: tweet.new | tweet.quote | tweet.reply | tweet.retweet[], id: string, isActive: boolean, url: string }[]"
+            "type": "{ createdAt: string, eventTypes: (tweet.new | tweet.quote | tweet.reply | tweet.retweet)[], id: string, isActive: boolean, url: string }[]"
           }
         ]
       }
@@ -1257,7 +1257,7 @@
           {
             "key": "eventTypes",
             "optional": true,
-            "type": "tweet.new | tweet.quote | tweet.reply | tweet.retweet[]"
+            "type": "(tweet.new | tweet.quote | tweet.reply | tweet.retweet)[]"
           },
           {
             "key": "id",
@@ -1287,7 +1287,7 @@
           {
             "key": "eventTypes",
             "optional": false,
-            "type": "tweet.new | tweet.quote | tweet.reply | tweet.retweet[]"
+            "type": "(tweet.new | tweet.quote | tweet.reply | tweet.retweet)[]"
           },
           {
             "key": "id",
@@ -1348,7 +1348,7 @@
           {
             "key": "confirmationSource",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "confirmedAt",
@@ -1393,7 +1393,7 @@
           {
             "key": "targetId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tweetId",
@@ -1420,7 +1420,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "deliveryId",
@@ -1464,7 +1464,7 @@
           }
         ]
       },
-      "responseType": "{ data: {}, deliveryId?: string, eventType: tweet.new | tweet.quote | tweet.reply | tweet.retweet | webhook.test, occurredAt?: string, query?: string, schemaVersion?: string, streamEventId?: string, timestamp?: string, username?: string }",
+      "responseType": "{ data: Record<string, any>, deliveryId?: string, eventType: tweet.new | tweet.quote | tweet.reply | tweet.retweet | webhook.test, occurredAt?: string, query?: string, schemaVersion?: string, streamEventId?: string, timestamp?: string, username?: string }",
       "usageExample": "xquik({\n    webhookHooks: {\n        events: {\n            monitor: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -1477,7 +1477,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "deliveryId",
@@ -1521,7 +1521,7 @@
           }
         ]
       },
-      "responseType": "{ data: {}, deliveryId?: string, eventType: tweet.new | tweet.quote | tweet.reply | tweet.retweet | webhook.test, occurredAt?: string, query?: string, schemaVersion?: string, streamEventId?: string, timestamp?: string, username?: string }",
+      "responseType": "{ data: Record<string, any>, deliveryId?: string, eventType: tweet.new | tweet.quote | tweet.reply | tweet.retweet | webhook.test, occurredAt?: string, query?: string, schemaVersion?: string, streamEventId?: string, timestamp?: string, username?: string }",
       "usageExample": "xquik({\n    webhookHooks: {\n        events: {\n            test: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     }
   ],
@@ -1588,6 +1588,11 @@
         },
         {
           "field": "deliveryId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "eventType",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

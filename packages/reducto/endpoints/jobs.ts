@@ -1,6 +1,6 @@
 import type { ReductoEndpoints } from '../index';
-import { forgetJob, rememberJobStatus } from './cache';
 import { callReducto } from './call';
+import { forgetJob, rememberJobStatus } from './persist';
 import {
 	CancelJobResponseSchema,
 	DeleteJobInputSchema,
@@ -67,7 +67,7 @@ export const cancel: ReductoEndpoints['cancelJob'] = async (ctx, input) => {
 };
 
 export const remove: ReductoEndpoints['deleteJob'] = async (ctx, input) => {
-	// The cache key is the id the caller asked to delete. The 202 body is not
+	// The entity id is the id the caller asked to delete. The 202 body is not
 	// required to echo it.
 	const { job_id } = DeleteJobInputSchema.parse(input);
 	const response = await callReducto(

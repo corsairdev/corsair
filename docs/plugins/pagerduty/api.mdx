@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for PagerDuty: every `pagerduty.api.*` operation with input and output types."
+title: "PagerDuty API reference"
+sidebarTitle: "API"
+description: "API reference for the PagerDuty plugin in Corsair: every `pagerduty.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `pagerduty.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -350,10 +349,10 @@ await corsair.pagerduty.api.incidents.list({});
 |------|------|----------|-------------|
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
-| `statuses` | `triggered \| acknowledged \| resolved[]` | No | — |
+| `statuses` | `(triggered \| acknowledged \| resolved)[]` | No | — |
 | `since` | `string` | No | — |
 | `until` | `string` | No | — |
-| `urgencies` | `high \| low[]` | No | — |
+| `urgencies` | `(high \| low)[]` | No | — |
 | `service_ids` | `string[]` | No | — |
 | `team_ids` | `string[]` | No | — |
 | `sort_by` | `string` | No | — |
@@ -368,7 +367,7 @@ await corsair.pagerduty.api.incidents.list({});
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `more` | `boolean` | No | — |
-| `total` | `number` | No | — |
+| `total` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="incidents full type">
@@ -643,7 +642,7 @@ await corsair.pagerduty.api.logEntries.list({});
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `more` | `boolean` | No | — |
-| `total` | `number` | No | — |
+| `total` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="log_entries full type">

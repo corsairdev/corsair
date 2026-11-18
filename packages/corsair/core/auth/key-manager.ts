@@ -1,4 +1,7 @@
+import { reencryptSealedAccountData } from '../../db/data-at-rest';
 import type { CorsairDatabase } from '../../db/kysely/database';
+import type { AccountConfig } from '../account-lookup';
+import { answersTo, findAccountRow, resolveAccount } from '../account-lookup';
 import type { AuthTypes } from '../constants';
 import {
 	decryptConfig,
@@ -8,6 +11,7 @@ import {
 	generateDEK,
 	reEncryptConfig,
 } from './encryption';
+import { singleFlight } from './single-flight';
 import type {
 	AccountKeyContext,
 	AccountKeyManagerFor,
@@ -274,6 +278,8 @@ export type AccountKeyManagerOptions<T extends AuthTypes> = {
 	/** Extra account-level fields from plugin authConfig */
 	extraAccountFields?: readonly string[];
 	ensureProvisioned?: () => Promise<void>;
+	/** Scope to one named account. Absent = the default (oldest) account. */
+	account?: { ref?: string };
 };
 
 /**
@@ -293,6 +299,7 @@ export function createAccountKeyManager<T extends AuthTypes>(
 		database,
 		extraAccountFields = [],
 		ensureProvisioned,
+		account: scope,
 	} = options;
 
 	// Merge base + extra fields
@@ -311,6 +318,9 @@ export function createAccountKeyManager<T extends AuthTypes>(
 		config: Record<string, unknown>;
 		dek: string | null;
 	} | null = null;
+
+	// Once a ref resolves its row id is pinned; the row is still re-read each call.
+	let pinnedAccountId: string | undefined;
 
 	const getIntegration = async () => {
 		if (cachedIntegration) return cachedIntegration;
@@ -359,12 +369,38 @@ export function createAccountKeyManager<T extends AuthTypes>(
 			while (true) {
 				const integration = await getIntegration();
 
-				const account = await database.db
-					.selectFrom('corsair_accounts')
-					.selectAll()
-					.where('tenant_id', '=', tenantId)
-					.where('integration_id', '=', integration.id)
-					.executeTakeFirst();
+				const where = { tenantId, integrationId: integration.id };
+				let account:
+					| { id: string; config: AccountConfig; dek?: string | null }
+					| undefined;
+				if (!scope) {
+					account = await findAccountRow(database.db, where);
+				} else {
+					if (pinnedAccountId) {
+						account = await database.db
+							.selectFrom('corsair_accounts')
+							.selectAll()
+							.where('id', '=', pinnedAccountId)
+							.where('tenant_id', '=', tenantId)
+							.executeTakeFirst();
+						if (
+							!account ||
+							(scope.ref && !(await answersTo(account, scope.ref, kek)))
+						) {
+							account = undefined;
+							pinnedAccountId = undefined;
+						}
+					}
+					if (!account) {
+						account = await resolveAccount({
+							db: database.db,
+							kek,
+							...where,
+							ref: scope.ref,
+						});
+						if (account && scope.ref) pinnedAccountId = account.id;
+					}
+				}
 
 				if (!account) {
 					if (!provisionAttempted && ensureProvisioned) {
@@ -524,10 +560,11 @@ export function createAccountKeyManager<T extends AuthTypes>(
 			const account = await ctx.getAccount();
 			const newDek = generateDEK();
 
-			// If there's an existing DEK, re-encrypt config; otherwise start fresh
+			// If there's an existing DEK, re-encrypt config and sealed rows; otherwise start fresh
 			let newConfig: Record<string, string> = {};
+			let oldDek: string | null = null;
 			if (account.dek) {
-				const oldDek = await decryptDEK(account.dek, kek);
+				oldDek = await decryptDEK(account.dek, kek);
 				const config = account.config as Record<string, string>;
 				if (config && Object.keys(config).length > 0) {
 					newConfig = reEncryptConfig(config, oldDek, newDek);
@@ -536,15 +573,39 @@ export function createAccountKeyManager<T extends AuthTypes>(
 
 			const encryptedNewDek = await encryptDEK(newDek, kek);
 
-			await ctx.updateAccount({
-				config: newConfig,
-				dek: encryptedNewDek,
-			});
+			if (oldDek) {
+				const previousDek = oldDek;
+				await database.db.transaction().execute(async (trx) => {
+					await reencryptSealedAccountData(
+						trx,
+						account.id,
+						previousDek,
+						newDek,
+					);
+					await trx
+						.updateTable('corsair_accounts')
+						.set({
+							config: newConfig,
+							dek: encryptedNewDek,
+							updated_at: new Date(),
+						})
+						.where('id', '=', account.id)
+						.execute();
+				});
+			} else {
+				await ctx.updateAccount({
+					config: newConfig,
+					dek: encryptedNewDek,
+				});
+			}
 
 			cachedDek = newDek;
 			cachedDekSource = encryptedNewDek;
 			return newDek;
 		},
+
+		single_flight: async <R>(name: string, run: () => Promise<R>) =>
+			singleFlight(database, `${name}:${(await ctx.getAccount()).id}`, run),
 
 		// Auto-generated field accessors
 		...createFieldAccessors(getDecryptedConfig, updateConfig, allFields),
@@ -628,12 +689,10 @@ export async function initializeAccountDEK(
 		throw new Error(`Integration "${integrationName}" not found.`);
 	}
 
-	const account = await database.db
-		.selectFrom('corsair_accounts')
-		.selectAll()
-		.where('tenant_id', '=', tenantId)
-		.where('integration_id', '=', integration.id)
-		.executeTakeFirst();
+	const account = await findAccountRow(database.db, {
+		tenantId,
+		integrationId: integration.id,
+	});
 
 	if (!account) {
 		throw new Error(

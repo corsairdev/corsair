@@ -1,0 +1,62 @@
+displayName: tl;dv
+description: Meeting intelligence with tl;dv - list and read recorded meetings, pull transcripts and AI notes, import a recording from a URL, and search folders.
+domain: tldv.io
+recommendedAuth: api_key
+overviewNote: |
+  Create an API key at https://tldv.io/app/integrations/api (you must be signed in, on a Pro or Business plan), then store it as the account's `api_key`. Every request sends it in an `x-api-key` header.
+
+  Things to know before you call:
+
+  - **A `User-Agent` is mandatory.** tl;dv blocks default library agents before the key is read: a request sent as `Python-urllib/3.11` gets a Cloudflare `403` with `error code: 1010` and no JSON body. The plugin always sends `Corsair-tldv-integration/1.0`.
+  - **The host is `pasta.tldv.io`,** not `api.tldv.io`; the latter answers 404 for every `/v1alpha1` path.
+  - **API access depends on the organizer's plan.** Seeing a meeting in the web app does not grant API access: a meeting organized on a Free plan cannot be exported, and sharing does not change that. Organization-wide automation needs Enterprise.
+  - **Two error shapes, split by status.** A `400` carries `{ name: 'BadRequestError', message, errors: [{ property, constraints }] }`; `401`, `403`, `404` and `500` carry `{ name, message }`. The plugin throws a `TldvAPIError`. Its `status` is the HTTP status, its `code` is tl;dv's `name` (for example `NotFoundError`) and its `detail` is the first constraint. `error.name` is always `TldvAPIError`, so compare `error.code`.
+  - **Timestamps are ISO 8601 strings** while `duration` and transcript offsets are numbers in seconds. `duration` can be fractional. The list endpoint itself answers `happenedAt` as a JavaScript date string (`Tue Nov 10 2026 19:06:44 GMT+0000 (Coordinated Universal Time)`); `meetings.list` converts it to ISO 8601 so it matches `meetings.get`.
+  - **No recording download.** `GET /meetings/{id}/download` answers a 302 to a signed URL, and the shared HTTP client follows redirects, so it would pull the whole file into memory. The meeting's `url` field is the tl;dv web page for the meeting, not the media file. To get the recording, call `GET https://pasta.tldv.io/v1alpha1/meetings/{id}/download` yourself with the same `x-api-key` and `User-Agent` headers and redirects turned off, then read the signed URL from the `Location` header. It expires after 6 hours.
+  - **Webhooks are not signed, so they carry a shared secret.** tl;dv publishes no signature scheme for either trigger. The plugin accepts a delivery only when it carries your shared secret in an `x-corsair-webhook-secret` header, and it rejects every delivery when no secret is configured. tl;dv can send that header itself: in Integrations > Webhooks > Configure new webhook, set Authentication type to "API Key", the header name to `x-corsair-webhook-secret` and the value to your secret. Set the same secret with `tldv({ webhookSecret })` or `keys.set_webhook_signature(secret)`. Webhooks need a Pro or Business plan, and the endpoint must be HTTPS and must not redirect.
+  - **What the secret proves.** The secret is the only thing that ties a delivery to tl;dv. Use a long random value, keep it out of logs and client code, and replace it in both places if it leaks.
+  - **Answer within 10 seconds.** tl;dv retries a delivery that gets no 2xx in that time, and a `MeetingReady` delivery with the transcript included can be several hundred KB. When the plugin rejects a delivery (wrong secret, a payload that does not parse), `processWebhook` returns `response.success === false`. Answer that with a non-2xx status.
+  - **Tenant routing.** Add `?tenantId=<id>` to the endpoint URL you give tl;dv, and pass `Object.fromEntries(new URL(request.url).searchParams)` to `processWebhook` as its fourth argument. Without it a delivery runs under `default`. If your handler resolves the tenant from the payload instead, a `MeetingReady` delivery is matched by the organizer's email, which you store with `keys.set_tenant_external_id(email)`. A `TranscriptReady` delivery names no organizer, so only `tenantId` can route it.
+examples:
+  read:
+    path: meetings.list
+    title: List recent meetings
+    args:
+      limit: 10
+  write:
+    path: meetings.import
+    title: Import a recording from a URL
+    args:
+      url: 'https://example.org/call-recording.mp4'
+      name: Discovery call
+apiExamples:
+  meetings.list:
+    call: "{ limit: 10, meetingType: 'external' }"
+  meetings.get:
+    call: "{ meetingId: 'meeting-123' }"
+  meetings.transcript:
+    call: "{ meetingId: 'meeting-123' }"
+  meetings.notes:
+    call: "{ meetingId: 'meeting-123' }"
+  meetings.import:
+    call: "{ url: 'https://example.org/call-recording.mp4', name: 'Discovery call', participants: ['jordan@example.org'] }"
+  folders.list:
+    call: "{ query: 'Q3 renewals', limit: 20 }"
+apiNotes:
+  meetings.list: |
+    Answers `{ page, pages, total, pageSize, results }`. `limit` caps at 100. `meetingType: 'internal'` keeps only meetings whose participants are all in your organization; `'external'` keeps the rest. `from` and `to` accept a date or a date-time. The input schema rejects a `meetingType` other than these two before any request is sent. `query` matches whole words: a meeting named `weekly-sync` is found by `weekly sync`, but not by `weekly-sync`.
+  meetings.get: |
+    `phoneNumber` and `metadata` are populated here and are absent from the list endpoint; both are set when the meeting was imported or uploaded.
+  meetings.transcript: |
+    Each entry in `data` is one sentence with a `speaker`, `text`, `startTime` and `endTime`, with the offsets in seconds. This is the same object a `TranscriptReady` webhook carries.
+  meetings.notes: |
+    Answers `structuredNotes`, `markdownContent` and `topics`. A note carries a `segmentId`, a `timestamp` in seconds and a `topicId` that matches a topic's `id`.
+  meetings.import: |
+    Starts a processing job and answers `{ success, jobId, message }`. `url` and `name` are both required. The URL must be publicly reachable and the media must be one of .mp3 .mp4 .wav .m4a .mkv .mov .avi .wma .flac. `metadata` is returned verbatim on the meeting and in the MeetingReady webhook, which is how you correlate your own record ids. It takes up to 20 keys, and each value is a string of up to 256 characters, a number or a boolean.
+  folders.list: |
+    Answers `{ page, pages, total, pageSize, results }`, where each folder carries its `meetingIds`. `space` narrows the search to personal, team or organization folders.
+exampleWebhook:
+  path: meetings.meetingReady
+  note: React as soon as a meeting is processed, with its notes and, when included, its transcript. Pass `webhookSecret` next to `webhookHooks`, or store it with `keys.set_webhook_signature(secret)`. With no secret the plugin rejects every delivery and this hook never runs.
+  after: |
+    console.log('Meeting ready:', result.data?.data.name, 'notes:', result.data?.data.notes?.structuredNotes?.length);

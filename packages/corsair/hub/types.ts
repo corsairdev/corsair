@@ -36,6 +36,13 @@ export type HubConfigInput = {
 	 * object is an advanced escape hatch to override the tunnel URL zone.
 	 */
 	tunnel?: boolean | TunnelConfig;
+	/**
+	 * Set by Corsair Cloud's runtime only: signs its managed-pricing requests
+	 * to Hub. Leave unset elsewhere.
+	 */
+	runtimeProofKey?: string;
+	/** Set from `createCorsair({ multiAccount })`; gates the capability header. */
+	multiAccount?: boolean;
 };
 
 /**
@@ -61,6 +68,12 @@ export type HubConfig = {
 	redirectURL?: string;
 	allowWorkflowExecution?: boolean;
 	tunnel?: boolean | TunnelConfig;
+	/**
+	 * Set by Corsair Cloud's runtime only: signs its managed-pricing requests
+	 * to Hub. Leave unset elsewhere.
+	 */
+	runtimeProofKey?: string;
+	multiAccount?: boolean;
 };
 
 export type HubConnectSessionInput = {

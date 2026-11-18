@@ -92,12 +92,15 @@ export const get: SpotifyEndpoints['playlistsGet'] = async (ctx, input) => {
 
 export const getUserPlaylists: SpotifyEndpoints['playlistsGetUserPlaylists'] =
 	async (ctx, input) => {
-		const userId = input.user_id || 'me';
-		const query: Record<string, string | number | undefined> = { ...input };
+		const { user_id, ...query } = input;
+		const endpoint =
+			user_id && user_id !== 'me'
+				? `users/${user_id}/playlists`
+				: 'me/playlists';
 
 		const result = await makeAuthenticatedSpotifyRequest<
 			SpotifyEndpointOutputs['playlistsGetUserPlaylists']
-		>(`users/${userId}/playlists`, ctx, {
+		>(endpoint, ctx, {
 			method: 'GET',
 			query,
 		});
@@ -137,11 +140,16 @@ export const removeItem: SpotifyEndpoints['playlistsRemoveItem'] = async (
 	ctx,
 	input,
 ) => {
+	// Spotify replaced DELETE /playlists/{id}/tracks with /items in February 2026
+	// (the old route is gone for development-mode apps) and renamed `tracks` to `items`.
 	const result = await makeAuthenticatedSpotifyRequest<
 		SpotifyEndpointOutputs['playlistsRemoveItem']
-	>(`playlists/${input.playlist_id}/tracks`, ctx, {
+	>(`playlists/${input.playlist_id}/items`, ctx, {
 		method: 'DELETE',
-		body: input,
+		body: {
+			items: input.tracks,
+			...(input.snapshot_id && { snapshot_id: input.snapshot_id }),
+		},
 	});
 
 	await logEventFromContext(

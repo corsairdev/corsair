@@ -1,12 +1,12 @@
 {
   "id": "vercel",
   "displayName": "Vercel",
-  "description": "Frontend cloud platform for deploying sites, serverless functions, and edge web applications.",
+  "description": "Manage Vercel projects, deployments, environment variables, domains, DNS, aliases, teams, webhooks and Edge Config.",
   "npmPackageName": "@corsair-dev/vercel",
-  "authTypes": ["api_key"],
+  "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "api_key",
   "counts": {
-    "api": 14,
+    "api": 55,
     "webhooks": 4,
     "db": 6
   },
@@ -15,36 +15,52 @@
       "authType": "api_key",
       "integrationFields": [],
       "accountFields": ["api_key", "webhook_signature", "team_id"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "team_id"
+      ]
     }
   ],
   "api": [
     {
       "path": "vercel.api.aliases.assignAlias",
       "shortPath": "aliases.assignAlias",
-      "description": "Assign an alias",
+      "description": "Point a hostname at a deployment. If the hostname already serves another deployment it moves, so live traffic switches; the response names the old deployment so it can be moved back.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
         "fields": [
           {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
             "key": "deploymentId",
             "optional": false,
-            "type": "string"
+            "type": "string",
+            "description": "Deployment to point the alias at: id (dpl_…) or hostname. An alias id or hostname also works and resolves to its current deployment."
           },
           {
             "key": "alias",
             "optional": false,
-            "type": "string"
+            "type": "string",
+            "description": "Hostname to assign, e.g. www.example.com or my-app.vercel.app. If another deployment holds it, it moves to this one."
           },
           {
             "key": "redirect",
             "optional": true,
-            "type": "string"
-          },
-          {
-            "key": "teamId",
-            "optional": true,
-            "type": "string"
+            "type": "string | null",
+            "description": "Hostname to 307-redirect the alias to instead of serving the deployment."
           }
         ]
       },
@@ -58,18 +74,177 @@
           },
           {
             "key": "alias",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string | null"
           },
           {
             "key": "created",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string | null"
           },
           {
             "key": "oldDeploymentId",
             "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.aliases.deleteAlias",
+      "shortPath": "aliases.deleteAlias",
+      "description": "Remove an alias by id or hostname. The hostname stops serving the deployment until it is assigned again, and share links on it are lost.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "aliasId",
+            "optional": false,
+            "type": "string",
+            "description": "Alias id (uid) or alias hostname to remove."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "aliasId",
+            "optional": false,
             "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.aliases.getAlias",
+      "shortPath": "aliases.getAlias",
+      "description": "Get one alias by id or hostname: the deployment and project it points at, redirect settings and creator.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "idOrAlias",
+            "optional": false,
+            "type": "string",
+            "description": "Alias id (uid) or alias hostname, e.g. www.example.com."
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string",
+            "description": "Return the alias only if it belongs to this project."
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "number",
+            "description": "Only results created after this timestamp (ms)."
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "number",
+            "description": "Only results created before this timestamp (ms). Pass the previous page’s pagination.next to get the next page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "alias",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "deletedAt",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "deploymentId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "redirect",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "redirectStatusCode",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "{ uid?: string | null, username?: string | null, email?: string | null } | null"
+          },
+          {
+            "key": "deployment",
+            "optional": true,
+            "type": "{ id?: string | null, url?: string | null } | null"
+          },
+          {
+            "key": "protectionBypass",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "microfrontends",
+            "optional": true,
+            "type": "Record<string, any> | null"
           }
         ]
       }
@@ -77,30 +252,52 @@
     {
       "path": "vercel.api.aliases.getAliases",
       "shortPath": "aliases.getAliases",
-      "description": "Get all aliases",
+      "description": "List aliases (hostnames pointing at deployments), newest first, filtered by domain or project. Page with until = pagination.next.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
         "fields": [
           {
-            "key": "limit",
+            "key": "teamId",
             "optional": true,
-            "type": "number"
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
           },
           {
-            "key": "until",
+            "key": "limit",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Maximum number of results to return."
           },
           {
             "key": "since",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Only results created after this timestamp (ms)."
           },
           {
-            "key": "teamId",
+            "key": "until",
             "optional": true,
-            "type": "string"
+            "type": "number",
+            "description": "Only results created before this timestamp (ms). Pass the previous page’s pagination.next to get the next page."
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | string[]",
+            "description": "Only aliases on this domain, or on any of these domains (up to 20)."
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string",
+            "description": "Only aliases of this project."
+          },
+          {
+            "key": "rollbackDeploymentId",
+            "optional": true,
+            "type": "string",
+            "description": "Only the aliases that would move if production rolled back to this deployment."
           }
         ]
       },
@@ -110,408 +307,68 @@
           {
             "key": "aliases",
             "optional": false,
-            "type": "{ uid: string, alias: string, created: string, createdAt: number, deploymentId?: string | null, projectId?: string | null, redirect?: string | null }[]"
+            "type": "{ uid: string, alias?: string | null, created?: string | null, createdAt?: number | null, updatedAt?: number | null, deletedAt?: number | null, deploymentId?: string | null, projectId?: string | null, redirect?: string | null, redirectStatusCode?: number | null, creator?: { uid?: string | null, username?: string | null, email?: string | null } | null, deployment?: { id?: string | null, url?: string | null } | null, protectionBypass?: Record<string, any> | null, microfrontends?: Record<string, any> | null }[]"
           },
           {
             "key": "pagination",
-            "optional": false,
-            "type": "{ count: number, next?: number | null, prev?: number | null }"
+            "optional": true,
+            "type": "{ count?: number, next?: number | null, prev?: number | null } | null"
           }
         ]
       }
     },
     {
-      "path": "vercel.api.deployments.createDeployment",
-      "shortPath": "deployments.createDeployment",
-      "description": "Create a deployment",
+      "path": "vercel.api.aliases.getDeploymentAliases",
+      "shortPath": "aliases.getDeploymentAliases",
+      "description": "List the aliases (hostnames) currently pointing at a deployment.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "deploymentId",
+            "optional": false,
+            "type": "string",
+            "description": "Deployment id (dpl_…)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "aliases",
+            "optional": false,
+            "type": "{ uid: string, alias?: string | null, created?: string | null, createdAt?: number | null, updatedAt?: number | null, deletedAt?: number | null, deploymentId?: string | null, projectId?: string | null, redirect?: string | null, redirectStatusCode?: number | null, creator?: { uid?: string | null, username?: string | null, email?: string | null } | null, deployment?: { id?: string | null, url?: string | null } | null, protectionBypass?: Record<string, any> | null, microfrontends?: Record<string, any> | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.deployments.cancelDeployment",
+      "shortPath": "deployments.cancelDeployment",
+      "description": "Stop a deployment that is still queued or building. Fails with 400 once it is READY, ERROR or already CANCELED. Redeploy to build it again.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
         "fields": [
           {
-            "key": "name",
-            "optional": false,
-            "type": "string"
-          },
-          {
-            "key": "project",
-            "optional": true,
-            "type": "string"
-          },
-          {
-            "key": "target",
-            "optional": true,
-            "type": "production | staging"
-          },
-          {
-            "key": "gitSource",
-            "optional": true,
-            "type": "{ type: github | gitlab | bitbucket, ref?: string, repoId?: string | number, sha?: string }"
-          },
-          {
-            "key": "files",
-            "optional": true,
-            "type": "any[]"
-          },
-          {
-            "key": "meta",
-            "optional": true,
-            "type": "{}"
-          },
-          {
-            "key": "env",
-            "optional": true,
-            "type": "{}"
-          },
-          {
             "key": "teamId",
             "optional": true,
-            "type": "string"
-          }
-        ]
-      },
-      "output": {
-        "kind": "object",
-        "fields": [
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
           {
-            "key": "uid",
+            "key": "deploymentId",
             "optional": false,
-            "type": "string"
-          },
-          {
-            "key": "name",
-            "optional": false,
-            "type": "string"
-          },
-          {
-            "key": "url",
-            "optional": false,
-            "type": "string"
-          },
-          {
-            "key": "created",
-            "optional": false,
-            "type": "number"
-          },
-          {
-            "key": "readyState",
-            "optional": false,
-            "type": "string"
-          },
-          {
-            "key": "type",
-            "optional": false,
-            "type": "LAMBDAS | PREBUILT | STATIC | string"
-          },
-          {
-            "key": "creator",
-            "optional": true,
-            "type": "{ uid: string, email: string, username: string }"
-          },
-          {
-            "key": "meta",
-            "optional": true,
-            "type": "{}"
-          },
-          {
-            "key": "target",
-            "optional": true,
-            "type": "production | staging | string"
-          },
-          {
-            "key": "aliasError",
-            "optional": true,
-            "type": "{ code: string, message: string }"
-          },
-          {
-            "key": "aliasAssigned",
-            "optional": true,
-            "type": "number"
-          },
-          {
-            "key": "inspectorUrl",
-            "optional": true,
-            "type": "string"
-          }
-        ]
-      }
-    },
-    {
-      "path": "vercel.api.deployments.getDeployment",
-      "shortPath": "deployments.getDeployment",
-      "description": "Get deployment details",
-      "riskLevel": "read",
-      "input": {
-        "kind": "object",
-        "fields": [
-          {
-            "key": "idOrUrl",
-            "optional": false,
-            "type": "string"
-          },
-          {
-            "key": "teamId",
-            "optional": true,
-            "type": "string"
-          }
-        ]
-      },
-      "output": {
-        "kind": "object",
-        "fields": [
-          {
-            "key": "uid",
-            "optional": false,
-            "type": "string"
-          },
-          {
-            "key": "name",
-            "optional": false,
-            "type": "string"
-          },
-          {
-            "key": "url",
-            "optional": false,
-            "type": "string"
-          },
-          {
-            "key": "created",
-            "optional": false,
-            "type": "number"
-          },
-          {
-            "key": "readyState",
-            "optional": false,
-            "type": "string"
-          },
-          {
-            "key": "type",
-            "optional": false,
-            "type": "LAMBDAS | PREBUILT | STATIC | string"
-          },
-          {
-            "key": "creator",
-            "optional": true,
-            "type": "{ uid: string, email: string, username: string }"
-          },
-          {
-            "key": "meta",
-            "optional": true,
-            "type": "{}"
-          },
-          {
-            "key": "target",
-            "optional": true,
-            "type": "production | staging | string"
-          },
-          {
-            "key": "aliasError",
-            "optional": true,
-            "type": "{ code: string, message: string }"
-          },
-          {
-            "key": "aliasAssigned",
-            "optional": true,
-            "type": "number"
-          },
-          {
-            "key": "inspectorUrl",
-            "optional": true,
-            "type": "string"
-          }
-        ]
-      }
-    },
-    {
-      "path": "vercel.api.deployments.getDeployments",
-      "shortPath": "deployments.getDeployments",
-      "description": "Get all deployments",
-      "riskLevel": "read",
-      "input": {
-        "kind": "object",
-        "fields": [
-          {
-            "key": "projectId",
-            "optional": true,
-            "type": "string"
-          },
-          {
-            "key": "limit",
-            "optional": true,
-            "type": "number"
-          },
-          {
-            "key": "until",
-            "optional": true,
-            "type": "number"
-          },
-          {
-            "key": "teamId",
-            "optional": true,
-            "type": "string"
-          }
-        ]
-      },
-      "output": {
-        "kind": "object",
-        "fields": [
-          {
-            "key": "deployments",
-            "optional": false,
-            "type": "{ uid: string, name: string, url: string, created: number, readyState: string, type: LAMBDAS | PREBUILT | STATIC | string, creator?: { uid: string, email: string, username: string } | null, meta?: {} | null, target?: production | staging | string | null, aliasError?: { code: string, message: string } | null, aliasAssigned?: number | null, inspectorUrl?: string | null }[]"
-          },
-          {
-            "key": "pagination",
-            "optional": false,
-            "type": "{ count: number, next?: number | null, prev?: number | null }"
-          }
-        ]
-      }
-    },
-    {
-      "path": "vercel.api.domains.getDomains",
-      "shortPath": "domains.getDomains",
-      "description": "Get all domains",
-      "riskLevel": "read",
-      "input": {
-        "kind": "object",
-        "fields": [
-          {
-            "key": "limit",
-            "optional": true,
-            "type": "number"
-          },
-          {
-            "key": "until",
-            "optional": true,
-            "type": "number"
-          },
-          {
-            "key": "since",
-            "optional": true,
-            "type": "number"
-          },
-          {
-            "key": "teamId",
-            "optional": true,
-            "type": "string"
-          }
-        ]
-      },
-      "output": {
-        "kind": "object",
-        "fields": [
-          {
-            "key": "domains",
-            "optional": false,
-            "type": "{ id: string, name: string, createdAt: number, boughtAt?: number | null, expiresAt?: number | null, transferredAt?: number | null, verified: boolean, nameservers: string[], intendedNameservers: string[] }[]"
-          },
-          {
-            "key": "pagination",
-            "optional": false,
-            "type": "{ count: number, next?: number | null, prev?: number | null }"
-          }
-        ]
-      }
-    },
-    {
-      "path": "vercel.api.domains.getProjectDomains",
-      "shortPath": "domains.getProjectDomains",
-      "description": "Get project domains",
-      "riskLevel": "read",
-      "input": {
-        "kind": "object",
-        "fields": [
-          {
-            "key": "idOrName",
-            "optional": false,
-            "type": "string"
-          },
-          {
-            "key": "limit",
-            "optional": true,
-            "type": "number"
-          },
-          {
-            "key": "until",
-            "optional": true,
-            "type": "number"
-          },
-          {
-            "key": "since",
-            "optional": true,
-            "type": "number"
-          },
-          {
-            "key": "teamId",
-            "optional": true,
-            "type": "string"
-          }
-        ]
-      },
-      "output": {
-        "kind": "object",
-        "fields": [
-          {
-            "key": "domains",
-            "optional": false,
-            "type": "{ name: string, apexName: string, projectId: string, redirect?: string | null, redirectStatusCode?: number | null, gitBranch?: string | null, updatedAt: number, createdAt: number, verified: boolean }[]"
-          },
-          {
-            "key": "pagination",
-            "optional": false,
-            "type": "{ count: number, next?: number | null, prev?: number | null }"
-          }
-        ]
-      }
-    },
-    {
-      "path": "vercel.api.envs.createEnvVariable",
-      "shortPath": "envs.createEnvVariable",
-      "description": "Create an environment variable for a project (supports plain, secret, encrypted, and sensitive types)",
-      "riskLevel": "write",
-      "input": {
-        "kind": "object",
-        "fields": [
-          {
-            "key": "idOrName",
-            "optional": false,
-            "type": "string"
-          },
-          {
-            "key": "key",
-            "optional": false,
-            "type": "string"
-          },
-          {
-            "key": "value",
-            "optional": false,
-            "type": "string"
-          },
-          {
-            "key": "type",
-            "optional": false,
-            "type": "plain | secret | encrypted | sensitive"
-          },
-          {
-            "key": "target",
-            "optional": false,
-            "type": "production | preview | development[]"
-          },
-          {
-            "key": "gitBranch",
-            "optional": true,
-            "type": "string"
-          },
-          {
-            "key": "comment",
-            "optional": true,
-            "type": "string"
-          },
-          {
-            "key": "teamId",
-            "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Deployment (dpl_…) that is still queued or building."
           }
         ]
       },
@@ -524,54 +381,2385 @@
             "type": "string"
           },
           {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ownerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "readyState",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "readySubstate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "target",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "buildingAt",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "ready",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "canceledAt",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "inspectorUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "errorCode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "errorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "alias",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "automaticAliases",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "aliasAssigned",
+            "optional": true,
+            "type": "boolean | number | null"
+          },
+          {
+            "key": "aliasError",
+            "optional": true,
+            "type": "{ code?: string | null, message?: string | null } | null"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "{ uid?: string | null, username?: string | null, email?: string | null } | null"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "gitSource",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "projectSettings",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "regions",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "public",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.deployments.createDeployment",
+      "shortPath": "deployments.createDeployment",
+      "description": "Start a deployment from a Git ref, from inline files, or as a redeploy of an existing deployment. It builds in the background: follow readyState with getDeployment. target production replaces the live site once ready.",
+      "riskLevel": "destructive",
+      "job": {
+        "idPath": "id",
+        "status": {
+          "op": "deployments.getDeployment",
+          "idArg": "idOrUrl",
+          "statusPath": "readyState",
+          "done": ["READY"],
+          "failed": ["ERROR", "CANCELED"]
+        },
+        "cancel": {
+          "op": "deployments.cancelDeployment",
+          "idArg": "deploymentId"
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Project name used in the deployment URL. Required even when project is set."
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string",
+            "description": "Project id or name to deploy into. Overrides name for the project."
+          },
+          {
+            "key": "target",
+            "optional": true,
+            "type": "string",
+            "description": "production, staging, or a custom environment. Omit for a preview deployment. production updates the live site."
+          },
+          {
+            "key": "customEnvironmentSlugOrId",
+            "optional": true,
+            "type": "string",
+            "description": "Custom environment to deploy to, overriding target."
+          },
+          {
+            "key": "deploymentId",
+            "optional": true,
+            "type": "string",
+            "description": "Redeploy this existing deployment (dpl_…): settings and env are inherited unless overridden here."
+          },
+          {
+            "key": "withLatestCommit",
+            "optional": true,
+            "type": "boolean",
+            "description": "With deploymentId: build the latest commit instead of the original one."
+          },
+          {
+            "key": "gitSource",
+            "optional": true,
+            "type": "{ type: github, repoId: string | number, ref: string, sha?: string } | { type: github, org: string, repo: string, ref: string, sha?: string } | { type: gitlab, projectId: string | number, ref: string, sha?: string } | { type: bitbucket, repoUuid: string, workspaceUuid?: string, ref: string, sha?: string } | { type: bitbucket, owner: string, slug: string, ref: string, sha?: string }",
+            "description": "Git source to build: github by repoId or org+repo, gitlab by projectId, bitbucket by repoUuid or owner+slug. Not with files."
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "({ file: string, data: string, encoding?: utf-8 | base64 } | { file: string, sha: string, size?: number })[]",
+            "description": "Files for a deployment without Git: inline small files (file + data), or reference uploaded ones (file + sha). Not with gitSource."
+          },
+          {
+            "key": "projectSettings",
+            "optional": true,
+            "type": "{ framework?: string | null, buildCommand?: string | null, devCommand?: string | null, installCommand?: string | null, outputDirectory?: string | null, rootDirectory?: string | null, commandForIgnoringBuildStep?: string | null, nodeVersion?: 26.x | 24.x | 22.x | 20.x | 18.x, serverlessFunctionRegion?: string | null, sourceFilesOutsideRootDirectory?: boolean, skipGitConnectDuringLink?: boolean }",
+            "description": "Build settings for this deployment. Needed on the first deployment of a new project, then saved."
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Key-value metadata to attach to the deployment."
+          },
+          {
+            "key": "monorepoManager",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "forceNew",
+            "optional": true,
+            "type": "boolean",
+            "description": "true: always build, even when an identical deployment exists."
+          },
+          {
+            "key": "skipAutoDetectionConfirmation",
+            "optional": true,
+            "type": "boolean",
+            "description": "true: proceed when the detected framework differs from the project setting instead of failing with 400."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ownerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "readyState",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "readySubstate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "target",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "buildingAt",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "ready",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "canceledAt",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "inspectorUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "errorCode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "errorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "alias",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "automaticAliases",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "aliasAssigned",
+            "optional": true,
+            "type": "boolean | number | null"
+          },
+          {
+            "key": "aliasError",
+            "optional": true,
+            "type": "{ code?: string | null, message?: string | null } | null"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "{ uid?: string | null, username?: string | null, email?: string | null } | null"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "gitSource",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "projectSettings",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "regions",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "public",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.deployments.deleteDeployment",
+      "shortPath": "deployments.deleteDeployment",
+      "description": "Delete a deployment by id or hostname. Its URL stops serving and its build output and logs are gone. Cannot be undone.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "deploymentId",
+            "optional": true,
+            "type": "string",
+            "description": "Deployment id (dpl_…)."
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "Deployment or alias hostname to delete by, instead of deploymentId."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.deployments.getDeployment",
+      "shortPath": "deployments.getDeployment",
+      "description": "Get one deployment by id or hostname: readyState (QUEUED, BUILDING, READY, ERROR, CANCELED), URL, aliases, creator, Git metadata and error details.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "idOrUrl",
+            "optional": false,
+            "type": "string",
+            "description": "Deployment id (dpl_…) or its hostname, e.g. my-app-abc123.vercel.app."
+          },
+          {
+            "key": "withGitRepoInfo",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include gitSource (commit SHA, branch, repo) in the response."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ownerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "readyState",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "readySubstate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "target",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "buildingAt",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "ready",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "canceledAt",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "inspectorUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "errorCode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "errorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "alias",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "automaticAliases",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "aliasAssigned",
+            "optional": true,
+            "type": "boolean | number | null"
+          },
+          {
+            "key": "aliasError",
+            "optional": true,
+            "type": "{ code?: string | null, message?: string | null } | null"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "{ uid?: string | null, username?: string | null, email?: string | null } | null"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "gitSource",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "projectSettings",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "regions",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "public",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.deployments.getDeploymentEvents",
+      "shortPath": "deployments.getDeploymentEvents",
+      "description": "Read the build logs of a deployment: stdout/stderr lines and state changes, oldest first by default. Returns what has been logged so far; it does not wait for new lines.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "idOrUrl",
+            "optional": false,
+            "type": "string",
+            "description": "Deployment id (dpl_…) or its hostname, e.g. my-app-abc123.vercel.app."
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "forward | backward",
+            "description": "forward: oldest first (default). backward: newest first."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "-1 | number",
+            "description": "Maximum number of events; -1 returns all of them."
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "number",
+            "description": "Only events from this timestamp (ms)."
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "number",
+            "description": "Only events up to this timestamp (ms)."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Only events of this build id."
+          },
+          {
+            "key": "statusCode",
+            "optional": true,
+            "type": "number | string",
+            "description": "Only request events with this HTTP status or range, e.g. 500 or 5xx."
+          },
+          {
+            "key": "builds",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include build events."
+          },
+          {
+            "key": "delimiter",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include delimiter events between steps."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ type: string, created?: number | null, date?: number | null, id?: string | null, deploymentId?: string | null, serial?: string | null, text?: string | null, level?: string | null, info?: Record<string, any> | null, payload?: Record<string, any> | null }[]"
+      }
+    },
+    {
+      "path": "vercel.api.deployments.getDeploymentFiles",
+      "shortPath": "deployments.getDeploymentFiles",
+      "description": "Get the source file tree of a deployment made with the CLI or the API files field. Git deployments have no file tree and return 404.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "deploymentId",
+            "optional": false,
+            "type": "string",
+            "description": "Deployment id (dpl_…)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ name: string, type?: string | null, mode?: number | null, uid?: string | null, contentType?: string | null, children?: any[] | null }[]"
+      }
+    },
+    {
+      "path": "vercel.api.deployments.getDeployments",
+      "shortPath": "deployments.getDeployments",
+      "description": "List deployments, newest first, filtered by project, environment, state, branch, commit or creator. Page with until = pagination.next.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results to return."
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "number",
+            "description": "Only results created after this timestamp (ms)."
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "number",
+            "description": "Only results created before this timestamp (ms). Pass the previous page’s pagination.next to get the next page."
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string",
+            "description": "Only deployments of this project (id or name)."
+          },
+          {
+            "key": "projectIds",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only deployments of these project ids. Not with projectId."
+          },
+          {
+            "key": "app",
+            "optional": true,
+            "type": "string",
+            "description": "Only deployments with this name."
+          },
+          {
+            "key": "target",
+            "optional": true,
+            "type": "string",
+            "description": "Environment: production, preview, or a custom environment."
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "BLOCKED | BUILDING | CANCELED | ERROR | INITIALIZING | QUEUED | READY | (BLOCKED | BUILDING | CANCELED | ERROR | INITIALIZING | QUEUED | READY)[]",
+            "description": "Only deployments in this state, or any of these states."
+          },
+          {
+            "key": "branch",
+            "optional": true,
+            "type": "string",
+            "description": "Only deployments of this Git branch."
+          },
+          {
+            "key": "sha",
+            "optional": true,
+            "type": "string",
+            "description": "Only deployments of this commit SHA."
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "string",
+            "description": "Only deployments created by these user ids (comma-separated)."
+          },
+          {
+            "key": "rollbackCandidate",
+            "optional": true,
+            "type": "boolean",
+            "description": "true: only deployments production can roll back to."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deployments",
+            "optional": false,
+            "type": "{ uid: string, name?: string | null, url?: string | null, projectId?: string | null, state?: string | null, readyState?: string | null, readySubstate?: string | null, target?: string | null, type?: string | null, source?: string | null, created?: number | null, createdAt?: number | null, buildingAt?: number | null, ready?: number | null, inspectorUrl?: string | null, errorCode?: string | null, errorMessage?: string | null, isRollbackCandidate?: boolean | null, aliasAssigned?: boolean | number | null, aliasError?: { code?: string | null, message?: string | null } | null, creator?: { uid?: string | null, username?: string | null, email?: string | null } | null, meta?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ count?: number, next?: number | null, prev?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.dns.createRecord",
+      "shortPath": "dns.createRecord",
+      "description": "Add a DNS record to a domain whose DNS is on Vercel. Fields depend on type: A, AAAA, ALIAS, CAA, CNAME, TXT and NS take value; MX takes value and mxPriority; SRV takes srv; HTTPS takes https. Takes effect on live traffic and email.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ teamId?: string, domain: string, name: string, ttl?: number, comment?: string, type: A, value: string } | { teamId?: string, domain: string, name: string, ttl?: number, comment?: string, type: AAAA, value: string } | { teamId?: string, domain: string, name: string, ttl?: number, comment?: string, type: ALIAS, value: string } | { teamId?: string, domain: string, name: string, ttl?: number, comment?: string, type: CAA, value: string } | { teamId?: string, domain: string, name: string, ttl?: number, comment?: string, type: CNAME, value: string } | { teamId?: string, domain: string, name: string, ttl?: number, comment?: string, type: MX, value: string, mxPriority: number } | { teamId?: string, domain: string, name: string, ttl?: number, comment?: string, type: SRV, srv: { priority: number | null, weight: number | null, port: number | null, target: string } } | { teamId?: string, domain: string, name: string, ttl?: number, comment?: string, type: TXT, value: string } | { teamId?: string, domain: string, name: string, ttl?: number, comment?: string, type: NS, value: string } | { teamId?: string, domain: string, name: string, ttl?: number, comment?: string, type: HTTPS, https: { priority: number | null, target: string, params?: string } }"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.dns.deleteRecord",
+      "shortPath": "dns.deleteRecord",
+      "description": "Delete a DNS record from a domain. Takes effect on live traffic and email, and the record cannot be restored, only recreated with a new id.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "Domain whose DNS zone is on Vercel, e.g. example.com."
+          },
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "string",
+            "description": "DNS record id (rec_…)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.dns.getRecords",
+      "shortPath": "dns.getRecords",
+      "description": "List the DNS records in a domain's Vercel DNS zone, 20 per page by default. Empty when the domain's DNS is hosted elsewhere (check serviceType with domains.getDomain). For the next page pass pagination.next as until.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "Domain whose DNS zone is on Vercel, e.g. example.com."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results to return."
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "number",
+            "description": "Only results created after this timestamp (ms)."
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "number",
+            "description": "Only results created before this timestamp (ms). Pass the previous page’s pagination.next to get the next page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "records",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, type?: string | null, value?: string | null, ttl?: number | null, mxPriority?: number | null, priority?: number | null, slug?: string | null, creator?: string | null, comment?: string | null, created?: number | null, createdAt?: number | null, updated?: number | null, updatedAt?: number | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ count?: number, next?: number | null, prev?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.dns.updateRecord",
+      "shortPath": "dns.updateRecord",
+      "description": "Change an existing DNS record by id (from getRecords): name, value, type, TTL, MX priority, SRV or HTTPS data, comment. Takes effect on live traffic and email; read the record first to be able to restore it.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "string",
+            "description": "DNS record id (rec_…)."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "New subdomain."
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "string | null",
+            "description": "New value."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "A | AAAA | ALIAS | CAA | CNAME | HTTPS | MX | SRV | TXT | NS | null",
+            "description": "New record type."
+          },
+          {
+            "key": "ttl",
+            "optional": true,
+            "type": "number | null",
+            "description": "Time to live in seconds, 60 or more. Vercel defaults to 60."
+          },
+          {
+            "key": "mxPriority",
+            "optional": true,
+            "type": "number | null",
+            "description": "New MX priority."
+          },
+          {
+            "key": "srv",
+            "optional": true,
+            "type": "{ target: string | null, weight: number | null, port: number | null, priority: number | null } | null",
+            "description": "New SRV data (all four fields)."
+          },
+          {
+            "key": "https",
+            "optional": true,
+            "type": "{ priority: number | null, target: string | null, params?: string | null } | null",
+            "description": "New HTTPS record data."
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string",
+            "description": "Note on what the record is for."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recordType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ttl",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.domains.addDomain",
+      "shortPath": "domains.addDomain",
+      "description": "Add a domain you already own to the account. No purchase or transfer. It may need ownership verification through DNS before it serves; zone: true creates a Vercel DNS zone (use when its nameservers point at Vercel). To serve it from a project, also call addProjectDomain.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Apex domain you already own, e.g. example.com."
+          },
+          {
+            "key": "cdnEnabled",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether the Vercel CDN is enabled for the domain."
+          },
+          {
+            "key": "zone",
+            "optional": true,
+            "type": "boolean",
+            "description": "Create a Vercel DNS zone for the domain. Set true when its nameservers point at Vercel."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "{ id: string, name: string, boughtAt?: number | null, createdAt?: number | null, expiresAt?: number | null, transferredAt?: number | null, transferStartedAt?: number | null, creator?: { id?: string | null, username?: string | null, email?: string | null, customerId?: string | null, isDomainReseller?: boolean | null } | null, customNameservers?: string[] | null, intendedNameservers?: string[] | null, nameservers?: string[] | null, echMode?: string | null, renew?: boolean | null, serviceType?: string | null, suffix?: boolean | null, teamId?: string | null, userId?: string | null, verified?: boolean | null, cdnEnabled?: boolean | null, zone?: boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.domains.addProjectDomain",
+      "shortPath": "domains.addProjectDomain",
+      "description": "Assign a domain to a project, optionally as a redirect or tied to a git branch or custom environment. If verified comes back false, set the record listed in verification, then call verifyProjectDomain. Errors if the domain is already on the project.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "idOrName",
+            "optional": false,
+            "type": "string",
+            "description": "Project id (prj_…) or project name."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Domain to add to the project, e.g. www.example.com."
+          },
+          {
+            "key": "customEnvironmentId",
+            "optional": true,
+            "type": "string",
+            "description": "Custom environment the domain serves."
+          },
+          {
+            "key": "gitBranch",
+            "optional": true,
+            "type": "string | null",
+            "description": "Git branch whose latest preview deployment this domain serves. null clears it."
+          },
+          {
+            "key": "redirect",
+            "optional": true,
+            "type": "string | null",
+            "description": "Domain to redirect to, e.g. example.com. null clears it."
+          },
+          {
+            "key": "redirectStatusCode",
+            "optional": true,
+            "type": "301 | 302 | 307 | 308 | null",
+            "description": "HTTP status for the redirect: 301, 302, 307 or 308. null clears it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "apexName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "redirect",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "redirectStatusCode",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "gitBranch",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customEnvironmentId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "verified",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "verification",
+            "optional": true,
+            "type": "{ type?: string | null, domain?: string | null, value?: string | null, reason?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.domains.deleteDomain",
+      "shortPath": "domains.deleteDomain",
+      "description": "Remove a domain from the account. Also removes its aliases and every DNS record in its Vercel DNS zone; the records cannot be recovered. Does not cancel a registration held at another registrar.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "Domain name, e.g. example.com."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "uid",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.domains.getDomain",
+      "shortPath": "domains.getDomain",
+      "description": "Get one account domain by name: whether ownership is verified, current and intended nameservers, whether Vercel serves its DNS (serviceType), and purchase/expiry dates when bought through Vercel.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "Domain name, e.g. example.com."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "{ id: string, name: string, boughtAt?: number | null, createdAt?: number | null, expiresAt?: number | null, transferredAt?: number | null, transferStartedAt?: number | null, creator?: { id?: string | null, username?: string | null, email?: string | null, customerId?: string | null, isDomainReseller?: boolean | null } | null, customNameservers?: string[] | null, intendedNameservers?: string[] | null, nameservers?: string[] | null, echMode?: string | null, renew?: boolean | null, serviceType?: string | null, suffix?: boolean | null, teamId?: string | null, userId?: string | null, verified?: boolean | null, cdnEnabled?: boolean | null, zone?: boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.domains.getDomainConfig",
+      "shortPath": "domains.getDomainConfig",
+      "description": "Check whether a domain's DNS points at Vercel: misconfigured, configuredBy (A, CNAME, http or null) and the recommended A and CNAME values to set at the DNS provider. Pass projectIdOrName for a domain not on a project yet.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "Domain name, e.g. example.com."
+          },
+          {
+            "key": "projectIdOrName",
+            "optional": true,
+            "type": "string",
+            "description": "Project the domain will be used on. Pass it when the domain is not on a project yet."
+          },
+          {
+            "key": "strict",
+            "optional": true,
+            "type": "boolean",
+            "description": "true: report only nameservers set on this exact domain. false (default): fall back to the parent zone's nameservers."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "misconfigured",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "configuredBy",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "acceptedChallenges",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "recommendedCNAME",
+            "optional": true,
+            "type": "{ rank?: number | null, value?: string | null }[] | null"
+          },
+          {
+            "key": "recommendedIPv4",
+            "optional": true,
+            "type": "{ rank?: number | null, value?: string[] | null }[] | null"
+          },
+          {
+            "key": "nameservers",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "serviceType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cnames",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "aValues",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "conflicts",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "ipStatus",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.domains.getDomains",
+      "shortPath": "domains.getDomains",
+      "description": "List the domains in the account or team (apex domains, not per-project assignments), newest first, 20 per page by default. For the next page pass pagination.next as until.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results to return."
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "number",
+            "description": "Only results created after this timestamp (ms)."
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "number",
+            "description": "Only results created before this timestamp (ms). Pass the previous page’s pagination.next to get the next page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domains",
+            "optional": false,
+            "type": "{ id: string, name: string, boughtAt?: number | null, createdAt?: number | null, expiresAt?: number | null, transferredAt?: number | null, transferStartedAt?: number | null, creator?: { id?: string | null, username?: string | null, email?: string | null, customerId?: string | null, isDomainReseller?: boolean | null } | null, customNameservers?: string[] | null, intendedNameservers?: string[] | null, nameservers?: string[] | null, echMode?: string | null, renew?: boolean | null, serviceType?: string | null, suffix?: boolean | null, teamId?: string | null, userId?: string | null, verified?: boolean | null, cdnEnabled?: boolean | null, zone?: boolean | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ count?: number, next?: number | null, prev?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.domains.getProjectDomain",
+      "shortPath": "domains.getProjectDomain",
+      "description": "Get one domain on a project, including the verification challenge (the DNS record to set) when verified is false.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "idOrName",
+            "optional": false,
+            "type": "string",
+            "description": "Project id (prj_…) or project name."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "Domain on the project, e.g. www.example.com."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "apexName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "redirect",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "redirectStatusCode",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "gitBranch",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customEnvironmentId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "verified",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "verification",
+            "optional": true,
+            "type": "{ type?: string | null, domain?: string | null, value?: string | null, reason?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.domains.getProjectDomains",
+      "shortPath": "domains.getProjectDomains",
+      "description": "List the domains assigned to a project (custom domains and *.vercel.app) with their redirect, git branch and verification state. Filters: production, target, gitBranch, verified, redirects, redirect, customEnvironmentId.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "idOrName",
+            "optional": false,
+            "type": "string",
+            "description": "Project id (prj_…) or project name."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results to return."
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "number",
+            "description": "Only results created after this timestamp (ms)."
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "number",
+            "description": "Only results created before this timestamp (ms). Pass the previous page’s pagination.next to get the next page."
+          },
+          {
+            "key": "production",
+            "optional": true,
+            "type": "boolean",
+            "description": "true: only production domains."
+          },
+          {
+            "key": "target",
+            "optional": true,
+            "type": "production | preview",
+            "description": "Only domains for this target."
+          },
+          {
+            "key": "customEnvironmentId",
+            "optional": true,
+            "type": "string",
+            "description": "Only domains of this custom environment."
+          },
+          {
+            "key": "gitBranch",
+            "optional": true,
+            "type": "string",
+            "description": "Only domains linked to this git branch."
+          },
+          {
+            "key": "redirects",
+            "optional": true,
+            "type": "boolean",
+            "description": "false: leave out domains that redirect. Default true."
+          },
+          {
+            "key": "redirect",
+            "optional": true,
+            "type": "string",
+            "description": "Only domains that redirect to this domain."
+          },
+          {
+            "key": "verified",
+            "optional": true,
+            "type": "boolean",
+            "description": "Only verified (true) or unverified (false) domains."
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "ASC | DESC",
+            "description": "Sort by creation time."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domains",
+            "optional": false,
+            "type": "{ name: string, apexName?: string | null, projectId?: string | null, redirect?: string | null, redirectStatusCode?: number | null, gitBranch?: string | null, customEnvironmentId?: string | null, createdAt?: number | null, updatedAt?: number | null, verified?: boolean | null, verification?: { type?: string | null, domain?: string | null, value?: string | null, reason?: string | null }[] | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ count?: number, next?: number | null, prev?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.domains.removeProjectDomain",
+      "shortPath": "domains.removeProjectDomain",
+      "description": "Unassign a domain from a project; it stops serving that project immediately. The domain stays in the account and can be added back, though it may need verifying again. removeRedirects: true also removes the project domains that redirect to it.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "idOrName",
+            "optional": false,
+            "type": "string",
+            "description": "Project id (prj_…) or project name."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "Domain on the project, e.g. www.example.com."
+          },
+          {
+            "key": "removeRedirects",
+            "optional": true,
+            "type": "boolean",
+            "description": "true: also remove this project's domains that redirect to the removed domain."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "removed",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "idOrName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.domains.updateProjectDomain",
+      "shortPath": "domains.updateProjectDomain",
+      "description": "Change a project domain's git branch or redirect (target domain and status code). Pass null to clear a field.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "idOrName",
+            "optional": false,
+            "type": "string",
+            "description": "Project id (prj_…) or project name."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "Domain on the project, e.g. www.example.com."
+          },
+          {
+            "key": "gitBranch",
+            "optional": true,
+            "type": "string | null",
+            "description": "Git branch whose latest preview deployment this domain serves. null clears it."
+          },
+          {
+            "key": "redirect",
+            "optional": true,
+            "type": "string | null",
+            "description": "Domain to redirect to, e.g. example.com. null clears it."
+          },
+          {
+            "key": "redirectStatusCode",
+            "optional": true,
+            "type": "301 | 302 | 307 | 308 | null",
+            "description": "HTTP status for the redirect: 301, 302, 307 or 308. null clears it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "apexName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "redirect",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "redirectStatusCode",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "gitBranch",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customEnvironmentId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "verified",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "verification",
+            "optional": true,
+            "type": "{ type?: string | null, domain?: string | null, value?: string | null, reason?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.domains.verifyProjectDomain",
+      "shortPath": "domains.verifyProjectDomain",
+      "description": "Re-check an unverified project domain's verification challenge and mark it verified once the DNS record is in place. Errors if the challenge isn't satisfied yet.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "idOrName",
+            "optional": false,
+            "type": "string",
+            "description": "Project id (prj_…) or project name."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "Domain on the project, e.g. www.example.com."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "apexName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "redirect",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "redirectStatusCode",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "gitBranch",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customEnvironmentId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "verified",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "verification",
+            "optional": true,
+            "type": "{ type?: string | null, domain?: string | null, value?: string | null, reason?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.edgeConfig.getEdgeConfig",
+      "shortPath": "edgeConfig.getEdgeConfig",
+      "description": "Get one Edge Config (Global Config) by id: slug, item count, size and digest.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "edgeConfigId",
+            "optional": false,
+            "type": "string",
+            "description": "Edge Config id (ecfg_…), as listed by getEdgeConfigs."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ownerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "digest",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "itemCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "sizeInBytes",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.edgeConfig.getEdgeConfigItem",
+      "shortPath": "edgeConfig.getEdgeConfigItem",
+      "description": "Read one Edge Config (Global Config) item by key. Returns found: false when the key does not exist.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "edgeConfigId",
+            "optional": false,
+            "type": "string",
+            "description": "Edge Config id (ecfg_…), as listed by getEdgeConfigs."
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string",
+            "description": "Key of the item to read."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "found",
+            "optional": false,
+            "type": "boolean",
+            "description": "false when the Edge Config has no item with this key."
+          },
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ key: string, value?: any, description?: string | null, edgeConfigId?: string | null, createdAt?: number | null, updatedAt?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.edgeConfig.getEdgeConfigItems",
+      "shortPath": "edgeConfig.getEdgeConfigItems",
+      "description": "List every item (key, JSON value, description) stored in an Edge Config (Global Config).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "edgeConfigId",
+            "optional": false,
+            "type": "string",
+            "description": "Edge Config id (ecfg_…), as listed by getEdgeConfigs."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ key: string, value?: any, description?: string | null, edgeConfigId?: string | null, createdAt?: number | null, updatedAt?: number | null }[]"
+      }
+    },
+    {
+      "path": "vercel.api.edgeConfig.getEdgeConfigs",
+      "shortPath": "edgeConfig.getEdgeConfigs",
+      "description": "List the team’s Edge Configs (called Global Config in Vercel’s API): id, slug, item count and size.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, slug?: string | null, ownerId?: string | null, digest?: string | null, itemCount?: number | null, sizeInBytes?: number | null, createdAt?: number | null, updatedAt?: number | null, createdBy?: string | null }[]"
+      }
+    },
+    {
+      "path": "vercel.api.edgeConfig.updateEdgeConfigItems",
+      "shortPath": "edgeConfig.updateEdgeConfigItems",
+      "description": "Change several Edge Config (Global Config) items in one request: create, update, upsert or delete items by key. A delete removes the item and its value for good.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "edgeConfigId",
+            "optional": false,
+            "type": "string",
+            "description": "Edge Config id (ecfg_…), as listed by getEdgeConfigs."
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "({ operation: create, key: string, value: any, description?: string | null } | { operation: update | upsert, key: string, value?: any, description?: string | null } | { operation: delete, key: string })[]",
+            "description": "Changes applied together: create (fails if the key exists), update (fails if it doesn’t), upsert, or delete."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.envs.createEnvVariable",
+      "shortPath": "envs.createEnvVariable",
+      "description": "Add one or several environment variables to a project (key, value, type, target environments, optional Git branch). Variables that already exist are listed under failed unless upsert is true. Takes effect on the next deployment.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "idOrName",
+            "optional": false,
+            "type": "string",
+            "description": "Project id (prj_…) or project name."
+          },
+          {
+            "key": "key",
+            "optional": true,
+            "type": "string",
+            "description": "Variable name, e.g. DATABASE_URL."
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "string",
+            "description": "Variable value. Kept out of event logs and the local store."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "encrypted | sensitive | plain | system",
+            "description": "encrypted: stored encrypted, readable later with getEnvVariable. sensitive: write-only, its value can never be read back. plain: stored and shown in plain text. system: reserved for Vercel system variables."
+          },
+          {
+            "key": "target",
+            "optional": true,
+            "type": "(production | preview | development)[]",
+            "description": "Environments the variable applies to. Required unless customEnvironmentIds is given."
+          },
+          {
+            "key": "gitBranch",
+            "optional": true,
+            "type": "string | null",
+            "description": "Limit the variable to one Git branch (target must be [\"preview\"])."
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string",
+            "description": "Note on what the variable is for."
+          },
+          {
+            "key": "customEnvironmentIds",
+            "optional": true,
+            "type": "string[]",
+            "description": "Custom environment ids (env_…) the variable applies to."
+          },
+          {
+            "key": "variables",
+            "optional": true,
+            "type": "{ key: string, value: string, type: encrypted | sensitive | plain | system, target?: (production | preview | development)[], gitBranch?: string | null, comment?: string, customEnvironmentIds?: string[] }[]",
+            "description": "Several variables in one call, each with key, value, type and target. Use instead of the single-variable fields."
+          },
+          {
+            "key": "upsert",
+            "optional": true,
+            "type": "boolean",
+            "description": "Overwrite a variable that already exists with the same key and target instead of reporting it under failed."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "created",
+            "optional": true,
+            "type": "{ id?: string | null, key: string, type?: string | null, value?: string | null, target?: string[] | string | null, gitBranch?: string | null, comment?: string | null, customEnvironmentIds?: string[] | null, decrypted?: boolean | null, system?: boolean | null, visibility?: string | null, configurationId?: string | null, edgeConfigId?: string | null, edgeConfigTokenId?: string | null, contentHint?: Record<string, any> | null, createdAt?: number | null, updatedAt?: number | null, createdBy?: string | null, updatedBy?: string | null } | { id?: string | null, key: string, type?: string | null, value?: string | null, target?: string[] | string | null, gitBranch?: string | null, comment?: string | null, customEnvironmentIds?: string[] | null, decrypted?: boolean | null, system?: boolean | null, visibility?: string | null, configurationId?: string | null, edgeConfigId?: string | null, edgeConfigTokenId?: string | null, contentHint?: Record<string, any> | null, createdAt?: number | null, updatedAt?: number | null, createdBy?: string | null, updatedBy?: string | null }[] | null"
+          },
+          {
+            "key": "failed",
+            "optional": true,
+            "type": "{ error: { code?: string | null, message?: string | null, key?: string | null, envVarKey?: string | null, envVarId?: string | null, gitBranch?: string | null, action?: string | null, link?: string | null, project?: string | null, target?: string[] | string | null } }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.envs.deleteEnvVariable",
+      "shortPath": "envs.deleteEnvVariable",
+      "description": "Delete an environment variable by id. Its value is gone for good; deployments built after this no longer get it.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "idOrName",
+            "optional": false,
+            "type": "string",
+            "description": "Project id (prj_…) or project name."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Environment variable id, as listed by getEnvVariables."
+          },
+          {
+            "key": "customEnvironmentId",
+            "optional": true,
+            "type": "string",
+            "description": "Custom environment (env_…) the variable belongs to, if any."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "idOrName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "removed",
+            "optional": false,
+            "type": "{ id?: string | null, key: string, type?: string | null, value?: string | null, target?: string[] | string | null, gitBranch?: string | null, comment?: string | null, customEnvironmentIds?: string[] | null, decrypted?: boolean | null, system?: boolean | null, visibility?: string | null, configurationId?: string | null, edgeConfigId?: string | null, edgeConfigTokenId?: string | null, contentHint?: Record<string, any> | null, createdAt?: number | null, updatedAt?: number | null, createdBy?: string | null, updatedBy?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.envs.getEnvVariable",
+      "shortPath": "envs.getEnvVariable",
+      "description": "Get one environment variable by id, including its DECRYPTED value (the secret itself) for encrypted and plain variables. Sensitive variables never return a value.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "idOrName",
+            "optional": false,
+            "type": "string",
+            "description": "Project id (prj_…) or project name."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Environment variable id, as listed by getEnvVariables."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
             "key": "key",
             "optional": false,
             "type": "string"
           },
           {
-            "key": "value",
-            "optional": false,
-            "type": "string"
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
           },
           {
-            "key": "type",
-            "optional": false,
-            "type": "plain | secret | encrypted | sensitive"
+            "key": "value",
+            "optional": true,
+            "type": "string | null"
           },
           {
             "key": "target",
-            "optional": false,
-            "type": "production | preview | development[]"
+            "optional": true,
+            "type": "string[] | string | null"
           },
           {
             "key": "gitBranch",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customEnvironmentIds",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "decrypted",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "system",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string | null"
           },
           {
             "key": "configurationId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
+          },
+          {
+            "key": "edgeConfigId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "edgeConfigTokenId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "contentHint",
+            "optional": true,
+            "type": "Record<string, any> | null"
           },
           {
             "key": "createdAt",
-            "optional": false,
-            "type": "number"
+            "optional": true,
+            "type": "number | null"
           },
           {
             "key": "updatedAt",
-            "optional": false,
-            "type": "number"
+            "optional": true,
+            "type": "number | null"
           },
           {
             "key": "createdBy",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedBy",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -579,20 +2767,46 @@
     {
       "path": "vercel.api.envs.getEnvVariables",
       "shortPath": "envs.getEnvVariables",
-      "description": "Get environment variables for a project (may include secret/sensitive values)",
+      "description": "List a project’s environment variables: key, type, targets, Git branch and id. Values of encrypted and sensitive variables come back encrypted (plain ones as is); use getEnvVariable to read one decrypted value.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
         "fields": [
           {
-            "key": "idOrName",
-            "optional": false,
-            "type": "string"
-          },
-          {
             "key": "teamId",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "idOrName",
+            "optional": false,
+            "type": "string",
+            "description": "Project id (prj_…) or project name."
+          },
+          {
+            "key": "gitBranch",
+            "optional": true,
+            "type": "string",
+            "description": "Only variables for this Git branch (preview target)."
+          },
+          {
+            "key": "customEnvironmentId",
+            "optional": true,
+            "type": "string",
+            "description": "Only variables of this custom environment (env_…)."
+          },
+          {
+            "key": "customEnvironmentSlug",
+            "optional": true,
+            "type": "string",
+            "description": "Only variables of the custom environment with this slug."
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string",
+            "description": "The source that is calling the endpoint (Vercel’s `source` parameter)."
           }
         ]
       },
@@ -602,28 +2816,279 @@
           {
             "key": "envs",
             "optional": true,
-            "type": "{ id: string, key: string, value: string, type: plain | secret | encrypted | sensitive, target: production | preview | development[], gitBranch?: string | null, configurationId?: string | null, createdAt: number, updatedAt: number, createdBy?: string | null, updatedBy?: string | null }[]"
+            "type": "{ id?: string | null, key: string, type?: string | null, value?: string | null, target?: string[] | string | null, gitBranch?: string | null, comment?: string | null, customEnvironmentIds?: string[] | null, decrypted?: boolean | null, system?: boolean | null, visibility?: string | null, configurationId?: string | null, edgeConfigId?: string | null, edgeConfigTokenId?: string | null, contentHint?: Record<string, any> | null, createdAt?: number | null, updatedAt?: number | null, createdBy?: string | null, updatedBy?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ count?: number, next?: number | null, prev?: number | null } | null"
+          },
+          {
+            "key": "hiddenProductionEnvCount",
+            "optional": true,
+            "type": "number | null"
           }
         ]
       }
     },
     {
-      "path": "vercel.api.projects.getProject",
-      "shortPath": "projects.getProject",
-      "description": "Get project details",
-      "riskLevel": "read",
+      "path": "vercel.api.envs.updateEnvVariable",
+      "shortPath": "envs.updateEnvVariable",
+      "description": "Change an environment variable by id: its value, key, type, targets, Git branch or comment. Takes effect on the next deployment.",
+      "riskLevel": "write",
       "input": {
         "kind": "object",
         "fields": [
           {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
             "key": "idOrName",
+            "optional": false,
+            "type": "string",
+            "description": "Project id (prj_…) or project name."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Environment variable id, as listed by getEnvVariables."
+          },
+          {
+            "key": "key",
+            "optional": true,
+            "type": "string",
+            "description": "Variable name, e.g. DATABASE_URL."
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "string",
+            "description": "Variable value. Kept out of event logs and the local store."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "encrypted | sensitive | plain | system",
+            "description": "encrypted: stored encrypted, readable later with getEnvVariable. sensitive: write-only, its value can never be read back. plain: stored and shown in plain text. system: reserved for Vercel system variables."
+          },
+          {
+            "key": "target",
+            "optional": true,
+            "type": "(production | preview | development)[]",
+            "description": "Environments the variable applies to. An empty list removes all of them (e.g. to keep only customEnvironmentIds)."
+          },
+          {
+            "key": "gitBranch",
+            "optional": true,
+            "type": "string | null",
+            "description": "Git branch to limit the variable to. null removes the limit."
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string",
+            "description": "Note on what the variable is for."
+          },
+          {
+            "key": "customEnvironmentIds",
+            "optional": true,
+            "type": "string[]",
+            "description": "Custom environment ids (env_…). An empty list removes the variable from all of them."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "key",
             "optional": false,
             "type": "string"
           },
           {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "target",
+            "optional": true,
+            "type": "string[] | string | null"
+          },
+          {
+            "key": "gitBranch",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customEnvironmentIds",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "decrypted",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "system",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "configurationId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "edgeConfigId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "edgeConfigTokenId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "contentHint",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedBy",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.projects.createProject",
+      "shortPath": "projects.createProject",
+      "description": "Create a project, optionally connected to a Git repo and with initial environment variables.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
             "key": "teamId",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Project name."
+          },
+          {
+            "key": "framework",
+            "optional": true,
+            "type": "string | null",
+            "description": "Framework preset slug, e.g. nextjs, vite, astro. null for none."
+          },
+          {
+            "key": "buildCommand",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "devCommand",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "installCommand",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "outputDirectory",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "rootDirectory",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "commandForIgnoringBuildStep",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "publicSource",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "serverlessFunctionRegion",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "previewDeploymentsDisabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "skipGitConnectDuringLink",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "gitRepository",
+            "optional": true,
+            "type": "{ type: github | gitlab | bitbucket, repo: string }",
+            "description": "Git repository to connect."
+          },
+          {
+            "key": "environmentVariables",
+            "optional": true,
+            "type": "{ key: string, value: string, target: production | preview | development | (production | preview | development)[], type?: system | secret | encrypted | plain | sensitive, gitBranch?: string }[]",
+            "description": "Environment variables to create with the project."
           }
         ]
       },
@@ -642,38 +3107,308 @@
           },
           {
             "key": "accountId",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string | null"
           },
           {
             "key": "createdAt",
-            "optional": false,
-            "type": "number"
+            "optional": true,
+            "type": "number | null"
           },
           {
             "key": "updatedAt",
-            "optional": false,
-            "type": "number"
+            "optional": true,
+            "type": "number | null"
           },
           {
             "key": "framework",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
+          },
+          {
+            "key": "nodeVersion",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "buildCommand",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "devCommand",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "installCommand",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "outputDirectory",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "rootDirectory",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "live",
+            "optional": true,
+            "type": "boolean | null"
           },
           {
             "key": "link",
             "optional": true,
-            "type": "{ type: string, repo: string, repoId?: number, org?: string | null, gitCredentialId?: string | null, productionBranch?: string | null, createdAt?: number | null, updatedAt?: number | null, deployHooks?: any[] | null }"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "latestDeployments",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "targets",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "alias",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "lastAliasRequest",
+            "optional": true,
+            "type": "{ type?: string | null, jobStatus?: string | null, toDeploymentId?: string | null, fromDeploymentId?: string | null, requestedAt?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.projects.deleteProject",
+      "shortPath": "projects.deleteProject",
+      "description": "Delete a project with all its deployments, domains and environment variables. Cannot be undone.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "idOrName",
+            "optional": false,
+            "type": "string",
+            "description": "Project id (prj_…) or project name."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "idOrName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.projects.getProject",
+      "shortPath": "projects.getProject",
+      "description": "Get a project by id or name, with its settings and latest deployments.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "idOrName",
+            "optional": false,
+            "type": "string",
+            "description": "Project id (prj_…) or project name."
+          },
+          {
+            "key": "rollbackInfo",
+            "optional": true,
+            "type": "boolean",
+            "description": "true: include lastAliasRequest, the status of the last promote or rollback (jobStatus pending, in-progress, succeeded, failed)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "framework",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "nodeVersion",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "buildCommand",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "devCommand",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "installCommand",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "outputDirectory",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "rootDirectory",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "live",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "link",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "latestDeployments",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "targets",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "alias",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "lastAliasRequest",
+            "optional": true,
+            "type": "{ type?: string | null, jobStatus?: string | null, toDeploymentId?: string | null, fromDeploymentId?: string | null, requestedAt?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.projects.getProjectMembers",
+      "shortPath": "projects.getProjectMembers",
+      "description": "List the members of a project and their project roles.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "idOrName",
+            "optional": false,
+            "type": "string",
+            "description": "Project id (prj_…) or project name."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results to return."
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "number",
+            "description": "Only results created after this timestamp (ms)."
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "number",
+            "description": "Only results created before this timestamp (ms). Pass the previous page’s pagination.next to get the next page."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Search members by name, username or email."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "members",
+            "optional": true,
+            "type": "{ uid: string, username?: string | null, email?: string | null, name?: string | null, avatar?: string | null, role?: string | null, computedProjectRole?: string | null, teamRole?: string | null, createdAt?: number | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ count?: number, next?: number | null, prev?: number | null } | null"
           }
         ]
       }
@@ -681,30 +3416,74 @@
     {
       "path": "vercel.api.projects.getProjects",
       "shortPath": "projects.getProjects",
-      "description": "Get all projects",
+      "description": "List projects in the team, newest first, with optional search and repo filters.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
         "fields": [
           {
-            "key": "limit",
+            "key": "teamId",
             "optional": true,
-            "type": "number"
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
           },
           {
-            "key": "until",
+            "key": "limit",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Maximum number of results to return."
           },
           {
             "key": "since",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Only results created after this timestamp (ms)."
           },
           {
-            "key": "teamId",
+            "key": "until",
+            "optional": true,
+            "type": "number",
+            "description": "Only results created before this timestamp (ms). Pass the previous page’s pagination.next to get the next page."
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "Continuation token or timestamp: projects updated after it."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Search projects by name."
+          },
+          {
+            "key": "repo",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by connected Git repo."
+          },
+          {
+            "key": "repoId",
             "optional": true,
             "type": "string"
+          },
+          {
+            "key": "repoUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "excludeRepos",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated repos to leave out."
+          },
+          {
+            "key": "edgeConfigId",
+            "optional": true,
+            "type": "string",
+            "description": "Only projects connected to this Edge Config."
           }
         ]
       },
@@ -714,20 +3493,421 @@
           {
             "key": "projects",
             "optional": false,
-            "type": "{ id: string, name: string, accountId: string, createdAt: number, updatedAt: number, framework?: string | null, link?: { type: string, repo: string, repoId?: number, org?: string | null, gitCredentialId?: string | null, productionBranch?: string | null, createdAt?: number | null, updatedAt?: number | null, deployHooks?: any[] | null } | null, latestDeployments?: any[] | null, targets?: {} | null }[]"
+            "type": "{ id: string, name: string, accountId?: string | null, createdAt?: number | null, updatedAt?: number | null, framework?: string | null, nodeVersion?: string | null, buildCommand?: string | null, devCommand?: string | null, installCommand?: string | null, outputDirectory?: string | null, rootDirectory?: string | null, live?: boolean | null, link?: Record<string, any> | null, latestDeployments?: any[] | null, targets?: Record<string, any> | null, alias?: any[] | null, lastAliasRequest?: { type?: string | null, jobStatus?: string | null, toDeploymentId?: string | null, fromDeploymentId?: string | null, requestedAt?: number | null } | null }[]"
           },
           {
             "key": "pagination",
-            "optional": false,
-            "type": "{ count: number, next?: number | null, prev?: number | null }"
+            "optional": true,
+            "type": "{ count?: number, next?: number | null, prev?: number | null } | null"
           }
         ]
       }
     },
     {
-      "path": "vercel.api.teams.getTeams",
-      "shortPath": "teams.getTeams",
-      "description": "Get all teams",
+      "path": "vercel.api.projects.pauseProject",
+      "shortPath": "projects.pauseProject",
+      "description": "Pause a project: its production deployment stops serving until unpaused.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string",
+            "description": "Project id (prj_…) or name."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "paused",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.projects.promoteDeployment",
+      "shortPath": "projects.promoteDeployment",
+      "description": "Make an existing production build (an earlier or staged production deployment) the live production deployment, without rebuilding. Vercel refuses preview deployments (422); redeploy those with target production instead. Runs in the background: getProject with rollbackInfo shows its jobStatus.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string",
+            "description": "Project id (prj_…) or name."
+          },
+          {
+            "key": "deploymentId",
+            "optional": false,
+            "type": "string",
+            "description": "Deployment to promote to production (no rebuild)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deploymentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "requested",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.projects.rollbackDeployment",
+      "shortPath": "projects.rollbackDeployment",
+      "description": "Roll production back to an earlier deployment (Instant Rollback).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string",
+            "description": "Project id (prj_…) or name."
+          },
+          {
+            "key": "deploymentId",
+            "optional": false,
+            "type": "string",
+            "description": "Earlier deployment to roll back to."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Reason for the rollback."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deploymentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "requested",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.projects.unpauseProject",
+      "shortPath": "projects.unpauseProject",
+      "description": "Unpause a paused project so production serves again.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string",
+            "description": "Project id (prj_…) or name."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "paused",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.projects.updateProject",
+      "shortPath": "projects.updateProject",
+      "description": "Update project settings: name, framework, build/dev/install commands, Node version, protection.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "idOrName",
+            "optional": false,
+            "type": "string",
+            "description": "Project id (prj_…) or project name."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "framework",
+            "optional": true,
+            "type": "string | null",
+            "description": "Framework preset slug, e.g. nextjs, vite, astro. null for none."
+          },
+          {
+            "key": "buildCommand",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "devCommand",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "installCommand",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "outputDirectory",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "rootDirectory",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "commandForIgnoringBuildStep",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "publicSource",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "serverlessFunctionRegion",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "previewDeploymentsDisabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "skipGitConnectDuringLink",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "nodeVersion",
+            "optional": true,
+            "type": "26.x | 24.x | 22.x | 20.x | 18.x",
+            "description": "Node.js version for builds and functions."
+          },
+          {
+            "key": "autoExposeSystemEnvs",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "autoAssignCustomDomains",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "gitForkProtection",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "directoryListing",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sourceFilesOutsideRootDirectory",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enableAffectedProjectsDeployments",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ssoProtection",
+            "optional": true,
+            "type": "{ deploymentType: all | preview | prod_deployment_urls_and_all_previews | all_except_custom_domains } | null",
+            "description": "Vercel Authentication. null turns it off."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "framework",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "nodeVersion",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "buildCommand",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "devCommand",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "installCommand",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "outputDirectory",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "rootDirectory",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "live",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "link",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "latestDeployments",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "targets",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "alias",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "lastAliasRequest",
+            "optional": true,
+            "type": "{ type?: string | null, jobStatus?: string | null, toDeploymentId?: string | null, fromDeploymentId?: string | null, requestedAt?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.teams.getTeam",
+      "shortPath": "teams.getTeam",
+      "description": "Get a team by id or slug (default: the connected team): name, slug, plan, creation date and the user’s membership.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -735,7 +3915,186 @@
           {
             "key": "teamId",
             "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug. Defaults to the connected team."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
             "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "avatar",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "creatorId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "limited",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "stagingPrefix",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "membership",
+            "optional": true,
+            "type": "{ uid?: string | null, role?: string | null, confirmed?: boolean | null, createdAt?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.teams.getTeamMembers",
+      "shortPath": "teams.getTeamMembers",
+      "description": "List a team’s members (default: the connected team) with their role, username and email. Filter by role or search by name, username or email.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug. Defaults to the connected team."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results to return."
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "number",
+            "description": "Only results created after this timestamp (ms)."
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "number",
+            "description": "Only results created before this timestamp (ms). Pass the previous page’s pagination.next to get the next page."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Search members by name, username or email."
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "OWNER | MEMBER | DEVELOPER | SECURITY | BILLING | VIEWER | VIEWER_FOR_PLUS | CONTRIBUTOR",
+            "description": "Only members with this team role."
+          },
+          {
+            "key": "excludeProject",
+            "optional": true,
+            "type": "string",
+            "description": "Leave out members of this project (id or name)."
+          },
+          {
+            "key": "eligibleMembersForProjectId",
+            "optional": true,
+            "type": "string",
+            "description": "Only members who can be added to this project."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "members",
+            "optional": false,
+            "type": "{ uid: string, username?: string | null, name?: string | null, email?: string | null, avatar?: string | null, role?: string | null, confirmed?: boolean | null, membershipSource?: string | null, createdAt?: number | null, accessRequestedAt?: number | null, projects?: any[] | null }[]"
+          },
+          {
+            "key": "emailInviteCodes",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ count?: number, next?: number | null, prev?: number | null } | null"
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.teams.getTeams",
+      "shortPath": "teams.getTeams",
+      "description": "List the teams the token’s user belongs to, with each team’s id, slug, name and the user’s role.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results to return."
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "number",
+            "description": "Only results created after this timestamp (ms)."
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "number",
+            "description": "Only results created before this timestamp (ms). Pass the previous page’s pagination.next to get the next page."
           }
         ]
       },
@@ -745,12 +4104,32 @@
           {
             "key": "teams",
             "optional": false,
-            "type": "{ id: string, slug: string, name: string, createdAt: number, updatedAt?: number | null, avatar?: string | null, membership: { uid: string, role: OWNER | MEMBER | DEVELOPER | BILLING | VIEWER | string, createdAt: number } }[]"
+            "type": "{ id: string, slug?: string | null, name?: string | null, avatar?: string | null, description?: string | null, creatorId?: string | null, createdAt?: number | null, updatedAt?: number | null, limited?: boolean | null, stagingPrefix?: string | null, billing?: Record<string, any> | null, membership?: { uid?: string | null, role?: string | null, confirmed?: boolean | null, createdAt?: number | null } | null }[]"
           },
           {
             "key": "pagination",
+            "optional": true,
+            "type": "{ count?: number, next?: number | null, prev?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.user.getUser",
+      "shortPath": "user.getUser",
+      "description": "Get the user the token belongs to: id, username, name, email and default team id.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
             "optional": false,
-            "type": "{ count: number, next?: number | null, prev?: number | null }"
+            "type": "{ id: string, email?: string | null, name?: string | null, username?: string | null, avatar?: string | null, defaultTeamId?: string | null, createdAt?: number | null, limited?: boolean | null, stagingPrefix?: string | null, version?: string | null, billing?: Record<string, any> | null, softBlock?: Record<string, any> | null }"
           }
         ]
       }
@@ -758,30 +4137,34 @@
     {
       "path": "vercel.api.webhooks.createWebhook",
       "shortPath": "webhooks.createWebhook",
-      "description": "Create a webhook",
+      "description": "Register a URL to receive Vercel events (deployments, projects, domains, env vars and more), for all projects or chosen ones. Returns the signing secret used to verify deliveries; it is shown only once, so store it.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
         "fields": [
           {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
             "key": "url",
             "optional": false,
-            "type": "string"
+            "type": "string",
+            "description": "HTTPS (or HTTP) endpoint Vercel POSTs events to."
           },
           {
             "key": "events",
             "optional": false,
-            "type": "(deployment.created | deployment.succeeded | deployment.ready | deployment.error | deployment.canceled | deployment.promoted | project.created | project.removed | domain.created | integration-configuration.scope-change-confirmed | integration-configuration.removed | integration-configuration.permission-upgraded | string)[]"
+            "type": "(budget.reached | domain.created | domain.dns.records.changed | domain.transfer-in.started | domain.transfer-in.completed | domain.transfer-in.failed | domain.certificate.add | domain.certificate.add.failed | domain.certificate.renew | domain.certificate.renew.failed | domain.certificate.deleted | domain.renewal | domain.renewal.failed | domain.auto-renew.changed | deployment.created | deployment.build-requested | deployment.cleanup | deployment.error | deployment.blocked | deployment.canceled | deployment.succeeded | deployment.ready | deployment.check-rerequested | deployment.promoted | deployment.rollback | deployment.integration.action.start | deployment.integration.action.cancel | deployment.integration.action.cleanup | deployment.checkrun.start | deployment.checkrun.cancel | edge-config.created | edge-config.deleted | edge-config.items.updated | firewall.attack | firewall.system-rule-anomaly | firewall.custom-rule-anomaly | function.archival-required | function.removal-required | alerts.triggered | integration-configuration.permission-upgraded | integration-configuration.removed | integration-configuration.scope-change-confirmed | integration-configuration.transferred | integration-resource.project-connected | integration-resource.project-disconnected | project.created | project.removed | project.renamed | project.env-variable.created | project.env-variable.updated | project.env-variable.deleted | project.domain.created | project.domain.updated | project.domain.deleted | project.domain.verified | project.domain.unverified | project.domain.moved | project.rolling-release.started | project.rolling-release.aborted | project.rolling-release.completed | project.rolling-release.approved | deployment.checks.failed | deployment.checks.succeeded | deployment-checks-completed | deployment-ready | deployment-prepared | deployment-error | deployment-check-rerequested | deployment-canceled | project-created | project-removed | domain-created | deployment | integration-configuration-permission-updated | integration-configuration-removed | integration-configuration-scope-change-confirmed | marketplace.member.changed | marketplace.invoice.created | marketplace.invoice.paid | marketplace.invoice.notpaid | marketplace.invoice.overdue | marketplace.invoice.refunded | ai-gateway.balance-depleted | ai-gateway.auto-reload.limit-reached | ai-gateway.budget.updated | observability.anomaly | observability.anomaly-error | observability.usage-anomaly | observability.error-anomaly | botid.anomaly | flag.created | flag.updated | flag.deleted | flag.segment.created | flag.segment.updated | flag.segment.deleted | test-webhook | message.created | message.updated | message.deleted | thread.resolved | thread.unresolved | message.reaction-added | message.reaction-removed | message.mentioned | comment.created | comment.updated | comment.deleted | comment.resolved | comment.unresolved | comment.reaction-added | comment.reaction-removed | comment.mentioned | string)[]",
+            "description": "Events to deliver, e.g. deployment.succeeded, deployment.error, project.created."
           },
           {
             "key": "projectIds",
             "optional": true,
-            "type": "string[]"
-          },
-          {
-            "key": "teamId",
-            "optional": true,
-            "type": "string"
+            "type": "string[]",
+            "description": "Only these projects (ids, up to 50). Leave out for every project in the team."
           }
         ]
       },
@@ -795,41 +4178,96 @@
           },
           {
             "key": "url",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string | null"
           },
           {
             "key": "events",
-            "optional": false,
-            "type": "(deployment.created | deployment.succeeded | deployment.ready | deployment.error | deployment.canceled | deployment.promoted | project.created | project.removed | domain.created | integration-configuration.scope-change-confirmed | integration-configuration.removed | integration-configuration.permission-upgraded | string)[]"
+            "optional": true,
+            "type": "string[] | null"
           },
           {
             "key": "ownerId",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string | null"
           },
           {
             "key": "projectIds",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
+          },
+          {
+            "key": "projectsMetadata",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "alertRuleIds",
+            "optional": true,
+            "type": "string[] | null"
           },
           {
             "key": "createdAt",
-            "optional": false,
-            "type": "number"
+            "optional": true,
+            "type": "number | null"
           },
           {
             "key": "updatedAt",
-            "optional": false,
-            "type": "number"
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "string | null",
+            "description": "Signing secret for the x-vercel-signature header. Returned only here, at creation."
           }
         ]
       }
     },
     {
-      "path": "vercel.api.webhooks.getWebhooks",
-      "shortPath": "webhooks.getWebhooks",
-      "description": "Get all webhooks",
+      "path": "vercel.api.webhooks.deleteWebhook",
+      "shortPath": "webhooks.deleteWebhook",
+      "description": "Delete a webhook: Vercel stops sending events to its URL. A replacement gets a new id and signing secret.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Webhook id, as listed by getWebhooks."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.webhooks.getWebhook",
+      "shortPath": "webhooks.getWebhook",
+      "description": "Get one webhook by id: URL, events and projects.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -837,13 +4275,93 @@
           {
             "key": "teamId",
             "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Webhook id, as listed by getWebhooks."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
             "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "ownerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectIds",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "projectsMetadata",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "alertRuleIds",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.webhooks.getWebhooks",
+      "shortPath": "webhooks.getWebhooks",
+      "description": "List the team’s webhooks: URL, subscribed events and the projects each covers. Filter by project.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team id (team_…) or team slug to run against. Defaults to the connected team."
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string",
+            "description": "Only webhooks that cover this project (prj_…)."
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, url: string, events: (deployment.created | deployment.succeeded | deployment.ready | deployment.error | deployment.canceled | deployment.promoted | project.created | project.removed | domain.created | integration-configuration.scope-change-confirmed | integration-configuration.removed | integration-configuration.permission-upgraded | string)[], ownerId: string, projectIds?: string[], createdAt: number, updatedAt: number }[]"
+        "type": "{ id: string, url?: string | null, events?: string[] | null, ownerId?: string | null, projectIds?: string[] | null, projectsMetadata?: any[] | null, alertRuleIds?: string[] | null, createdAt?: number | null, updatedAt?: number | null }[]"
       }
     }
   ],

@@ -1,6 +1,7 @@
 ---
-title: Database
-description: "Diffbot local sync: searchable entities, `.search()` filters, and operators."
+title: "Diffbot database"
+sidebarTitle: "Database"
+description: "Diffbot local sync in Corsair: the entities stored in your database, the `.search()` filters each one accepts, and the filter operators."
 ---
 
 The Diffbot plugin syncs data locally. Use `corsair.diffbot.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
@@ -59,6 +60,7 @@ const rows = await corsair.diffbot.db.articles.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
 | `pageUrl` | `string` | equals, contains, startsWith, endsWith, in |
 | `resolvedPageUrl` | `string` | equals, contains, startsWith, endsWith, in |
 | `title` | `string` | equals, contains, startsWith, endsWith, in |
@@ -102,6 +104,7 @@ const rows = await corsair.diffbot.db.bulkJobs.search({
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `bulkjobId` | `string` | equals, contains, startsWith, endsWith, in |
+| `kind` | `string` | equals, contains, startsWith, endsWith, in |
 | `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `total` | `number` | equals, gt, gte, lt, lte, in |
 | `completed` | `number` | equals, gt, gte, lt, lte, in |
@@ -203,6 +206,7 @@ const rows = await corsair.diffbot.db.discussions.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
 | `pageUrl` | `string` | equals, contains, startsWith, endsWith, in |
 | `resolvedPageUrl` | `string` | equals, contains, startsWith, endsWith, in |
 | `title` | `string` | equals, contains, startsWith, endsWith, in |
@@ -235,6 +239,7 @@ const rows = await corsair.diffbot.db.events.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
 | `pageUrl` | `string` | equals, contains, startsWith, endsWith, in |
 | `resolvedPageUrl` | `string` | equals, contains, startsWith, endsWith, in |
 | `title` | `string` | equals, contains, startsWith, endsWith, in |
@@ -270,6 +275,7 @@ const rows = await corsair.diffbot.db.images.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
 | `pageUrl` | `string` | equals, contains, startsWith, endsWith, in |
 | `resolvedPageUrl` | `string` | equals, contains, startsWith, endsWith, in |
 | `url` | `string` | equals, contains, startsWith, endsWith, in |
@@ -309,6 +315,7 @@ const rows = await corsair.diffbot.db.jobs.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
 | `pageUrl` | `string` | equals, contains, startsWith, endsWith, in |
 | `resolvedPageUrl` | `string` | equals, contains, startsWith, endsWith, in |
 | `title` | `string` | equals, contains, startsWith, endsWith, in |
@@ -341,6 +348,7 @@ const rows = await corsair.diffbot.db.lists.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
 | `pageUrl` | `string` | equals, contains, startsWith, endsWith, in |
 | `resolvedPageUrl` | `string` | equals, contains, startsWith, endsWith, in |
 | `title` | `string` | equals, contains, startsWith, endsWith, in |
@@ -371,6 +379,7 @@ const rows = await corsair.diffbot.db.organizations.search({
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
 | `diffbotUri` | `string` | equals, contains, startsWith, endsWith, in |
 | `homepageUri` | `string` | equals, contains, startsWith, endsWith, in |
 | `description` | `string` | equals, contains, startsWith, endsWith, in |
@@ -424,6 +433,7 @@ const rows = await corsair.diffbot.db.people.search({
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
 | `diffbotUri` | `string` | equals, contains, startsWith, endsWith, in |
 | `description` | `string` | equals, contains, startsWith, endsWith, in |
 | `summary` | `string` | equals, contains, startsWith, endsWith, in |
@@ -466,6 +476,7 @@ const rows = await corsair.diffbot.db.products.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
 | `pageUrl` | `string` | equals, contains, startsWith, endsWith, in |
 | `resolvedPageUrl` | `string` | equals, contains, startsWith, endsWith, in |
 | `title` | `string` | equals, contains, startsWith, endsWith, in |
@@ -506,6 +517,7 @@ const rows = await corsair.diffbot.db.videos.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
 | `pageUrl` | `string` | equals, contains, startsWith, endsWith, in |
 | `resolvedPageUrl` | `string` | equals, contains, startsWith, endsWith, in |
 | `url` | `string` | equals, contains, startsWith, endsWith, in |

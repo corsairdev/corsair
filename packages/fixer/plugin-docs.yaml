@@ -1,0 +1,21 @@
+displayName: Fixer
+description: Foreign exchange rates and currency conversion for 170 world currencies.
+domain: fixer.io
+examples:
+  read:
+    path: rates.latest
+    title: Latest rates
+    args:
+      base: EUR
+      symbols: [USD, GBP]
+apiExamples:
+  rates.latest:
+    base: EUR
+    symbols: [USD, GBP]
+  rates.historical:
+    date: '2026-01-01'
+    symbols: [USD]
+  rates.convert:
+    from: USD
+    to: EUR
+    amount: 100

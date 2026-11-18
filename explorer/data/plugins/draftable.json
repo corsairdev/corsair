@@ -1,0 +1,514 @@
+{
+  "id": "draftable",
+  "displayName": "Draftable",
+  "description": "Compare PDF, Word and PowerPoint documents with Draftable, view the differences and export them as PDF.",
+  "npmPackageName": "@corsair-dev/draftable",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 7,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "draftable.api.comparisons.create",
+      "shortPath": "comparisons.create",
+      "description": "Compare two documents given by URL (PDF, Word, PowerPoint, RTF or text). Uses one comparison from the plan quota.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "left",
+            "optional": false,
+            "type": "{ source_url: string, file_type: pdf | docx | docm | doc | rtf | pptx | pptm | ppt | txt, display_name?: string }",
+            "description": "The original document."
+          },
+          {
+            "key": "right",
+            "optional": false,
+            "type": "{ source_url: string, file_type: pdf | docx | docm | doc | rtf | pptx | pptm | ppt | txt, display_name?: string }",
+            "description": "The new document."
+          },
+          {
+            "key": "identifier",
+            "optional": true,
+            "type": "string",
+            "description": "Your own unique id for the comparison. Draftable makes one when omitted."
+          },
+          {
+            "key": "public",
+            "optional": true,
+            "type": "boolean",
+            "description": "Let anyone with the viewer link see it. Default false (signed links only)."
+          },
+          {
+            "key": "expiry_time",
+            "optional": true,
+            "type": "string",
+            "description": "ISO-8601 time after which Draftable deletes the comparison."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comparison_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "viewer_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "left",
+            "optional": true,
+            "type": "{ file_type?: string | null, source_url?: string | null, display_name?: string | null, page_count?: number | null, original_document_size_bytes?: number | null, highlighted_document_size_bytes?: number | null } | null"
+          },
+          {
+            "key": "right",
+            "optional": true,
+            "type": "{ file_type?: string | null, source_url?: string | null, display_name?: string | null, page_count?: number | null, original_document_size_bytes?: number | null, highlighted_document_size_bytes?: number | null } | null"
+          },
+          {
+            "key": "creation_time",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expiry_time",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "public",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "ready",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "ready_time",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "failed",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "error_message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "draftable.api.comparisons.delete",
+      "shortPath": "comparisons.delete",
+      "description": "Delete a comparison and its documents from Draftable.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string",
+            "description": "Comparison identifier from comparisons.list or comparisons.create."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "draftable.api.comparisons.get",
+      "shortPath": "comparisons.get",
+      "description": "Get one comparison: both documents, page counts, and whether it is ready or failed.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string",
+            "description": "Comparison identifier from comparisons.list or comparisons.create."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comparison_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "viewer_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "left",
+            "optional": true,
+            "type": "{ file_type?: string | null, source_url?: string | null, display_name?: string | null, page_count?: number | null, original_document_size_bytes?: number | null, highlighted_document_size_bytes?: number | null } | null"
+          },
+          {
+            "key": "right",
+            "optional": true,
+            "type": "{ file_type?: string | null, source_url?: string | null, display_name?: string | null, page_count?: number | null, original_document_size_bytes?: number | null, highlighted_document_size_bytes?: number | null } | null"
+          },
+          {
+            "key": "creation_time",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expiry_time",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "public",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "ready",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "ready_time",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "failed",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "error_message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "draftable.api.comparisons.getViewerUrl",
+      "shortPath": "comparisons.getViewerUrl",
+      "description": "Get a link to view a comparison in the Draftable viewer, signed for a limited time unless the comparison is public.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string",
+            "description": "Comparison identifier from comparisons.list or comparisons.create."
+          },
+          {
+            "key": "valid_for_minutes",
+            "optional": true,
+            "type": "number",
+            "description": "How long a signed link stays valid. Default 30 minutes. Ignored for public comparisons."
+          },
+          {
+            "key": "wait",
+            "optional": true,
+            "type": "boolean",
+            "description": "Show a loading page until the comparison is ready instead of an error."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "signed",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "valid_until",
+            "optional": false,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "draftable.api.comparisons.list",
+      "shortPath": "comparisons.list",
+      "description": "List the comparisons on the Draftable account.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Number of comparisons to skip."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ identifier: string, comparison_type?: string | null, viewer_url?: string | null, left?: { file_type?: string | null, source_url?: string | null, display_name?: string | null, page_count?: number | null, original_document_size_bytes?: number | null, highlighted_document_size_bytes?: number | null } | null, right?: { file_type?: string | null, source_url?: string | null, display_name?: string | null, page_count?: number | null, original_document_size_bytes?: number | null, highlighted_document_size_bytes?: number | null } | null, creation_time?: string | null, expiry_time?: string | null, public?: boolean | null, ready?: boolean | null, ready_time?: string | null, failed?: boolean | null, error_message?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "draftable.api.exports.create",
+      "shortPath": "exports.create",
+      "description": "Start a PDF export of a comparison. Poll exports.get until ready, then download its url.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comparison",
+            "optional": false,
+            "type": "string",
+            "description": "Comparison identifier from comparisons.list or comparisons.create."
+          },
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "single_page | combined | left | right",
+            "description": "single_page: the right document only, with highlights and deletion markers showing the changes; combined: both documents side by side; left or right: that document only."
+          },
+          {
+            "key": "include_cover_page",
+            "optional": true,
+            "type": "boolean",
+            "description": "Add a cover page (combined exports only)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comparison",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ready",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "failed",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "error_message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "include_cover_page",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "draftable.api.exports.get",
+      "shortPath": "exports.get",
+      "description": "Get an export: whether it is ready and the URL to download the PDF.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string",
+            "description": "Export identifier from exports.create."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comparison",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ready",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "failed",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "error_message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "include_cover_page",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "draftable.db.comparisons.search",
+      "entityName": "comparisons",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "identifier",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ready",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "creation_time",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "public",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    }
+  ]
+}

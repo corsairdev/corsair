@@ -1,0 +1,18 @@
+displayName: Callingly
+description: Speed-to-lead platform. Manage leads, calls, agents and their schedules, teams, clients, and webhooks.
+domain: callingly.com
+examples:
+  read:
+    path: leads.list
+    title: List leads
+  write:
+    path: calls.create
+    title: Create a call
+    args:
+      team_id: 123
+      phone_number: "+15555550123"
+      first_name: Octo
+dbExample:
+  entity: leads
+  note: Search synced leads without hitting Callingly.
+  limit: 50

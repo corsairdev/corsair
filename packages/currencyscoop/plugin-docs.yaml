@@ -1,0 +1,35 @@
+displayName: CurrencyScoop
+description: Read CurrencyScoop rates, conversions, and supported currencies. The live host is CurrencyBeacon.
+domain: currencybeacon.com
+recommendedAuth: api_key
+overviewNote: |
+  CurrencyScoop now answers on https://api.currencybeacon.com/v1. GET /v1/latest with an empty api_key returned HTTP 401, error_type "auth failed". The same 401 came back from api.currencyscoop.com. The key is a query parameter and is not written to the event. A conversion is returned and not stored.
+examples:
+  read:
+    path: quotes.latest
+    title: Latest rates
+    args:
+      base: USD
+      symbols: EUR
+apiNotes:
+  currencies.list: |
+    GET /currencies. A row is stored when short_code is present.
+  quotes.latest: |
+    GET /latest. Each rate is stored as date, base, code, and rate.
+  quotes.historical: |
+    GET /historical. date is required. The stored row matches latest.
+  quotes.convert: |
+    GET /convert. Returns from, to, amount, value, and date. Nothing is stored.
+  quotes.timeseries: |
+    GET /timeseries. The API lists rates by date under response with no base, so the stored base is the one you asked for (USD when omitted). Stores one quote per date and currency code.
+apiExamples:
+  currencies.list:
+    call: "{}"
+  quotes.latest:
+    call: "{ base: 'USD', symbols: 'EUR' }"
+  quotes.historical:
+    call: "{ date: '2024-01-01', base: 'USD' }"
+  quotes.convert:
+    call: "{ from: 'USD', to: 'EUR', amount: 1 }"
+  quotes.timeseries:
+    call: "{ start_date: '2024-01-01', end_date: '2024-01-02', base: 'USD' }"

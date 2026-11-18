@@ -1,0 +1,1130 @@
+{
+  "id": "smsalert",
+  "displayName": "SMS Alert",
+  "description": "Send SMS messages and manage SMS Alert contacts, templates, delivery reports, and account resources.",
+  "npmPackageName": "@corsair-dev/smsalert",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 29,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "smsalert.api.account.balance",
+      "shortPath": "account.balance",
+      "description": "Get available SMS credits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "{ desc: string, routes: { route: string, display_name: string, credits: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "smsalert.api.account.changePassword",
+      "shortPath": "account.changePassword",
+      "description": "Change the account password",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pwd",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "newpwd",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cnfpwd",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "smsalert.api.account.forgotPassword",
+      "shortPath": "account.forgotPassword",
+      "description": "Request a password reset (SMS Alert emails the account owner)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username_email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success"
+          },
+          {
+            "key": "msg",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "smsalert.api.account.profile",
+      "shortPath": "account.profile",
+      "description": "Get the account profile",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "{ id: string, username: string, firstname?: string, lastname?: string, mobilenumber?: string, emailid?: string, allowedprefix?: string, parent_id?: string, expirydate?: string, mobile_verified?: number, kyc_status?: number, android_push?: number, two_factor_auth?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "smsalert.api.account.register",
+      "shortPath": "account.register",
+      "description": "Register an SMS Alert account (SMS Alert texts an OTP to the mobile number)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mobilenumber",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "emailid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lastname",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "smsalert.api.account.senders",
+      "shortPath": "account.senders",
+      "description": "List sender IDs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "{ Senderid: { sender: string, approved: boolean, open: boolean, datetime: string } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "smsalert.api.account.updateProfile",
+      "shortPath": "account.updateProfile",
+      "description": "Update the account profile",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mobilenumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emailid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fcm_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "smsalert.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create a contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "grpname",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "smsalert.api.contacts.delete",
+      "shortPath": "contacts.delete",
+      "description": "Delete a contact",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "smsalert.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List contacts in a group",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "{ Groupmember: { id?: string, name?: string, creationdate?: string, number?: string, datas?: string | null } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "smsalert.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Update a contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "smsalert.api.groups.create",
+      "shortPath": "groups.create",
+      "description": "Create a contact group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "smsalert.api.groups.delete",
+      "shortPath": "groups.delete",
+      "description": "Delete a contact group",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "smsalert.api.groups.list",
+      "shortPath": "groups.list",
+      "description": "List contact groups",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "{ Group: { id?: string, name?: string, creationdate?: string, group_data?: string | null, groupfields?: string | null, members?: string } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "smsalert.api.groups.send",
+      "shortPath": "groups.send",
+      "description": "Send SMS to contact groups",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sender",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "route",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "schedule",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "{ desc: string, batchid: string, batch_dtl: { mobileno: string, msgid: string, status: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "smsalert.api.groups.update",
+      "shortPath": "groups.update",
+      "description": "Update a contact group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "smsalert.api.messages.send",
+      "shortPath": "messages.send",
+      "description": "Send or schedule an SMS, optionally requesting delivery callbacks",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sender",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mobileno",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "schedule",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dlrurl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "{ desc: string, batchid: string, batch_dtl: { mobileno: string, msgid: string, status: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "smsalert.api.otp.generate",
+      "shortPath": "otp.generate",
+      "description": "Generate and send an OTP",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sender",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mobileno",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "template",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "{ desc: string, batchid: string, batch_dtl: { mobileno: string, msgid: string, status: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "smsalert.api.otp.validate",
+      "shortPath": "otp.validate",
+      "description": "Validate an OTP",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mobileno",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "{ desc: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "smsalert.api.reports.delivery",
+      "shortPath": "reports.delivery",
+      "description": "Get delivery reports for a batch",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "batchid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "schedule",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sender",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "{ desc: string, report: { mobileno: string, sender: string, text: string, msgid: string, status: string, schedule: string, lastupdated: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "smsalert.api.reports.sent",
+      "shortPath": "reports.sent",
+      "description": "List sent SMS campaigns",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "schedule",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "{ Smscampaignlog: { id: string, userid?: string, senderid?: string, text?: string, campaignname?: string, source?: string, ipaddress?: string, route?: string, smscount?: string, creditsrefunded?: string, creditscharged?: string, schedule?: boolean, scheduletime?: string, datetime?: string } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "smsalert.api.schedules.cancel",
+      "shortPath": "schedules.cancel",
+      "description": "Cancel a scheduled campaign",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "batchid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "smsalert.api.schedules.update",
+      "shortPath": "schedules.update",
+      "description": "Change a scheduled campaign",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "batchid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "schedule",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "smsalert.api.shortUrls.create",
+      "shortPath": "shortUrls.create",
+      "description": "Create a short URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "{ id: string, status: string, message: string, data: { Link: { long_url: string, short_url: string, alias: string, title?: string, description?: string, clicks?: string, updated?: string | null, created?: string } } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "smsalert.api.shortUrls.delete",
+      "shortPath": "shortUrls.delete",
+      "description": "Delete a short URL",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "smsalert.api.templates.create",
+      "shortPath": "templates.create",
+      "description": "Create an SMS template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "smsalert.api.templates.delete",
+      "shortPath": "templates.delete",
+      "description": "Delete an SMS template",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "smsalert.api.templates.list",
+      "shortPath": "templates.list",
+      "description": "List SMS templates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "{ Smstemplate: { id?: string, name?: string, creationdate?: string, title?: string, template?: string }, User?: any }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "smsalert.api.templates.update",
+      "shortPath": "templates.update",
+      "description": "Update an SMS template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

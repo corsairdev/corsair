@@ -1,0 +1,1081 @@
+---
+title: "ZenRows API reference"
+sidebarTitle: "API"
+description: "API reference for the ZenRows plugin in Corsair: every `zenrows.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### subscription
+
+`account.subscription`
+
+Read the plan behind the key: credits used and allowed, period end, per-product usage and the concurrency limit
+
+**Risk:** `read`
+
+```ts
+await corsair.zenrows.api.account.subscription({});
+```
+
+**Input:** _empty object_
+
+Costs no credits and does not count against the concurrency limit, so it is safe to call after a failure to see where the credits stand.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `period_starts_at` | `string \| null` | No | — |
+| `period_ends_at` | `string \| null` | No | — |
+| `usage` | `number \| null` | No | — |
+| `usage_credits` | `number \| null` | No | — |
+| `credit_limit` | `number \| null` | No | — |
+| `usage_percent` | `number \| null` | No | — |
+| `plan` | `object \| null` | No | — |
+| `top_ups` | `Record<string, JsonValue>[] \| null` | No | — |
+| `api_key` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="plan full type">
+
+```ts
+{
+  name?: string | null,
+  price?: number | null,
+  unit_cost?: number | null,
+  recurrence?: string | null,
+  products?: Record<string, {
+    name?: string | null,
+    usage?: number | null,
+    usage_credits?: number | null,
+    concurrency?: {
+      limit?: number | null,
+      usage?: number | null
+    } | null
+  }> | null
+} | null
+```
+</Accordion>
+
+<Accordion title="api_key full type">
+
+```ts
+{
+  caps?: Record<string, JsonValue>[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Crawl
+
+### get
+
+`crawl.get`
+
+Read a crawl with its coverage and one page of results; poll it with the same cursor to collect new URLs
+
+**Risk:** `read`
+
+```ts
+await corsair.zenrows.api.crawl.get({ crawlId: '<crawl_id from crawl.start>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `crawlId` | `string` | Yes | The `crawl_id` that `crawl.start` returned. |
+| `cursor` | `string` | No | The `next_cursor` from the previous read. Each URL is returned once, so poll with the same cursor to get only new ones. It is null once the crawl has ended and its last results were read. |
+| `limit` | `number` | No | How many results to return. Zenrows defaults to 1000. |
+
+While the crawl runs `next_cursor` is never null. Poll with the cursor to collect only the URLs you have not read.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `crawl_id` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `stop_reason` | `string \| null` | No | — |
+| `error` | `object \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `depth` | `number \| null` | No | — |
+| `max_items` | `number \| null` | No | — |
+| `max_pages` | `number \| null` | No | — |
+| `include_patterns` | `string[] \| null` | No | — |
+| `exclude_patterns` | `string[] \| null` | No | — |
+| `output_format` | `string \| null` | No | — |
+| `discovery` | `string[] \| null` | No | — |
+| `coverage` | `object \| null` | No | — |
+| `duplicates_removed` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `finished_at` | `string \| null` | No | — |
+| `results` | `object[] \| null` | No | — |
+| `next_cursor` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="error full type">
+
+```ts
+{
+  code?: string | null,
+  detail?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="coverage full type">
+
+```ts
+{
+  pages_fetched?: number | null,
+  pages_failed?: number | null,
+  items_found?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+  url: string,
+  content_status?: string | null,
+  content_url?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getContent
+
+`crawl.getContent`
+
+Read one kept page of a crawl, in the crawl's output format
+
+**Risk:** `read`
+
+```ts
+await corsair.zenrows.api.crawl.getContent({ crawlId: '<crawl_id>', contentId: '<last segment of content_url>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `crawlId` | `string` | Yes | The crawl the page belongs to. |
+| `contentId` | `string` | Yes | The last path segment of a result's `content_url`, which `crawl.get` returns for a crawl started with `outputFormat`. |
+| `download` | `boolean` | No | Ask Zenrows to label the answer as a file to save. The bytes are the same. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `string` | Yes | — |
+| `bodyFormat` | `json \| text` | Yes | — |
+
+
+
+---
+
+### list
+
+`crawl.list`
+
+List crawls, newest first, without their results
+
+**Risk:** `read`
+
+```ts
+await corsair.zenrows.api.crawl.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | The `next_cursor` from the previous page. |
+| `limit` | `number` | No | How many crawls to return. Zenrows defaults to 20. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `crawls` | `object[]` | Yes | — |
+| `next_cursor` | `string \| null` | No | Send it as `cursor` for the next page. Absent on the last page. |
+
+<AccordionGroup>
+<Accordion title="crawls full type">
+
+```ts
+{
+  crawl_id: string,
+  status: string,
+  stop_reason?: string | null,
+  error?: {
+    code?: string | null,
+    detail?: string | null
+  } | null,
+  url?: string | null,
+  depth?: number | null,
+  max_items?: number | null,
+  max_pages?: number | null,
+  include_patterns?: string[] | null,
+  exclude_patterns?: string[] | null,
+  output_format?: string | null,
+  discovery?: string[] | null,
+  coverage?: {
+    pages_fetched?: number | null,
+    pages_failed?: number | null,
+    items_found?: number | null
+  } | null,
+  duplicates_removed?: number | null,
+  created_at?: string | null,
+  finished_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### start
+
+`crawl.start`
+
+Start a crawl from one URL: each page it opens is a billed Fetch request, and a crawl runs until its page limits stop it
+
+**Risk:** `write`
+
+```ts
+await corsair.zenrows.api.crawl.start({ url: 'https://www.scrapingcourse.com/ecommerce/', maxPages: 10, includePatterns: ['/product/'], outputFormat: 'html' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The start URL. The crawl stays on its domain, subdomains included, and never opens a link that would change something, such as a checkout or unsubscribe. |
+| `depth` | `number` | No | How many link steps to follow. At 1, the links on the start page. Omit it to follow links until `maxItems` or `maxPages` stops the crawl. |
+| `maxItems` | `number` | No | Stop after keeping this many URLs. Zenrows defaults to 100. |
+| `maxPages` | `number` | No | Stop after fetching this many pages. Zenrows defaults to 100. This is the cost cap: each page is one billed Fetch request. |
+| `includePatterns` | `string[]` | No | Keep and open only URLs containing at least one of these texts, such as "/product/". The start URL is never returned itself. |
+| `excludePatterns` | `string[]` | No | Drop URLs containing any of these texts, even when they match an include pattern. |
+| `outputFormat` | `html \| markdown` | No | Also return each kept page: `html` as fetched, `markdown` converted. Omit it to get URLs only. |
+| `webhookUrl` | `string` | No | Send crawl events here. The host must resolve publicly, the account needs a webhook signing key, and the URL cannot change once the crawl starts. |
+| `webhookEvents` | `(crawl.started \| crawl.completed \| crawl.stopped \| crawl.failed)[]` | No | Events to send. Omit it for all four. |
+| `webhookMetadata` | `Record<string, JsonValue>` | No | Up to 20 keys of your own, echoed back in every event so a delivery can be matched to your records. |
+| `idempotencyKey` | `string` | No | The same key with the same body returns the original crawl instead of starting a second one. |
+
+The page limit is the cost cap, because each page opened is one billed Fetch request. `webhookUrl` needs a ZenRows webhook signing key on the account and an `https` host that resolves publicly, and the URL cannot change after the start.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `crawl_id` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `stop_reason` | `string \| null` | No | — |
+| `error` | `object \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `depth` | `number \| null` | No | — |
+| `max_items` | `number \| null` | No | — |
+| `max_pages` | `number \| null` | No | — |
+| `include_patterns` | `string[] \| null` | No | — |
+| `exclude_patterns` | `string[] \| null` | No | — |
+| `output_format` | `string \| null` | No | — |
+| `discovery` | `string[] \| null` | No | — |
+| `coverage` | `object \| null` | No | — |
+| `duplicates_removed` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `finished_at` | `string \| null` | No | — |
+| `results` | `object[] \| null` | No | — |
+| `next_cursor` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="error full type">
+
+```ts
+{
+  code?: string | null,
+  detail?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="coverage full type">
+
+```ts
+{
+  pages_fetched?: number | null,
+  pages_failed?: number | null,
+  items_found?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+  url: string,
+  content_status?: string | null,
+  content_url?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### stop
+
+`crawl.stop`
+
+Stop a running crawl. Pages already being fetched finish and are billed
+
+**Risk:** `write`
+
+```ts
+await corsair.zenrows.api.crawl.stop({ crawlId: '<crawl_id from crawl.start>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `crawlId` | `string` | Yes | The crawl to stop. |
+
+Pages already in flight finish and are billed. Read the crawl until `next_cursor` is null for its final results.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `crawl_id` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `stop_reason` | `string \| null` | No | — |
+| `finished_at` | `string \| null` | No | — |
+
+
+
+---
+
+## Extract
+
+### allowance
+
+`extract.allowance`
+
+Read how many domain preparations this account has left this month
+
+**Risk:** `read`
+
+```ts
+await corsair.zenrows.api.extract.allowance({});
+```
+
+**Input:** _empty object_
+
+Costs no credits.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `used` | `number \| null` | No | — |
+| `limit` | `number \| null` | No | — |
+| `remaining` | `number \| null` | No | — |
+| `month` | `string \| null` | No | — |
+
+
+
+---
+
+### domains
+
+`extract.domains`
+
+List the sites Extract can handle today, with their verticals
+
+**Risk:** `read`
+
+```ts
+await corsair.zenrows.api.extract.domains({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domains` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="domains full type">
+
+```ts
+{
+  domain: string,
+  verticals?: string[] | null,
+  warm?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getDomainStatus
+
+`extract.getDomainStatus`
+
+Read how far a domain preparation has got: preparing, ready or failed
+
+**Risk:** `read`
+
+```ts
+await corsair.zenrows.api.extract.getDomainStatus({ domain: 'example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | The domain to read the preparation of, without scheme. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `state` | `string \| null` | No | — |
+| `roles` | `object[] \| null` | No | — |
+| `failure` | `object \| null` | No | — |
+| `submitted_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="roles full type">
+
+```ts
+{
+  role?: string | null,
+  status?: string | null,
+  url?: string | null,
+  detail?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="failure full type">
+
+```ts
+{
+  code?: string | null,
+  detail?: string | null,
+  slot_consumed?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listPreparedDomains
+
+`extract.listPreparedDomains`
+
+List the domains this account submitted for preparation, with the monthly allowance
+
+**Risk:** `read`
+
+```ts
+await corsair.zenrows.api.extract.listPreparedDomains({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domains` | `object[]` | Yes | — |
+| `allowance` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="domains full type">
+
+```ts
+{
+  domain: string,
+  status: string,
+  state?: string | null,
+  roles?: {
+    role?: string | null,
+    status?: string | null,
+    url?: string | null,
+    detail?: string | null
+  }[] | null,
+  failure?: {
+    code?: string | null,
+    detail?: string | null,
+    slot_consumed?: boolean | null
+  } | null,
+  submitted_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="allowance full type">
+
+```ts
+{
+  used?: number | null,
+  limit?: number | null,
+  remaining?: number | null,
+  month?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### prepareDomain
+
+`extract.prepareDomain`
+
+Ask Zenrows to prepare a domain for Extract, which takes minutes and one slot of the monthly allowance; preparation is free and shared across accounts
+
+**Risk:** `write`
+
+```ts
+await corsair.zenrows.api.extract.prepareDomain({ domain: 'example.com', exampleUrls: ['https://example.com/1', 'https://example.com/2', 'https://example.com/3'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | The domain to prepare, without scheme: "example.com". Zenrows drops a leading `www.`, and prepares each subdomain separately. |
+| `exampleUrls` | `string[]` | No | 1 to 5 URLs on that domain. Three or more of the same page type work best, because Extract compares them. Zenrows answers 400 without them for a domain that is not already ready. For a ready domain, the call returns its record. |
+| `idempotencyKey` | `string` | No | The same key with the same body returns the original submission; a different body answers 409. |
+
+Preparation is free and needs no credits, but it takes one slot of the monthly allowance and minutes to finish. Send `exampleUrls`: a domain that is not already ready is refused without them. A failed attempt that Zenrows could not fetch does not use a slot. Poll `extract.getDomainStatus` rather than blocking.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `state` | `string \| null` | No | — |
+| `roles` | `object[] \| null` | No | — |
+| `failure` | `object \| null` | No | — |
+| `submitted_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="roles full type">
+
+```ts
+{
+  role?: string | null,
+  status?: string | null,
+  url?: string | null,
+  detail?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="failure full type">
+
+```ts
+{
+  code?: string | null,
+  detail?: string | null,
+  slot_consumed?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Fetch
+
+### browse
+
+`fetch.browse`
+
+Render a page and act on it before capture: fill fields, click, check, scroll or run JavaScript. Reaches the site, so it can change its state
+
+**Risk:** `write`
+
+```ts
+await corsair.zenrows.api.fetch.browse({ url: 'https://example.com', jsRender: true, jsInstructions: [{ click: 'a' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The page to fetch. |
+| `mode` | `auto` | No | Adaptive Stealth Mode: starts from the cheapest configuration and escalates to rendering or residential proxies only when the target needs it. Rejects `jsRender` and `premiumProxy`. |
+| `jsRender` | `boolean` | No | Render the page in a headless browser first. Defaults to false. |
+| `headers` | `Record<string, string>` | No | Headers to send to the target page, such as &#123; "Referer": "https://www.google.com", "Cookie": "session=..." &#125;. ZenRows forwards every request header when `customHeaders` is on, so the API key moves to the query string for this call. The target sees these exactly as given. |
+| `customHeaders` | `boolean` | No | Forward the caller's own request headers to the page. Implied by `headers`, which turn it on even when this is false, and the API key moves to the query string because ZenRows copies every request header onto the target request. |
+| `premiumProxy` | `boolean` | No | Route through residential IPs. Most protected sites need it. |
+| `proxyCountry` | `string` | No | Two-letter exit country, such as "us". Needs `premiumProxy` or `mode: "auto"`. |
+| `sessionId` | `number` | No | Any integer; requests sharing it leave through the same IP for 10 minutes. It pins the IP, not cookies. |
+| `originalStatus` | `boolean` | No | Answer with the target's own status code instead of Zenrows' one. A 4xx or 5xx from the target then arrives as an error, and the request is still charged. |
+| `allowedStatusCodes` | `number[]` | No | Status codes whose page body is returned instead of raising an error, such as [404]. The answer is then a 200 carrying that page. |
+| `waitFor` | `string` | No | CSS selector to wait for before capture. Needs `jsRender`; Zenrows gives up with a 422 after 3 minutes. |
+| `wait` | `number` | No | Milliseconds to wait after load before capture. Needs `jsRender` or `mode: "auto"`. Defaults to 0. |
+| `blockResources` | `(image \| media \| font \| stylesheet \| script \| xhr \| fetch \| other \| eventsource \| manifest \| websocket \| texttrack)[]` | No | Resource types to block, such as ["image","font"]. Images and stylesheets are already blocked by default, so this customises that rather than adding to nothing. |
+| `jsInstructions` | `object[]` | Yes | Browser actions run in order before the page is captured, such as &#123;"fill":["#q","x"]&#125; then &#123;"click":"#submit"&#125;. Each instruction carries one action key, and the sequence has 40 seconds. |
+| `responseType` | `markdown \| plaintext` | No | Convert the captured page before returning it. `markdown` and `plaintext` are text; omit it for the HTML as it stands after the actions. |
+
+A write: browser actions reach the site, so this is not available to a read-only caller. Needs `jsRender` or `mode: 'auto'`, and the whole sequence has 40 seconds.
+
+<AccordionGroup>
+<Accordion title="jsInstructions full type">
+
+```ts
+{
+  click?: string,
+  wait_for?: string,
+  wait?: number,
+  fill?: [
+    string,
+    string
+  ],
+  check?: string,
+  uncheck?: string,
+  select_option?: [
+    string,
+    string
+  ],
+  scroll_y?: number,
+  scroll_x?: number,
+  evaluate?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `string` | Yes | — |
+| `bodyFormat` | `json \| text` | Yes | — |
+| `responseType` | `html \| markdown \| plaintext` | Yes | — |
+
+
+
+---
+
+### cssExtract
+
+`fetch.cssExtract`
+
+Extract named fields from a page with your own CSS or XPath selectors, such as a title, a price and every link, on any site with no preparation
+
+**Risk:** `read`
+
+```ts
+await corsair.zenrows.api.fetch.cssExtract({ url: 'https://example.com', cssExtractor: { title: 'h1', links: 'a @href' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The page to fetch. |
+| `mode` | `auto` | No | Adaptive Stealth Mode: starts from the cheapest configuration and escalates to rendering or residential proxies only when the target needs it. Rejects `jsRender` and `premiumProxy`. |
+| `jsRender` | `boolean` | No | Render the page in a headless browser first. Defaults to false. |
+| `headers` | `Record<string, string>` | No | Headers to send to the target page, such as &#123; "Referer": "https://www.google.com", "Cookie": "session=..." &#125;. ZenRows forwards every request header when `customHeaders` is on, so the API key moves to the query string for this call. The target sees these exactly as given. |
+| `customHeaders` | `boolean` | No | Forward the caller's own request headers to the page. Implied by `headers`, which turn it on even when this is false, and the API key moves to the query string because ZenRows copies every request header onto the target request. |
+| `premiumProxy` | `boolean` | No | Route through residential IPs. Most protected sites need it. |
+| `proxyCountry` | `string` | No | Two-letter exit country, such as "us". Needs `premiumProxy` or `mode: "auto"`. |
+| `sessionId` | `number` | No | Any integer; requests sharing it leave through the same IP for 10 minutes. It pins the IP, not cookies. |
+| `originalStatus` | `boolean` | No | Answer with the target's own status code instead of Zenrows' one. A 4xx or 5xx from the target then arrives as an error, and the request is still charged. |
+| `allowedStatusCodes` | `number[]` | No | Status codes whose page body is returned instead of raising an error, such as [404]. The answer is then a 200 carrying that page. |
+| `waitFor` | `string` | No | CSS selector to wait for before capture. Needs `jsRender`; Zenrows gives up with a 422 after 3 minutes. |
+| `wait` | `number` | No | Milliseconds to wait after load before capture. Needs `jsRender` or `mode: "auto"`. Defaults to 0. |
+| `blockResources` | `(image \| media \| font \| stylesheet \| script \| xhr \| fetch \| other \| eventsource \| manifest \| websocket \| texttrack)[]` | No | Resource types to block, such as ["image","font"]. Images and stylesheets are already blocked by default, so this customises that rather than adding to nothing. |
+| `cssExtractor` | `Record<string, string>` | Yes | Extraction rules: a map from output key to CSS or XPath selector, such as &#123;"product_name":"h1.title","links":"a @href"&#125;. Append `@attribute` to read an attribute instead of the text. Works on any site, with no preparation. |
+
+The answer is the extracted keys at the top level, not an Extract envelope. A selector that matched nothing comes back as an empty string rather than a missing key.
+
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+### extract
+
+`fetch.extract`
+
+Turn a page into structured JSON with Extract: the site's own field names, or a canonical Real Estate schema, on a domain prepared for it
+
+**Risk:** `read`
+
+```ts
+await corsair.zenrows.api.fetch.extract({ url: 'https://www.scrapingcourse.com/ecommerce/product/abominable-hoodie/' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The page to fetch. |
+| `mode` | `auto` | No | Adaptive Stealth Mode: starts from the cheapest configuration and escalates to rendering or residential proxies only when the target needs it. Rejects `jsRender` and `premiumProxy`. |
+| `jsRender` | `boolean` | No | Render the page in a headless browser first. Defaults to false. |
+| `headers` | `Record<string, string>` | No | Headers to send to the target page, such as &#123; "Referer": "https://www.google.com", "Cookie": "session=..." &#125;. ZenRows forwards every request header when `customHeaders` is on, so the API key moves to the query string for this call. The target sees these exactly as given. |
+| `customHeaders` | `boolean` | No | Forward the caller's own request headers to the page. Implied by `headers`, which turn it on even when this is false, and the API key moves to the query string because ZenRows copies every request header onto the target request. |
+| `premiumProxy` | `boolean` | No | Route through residential IPs. Most protected sites need it. |
+| `proxyCountry` | `string` | No | Two-letter exit country, such as "us". Needs `premiumProxy` or `mode: "auto"`. |
+| `sessionId` | `number` | No | Any integer; requests sharing it leave through the same IP for 10 minutes. It pins the IP, not cookies. |
+| `originalStatus` | `boolean` | No | Answer with the target's own status code instead of Zenrows' one. A 4xx or 5xx from the target then arrives as an error, and the request is still charged. |
+| `allowedStatusCodes` | `number[]` | No | Status codes whose page body is returned instead of raising an error, such as [404]. The answer is then a 200 carrying that page. |
+| `waitFor` | `string` | No | CSS selector to wait for before capture. Needs `jsRender`; Zenrows gives up with a 422 after 3 minutes. |
+| `wait` | `number` | No | Milliseconds to wait after load before capture. Needs `jsRender` or `mode: "auto"`. Defaults to 0. |
+| `blockResources` | `(image \| media \| font \| stylesheet \| script \| xhr \| fetch \| other \| eventsource \| manifest \| websocket \| texttrack)[]` | No | Resource types to block, such as ["image","font"]. Images and stylesheets are already blocked by default, so this customises that rather than adding to nothing. |
+| `extract` | `auto \| native \| standard` | No | Return structured JSON extracted from the page. `auto` and `native` return the site's own field names; `standard` returns a canonical Real Estate schema. Defaults to `auto`. |
+| `extractFields` | `string[]` | No | Fields to keep, dot-notated inside a group, such as ["products.name","products.price"]. Omit it for every field. |
+
+Needs a domain prepared for Extract, or a 403 REQS007. `extract` defaults to `auto`; `extractFields` narrows the fields and requires `extract`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `html` | `string \| null` | No | — |
+| `parsed` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+### jsonResponse
+
+`fetch.jsonResponse`
+
+Capture the page and the XHR and fetch calls it made, as a JSON envelope, from a rendered page
+
+**Risk:** `read`
+
+```ts
+await corsair.zenrows.api.fetch.jsonResponse({ url: 'https://example.com', jsRender: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The page to fetch. |
+| `mode` | `auto` | No | Adaptive Stealth Mode: starts from the cheapest configuration and escalates to rendering or residential proxies only when the target needs it. Rejects `jsRender` and `premiumProxy`. |
+| `jsRender` | `boolean` | No | Render the page in a headless browser first. Defaults to false. |
+| `headers` | `Record<string, string>` | No | Headers to send to the target page, such as &#123; "Referer": "https://www.google.com", "Cookie": "session=..." &#125;. ZenRows forwards every request header when `customHeaders` is on, so the API key moves to the query string for this call. The target sees these exactly as given. |
+| `customHeaders` | `boolean` | No | Forward the caller's own request headers to the page. Implied by `headers`, which turn it on even when this is false, and the API key moves to the query string because ZenRows copies every request header onto the target request. |
+| `premiumProxy` | `boolean` | No | Route through residential IPs. Most protected sites need it. |
+| `proxyCountry` | `string` | No | Two-letter exit country, such as "us". Needs `premiumProxy` or `mode: "auto"`. |
+| `sessionId` | `number` | No | Any integer; requests sharing it leave through the same IP for 10 minutes. It pins the IP, not cookies. |
+| `originalStatus` | `boolean` | No | Answer with the target's own status code instead of Zenrows' one. A 4xx or 5xx from the target then arrives as an error, and the request is still charged. |
+| `allowedStatusCodes` | `number[]` | No | Status codes whose page body is returned instead of raising an error, such as [404]. The answer is then a 200 carrying that page. |
+| `waitFor` | `string` | No | CSS selector to wait for before capture. Needs `jsRender`; Zenrows gives up with a 422 after 3 minutes. |
+| `wait` | `number` | No | Milliseconds to wait after load before capture. Needs `jsRender` or `mode: "auto"`. Defaults to 0. |
+| `blockResources` | `(image \| media \| font \| stylesheet \| script \| xhr \| fetch \| other \| eventsource \| manifest \| websocket \| texttrack)[]` | No | Resource types to block, such as ["image","font"]. Images and stylesheets are already blocked by default, so this customises that rather than adding to nothing. |
+| `cssExtractor` | `Record<string, string>` | No | Selectors to apply to the captured page; the result arrives under `css_extractor.data`, keyed as the map named them. Cannot be combined with `outputs`. |
+| `outputs` | `(emails \| phone_numbers \| headings \| images \| audios \| videos \| links \| menus \| hashtags \| metadata \| tables \| favicon)[]` | No | Data types to pull out of the captured page; the result arrives under `outputs`. Cannot be combined with `cssExtractor`. |
+
+Needs `jsRender` or `mode: 'auto'`. Selectors arrive under `css_extractor.data` and output filters under `outputs`, inside the envelope. Send one or the other: with both, ZenRows drops `outputs`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `html` | `string \| null` | No | — |
+| `xhr` | `Record<string, JsonValue>[] \| null` | No | — |
+| `outputs` | `Record<string, JsonValue> \| null` | No | — |
+| `css_extractor` | `Record<string, JsonValue> \| null` | No | — |
+| `js_instructions_report` | `JsonValue \| null` | No | — |
+
+
+
+---
+
+### outputs
+
+`fetch.outputs`
+
+Pull typed data out of a page without parsing it: emails, phone numbers, links, headings, tables, metadata and more
+
+**Risk:** `read`
+
+```ts
+await corsair.zenrows.api.fetch.outputs({ url: 'https://example.com', outputs: ['emails', 'links'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The page to fetch. |
+| `mode` | `auto` | No | Adaptive Stealth Mode: starts from the cheapest configuration and escalates to rendering or residential proxies only when the target needs it. Rejects `jsRender` and `premiumProxy`. |
+| `jsRender` | `boolean` | No | Render the page in a headless browser first. Defaults to false. |
+| `headers` | `Record<string, string>` | No | Headers to send to the target page, such as &#123; "Referer": "https://www.google.com", "Cookie": "session=..." &#125;. ZenRows forwards every request header when `customHeaders` is on, so the API key moves to the query string for this call. The target sees these exactly as given. |
+| `customHeaders` | `boolean` | No | Forward the caller's own request headers to the page. Implied by `headers`, which turn it on even when this is false, and the API key moves to the query string because ZenRows copies every request header onto the target request. |
+| `premiumProxy` | `boolean` | No | Route through residential IPs. Most protected sites need it. |
+| `proxyCountry` | `string` | No | Two-letter exit country, such as "us". Needs `premiumProxy` or `mode: "auto"`. |
+| `sessionId` | `number` | No | Any integer; requests sharing it leave through the same IP for 10 minutes. It pins the IP, not cookies. |
+| `originalStatus` | `boolean` | No | Answer with the target's own status code instead of Zenrows' one. A 4xx or 5xx from the target then arrives as an error, and the request is still charged. |
+| `allowedStatusCodes` | `number[]` | No | Status codes whose page body is returned instead of raising an error, such as [404]. The answer is then a 200 carrying that page. |
+| `waitFor` | `string` | No | CSS selector to wait for before capture. Needs `jsRender`; Zenrows gives up with a 422 after 3 minutes. |
+| `wait` | `number` | No | Milliseconds to wait after load before capture. Needs `jsRender` or `mode: "auto"`. Defaults to 0. |
+| `blockResources` | `(image \| media \| font \| stylesheet \| script \| xhr \| fetch \| other \| eventsource \| manifest \| websocket \| texttrack)[]` | No | Resource types to block, such as ["image","font"]. Images and stylesheets are already blocked by default, so this customises that rather than adding to nothing. |
+| `outputs` | `(emails \| phone_numbers \| headings \| images \| audios \| videos \| links \| menus \| hashtags \| metadata \| tables \| favicon)[]` | Yes | Data types to pull out of the page. `phone_numbers` also matches `tel:` links; `tables` reads real &lt;table&gt; elements, not CSS grids. |
+
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+### page
+
+`fetch.page`
+
+Fetch one page through Zenrows: HTML by default, or Markdown and plaintext, with optional browser rendering, residential proxies, geolocation and resource blocking
+
+**Risk:** `read`
+
+```ts
+await corsair.zenrows.api.fetch.page({ url: 'https://example.com', responseType: 'markdown' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The page to fetch. |
+| `mode` | `auto` | No | Adaptive Stealth Mode: starts from the cheapest configuration and escalates to rendering or residential proxies only when the target needs it. Rejects `jsRender` and `premiumProxy`. |
+| `jsRender` | `boolean` | No | Render the page in a headless browser first. Defaults to false. |
+| `headers` | `Record<string, string>` | No | Headers to send to the target page, such as &#123; "Referer": "https://www.google.com", "Cookie": "session=..." &#125;. ZenRows forwards every request header when `customHeaders` is on, so the API key moves to the query string for this call. The target sees these exactly as given. |
+| `customHeaders` | `boolean` | No | Forward the caller's own request headers to the page. Implied by `headers`, which turn it on even when this is false, and the API key moves to the query string because ZenRows copies every request header onto the target request. |
+| `premiumProxy` | `boolean` | No | Route through residential IPs. Most protected sites need it. |
+| `proxyCountry` | `string` | No | Two-letter exit country, such as "us". Needs `premiumProxy` or `mode: "auto"`. |
+| `sessionId` | `number` | No | Any integer; requests sharing it leave through the same IP for 10 minutes. It pins the IP, not cookies. |
+| `originalStatus` | `boolean` | No | Answer with the target's own status code instead of Zenrows' one. A 4xx or 5xx from the target then arrives as an error, and the request is still charged. |
+| `allowedStatusCodes` | `number[]` | No | Status codes whose page body is returned instead of raising an error, such as [404]. The answer is then a 200 carrying that page. |
+| `waitFor` | `string` | No | CSS selector to wait for before capture. Needs `jsRender`; Zenrows gives up with a 422 after 3 minutes. |
+| `wait` | `number` | No | Milliseconds to wait after load before capture. Needs `jsRender` or `mode: "auto"`. Defaults to 0. |
+| `blockResources` | `(image \| media \| font \| stylesheet \| script \| xhr \| fetch \| other \| eventsource \| manifest \| websocket \| texttrack)[]` | No | Resource types to block, such as ["image","font"]. Images and stylesheets are already blocked by default, so this customises that rather than adding to nothing. |
+| `responseType` | `markdown \| plaintext` | No | Convert the page before returning it. `markdown` and `plaintext` are text; omit it for the HTML as fetched. The PDF conversion is not offered because this client cannot return binary bodies. |
+
+Returns the page itself, so the body is text. `responseType` picks HTML (the default), Markdown or plaintext; the PDF conversion is not exposed because this client cannot return a binary body.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `string` | Yes | — |
+| `bodyFormat` | `json \| text` | Yes | — |
+| `responseType` | `html \| markdown \| plaintext` | Yes | — |
+
+
+
+---
+
+### post
+
+`fetch.post`
+
+Send a POST to the target through Zenrows and return its answer. Reaches the site with the caller's body, so the site's state can change
+
+**Risk:** `write`
+
+```ts
+await corsair.zenrows.api.fetch.post({ url: 'https://httpbin.io/anything', body: { type: 'json', value: { hello: 'world' } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The page to fetch. |
+| `mode` | `auto` | No | Adaptive Stealth Mode: starts from the cheapest configuration and escalates to rendering or residential proxies only when the target needs it. Rejects `jsRender` and `premiumProxy`. |
+| `jsRender` | `boolean` | No | Render the page in a headless browser first. Defaults to false. |
+| `headers` | `Record<string, string>` | No | Headers to send to the target page, such as &#123; "Referer": "https://www.google.com", "Cookie": "session=..." &#125;. ZenRows forwards every request header when `customHeaders` is on, so the API key moves to the query string for this call. The target sees these exactly as given. |
+| `customHeaders` | `boolean` | No | Forward the caller's own request headers to the page. Implied by `headers`, which turn it on even when this is false, and the API key moves to the query string because ZenRows copies every request header onto the target request. |
+| `premiumProxy` | `boolean` | No | Route through residential IPs. Most protected sites need it. |
+| `proxyCountry` | `string` | No | Two-letter exit country, such as "us". Needs `premiumProxy` or `mode: "auto"`. |
+| `sessionId` | `number` | No | Any integer; requests sharing it leave through the same IP for 10 minutes. It pins the IP, not cookies. |
+| `originalStatus` | `boolean` | No | Answer with the target's own status code instead of Zenrows' one. A 4xx or 5xx from the target then arrives as an error, and the request is still charged. |
+| `allowedStatusCodes` | `number[]` | No | Status codes whose page body is returned instead of raising an error, such as [404]. The answer is then a 200 carrying that page. |
+| `waitFor` | `string` | No | CSS selector to wait for before capture. Needs `jsRender`; Zenrows gives up with a 422 after 3 minutes. |
+| `wait` | `number` | No | Milliseconds to wait after load before capture. Needs `jsRender` or `mode: "auto"`. Defaults to 0. |
+| `blockResources` | `(image \| media \| font \| stylesheet \| script \| xhr \| fetch \| other \| eventsource \| manifest \| websocket \| texttrack)[]` | No | Resource types to block, such as ["image","font"]. Images and stylesheets are already blocked by default, so this customises that rather than adding to nothing. |
+| `body` | `object` | No | The body forwarded to the target. Omit it to send the request with no body. |
+
+The forwarded body reaches the target, so the site's state can change. `jsRender` cannot be combined with a JSON body, because ZenRows reads the body as a query parameter.
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  type: json,
+  value: Record<string, JsonValue> | JsonValue[]
+} | {
+  type: form,
+  value: Record<string, string>
+} | {
+  type: text,
+  value: string,
+  contentType: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `string` | Yes | — |
+| `bodyFormat` | `json \| text` | Yes | — |
+
+
+
+---
+
+### put
+
+`fetch.put`
+
+Send a PUT to the target through Zenrows and return its answer. Reaches the site with the caller's body, so the site's state can change
+
+**Risk:** `write`
+
+```ts
+await corsair.zenrows.api.fetch.put({ url: 'https://httpbin.io/anything', body: { type: 'json', value: { hello: 'world' } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The page to fetch. |
+| `mode` | `auto` | No | Adaptive Stealth Mode: starts from the cheapest configuration and escalates to rendering or residential proxies only when the target needs it. Rejects `jsRender` and `premiumProxy`. |
+| `jsRender` | `boolean` | No | Render the page in a headless browser first. Defaults to false. |
+| `headers` | `Record<string, string>` | No | Headers to send to the target page, such as &#123; "Referer": "https://www.google.com", "Cookie": "session=..." &#125;. ZenRows forwards every request header when `customHeaders` is on, so the API key moves to the query string for this call. The target sees these exactly as given. |
+| `customHeaders` | `boolean` | No | Forward the caller's own request headers to the page. Implied by `headers`, which turn it on even when this is false, and the API key moves to the query string because ZenRows copies every request header onto the target request. |
+| `premiumProxy` | `boolean` | No | Route through residential IPs. Most protected sites need it. |
+| `proxyCountry` | `string` | No | Two-letter exit country, such as "us". Needs `premiumProxy` or `mode: "auto"`. |
+| `sessionId` | `number` | No | Any integer; requests sharing it leave through the same IP for 10 minutes. It pins the IP, not cookies. |
+| `originalStatus` | `boolean` | No | Answer with the target's own status code instead of Zenrows' one. A 4xx or 5xx from the target then arrives as an error, and the request is still charged. |
+| `allowedStatusCodes` | `number[]` | No | Status codes whose page body is returned instead of raising an error, such as [404]. The answer is then a 200 carrying that page. |
+| `waitFor` | `string` | No | CSS selector to wait for before capture. Needs `jsRender`; Zenrows gives up with a 422 after 3 minutes. |
+| `wait` | `number` | No | Milliseconds to wait after load before capture. Needs `jsRender` or `mode: "auto"`. Defaults to 0. |
+| `blockResources` | `(image \| media \| font \| stylesheet \| script \| xhr \| fetch \| other \| eventsource \| manifest \| websocket \| texttrack)[]` | No | Resource types to block, such as ["image","font"]. Images and stylesheets are already blocked by default, so this customises that rather than adding to nothing. |
+| `body` | `object` | No | The body forwarded to the target. Omit it to send the request with no body. |
+
+The forwarded body reaches the target, so the site's state can change.
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  type: json,
+  value: Record<string, JsonValue> | JsonValue[]
+} | {
+  type: form,
+  value: Record<string, string>
+} | {
+  type: text,
+  value: string,
+  contentType: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `string` | Yes | — |
+| `bodyFormat` | `json \| text` | Yes | — |
+
+
+
+---
+

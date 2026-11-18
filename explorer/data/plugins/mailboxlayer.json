@@ -80,8 +80,8 @@
           },
           {
             "key": "catch_all",
-            "optional": true,
-            "type": "boolean"
+            "optional": false,
+            "type": "boolean | null"
           },
           {
             "key": "role",

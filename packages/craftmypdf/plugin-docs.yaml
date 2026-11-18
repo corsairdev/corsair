@@ -1,0 +1,62 @@
+displayName: CraftMyPDF
+description: PDF generation API that renders PDFs and images from reusable drag-and-drop templates, and manages those templates, their versions and the account's usage.
+domain: craftmypdf.com
+recommendedAuth: api_key
+overviewNote: |
+  CraftMyPDF renders from templates you design in its editor. The template calls
+  (`pdf.create`, `pdf.createAsync`, `pdf.createImage`, `pdf.createMerge`,
+  `pdf.createParallel`) need a `template_id`, which the templates list operation
+  returns, and the JSON data that fills it; the merge and parallel calls take one
+  per entry. `pdf.create` and `pdf.createImage` can fetch that data from a URL
+  with `load_data_from` instead of `data`. The PDF editing calls (`pdf.merge`,
+  `pdf.addText`, `pdf.addWatermark`, `pdf.updateFields`, `pdf.getInfo`) take PDF
+  URLs and no template.
+
+  Generation is metered: each PDF or image costs one credit from the monthly
+  allowance. Reads (account, templates, transactions) are free.
+
+  CraftMyPDF runs several regional APIs. The plugin calls the Singapore host
+  (https://api.craftmypdf.com/v1) unless you pass `region`, which accepts `sg`,
+  `de`, `us` or `au`.
+examples:
+  read:
+    path: templates.list
+    title: List the templates on the account
+  write:
+    path: pdf.create
+    title: Generate a PDF from a template
+    args:
+      template_id: 05f77b2b18ad809a
+      data:
+        invoice_number: INV38379
+        total_amount: 82542.56
+apiExamples:
+  pdf.create:
+    call: |
+      {
+        template_id: '05f77b2b18ad809a',
+        data: { invoice_number: 'INV38379', total_amount: 82542.56 },
+        expiration: 60,
+      }
+  pdf.createAsync:
+    call: |
+      {
+        template_id: '05f77b2b18ad809a',
+        data: { invoice_number: 'INV38379' },
+        webhook_url: 'https://example.com/pdf-handler',
+      }
+  templates.queryUsage:
+    call: |
+      {
+        template_ids: ['bba77b234e84443e'],
+        start_date: '2025-01-30T00:00:00Z',
+        end_date: '2025-01-30T11:59:59Z',
+      }
+apiNotes:
+  pdf.create: A synchronous call can take up to 100 seconds, so the plugin waits 120 seconds before timing out. Each call spends one credit.
+  pdf.createAsync: CraftMyPDF calls `webhook_url` with a GET once the file is ready, appending file (the PDF URL), transaction_ref, status, message and details as query parameters. The webhook is the only place the file URL arrives. `transactions.list` shows the job and its status, but no file URL, so pass `webhook_url` if you need the file.
+  pdf.createParallel: Each request entry carries its own template data. Set `merge` to also receive one combined PDF.
+  templates.list: CraftMyPDF reports no total, so `next_offset` is present only when the page came back full. Pass it as `offset` to read the next page.
+  transactions.list: "`next_offset` is present only when the page came back full."
+  editor.createSession: The returned URL is a signed token that lets its bearer edit the template, so treat it as a credential and deactivate it when done.
+  pdf.updateFields: CraftMyPDF answers `success` even when a field does not exist in the document and reports the failure only in `field_statuses`. The plugin also returns the failures as `failed_fields`, so check it is empty before treating the form as filled.

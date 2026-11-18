@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Sourcegraph: every `sourcegraph.api.*` operation with input and output types."
+title: "Sourcegraph API reference"
+sidebarTitle: "API"
+description: "API reference for the Sourcegraph plugin in Corsair: every `sourcegraph.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `sourcegraph.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -38,7 +37,7 @@ await corsair.sourcegraph.api.repository.compareCommits({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `repository` | `object` | No | — |
+| `repository` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="repository full type">
@@ -66,7 +65,7 @@ await corsair.sourcegraph.api.repository.compareCommits({});
       }
     }
   } | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -100,14 +99,14 @@ await corsair.sourcegraph.api.repository.getCommitDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `repository` | `object` | No | — |
+| `repository` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="repository full type">
 
 ```ts
 {
-  commit?: {
+  commit: {
     oid: string,
     abbreviatedOID?: string,
     message?: string,
@@ -132,7 +131,7 @@ await corsair.sourcegraph.api.repository.getCommitDetails({});
       } | null
     } | null
   } | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -166,7 +165,7 @@ await corsair.sourcegraph.api.repository.getFileContents({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `repository` | `object` | No | — |
+| `repository` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="repository full type">
@@ -179,7 +178,7 @@ await corsair.sourcegraph.api.repository.getFileContents({});
   } | null,
   commit?: {
     oid?: string,
-    file?: {
+    file: {
       name?: string,
       path?: string,
       content?: string,
@@ -187,7 +186,7 @@ await corsair.sourcegraph.api.repository.getFileContents({});
       byteSize?: number
     } | null
   } | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -275,15 +274,15 @@ await corsair.sourcegraph.api.repository.listFiles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `repository` | `object` | No | — |
+| `repository` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="repository full type">
 
 ```ts
 {
-  commit?: {
-    tree?: {
+  commit: {
+    tree: {
       path?: string,
       isRoot?: boolean,
       entries?: {
@@ -293,7 +292,7 @@ await corsair.sourcegraph.api.repository.listFiles({});
       }[]
     } | null
   } | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -326,7 +325,7 @@ await corsair.sourcegraph.api.repository.listLanguages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `repository` | `object` | No | — |
+| `repository` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="repository full type">
@@ -343,7 +342,7 @@ await corsair.sourcegraph.api.repository.listLanguages({});
       totalLines?: number
     }[]
   } | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -373,8 +372,8 @@ await corsair.sourcegraph.api.site.checkSettingsEditPermission({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `site` | `object` | No | — |
-| `currentUser` | `object` | No | — |
+| `site` | `object \| null` | No | — |
+| `currentUser` | `object \| null` | No | — |
 | `canEditSiteSettings` | `boolean` | Yes | — |
 
 <AccordionGroup>
@@ -386,7 +385,7 @@ await corsair.sourcegraph.api.site.checkSettingsEditPermission({});
   siteID?: string,
   canReloadSite?: boolean,
   viewerCanAdminister?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -396,7 +395,7 @@ await corsair.sourcegraph.api.site.checkSettingsEditPermission({});
 {
   siteAdmin?: boolean,
   viewerCanAdminister?: boolean
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -426,7 +425,7 @@ await corsair.sourcegraph.api.user.getCurrent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `currentUser` | `object` | No | — |
+| `currentUser` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="currentUser full type">
@@ -442,7 +441,7 @@ await corsair.sourcegraph.api.user.getCurrent({});
   avatarURL?: string | null,
   url?: string,
   createdAt?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>

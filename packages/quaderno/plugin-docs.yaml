@@ -1,0 +1,106 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+displayName: "Quaderno"
+description: "Calculate tax, issue invoices and credit notes, and manage customers, products and webhooks."
+domain: "quadernoapp.com"
+recommendedAuth: "api_key"
+overviewNote: |-
+  Quaderno uses **HTTP Basic auth** with your API key as the username and an
+  empty password. Create a key at
+  [quadernoapp.com/users/api-keys](https://quadernoapp.com/users/api-keys), then
+  store it for the `quaderno` integration.
+
+  **There is no shared host.** Every account answers on its own subdomain, so
+  the plugin needs the account name as a second credential: set
+  `quaderno({ account: 'acme' })` or store it with `keys.set_account_name`. A
+  key alone can find its account through `authorization`, whose `identity.href`
+  is that account's base URL.
+
+  Documents are legal records. Quaderno **cannot delete** an invoice once issued,
+  because tax law requires keeping it: `invoices.void` reverses it by recording
+  an offset payment and issuing a credit note beside it, and `void_reason` is
+  required. Creating any invoice, receipt or credit note consumes a document
+  number. A credit note is issued against an existing invoice (`invoice_id`),
+  and a receipt needs a `payment_method` because it records a sale that is
+  already paid.
+
+  The `deliver` operations email a document to the address on file for its
+  contact. They answer `delivered: true` and no document, and they are never
+  retried, because a second call sends a second email.
+
+  Lists answer a **bare array**, not an envelope. Page with `created_before`,
+  passing the previous page's `next_created_before`, which is `null` on the last
+  page. No route here takes a `cursor` parameter.
+
+  A missing record answers **401**, not 404, and so does a wrong key. The plugin
+  reads the message to tell them apart, so a bad id is reported as
+  `not_found_or_denied` rather than as an auth failure.
+examples:
+  read:
+    path: invoices.list
+    title: List outstanding invoices
+    args:
+      state: "outstanding"
+      limit: 10
+  write:
+    path: contacts.create
+    title: Create a customer
+    args:
+      first_name: "Amelia"
+      last_name: "Chen"
+      email: "amelia.chen@example.com"
+      country: "US"
+apiNotes:
+  invoices.void: "Voiding requires `void_reason`. It does not delete: the invoice stays and a credit note is issued beside it."
+  invoices.create: "Consumes a document number, which cannot be freed. Pass `payment_method` to record a full payment at the same time."
+  taxRates.calculate: "`tax_code` and `amount` are required from API version 20210316."
+  invoices.list: "`date` takes a range, two ISO dates joined by a comma (`2026-01-01,2026-12-31`), not a single date."
+  credits.create: "A credit note is issued against an invoice: pass `invoice_id`. It credits the full invoice unless `credited_amount` is set, which only works for an invoice with one line."
+  receipts.create: "`payment_method` is required: a receipt records a sale that is already paid."
+  transactions.create: "Not an invoice body. The buyer is `customer`, each line carries its total as `amount`, and `payment.method` is required."
+  proformas.convert: "Only an accepted proforma can be converted. The result is the new invoice, under `invoice`."
+  invoices.deliver: "Sends to the address on file for the contact. Answers `delivered: true`; read the invoice again to see its delivery history."
+  webhooks.list: "The signing secret (`auth_key`) is left out of each row."
+apiExamples:
+  contacts.list: { args: { limit: 10 } }
+  contacts.create: { call: '{ first_name: "Amelia", last_name: "Chen", email: "amelia.chen@example.com", country: "US" }' }
+  contacts.get: { args: { id: 78395726 } }
+  contacts.update: { call: '{ id: 78395726, first_name: "Amelia" }' }
+  contacts.delete: { args: { id: 78395726 } }
+  products.list: { args: { limit: 10 } }
+  products.create: { call: '{ name: "Consulting hour", code: "CONSULT-1", unit_cost: "150.00", kind: "one_off" }' }
+  products.get: { args: { id: 321034 } }
+  products.update: { call: '{ id: 321034, name: "Consulting hour", code: "CONSULT-1", unit_cost: "175.00" }' }
+  products.delete: { args: { id: 321034 } }
+  invoices.list: { args: { limit: 10 } }
+  invoices.create: { call: '{ contact: { id: 78395726 }, items: [{ description: "Consulting hour", unit_price: 150 }] }' }
+  invoices.get: { args: { id: 181235103 } }
+  invoices.update: { call: '{ id: 181235103, notes: "Paid by wire transfer" }' }
+  invoices.void: { call: '{ id: 181235103, void_reason: "Issued in error" }' }
+  invoices.markUncollectible: { args: { id: 181235103 } }
+  invoices.recordPayment: { call: '{ id: 181235103, date: "2026-11-10", amount: 150, payment_method: "cash" }' }
+  invoices.deliver: { args: { id: 181235103 } }
+  receipts.list: { args: { limit: 10 } }
+  receipts.create: { call: '{ contact: { id: 78395726 }, items: [{ description: "Consulting hour", unit_price: 150 }], payment_method: "credit_card" }' }
+  receipts.get: { args: { id: 181235200 } }
+  receipts.void: { call: '{ id: 181235200, void_reason: "Issued in error" }' }
+  receipts.deliver: { args: { id: 181235200 } }
+  credits.list: { args: { limit: 10 } }
+  credits.create: { call: '{ invoice_id: 181235103 }' }
+  credits.get: { args: { id: 181235112 } }
+  credits.update: { call: '{ id: 181235112, notes: "Refund agreed by phone" }' }
+  credits.void: { call: '{ id: 181235112, void_reason: "Issued in error" }' }
+  credits.deliver: { args: { id: 181235112 } }
+  proformas.list: { args: { limit: 10 } }
+  proformas.create: { call: '{ contact: { id: 78395726 }, items: [{ description: "Consulting hour", unit_price: 150 }] }' }
+  proformas.get: { args: { id: 181235300 } }
+  proformas.update: { call: '{ id: 181235300, notes: "Valid for 30 days" }' }
+  proformas.accept: { args: { id: 181235300 } }
+  proformas.decline: { args: { id: 181235300 } }
+  proformas.revert: { args: { id: 181235300 } }
+  proformas.convert: { args: { id: 181235300 } }
+  proformas.deliver: { args: { id: 181235300 } }
+  taxRates.calculate: { call: '{ to_country: "US", tax_code: "standard", amount: 10 }' }
+  taxIds.validate: { call: '{ tax_id: "GB123456789", country: "GB" }' }
+  taxCodes.get: { args: { id: "standard" } }
+  jurisdictions.get: { args: { id: 1 } }
+  transactions.create: { call: '{ customer: { id: 78395726 }, items: [{ description: "Consulting hour", amount: 150 }], payment: { method: "cash" }, date: "2026-11-10" }' }

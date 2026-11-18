@@ -115,12 +115,12 @@
           {
             "key": "trashed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "purged_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "content_created_at",
@@ -150,12 +150,12 @@
           {
             "key": "shared_link",
             "optional": true,
-            "type": "{ url?: string, download_url?: string | null, vanity_url?: string | null, access?: string, effective_access?: string, effective_permission?: string, unshared_at?: string | null, is_password_enabled?: boolean, permissions?: { can_download?: boolean, can_preview?: boolean, can_edit?: boolean }, download_count?: number, preview_count?: number }"
+            "type": "{ url?: string, download_url?: string | null, vanity_url?: string | null, access?: string, effective_access?: string, effective_permission?: string, unshared_at?: string | null, is_password_enabled?: boolean, permissions?: { can_download?: boolean, can_preview?: boolean, can_edit?: boolean }, download_count?: number, preview_count?: number } | null"
           },
           {
             "key": "parent",
             "optional": true,
-            "type": "{ type?: string, id?: string, sequence_id?: string | null, etag?: string | null, name?: string | null }"
+            "type": "{ type?: string, id?: string, sequence_id?: string | null, etag?: string | null, name?: string | null } | null"
           },
           {
             "key": "item_status",
@@ -209,7 +209,7 @@
     {
       "path": "box.api.files.download",
       "shortPath": "files.download",
-      "description": "Download the content of a Box file",
+      "description": "Download a file. A text file comes back as text, any other file as base64, up to about 700 KB; size and type are always returned.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -227,8 +227,45 @@
         ]
       },
       "output": {
-        "kind": "inline",
-        "type": "string"
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentBase64",
+            "optional": true,
+            "type": "string",
+            "description": "The file, base64-encoded. Missing when the file came back as text or contentOmitted is set."
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string",
+            "description": "The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "Media type of the file, for example application/pdf."
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the file in bytes."
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string",
+            "description": "The file name, when known."
+          },
+          {
+            "key": "contentOmitted",
+            "optional": true,
+            "type": "not_requested | over_limit",
+            "description": "Set when the content was left out: the caller did not ask for it, or the file was over the limit."
+          }
+        ]
       }
     },
     {
@@ -312,12 +349,12 @@
           {
             "key": "trashed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "purged_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "content_created_at",
@@ -347,12 +384,12 @@
           {
             "key": "shared_link",
             "optional": true,
-            "type": "{ url?: string, download_url?: string | null, vanity_url?: string | null, access?: string, effective_access?: string, effective_permission?: string, unshared_at?: string | null, is_password_enabled?: boolean, permissions?: { can_download?: boolean, can_preview?: boolean, can_edit?: boolean }, download_count?: number, preview_count?: number }"
+            "type": "{ url?: string, download_url?: string | null, vanity_url?: string | null, access?: string, effective_access?: string, effective_permission?: string, unshared_at?: string | null, is_password_enabled?: boolean, permissions?: { can_download?: boolean, can_preview?: boolean, can_edit?: boolean }, download_count?: number, preview_count?: number } | null"
           },
           {
             "key": "parent",
             "optional": true,
-            "type": "{ type?: string, id?: string, sequence_id?: string | null, etag?: string | null, name?: string | null }"
+            "type": "{ type?: string, id?: string, sequence_id?: string | null, etag?: string | null, name?: string | null } | null"
           },
           {
             "key": "item_status",
@@ -544,12 +581,12 @@
           {
             "key": "trashed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "purged_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "content_created_at",
@@ -579,12 +616,12 @@
           {
             "key": "shared_link",
             "optional": true,
-            "type": "{ url?: string, download_url?: string | null, vanity_url?: string | null, access?: string, effective_access?: string, effective_permission?: string, unshared_at?: string | null, is_password_enabled?: boolean, permissions?: { can_download?: boolean, can_preview?: boolean, can_edit?: boolean }, download_count?: number, preview_count?: number }"
+            "type": "{ url?: string, download_url?: string | null, vanity_url?: string | null, access?: string, effective_access?: string, effective_permission?: string, unshared_at?: string | null, is_password_enabled?: boolean, permissions?: { can_download?: boolean, can_preview?: boolean, can_edit?: boolean }, download_count?: number, preview_count?: number } | null"
           },
           {
             "key": "parent",
             "optional": true,
-            "type": "{ type?: string, id?: string, sequence_id?: string | null, etag?: string | null, name?: string | null }"
+            "type": "{ type?: string, id?: string, sequence_id?: string | null, etag?: string | null, name?: string | null } | null"
           },
           {
             "key": "item_status",
@@ -706,7 +743,7 @@
           {
             "key": "sequence_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "etag",
@@ -741,12 +778,12 @@
           {
             "key": "trashed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "purged_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "content_created_at",
@@ -776,12 +813,12 @@
           {
             "key": "shared_link",
             "optional": true,
-            "type": "{ url?: string, download_url?: string | null, vanity_url?: string | null, access?: string, effective_access?: string, effective_permission?: string, unshared_at?: string | null, is_password_enabled?: boolean, permissions?: { can_download?: boolean, can_preview?: boolean, can_edit?: boolean }, download_count?: number, preview_count?: number }"
+            "type": "{ url?: string, download_url?: string | null, vanity_url?: string | null, access?: string, effective_access?: string, effective_permission?: string, unshared_at?: string | null, is_password_enabled?: boolean, permissions?: { can_download?: boolean, can_preview?: boolean, can_edit?: boolean }, download_count?: number, preview_count?: number } | null"
           },
           {
             "key": "parent",
             "optional": true,
-            "type": "{ type?: string, id?: string, sequence_id?: string | null, etag?: string | null, name?: string | null }"
+            "type": "{ type?: string, id?: string, sequence_id?: string | null, etag?: string | null, name?: string | null } | null"
           },
           {
             "key": "item_status",
@@ -801,7 +838,7 @@
           {
             "key": "item_collection",
             "optional": true,
-            "type": "{ total_count?: number, entries?: {}[] }"
+            "type": "{ total_count?: number, entries?: Record<string, any>[] }"
           }
         ]
       }
@@ -873,7 +910,7 @@
           {
             "key": "sequence_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "etag",
@@ -908,12 +945,12 @@
           {
             "key": "trashed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "purged_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "content_created_at",
@@ -943,12 +980,12 @@
           {
             "key": "shared_link",
             "optional": true,
-            "type": "{ url?: string, download_url?: string | null, vanity_url?: string | null, access?: string, effective_access?: string, effective_permission?: string, unshared_at?: string | null, is_password_enabled?: boolean, permissions?: { can_download?: boolean, can_preview?: boolean, can_edit?: boolean }, download_count?: number, preview_count?: number }"
+            "type": "{ url?: string, download_url?: string | null, vanity_url?: string | null, access?: string, effective_access?: string, effective_permission?: string, unshared_at?: string | null, is_password_enabled?: boolean, permissions?: { can_download?: boolean, can_preview?: boolean, can_edit?: boolean }, download_count?: number, preview_count?: number } | null"
           },
           {
             "key": "parent",
             "optional": true,
-            "type": "{ type?: string, id?: string, sequence_id?: string | null, etag?: string | null, name?: string | null }"
+            "type": "{ type?: string, id?: string, sequence_id?: string | null, etag?: string | null, name?: string | null } | null"
           },
           {
             "key": "item_status",
@@ -968,7 +1005,7 @@
           {
             "key": "item_collection",
             "optional": true,
-            "type": "{ total_count?: number, entries?: {}[] }"
+            "type": "{ total_count?: number, entries?: Record<string, any>[] }"
           }
         ]
       }
@@ -1080,7 +1117,7 @@
           {
             "key": "sequence_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "etag",
@@ -1115,12 +1152,12 @@
           {
             "key": "trashed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "purged_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "content_created_at",
@@ -1150,12 +1187,12 @@
           {
             "key": "shared_link",
             "optional": true,
-            "type": "{ url?: string, download_url?: string | null, vanity_url?: string | null, access?: string, effective_access?: string, effective_permission?: string, unshared_at?: string | null, is_password_enabled?: boolean, permissions?: { can_download?: boolean, can_preview?: boolean, can_edit?: boolean }, download_count?: number, preview_count?: number }"
+            "type": "{ url?: string, download_url?: string | null, vanity_url?: string | null, access?: string, effective_access?: string, effective_permission?: string, unshared_at?: string | null, is_password_enabled?: boolean, permissions?: { can_download?: boolean, can_preview?: boolean, can_edit?: boolean }, download_count?: number, preview_count?: number } | null"
           },
           {
             "key": "parent",
             "optional": true,
-            "type": "{ type?: string, id?: string, sequence_id?: string | null, etag?: string | null, name?: string | null }"
+            "type": "{ type?: string, id?: string, sequence_id?: string | null, etag?: string | null, name?: string | null } | null"
           },
           {
             "key": "item_status",
@@ -1175,7 +1212,7 @@
           {
             "key": "item_collection",
             "optional": true,
-            "type": "{ total_count?: number, entries?: {}[] }"
+            "type": "{ total_count?: number, entries?: Record<string, any>[] }"
           }
         ]
       }
@@ -1251,7 +1288,7 @@
           {
             "key": "sequence_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "etag",
@@ -1286,12 +1323,12 @@
           {
             "key": "trashed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "purged_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "content_created_at",
@@ -1321,12 +1358,12 @@
           {
             "key": "shared_link",
             "optional": true,
-            "type": "{ url?: string, download_url?: string | null, vanity_url?: string | null, access?: string, effective_access?: string, effective_permission?: string, unshared_at?: string | null, is_password_enabled?: boolean, permissions?: { can_download?: boolean, can_preview?: boolean, can_edit?: boolean }, download_count?: number, preview_count?: number }"
+            "type": "{ url?: string, download_url?: string | null, vanity_url?: string | null, access?: string, effective_access?: string, effective_permission?: string, unshared_at?: string | null, is_password_enabled?: boolean, permissions?: { can_download?: boolean, can_preview?: boolean, can_edit?: boolean }, download_count?: number, preview_count?: number } | null"
           },
           {
             "key": "parent",
             "optional": true,
-            "type": "{ type?: string, id?: string, sequence_id?: string | null, etag?: string | null, name?: string | null }"
+            "type": "{ type?: string, id?: string, sequence_id?: string | null, etag?: string | null, name?: string | null } | null"
           },
           {
             "key": "item_status",
@@ -1346,7 +1383,7 @@
           {
             "key": "item_collection",
             "optional": true,
-            "type": "{ total_count?: number, entries?: {}[] }"
+            "type": "{ total_count?: number, entries?: Record<string, any>[] }"
           }
         ]
       }
@@ -1393,16 +1430,16 @@
           {
             "key": "source",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "additional_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: COLLABORATION.ACCEPTED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: COLLABORATION.ACCEPTED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: Record<string, any>, additional_info?: Record<string, any> }",
       "usageExample": "box({\n    webhookHooks: {\n        collaborations: {\n            accepted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -1445,16 +1482,16 @@
           {
             "key": "source",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "additional_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: COLLABORATION.CREATED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: COLLABORATION.CREATED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: Record<string, any>, additional_info?: Record<string, any> }",
       "usageExample": "box({\n    webhookHooks: {\n        collaborations: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -1497,16 +1534,16 @@
           {
             "key": "source",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "additional_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: COLLABORATION.REJECTED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: COLLABORATION.REJECTED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: Record<string, any>, additional_info?: Record<string, any> }",
       "usageExample": "box({\n    webhookHooks: {\n        collaborations: {\n            rejected: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -1549,16 +1586,16 @@
           {
             "key": "source",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "additional_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: COLLABORATION.REMOVED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: COLLABORATION.REMOVED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: Record<string, any>, additional_info?: Record<string, any> }",
       "usageExample": "box({\n    webhookHooks: {\n        collaborations: {\n            removed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -1601,16 +1638,16 @@
           {
             "key": "source",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "additional_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: COLLABORATION.UPDATED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: COLLABORATION.UPDATED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: Record<string, any>, additional_info?: Record<string, any> }",
       "usageExample": "box({\n    webhookHooks: {\n        collaborations: {\n            updated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -1653,16 +1690,16 @@
           {
             "key": "source",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "additional_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: COMMENT.CREATED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: COMMENT.CREATED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: Record<string, any>, additional_info?: Record<string, any> }",
       "usageExample": "box({\n    webhookHooks: {\n        comments: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -1705,16 +1742,16 @@
           {
             "key": "source",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "additional_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: COMMENT.DELETED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: COMMENT.DELETED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: Record<string, any>, additional_info?: Record<string, any> }",
       "usageExample": "box({\n    webhookHooks: {\n        comments: {\n            deleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -1757,16 +1794,16 @@
           {
             "key": "source",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "additional_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: COMMENT.UPDATED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: COMMENT.UPDATED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: Record<string, any>, additional_info?: Record<string, any> }",
       "usageExample": "box({\n    webhookHooks: {\n        comments: {\n            updated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -1809,16 +1846,16 @@
           {
             "key": "source",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "additional_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FILE.COPIED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FILE.COPIED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: Record<string, any>, additional_info?: Record<string, any> }",
       "usageExample": "box({\n    webhookHooks: {\n        files: {\n            copied: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -1861,16 +1898,16 @@
           {
             "key": "source",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "additional_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FILE.DELETED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FILE.DELETED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: Record<string, any>, additional_info?: Record<string, any> }",
       "usageExample": "box({\n    webhookHooks: {\n        files: {\n            deleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -1913,16 +1950,16 @@
           {
             "key": "source",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "additional_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FILE.DOWNLOADED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FILE.DOWNLOADED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: Record<string, any>, additional_info?: Record<string, any> }",
       "usageExample": "box({\n    webhookHooks: {\n        files: {\n            downloaded: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -1965,16 +2002,16 @@
           {
             "key": "source",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "additional_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FILE.LOCKED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FILE.LOCKED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: Record<string, any>, additional_info?: Record<string, any> }",
       "usageExample": "box({\n    webhookHooks: {\n        files: {\n            locked: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2017,16 +2054,16 @@
           {
             "key": "source",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "additional_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FILE.MOVED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FILE.MOVED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: Record<string, any>, additional_info?: Record<string, any> }",
       "usageExample": "box({\n    webhookHooks: {\n        files: {\n            moved: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2069,16 +2106,16 @@
           {
             "key": "source",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "additional_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FILE.PREVIEWED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FILE.PREVIEWED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: Record<string, any>, additional_info?: Record<string, any> }",
       "usageExample": "box({\n    webhookHooks: {\n        files: {\n            previewed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2121,16 +2158,16 @@
           {
             "key": "source",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "additional_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FILE.RENAMED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FILE.RENAMED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: Record<string, any>, additional_info?: Record<string, any> }",
       "usageExample": "box({\n    webhookHooks: {\n        files: {\n            renamed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2173,16 +2210,16 @@
           {
             "key": "source",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "additional_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FILE.RESTORED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FILE.RESTORED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: Record<string, any>, additional_info?: Record<string, any> }",
       "usageExample": "box({\n    webhookHooks: {\n        files: {\n            restored: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2225,16 +2262,16 @@
           {
             "key": "source",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "additional_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FILE.TRASHED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FILE.TRASHED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: Record<string, any>, additional_info?: Record<string, any> }",
       "usageExample": "box({\n    webhookHooks: {\n        files: {\n            trashed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2277,16 +2314,16 @@
           {
             "key": "source",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "additional_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FILE.UNLOCKED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FILE.UNLOCKED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: Record<string, any>, additional_info?: Record<string, any> }",
       "usageExample": "box({\n    webhookHooks: {\n        files: {\n            unlocked: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2329,16 +2366,16 @@
           {
             "key": "source",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "additional_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FILE.UPLOADED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FILE.UPLOADED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: Record<string, any>, additional_info?: Record<string, any> }",
       "usageExample": "box({\n    webhookHooks: {\n        files: {\n            uploaded: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2381,16 +2418,16 @@
           {
             "key": "source",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "additional_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FOLDER.COPIED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FOLDER.COPIED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: Record<string, any>, additional_info?: Record<string, any> }",
       "usageExample": "box({\n    webhookHooks: {\n        folders: {\n            copied: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2433,16 +2470,16 @@
           {
             "key": "source",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "additional_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FOLDER.CREATED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FOLDER.CREATED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: Record<string, any>, additional_info?: Record<string, any> }",
       "usageExample": "box({\n    webhookHooks: {\n        folders: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2485,16 +2522,16 @@
           {
             "key": "source",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "additional_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FOLDER.DELETED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FOLDER.DELETED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: Record<string, any>, additional_info?: Record<string, any> }",
       "usageExample": "box({\n    webhookHooks: {\n        folders: {\n            deleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2537,16 +2574,16 @@
           {
             "key": "source",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "additional_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FOLDER.DOWNLOADED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FOLDER.DOWNLOADED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: Record<string, any>, additional_info?: Record<string, any> }",
       "usageExample": "box({\n    webhookHooks: {\n        folders: {\n            downloaded: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2589,16 +2626,16 @@
           {
             "key": "source",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "additional_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FOLDER.MOVED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FOLDER.MOVED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: Record<string, any>, additional_info?: Record<string, any> }",
       "usageExample": "box({\n    webhookHooks: {\n        folders: {\n            moved: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2641,16 +2678,16 @@
           {
             "key": "source",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "additional_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FOLDER.RENAMED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FOLDER.RENAMED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: Record<string, any>, additional_info?: Record<string, any> }",
       "usageExample": "box({\n    webhookHooks: {\n        folders: {\n            renamed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2693,16 +2730,16 @@
           {
             "key": "source",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "additional_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FOLDER.RESTORED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FOLDER.RESTORED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: Record<string, any>, additional_info?: Record<string, any> }",
       "usageExample": "box({\n    webhookHooks: {\n        folders: {\n            restored: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2745,16 +2782,16 @@
           {
             "key": "source",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "additional_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FOLDER.TRASHED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FOLDER.TRASHED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: Record<string, any>, additional_info?: Record<string, any> }",
       "usageExample": "box({\n    webhookHooks: {\n        folders: {\n            trashed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2797,16 +2834,16 @@
           {
             "key": "source",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "additional_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: METADATA_INSTANCE.CREATED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: METADATA_INSTANCE.CREATED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: Record<string, any>, additional_info?: Record<string, any> }",
       "usageExample": "box({\n    webhookHooks: {\n        metadata: {\n            instanceCreated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2849,16 +2886,16 @@
           {
             "key": "source",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "additional_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: METADATA_INSTANCE.DELETED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: METADATA_INSTANCE.DELETED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: Record<string, any>, additional_info?: Record<string, any> }",
       "usageExample": "box({\n    webhookHooks: {\n        metadata: {\n            instanceDeleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2901,16 +2938,16 @@
           {
             "key": "source",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "additional_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: METADATA_INSTANCE.UPDATED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: METADATA_INSTANCE.UPDATED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: Record<string, any>, additional_info?: Record<string, any> }",
       "usageExample": "box({\n    webhookHooks: {\n        metadata: {\n            instanceUpdated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2953,16 +2990,16 @@
           {
             "key": "source",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "additional_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: SHARED_LINK.CREATED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: SHARED_LINK.CREATED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: Record<string, any>, additional_info?: Record<string, any> }",
       "usageExample": "box({\n    webhookHooks: {\n        sharedLinks: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -3005,16 +3042,16 @@
           {
             "key": "source",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "additional_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: SHARED_LINK.DELETED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: SHARED_LINK.DELETED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: Record<string, any>, additional_info?: Record<string, any> }",
       "usageExample": "box({\n    webhookHooks: {\n        sharedLinks: {\n            deleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -3057,16 +3094,16 @@
           {
             "key": "source",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "additional_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: SHARED_LINK.UPDATED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: SHARED_LINK.UPDATED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: Record<string, any>, additional_info?: Record<string, any> }",
       "usageExample": "box({\n    webhookHooks: {\n        sharedLinks: {\n            updated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     }
   ],

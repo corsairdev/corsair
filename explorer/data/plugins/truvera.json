@@ -1,0 +1,1301 @@
+{
+  "id": "truvera",
+  "displayName": "Truvera",
+  "description": "Create DIDs, issue and revoke verifiable credentials, manage schemas and revocation registries, and verify credentials.",
+  "npmPackageName": "@corsair-dev/truvera",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 28,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "truvera.api.credentials.delete",
+      "shortPath": "credentials.delete",
+      "description": "Delete a credential metadata record; this does not revoke the credential",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credential_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string",
+            "description": "Deprecated: only for retrieving a persisted credential body"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | undefined"
+      }
+    },
+    {
+      "path": "truvera.api.credentials.get",
+      "shortPath": "credentials.get",
+      "description": "Read one credential metadata, and its contents when it was persisted",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credential_id",
+            "optional": false,
+            "type": "string",
+            "description": "The credential URI, as the issue or list route returned it"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "issuerKey",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "issuerName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "revocationRegistry",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "revoked",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expiryDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expirationDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "issuanceDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "byteSize",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "persist",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "index",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "subjectRef",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "subjectId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "whitelabel",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "algorithm",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "credential",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "truvera.api.credentials.issue",
+      "shortPath": "credentials.issue",
+      "description": "Issue and sign a verifiable credential, optionally distributing it to a holder, persisting it, or making it revocable",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credential",
+            "optional": false,
+            "type": "{ id?: string, name?: string, description?: string, schema?: string, context?: string | (string | {})[], type?: string[], subject?: Record<string, JsonValue> | Record<string, JsonValue>[], issuer: string, issuanceDate?: string, expirationDate?: string, status?: string | {} | null }",
+            "description": "The credential to sign"
+          },
+          {
+            "key": "persist",
+            "optional": true,
+            "type": "boolean",
+            "description": "Store an encrypted copy; requires `password`"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string",
+            "description": "Encrypts a persisted credential; never stored by the plugin"
+          },
+          {
+            "key": "recipient_did",
+            "optional": true,
+            "type": "string",
+            "description": "The holder's DID for DID distribution"
+          },
+          {
+            "key": "recipient_email",
+            "optional": true,
+            "type": "string",
+            "description": "The holder's email for email distribution"
+          },
+          {
+            "key": "algorithm",
+            "optional": true,
+            "type": "string",
+            "description": "Signing algorithm; dockbbs enables zero-knowledge proofs"
+          },
+          {
+            "key": "distribute",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "jsonld | jwt | sdjwt",
+            "description": "Default jsonld"
+          },
+          {
+            "key": "revocable",
+            "optional": true,
+            "type": "boolean",
+            "description": "Provision a revocation registry automatically"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "@context",
+            "optional": true,
+            "type": "string | (string | {})[] | null"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "credentialSubject",
+            "optional": true,
+            "type": "{} | {}[] | null"
+          },
+          {
+            "key": "issuer",
+            "optional": true,
+            "type": "string | {} | null"
+          },
+          {
+            "key": "issuanceDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expirationDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "credentialStatus",
+            "optional": true,
+            "type": "string | {} | null"
+          },
+          {
+            "key": "proof",
+            "optional": true,
+            "type": "{} | {}[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "truvera.api.credentials.list",
+      "shortPath": "credentials.list",
+      "description": "List the credential metadata on the account, with offset paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Default 0"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Default 64, max 100"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by id, subject, issuer or date"
+          },
+          {
+            "key": "subject_id",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by holder DID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | null, issuerKey?: string | null, issuerName?: string | null, type?: string | null, revocationRegistry?: string | null, revoked?: boolean | null, createdAt?: string | null, expiryDate?: string | null, expirationDate?: string | null, issuanceDate?: string | null, byteSize?: number | null, persist?: boolean | null, index?: string | null, subjectRef?: string | null, subjectId?: string | null, whitelabel?: number | null, algorithm?: string | null, credential?: {} | null, warning?: string | null }[]"
+      }
+    },
+    {
+      "path": "truvera.api.credentials.revoke",
+      "shortPath": "credentials.revoke",
+      "description": "Revoke a credential, which makes every verification of it fail",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credential_id",
+            "optional": false,
+            "type": "string",
+            "description": "The credential URI, as the issue or list route returned it"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "truvera.api.credentials.unrevoke",
+      "shortPath": "credentials.unrevoke",
+      "description": "Unrevoke a credential, which restores it as valid",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credential_id",
+            "optional": false,
+            "type": "string",
+            "description": "The credential URI, as the issue or list route returned it"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "truvera.api.dids.create",
+      "shortPath": "dids.create",
+      "description": "Create a DID with its keys, optionally with a DIDComm service endpoint",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string",
+            "description": "DID method, such as cheqd, key, or dock"
+          },
+          {
+            "key": "key_type",
+            "optional": true,
+            "type": "string",
+            "description": "Signing key type, such as ed25519 or secp256k1"
+          },
+          {
+            "key": "controller",
+            "optional": true,
+            "type": "string",
+            "description": "Controller DID, when it is not the DID itself"
+          },
+          {
+            "key": "didcomm_service_url",
+            "optional": true,
+            "type": "string",
+            "description": "DIDComm endpoint to add to the document"
+          },
+          {
+            "key": "include_didcomm_service",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "did",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "controller",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "didDocument",
+            "optional": true,
+            "type": "{ id?: string | null, controller?: string | string[] | null, alsoKnownAs?: (string | {})[] | null, verificationMethod?: (string | {})[] | null, authentication?: (string | {})[] | null, assertionMethod?: (string | {})[] | null, keyAgreement?: (string | {})[] | null, capabilityInvocation?: (string | {})[] | null, capabilityDelegation?: (string | {})[] | null, service?: (string | {})[] | null } | null"
+          },
+          {
+            "key": "keyId",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "truvera.api.dids.delete",
+      "shortPath": "dids.delete",
+      "description": "Delete a DID and its keys; credentials signed with it can no longer be verified against it",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "did",
+            "optional": false,
+            "type": "string",
+            "description": "A fully qualified DID, such as did:cheqd:mainnet:abc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "truvera.api.dids.get",
+      "shortPath": "dids.get",
+      "description": "Resolve one DID and read its document",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "did",
+            "optional": false,
+            "type": "string",
+            "description": "A fully qualified DID, such as did:cheqd:mainnet:abc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "didDocument",
+            "optional": true,
+            "type": "{ id?: string | null, controller?: string | string[] | null, alsoKnownAs?: (string | {})[] | null, verificationMethod?: (string | {})[] | null, authentication?: (string | {})[] | null, assertionMethod?: (string | {})[] | null, keyAgreement?: (string | {})[] | null, capabilityInvocation?: (string | {})[] | null, capabilityDelegation?: (string | {})[] | null, service?: (string | {})[] | null } | null"
+          },
+          {
+            "key": "didDocumentMetadata",
+            "optional": true,
+            "type": "{ did?: string | null, controller?: string | null, created?: string | null, updated?: string | null, deactivated?: boolean | null, versionId?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "truvera.api.dids.getMetadata",
+      "shortPath": "dids.getMetadata",
+      "description": "Read one DID resolution metadata: controller, versions and deactivation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "did",
+            "optional": false,
+            "type": "string",
+            "description": "A fully qualified DID, such as did:cheqd:mainnet:abc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "did",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "controller",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "deactivated",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "versionId",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "truvera.api.dids.list",
+      "shortPath": "dids.list",
+      "description": "List the DIDs the account controls",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Default 0"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Default and maximum 64"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "(string | { id?: string | null, controller?: string | string[] | null, alsoKnownAs?: (string | {})[] | null, verificationMethod?: (string | {})[] | null, authentication?: (string | {})[] | null, assertionMethod?: (string | {})[] | null, keyAgreement?: (string | {})[] | null, capabilityInvocation?: (string | {})[] | null, capabilityDelegation?: (string | {})[] | null, service?: (string | {})[] | null })[]"
+      }
+    },
+    {
+      "path": "truvera.api.jobs.get",
+      "shortPath": "jobs.get",
+      "description": "Read an async job that issuance or a registry write returned instead of a finished resource",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "queued, running, succeeded, or failed"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{} | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "truvera.api.profiles.create",
+      "shortPath": "profiles.create",
+      "description": "Create a profile for a DID the account controls",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "did",
+            "optional": false,
+            "type": "string",
+            "description": "A fully qualified DID, such as did:cheqd:mainnet:abc"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The issuer name shown on credentials"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "logo",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "did",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "logo",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "truvera.api.profiles.delete",
+      "shortPath": "profiles.delete",
+      "description": "Delete a profile; the DID itself remains",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "did",
+            "optional": false,
+            "type": "string",
+            "description": "A fully qualified DID, such as did:cheqd:mainnet:abc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | undefined"
+      }
+    },
+    {
+      "path": "truvera.api.profiles.get",
+      "shortPath": "profiles.get",
+      "description": "Read one profile by its DID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "did",
+            "optional": false,
+            "type": "string",
+            "description": "A fully qualified DID, such as did:cheqd:mainnet:abc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "did",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "logo",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "truvera.api.profiles.list",
+      "shortPath": "profiles.list",
+      "description": "List the issuer profiles on the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Default 0"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Default and maximum 64"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ did?: string | null, name?: string | null, description?: string | null, logo?: string | null, website?: string | null, email?: string | null }[]"
+      }
+    },
+    {
+      "path": "truvera.api.profiles.update",
+      "shortPath": "profiles.update",
+      "description": "Change a profile's name, description, logo or contact details",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "did",
+            "optional": false,
+            "type": "string",
+            "description": "A fully qualified DID, such as did:cheqd:mainnet:abc"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Required by Truvera on every update, even when unchanged"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "logo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string",
+            "description": "A URL for the profile"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "did",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "logo",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "truvera.api.registries.create",
+      "shortPath": "registries.create",
+      "description": "Create a revocation registry",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string",
+            "description": "Registry type, such as dock or cheqd"
+          },
+          {
+            "key": "add_only",
+            "optional": true,
+            "type": "boolean",
+            "description": "Once true, entries can never be removed"
+          },
+          {
+            "key": "policy",
+            "optional": true,
+            "type": "(string | {})[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number | null",
+            "description": "The job to poll with jobs.get"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "truvera.api.registries.delete",
+      "shortPath": "registries.delete",
+      "description": "Delete a revocation registry, which removes every credential status it held",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "registry_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "truvera.api.registries.get",
+      "shortPath": "registries.get",
+      "description": "Read one revocation registry",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "registry_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "policy_and_type",
+            "optional": true,
+            "type": "{ type?: string | null, policy?: string[] | null, addOnly?: boolean | null } | null"
+          },
+          {
+            "key": "registry_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "job_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "latest_credential_index",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "addOnly",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "policy",
+            "optional": true,
+            "type": "(string | {})[] | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "truvera.api.registries.list",
+      "shortPath": "registries.list",
+      "description": "List the revocation registries on the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Default 0"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Default and maximum 64"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | null, policy_and_type?: { type?: string | null, policy?: string[] | null, addOnly?: boolean | null } | null, registry_type?: string | null, created_at?: string | null, job_id?: string | null, latest_credential_index?: number | null, addOnly?: boolean | null, policy?: (string | {})[] | null, type?: string | null, created?: string | null }[]"
+      }
+    },
+    {
+      "path": "truvera.api.registries.revocationStatus",
+      "shortPath": "registries.revocationStatus",
+      "description": "Read whether one credential in a registry is revoked",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "registry_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revocation_id",
+            "optional": false,
+            "type": "string",
+            "description": "The credential index within the registry"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "boolean | string | null",
+            "description": "true when the credential is revoked"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "revoked",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "truvera.api.registries.revoke",
+      "shortPath": "registries.revoke",
+      "description": "Revoke or unrevoke several credentials in one registry in one call",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "registry_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credential_ids",
+            "optional": false,
+            "type": "string[]",
+            "description": "Credentials to revoke or unrevoke in this registry"
+          },
+          {
+            "key": "action",
+            "optional": false,
+            "type": "revoke | unrevoke",
+            "description": "Which direction to apply"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "truvera.api.schemas.create",
+      "shortPath": "schemas.create",
+      "description": "Create a JSON credential schema that a credential type and subject follow",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string",
+            "description": "JSON Schema type, usually object"
+          },
+          {
+            "key": "properties",
+            "optional": false,
+            "type": "Record<string, JsonValue>",
+            "description": "JSON Schema properties that a credential may set"
+          },
+          {
+            "key": "required",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "additional_properties",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number | null",
+            "description": "The job to poll with jobs.get"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "truvera.api.schemas.delete",
+      "shortPath": "schemas.delete",
+      "description": "Delete a schema; credentials already issued against it stay valid",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "schema_id",
+            "optional": false,
+            "type": "string",
+            "description": "The schema URI or id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "truvera.api.schemas.get",
+      "shortPath": "schemas.get",
+      "description": "Read one schema by its id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "schema_id",
+            "optional": false,
+            "type": "string",
+            "description": "The schema URI or id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "$schema",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          },
+          {
+            "key": "required",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "additionalProperties",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "$metadata",
+            "optional": true,
+            "type": "{} | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "truvera.api.schemas.list",
+      "shortPath": "schemas.list",
+      "description": "List the credential schemas on the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Default 0"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Default and maximum 64"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | null, $schema?: string | null, name?: string | null, description?: string | null, type?: string | null, properties?: Record<string, JsonValue> | null, required?: string[] | null, additionalProperties?: boolean | null, $metadata?: {} | null }[]"
+      }
+    },
+    {
+      "path": "truvera.api.verify.verify",
+      "shortPath": "verify.verify",
+      "description": "Verify a credential or presentation and read the reasons when it fails",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credential",
+            "optional": false,
+            "type": "Record<string, JsonValue>",
+            "description": "A verifiable credential or presentation, as JSON"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "verified",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{}[] | null"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "{}[] | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

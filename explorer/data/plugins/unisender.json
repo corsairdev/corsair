@@ -1,0 +1,802 @@
+{
+  "id": "unisender",
+  "displayName": "Unisender",
+  "description": "Email marketing and transactional email with Unisender - manage lists, contacts, custom fields and tags, subscribe and import contacts, send transactional email, and create and list campaigns.",
+  "npmPackageName": "@corsair-dev/unisender",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 19,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "unisender.api.campaigns.create",
+      "shortPath": "campaigns.create",
+      "description": "Start or schedule a campaign from a message; omitting start_time sends it immediately",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "number",
+            "description": "The message from messages.createEmail."
+          },
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "string",
+            "description": "YYYY-MM-DD hh:mm in the given timezone, at most 100 days ahead. Omit it to start immediately."
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string",
+            "description": "The timezone start_time is in. UTC is the only value Unisender accepts; omit it to use the account timezone."
+          },
+          {
+            "key": "track_read",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "track_links",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "contacts",
+            "optional": true,
+            "type": "string",
+            "description": "A comma-separated address list, as an alternative to the message's list."
+          },
+          {
+            "key": "track_ga",
+            "optional": true,
+            "type": "0 | 1"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ campaign_id?: number | null, status?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unisender.api.campaigns.list",
+      "shortPath": "campaigns.list",
+      "description": "List campaigns whose start time falls in a window, up to 10,000 a page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string",
+            "description": "YYYY-MM-DD hh:mm:ss in UTC; the earliest start to include."
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string",
+            "description": "YYYY-MM-DD hh:mm:ss in UTC; the latest start to include."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "At most 10,000 a call."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Zero-based position of the first record."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: number | null, start_time?: string | null, status?: string | null, subject?: string | null, sender_name?: string | null, sender_email?: string | null, message_id?: number | null, list_id?: number | null, lists?: (number | string)[] | null, stats_url?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unisender.api.contacts.count",
+      "shortPath": "contacts.count",
+      "description": "Count the contacts in a list by kind (type address for email contacts, phone for SMS) or by tag; Unisender needs at least one of the two",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "number",
+            "description": "A contact list id from lists.list."
+          },
+          {
+            "key": "tag_id",
+            "optional": true,
+            "type": "number",
+            "description": "Only contacts with this tag."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "address | phone",
+            "description": "Only contacts of this kind."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "A substring of an address or phone; needs `type`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ listId?: number | null, count?: number | string | null, searchParams?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unisender.api.contacts.exclude",
+      "shortPath": "contacts.exclude",
+      "description": "Remove a contact from lists without marking them unsubscribed, so they can be re-added later",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contact_type",
+            "optional": true,
+            "type": "email",
+            "description": "email is the documented value; it is sent explicitly."
+          },
+          {
+            "key": "list_ids",
+            "optional": true,
+            "type": "number[]",
+            "description": "The lists to unsubscribe from. Omit it to unsubscribe from every list the contact is in."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unisender.api.contacts.export",
+      "shortPath": "contacts.export",
+      "description": "Request an asynchronous export of the contact data, delivered to a notify URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": true,
+            "type": "number",
+            "description": "Only this list. Omit for every list."
+          },
+          {
+            "key": "notify_url",
+            "optional": true,
+            "type": "string",
+            "description": "Where Unisender posts the export when the file is ready."
+          },
+          {
+            "key": "field_names",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only these fields. Omit for every field."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ task_uuid?: string | null, status?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unisender.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Read one contact's address status, lists and custom fields by email",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "list_id",
+            "optional": true,
+            "type": "number",
+            "description": "Read the contact as they appear in this list, when the fields differ per list."
+          },
+          {
+            "key": "include_lists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also return the lists the contact belongs to."
+          },
+          {
+            "key": "include_fields",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also return the custom field values."
+          },
+          {
+            "key": "include_details",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also return the extended contact details."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ email?: { email?: string | null, added_at?: string | null, status?: string | null } | null, lists?: { id?: number | string | null, name?: string | null }[] | null, fields?: Record<string, any> | Record<string, any>[] | null, details?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unisender.api.contacts.import",
+      "shortPath": "contacts.import",
+      "description": "Import up to 500 contacts from columnar data, with list membership in an email_list_ids column; role addresses such as sales@ are skipped on purpose, and a `delete` column removes contacts",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "field_names",
+            "optional": false,
+            "type": "string[]",
+            "description": "The column names, which must include email. `email_list_ids` is a comma-separated list of list codes to subscribe each row to, `tags` is a comma-separated tag list, and `delete` set to 1 removes the contact."
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "(string | number | boolean)[][]",
+            "description": "Rows, each with a value per field_names entry and in the same order. At most 500 contacts per call."
+          },
+          {
+            "key": "overwrite_tags",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "overwrite_lists",
+            "optional": true,
+            "type": "0 | 1"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ total?: number | null, inserted?: number | null, updated?: number | null, deleted?: number | null, new_emails?: number | null, invalid?: number | null, role_based?: number | null, log?: { index?: number | string | null, code?: string | null, message?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unisender.api.contacts.subscribe",
+      "shortPath": "contacts.subscribe",
+      "description": "Add or update a contact in one or more lists. By default (double_optin 0) Unisender emails the contact a confirmation request; pass double_optin 3 to add them with no email. Returns only person_id; read the confirmation status with contacts.get",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_ids",
+            "optional": false,
+            "type": "number[]",
+            "description": "The lists to add the contact to."
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>",
+            "description": "Custom field name to value, sent as fields[<name>]=value."
+          },
+          {
+            "key": "double_optin",
+            "optional": true,
+            "type": "0 | 3 | 4",
+            "description": "0 sends a confirmation invitation and leaves the contact unconfirmed until it is accepted, 3 adds the contact as new with no email, 4 adds it silently when it already exists in your lists and sends an invitation otherwise."
+          },
+          {
+            "key": "overwrite",
+            "optional": true,
+            "type": "0 | 1 | 2",
+            "description": "0 adds new fields and tags and keeps existing ones, 1 REPLACES every field and tag and removes the contact from all lists not named in list_ids, 2 replaces only the fields you send and keeps the rest."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "Up to 10 tags to add."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ person_id?: number | string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unisender.api.contacts.unsubscribe",
+      "shortPath": "contacts.unsubscribe",
+      "description": "Unsubscribe a contact from lists, which only the contact can reverse through an activation link",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contact_type",
+            "optional": true,
+            "type": "email",
+            "description": "email is the documented value; it is sent explicitly."
+          },
+          {
+            "key": "list_ids",
+            "optional": true,
+            "type": "number[]",
+            "description": "The lists to unsubscribe from. Omit it to unsubscribe from every list the contact is in."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unisender.api.fields.create",
+      "shortPath": "fields.create",
+      "description": "Create a custom contact field",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The field name, as used in fields[...] arguments."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string | text | number | date | bool",
+            "description": "string for a short value, text for a long one, bool for 1/0. Unisender stores every type as text; the type only changes the admin form."
+          },
+          {
+            "key": "is_visible",
+            "optional": true,
+            "type": "0 | 1",
+            "description": "1 to show the field in the admin."
+          },
+          {
+            "key": "view_pos",
+            "optional": true,
+            "type": "number",
+            "description": "Display order."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unisender.api.fields.delete",
+      "shortPath": "fields.delete",
+      "description": "Delete a custom contact field by id",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The field id from fields.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{} | \"\""
+          }
+        ]
+      }
+    },
+    {
+      "path": "unisender.api.fields.list",
+      "shortPath": "fields.list",
+      "description": "List the custom contact fields with their types",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, type?: string | null, is_visible?: number | null, view_pos?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unisender.api.lists.create",
+      "shortPath": "lists.create",
+      "description": "Create a contact list, which models a topic rather than a single send; the title must be unique",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string",
+            "description": "The list name, unique within the account. A duplicate name is an error."
+          },
+          {
+            "key": "before_subscribe_url",
+            "optional": true,
+            "type": "string",
+            "description": "Where to send a contact before they confirm a subscription."
+          },
+          {
+            "key": "after_subscribe_url",
+            "optional": true,
+            "type": "string",
+            "description": "Where to send a contact after they confirm a subscription."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unisender.api.lists.delete",
+      "shortPath": "lists.delete",
+      "description": "Delete a contact list by id",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "number",
+            "description": "A contact list id from lists.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{} | \"\""
+          }
+        ]
+      }
+    },
+    {
+      "path": "unisender.api.lists.list",
+      "shortPath": "lists.list",
+      "description": "List the contact lists in the account, with their ids and titles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: number | null, title?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unisender.api.messages.createEmail",
+      "shortPath": "messages.createEmail",
+      "description": "Create a campaign email without sending it, for campaigns.create to send",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sender_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sender_email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string",
+            "description": "The HTML body, up to 8 MB."
+          },
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "number",
+            "description": "A contact list id from lists.list."
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string",
+            "description": "A tag to attach to the message."
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string",
+            "description": "The message language, such as en."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ message_id?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unisender.api.messages.sendEmail",
+      "shortPath": "messages.sendEmail",
+      "description": "Send one transactional email to a single recipient, who is added to list_id if not already in it; capped at 60 calls a minute and with no field substitution beyond the unsubscribe URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "The recipient, optionally as `Name <address>`."
+          },
+          {
+            "key": "sender_name",
+            "optional": false,
+            "type": "string",
+            "description": "The From display name."
+          },
+          {
+            "key": "sender_email",
+            "optional": false,
+            "type": "string",
+            "description": "The From address, which must be verified."
+          },
+          {
+            "key": "subject",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string",
+            "description": "The HTML body, up to 1 MB."
+          },
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "number",
+            "description": "The list the message is associated with, for unsubscribe handling."
+          },
+          {
+            "key": "track_read",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "track_links",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "cc",
+            "optional": true,
+            "type": "string",
+            "description": "A carbon-copy address."
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string | number>",
+            "description": "Your own keys, echoed back by checkEmail."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ email_id?: number | string | null, id?: string | number | null, email?: string | null, message_id?: number | null, message?: string | null, index?: number | null, errors?: { code?: string | null, message?: string | null }[] | null } | { email_id?: number | string | null, id?: string | number | null, email?: string | null, message_id?: number | null, message?: string | null, index?: number | null, errors?: { code?: string | null, message?: string | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unisender.api.messages.status",
+      "shortPath": "messages.status",
+      "description": "Read delivery status for up to 500 sent emails; err_ is a failure and ok_ a success or still in progress",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email_id",
+            "optional": false,
+            "type": "(number | string)[]",
+            "description": "Up to 500 ids from messages.sendEmail: its email_id, or the string id a send with cc returns."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ statuses?: { id?: number | string | null, status?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unisender.api.tags.list",
+      "shortPath": "tags.list",
+      "description": "List the contact tags with their ids",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

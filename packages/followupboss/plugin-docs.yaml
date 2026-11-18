@@ -1,0 +1,351 @@
+displayName: Follow Up Boss
+description: Real-estate CRM with Follow Up Boss - manage people, deals, appointments, calls, texts, notes and tasks, push lead events into its routing, read smart lists and automations data, manage webhook subscriptions, and read delivered webhook events by ID.
+domain: followupboss.com
+recommendedAuth: api_key
+overviewNote: |
+  Create a key in Follow Up Boss under Admin, API. Things to know before you call:
+
+  - **Basic auth, not Bearer.** The API key is the username and the password is empty; the plugin builds the documented `Authorization: Basic` header. Bearer is only for OAuth integrations.
+  - **Lead intake runs through `events.create`.** FUB's docs advise pushing leads via `POST /events`: it creates or matches the person and runs their action plans. `people.create` only writes the contact without routing.
+  - **Identification headers.** Every request carries `X-System` (defaults to `corsair`) and, when you set `systemKey`, `X-System-Key` from your system registration. Registered systems get the higher rate limits (global 250 per 10s instead of 125).
+  - **Rate limits are per 10-second window** per context (events GET 20, notes 10, PUT /people 25, global 250). FUB answers 429 with `Retry-After`; the plugin waits that long and retries up to five times.
+  - **Paging.** Lists take `limit` (max 100) and `offset`; responses carry a `_metadata` block whose `next` keyset cursor FUB enforces for deep pagination.
+  - **Deleting.** Most deletes answer 200 (the plugin returns the echoed resource when FUB sends one). `appointments.delete` and `people.ignoreUnclaimed` answer 204. Deleting an appointment type requires `assignTypeId`: the type its existing appointments move to.
+  - **`people.claim` and `people.ignoreUnclaimed`** work on unclaimed leads only, and a claim of a lead that is no longer unclaimed answers 409.
+  - **Text messages are logged, not sent.** `textMessages.create` records a message on a person; FUB does not send SMS through the API.
+  - **Webhooks.** The plugin manages webhook subscriptions (`/webhooks`) and reads a webhook's delivered events by ID with `webhookEvents.get`; it does not receive webhook deliveries.
+examples:
+  read:
+    path: people.list
+    title: List the newest people
+    args:
+      limit: 10
+  write:
+    path: events.create
+    title: Push a registration lead into FUB routing
+    args:
+      source: Zillow
+      system: corsair
+      type: Registration
+      person:
+        firstName: Jordan
+        lastName: Rivera
+        emails:
+          - value: jordan@acme-logistics.com
+            type: home
+        phones:
+          - value: 888-555-0123
+            type: mobile
+apiExamples:
+  people.list:
+    call: "{ limit: 10, stage: 'Lead' }"
+  people.get:
+    call: "{ id: 123 }"
+  people.create:
+    call: "{ firstName: 'Jordan', lastName: 'Rivera', emails: [{ value: 'jordan@acme-logistics.com', type: 'home' }], tags: ['Zillow'] }"
+  people.update:
+    call: "{ id: 123, stage: 'Working', mergeTags: true, tags: ['Hot'] }"
+  people.delete:
+    call: "{ id: 123 }"
+  people.checkDuplicate:
+    call: "{ email: 'jordan@acme-logistics.com' }"
+  people.unclaimed:
+    call: "{ limit: 25 }"
+  people.claim:
+    call: "{ personId: 123 }"
+  people.ignoreUnclaimed:
+    call: "{ personId: 123 }"
+  personAttachments.create:
+    call: "{ personId: 123, uri: 'https://files.example.com/contract.pdf', fileName: 'contract.pdf' }"
+  personAttachments.get:
+    call: "{ id: 45 }"
+  personAttachments.update:
+    call: "{ id: 45, personId: 123, uri: 'https://files.example.com/contract-v2.pdf', fileName: 'contract-v2.pdf' }"
+  personAttachments.delete:
+    call: "{ id: 45 }"
+  peopleRelationships.list:
+    call: "{ personId: 123 }"
+  peopleRelationships.create:
+    call: "{ personId: 123, firstName: 'Sam', lastName: 'Rivera', type: 'Spouse', emails: [{ value: 'sam@acme-logistics.com' }] }"
+  peopleRelationships.get:
+    call: "{ id: 67 }"
+  peopleRelationships.update:
+    call: "{ id: 67, type: 'Partner' }"
+  peopleRelationships.delete:
+    call: "{ id: 67 }"
+  calls.list:
+    call: "{ personId: 123, limit: 50 }"
+  calls.create:
+    call: "{ personId: 123, phone: '888-555-0123', isIncoming: false, outcome: 'Interested', duration: 320 }"
+  calls.get:
+    call: "{ id: 89 }"
+  calls.update:
+    call: "{ id: 89, note: 'Left a voicemail' }"
+  textMessages.list:
+    call: "{ personId: 123 }"
+  textMessages.create:
+    call: "{ personId: 123, message: 'Tour confirmed for Friday', toNumber: '888-555-0123', fromNumber: '888-555-0199' }"
+  textMessages.get:
+    call: "{ id: 32 }"
+  notes.create:
+    call: "{ personId: 123, subject: 'Tour follow-up', body: 'Sent the listing packet.' }"
+  notes.get:
+    call: "{ id: 21, includeThreadedReplies: true }"
+  notes.update:
+    call: "{ id: 21, body: 'Sent the listing packet and comps.' }"
+  notes.delete:
+    call: "{ id: 21 }"
+  events.list:
+    call: "{ personId: 123, limit: 50 }"
+  events.get:
+    call: "{ id: 1001 }"
+  events.create:
+    call: "{ source: 'Zillow', type: 'Registration', person: { firstName: 'Jordan', lastName: 'Rivera', emails: [{ value: 'jordan@acme-logistics.com' }] } }"
+  tasks.list:
+    call: "{ due: 'today' }"
+  tasks.create:
+    call: "{ personId: 123, name: 'Send listing packet', type: 'Email', dueDate: '2026-05-22' }"
+  tasks.get:
+    call: "{ id: 14 }"
+  tasks.update:
+    call: "{ id: 14, isCompleted: true }"
+  tasks.delete:
+    call: "{ id: 14 }"
+  appointments.list:
+    call: "{ personId: 123, start: '2026-05-21T00:00:00+00:00', end: '2026-05-28T00:00:00+00:00' }"
+  appointments.create:
+    call: "{ title: 'Property tour', start: '2026-05-21T17:00:00+00:00', end: '2026-05-21T17:30:00+00:00', invitees: [{ id: 123, type: 'person' }] }"
+  appointments.get:
+    call: "{ id: 8 }"
+  appointments.update:
+    call: "{ id: 8, start: '2026-05-22T17:00:00+00:00', end: '2026-05-22T17:30:00+00:00' }"
+  appointments.delete:
+    call: "{ id: 8 }"
+  appointmentTypes.list:
+    call: "{}"
+  appointmentTypes.create:
+    call: "{ name: 'Buyer consultation', orderWeight: 1 }"
+  appointmentTypes.get:
+    call: "{ id: 3 }"
+  appointmentTypes.update:
+    call: "{ id: 3, name: 'Buyer consult' }"
+  appointmentTypes.delete:
+    call: "{ id: 3, assignTypeId: 4 }"
+  timeframes.list:
+    call: "{}"
+  smartLists.list:
+    call: "{ limit: 50 }"
+  smartLists.get:
+    call: "{ id: 2 }"
+  account.me:
+    call: "{}"
+  account.identity:
+    call: "{}"
+  deals.list:
+    call: "{ limit: 50 }"
+  deals.get:
+    call: "{ id: 55 }"
+  deals.create:
+    call: "{ name: '812 Oak Street', stageId: 7, price: 520000, description: 'Buyer tour scheduled' }"
+  deals.update:
+    call: "{ id: 55, price: 535000 }"
+  deals.delete:
+    call: "{ id: 55 }"
+  pipelines.list:
+    call: "{}"
+  pipelines.create:
+    call: "{ name: 'Buyer pipeline', stages: [{ name: 'New', closedStage: false }, { name: 'Touring', closedStage: false }, { name: 'Offer', closedStage: true }] }"
+  pipelines.get:
+    call: "{ id: 2 }"
+  pipelines.update:
+    call: "{ id: 2, name: 'Buyer pipeline 2026' }"
+  pipelines.delete:
+    call: "{ id: 2 }"
+  stages.list:
+    call: "{}"
+  stages.create:
+    call: "{ name: 'Touring', orderWeight: 3 }"
+  stages.get:
+    call: "{ id: 7 }"
+  stages.update:
+    call: "{ id: 7, name: 'Active touring' }"
+  stages.delete:
+    call: "{ id: 7, assignStageId: 8 }"
+  dealCustomFields.list:
+    call: "{}"
+  dealCustomFields.create:
+    call: "{ label: 'Closing date', type: 'date' }"
+  dealCustomFields.get:
+    call: "{ id: 9 }"
+  dealCustomFields.update:
+    call: "{ id: 9, label: 'Expected closing date', type: 'date' }"
+  dealCustomFields.delete:
+    call: "{ id: 9 }"
+  dealAttachments.create:
+    call: "{ dealId: 55, uri: 'https://files.example.com/offer.pdf', fileName: 'offer.pdf' }"
+  dealAttachments.get:
+    call: "{ id: 61 }"
+  dealAttachments.update:
+    call: "{ id: 61, dealId: 55, uri: 'https://files.example.com/offer-v2.pdf', fileName: 'offer-v2.pdf' }"
+  dealAttachments.delete:
+    call: "{ id: 61 }"
+  appointmentOutcomes.list:
+    call: "{}"
+  appointmentOutcomes.create:
+    call: "{ name: 'Met at property', orderWeight: 1 }"
+  appointmentOutcomes.get:
+    call: "{ id: 4 }"
+  appointmentOutcomes.update:
+    call: "{ id: 4, name: 'Met at property (completed)' }"
+  appointmentOutcomes.delete:
+    call: "{ id: 4, assignOutcomeId: 5 }"
+  customFields.list:
+    call: "{}"
+  customFields.create:
+    call: "{ label: 'Preferred contact', type: 'text' }"
+  customFields.get:
+    call: "{ id: 12 }"
+  customFields.update:
+    call: "{ id: 12, label: 'Preferred contact method' }"
+  customFields.delete:
+    call: "{ id: 12 }"
+  templates.list:
+    call: "{ limit: 50 }"
+  templates.create:
+    call: "{ name: 'Tour follow-up', subject: 'Great meeting you', body: 'Hi {{first_name}}, ...', isShared: true }"
+  templates.get:
+    call: "{ id: 3 }"
+  templates.update:
+    call: "{ id: 3, name: 'Tour follow-up', subject: 'Great meeting you today', body: 'Hi there' }"
+  templates.delete:
+    call: "{ id: 3 }"
+  templates.merge:
+    call: "{ templateId: 3, mergePersonId: 123 }"
+  textMessageTemplates.list:
+    call: "{ limit: 50 }"
+  textMessageTemplates.create:
+    call: "{ name: 'Tour reminder', message: 'See you at the tour tomorrow!', isShared: true }"
+  textMessageTemplates.get:
+    call: "{ id: 5 }"
+  textMessageTemplates.update:
+    call: "{ id: 5, name: 'Tour reminder', message: 'Reminder: tour tomorrow at 5pm.' }"
+  textMessageTemplates.delete:
+    call: "{ id: 5 }"
+  textMessageTemplates.merge:
+    call: "{ templateId: 5, personId: 123 }"
+  emCampaigns.list:
+    call: "{ limit: 25 }"
+  emCampaigns.create:
+    call: "{ name: 'Spring newsletter', subject: 'New listings this spring', bodyHtml: '<p>Hi {{first_name}}</p>', origin: 'custom' }"
+  emCampaigns.update:
+    call: "{ id: 8, subject: 'New listings this April' }"
+  emEvents.list:
+    call: "{ limit: 50 }"
+  emEvents.create:
+    call: "{ emEvents: [{ type: 'open', email: 'jordan@acme-logistics.com' }] }"
+  users.list:
+    call: "{}"
+  users.get:
+    call: "{ id: 1 }"
+  users.delete:
+    call: "{ id: 14, assignTo: 1 }"
+  teams.list:
+    call: "{}"
+  teams.create:
+    call: "{ name: 'Downtown crew', userIds: [1, 4], leaderIds: [1] }"
+  teams.get:
+    call: "{ id: 3 }"
+  teams.update:
+    call: "{ id: 3, name: 'Downtown team' }"
+  teams.delete:
+    call: "{ id: 3 }"
+  groups.list:
+    call: "{}"
+  groups.create:
+    call: "{ name: 'Round robin intake', users: [1, 4, 6], distribution: 'round-robin' }"
+  groups.get:
+    call: "{ id: 2 }"
+  groups.update:
+    call: "{ id: 2, name: 'Intake group', users: [1, 4, 6] }"
+  groups.delete:
+    call: "{ id: 2 }"
+  groups.roundRobin:
+    call: "{}"
+  ponds.list:
+    call: "{}"
+  ponds.create:
+    call: "{ name: 'Buyer pond', userId: 1, userIds: [1, 4] }"
+  ponds.get:
+    call: "{ id: 6 }"
+  ponds.update:
+    call: "{ id: 6, name: 'Buyer pond 2026' }"
+  ponds.delete:
+    call: "{ id: 6, assignTo: 1 }"
+  rateLimit.limits:
+    call: "{}"
+  rateLimit.usage:
+    call: "{}"
+  automations.list:
+    call: "{}"
+  automations.get:
+    call: "{ id: 10 }"
+  automationsPeople.list:
+    call: "{ automationId: 10 }"
+  automationsPeople.get:
+    call: "{ id: 77 }"
+  automationsPeople.create:
+    call: "{ automationId: 10, personId: 123 }"
+  automationsPeople.update:
+    call: "{ id: 77, isFinished: true }"
+  actionPlans.list:
+    call: "{}"
+  actionPlansPeople.list:
+    call: "{ personId: 123 }"
+  actionPlansPeople.create:
+    call: "{ personId: 123, actionPlanId: 3 }"
+  actionPlansPeople.update:
+    call: "{ id: 41, status: 'Running' }"
+  webhooks.list:
+    call: "{}"
+  webhooks.create:
+    call: "{ event: 'peopleCreated', url: 'https://hooks.example.com/fub' }"
+  webhooks.get:
+    call: "{ id: 18 }"
+  webhooks.update:
+    call: "{ id: 18, url: 'https://hooks.example.com/fub-v2' }"
+  webhooks.delete:
+    call: "{ id: 18 }"
+  webhookEvents.get:
+    call: "{ id: 9001 }"
+  inboxApps.deactivate:
+    call: "{ inboxAppId: 'app_123' }"
+  inboxApps.deleteParticipant:
+    call: "{ inboxAppId: 'app_123', extConversationId: 'conv_88', participantId: 'part_5' }"
+  inboxApps.getParticipants:
+    call: "{ inboxAppId: 'app_123', extConversationId: 'conv_88' }"
+  inboxApps.createParticipant:
+    call: "{ inboxAppId: 'app_123', extConversationId: 'conv_88', body: { name: 'Sam Rivera' } }"
+  inboxApps.addMessage:
+    call: "{ inboxAppId: 'app_123', externalConversationId: 'conv_88', externalMessageId: 'msg_910', message: 'Offer accepted!', isIncoming: false, sender: { name: 'Jordan Rivera' } }"
+  inboxApps.addNote:
+    call: "{ inboxAppId: 'app_123', externalConversationId: 'conv_88', body: 'Client prefers evening calls', user: { name: 'Alex' } }"
+  inboxApps.addSystemConfirmationMessage:
+    call: "{ inboxAppId: 'app_123', externalConversationId: 'conv_88', externalMessageId: 'sys_1', type: 'success', message: 'Conversation synced' }"
+  inboxApps.install:
+    call: "{ publishedInboxAppId: 1, userId: 1, subscriptionUrl: 'https://hooks.example.com/inbox' }"
+  inboxApps.updateConversation:
+    call: "{ inboxAppId: 'app_123', extConversationId: 'conv_88', name: 'Offer negotiation' }"
+  inboxApps.updateMessage:
+    call: "{ inboxAppId: 'app_123', externalMessageId: 'msg_910', deliveryStatus: 'Read' }"
+  inboxApps.installedApp:
+    call: "{ publishedInboxAppId: 'pub_app_1' }"
+  teamInboxes.list:
+    call: "{}"
+  reactions.create:
+    call: "{ refType: 'Note', refId: '21', body: '👍' }"
+  reactions.get:
+    call: "{ id: 31 }"
+  reactions.delete:
+    call: "{ refType: 'Note', refId: '21' }"
+  threadedReplies.get:
+    call: "{ id: 44 }"

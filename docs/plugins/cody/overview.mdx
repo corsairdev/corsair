@@ -1,6 +1,7 @@
 ---
-title: Overview
-description: "Cody plugin for Corsair"
+title: "Cody plugin"
+sidebarTitle: "Overview"
+description: "AI assistant platform. Manage bots, conversations, messages, documents, and folders, and create signed upload URLs."
 ---
 
 Use **Cody** through Corsair: one client, typed API calls, local DB sync.
@@ -17,16 +18,20 @@ Use **Cody** through Corsair: one client, typed API calls, local DB sync.
 <Step title="Install">
 <CodeGroup>
 ```bash npm
-npm install corsair @corsair-dev/cody
+npm install corsair @corsair-dev/cody better-sqlite3
+npm install --save-dev @types/better-sqlite3
 ```
 ```bash yarn
-yarn add corsair @corsair-dev/cody
+yarn add corsair @corsair-dev/cody better-sqlite3
+yarn add --dev @types/better-sqlite3
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/cody
+pnpm install corsair @corsair-dev/cody better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
 ```
 ```bash bun
-bun add corsair @corsair-dev/cody
+bun add corsair @corsair-dev/cody better-sqlite3
+bun add --dev @types/better-sqlite3
 ```
 </CodeGroup>
 
@@ -44,6 +49,7 @@ export const corsair = createCorsair({
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
 	hub: {
 		projectApiKey: process.env.CORSAIR_API_KEY!,
 		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
@@ -51,7 +57,7 @@ export const corsair = createCorsair({
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
@@ -59,7 +65,7 @@ Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See 
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+Store the Cody API key before the first call: `pnpm corsair setup --plugin=cody --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
 
 ```ts
 cody()
@@ -89,7 +95,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`bots.list`**
+**List bots**
 
 ```ts
 const tenant = corsair.withTenant('acme');
@@ -97,11 +103,11 @@ await tenant.cody.api.bots.list({});
 ```
 
 
-**`conversations.create`**
+**Send a message**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.cody.api.conversations.create({});
+await tenant.cody.api.messages.send({ conversation_id: 'conv_0123456789', content: 'What can you help me with?' });
 ```
 
 
@@ -109,9 +115,17 @@ See the full list on the [API](/plugins/cody/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.cody.db.<entity>.search()` and `.list()`: `bots`, `conversations`, `documents`, `folders`, `messages`, `usage`.
+This table exists, but Cody calls don't fill it yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/cody/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.cody.db.bots.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `bots`, `conversations`, `documents`, `folders`, `messages`, `usage`. See [Database](/plugins/cody/database) for filters and operators.
 
 ## What's next
 

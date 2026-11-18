@@ -4,6 +4,7 @@ import { cache } from 'react';
 import { db } from '@/db';
 import type { IntegrationDetailData } from '@/lib/integration-page.types';
 import type { IntegrationCatalogEntry } from '@/lib/integrations-catalog.types';
+import { nullIfNotFound } from '@/server/api/null-if-not-found';
 import { appRouter } from '@/server/api/root';
 
 export const CATALOG_INTEGRATIONS_CACHE_TAG = 'catalog-integrations';
@@ -40,7 +41,8 @@ function getCachedCatalogIntegrationIds() {
 
 function getCachedCatalogIntegrationById(id: string) {
 	return unstable_cache(
-		async () => createPublicCaller().catalogIntegrations.getById({ id }),
+		async () =>
+			nullIfNotFound(createPublicCaller().catalogIntegrations.getById({ id })),
 		['catalog-integration-detail', id],
 		{
 			revalidate: 60,

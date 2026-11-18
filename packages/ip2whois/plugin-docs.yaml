@@ -1,0 +1,23 @@
+displayName: IP2WHOIS
+description: Look up WHOIS registration for a domain, and list the domains hosted on an IP address.
+domain: ip2whois.com
+recommendedAuth: api_key
+overviewNote: |
+  Each lookup counts against the plan's monthly quota (the IP2Location.io free plan includes 500 WHOIS lookups a month). Keys come from ip2location.io. The client always sends format=json. An empty key comes back as HTTP 401 with error code 10001.
+examples:
+  read:
+    path: domain.lookup
+    title: Look up WHOIS for a domain
+    args:
+      domain: example.com
+apiNotes:
+  domain.lookup: |
+    Pass the registrable domain, without a scheme or www. The response includes the registrar and the registrant, admin, tech and billing contacts as the registry publishes them (often redacted). Only the registration fields are saved to the `domains` table, not the contacts.
+  hosted.lookup: |
+    Pass an IPv4 or IPv6 address. `domains` is a list of domain names. Page size depends on the plan: 1 domain per page on the free plan, up to 100 on Security. Page starts at 1.
+apiExamples:
+  domain.lookup:
+    domain: example.com
+  hosted.lookup:
+    ip: "8.8.8.8"
+    page: 1

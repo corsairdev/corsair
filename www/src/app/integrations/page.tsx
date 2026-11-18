@@ -6,14 +6,14 @@ import { getCatalogIntegrationsList } from '@/server/catalog-integration-cache';
 export const metadata: Metadata = {
 	title: 'Integrations',
 	description:
-		'Browse 250+ typed Corsair integrations for AI agents — OAuth, webhooks, MCP, and local DB sync for Gmail, Slack, GitHub, Notion, and more.',
+		'Browse 700+ typed Corsair integrations for AI agents — OAuth, webhooks, MCP, and local DB sync for Gmail, Slack, GitHub, Notion, and more.',
 	alternates: {
 		canonical: '/integrations',
 	},
 	openGraph: {
 		title: 'Corsair Integrations — Plug every app into your agents',
 		description:
-			'Browse 250+ typed Corsair integrations for AI agents — OAuth, webhooks, MCP, and local DB sync.',
+			'Browse 700+ typed Corsair integrations for AI agents — OAuth, webhooks, MCP, and local DB sync.',
 		url: 'https://corsair.dev/integrations',
 	},
 };
@@ -23,6 +23,9 @@ export default async function IntegrationsPage() {
 
 	return (
 		<main>
+			<h1 className="sr-only">
+				Corsair integrations and MCP servers for AI agents
+			</h1>
 			<IntegrationsGrid integrations={integrations} />
 		</main>
 	);

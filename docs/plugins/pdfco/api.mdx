@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Pdfco: every `pdfco.api.*` operation with input and output types."
+title: "PDF.co API reference"
+sidebarTitle: "API"
+description: "API reference for the PDF.co plugin in Corsair: every `pdfco.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `pdfco.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -67,17 +66,7 @@ await corsair.pdfco.api.barcodeGenerate({});
 | `decorationImage` | `string` | No | Logo image URL embedded inside QR-Code barcodes |
 | `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
 | `expiration` | `number` | No | Output link lifetime in minutes |
-| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
-
-<AccordionGroup>
-<Accordion title="profiles full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `profiles` | `string \| Record<string, JsonValue>` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
 
 
 
@@ -128,17 +117,7 @@ await corsair.pdfco.api.documentParser({});
 | `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
 | `name` | `string` | No | Output file name |
 | `expiration` | `number` | No | Output link lifetime in minutes |
-| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
-
-<AccordionGroup>
-<Accordion title="profiles full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `profiles` | `string \| Record<string, JsonValue>` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
 
 
 
@@ -163,8 +142,7 @@ string | {
 
 ```ts
 {
-  objects?: {
-  }[],
+  objects?: Record<string, JsonValue>[],
   elapsed?: number,
   templateName?: string,
   templateVersion?: string,
@@ -202,17 +180,7 @@ await corsair.pdfco.api.excelToCsv({});
 | `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
 | `name` | `string` | No | Output file name |
 | `expiration` | `number` | No | Output link lifetime in minutes |
-| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
-
-<AccordionGroup>
-<Accordion title="profiles full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `profiles` | `string \| Record<string, JsonValue>` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
 
 
 
@@ -260,17 +228,7 @@ await corsair.pdfco.api.excelToHtml({});
 | `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
 | `name` | `string` | No | Output file name |
 | `expiration` | `number` | No | Output link lifetime in minutes |
-| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
-
-<AccordionGroup>
-<Accordion title="profiles full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `profiles` | `string \| Record<string, JsonValue>` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
 
 
 
@@ -318,17 +276,7 @@ await corsair.pdfco.api.excelToJson({});
 | `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
 | `name` | `string` | No | Output file name |
 | `expiration` | `number` | No | Output link lifetime in minutes |
-| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
-
-<AccordionGroup>
-<Accordion title="profiles full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `profiles` | `string \| Record<string, JsonValue>` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
 
 
 
@@ -376,17 +324,7 @@ await corsair.pdfco.api.excelToText({});
 | `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
 | `name` | `string` | No | Output file name |
 | `expiration` | `number` | No | Output link lifetime in minutes |
-| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
-
-<AccordionGroup>
-<Accordion title="profiles full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `profiles` | `string \| Record<string, JsonValue>` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
 
 
 
@@ -434,17 +372,7 @@ await corsair.pdfco.api.excelToXml({});
 | `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
 | `name` | `string` | No | Output file name |
 | `expiration` | `number` | No | Output link lifetime in minutes |
-| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
-
-<AccordionGroup>
-<Accordion title="profiles full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `profiles` | `string \| Record<string, JsonValue>` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
 
 
 
@@ -625,7 +553,7 @@ await corsair.pdfco.api.pdfAdd({});
 | `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
 | `name` | `string` | No | Output file name |
 | `expiration` | `number` | No | Output link lifetime in minutes |
-| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
+| `profiles` | `string \| Record<string, JsonValue>` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
 
 <AccordionGroup>
 <Accordion title="annotations full type">
@@ -672,14 +600,6 @@ await corsair.pdfco.api.pdfAdd({});
   text: string,
   pages?: string
 }[]
-```
-</Accordion>
-
-<Accordion title="profiles full type">
-
-```ts
-string | {
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -730,17 +650,7 @@ await corsair.pdfco.api.pdfChangeTextSearchable({});
 | `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
 | `name` | `string` | No | Output file name |
 | `expiration` | `number` | No | Output link lifetime in minutes |
-| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
-
-<AccordionGroup>
-<Accordion title="profiles full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `profiles` | `string \| Record<string, JsonValue>` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
 
 
 
@@ -787,17 +697,7 @@ await corsair.pdfco.api.pdfDeletePages({});
 | `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
 | `name` | `string` | No | Output file name |
 | `expiration` | `number` | No | Output link lifetime in minutes |
-| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
-
-<AccordionGroup>
-<Accordion title="profiles full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `profiles` | `string \| Record<string, JsonValue>` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
 
 
 
@@ -844,17 +744,7 @@ await corsair.pdfco.api.pdfExtractAttachments({});
 | `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
 | `name` | `string` | No | Output file name |
 | `expiration` | `number` | No | Output link lifetime in minutes |
-| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
-
-<AccordionGroup>
-<Accordion title="profiles full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `profiles` | `string \| Record<string, JsonValue>` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
 
 
 
@@ -901,17 +791,7 @@ await corsair.pdfco.api.pdfFind({});
 | `regexSearch` | `boolean` | No | Treat searchString as regex |
 | `password` | `string` | No | PDF password if protected |
 | `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
-| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
-
-<AccordionGroup>
-<Accordion title="profiles full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `profiles` | `string \| Record<string, JsonValue>` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
 
 
 
@@ -970,17 +850,7 @@ await corsair.pdfco.api.pdfFormsInfoReader({});
 | `url` | `string` | Yes | Public URL of the source PDF |
 | `password` | `string` | No | PDF password if protected |
 | `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
-| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
-
-<AccordionGroup>
-<Accordion title="profiles full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `profiles` | `string \| Record<string, JsonValue>` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
 
 
 
@@ -1065,17 +935,7 @@ await corsair.pdfco.api.pdfFromEmail({});
 | `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
 | `name` | `string` | No | Output file name |
 | `expiration` | `number` | No | Output link lifetime in minutes |
-| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
-
-<AccordionGroup>
-<Accordion title="profiles full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `profiles` | `string \| Record<string, JsonValue>` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
 
 
 
@@ -1126,17 +986,7 @@ await corsair.pdfco.api.pdfFromHtml({});
 | `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
 | `name` | `string` | No | Output file name |
 | `expiration` | `number` | No | Output link lifetime in minutes |
-| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
-
-<AccordionGroup>
-<Accordion title="profiles full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `profiles` | `string \| Record<string, JsonValue>` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
 
 
 
@@ -1183,17 +1033,7 @@ await corsair.pdfco.api.pdfFromText({});
 | `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
 | `name` | `string` | No | Output file name |
 | `expiration` | `number` | No | Output link lifetime in minutes |
-| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
-
-<AccordionGroup>
-<Accordion title="profiles full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `profiles` | `string \| Record<string, JsonValue>` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
 
 
 
@@ -1237,17 +1077,7 @@ await corsair.pdfco.api.pdfInfoReader({});
 | `url` | `string` | Yes | Public URL of the source PDF |
 | `password` | `string` | No | PDF password if protected |
 | `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
-| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
-
-<AccordionGroup>
-<Accordion title="profiles full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `profiles` | `string \| Record<string, JsonValue>` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
 
 
 
@@ -1310,17 +1140,7 @@ await corsair.pdfco.api.pdfMerge({});
 | `name` | `string` | No | Output file name |
 | `expiration` | `number` | No | Output link lifetime in minutes |
 | `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
-| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
-
-<AccordionGroup>
-<Accordion title="profiles full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `profiles` | `string \| Record<string, JsonValue>` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
 
 
 
@@ -1367,17 +1187,7 @@ await corsair.pdfco.api.pdfRotate({});
 | `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
 | `name` | `string` | No | Output file name |
 | `expiration` | `number` | No | Output link lifetime in minutes |
-| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
-
-<AccordionGroup>
-<Accordion title="profiles full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `profiles` | `string \| Record<string, JsonValue>` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
 
 
 
@@ -1430,17 +1240,7 @@ await corsair.pdfco.api.pdfSearchAndDeleteText({});
 | `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
 | `name` | `string` | No | Output file name |
 | `expiration` | `number` | No | Output link lifetime in minutes |
-| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
-
-<AccordionGroup>
-<Accordion title="profiles full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `profiles` | `string \| Record<string, JsonValue>` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
 
 
 
@@ -1494,17 +1294,7 @@ await corsair.pdfco.api.pdfSearchAndReplaceText({});
 | `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
 | `name` | `string` | No | Output file name |
 | `expiration` | `number` | No | Output link lifetime in minutes |
-| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
-
-<AccordionGroup>
-<Accordion title="profiles full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `profiles` | `string \| Record<string, JsonValue>` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
 
 
 
@@ -1551,17 +1341,7 @@ await corsair.pdfco.api.pdfSplit({});
 | `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
 | `name` | `string` | No | Output file name |
 | `expiration` | `number` | No | Output link lifetime in minutes |
-| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
-
-<AccordionGroup>
-<Accordion title="profiles full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `profiles` | `string \| Record<string, JsonValue>` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
 
 
 
@@ -1609,17 +1389,7 @@ await corsair.pdfco.api.pdfToCsv({});
 | `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
 | `name` | `string` | No | Output file name |
 | `expiration` | `number` | No | Output link lifetime in minutes |
-| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
-
-<AccordionGroup>
-<Accordion title="profiles full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `profiles` | `string \| Record<string, JsonValue>` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
 
 
 
@@ -1668,17 +1438,7 @@ await corsair.pdfco.api.pdfToHtml({});
 | `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
 | `name` | `string` | No | Output file name |
 | `expiration` | `number` | No | Output link lifetime in minutes |
-| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
-
-<AccordionGroup>
-<Accordion title="profiles full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `profiles` | `string \| Record<string, JsonValue>` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
 
 
 
@@ -1727,17 +1487,7 @@ await corsair.pdfco.api.pdfToImage({});
 | `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
 | `name` | `string` | No | Output file name |
 | `expiration` | `number` | No | Output link lifetime in minutes |
-| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
-
-<AccordionGroup>
-<Accordion title="profiles full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `profiles` | `string \| Record<string, JsonValue>` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
 
 
 
@@ -1785,17 +1535,7 @@ await corsair.pdfco.api.pdfToJson({});
 | `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
 | `name` | `string` | No | Output file name |
 | `expiration` | `number` | No | Output link lifetime in minutes |
-| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
-
-<AccordionGroup>
-<Accordion title="profiles full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `profiles` | `string \| Record<string, JsonValue>` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
 
 
 
@@ -1844,17 +1584,7 @@ await corsair.pdfco.api.pdfToText({});
 | `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
 | `name` | `string` | No | Output file name |
 | `expiration` | `number` | No | Output link lifetime in minutes |
-| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
-
-<AccordionGroup>
-<Accordion title="profiles full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `profiles` | `string \| Record<string, JsonValue>` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
 
 
 
@@ -1902,17 +1632,7 @@ await corsair.pdfco.api.pdfToXls({});
 | `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
 | `name` | `string` | No | Output file name |
 | `expiration` | `number` | No | Output link lifetime in minutes |
-| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
-
-<AccordionGroup>
-<Accordion title="profiles full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `profiles` | `string \| Record<string, JsonValue>` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
 
 
 
@@ -1959,17 +1679,7 @@ await corsair.pdfco.api.pdfToXlsx({});
 | `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
 | `name` | `string` | No | Output file name |
 | `expiration` | `number` | No | Output link lifetime in minutes |
-| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
-
-<AccordionGroup>
-<Accordion title="profiles full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `profiles` | `string \| Record<string, JsonValue>` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
 
 
 
@@ -2017,17 +1727,7 @@ await corsair.pdfco.api.pdfToXml({});
 | `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
 | `name` | `string` | No | Output file name |
 | `expiration` | `number` | No | Output link lifetime in minutes |
-| `profiles` | `object` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
-
-<AccordionGroup>
-<Accordion title="profiles full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `profiles` | `string \| Record<string, JsonValue>` | No | Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles |
 
 
 

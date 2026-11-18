@@ -84,7 +84,11 @@ export function IntegrationLogo({
 				alt=""
 				width={size}
 				height={size}
-				className="h-full w-full object-contain p-1.5"
+				className={cn(
+					'h-full w-full object-contain',
+					// 6px of padding leaves a 20px icon only 8px of image.
+					size < 32 ? 'p-0.5' : 'p-1.5',
+				)}
 				onError={() => setFailed(true)}
 				unoptimized
 			/>

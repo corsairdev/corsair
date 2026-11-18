@@ -50,6 +50,8 @@ export function normalizeHubConfig(input: HubConfigInput): HubConfig {
 		// Carry `undefined` (not `false`): a `ck_dev_` key tunnels by default, so
 		// only an explicit `tunnel: false` should opt out.
 		tunnel: input.tunnel,
+		runtimeProofKey: input.runtimeProofKey?.trim() || undefined,
+		multiAccount: input.multiAccount === true,
 	};
 }
 

@@ -1,0 +1,1255 @@
+{
+  "id": "ritekit",
+  "displayName": "RiteKit",
+  "description": "Hashtag stats and suggestions, emoji, quote images, link shortening, person and company insights, and article extraction with RiteKit.",
+  "npmPackageName": "@corsair-dev/ritekit",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 23,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "ritekit.api.companies.brandColors",
+      "shortPath": "companies.brandColors",
+      "description": "Return a company's brand colors from its domain or name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "A company name or a domain."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True on success. A refusal is a non-2xx status, not a false here."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null",
+            "description": "Repeats the HTTP status when present."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "The site's brand colors, most prominent first."
+          }
+        ]
+      }
+    },
+    {
+      "path": "ritekit.api.companies.logo",
+      "shortPath": "companies.logo",
+      "description": "Return a company's logo from its domain, with square and original variants, brand colors and a stable URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "The company site, such as evernote.com."
+          },
+          {
+            "key": "generateFallbackLogo",
+            "optional": true,
+            "type": "boolean",
+            "description": "Generate a logo from the site's brand colors when no logo is found."
+          },
+          {
+            "key": "squareLogoSize",
+            "optional": true,
+            "type": "number",
+            "description": "Pixels, 1 to 512."
+          },
+          {
+            "key": "squareLogoBackground",
+            "optional": true,
+            "type": "remove | original | add",
+            "description": "remove makes it transparent, add makes it solid."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True on success. A refusal is a non-2xx status, not a false here."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null",
+            "description": "Repeats the HTTP status when present."
+          },
+          {
+            "key": "isGenerated",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True when no logo was found and one was generated."
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null",
+            "description": "The logo itself."
+          },
+          {
+            "key": "permanentUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "A stable URL that serves the image directly. Each view costs a credit."
+          },
+          {
+            "key": "originalLogo",
+            "optional": true,
+            "type": "{ url?: { svg?: string | null, png?: string | null } | null, permanentUrl?: { svg?: string | null, png?: string | null } | null } | null"
+          },
+          {
+            "key": "squareLogo",
+            "optional": true,
+            "type": "{ size?: number | null, background?: string | null, url?: { svg?: string | null, png?: string | null } | null, permanentUrl?: { svg?: string | null, png?: string | null } | null } | null"
+          },
+          {
+            "key": "brandColors",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ritekit.api.companies.nameToDomain",
+      "shortPath": "companies.nameToDomain",
+      "description": "Return the most probable domains for a company name, best first",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "A company name or a domain."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True on success. A refusal is a non-2xx status, not a false here."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null",
+            "description": "Repeats the HTTP status when present."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "The name as RiteKit read it."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "The most probable domains, best first."
+          }
+        ]
+      }
+    },
+    {
+      "path": "ritekit.api.emojis.auto",
+      "shortPath": "emojis.auto",
+      "description": "Return a block of text with emoji added",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string",
+            "description": "A short block of text to emoji-ify."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True on success. A refusal is a non-2xx status, not a false here."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null",
+            "description": "Repeats the HTTP status when present."
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string | null",
+            "description": "The text with emoji added."
+          }
+        ]
+      }
+    },
+    {
+      "path": "ritekit.api.emojis.suggestions",
+      "shortPath": "emojis.suggestions",
+      "description": "Suggest emoji for a short block of text",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string",
+            "description": "A short block of text to emoji-ify."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True on success. A refusal is a non-2xx status, not a false here."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null",
+            "description": "Repeats the HTTP status when present."
+          },
+          {
+            "key": "emojis",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Suggested emoji characters."
+          }
+        ]
+      }
+    },
+    {
+      "path": "ritekit.api.hashtags.auto",
+      "shortPath": "hashtags.auto",
+      "description": "Return a post with hashtags added, either inside the sentence or appended",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "post",
+            "optional": false,
+            "type": "string",
+            "description": "The post to add hashtags to."
+          },
+          {
+            "key": "maxHashtags",
+            "optional": true,
+            "type": "number",
+            "description": "How many to add. Defaults to RiteKit's own choice."
+          },
+          {
+            "key": "hashtagPosition",
+            "optional": true,
+            "type": "auto | end",
+            "description": "auto places them in the sentence, end appends them."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True on success. A refusal is a non-2xx status, not a false here."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null",
+            "description": "Repeats the HTTP status when present."
+          },
+          {
+            "key": "post",
+            "optional": true,
+            "type": "string | null",
+            "description": "The post with hashtags added."
+          }
+        ]
+      }
+    },
+    {
+      "path": "ritekit.api.hashtags.cleanInstagram",
+      "shortPath": "hashtags.cleanInstagram",
+      "description": "Remove the hashtags Instagram has banned from a post and report which were dropped",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "post",
+            "optional": false,
+            "type": "string",
+            "description": "A post whose hashtags should be checked."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True on success. A refusal is a non-2xx status, not a false here."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null",
+            "description": "Repeats the HTTP status when present."
+          },
+          {
+            "key": "post",
+            "optional": true,
+            "type": "string | null",
+            "description": "The same post with the banned hashtags removed."
+          },
+          {
+            "key": "bannedHashtags",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "The hashtags that were removed, each with its leading #."
+          }
+        ]
+      }
+    },
+    {
+      "path": "ritekit.api.hashtags.forImage",
+      "shortPath": "hashtags.forImage",
+      "description": "Suggest hashtags for an image, from its content and its engagement",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "image",
+            "optional": false,
+            "type": "string",
+            "description": "A publicly reachable image URL."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True on success. A refusal is a non-2xx status, not a false here."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null",
+            "description": "Repeats the HTTP status when present."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ hashtag?: string | null, tag?: string | null, tweets?: number | null, exposure?: number | null, retweets?: number | null, images?: number | null, links?: number | null, mentions?: number | null, mediaCount?: number | null, color?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ritekit.api.hashtags.forUrl",
+      "shortPath": "hashtags.forUrl",
+      "description": "Suggest hashtags for the content of a URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The page to read hashtags from."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True on success. A refusal is a non-2xx status, not a false here."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null",
+            "description": "Repeats the HTTP status when present."
+          },
+          {
+            "key": "hashtags",
+            "optional": true,
+            "type": "{ hashtag?: string | null, tag?: string | null, tweets?: number | null, exposure?: number | null, retweets?: number | null, images?: number | null, links?: number | null, mentions?: number | null, mediaCount?: number | null, color?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ritekit.api.hashtags.stats",
+      "shortPath": "hashtags.stats",
+      "description": "Read real-time stats for up to 100 hashtags: tweets per hour, exposure, retweets and the share carrying images, links and mentions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "string[]",
+            "description": "Up to 100 hashtags, with or without the leading #."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True on success. A refusal is a non-2xx status, not a false here."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null",
+            "description": "Repeats the HTTP status when present."
+          },
+          {
+            "key": "hashtags",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "The tags as RiteKit read them."
+          },
+          {
+            "key": "stats",
+            "optional": true,
+            "type": "{ hashtag?: string | null, tag?: string | null, tweets?: number | null, exposure?: number | null, retweets?: number | null, images?: number | null, links?: number | null, mentions?: number | null, mediaCount?: number | null, color?: number | null }[] | null"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "The labels for a stats entry's `color`: unused, overused, good, great."
+          }
+        ]
+      }
+    },
+    {
+      "path": "ritekit.api.hashtags.suggestions",
+      "shortPath": "hashtags.suggestions",
+      "description": "Suggest hashtags for a single word or a short block of text, ranked by semantic relevance and real-time popularity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string",
+            "description": "A single word or a short block of text."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True on success. A refusal is a non-2xx status, not a false here."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null",
+            "description": "Repeats the HTTP status when present."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ hashtag?: string | null, tag?: string | null, tweets?: number | null, exposure?: number | null, retweets?: number | null, images?: number | null, links?: number | null, mentions?: number | null, mediaCount?: number | null, color?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ritekit.api.hashtags.trending",
+      "shortPath": "hashtags.trending",
+      "description": "List hashtags currently trending, optionally only the ones worth using and only Latin-alphabet tags",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "green",
+            "optional": true,
+            "type": "boolean",
+            "description": "Only hashtags in the \"good\" or \"great\" color band."
+          },
+          {
+            "key": "latin",
+            "optional": true,
+            "type": "boolean",
+            "description": "Only hashtags in the Latin alphabet."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True on success. A refusal is a non-2xx status, not a false here."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null",
+            "description": "Repeats the HTTP status when present."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ tag?: string | null, tweets?: number | null, retweets?: number | null, exposure?: number | null, links?: number | null, photos?: number | null, mentions?: number | null, color?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ritekit.api.images.animate",
+      "shortPath": "images.animate",
+      "description": "Turn a still image into an animated GIF, returned as a data URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The still image to animate."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "glint",
+            "description": "The animation style. glint is the only one documented."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The image as a data URL (data:<type>;base64,...)."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "Such as image/png or image/gif."
+          },
+          {
+            "key": "bytes",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the image in bytes."
+          }
+        ]
+      }
+    },
+    {
+      "path": "ritekit.api.images.extractTopImage",
+      "shortPath": "images.extractTopImage",
+      "description": "Return a page's lead image URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The page to read the lead image from."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True on success. A refusal is a non-2xx status, not a false here."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null",
+            "description": "Repeats the HTTP status when present."
+          },
+          {
+            "key": "top_image",
+            "optional": true,
+            "type": "string | null",
+            "description": "The page's lead image. Named in snake_case by RiteKit."
+          }
+        ]
+      }
+    },
+    {
+      "path": "ritekit.api.images.quote",
+      "shortPath": "images.quote",
+      "description": "Render a quote as a PNG with chosen fonts, colors, gradient and an optional logo, returned as a data URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string",
+            "description": "The quote."
+          },
+          {
+            "key": "author",
+            "optional": false,
+            "type": "string",
+            "description": "Who said it."
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number",
+            "description": "Pixels, such as 400."
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number",
+            "description": "Pixels, such as 400."
+          },
+          {
+            "key": "textFont",
+            "optional": true,
+            "type": "string",
+            "description": "A font name, such as Lora."
+          },
+          {
+            "key": "textColor",
+            "optional": true,
+            "type": "string",
+            "description": "A CSS color, such as #000000 or transparent. The # is percent-encoded for you."
+          },
+          {
+            "key": "textFontWeight",
+            "optional": true,
+            "type": "number",
+            "description": "Such as 400 or 700."
+          },
+          {
+            "key": "authorFont",
+            "optional": true,
+            "type": "string",
+            "description": "A font name, such as Lato."
+          },
+          {
+            "key": "authorColor",
+            "optional": true,
+            "type": "string",
+            "description": "A CSS color, such as #000000 or transparent. The # is percent-encoded for you."
+          },
+          {
+            "key": "authorFontWeight",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "highlightEnabled",
+            "optional": true,
+            "type": "boolean",
+            "description": "Highlights part of the quote."
+          },
+          {
+            "key": "highlightColor",
+            "optional": true,
+            "type": "string",
+            "description": "transparent leaves the text unhighlighted."
+          },
+          {
+            "key": "backgroundColor1",
+            "optional": true,
+            "type": "string",
+            "description": "The gradient's first stop."
+          },
+          {
+            "key": "backgroundColor2",
+            "optional": true,
+            "type": "string",
+            "description": "The gradient's second stop."
+          },
+          {
+            "key": "logoUrl",
+            "optional": true,
+            "type": "string",
+            "description": "An image drawn onto the quote, such as a brand logo."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The image as a data URL (data:<type>;base64,...)."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "Such as image/png or image/gif."
+          },
+          {
+            "key": "bytes",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the image in bytes."
+          }
+        ]
+      }
+    },
+    {
+      "path": "ritekit.api.links.listCtas",
+      "shortPath": "links.listCtas",
+      "description": "List the Link Ads on the account, whose ids links.shorten takes as its cta",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "list",
+            "optional": true,
+            "type": "{ id?: string | number | null, name?: string | null, code?: string | null, default?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ritekit.api.links.shorten",
+      "shortPath": "links.shorten",
+      "description": "Create a rite.ly short link carrying a Link Ad from links.listCtas, and report the plan balance",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The URL to shorten."
+          },
+          {
+            "key": "cta",
+            "optional": false,
+            "type": "string | number",
+            "description": "The Link Ad to attach: an id from links.listCtas, such as bit.ly for none. RiteKit answers 500 without one."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null",
+            "description": "The short link."
+          },
+          {
+            "key": "original",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "service",
+            "optional": true,
+            "type": "string | null",
+            "description": "rite.ly."
+          },
+          {
+            "key": "ctaId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "{ remaining?: number | null } | null",
+            "description": "Short links left on the plan."
+          }
+        ]
+      }
+    },
+    {
+      "path": "ritekit.api.person.disposable",
+      "shortPath": "person.disposable",
+      "description": "Report whether an address belongs to a disposable email service",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True on success. A refusal is a non-2xx status, not a false here."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null",
+            "description": "Repeats the HTTP status when present."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null",
+            "description": "The address as RiteKit read it."
+          },
+          {
+            "key": "disposable",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ritekit.api.person.emailTypo",
+      "shortPath": "person.emailTypo",
+      "description": "Suggest likely corrections for an address whose domain looks mistyped",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True on success. A refusal is a non-2xx status, not a false here."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null",
+            "description": "Repeats the HTTP status when present."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null",
+            "description": "The address as RiteKit read it."
+          },
+          {
+            "key": "suggestions",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Likely corrections, most probable first."
+          }
+        ]
+      }
+    },
+    {
+      "path": "ritekit.api.person.freemail",
+      "shortPath": "person.freemail",
+      "description": "Report whether an address is on a consumer email provider rather than a company domain",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "An email address or a domain; the sample passes a full address under this name."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True on success. A refusal is a non-2xx status, not a false here."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null",
+            "description": "Repeats the HTTP status when present."
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "freemail",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True for a consumer provider such as gmail.com."
+          }
+        ]
+      }
+    },
+    {
+      "path": "ritekit.api.person.nameFromEmail",
+      "shortPath": "person.nameFromEmail",
+      "description": "Derive a person's given name and surname from their address",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True on success. A refusal is a non-2xx status, not a false here."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null",
+            "description": "Repeats the HTTP status when present."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null",
+            "description": "The address as RiteKit read it."
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | { givenName?: string | null, surname?: string | null } | null",
+            "description": "The derived name: a string such as \"John Doe\" in live answers."
+          }
+        ]
+      }
+    },
+    {
+      "path": "ritekit.api.texts.extractArticle",
+      "shortPath": "texts.extractArticle",
+      "description": "Extract an article's title and body from a URL, dropping headers, footers and columns",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The article to read."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string | null",
+            "description": "The article body, without headers, footers or columns."
+          }
+        ]
+      }
+    },
+    {
+      "path": "ritekit.api.texts.linkPreview",
+      "shortPath": "texts.linkPreview",
+      "description": "Return the title, description and image for a URL preview",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The page to preview."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "image",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

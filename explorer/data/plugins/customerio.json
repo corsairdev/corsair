@@ -1,7 +1,7 @@
 {
   "id": "customerio",
   "displayName": "Customer.io",
-  "description": "Customer.io plugin for Corsair",
+  "description": "Customer engagement platform for sending targeted email, SMS, and push messages, with endpoints for profiles, segments, broadcasts, transactional messages, newsletters, collections, snippets, and CDP tracking.",
   "npmPackageName": "@corsair-dev/customerio",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -70,7 +70,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "created",
@@ -111,7 +111,7 @@
           {
             "key": "triggers",
             "optional": false,
-            "type": "{ id: number, broadcast_id?: number, campaign_id?: number, state?: string, data?: lazy, created?: number | string, created_at?: number | string, processed_at?: number | string }[]"
+            "type": "{ id: number, broadcast_id?: number, campaign_id?: number, state?: string, data?: Record<string, JsonValue>, created?: number | string, created_at?: number | string, processed_at?: number | string }[]"
           },
           {
             "key": "next",
@@ -137,12 +137,12 @@
           {
             "key": "data",
             "optional": true,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "recipients",
             "optional": true,
-            "type": "lazy"
+            "type": "{ ids?: string[], emails?: string[], segment?: { id: number }, attribute?: { field: string, operator: eq | exists, value?: string | number | boolean }, and?: (recursive)[], or?: (recursive)[], not?: (recursive) }"
           },
           {
             "key": "ids",
@@ -157,7 +157,7 @@
           {
             "key": "per_user_data",
             "optional": true,
-            "type": "{ id?: string, email?: string, data?: lazy }[]"
+            "type": "{ id?: string, email?: string, data?: Record<string, JsonValue> }[]"
           },
           {
             "key": "data_file_url",
@@ -218,12 +218,12 @@
           {
             "key": "batch",
             "optional": false,
-            "type": "({ type: identify, userId?: string, anonymousId?: string, traits?: lazy, context?: lazy, timestamp?: string } | { type: track, userId?: string, anonymousId?: string, event: string, properties?: lazy, context?: lazy, timestamp?: string } | { type: page, userId?: string, anonymousId?: string, name?: string, properties?: lazy, context?: lazy, timestamp?: string } | { type: screen, userId?: string, anonymousId?: string, name: string, properties?: lazy, context?: lazy, timestamp?: string } | { type: group, userId?: string, anonymousId?: string, groupId: string, traits?: lazy, context?: lazy, timestamp?: string } | { type: alias, userId: string, previousId: string, context?: lazy, timestamp?: string })[]"
+            "type": "({ type: identify, userId?: string, anonymousId?: string, traits?: Record<string, JsonValue>, context?: Record<string, JsonValue>, timestamp?: string } | { type: track, userId?: string, anonymousId?: string, event: string, properties?: Record<string, JsonValue>, context?: Record<string, JsonValue>, timestamp?: string } | { type: page, userId?: string, anonymousId?: string, name?: string, properties?: Record<string, JsonValue>, context?: Record<string, JsonValue>, timestamp?: string } | { type: screen, userId?: string, anonymousId?: string, name: string, properties?: Record<string, JsonValue>, context?: Record<string, JsonValue>, timestamp?: string } | { type: group, userId?: string, anonymousId?: string, groupId: string, traits?: Record<string, JsonValue>, context?: Record<string, JsonValue>, timestamp?: string } | { type: alias, userId: string, previousId: string, context?: Record<string, JsonValue>, timestamp?: string })[]"
           },
           {
             "key": "context",
             "optional": true,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -258,12 +258,12 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "context",
             "optional": true,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "timestamp",
@@ -303,12 +303,12 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "context",
             "optional": true,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "timestamp",
@@ -336,8 +336,8 @@
         "fields": [
           {
             "key": "collections",
-            "optional": true,
-            "type": "{ id?: string, name?: string, schema?: lazy, rows?: number, bytes?: number, created?: number | string }[]"
+            "optional": false,
+            "type": "{ id?: string, name?: string, schema?: Record<string, JsonValue>, rows?: number, bytes?: number, created?: number | string }[] | null"
           }
         ]
       }
@@ -363,7 +363,7 @@
           {
             "key": "traits",
             "optional": true,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -550,7 +550,7 @@
           {
             "key": "attributes",
             "optional": true,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -650,7 +650,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "timestamp",
@@ -713,8 +713,8 @@
         "fields": [
           {
             "key": "reporting_webhooks",
-            "optional": true,
-            "type": "{ id?: number, name?: string, endpoint?: string, events?: string[], disabled?: boolean }[]"
+            "optional": false,
+            "type": "{ id?: number, name?: string, endpoint?: string, events?: string[], disabled?: boolean }[] | null"
           }
         ]
       }
@@ -796,7 +796,7 @@
           {
             "key": "customers",
             "optional": true,
-            "type": "lazy[]"
+            "type": "Record<string, JsonValue>[]"
           },
           {
             "key": "ids",

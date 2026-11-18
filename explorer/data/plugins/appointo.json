@@ -1,7 +1,7 @@
 {
   "id": "appointo",
   "displayName": "Appointo",
-  "description": "Appointo plugin for Corsair",
+  "description": "Appointment scheduling platform. List products, appointments, bookings and subscriptions, check availability, and create, update, reschedule, or cancel bookings.",
   "npmPackageName": "@corsair-dev/appointo",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

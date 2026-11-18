@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for BrowserTool: every `browsertool.api.*` operation with input and output types."
+title: "Browser Tool API reference"
+sidebarTitle: "API"
+description: "API reference for the Browser Tool plugin in Corsair: every `browsertool.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `browsertool.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -37,9 +36,9 @@ await corsair.browsertool.api.files.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `any` | Yes | — |
-| `error` | `string` | No | — |
+| `error` | `string \| null` | No | — |
 | `successful` | `boolean` | Yes | — |
-| `session_info` | `any` | No | — |
+| `session_info` | `any \| null` | No | — |
 | `log_id` | `string` | No | — |
 
 
@@ -73,9 +72,9 @@ await corsair.browsertool.api.sessions.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `any` | Yes | — |
-| `error` | `string` | No | — |
+| `error` | `string \| null` | No | — |
 | `successful` | `boolean` | Yes | — |
-| `session_info` | `any` | No | — |
+| `session_info` | `any \| null` | No | — |
 | `log_id` | `string` | No | — |
 
 
@@ -101,19 +100,9 @@ await corsair.browsertool.api.tasks.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `task` | `string` | Yes | — |
-| `secrets` | `object` | No | — |
+| `secrets` | `Record<string, string>` | No | — |
 | `startUrl` | `string` | No | — |
 | `sessionId` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="secrets full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -122,9 +111,9 @@ await corsair.browsertool.api.tasks.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `any` | Yes | — |
-| `error` | `string` | No | — |
+| `error` | `string \| null` | No | — |
 | `successful` | `boolean` | Yes | — |
-| `session_info` | `any` | No | — |
+| `session_info` | `any \| null` | No | — |
 | `log_id` | `string` | No | — |
 
 
@@ -156,9 +145,9 @@ await corsair.browsertool.api.tasks.stop({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `any` | Yes | — |
-| `error` | `string` | No | — |
+| `error` | `string \| null` | No | — |
 | `successful` | `boolean` | Yes | — |
-| `session_info` | `any` | No | — |
+| `session_info` | `any \| null` | No | — |
 | `log_id` | `string` | No | — |
 
 
@@ -191,9 +180,9 @@ await corsair.browsertool.api.tasks.watch({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `any` | Yes | — |
-| `error` | `string` | No | — |
+| `error` | `string \| null` | No | — |
 | `successful` | `boolean` | Yes | — |
-| `session_info` | `any` | No | — |
+| `session_info` | `any \| null` | No | — |
 | `log_id` | `string` | No | — |
 
 

@@ -1,9 +1,8 @@
 ---
-title: API
+title: "Better Proposals API reference"
+sidebarTitle: "API"
 description: "API reference for Better Proposals: every `betterproposals.api.*` operation with input and output types."
 ---
-
-Every `betterproposals.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -36,7 +35,7 @@ await corsair.betterproposals.api.companies.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
-| `data` | `object` | Yes | — |
+| `data` | `object \| Record<string, any>` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -54,8 +53,7 @@ await corsair.betterproposals.api.companies.create({});
   EditedBy?: string | number | null,
   Deleted?: string | number | null,
   DeletedBy?: string | number | null
-} | {
-}
+} | Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
@@ -1417,7 +1415,7 @@ await corsair.betterproposals.api.quotes.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
-| `data` | `object[]` | Yes | — |
+| `data` | `object \| any[]` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -1710,7 +1708,7 @@ await corsair.betterproposals.api.templates.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
-| `data` | `object[]` | Yes | — |
+| `data` | `object \| any[]` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">

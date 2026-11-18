@@ -1,6 +1,7 @@
 ---
-title: Webhooks
-description: "Coinbase incoming webhooks: event paths, payloads, and response data."
+title: "Coinbase webhooks"
+sidebarTitle: "Webhooks"
+description: "Coinbase incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
 ---
 
 The Coinbase plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/coinbase/overview) for setup context and the exact URL shape).
@@ -23,9 +24,23 @@ import { corsair } from "@/server/corsair";
 
 export async function POST(request: Request) {
     const headers = Object.fromEntries(request.headers);
-    const body = await request.json();
-    const result = await processWebhook(corsair, headers, body);
-    return result.response;
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
 }
 ```
 
@@ -45,7 +60,7 @@ A new on-chain payment arrived at a watched address
 |------|------|----------|-------------|
 | `id` | `string` | No | — |
 | `type` | `wallet:addresses:new-payment` | Yes | — |
-| `data` | `object` | No | — |
+| `data` | `Record<string, any>` | No | — |
 | `user` | `object` | No | — |
 | `account` | `object` | No | — |
 | `delivery_attempts` | `number` | No | — |
@@ -54,14 +69,6 @@ A new on-chain payment arrived at a watched address
 | `resource_path` | `string` | No | — |
 
 <AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="user full type">
 
 ```ts
@@ -94,8 +101,7 @@ A new on-chain payment arrived at a watched address
 {
   id?: string,
   type: wallet:addresses:new-payment,
-  data?: {
-  },
+  data?: Record<string, any>,
   user?: {
     id?: string,
     resource?: string,
@@ -147,7 +153,7 @@ Coinbase webhook ping used to verify a notification URL
 |------|------|----------|-------------|
 | `id` | `string` | No | — |
 | `type` | `ping` | Yes | — |
-| `data` | `object` | No | — |
+| `data` | `Record<string, any>` | No | — |
 | `user` | `object` | No | — |
 | `account` | `object` | No | — |
 | `delivery_attempts` | `number` | No | — |
@@ -156,14 +162,6 @@ Coinbase webhook ping used to verify a notification URL
 | `resource_path` | `string` | No | — |
 
 <AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="user full type">
 
 ```ts
@@ -196,8 +194,7 @@ Coinbase webhook ping used to verify a notification URL
 {
   id?: string,
   type: ping,
-  data?: {
-  },
+  data?: Record<string, any>,
   user?: {
     id?: string,
     resource?: string,

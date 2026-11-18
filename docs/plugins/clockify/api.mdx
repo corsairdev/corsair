@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Clockify: every `clockify.api.*` operation with input and output types."
+title: "Clockify API reference"
+sidebarTitle: "API"
+description: "API reference for the Clockify plugin in Corsair: every `clockify.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `clockify.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -128,9 +127,9 @@ await corsair.clockify.api.timeEntries.create({});
 | `id` | `string` | Yes | — |
 | `description` | `string` | Yes | — |
 | `workspaceId` | `string` | Yes | — |
-| `projectId` | `string` | No | — |
-| `taskId` | `string` | No | — |
-| `timeInterval` | `object` | No | — |
+| `projectId` | `string \| null` | No | — |
+| `taskId` | `string \| null` | No | — |
+| `timeInterval` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="timeInterval full type">
@@ -140,7 +139,7 @@ await corsair.clockify.api.timeEntries.create({});
   start: string,
   end?: string | null,
   duration?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -186,7 +185,7 @@ await corsair.clockify.api.timeEntries.list({});
   workspaceId: string,
   projectId?: string | null,
   taskId?: string | null,
-  timeInterval?: {
+  timeInterval: {
     start: string,
     end?: string | null,
     duration?: string | null

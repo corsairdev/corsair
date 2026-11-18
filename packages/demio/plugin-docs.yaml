@@ -1,0 +1,50 @@
+displayName: Demio
+description: Webinar and event data from Demio - list events and their dates, register attendees, and read who attended each session.
+domain: demio.com
+recommendedAuth: api_key
+overviewNote: |
+  Demio issues two credentials and every request carries both, so connect with the key and the secret together. An account Owner generates the pair under **Account Settings > API**; there is no other credential and no token exchange.
+
+  - **One registration operation.** Demio accepts both `PUT` and `POST` on `/event/register` with identical behaviour. The plugin exposes one operation, `registrations.create`, sent as `POST`.
+  - **Filtering events.** `events.list` takes `type`, one of `upcoming`, `past` or `automated`. Omit it to receive every event with its nearest date, ordered by date, ascending.
+  - **Identifying the event.** `registrations.create` takes either `id` or `ref_url`, the event's public registration page link. Omit `date_id` to put the registrant on the event's next date, and pass one to choose a date.
+  - **Registration is the only write.** It adds a person to an event and sends them a join link. Every other operation reads.
+  - **On-demand dates.** Inside `events.get`, an on-demand date reports `status: 'on-demand'` with `timestamp`, `datetime` and `zone` all null. `events.getDate` describes the same date as `status: 'running'` with the current time as its `timestamp`.
+  - **The participant status has two spellings.** Filter with `did-not-attend` and `left-early`; each participant comes back with `did not attend` and `left early`. Demio itself ignores a `status` it does not recognise and returns every registrant, but the plugin only accepts the five hyphenated values and rejects anything else before the request, so a misspelled filter fails validation instead of widening the list.
+  - **Rate limits answer 417, not 429.** Each endpoint accepts 180 requests a minute, and accounts also carry a daily call allowance. A per-minute limit is retried up to twice: a `Retry-After` from Demio sets the wait, and without one the plugin waits the documented minute, because a shorter delay would retry inside the same window. A spent daily allowance fails immediately, since no retry restores it.
+  - **No paging.** The events and participants operations return the whole set with no page parameters and no cursor, so a large account receives every record in one answer.
+  - **Registration needs a verified account email.** A live registration against an account whose owner has not confirmed their address answers 400 `{"errors":["Your email is not verified. Please, verify your email address."]}`. Verify the address Demio sent to the account owner before relying on `registrations.create`.
+  - **A bad event or date id answers 403, not 404.** Demio returns `{"errors":["You haven't access to this Event"]}` for an id that does not exist, a date that is not on the event, and a report on an unknown date, so a missing resource and a forbidden one look the same. The plugin does not retry either.
+  - **An unidentified registration answers 422.** Omitting both `id` and `ref_url` gets `{"errors":["Not enough params."]}` with status 422, which the published specification does not list. The plugin rejects that body before sending, so the 422 only appears if the provider changes.
+  - **Webhooks.** The plugin does not receive webhooks; the Demio API offers no delivery or registration call.
+examples:
+  read:
+    path: ping.check
+    title: Check the credential pair
+    args: {}
+  write:
+    path: registrations.create
+    title: Register an attendee for the next date of an event
+    args:
+      id: 86
+      name: Jane Doe
+      email: jane.doe@example.com
+apiExamples:
+  events.list:
+    call: "{ type: 'upcoming' }"
+  events.get:
+    call: "{ id: 86, active: true }"
+  events.getDate:
+    call: "{ id: 86, date_id: 1575 }"
+  registrations.create:
+    call: "{ id: 86, name: 'Jane Doe', email: 'jane.doe@example.com' }"
+  reports.participants:
+    call: "{ date_id: 1575 }"
+  ping.check: {}
+apiNotes:
+  'events.list': 'Omit `type` to receive every event with its nearest date. The list is ordered by date, ascending.'
+  'events.get': 'Send `active: true` to receive only dates that are scheduled or running. An event whose dates have all finished answers 404 under that filter.'
+  'events.getDate': 'An on-demand date reports `running` here and `on-demand` inside `events.get`. For an on-demand date, `datetime` is the stored start time while `timestamp` is the moment you asked.'
+  'registrations.create': 'Give either `id` or `ref_url`. Omit `date_id` to use the event''s next date. The answer carries a `hash` and the `join_link` to hand the registrant.'
+  'reports.participants': 'Filter with the hyphenated values `attended`, `did-not-attend`, `completed`, `left-early` and `banned`; the `status` each participant returns uses spaces. Any other value fails input validation before the request; Demio on its own would ignore it and return every registrant.'
+  'ping.check': 'Confirms the key and secret pair are accepted. Use it after connecting before relying on any other operation.'

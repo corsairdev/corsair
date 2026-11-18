@@ -63,38 +63,38 @@
           },
           {
             "key": "payload",
-            "optional": true,
-            "type": "any"
+            "optional": false,
+            "type": "any | null"
           },
           {
             "key": "meta",
-            "optional": true,
-            "type": "any"
+            "optional": false,
+            "type": "any | null"
           },
           {
             "key": "filename",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "download_url",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "preview_url",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "public_share_link",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "checksum",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "generation_logs",
@@ -103,8 +103,8 @@
           },
           {
             "key": "failure_cause",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "output_type",
@@ -170,32 +170,32 @@
           {
             "key": "filename",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "download_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "preview_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "public_share_link",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "failure_cause",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "output_type",
@@ -287,38 +287,38 @@
           },
           {
             "key": "payload",
-            "optional": true,
-            "type": "any"
+            "optional": false,
+            "type": "any | null"
           },
           {
             "key": "meta",
-            "optional": true,
-            "type": "any"
+            "optional": false,
+            "type": "any | null"
           },
           {
             "key": "filename",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "download_url",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "preview_url",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "public_share_link",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "checksum",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "generation_logs",
@@ -327,8 +327,8 @@
           },
           {
             "key": "failure_cause",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "output_type",
@@ -394,32 +394,32 @@
           {
             "key": "filename",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "download_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "preview_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "public_share_link",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "failure_cause",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "output_type",
@@ -449,8 +449,9 @@
         "fields": [
           {
             "key": "page",
-            "optional": false,
-            "type": "number"
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 1."
           },
           {
             "key": "q",
@@ -470,7 +471,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ current_page: number, next_page?: number | null, prev_page?: number | null, total_pages: number }"
+            "type": "{ current_page: number, next_page: number | null, prev_page: number | null, total_pages: number }"
           }
         ]
       }
@@ -525,38 +526,38 @@
           },
           {
             "key": "payload",
-            "optional": true,
-            "type": "any"
+            "optional": false,
+            "type": "any | null"
           },
           {
             "key": "meta",
-            "optional": true,
-            "type": "any"
+            "optional": false,
+            "type": "any | null"
           },
           {
             "key": "filename",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "download_url",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "preview_url",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "public_share_link",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "checksum",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "generation_logs",
@@ -565,8 +566,8 @@
           },
           {
             "key": "failure_cause",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "output_type",
@@ -675,8 +676,9 @@
         "fields": [
           {
             "key": "page",
-            "optional": false,
-            "type": "number"
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 1."
           },
           {
             "key": "q",
@@ -701,7 +703,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ current_page: number, next_page?: number | null, prev_page?: number | null, total_pages: number }"
+            "type": "{ current_page: number, next_page: number | null, prev_page: number | null, total_pages: number }"
           }
         ]
       }

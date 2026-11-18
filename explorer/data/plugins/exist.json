@@ -1,7 +1,7 @@
 {
   "id": "exist",
   "displayName": "Exist",
-  "description": "Exist plugin for Corsair",
+  "description": "Personal analytics service that collects tracked data and returns attributes, averages, correlations, and insights, and lets you write attribute values.",
   "npmPackageName": "@corsair-dev/exist",
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",
@@ -157,13 +157,13 @@
           },
           {
             "key": "next",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "previous",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "results",
@@ -233,13 +233,13 @@
           },
           {
             "key": "next",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "previous",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "results",
@@ -289,13 +289,13 @@
           },
           {
             "key": "next",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "previous",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "results",
@@ -365,18 +365,18 @@
           },
           {
             "key": "next",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "previous",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "results",
             "optional": false,
-            "type": "{ template?: string | null, name: string, label: string, group: { name: string, label: string, priority: number }, service?: { name: string, label: string } | null, active: boolean, priority: number, manual: boolean, value_type: number, value_type_description: string, available_services?: { name: string, label: string }[], values: { date: string, value?: string | number | boolean | null }[] }[]"
+            "type": "{ template?: string | null, name: string, label: string, group: { name: string, label: string, priority: number }, service?: { name: string, label: string } | null, active: boolean, priority: number, manual: boolean, value_type: number, value_type_description: string, available_services?: { name: string, label: string }[], values: { date: string, value: string | number | boolean | null }[] }[]"
           }
         ]
       }
@@ -423,7 +423,7 @@
           {
             "key": "attributes",
             "optional": false,
-            "type": "{ name: string, date: string, value?: string | number | boolean | null }[]"
+            "type": "{ name: string, date: string, value: string | number | boolean | null }[]"
           }
         ]
       },
@@ -433,7 +433,7 @@
           {
             "key": "success",
             "optional": false,
-            "type": "{ name: string, date: string, value?: string | number | boolean | null }[]"
+            "type": "{ name: string, date: string, value: string | number | boolean | null }[]"
           },
           {
             "key": "failed",
@@ -498,18 +498,18 @@
           },
           {
             "key": "next",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "previous",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "results",
             "optional": false,
-            "type": "{ attribute: string, date: string, overall?: number | null, monday?: number | null, tuesday?: number | null, wednesday?: number | null, thursday?: number | null, friday?: number | null, saturday?: number | null, sunday?: number | null }[]"
+            "type": "{ attribute: string, date: string, overall: number | null, monday: number | null, tuesday: number | null, wednesday: number | null, thursday: number | null, friday: number | null, saturday: number | null, sunday: number | null }[]"
           }
         ]
       }
@@ -559,13 +559,13 @@
           },
           {
             "key": "next",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "previous",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "results",
@@ -620,18 +620,18 @@
           },
           {
             "key": "next",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "previous",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "results",
             "optional": false,
-            "type": "{ created: string, target_date?: string | null, type: { name: string, period: number, priority: number, attribute?: { name: string, label: string, group: { name: string, label: string, priority: number }, priority: number, value_type: number, value_type_description: string } | null }, html: string, text: string }[]"
+            "type": "{ created: string, target_date: string | null, type: { name: string, period: number, priority: number, attribute?: { name: string, label: string, group: { name: string, label: string, priority: number }, priority: number, value_type: number, value_type_description: string } | null }, html: string, text: string }[]"
           }
         ]
       }
@@ -702,7 +702,7 @@
           {
             "key": "avatar",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "timezone",
