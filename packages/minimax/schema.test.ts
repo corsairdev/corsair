@@ -32,7 +32,7 @@ const inputCases: Record<string, Case> = {
 	},
 	chatCreateResponse: {
 		valid: { model: 'MiniMax-M2', input: 'hello' },
-		invalid: { input: 'hello' },
+		invalid: { input: 42 },
 	},
 	chatEstimateInputTokens: {
 		valid: { model: 'MiniMax-M2', input: 'hello' },
