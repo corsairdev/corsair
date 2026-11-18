@@ -59,16 +59,18 @@ function parseBody(body: unknown): Record<string, unknown> | null {
 		: null;
 }
 
-function headerValue(
+export function headerValue(
 	headers: Record<string, string | string[] | undefined>,
 	name: string,
 ): string | undefined {
 	const direct = headers[name];
 	if (typeof direct === 'string') return direct;
 	if (Array.isArray(direct)) return direct[0];
-	const lower = headers[name.toLowerCase()];
-	if (typeof lower === 'string') return lower;
-	if (Array.isArray(lower)) return lower[0];
+	const wanted = name.toLowerCase();
+	const key = Object.keys(headers).find((k) => k.toLowerCase() === wanted);
+	const value = key === undefined ? undefined : headers[key];
+	if (typeof value === 'string') return value;
+	if (Array.isArray(value)) return value[0];
 	return undefined;
 }
 
@@ -120,11 +122,9 @@ export function verifyTwittrApiWebhookSignature(
 		return { valid: false, error: 'Missing webhook secret' };
 	}
 
-	const signatureHeader =
-		// Headers arrive normalized (lowercase) or raw; both spellings are
-		// read because transports differ. Values can be string[] per the type.
-		(request.headers['x-twittrapi-signature'] as string | undefined) ??
-		(request.headers['X-TwittrAPI-Signature'] as string | undefined);
+	// Headers arrive normalized (lowercase) or raw, and a transport may hand
+	// over string[]; headerValue reads both spellings and takes the first.
+	const signatureHeader = headerValue(request.headers, 'x-twittrapi-signature');
 
 	if (!signatureHeader) {
 		return { valid: false, error: 'Missing x-twittrapi-signature header' };
