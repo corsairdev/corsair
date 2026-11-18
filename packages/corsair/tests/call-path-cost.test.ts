@@ -138,9 +138,9 @@ describe('bound-account call path cost', () => {
 			(t.demo.api as unknown as { event(): Promise<unknown> }).event(),
 		);
 		expect({ token, upsert, event }).toEqual({
-			token: { queries: 4, scrypt: 4 },
-			upsert: { queries: 7, scrypt: 2 },
-			event: { queries: 3, scrypt: 2 },
+			token: { queries: 4, scrypt: 0 },
+			upsert: { queries: 7, scrypt: 0 },
+			event: { queries: 3, scrypt: 0 },
 		});
 	});
 });
