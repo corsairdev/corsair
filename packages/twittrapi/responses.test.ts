@@ -415,8 +415,11 @@ describe('TwittrAPI output schemas (offline fixtures)', () => {
 
 	it('keeps receiver URL credentials out of event logs', () => {
 		expect(redactUrl('https://user:pw@hooks.example.com/tw?token=abc#x')).toBe(
-			'https://hooks.example.com/tw',
+			'https://hooks.example.com',
 		);
+		expect(
+			redactUrl('https://hooks.example.com/incoming/receiver-secret'),
+		).toBe('https://hooks.example.com');
 		expect(redactUrl('not a url')).toBe('[invalid url]');
 	});
 });

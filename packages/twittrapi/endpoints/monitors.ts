@@ -14,12 +14,11 @@ function stripWebhookSecret(
 	return rest;
 }
 
-// A receiver URL can carry a token in its query or userinfo; the event log
-// keeps the origin and path only.
+// A receiver URL can carry a secret in its userinfo, query or path (many hook
+// URLs end in a token), so the event log keeps the origin only.
 export function redactUrl(url: string): string {
 	try {
-		const parsed = new URL(url);
-		return `${parsed.origin}${parsed.pathname}`;
+		return new URL(url).origin;
 	} catch {
 		return '[invalid url]';
 	}
