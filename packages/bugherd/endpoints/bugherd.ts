@@ -42,10 +42,10 @@ type Table<T> = {
 	upsertByEntityId: (id: string, row: T) => Promise<unknown>;
 	deleteByEntityId: (id: string) => Promise<unknown>;
 	findByEntityId: (id: string) => Promise<{ data: unknown } | null>;
-	search: (options: {
-		data: Record<string, string | number>;
+	list: (options?: {
 		limit?: number;
-	}) => Promise<Array<{ entity_id: string }>>;
+		offset?: number;
+	}) => Promise<Array<{ entity_id: string; data: unknown }>>;
 };
 
 /**
@@ -90,21 +90,38 @@ async function drop(
 	}
 }
 
-/** Removes every local row whose data matches `where` (e.g. a task's comments). */
+/**
+ * Removes every local row whose data matches `where` (e.g. a task's comments).
+ * Pages through list() and filters in memory: search() on data fields is
+ * refused when encryptDataAtRest is on, and a search page could stop short.
+ * Matches are collected first so deletes don't shift the pages.
+ */
 async function dropWhere(
-	table: Pick<Table<never>, 'deleteByEntityId' | 'search'> | undefined,
+	table: Pick<Table<never>, 'deleteByEntityId' | 'list'> | undefined,
 	where: Record<string, string | number>,
 	label: string,
 ): Promise<string[]> {
 	if (!table) return [];
+	const PAGE = 500;
+	const matches: string[] = [];
 	try {
-		const rows = await table.search({ data: where, limit: 1000 });
-		for (const row of rows) await drop(table, row.entity_id, label);
-		return rows.map((row) => row.entity_id);
+		for (let offset = 0; ; offset += PAGE) {
+			const rows = await table.list({ limit: PAGE, offset });
+			for (const row of rows) {
+				const data =
+					row.data && typeof row.data === 'object'
+						? (row.data as Record<string, unknown>)
+						: {};
+				if (Object.entries(where).every(([key, value]) => data[key] === value))
+					matches.push(row.entity_id);
+			}
+			if (rows.length < PAGE) break;
+		}
 	} catch {
-		console.warn(`Failed to remove BugHerd ${label}s`);
-		return [];
+		console.warn(`Failed to read saved BugHerd ${label}s`);
 	}
+	for (const id of matches) await drop(table, id, label);
+	return matches;
 }
 
 /** A deleted task takes its saved comments and attachments with it. */

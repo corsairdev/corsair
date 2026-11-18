@@ -32,7 +32,7 @@ function table(saved: Record<string, unknown> | null = null) {
 		upsertByEntityId: jest.fn().mockResolvedValue(undefined),
 		deleteByEntityId: jest.fn().mockResolvedValue(true),
 		findByEntityId: jest.fn().mockResolvedValue(saved ? { data: saved } : null),
-		search: jest.fn().mockResolvedValue([]),
+		list: jest.fn().mockResolvedValue([]),
 	};
 }
 
@@ -816,22 +816,31 @@ describe('local storage', () => {
 
 	it('tasks.delete removes saved comments and attachments of the task', async () => {
 		const db = tables();
-		db.comments.search.mockResolvedValue([{ entity_id: '8801' }]);
-		db.attachments.search.mockResolvedValue([{ entity_id: '331' }]);
+		db.comments.list.mockResolvedValue([
+			{ entity_id: '8801', data: { task_id: 98765 } },
+			{ entity_id: '8802', data: { task_id: 1 } },
+		]);
+		db.attachments.list.mockResolvedValue([
+			{ entity_id: '331', data: { task_id: 98765 } },
+		]);
 		mockRequest.mockResolvedValue({ success: true });
 		await B.deleteTask(context(db), { project_id: 1, task_id: 98765 });
-		expect(db.comments.search).toHaveBeenCalledWith(
-			expect.objectContaining({ data: { task_id: 98765 } }),
-		);
 		expect(db.comments.deleteByEntityId).toHaveBeenCalledWith('8801');
+		expect(db.comments.deleteByEntityId).not.toHaveBeenCalledWith('8802');
 		expect(db.attachments.deleteByEntityId).toHaveBeenCalledWith('331');
 	});
 
 	it('projects.delete removes its saved tasks, their comments, and its columns', async () => {
 		const db = tables();
-		db.tasks.search.mockResolvedValue([{ entity_id: '98765' }]);
-		db.columns.search.mockResolvedValue([{ entity_id: '2387619' }]);
-		db.comments.search.mockResolvedValue([{ entity_id: '8801' }]);
+		db.tasks.list.mockResolvedValue([
+			{ entity_id: '98765', data: { project_id: 7 } },
+		]);
+		db.columns.list.mockResolvedValue([
+			{ entity_id: '2387619', data: { project_id: 7 } },
+		]);
+		db.comments.list.mockResolvedValue([
+			{ entity_id: '8801', data: { task_id: 98765 } },
+		]);
 		mockRequest.mockResolvedValue({ success: true });
 		await B.deleteProject(context(db), { project_id: 7 });
 		expect(db.tasks.deleteByEntityId).toHaveBeenCalledWith('98765');
@@ -841,17 +850,34 @@ describe('local storage', () => {
 
 	it("tasks.move drops the moved tasks' saved rows", async () => {
 		const db = tables();
-		db.tasks.search.mockResolvedValue([{ entity_id: '98765' }]);
+		db.tasks.list.mockResolvedValue([
+			{ entity_id: '98765', data: { project_id: 1, local_task_id: 4 } },
+			{ entity_id: '98766', data: { project_id: 1, local_task_id: 5 } },
+		]);
 		mockRequest.mockResolvedValue({ success: true });
 		await B.moveTasks(context(db), {
 			project_id: 1,
 			destination_project_id: 2,
 			task_ids: [4],
 		});
-		expect(db.tasks.search).toHaveBeenCalledWith(
-			expect.objectContaining({ data: { project_id: 1, local_task_id: 4 } }),
-		);
 		expect(db.tasks.deleteByEntityId).toHaveBeenCalledWith('98765');
+		expect(db.tasks.deleteByEntityId).not.toHaveBeenCalledWith('98766');
+	});
+
+	it('cleanup reads every page of saved rows', async () => {
+		const db = tables();
+		const page = (start: number, n: number) =>
+			Array.from({ length: n }, (_, i) => ({
+				entity_id: String(start + i),
+				data: { task_id: 98765 },
+			}));
+		db.comments.list
+			.mockResolvedValueOnce(page(0, 500))
+			.mockResolvedValueOnce(page(500, 3));
+		mockRequest.mockResolvedValue({ success: true });
+		await B.deleteTask(context(db), { project_id: 1, task_id: 98765 });
+		expect(db.comments.list).toHaveBeenCalledWith({ limit: 500, offset: 500 });
+		expect(db.comments.deleteByEntityId).toHaveBeenCalledTimes(503);
 	});
 });
 
