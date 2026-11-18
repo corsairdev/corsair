@@ -1,4 +1,3 @@
-import { AuthMissingError } from 'corsair/core';
 import type {
 	AuthTypes,
 	BindEndpoints,
@@ -13,6 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { campaigns, fields, lists, members, reports } from './endpoints';
 import type {
 	LapostaEndpointInputs,
@@ -38,8 +38,7 @@ export type LapostaContext = CorsairPluginContext<
 	LapostaPluginOptions
 >;
 
-export type LapostaKeyBuilderContext =
-	KeyBuilderContext<LapostaPluginOptions>;
+export type LapostaKeyBuilderContext = KeyBuilderContext<LapostaPluginOptions>;
 
 export type LapostaBoundEndpoints = BindEndpoints<
 	typeof lapostaEndpointsNested

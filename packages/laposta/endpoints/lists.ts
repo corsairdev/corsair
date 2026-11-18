@@ -30,10 +30,7 @@ export const lists = {
 		return GetListsOutputSchema.parse(raw);
 	},
 
-	get: async (
-		input: GetListInput,
-		apiKey?: string,
-	): Promise<GetListOutput> => {
+	get: async (input: GetListInput, apiKey?: string): Promise<GetListOutput> => {
 		const raw = await makeLapostaRequest<unknown>(
 			`/list/${encodeURIComponent(input.list_id)}`,
 			apiKey,

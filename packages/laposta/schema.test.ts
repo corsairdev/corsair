@@ -67,9 +67,9 @@ describe('Laposta endpoint schemas', () => {
 			}).success,
 		).toBe(true);
 
-		expect(CreateListInputSchema.safeParse({ name: 'Subscribers' }).success).toBe(
-			true,
-		);
+		expect(
+			CreateListInputSchema.safeParse({ name: 'Subscribers' }).success,
+		).toBe(true);
 		expect(CreateListInputSchema.safeParse({ name: '' }).success).toBe(false);
 		expect(
 			CreateListOutputSchema.safeParse({
@@ -80,7 +80,9 @@ describe('Laposta endpoint schemas', () => {
 		expect(
 			UpdateListInputSchema.safeParse({ list_id: 'l1', name: 'VIP' }).success,
 		).toBe(true);
-		expect(UpdateListInputSchema.safeParse({ list_id: '' }).success).toBe(false);
+		expect(UpdateListInputSchema.safeParse({ list_id: '' }).success).toBe(
+			false,
+		);
 		expect(
 			UpdateListOutputSchema.safeParse({
 				list: { list_id: 'l1', name: 'VIP' },
@@ -90,7 +92,9 @@ describe('Laposta endpoint schemas', () => {
 		expect(DeleteListInputSchema.safeParse({ list_id: 'l1' }).success).toBe(
 			true,
 		);
-		expect(DeleteListInputSchema.safeParse({ list_id: '' }).success).toBe(false);
+		expect(DeleteListInputSchema.safeParse({ list_id: '' }).success).toBe(
+			false,
+		);
 		expect(
 			DeleteListOutputSchema.safeParse({
 				list: { list_id: 'l1', state: 'deleted' },
@@ -106,7 +110,9 @@ describe('Laposta endpoint schemas', () => {
 			GetMembersInputSchema.safeParse({ list_id: 'l1', state: 'active' })
 				.success,
 		).toBe(true);
-		expect(GetMembersInputSchema.safeParse({ list_id: '' }).success).toBe(false);
+		expect(GetMembersInputSchema.safeParse({ list_id: '' }).success).toBe(
+			false,
+		);
 		expect(GetMembersOutputSchema.safeParse({ data: [] }).success).toBe(true);
 
 		expect(
