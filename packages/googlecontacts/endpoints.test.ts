@@ -699,6 +699,52 @@ describe('Google Contacts plugin', () => {
 			expect(plugin.authConfig.oauth_2.account).toEqual([]);
 		});
 
+		it('drops the search term from a failed search error', async () => {
+			mockRequest.mockRejectedValueOnce(
+				new ApiError(
+					{
+						method: 'GET',
+						url: '/people:searchContacts',
+						query: { query: 'ada@example.com', readMask: 'names' },
+					},
+					{
+						url: 'https://people.googleapis.com/v1/people:searchContacts?query=ada%40example.com&readMask=names',
+						ok: false,
+						status: 400,
+						statusText: 'Bad Request',
+						body: { error: { code: 400 } },
+					},
+					'Bad Request',
+				),
+			);
+
+			const error = await plugin.endpoints.contacts
+				.search(ctx, { query: 'ada@example.com' })
+				.catch((e: unknown) => e);
+
+			expect(error).toBeInstanceOf(ApiError);
+			expect(JSON.stringify(error)).not.toContain('ada');
+			expect(error.url).toContain('readMask=names');
+		});
+
+		it('keeps address keys it does not model on an update', async () => {
+			mockRequest.mockResolvedValueOnce(PERSON);
+
+			await plugin.endpoints.contacts.update(ctx, {
+				resourceName: 'people/c1',
+				etag: 'e',
+				person: {
+					addresses: [{ streetAddress: '1 Main St', poBox: 'PO 7' }],
+				},
+				updatePersonFields: ['addresses'],
+			});
+
+			expect(lastCall().body.addresses[0]).toEqual({
+				streetAddress: '1 Main St',
+				poBox: 'PO 7',
+			});
+		});
+
 		it('does not stack its own 429 retries on top of core', async () => {
 			const result = await errorHandlers.RATE_LIMIT_ERROR.handler(
 				new Error('429'),

@@ -31,6 +31,14 @@ describe('GoogleContacts schema', () => {
 			true,
 		);
 		expect(other.safeParse({ readMask: ['addresses'] }).success).toBe(false);
+		expect(other.safeParse({ readMask: [] }).success).toBe(false);
+		const search = GoogleContactsEndpointInputSchemas.otherContactsSearch;
+		expect(search.safeParse({ query: 'a', readMask: ['photos'] }).success).toBe(
+			false,
+		);
+		expect(search.safeParse({ query: 'a', readMask: ['names'] }).success).toBe(
+			true,
+		);
 	});
 });
 

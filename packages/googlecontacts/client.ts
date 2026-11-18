@@ -53,18 +53,36 @@ export async function makePeopleRequest<T>(
 }
 
 // A failed create or update would otherwise carry the submitted contact (names,
-// emails, phones, addresses) on ApiError.request. Rebuild the error without the
+// emails, phones, addresses) on ApiError.request, and a failed search its term. Rebuild the error without the
 // request body; status, provider body, message and rate-limit fields stay as core
 // set them.
 // `unknown`: the caught value may not be an ApiError; anything else is rethrown untouched.
 function withoutRequestBody(error: unknown): unknown {
-	if (!(error instanceof ApiError) || error.request?.body === undefined) {
-		return error;
+	if (!(error instanceof ApiError)) return error;
+	const query = error.request?.query as Record<string, unknown> | undefined;
+	const searched = query !== undefined && 'query' in query;
+	if (error.request?.body === undefined && !searched) return error;
+	// A search term can be a name or an email address, so it leaves the
+	// request query and the URL as well.
+	let url = error.url;
+	if (searched) {
+		try {
+			const parsed = new URL(error.url);
+			parsed.searchParams.delete('query');
+			url = parsed.toString();
+		} catch {
+			url = error.url.split('?')[0] ?? error.url;
+		}
 	}
+	const { query: _term, ...restQuery } = query ?? {};
 	return new ApiError(
-		{ ...error.request, body: undefined },
 		{
-			url: error.url,
+			...error.request,
+			body: undefined,
+			query: query === undefined ? undefined : restQuery,
+		},
+		{
+			url,
 			ok: false,
 			status: error.status,
 			statusText: error.statusText,

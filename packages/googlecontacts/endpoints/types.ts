@@ -10,79 +10,100 @@ import type {
 } from '../types';
 
 // ─── Shared sub-schemas ───────────────────────────────────────────────────────
+// Loose: Google sends more per-field keys than these list (poBox, extendedAddress,
+// phoneticFamilyName, ...). Inputs are parsed before a request, so a read-modify-
+// write must carry those keys through instead of dropping them.
 
-const FieldMetadataSchema = z.object({
-	primary: z.boolean().optional(),
-	verified: z.boolean().optional(),
-	source: z
-		.object({ type: z.string().optional(), id: z.string().optional() })
-		.optional(),
-});
+const FieldMetadataSchema = z
+	.object({
+		primary: z.boolean().optional(),
+		verified: z.boolean().optional(),
+		source: z
+			.object({ type: z.string().optional(), id: z.string().optional() })
+			.optional(),
+	})
+	.loose();
 
-const PersonNameSchema = z.object({
-	metadata: FieldMetadataSchema.optional(),
-	displayName: z.string().optional(),
-	familyName: z.string().optional(),
-	givenName: z.string().optional(),
-	middleName: z.string().optional(),
-	honorificPrefix: z.string().optional(),
-	honorificSuffix: z.string().optional(),
-});
+const PersonNameSchema = z
+	.object({
+		metadata: FieldMetadataSchema.optional(),
+		displayName: z.string().optional(),
+		familyName: z.string().optional(),
+		givenName: z.string().optional(),
+		middleName: z.string().optional(),
+		honorificPrefix: z.string().optional(),
+		honorificSuffix: z.string().optional(),
+	})
+	.loose();
 
-const EmailAddressSchema = z.object({
-	metadata: FieldMetadataSchema.optional(),
-	value: z.string().optional(),
-	type: z.string().optional().describe('e.g. "home", "work", "other"'),
-	displayName: z.string().optional(),
-});
+const EmailAddressSchema = z
+	.object({
+		metadata: FieldMetadataSchema.optional(),
+		value: z.string().optional(),
+		type: z.string().optional().describe('e.g. "home", "work", "other"'),
+		displayName: z.string().optional(),
+	})
+	.loose();
 
-const PhoneNumberSchema = z.object({
-	metadata: FieldMetadataSchema.optional(),
-	value: z.string().optional(),
-	canonicalForm: z.string().optional(),
-	type: z.string().optional().describe('e.g. "mobile", "home", "work"'),
-});
+const PhoneNumberSchema = z
+	.object({
+		metadata: FieldMetadataSchema.optional(),
+		value: z.string().optional(),
+		canonicalForm: z.string().optional(),
+		type: z.string().optional().describe('e.g. "mobile", "home", "work"'),
+	})
+	.loose();
 
-const OrganizationSchema = z.object({
-	metadata: FieldMetadataSchema.optional(),
-	name: z.string().optional(),
-	title: z.string().optional(),
-	department: z.string().optional(),
-});
+const OrganizationSchema = z
+	.object({
+		metadata: FieldMetadataSchema.optional(),
+		name: z.string().optional(),
+		title: z.string().optional(),
+		department: z.string().optional(),
+	})
+	.loose();
 
-const AddressSchema = z.object({
-	metadata: FieldMetadataSchema.optional(),
-	formattedValue: z.string().optional(),
-	streetAddress: z.string().optional(),
-	city: z.string().optional(),
-	region: z.string().optional(),
-	postalCode: z.string().optional(),
-	country: z.string().optional(),
-	countryCode: z.string().optional(),
-	type: z.string().optional(),
-});
+const AddressSchema = z
+	.object({
+		metadata: FieldMetadataSchema.optional(),
+		formattedValue: z.string().optional(),
+		streetAddress: z.string().optional(),
+		city: z.string().optional(),
+		region: z.string().optional(),
+		postalCode: z.string().optional(),
+		country: z.string().optional(),
+		countryCode: z.string().optional(),
+		type: z.string().optional(),
+	})
+	.loose();
 
-const PhotoSchema = z.object({
-	metadata: FieldMetadataSchema.optional(),
-	url: z.string().optional(),
-	default: z.boolean().optional(),
-});
+const PhotoSchema = z
+	.object({
+		metadata: FieldMetadataSchema.optional(),
+		url: z.string().optional(),
+		default: z.boolean().optional(),
+	})
+	.loose();
 
-const BiographySchema = z.object({
-	metadata: FieldMetadataSchema.optional(),
-	value: z.string().optional(),
-	contentType: z.string().optional(),
-});
+const BiographySchema = z
+	.object({
+		metadata: FieldMetadataSchema.optional(),
+		value: z.string().optional(),
+		contentType: z.string().optional(),
+	})
+	.loose();
 
-const MembershipSchema = z.object({
-	metadata: FieldMetadataSchema.optional(),
-	contactGroupMembership: z
-		.object({
-			contactGroupId: z.string().optional(),
-			contactGroupResourceName: z.string().optional(),
-		})
-		.optional(),
-});
+const MembershipSchema = z
+	.object({
+		metadata: FieldMetadataSchema.optional(),
+		contactGroupMembership: z
+			.object({
+				contactGroupId: z.string().optional(),
+				contactGroupResourceName: z.string().optional(),
+			})
+			.optional(),
+	})
+	.loose();
 
 const PersonSchema = z.object({
 	resourceName: z.string(),
@@ -174,7 +195,7 @@ const ContactsListInputSchema = z.object({
 		.string()
 		.optional()
 		.describe(
-			'Return only changes since this token. Expired tokens 400; re-list in full.',
+			'Return only changes since this token. An expired token answers 410 EXPIRED_SYNC_TOKEN; re-list in full.',
 		),
 });
 
@@ -238,6 +259,13 @@ const OtherContactsReadMaskSchema = z
 	.array(
 		z.enum(['emailAddresses', 'metadata', 'names', 'phoneNumbers', 'photos']),
 	)
+	.min(1)
+	.optional();
+
+/** otherContacts.search takes the same mask minus photos. */
+const OtherContactsSearchReadMaskSchema = z
+	.array(z.enum(['emailAddresses', 'metadata', 'names', 'phoneNumbers']))
+	.min(1)
 	.optional();
 
 const OtherContactsListInputSchema = z.object({
@@ -260,7 +288,7 @@ const OtherContactsListInputSchema = z.object({
 
 const OtherContactsSearchInputSchema = z.object({
 	query: z.string(),
-	readMask: OtherContactsReadMaskSchema,
+	readMask: OtherContactsSearchReadMaskSchema,
 	pageSize: z.number().min(1).max(30).optional(),
 });
 
