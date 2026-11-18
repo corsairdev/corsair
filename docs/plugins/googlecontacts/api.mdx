@@ -1,9 +1,8 @@
 ---
-title: API
+title: "Google Contacts API reference"
+sidebarTitle: "API"
 description: "API reference for Google Contacts: every `googlecontacts.api.*` operation with input and output types."
 ---
-
-Every `googlecontacts.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -1940,7 +1939,7 @@ await corsair.googlecontacts.api.otherContacts.copyToContacts({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `resourceName` | `string` | Yes | e.g. "otherContacts/c123456789" |
-| `copyMask` | `emailAddresses \| names \| phoneNumbers[]` | No | Fields to carry over. Google permits only these three. |
+| `copyMask` | `(emailAddresses \| names \| phoneNumbers)[]` | No | Fields to carry over. Google permits only these three. |
 | `personFields` | `string[]` | No | Person fields to return, e.g. ["names","emailAddresses","phoneNumbers"]. Defaults to names, emailAddresses and phoneNumbers. |
 
 
@@ -2157,7 +2156,7 @@ await corsair.googlecontacts.api.otherContacts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `readMask` | `emailAddresses \| metadata \| names \| phoneNumbers[]` | No | — |
+| `readMask` | `(emailAddresses \| metadata \| names \| phoneNumbers \| photos)[]` | No | — |
 | `pageSize` | `number` | No | — |
 | `pageToken` | `string` | No | — |
 | `requestSyncToken` | `boolean` | No | Return a nextSyncToken for incremental reads. Expires after 7 days. |
@@ -2327,7 +2326,7 @@ await corsair.googlecontacts.api.otherContacts.search({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `query` | `string` | Yes | — |
-| `readMask` | `emailAddresses \| metadata \| names \| phoneNumbers[]` | No | — |
+| `readMask` | `(emailAddresses \| metadata \| names \| phoneNumbers \| photos)[]` | No | — |
 | `pageSize` | `number` | No | — |
 
 
