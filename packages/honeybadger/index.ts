@@ -819,7 +819,8 @@ export type BaseHoneybadgerPlugin<T extends HoneybadgerPluginOptions> =
 		typeof honeybadgerEndpointsNested,
 		{},
 		T,
-		typeof defaultAuthType
+		typeof defaultAuthType,
+		typeof honeybadgerAuthConfig
 	>;
 
 export type InternalHoneybadgerPlugin =
