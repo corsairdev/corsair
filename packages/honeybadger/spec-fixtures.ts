@@ -5,6 +5,8 @@
  * response schema and keeping its required fields; committed so the check runs
  * offline.
  */
+// unknown: each entry is a different operation's response document; the test
+// looks up that operation's output schema and parses with it.
 export const SPEC_RESPONSES: Array<{ operation: string; document: unknown }> = [
 	{
 		operation: 'projects.list',
