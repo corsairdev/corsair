@@ -68,7 +68,6 @@ export type TwittrApiEndpoints = {
 	tweetsGetReplies: TwittrApiEndpoint<'tweetsGetReplies'>;
 	tweetsGetQuotes: TwittrApiEndpoint<'tweetsGetQuotes'>;
 	tweetsGetRetweeters: TwittrApiEndpoint<'tweetsGetRetweeters'>;
-	tweetsGetLikers: TwittrApiEndpoint<'tweetsGetLikers'>;
 	usersGetByUsername: TwittrApiEndpoint<'usersGetByUsername'>;
 	usersGetById: TwittrApiEndpoint<'usersGetById'>;
 	usersBatchGetByIds: TwittrApiEndpoint<'usersBatchGetByIds'>;
@@ -164,7 +163,6 @@ const twittrApiEndpointsNested = {
 		getReplies: TweetsEndpoints.getReplies,
 		getQuotes: TweetsEndpoints.getQuotes,
 		getRetweeters: TweetsEndpoints.getRetweeters,
-		getLikers: TweetsEndpoints.getLikers,
 	},
 	users: {
 		getByUsername: UsersEndpoints.getByUsername,
@@ -246,10 +244,6 @@ export const twittrApiEndpointSchemas = {
 	'tweets.getRetweeters': {
 		input: TwittrApiEndpointInputSchemas.tweetsGetRetweeters,
 		output: TwittrApiEndpointOutputSchemas.tweetsGetRetweeters,
-	},
-	'tweets.getLikers': {
-		input: TwittrApiEndpointInputSchemas.tweetsGetLikers,
-		output: TwittrApiEndpointOutputSchemas.tweetsGetLikers,
 	},
 	'users.getByUsername': {
 		input: TwittrApiEndpointInputSchemas.usersGetByUsername,
@@ -439,10 +433,6 @@ const twittrApiEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Get users who retweeted a tweet',
 	},
-	'tweets.getLikers': {
-		riskLevel: 'read',
-		description: 'Get users who liked a tweet',
-	},
 	'users.getByUsername': {
 		riskLevel: 'read',
 		description: 'Get a user profile by handle',
@@ -599,7 +589,9 @@ const twittrApiEndpointMeta = {
 
 export const twittrApiAuthConfig = {
 	api_key: {
-		account: ['user_id'] as const,
+		// The webhook's ID (X-TwittrAPI-Webhook on every delivery), shown by
+		// monitors.createWebhook and monitors.listWebhooks.
+		account: ['webhook_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -651,27 +643,16 @@ export function twittrapi<const T extends TwittrApiPluginOptions>(
 			...options.errorHandlers,
 		},
 		pluginWebhookMatcher: (request) => {
+			// TwittrAPI signs every delivery and names the event in a header.
+			// A bare {event: "test"} body is not enough: other providers send
+			// that too.
 			const headers = request.headers;
-			if ('x-twittrapi-signature' in headers) return true;
-			if ('x-twittrapi-event' in headers) return true;
-			// Raw bodies arrive as string or pre-parsed objects; Record keeps
-			// the matcher generic across transports (parity with core
-			// readBodyRecord), since no single event type fits all bodies.
-			const body =
-				typeof request.body === 'string'
-					? (() => {
-							try {
-								return JSON.parse(request.body as string) as Record<
-									string,
-									unknown
-								>;
-							} catch {
-								return {};
-							}
-						})()
-					: // Pre-parsed bodies are untyped by the transport layer.
-						((request.body as Record<string, unknown> | undefined) ?? {});
-			return body?.event === 'tweet' || body?.event === 'test';
+			return (
+				'x-twittrapi-signature' in headers ||
+				'X-TwittrAPI-Signature' in headers ||
+				'x-twittrapi-event' in headers ||
+				'X-TwittrAPI-Event' in headers
+			);
 		},
 		pluginTenantWebhookMatcher: matchTwittrApiTenantWebhook,
 		keyBuilder: async (ctx: TwittrApiKeyBuilderContext, source) => {
