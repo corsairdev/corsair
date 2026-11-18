@@ -1,10 +1,10 @@
 import {
 	ContactCreateInputSchema,
 	ContactSchema,
-	ContactUpdateInputSchema,
 	ContactsGetInputSchema,
 	ContactsListInputSchema,
 	ContactsListResponseSchema,
+	ContactUpdateInputSchema,
 	CreditNoteDetailsSchema,
 	CreditNotesGetInputSchema,
 	CreditNotesListInputSchema,

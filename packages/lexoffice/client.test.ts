@@ -1,9 +1,9 @@
 import { AuthMissingError } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
 import {
+	compactQuery,
 	LEXOFFICE_API_BASE,
 	LEXOFFICE_NO_TRANSPORT_RETRIES,
-	compactQuery,
 	makeLexofficeRequest,
 	redactSensitiveData,
 	sanitizeApiError,
