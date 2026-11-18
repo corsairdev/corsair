@@ -125,6 +125,21 @@ export const geminiEndpointSchemas = {
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
+// A Veo generation runs after generateVideos returns. Its read answers a
+// derived `state` (endpoints/types.ts VIDEO_OPERATION_STATES), since Google's
+// operation has only `done` and `error`; jobs.test.ts keeps the two in step.
+// The Gemini API has no way to stop a Veo operation.
+const VIDEO_JOB = {
+	idPath: 'operationName',
+	status: {
+		op: 'videos.getVideosOperation',
+		idArg: 'operationName',
+		statusPath: 'state',
+		done: ['SUCCEEDED'],
+		failed: ['FAILED'],
+	},
+} as const;
+
 const geminiEndpointMeta = {
 	'content.countTokens': {
 		riskLevel: 'read',
@@ -150,11 +165,12 @@ const geminiEndpointMeta = {
 		riskLevel: 'write',
 		description:
 			'Generate a text-to-video clip using a Veo model; returns an operation name for status tracking',
+		job: VIDEO_JOB,
 	},
 	'videos.getVideosOperation': {
 		riskLevel: 'read',
 		description:
-			'(Deprecated — use videos.waitForVideo) Check the status of a Veo video generation operation',
+			'Where a Veo video generation stands: state RUNNING, SUCCEEDED or FAILED. videos.waitForVideo waits for it and returns the file',
 	},
 	'videos.waitForVideo': {
 		riskLevel: 'write',

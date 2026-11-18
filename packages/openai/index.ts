@@ -814,6 +814,47 @@ export const openaiEndpointSchemas = {
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
+// Videos, batches and fine-tuning jobs run after the call that starts them
+// returns. Status values are the output schemas' (schema/videos.ts,
+// schema/batches.ts, schema/fine-tuning.ts); jobs.test.ts keeps them in step.
+// OpenAI can't stop a video render (videos.delete only removes it).
+const VIDEO_JOB = {
+	idPath: 'id',
+	status: {
+		op: 'videos.retrieve',
+		idArg: 'videoId',
+		statusPath: 'status',
+		done: ['completed'],
+		failed: ['failed'],
+	},
+} as const;
+
+// A batch past its completion window is expired: it ended without finishing
+// every request, and only the finished ones are in its output file.
+const BATCH_JOB = {
+	idPath: 'id',
+	status: {
+		op: 'batches.retrieve',
+		idArg: 'batchId',
+		statusPath: 'status',
+		done: ['completed'],
+		failed: ['failed', 'expired', 'cancelled'],
+	},
+	cancel: { op: 'batches.cancel', idArg: 'batchId' },
+} as const;
+
+const FINE_TUNING_JOB = {
+	idPath: 'id',
+	status: {
+		op: 'fineTuning.retrieveJob',
+		idArg: 'jobId',
+		statusPath: 'status',
+		done: ['succeeded'],
+		failed: ['failed', 'cancelled'],
+	},
+	cancel: { op: 'fineTuning.cancelJob', idArg: 'jobId' },
+} as const;
+
 const openaiEndpointMeta = {
 	'models.list': { riskLevel: 'read', description: 'List available models' },
 	'models.retrieve': {
@@ -1003,6 +1044,7 @@ const openaiEndpointMeta = {
 	'videos.create': {
 		riskLevel: 'write',
 		description: 'Generate a video from a prompt',
+		job: VIDEO_JOB,
 	},
 	'videos.list': { riskLevel: 'read', description: 'List generated videos' },
 	'videos.retrieve': { riskLevel: 'read', description: 'Retrieve a video' },
@@ -1013,6 +1055,7 @@ const openaiEndpointMeta = {
 	'videos.createRemix': {
 		riskLevel: 'write',
 		description: 'Create a remix of an existing video',
+		job: VIDEO_JOB,
 	},
 	'videos.download': {
 		riskLevel: 'read',
@@ -1119,6 +1162,7 @@ const openaiEndpointMeta = {
 	'fineTuning.createJob': {
 		riskLevel: 'write',
 		description: 'Create a fine-tuning job',
+		job: FINE_TUNING_JOB,
 	},
 	'fineTuning.listJobs': {
 		riskLevel: 'read',
@@ -1230,6 +1274,7 @@ const openaiEndpointMeta = {
 	'batches.create': {
 		riskLevel: 'write',
 		description: 'Create a batch job',
+		job: BATCH_JOB,
 	},
 	'batches.retrieve': {
 		riskLevel: 'read',
