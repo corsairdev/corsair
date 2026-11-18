@@ -1,40 +1,40 @@
-import type {
-	BindEndpoints,
-	BindWebhooks,
-	CorsairEndpoint,
-	CorsairErrorHandler,
-	CorsairPlugin,
-	CorsairPluginContext,
-	CorsairWebhook,
-	KeyBuilderContext,
-	PickAuth,
-	PluginAuthConfig,
-	PluginPermissionsConfig,
-	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
+import {
+	AuthMissingError,
+	type AuthTypes,
+	type BindEndpoints,
+	type CorsairEndpoint,
+	type CorsairErrorHandler,
+	type CorsairPlugin,
+	type CorsairPluginContext,
+	type KeyBuilderContext,
+	type PickAuth,
+	type PluginAuthConfig,
+	type PluginPermissionsConfig,
+	type RequiredPluginEndpointMeta,
+	type RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
-import type { LodgifyEndpointInputs, LodgifyEndpointOutputs } from './endpoints/types';
-import { LodgifyEndpointInputSchemas, LodgifyEndpointOutputSchemas } from './endpoints/types';
+import {
+	Availability,
+	Messages,
+	Properties,
+	Quotes,
+	Reservations,
+} from './endpoints';
 import type {
-	LodgifyWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
-import { Example } from './endpoints';
-import { LodgifySchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
+	LodgifyEndpointInputs,
+	LodgifyEndpointOutputs,
+} from './endpoints/types';
+import {
+	LodgifyEndpointInputSchemas,
+	LodgifyEndpointOutputSchemas,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
-import { matchLodgifyTenantWebhook } from './webhooks/tenant-matcher';
-import { resolveLodgifyOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { LodgifySchema } from './schema';
 
 export type LodgifyPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalLodgifyPlugin['hooks'];
-	webhookHooks?: InternalLodgifyPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof lodgifyEndpointsNested>;
 };
@@ -46,81 +46,151 @@ export type LodgifyContext = CorsairPluginContext<
 
 export type LodgifyKeyBuilderContext = KeyBuilderContext<LodgifyPluginOptions>;
 
-export type LodgifyBoundEndpoints = BindEndpoints<typeof lodgifyEndpointsNested>;
+export type LodgifyBoundEndpoints = BindEndpoints<
+	typeof lodgifyEndpointsNested
+>;
 
-type LodgifyEndpoint<
-	K extends keyof LodgifyEndpointOutputs,
-> = CorsairEndpoint<
+type LodgifyEndpoint<K extends keyof LodgifyEndpointOutputs> = CorsairEndpoint<
 	LodgifyContext,
 	LodgifyEndpointInputs[K],
 	LodgifyEndpointOutputs[K]
 >;
 
 export type LodgifyEndpoints = {
-	exampleGet: LodgifyEndpoint<'exampleGet'>;
+	'properties.list': LodgifyEndpoint<'properties.list'>;
+	'properties.get': LodgifyEndpoint<'properties.get'>;
+	'properties.getRooms': LodgifyEndpoint<'properties.getRooms'>;
+	'reservations.list': LodgifyEndpoint<'reservations.list'>;
+	'reservations.get': LodgifyEndpoint<'reservations.get'>;
+	'reservations.create': LodgifyEndpoint<'reservations.create'>;
+	'availability.get': LodgifyEndpoint<'availability.get'>;
+	'quotes.calculate': LodgifyEndpoint<'quotes.calculate'>;
+	'messages.list': LodgifyEndpoint<'messages.list'>;
+	'messages.send': LodgifyEndpoint<'messages.send'>;
 };
 
-type LodgifyWebhook<
-	K extends keyof LodgifyWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<LodgifyContext, TEvent, LodgifyWebhookOutputs[K]>;
-
-export type LodgifyWebhooks = {
-	example: LodgifyWebhook<'example', ExampleEvent>;
-};
-
-export type LodgifyBoundWebhooks = BindWebhooks<LodgifyWebhooks>;
-
-const lodgifyEndpointsNested = {
-	example: {
-		get: Example.get,
+export const lodgifyEndpointsNested = {
+	properties: {
+		list: Properties.list,
+		get: Properties.get,
+		getRooms: Properties.getRooms,
 	},
-} as const;
-
-const lodgifyWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
+	reservations: {
+		list: Reservations.list,
+		get: Reservations.get,
+		create: Reservations.create,
+	},
+	availability: {
+		get: Availability.get,
+	},
+	quotes: {
+		calculate: Quotes.calculate,
+	},
+	messages: {
+		list: Messages.list,
+		send: Messages.send,
 	},
 } as const;
 
 export const lodgifyEndpointSchemas = {
-	'example.get': {
-		input: LodgifyEndpointInputSchemas.exampleGet,
-		output: LodgifyEndpointOutputSchemas.exampleGet,
+	'properties.list': {
+		input: LodgifyEndpointInputSchemas['properties.list'],
+		output: LodgifyEndpointOutputSchemas['properties.list'],
 	},
-} as const satisfies RequiredPluginEndpointSchemas<typeof lodgifyEndpointsNested>;
-
-const lodgifyWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
+	'properties.get': {
+		input: LodgifyEndpointInputSchemas['properties.get'],
+		output: LodgifyEndpointOutputSchemas['properties.get'],
 	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof lodgifyWebhooksNested>;
+	'properties.getRooms': {
+		input: LodgifyEndpointInputSchemas['properties.getRooms'],
+		output: LodgifyEndpointOutputSchemas['properties.getRooms'],
+	},
+	'reservations.list': {
+		input: LodgifyEndpointInputSchemas['reservations.list'],
+		output: LodgifyEndpointOutputSchemas['reservations.list'],
+	},
+	'reservations.get': {
+		input: LodgifyEndpointInputSchemas['reservations.get'],
+		output: LodgifyEndpointOutputSchemas['reservations.get'],
+	},
+	'reservations.create': {
+		input: LodgifyEndpointInputSchemas['reservations.create'],
+		output: LodgifyEndpointOutputSchemas['reservations.create'],
+	},
+	'availability.get': {
+		input: LodgifyEndpointInputSchemas['availability.get'],
+		output: LodgifyEndpointOutputSchemas['availability.get'],
+	},
+	'quotes.calculate': {
+		input: LodgifyEndpointInputSchemas['quotes.calculate'],
+		output: LodgifyEndpointOutputSchemas['quotes.calculate'],
+	},
+	'messages.list': {
+		input: LodgifyEndpointInputSchemas['messages.list'],
+		output: LodgifyEndpointOutputSchemas['messages.list'],
+	},
+	'messages.send': {
+		input: LodgifyEndpointInputSchemas['messages.send'],
+		output: LodgifyEndpointOutputSchemas['messages.send'],
+	},
+} as const satisfies RequiredPluginEndpointSchemas<
+	typeof lodgifyEndpointsNested
+>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
-const lodgifyEndpointMeta = {
-	'example.get': {
+export const lodgifyEndpointMeta = {
+	'properties.list': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description: 'List vacation rental properties',
+	},
+	'properties.get': {
+		riskLevel: 'read',
+		description: 'Get property details by ID',
+	},
+	'properties.getRooms': {
+		riskLevel: 'read',
+		description: 'Get room types for a property',
+	},
+	'reservations.list': {
+		riskLevel: 'read',
+		description: 'List reservations and bookings',
+	},
+	'reservations.get': {
+		riskLevel: 'read',
+		description: 'Get reservation or booking details by ID',
+	},
+	'reservations.create': {
+		riskLevel: 'write',
+		description: 'Create a new reservation or booking',
+	},
+	'availability.get': {
+		riskLevel: 'read',
+		description: 'Get availability calendar periods for a property',
+	},
+	'quotes.calculate': {
+		riskLevel: 'read',
+		description: 'Calculate quote and pricing for a stay',
+	},
+	'messages.list': {
+		riskLevel: 'read',
+		description: 'List guest messaging threads or messages',
+	},
+	'messages.send': {
+		riskLevel: 'write',
+		description: 'Send a message to a guest or thread',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof lodgifyEndpointsNested>;
 
 export const lodgifyAuthConfig = {
-	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
-	},
+	api_key: {},
 } as const satisfies PluginAuthConfig;
 
 export type BaseLodgifyPlugin<T extends LodgifyPluginOptions> = CorsairPlugin<
 	'lodgify',
 	typeof LodgifySchema,
 	typeof lodgifyEndpointsNested,
-	typeof lodgifyWebhooksNested,
+	Record<string, never>,
 	T,
 	typeof defaultAuthType
 >;
@@ -130,6 +200,8 @@ export type InternalLodgifyPlugin = BaseLodgifyPlugin<LodgifyPluginOptions>;
 export type ExternalLodgifyPlugin<T extends LodgifyPluginOptions> =
 	BaseLodgifyPlugin<T>;
 
+const PUBLIC_ENDPOINTS = new Set<string>();
+
 export function lodgify<const T extends LodgifyPluginOptions>(
 	incomingOptions: LodgifyPluginOptions & T = {} as LodgifyPluginOptions & T,
 ): ExternalLodgifyPlugin<T> {
@@ -137,66 +209,67 @@ export function lodgify<const T extends LodgifyPluginOptions>(
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+
+	const { DEFAULT: builtInDefault, ...builtIns } = errorHandlers;
+	const { DEFAULT: callerDefault, ...callers } = options.errorHandlers ?? {};
+	const combinedErrorHandlers: CorsairErrorHandler = {
+		...callers,
+		...builtIns,
+		...callers,
+		DEFAULT: callerDefault ?? builtInDefault,
+	};
+
 	return {
 		id: 'lodgify',
 		authConfig: lodgifyAuthConfig,
 		schema: LodgifySchema,
-		options: options,
+		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: lodgifyEndpointsNested,
-		webhooks: lodgifyWebhooksNested,
+		webhooks: {},
 		endpointMeta: lodgifyEndpointMeta,
 		endpointSchemas: lodgifyEndpointSchemas,
-		webhookSchemas: lodgifyWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-lodgify-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchLodgifyTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveLodgifyOAuthWebhookTenantLink,
-		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
-		},
+		errorHandlers: combinedErrorHandlers,
 		keyBuilder: async (ctx: LodgifyKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && options.key) {
-				return options.key;
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			if (source !== 'endpoint') return '';
+			if (options.key) return options.key;
+			if (PUBLIC_ENDPOINTS.has(ctx.meteredOperationId ?? '')) return '';
+			if (!ctx.keys) throw new AuthMissingError('lodgify', 'api_key');
+			const apiKey = await ctx.keys.get_api_key();
+			if (!apiKey) throw new AuthMissingError('lodgify', 'api_key');
+			return apiKey;
 		},
 	} satisfies InternalLodgifyPlugin;
 }
 
 export type {
-	ExampleEvent,
-	LodgifyWebhookOutputs,
-} from './webhooks/types';
-
-export type {
+	LodgifyAvailabilityGetInputSchema,
+	LodgifyAvailabilityGetOutputSchema,
+	LodgifyAvailabilityPeriodSchema,
 	LodgifyEndpointInputs,
 	LodgifyEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
+	LodgifyFeeSchema,
+	LodgifyGuestSchema,
+	LodgifyMessageSchema,
+	LodgifyMessagesListInputSchema,
+	LodgifyMessagesListOutputSchema,
+	LodgifyMessagesSendInputSchema,
+	LodgifyMessagesSendOutputSchema,
+	LodgifyPropertiesGetInputSchema,
+	LodgifyPropertiesGetOutputSchema,
+	LodgifyPropertiesGetRoomsInputSchema,
+	LodgifyPropertiesGetRoomsOutputSchema,
+	LodgifyPropertiesListInputSchema,
+	LodgifyPropertiesListOutputSchema,
+	LodgifyPropertyRoomSchema,
+	LodgifyPropertySchema,
+	LodgifyQuotesCalculateInputSchema,
+	LodgifyQuotesCalculateOutputSchema,
+	LodgifyReservationSchema,
+	LodgifyReservationsCreateInputSchema,
+	LodgifyReservationsCreateOutputSchema,
+	LodgifyReservationsGetInputSchema,
+	LodgifyReservationsGetOutputSchema,
+	LodgifyReservationsListInputSchema,
+	LodgifyReservationsListOutputSchema,
 } from './endpoints/types';

@@ -1,0 +1,607 @@
+---
+title: "Lodgify API reference"
+sidebarTitle: "API"
+description: "API reference for the Lodgify plugin in Corsair: every `lodgify.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Availability
+
+### get
+
+`availability.get`
+
+Get availability calendar periods for a property
+
+**Risk:** `read`
+
+```ts
+await corsair.lodgify.api.availability.get({ propertyId: 101, from: '2026-06-01', to: '2026-06-10' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `propertyId` | `number` | Yes | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+
+Returns the calendar availability periods and booking states for the specified property over a date range.
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  start?: string | null,
+  end?: string | null,
+  is_available?: boolean,
+  period_type?: string | null,
+  room_type_id?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Messages
+
+### list
+
+`messages.list`
+
+List guest messaging threads or messages
+
+**Risk:** `read`
+
+```ts
+await corsair.lodgify.api.messages.list({ page: 1, size: 10, thread_id: 'thread-123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+| `thread_id` | `string` | No | — |
+| `booking_id` | `number` | No | — |
+
+Retrieves guest messaging threads and conversations.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string | number,
+  thread_id?: string | null,
+  booking_id?: number | null,
+  subject?: string | null,
+  message?: string | null,
+  sender?: string | null,
+  created_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`messages.send`
+
+Send a message to a guest or thread
+
+**Risk:** `write`
+
+```ts
+await corsair.lodgify.api.messages.send({ message: 'Welcome to your stay! Check-in instructions have been sent.', thread_id: 'thread-123', subject: 'Check-in instructions' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `thread_id` | `string` | No | — |
+| `booking_id` | `number` | No | — |
+| `subject` | `string` | No | — |
+| `recipient` | `string` | No | — |
+
+Sends a message to a guest or messaging thread.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `thread_id` | `string` | No | — |
+| `status` | `string` | No | — |
+| `sent` | `boolean` | No | — |
+
+
+
+---
+
+## Properties
+
+### get
+
+`properties.get`
+
+Get property details by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.lodgify.api.properties.get({ id: 101 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+Returns detailed configuration and settings for a specific vacation rental property by ID.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `latitude` | `number \| null` | No | — |
+| `longitude` | `number \| null` | No | — |
+| `address` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `country_code` | `string \| null` | No | — |
+| `currency_code` | `string \| null` | No | — |
+| `rooms` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="rooms full type">
+
+```ts
+{
+  id: number,
+  name?: string,
+  max_people?: number,
+  bedrooms?: number,
+  bathrooms?: number,
+  property_id?: number,
+  type?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRooms
+
+`properties.getRooms`
+
+Get room types for a property
+
+**Risk:** `read`
+
+```ts
+await corsair.lodgify.api.properties.getRooms({ id: 101 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+Returns the room types and units configured for the specified property.
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name?: string,
+  max_people?: number,
+  bedrooms?: number,
+  bathrooms?: number,
+  property_id?: number,
+  type?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`properties.list`
+
+List vacation rental properties
+
+**Risk:** `read`
+
+```ts
+await corsair.lodgify.api.properties.list({ page: 1, size: 10, includeCount: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+| `includeCount` | `boolean` | No | — |
+
+Returns a paged list of properties. Query parameters `page` and `size` control pagination, and `includeCount` includes the total count.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  description?: string | null,
+  latitude?: number | null,
+  longitude?: number | null,
+  address?: string | null,
+  city?: string | null,
+  country_code?: string | null,
+  currency_code?: string | null,
+  rooms?: {
+    id: number,
+    name?: string,
+    max_people?: number,
+    bedrooms?: number,
+    bathrooms?: number,
+    property_id?: number,
+    type?: string | null
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Quotes
+
+### calculate
+
+`quotes.calculate`
+
+Calculate quote and pricing for a stay
+
+**Risk:** `read`
+
+```ts
+await corsair.lodgify.api.quotes.calculate({
+	property_id: 101,
+	arrival: '2026-06-01',
+	departure: '2026-06-05',
+	guests: 2,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `property_id` | `number` | Yes | — |
+| `arrival` | `string` | Yes | — |
+| `departure` | `string` | Yes | — |
+| `room_types` | `object[]` | No | — |
+| `guests` | `number` | No | — |
+| `add_ons` | `(number \| string)[]` | No | — |
+
+Calculates stay rates, grand totals, and extra fees for a requested date range and guest count.
+
+<AccordionGroup>
+<Accordion title="room_types full type">
+
+```ts
+{
+  id: number,
+  people?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `property_id` | `number` | No | — |
+| `arrival` | `string` | No | — |
+| `departure` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `subtotal` | `number` | No | — |
+| `grand_total` | `number` | No | — |
+| `balance_to_pay` | `number` | No | — |
+| `tax_amount` | `number` | No | — |
+| `optional_extras_total` | `number` | No | — |
+| `is_available` | `boolean` | No | — |
+| `min_stay` | `number` | No | — |
+| `fees` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="fees full type">
+
+```ts
+{
+  name?: string,
+  amount?: number,
+  included_in_total?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reservations
+
+### create
+
+`reservations.create`
+
+Create a new reservation or booking
+
+**Risk:** `write`
+
+```ts
+await corsair.lodgify.api.reservations.create({
+	property_id: 101,
+	arrival: '2026-06-01',
+	departure: '2026-06-07',
+	guest: { first_name: 'Jane', last_name: 'Doe', email: 'jane@example.com' },
+	roomTypes: [{ id: 201, people: 2 }],
+	total_amount: 1200,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `property_id` | `number` | Yes | — |
+| `arrival` | `string` | Yes | — |
+| `departure` | `string` | Yes | — |
+| `guest` | `object` | No | — |
+| `roomTypes` | `object[]` | No | — |
+| `total_amount` | `number` | No | — |
+| `source` | `string` | No | — |
+| `status` | `string` | No | — |
+
+Creates a new reservation or booking on the specified property.
+
+<AccordionGroup>
+<Accordion title="guest full type">
+
+```ts
+{
+  first_name?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  phone?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="roomTypes full type">
+
+```ts
+{
+  id: number,
+  people?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `property_id` | `number \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `arrival` | `string \| null` | No | — |
+| `departure` | `string \| null` | No | — |
+| `total_amount` | `number \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `guest` | `object \| null` | No | — |
+| `source` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="guest full type">
+
+```ts
+{
+  first_name?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  phone?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`reservations.get`
+
+Get reservation or booking details by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.lodgify.api.reservations.get({ id: 501 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+Returns complete booking details including guest information and stay dates for a specific reservation.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `property_id` | `number \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `arrival` | `string \| null` | No | — |
+| `departure` | `string \| null` | No | — |
+| `total_amount` | `number \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `guest` | `object \| null` | No | — |
+| `source` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="guest full type">
+
+```ts
+{
+  first_name?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  phone?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`reservations.list`
+
+List reservations and bookings
+
+**Risk:** `read`
+
+```ts
+await corsair.lodgify.api.reservations.list({ page: 1, size: 10, includeCount: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+| `stayFilter` | `Upcoming \| Current \| Historic \| All` | No | — |
+| `updatedSince` | `string` | No | — |
+| `includeCount` | `boolean` | No | — |
+| `includeExternal` | `boolean` | No | — |
+
+Returns bookings filtered by `stayFilter` (Upcoming, Current, Historic, All) and updated timestamp.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: number,
+  property_id?: number | null,
+  status?: string | null,
+  arrival?: string | null,
+  departure?: string | null,
+  total_amount?: number | null,
+  currency?: string | null,
+  guest?: {
+    first_name?: string | null,
+    last_name?: string | null,
+    email?: string | null,
+    phone?: string | null
+  } | null,
+  source?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

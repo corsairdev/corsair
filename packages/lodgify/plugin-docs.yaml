@@ -1,4 +1,92 @@
-# Display copy for the docs, the catalog, corsair.dev and Hub.
-# `pnpm validate:plugins` fails until the TODO is replaced.
-displayName: "Lodgify"
-description: TODO one sentence on what the API is and what this plugin can do with it.
+displayName: Lodgify
+description: Manage vacation rental properties, room types, reservations, guest communications, quotes, and availability calendars via the Lodgify API.
+domain: lodgify.com
+overviewNote: >-
+  Lodgify API endpoints require authentication via an account API key passed in
+  the `X-ApiKey` header. API access is available on Lodgify Pro and Enterprise
+  tiers. The tenant must configure their API key before authenticated calls can
+  be made.
+examples:
+  read:
+    path: properties.list
+    title: List properties
+    args:
+      page: 1
+      size: 10
+  write:
+    path: reservations.create
+    title: Create a reservation
+    args:
+      property_id: 101
+      arrival: '2026-06-01'
+      departure: '2026-06-07'
+      guest:
+        first_name: Jane
+        last_name: Doe
+        email: jane@example.com
+apiExamples:
+  properties.list:
+    page: 1
+    size: 10
+    includeCount: true
+  properties.get:
+    id: 101
+  properties.getRooms:
+    id: 101
+  reservations.list:
+    page: 1
+    size: 10
+    includeCount: true
+  reservations.get:
+    id: 501
+  reservations.create:
+    property_id: 101
+    arrival: '2026-06-01'
+    departure: '2026-06-07'
+    guest:
+      first_name: Jane
+      last_name: Doe
+      email: jane@example.com
+    roomTypes:
+      - id: 201
+        people: 2
+    total_amount: 1200
+  availability.get:
+    propertyId: 101
+    from: '2026-06-01'
+    to: '2026-06-10'
+  quotes.calculate:
+    property_id: 101
+    arrival: '2026-06-01'
+    departure: '2026-06-05'
+    guests: 2
+  messages.list:
+    page: 1
+    size: 10
+    thread_id: thread-123
+  messages.send:
+    message: Welcome to your stay! Check-in instructions have been sent.
+    thread_id: thread-123
+    subject: Check-in instructions
+apiNotes:
+  properties.list: >-
+    Returns a paged list of properties. Query parameters `page` and `size` control
+    pagination, and `includeCount` includes the total count.
+  properties.get: >-
+    Returns detailed configuration and settings for a specific vacation rental property by ID.
+  properties.getRooms: >-
+    Returns the room types and units configured for the specified property.
+  reservations.list: >-
+    Returns bookings filtered by `stayFilter` (Upcoming, Current, Historic, All) and updated timestamp.
+  reservations.get: >-
+    Returns complete booking details including guest information and stay dates for a specific reservation.
+  reservations.create: >-
+    Creates a new reservation or booking on the specified property.
+  availability.get: >-
+    Returns the calendar availability periods and booking states for the specified property over a date range.
+  quotes.calculate: >-
+    Calculates stay rates, grand totals, and extra fees for a requested date range and guest count.
+  messages.list: >-
+    Retrieves guest messaging threads and conversations.
+  messages.send: >-
+    Sends a message to a guest or messaging thread.
