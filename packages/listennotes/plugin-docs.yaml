@@ -1,4 +1,33 @@
-# Display copy for the docs, the catalog, corsair.dev and Hub.
-# `pnpm validate:plugins` fails until the TODO is replaced.
-displayName: "ListenNotes"
-description: TODO one sentence on what the API is and what this plugin can do with it.
+displayName: Listen Notes
+description: Podcast search and directory API for exploring podcasts, episodes, genres, curated lists, and playlists.
+examples:
+  read:
+    path: search.search
+    title: Search podcast episodes
+    args:
+      q: startup
+apiExamples:
+  search.search:
+    q: startup
+  search.typeahead:
+    q: tech
+  podcasts.get:
+    id: 4d384cb3d3d949b28534e2c0fa026f8d
+  podcasts.getEpisodes:
+    id: 4d384cb3d3d949b28534e2c0fa026f8d
+  podcasts.getRecommendations:
+    id: 4d384cb3d3d949b28534e2c0fa026f8d
+  podcasts.getBest:
+    genre_id: '127'
+  episodes.get:
+    id: 254444fa6cf64a43a95292a70eb6869b
+  episodes.getRecommendations:
+    id: 254444fa6cf64a43a95292a70eb6869b
+  genres.list: {}
+  curated.list: {}
+  curated.get:
+    id: e4a6865261f945aeb78f2ebcb3fd46fb
+  playlists.list: {}
+  playlists.get:
+    id: m52eb3hdwdg
+overviewNote: Listen Notes API requests require an API key passed via the X-ListenAPI-Key header.

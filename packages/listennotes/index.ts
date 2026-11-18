@@ -1,202 +1,336 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
-import type { ListenNotesEndpointInputs, ListenNotesEndpointOutputs } from './endpoints/types';
-import { ListenNotesEndpointInputSchemas, ListenNotesEndpointOutputSchemas } from './endpoints/types';
+import { AuthMissingError } from 'corsair/core';
+import {
+	Curated,
+	Episodes,
+	Genres,
+	Playlists,
+	Podcasts,
+	Search,
+} from './endpoints';
 import type {
-	ListenNotesWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
-import { Example } from './endpoints';
-import { ListenNotesSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
+	ListennotesEndpointInputs,
+	ListennotesEndpointOutputs,
+} from './endpoints/types';
+import {
+	ListennotesEndpointInputSchemas,
+	ListennotesEndpointOutputSchemas,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
-import { matchListenNotesTenantWebhook } from './webhooks/tenant-matcher';
-import { resolveListenNotesOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { ListennotesSchema } from './schema';
 
-export type ListenNotesPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+export { ListennotesSchema } from './schema';
+export { listennotesEntities } from './schema/database';
+
+export type ListennotesPluginOptions = {
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
-	hooks?: InternalListenNotesPlugin['hooks'];
-	webhookHooks?: InternalListenNotesPlugin['webhookHooks'];
+	hooks?: InternalListennotesPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
-	permissions?: PluginPermissionsConfig<typeof listenNotesEndpointsNested>;
+	permissions?: PluginPermissionsConfig<typeof listennotesEndpointsNested>;
 };
 
-export type ListenNotesContext = CorsairPluginContext<
-	typeof ListenNotesSchema,
-	ListenNotesPluginOptions
+export type ListennotesContext = CorsairPluginContext<
+	typeof ListennotesSchema,
+	ListennotesPluginOptions
 >;
 
-export type ListenNotesKeyBuilderContext = KeyBuilderContext<ListenNotesPluginOptions>;
+export type ListennotesKeyBuilderContext =
+	KeyBuilderContext<ListennotesPluginOptions>;
 
-export type ListenNotesBoundEndpoints = BindEndpoints<typeof listenNotesEndpointsNested>;
-
-type ListenNotesEndpoint<
-	K extends keyof ListenNotesEndpointOutputs,
-> = CorsairEndpoint<
-	ListenNotesContext,
-	ListenNotesEndpointInputs[K],
-	ListenNotesEndpointOutputs[K]
+export type ListennotesBoundEndpoints = BindEndpoints<
+	typeof listennotesEndpointsNested
 >;
 
-export type ListenNotesEndpoints = {
-	exampleGet: ListenNotesEndpoint<'exampleGet'>;
+type ListennotesEndpoint<K extends keyof ListennotesEndpointOutputs> =
+	CorsairEndpoint<
+		ListennotesContext,
+		ListennotesEndpointInputs[K],
+		ListennotesEndpointOutputs[K]
+	>;
+
+export type ListennotesEndpoints = {
+	'search.search': ListennotesEndpoint<'search.search'>;
+	'search.typeahead': ListennotesEndpoint<'search.typeahead'>;
+	'podcasts.get': ListennotesEndpoint<'podcasts.get'>;
+	'podcasts.getEpisodes': ListennotesEndpoint<'podcasts.getEpisodes'>;
+	'podcasts.getRecommendations': ListennotesEndpoint<'podcasts.getRecommendations'>;
+	'podcasts.getBest': ListennotesEndpoint<'podcasts.getBest'>;
+	'episodes.get': ListennotesEndpoint<'episodes.get'>;
+	'episodes.getRecommendations': ListennotesEndpoint<'episodes.getRecommendations'>;
+	'genres.list': ListennotesEndpoint<'genres.list'>;
+	'curated.list': ListennotesEndpoint<'curated.list'>;
+	'curated.get': ListennotesEndpoint<'curated.get'>;
+	'playlists.list': ListennotesEndpoint<'playlists.list'>;
+	'playlists.get': ListennotesEndpoint<'playlists.get'>;
 };
 
-type ListenNotesWebhook<
-	K extends keyof ListenNotesWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<ListenNotesContext, TEvent, ListenNotesWebhookOutputs[K]>;
-
-export type ListenNotesWebhooks = {
-	example: ListenNotesWebhook<'example', ExampleEvent>;
-};
-
-export type ListenNotesBoundWebhooks = BindWebhooks<ListenNotesWebhooks>;
-
-const listenNotesEndpointsNested = {
-	example: {
-		get: Example.get,
+const listennotesEndpointsNested = {
+	search: {
+		search: Search.search,
+		typeahead: Search.typeahead,
+	},
+	podcasts: {
+		get: Podcasts.get,
+		getEpisodes: Podcasts.getEpisodes,
+		getRecommendations: Podcasts.getRecommendations,
+		getBest: Podcasts.getBest,
+	},
+	episodes: {
+		get: Episodes.get,
+		getRecommendations: Episodes.getRecommendations,
+	},
+	genres: {
+		list: Genres.list,
+	},
+	curated: {
+		list: Curated.list,
+		get: Curated.get,
+	},
+	playlists: {
+		list: Playlists.list,
+		get: Playlists.get,
 	},
 } as const;
 
-const listenNotesWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
+export const listennotesEndpointSchemas = {
+	'search.search': {
+		input: ListennotesEndpointInputSchemas['search.search'],
+		output: ListennotesEndpointOutputSchemas['search.search'],
 	},
-} as const;
-
-export const listenNotesEndpointSchemas = {
-	'example.get': {
-		input: ListenNotesEndpointInputSchemas.exampleGet,
-		output: ListenNotesEndpointOutputSchemas.exampleGet,
+	'search.typeahead': {
+		input: ListennotesEndpointInputSchemas['search.typeahead'],
+		output: ListennotesEndpointOutputSchemas['search.typeahead'],
 	},
-} as const satisfies RequiredPluginEndpointSchemas<typeof listenNotesEndpointsNested>;
-
-const listenNotesWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
+	'podcasts.get': {
+		input: ListennotesEndpointInputSchemas['podcasts.get'],
+		output: ListennotesEndpointOutputSchemas['podcasts.get'],
 	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof listenNotesWebhooksNested>;
+	'podcasts.getEpisodes': {
+		input: ListennotesEndpointInputSchemas['podcasts.getEpisodes'],
+		output: ListennotesEndpointOutputSchemas['podcasts.getEpisodes'],
+	},
+	'podcasts.getRecommendations': {
+		input: ListennotesEndpointInputSchemas['podcasts.getRecommendations'],
+		output: ListennotesEndpointOutputSchemas['podcasts.getRecommendations'],
+	},
+	'podcasts.getBest': {
+		input: ListennotesEndpointInputSchemas['podcasts.getBest'],
+		output: ListennotesEndpointOutputSchemas['podcasts.getBest'],
+	},
+	'episodes.get': {
+		input: ListennotesEndpointInputSchemas['episodes.get'],
+		output: ListennotesEndpointOutputSchemas['episodes.get'],
+	},
+	'episodes.getRecommendations': {
+		input: ListennotesEndpointInputSchemas['episodes.getRecommendations'],
+		output: ListennotesEndpointOutputSchemas['episodes.getRecommendations'],
+	},
+	'genres.list': {
+		input: ListennotesEndpointInputSchemas['genres.list'],
+		output: ListennotesEndpointOutputSchemas['genres.list'],
+	},
+	'curated.list': {
+		input: ListennotesEndpointInputSchemas['curated.list'],
+		output: ListennotesEndpointOutputSchemas['curated.list'],
+	},
+	'curated.get': {
+		input: ListennotesEndpointInputSchemas['curated.get'],
+		output: ListennotesEndpointOutputSchemas['curated.get'],
+	},
+	'playlists.list': {
+		input: ListennotesEndpointInputSchemas['playlists.list'],
+		output: ListennotesEndpointOutputSchemas['playlists.list'],
+	},
+	'playlists.get': {
+		input: ListennotesEndpointInputSchemas['playlists.get'],
+		output: ListennotesEndpointOutputSchemas['playlists.get'],
+	},
+} as const satisfies RequiredPluginEndpointSchemas<
+	typeof listennotesEndpointsNested
+>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
-const listenNotesEndpointMeta = {
-	'example.get': {
+const listennotesEndpointMeta = {
+	'search.search': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description:
+			'Full-text search for podcast episodes, channels, or curated lists',
 	},
-} as const satisfies RequiredPluginEndpointMeta<typeof listenNotesEndpointsNested>;
-
-export const listenNotesAuthConfig = {
-	api_key: {
-		account: ['tenant_external_id'] as const,
+	'search.typeahead': {
+		riskLevel: 'read',
+		description:
+			'Typeahead search for podcast titles, genres, and terms',
 	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
+	'podcasts.get': {
+		riskLevel: 'read',
+		description:
+			'Fetch detailed metadata and episodes for a podcast by ID',
 	},
-} as const satisfies PluginAuthConfig;
-
-export type BaseListenNotesPlugin<T extends ListenNotesPluginOptions> = CorsairPlugin<
-	'listennotes',
-	typeof ListenNotesSchema,
-	typeof listenNotesEndpointsNested,
-	typeof listenNotesWebhooksNested,
-	T,
-	typeof defaultAuthType
+	'podcasts.getEpisodes': {
+		riskLevel: 'read',
+		description:
+			'Fetch paginated episodes for a podcast by ID',
+	},
+	'podcasts.getRecommendations': {
+		riskLevel: 'read',
+		description:
+			'Fetch recommended podcasts based on a given podcast ID',
+	},
+	'podcasts.getBest': {
+		riskLevel: 'read',
+		description: 'Fetch best podcasts by genre and region',
+	},
+	'episodes.get': {
+		riskLevel: 'read',
+		description:
+			'Fetch detailed metadata for an episode by ID',
+	},
+	'episodes.getRecommendations': {
+		riskLevel: 'read',
+		description:
+			'Fetch recommended episodes based on a given episode ID',
+	},
+	'genres.list': {
+		riskLevel: 'read',
+		description:
+			'Fetch a list of podcast genres supported by Listen Notes',
+	},
+	'curated.list': {
+		riskLevel: 'read',
+		description: 'Fetch curated lists of podcasts',
+	},
+	'curated.get': {
+		riskLevel: 'read',
+		description: 'Fetch a curated list of podcasts by ID',
+	},
+	'playlists.list': {
+		riskLevel: 'read',
+		description: 'Fetch a list of user playlists',
+	},
+	'playlists.get': {
+		riskLevel: 'read',
+		description: 'Fetch a playlist and its items by ID',
+	},
+} as const satisfies RequiredPluginEndpointMeta<
+	typeof listennotesEndpointsNested
 >;
 
-export type InternalListenNotesPlugin = BaseListenNotesPlugin<ListenNotesPluginOptions>;
+export const listennotesAuthConfig = {
+	api_key: {},
+} as const satisfies PluginAuthConfig;
 
-export type ExternalListenNotesPlugin<T extends ListenNotesPluginOptions> =
-	BaseListenNotesPlugin<T>;
+export type BaseListennotesPlugin<T extends ListennotesPluginOptions> =
+	CorsairPlugin<
+		'listennotes',
+		typeof ListennotesSchema,
+		typeof listennotesEndpointsNested,
+		Record<string, never>,
+		T,
+		typeof defaultAuthType
+	>;
 
-export function listennotes<const T extends ListenNotesPluginOptions>(
-	incomingOptions: ListenNotesPluginOptions & T = {} as ListenNotesPluginOptions & T,
-): ExternalListenNotesPlugin<T> {
+export type InternalListennotesPlugin =
+	BaseListennotesPlugin<ListennotesPluginOptions>;
+
+export type ExternalListennotesPlugin<T extends ListennotesPluginOptions> =
+	BaseListennotesPlugin<T>;
+
+const PUBLIC_ENDPOINTS = new Set<string>();
+
+export function listennotes<const T extends ListennotesPluginOptions>(
+	incomingOptions: ListennotesPluginOptions &
+		T = {} as ListennotesPluginOptions & T,
+): ExternalListennotesPlugin<T> {
 	const options = {
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+	const { DEFAULT: builtInDefault, ...builtInErrorHandlers } = errorHandlers;
+	const { DEFAULT: callerDefault, ...callerErrorHandlers } =
+		options.errorHandlers ?? {};
+	const orderedErrorHandlers = {
+		...callerErrorHandlers,
+		...builtInErrorHandlers,
+		...callerErrorHandlers,
+		DEFAULT: callerDefault ?? builtInDefault,
+	};
+
 	return {
 		id: 'listennotes',
-		authConfig: listenNotesAuthConfig,
-		schema: ListenNotesSchema,
-		options: options,
+		authConfig: listennotesAuthConfig,
+		schema: ListennotesSchema,
+		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
-		endpoints: listenNotesEndpointsNested,
-		webhooks: listenNotesWebhooksNested,
-		endpointMeta: listenNotesEndpointMeta,
-		endpointSchemas: listenNotesEndpointSchemas,
-		webhookSchemas: listenNotesWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-listennotes-signature' in headers;
+		endpoints: listennotesEndpointsNested,
+		webhooks: {},
+		endpointMeta: listennotesEndpointMeta,
+		endpointSchemas: listennotesEndpointSchemas,
+		errorHandlers: orderedErrorHandlers,
+		keyBuilder: async (ctx: ListennotesKeyBuilderContext, source) => {
+			if (source !== 'endpoint') return '';
+			if (options.key) return options.key;
+			if (PUBLIC_ENDPOINTS.has(ctx.meteredOperationId ?? '')) return '';
+			if (!ctx.keys) throw new AuthMissingError('listennotes', 'api_key');
+			const apiKey = await ctx.keys.get_api_key();
+			if (!apiKey) throw new AuthMissingError('listennotes', 'api_key');
+			return apiKey;
 		},
-		pluginTenantWebhookMatcher: matchListenNotesTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveListenNotesOAuthWebhookTenantLink,
-		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
-		},
-		keyBuilder: async (ctx: ListenNotesKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && options.key) {
-				return options.key;
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
-		},
-	} satisfies InternalListenNotesPlugin;
+	} satisfies InternalListennotesPlugin;
 }
 
 export type {
-	ExampleEvent,
-	ListenNotesWebhookOutputs,
-} from './webhooks/types';
-
-export type {
-	ListenNotesEndpointInputs,
-	ListenNotesEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
+	CuratedGetInput,
+	CuratedGetResponse,
+	CuratedListFull,
+	CuratedListInput,
+	CuratedListResponse,
+	CuratedListSimple,
+	EpisodeFull,
+	EpisodeMinimum,
+	EpisodeSimple,
+	EpisodesGetInput,
+	EpisodesGetRecommendationsInput,
+	EpisodesGetRecommendationsResponse,
+	EpisodesGetResponse,
+	Genre,
+	GenresListInput,
+	GenresListResponse,
+	ListennotesEndpointInputs,
+	ListennotesEndpointOutputs,
+	PlaylistItem,
+	PlaylistsGetInput,
+	PlaylistsGetResponse,
+	PlaylistsListInput,
+	PlaylistsListResponse,
+	PlaylistSummary,
+	PodcastFull,
+	PodcastSimple,
+	PodcastsGetBestInput,
+	PodcastsGetBestResponse,
+	PodcastsGetEpisodesInput,
+	PodcastsGetEpisodesResponse,
+	PodcastsGetInput,
+	PodcastsGetRecommendationsInput,
+	PodcastsGetRecommendationsResponse,
+	PodcastsGetResponse,
+	PodcastTypeaheadResult,
+	SearchInput,
+	SearchResponse,
+	TypeaheadInput,
+	TypeaheadResponse,
 } from './endpoints/types';

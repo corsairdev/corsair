@@ -1,4 +1,6 @@
-export const ListenNotesSchema = {
+import { listennotesEntities } from './database';
+
+export const ListennotesSchema = {
 	version: '1.0.0',
-	entities: {},
+	entities: listennotesEntities,
 } as const;
