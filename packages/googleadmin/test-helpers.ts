@@ -67,6 +67,7 @@ export function sentHeader(name: string): string | null {
 }
 
 /** The JSON body of the last request, as a plain record. */
+// unknown: a parsed JSON body has no static shape; tests read single keys.
 /** The JSON body of the last request, as a plain record. */
 export function sentBody(): Record<string, unknown> {
 	// unknown: parsed JSON.
