@@ -89,7 +89,6 @@
     "build": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\" && tsup",
     "prepublishOnly": "pnpm run build",
     "build:watch": "tsup --watch",
-    "postinstall": "node scripts/postinstall-frpc.mjs",
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.test.json",
     "ind": "tsx index.ts"
   },
@@ -157,8 +156,6 @@
   },
   "packageManager": "pnpm@10.20.0",
   "files": [
-    "dist",
-    "scripts/postinstall-frpc.mjs",
-    "scripts/frpc-release.json"
+    "dist"
   ]
 }
