@@ -65,7 +65,7 @@ export const errorHandlers = {
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	DEFAULT: {
-		match: () => true,
+		match: (_error?: unknown) => true,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 } satisfies CorsairErrorHandler;

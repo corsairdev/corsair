@@ -1,22 +1,24 @@
-import {
-	AuthMissingError,
-	type AuthTypes,
-	type BindEndpoints,
-	type CorsairEndpoint,
-	type CorsairErrorHandler,
-	type CorsairPlugin,
-	type CorsairPluginContext,
-	type KeyBuilderContext,
-	type PickAuth,
-	type PluginAuthConfig,
-	type PluginPermissionsConfig,
-	type RequiredPluginEndpointMeta,
-	type RequiredPluginEndpointSchemas,
+import { AuthMissingError } from 'corsair/core';
+import type {
+	AuthTypes,
+	BindEndpoints,
+	CorsairEndpoint,
+	CorsairErrorHandler,
+	CorsairPlugin,
+	CorsairPluginContext,
+	KeyBuilderContext,
+	PickAuth,
+	PluginAuthConfig,
+	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
+	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { campaigns, fields, lists, members, reports } from './endpoints';
+import type {
+	LapostaEndpointInputs,
+	LapostaEndpointOutputs,
+} from './endpoints/types';
 import {
-	type LapostaEndpointInputs,
-	type LapostaEndpointOutputs,
 	LapostaEndpointInputSchemas,
 	LapostaEndpointOutputSchemas,
 } from './endpoints/types';
@@ -43,12 +45,11 @@ export type LapostaBoundEndpoints = BindEndpoints<
 	typeof lapostaEndpointsNested
 >;
 
-type LapostaEndpoint<K extends keyof LapostaEndpointOutputs> =
-	CorsairEndpoint<
-		LapostaContext,
-		LapostaEndpointInputs[K],
-		LapostaEndpointOutputs[K]
-	>;
+type LapostaEndpoint<K extends keyof LapostaEndpointOutputs> = CorsairEndpoint<
+	LapostaContext,
+	LapostaEndpointInputs[K],
+	LapostaEndpointOutputs[K]
+>;
 
 export type LapostaEndpoints = {
 	'lists.list': LapostaEndpoint<'lists.list'>;

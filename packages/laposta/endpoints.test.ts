@@ -19,22 +19,26 @@ describe('Laposta endpoints', () => {
 	});
 
 	function mockFetchResponse(body: unknown, status = 200) {
-		globalThis.fetch = jest.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
-			const req = new Request(input, init);
-			capturedMethod = req.method;
-			capturedUrl = req.url;
-			const text = await req.text();
-			capturedBody = text ? JSON.parse(text) : null;
-			return new Response(JSON.stringify(body), {
-				status,
-				headers: { 'Content-Type': 'application/json' },
-			});
-		});
+		globalThis.fetch = jest.fn(
+			async (input: string | URL | Request, init?: RequestInit) => {
+				const req = new Request(input, init);
+				capturedMethod = req.method;
+				capturedUrl = req.url;
+				const text = await req.text();
+				capturedBody = text ? JSON.parse(text) : null;
+				return new Response(JSON.stringify(body), {
+					status,
+					headers: { 'Content-Type': 'application/json' },
+				});
+			},
+		);
 	}
 
 	describe('lists endpoints', () => {
 		it('lists.list calls GET /list', async () => {
-			mockFetchResponse({ data: [{ list: { list_id: 'l1', name: 'General' } }] });
+			mockFetchResponse({
+				data: [{ list: { list_id: 'l1', name: 'General' } }],
+			});
 			const res = await lists.list({}, 'test-key');
 			expect(capturedMethod).toBe('GET');
 			expect(capturedUrl).toContain('/v2/list');
@@ -81,7 +85,9 @@ describe('Laposta endpoints', () => {
 
 	describe('members endpoints', () => {
 		it('members.list calls GET /member with list_id and state', async () => {
-			mockFetchResponse({ data: [{ member: { member_id: 'm1', email: 'a@example.com' } }] });
+			mockFetchResponse({
+				data: [{ member: { member_id: 'm1', email: 'a@example.com' } }],
+			});
 			const res = await members.list(
 				{ list_id: 'l1', state: 'active' },
 				'test-key',
@@ -94,7 +100,9 @@ describe('Laposta endpoints', () => {
 		});
 
 		it('members.get calls GET /member/:id with list_id', async () => {
-			mockFetchResponse({ member: { member_id: 'm1', email: 'a@example.com' } });
+			mockFetchResponse({
+				member: { member_id: 'm1', email: 'a@example.com' },
+			});
 			const res = await members.get(
 				{ list_id: 'l1', member_id: 'm1' },
 				'test-key',
@@ -106,7 +114,9 @@ describe('Laposta endpoints', () => {
 		});
 
 		it('members.create calls POST /member with payload', async () => {
-			mockFetchResponse({ member: { member_id: 'm2', email: 'b@example.com' } });
+			mockFetchResponse({
+				member: { member_id: 'm2', email: 'b@example.com' },
+			});
 			const res = await members.create(
 				{ list_id: 'l1', email: 'b@example.com' },
 				'test-key',
@@ -121,7 +131,9 @@ describe('Laposta endpoints', () => {
 		});
 
 		it('members.update calls POST /member/:id with payload', async () => {
-			mockFetchResponse({ member: { member_id: 'm1', state: 'unsubscribed' } });
+			mockFetchResponse({
+				member: { member_id: 'm1', state: 'unsubscribed' },
+			});
 			const res = await members.update(
 				{ list_id: 'l1', member_id: 'm1', state: 'unsubscribed' },
 				'test-key',
@@ -148,7 +160,9 @@ describe('Laposta endpoints', () => {
 
 	describe('fields endpoints', () => {
 		it('fields.list calls GET /field with list_id', async () => {
-			mockFetchResponse({ data: [{ field: { field_id: 'f1', name: 'City' } }] });
+			mockFetchResponse({
+				data: [{ field: { field_id: 'f1', name: 'City' } }],
+			});
 			const res = await fields.list({ list_id: 'l1' }, 'test-key');
 			expect(capturedMethod).toBe('GET');
 			expect(capturedUrl).toContain('/v2/field');
@@ -199,7 +213,9 @@ describe('Laposta endpoints', () => {
 
 	describe('campaigns and reports endpoints', () => {
 		it('campaigns.list calls GET /campaign', async () => {
-			mockFetchResponse({ data: [{ campaign: { campaign_id: 'c1', name: 'Weekly Newsletter' } }] });
+			mockFetchResponse({
+				data: [{ campaign: { campaign_id: 'c1', name: 'Weekly Newsletter' } }],
+			});
 			const res = await campaigns.list({}, 'test-key');
 			expect(capturedMethod).toBe('GET');
 			expect(capturedUrl).toContain('/v2/campaign');
@@ -207,7 +223,9 @@ describe('Laposta endpoints', () => {
 		});
 
 		it('campaigns.get calls GET /campaign/:id', async () => {
-			mockFetchResponse({ campaign: { campaign_id: 'c1', name: 'Weekly Newsletter' } });
+			mockFetchResponse({
+				campaign: { campaign_id: 'c1', name: 'Weekly Newsletter' },
+			});
 			const res = await campaigns.get({ campaign_id: 'c1' }, 'test-key');
 			expect(capturedMethod).toBe('GET');
 			expect(capturedUrl).toContain('/v2/campaign/c1');
@@ -215,7 +233,9 @@ describe('Laposta endpoints', () => {
 		});
 
 		it('reports.get calls GET /report/:id', async () => {
-			mockFetchResponse({ report: { campaign_id: 'c1', sent: 1000, opens: 450 } });
+			mockFetchResponse({
+				report: { campaign_id: 'c1', sent: 1000, opens: 450 },
+			});
 			const res = await reports.get({ campaign_id: 'c1' }, 'test-key');
 			expect(capturedMethod).toBe('GET');
 			expect(capturedUrl).toContain('/v2/report/c1');

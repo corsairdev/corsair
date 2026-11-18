@@ -12,7 +12,6 @@ describe('Laposta error handlers', () => {
 				body: { error: { message: 'Too many requests' } },
 				status: 429,
 				statusText: 'Too Many Requests',
-				headers: {},
 				ok: false,
 				url: 'https://api.laposta.nl/v2/list',
 			},
@@ -34,14 +33,13 @@ describe('Laposta error handlers', () => {
 				body: { error: { message: 'Unauthorized' } },
 				status: 401,
 				statusText: 'Unauthorized',
-				headers: {},
 				ok: false,
 				url: 'https://api.laposta.nl/v2/list',
 			},
 			'Unauthorized',
 		);
 		expect(errorHandlers.AUTH_ERROR.match(authError401)).toBe(true);
-		const result = await errorHandlers.AUTH_ERROR.handler(authError401);
+		const result = await errorHandlers.AUTH_ERROR.handler();
 		expect(result.maxRetries).toBe(0);
 
 		const authError403 = new ApiError(
@@ -50,7 +48,6 @@ describe('Laposta error handlers', () => {
 				body: { error: { message: 'Forbidden' } },
 				status: 403,
 				statusText: 'Forbidden',
-				headers: {},
 				ok: false,
 				url: 'https://api.laposta.nl/v2/list',
 			},
@@ -66,14 +63,13 @@ describe('Laposta error handlers', () => {
 				body: { error: { message: 'Resource not found' } },
 				status: 404,
 				statusText: 'Not Found',
-				headers: {},
 				ok: false,
 				url: 'https://api.laposta.nl/v2/list/unknown',
 			},
 			'Not Found',
 		);
 		expect(errorHandlers.NOT_FOUND_ERROR.match(notFoundError)).toBe(true);
-		const result = await errorHandlers.NOT_FOUND_ERROR.handler(notFoundError);
+		const result = await errorHandlers.NOT_FOUND_ERROR.handler();
 		expect(result.maxRetries).toBe(0);
 	});
 
@@ -84,21 +80,20 @@ describe('Laposta error handlers', () => {
 				body: { error: { message: 'Validation failed' } },
 				status: 400,
 				statusText: 'Bad Request',
-				headers: {},
 				ok: false,
 				url: 'https://api.laposta.nl/v2/list',
 			},
 			'Bad Request',
 		);
 		expect(errorHandlers.VALIDATION_ERROR.match(validationError)).toBe(true);
-		const result = await errorHandlers.VALIDATION_ERROR.handler(validationError);
+		const result = await errorHandlers.VALIDATION_ERROR.handler();
 		expect(result.maxRetries).toBe(0);
 	});
 
 	it('falls back to DEFAULT handler', async () => {
 		const generalError = new Error('Random unexpected network glitch');
 		expect(errorHandlers.DEFAULT.match(generalError)).toBe(true);
-		const result = await errorHandlers.DEFAULT.handler(generalError);
+		const result = await errorHandlers.DEFAULT.handler();
 		expect(result.maxRetries).toBe(0);
 	});
 });
