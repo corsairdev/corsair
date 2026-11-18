@@ -1,0 +1,400 @@
+---
+title: "Langbase API reference"
+sidebarTitle: "API"
+description: "API reference for the Langbase plugin in Corsair: every `langbase.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Memory
+
+### create
+
+`memory.create`
+
+Create a new managed semantic memory set
+
+**Risk:** `write`
+
+```ts
+await corsair.langbase.api.memory.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `embedding_model` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `memory` | `Record<string, any>` | Yes | — |
+
+
+
+---
+
+### delete
+
+`memory.delete`
+
+Delete a semantic memory set
+
+**Risk:** `destructive`
+
+```ts
+await corsair.langbase.api.memory.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `result` | `Record<string, any>` | No | — |
+
+
+
+---
+
+### get
+
+`memory.get`
+
+Retrieve a specific semantic memory set by name
+
+**Risk:** `read`
+
+```ts
+await corsair.langbase.api.memory.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `memory` | `Record<string, any>` | Yes | — |
+
+
+
+---
+
+### list
+
+`memory.list`
+
+Retrieve all managed semantic memory sets
+
+**Risk:** `read`
+
+```ts
+await corsair.langbase.api.memory.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `memories` | `Record<string, any>[]` | Yes | — |
+
+
+
+---
+
+## Pipes
+
+### create
+
+`pipes.create`
+
+Create a new AI agent pipe
+
+**Risk:** `write`
+
+```ts
+await corsair.langbase.api.pipes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `model` | `string` | No | — |
+| `prompt` | `string` | No | — |
+| `memory` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="memory full type">
+
+```ts
+{
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pipe` | `Record<string, any>` | Yes | — |
+
+
+
+---
+
+### delete
+
+`pipes.delete`
+
+Delete a pipe definition
+
+**Risk:** `destructive`
+
+```ts
+await corsair.langbase.api.pipes.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `result` | `Record<string, any>` | No | — |
+
+
+
+---
+
+### get
+
+`pipes.get`
+
+Retrieve a specific pipe definition by name
+
+**Risk:** `read`
+
+```ts
+await corsair.langbase.api.pipes.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pipe` | `Record<string, any>` | Yes | — |
+
+
+
+---
+
+### list
+
+`pipes.list`
+
+Retrieve all configured pipes in the account
+
+**Risk:** `read`
+
+```ts
+await corsair.langbase.api.pipes.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pipes` | `Record<string, any>[]` | Yes | — |
+
+
+
+---
+
+### run
+
+`pipes.run`
+
+Execute an AI agent pipe and return generation completion
+
+**Risk:** `write`
+
+```ts
+await corsair.langbase.api.pipes.run({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messages` | `object[]` | Yes | — |
+| `name` | `string` | No | — |
+| `stream` | `boolean` | No | — |
+| `memory` | `object[]` | No | — |
+| `variables` | `Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  role: system | user | assistant | tool,
+  content: string,
+  name?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="memory full type">
+
+```ts
+{
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `completion` | `string` | No | — |
+| `raw` | `Record<string, any>` | No | — |
+| `thread` | `Record<string, any>` | No | — |
+
+
+
+---
+
+### update
+
+`pipes.update`
+
+Update an existing pipe configuration
+
+**Risk:** `write`
+
+```ts
+await corsair.langbase.api.pipes.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `model` | `string` | No | — |
+| `prompt` | `string` | No | — |
+| `memory` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="memory full type">
+
+```ts
+{
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pipe` | `Record<string, any>` | Yes | — |
+
+
+
+---
+
+## Tools
+
+### webSearch
+
+`tools.webSearch`
+
+Perform web searches via Langbase Tools API
+
+**Risk:** `read`
+
+```ts
+await corsair.langbase.api.tools.webSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `totalResults` | `number` | No | — |
+| `domains` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `Record<string, any>[]` | Yes | — |
+
+
+
+---
+
