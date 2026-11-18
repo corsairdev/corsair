@@ -1,14 +1,112 @@
 displayName: Zoho Invoice
-description: Manage invoices, customers, items, payments, and estimates.
+description: Create and send invoices and quotes, record payments, and manage customers and items in Zoho Invoice.
+domain: zoho.com
+recommendedAuth: oauth_2
 overviewNote: |
-  Zoho Invoice uses regional datacenters. Pass `region` (`us` default, plus
-  `eu`, `in`, `au`, `jp`, `ca`, `cn`, `sa`) so the plugin targets the right
-  `accounts.zoho.*` and `www.zohoapis.*` hosts:
+  Zoho Invoice uses regional data centers. Pass `region` (`us` default, plus `eu`, `in`, `au`, `jp`, `ca`, `cn`, `sa`) so the plugin uses the matching `www.zohoapis.*` API host and Zoho sign-in host (`accounts.zoho.*`, or `accounts.zohocloud.ca` for Canada):
 
   ```ts
   zohoinvoice({ region: 'eu' })
   ```
 
-  Most API calls are organization-scoped. Pass `organizationId` on every
-  request. OAuth tenant linking resolves the default organization during
-  connection setup; it does not auto-fill endpoint inputs.
+  Every call except `organizations.list` is scoped to one organization. `organizationId` is optional: the plugin uses the organization saved when the account connected, else the account's only organization. With several organizations, pass `organizationId` (from `organizations.list`).
+
+  Create and update calls take Zoho's own fields in `body` (for example `contact_name`, `line_items`, `customer_id`), as in the Zoho Invoice API reference.
+
+  **Risk.** `invoices.email`, `invoices.remind` and `estimates.email` email your customer, and `invoices.void` and the deletes can't be undone, so these are `destructive`. Estimates are called quotes in the Zoho Invoice UI.
+references:
+  - title: Zoho Invoice API v3 reference
+    url: https://www.zoho.com/invoice/api/v3/
+examples:
+  read:
+    path: invoices.list
+    title: Unpaid invoices
+    args:
+      query:
+        status: unpaid
+  write:
+    path: invoices.create
+    title: Invoice a customer for one item
+    args:
+      body:
+        customer_id: '460000000026049'
+        date: '2026-11-18'
+        line_items:
+          - item_id: '460000000027009'
+            quantity: 2
+apiNotes:
+  organizations.list: |
+    `GET /organizations`, without the organization header.
+  items.list: |
+    Items use Zoho's `ZohoInvoice.settings` scopes, not `ZohoInvoice.items`.
+  invoices.email: |
+    `POST /invoices/{invoice_id}/email`. Without `body`, Zoho emails the customer's contact persons with the default template.
+apiExamples:
+  organizations.list:
+    call: "{}"
+  customers.list:
+    call: "{ query: { search_text: 'Acme' } }"
+  customers.get:
+    call: "{ contactId: '460000000026049' }"
+  customers.create:
+    call: "{ body: { contact_name: 'Acme Corp', company_name: 'Acme Corp' } }"
+  customers.update:
+    call: "{ contactId: '460000000026049', body: { payment_terms: 30 } }"
+  customers.delete:
+    call: "{ contactId: '460000000026049' }"
+  invoices.list:
+    call: "{ query: { status: 'overdue' }, perPage: 50 }"
+  invoices.get:
+    call: "{ invoiceId: '460000000028192' }"
+  invoices.create:
+    call: "{ body: { customer_id: '460000000026049', date: '2026-11-18', line_items: [{ item_id: '460000000027009', quantity: 2 }] } }"
+  invoices.update:
+    call: "{ invoiceId: '460000000028192', body: { reference_number: 'PO-1042' } }"
+  invoices.delete:
+    call: "{ invoiceId: '460000000028192' }"
+  invoices.markSent:
+    call: "{ invoiceId: '460000000028192' }"
+  invoices.void:
+    call: "{ invoiceId: '460000000028192' }"
+  invoices.email:
+    call: "{ invoiceId: '460000000028192' }"
+  invoices.remind:
+    call: "{ invoiceId: '460000000028192' }"
+  invoices.listPayments:
+    call: "{ invoiceId: '460000000028192' }"
+  items.list:
+    call: "{}"
+  items.get:
+    call: "{ itemId: '460000000027009' }"
+  items.create:
+    call: "{ body: { name: 'Consulting hour', rate: 120 } }"
+  items.update:
+    call: "{ itemId: '460000000027009', body: { rate: 140 } }"
+  items.delete:
+    call: "{ itemId: '460000000027009' }"
+  payments.list:
+    call: "{}"
+  payments.get:
+    call: "{ paymentId: '460000000029001' }"
+  payments.create:
+    call: "{ body: { customer_id: '460000000026049', payment_mode: 'banktransfer', amount: 240, date: '2026-11-18', invoices: [{ invoice_id: '460000000028192', amount_applied: 240 }] } }"
+  payments.delete:
+    call: "{ paymentId: '460000000029001' }"
+  estimates.list:
+    call: "{}"
+  estimates.get:
+    call: "{ estimateId: '460000000030001' }"
+  estimates.create:
+    call: "{ body: { customer_id: '460000000026049', line_items: [{ item_id: '460000000027009', quantity: 1 }] } }"
+  estimates.update:
+    call: "{ estimateId: '460000000030001', body: { reference_number: 'Q-7' } }"
+  estimates.delete:
+    call: "{ estimateId: '460000000030001' }"
+  estimates.markSent:
+    call: "{ estimateId: '460000000030001' }"
+  estimates.markAccepted:
+    call: "{ estimateId: '460000000030001' }"
+  estimates.markDeclined:
+    call: "{ estimateId: '460000000030001' }"
+  estimates.email:
+    call: "{ estimateId: '460000000030001' }"
