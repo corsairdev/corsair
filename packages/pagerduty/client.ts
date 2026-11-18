@@ -33,7 +33,7 @@ export async function makePagerdutyRequest<T>(
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
+		query?: Record<string, string | number | boolean | string[] | undefined>;
 		from?: string;
 	} = {},
 ): Promise<T> {
