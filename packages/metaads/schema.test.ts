@@ -22,9 +22,9 @@ describe('Meta Ads schemas and registry', () => {
 				return `${group}${action?.[0]?.toUpperCase()}${action?.slice(1)}`;
 			})
 			.sort();
-		expect(inputKeys).toHaveLength(41);
+		expect(inputKeys).toHaveLength(56);
 		expect(outputKeys).toEqual(inputKeys);
-		expect(registeredKeys).toHaveLength(41);
+		expect(registeredKeys).toHaveLength(56);
 		expect(registeredKeys).toEqual(inputKeys);
 		for (const schema of Object.values(MetaAdsEndpointInputSchemas)) {
 			expect(schema.safeParse({ undocumented: true }).success).toBe(false);

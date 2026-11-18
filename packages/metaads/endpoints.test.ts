@@ -185,6 +185,57 @@ const cases: Case[] = [
 		},
 	},
 	{
+		name: 'campaigns.adSetsList',
+		path: '/campaign-1/adsets',
+		method: 'GET',
+		query: { fields: 'id,name', limit: 3, after: 'c1' },
+		call: async () => {
+			await Campaigns.adSetsList(ctx, {
+				campaignId: 'campaign-1',
+				fields: 'id,name',
+				limit: 3,
+				after: 'c1',
+			});
+		},
+	},
+	{
+		name: 'campaigns.adsList',
+		path: '/campaign-1/ads',
+		method: 'GET',
+		query: { fields: 'id,name', limit: 3, after: 'c1' },
+		call: async () => {
+			await Campaigns.adsList(ctx, {
+				campaignId: 'campaign-1',
+				fields: 'id,name',
+				limit: 3,
+				after: 'c1',
+			});
+		},
+	},
+	{
+		name: 'campaigns.copiesList',
+		path: '/campaign-1/copies',
+		method: 'GET',
+		query: { fields: 'id,name', limit: 3, after: 'c1' },
+		call: async () => {
+			await Campaigns.copiesList(ctx, {
+				campaignId: 'campaign-1',
+				fields: 'id,name',
+				limit: 3,
+				after: 'c1',
+			});
+		},
+	},
+	{
+		name: 'campaigns.copy',
+		path: '/campaign-1/copies',
+		method: 'POST',
+		body: { status_option: 'PAUSED' },
+		call: async () => {
+			await Campaigns.copy(ctx, { campaignId: 'campaign-1' });
+		},
+	},
+	{
 		name: 'campaigns.get',
 		path: '/campaign-1',
 		method: 'GET',
@@ -249,6 +300,51 @@ const cases: Case[] = [
 				limit: 3,
 				after: 'c1',
 			});
+		},
+	},
+	{
+		name: 'adSets.adsList',
+		path: '/adset-1/ads',
+		method: 'GET',
+		query: { fields: 'id,name', limit: 3, after: 'c1' },
+		call: async () => {
+			await AdSets.adsList(ctx, {
+				adSetId: 'adset-1',
+				fields: 'id,name',
+				limit: 3,
+				after: 'c1',
+			});
+		},
+	},
+	{
+		name: 'adSets.adCreativesList',
+		path: '/adset-1/adcreatives',
+		method: 'GET',
+		call: async () => {
+			await AdSets.adCreativesList(ctx, { adSetId: 'adset-1' });
+		},
+	},
+	{
+		name: 'adSets.copiesList',
+		path: '/adset-1/copies',
+		method: 'GET',
+		query: { fields: 'id,name', limit: 3, after: 'c1' },
+		call: async () => {
+			await AdSets.copiesList(ctx, {
+				adSetId: 'adset-1',
+				fields: 'id,name',
+				limit: 3,
+				after: 'c1',
+			});
+		},
+	},
+	{
+		name: 'adSets.copy',
+		path: '/adset-1/copies',
+		method: 'POST',
+		body: { status_option: 'PAUSED' },
+		call: async () => {
+			await AdSets.copy(ctx, { adSetId: 'adset-1' });
 		},
 	},
 	{
@@ -327,6 +423,37 @@ const cases: Case[] = [
 				limit: 3,
 				after: 'c1',
 			});
+		},
+	},
+	{
+		name: 'ads.adCreativesList',
+		path: '/ad-1/adcreatives',
+		method: 'GET',
+		call: async () => {
+			await Ads.adCreativesList(ctx, { adId: 'ad-1' });
+		},
+	},
+	{
+		name: 'ads.copiesList',
+		path: '/ad-1/copies',
+		method: 'GET',
+		query: { fields: 'id,name', limit: 3, after: 'c1' },
+		call: async () => {
+			await Ads.copiesList(ctx, {
+				adId: 'ad-1',
+				fields: 'id,name',
+				limit: 3,
+				after: 'c1',
+			});
+		},
+	},
+	{
+		name: 'ads.copy',
+		path: '/ad-1/copies',
+		method: 'POST',
+		body: { status_option: 'PAUSED' },
+		call: async () => {
+			await Ads.copy(ctx, { adId: 'ad-1' });
 		},
 	},
 	{
@@ -510,6 +637,20 @@ const cases: Case[] = [
 		},
 	},
 	{
+		name: 'audiences.adsList',
+		path: '/audience-1/ads',
+		method: 'GET',
+		query: { fields: 'id,name', limit: 3, after: 'c1' },
+		call: async () => {
+			await Audiences.adsList(ctx, {
+				audienceId: 'audience-1',
+				fields: 'id,name',
+				limit: 3,
+				after: 'c1',
+			});
+		},
+	},
+	{
 		name: 'audiences.get',
 		path: '/audience-1',
 		method: 'GET',
@@ -522,11 +663,16 @@ const cases: Case[] = [
 		name: 'audiences.create',
 		path: '/act_123/customaudiences',
 		method: 'POST',
-		body: { name: 'Test audience', subtype: 'CUSTOM' },
+		body: {
+			name: 'Test audience',
+			customer_file_source: 'USER_PROVIDED_ONLY',
+			subtype: 'CUSTOM',
+		},
 		call: async () => {
 			await Audiences.create(ctx, {
 				accountId: '123',
 				name: 'Test audience',
+				customerFileSource: 'USER_PROVIDED_ONLY',
 				subtype: 'CUSTOM',
 			});
 		},
@@ -653,6 +799,48 @@ const cases: Case[] = [
 		},
 	},
 	{
+		name: 'insights.listForCampaign',
+		path: '/campaign-1/insights',
+		method: 'GET',
+		query: { fields: 'impressions,spend', limit: 10, after: 'i1' },
+		call: async () => {
+			await Insights.listForCampaign(ctx, {
+				campaignId: 'campaign-1',
+				fields: ['impressions', 'spend'],
+				limit: 10,
+				after: 'i1',
+			});
+		},
+	},
+	{
+		name: 'insights.listForAdSet',
+		path: '/adset-1/insights',
+		method: 'GET',
+		query: { fields: 'impressions,spend', limit: 10, after: 'i1' },
+		call: async () => {
+			await Insights.listForAdSet(ctx, {
+				adSetId: 'adset-1',
+				fields: ['impressions', 'spend'],
+				limit: 10,
+				after: 'i1',
+			});
+		},
+	},
+	{
+		name: 'insights.listForAd',
+		path: '/ad-1/insights',
+		method: 'GET',
+		query: { fields: 'impressions,spend', limit: 10, after: 'i1' },
+		call: async () => {
+			await Insights.listForAd(ctx, {
+				adId: 'ad-1',
+				fields: ['impressions', 'spend'],
+				limit: 10,
+				after: 'i1',
+			});
+		},
+	},
+	{
 		name: 'insights.createAsync',
 		path: '/act_123/insights',
 		method: 'POST',
@@ -760,107 +948,119 @@ describe('Meta Ads operations', () => {
 				].includes(testCase.name);
 			const isCreate = [
 				'campaigns.create',
+				'campaigns.copy',
 				'adSets.create',
+				'adSets.copy',
 				'ads.create',
+				'ads.copy',
 				'creatives.create',
 				'audiences.create',
 				'insights.createAsync',
 			].includes(testCase.name);
 			const response =
-				testCase.name === 'images.list'
-					? {
-							data: [
-								{
-									hash: 'image-hash',
-									name: 'image.jpg',
-									width: 640,
-									height: 480,
-								},
-							],
-							paging: { cursors: { after: 'image-cursor' } },
-							summary: { total_count: 1 },
-						}
-					: testCase.name === 'images.upload'
-						? {
-								images: {
-									'image-hash': {
-										hash: 'image-hash',
-										width: 640,
-										height: 480,
-									},
-								},
-							}
-						: testCase.name === 'audiences.usersAdd' ||
-								testCase.name === 'audiences.usersRemove'
-							? {
-									audience_id: 'audience-1',
-									session_id: 123,
-									num_received: 1,
-									num_invalid_entries: 0,
-									invalid_entry_samples: ['sensitive-sample'],
-								}
-							: testCase.name === 'insights.createAsync'
-								? { report_run_id: 'report-1' }
-								: testCase.name === 'insights.getAsyncReport'
+				testCase.name === 'campaigns.copy'
+					? { copied_campaign_id: 'campaign-copy-1' }
+					: testCase.name === 'adSets.copy'
+						? { copied_adset_id: 'adset-copy-1' }
+						: testCase.name === 'ads.copy'
+							? { copied_ad_id: 'ad-copy-1' }
+							: testCase.name === 'images.list'
+								? {
+										data: [
+											{
+												hash: 'image-hash',
+												name: 'image.jpg',
+												width: 640,
+												height: 480,
+											},
+										],
+										paging: { cursors: { after: 'image-cursor' } },
+										summary: { total_count: 1 },
+									}
+								: testCase.name === 'images.upload'
 									? {
-											id: 'report-1',
-											async_status: 'Job Running',
-											async_percent_completion: 50,
+											images: {
+												'image-hash': {
+													hash: 'image-hash',
+													width: 640,
+													height: 480,
+												},
+											},
 										}
-									: testCase.name === 'insights.listFeatures'
+									: testCase.name === 'audiences.usersAdd' ||
+											testCase.name === 'audiences.usersRemove'
 										? {
-												data: [
-													{
-														feature_name: 'impression_device',
-														feature_type: 'breakdown',
-													},
-												],
+												audience_id: 'audience-1',
+												session_id: 123,
+												num_received: 1,
+												num_invalid_entries: 0,
+												invalid_entry_samples: ['sensitive-sample'],
 											}
-										: testCase.name === 'insights.listEnabledFeatures'
-											? {
-													data: [
-														{
-															feature_name: 'impression_device',
-															status: 'enabled',
-														},
-													],
-												}
-											: testCase.name === 'insights.enableFeature'
-												? { id: 'act_123' }
-												: testCase.name === 'audiences.sessionsList'
+										: testCase.name === 'insights.createAsync'
+											? { report_run_id: 'report-1' }
+											: testCase.name === 'insights.getAsyncReport'
+												? {
+														id: 'report-1',
+														async_status: 'Job Running',
+														async_percent_completion: 50,
+													}
+												: testCase.name === 'insights.listFeatures'
 													? {
 															data: [
 																{
-																	session_id: '123',
-																	stage: 'COMPLETED',
-																	num_received: '2',
+																	feature_name: 'impression_device',
+																	feature_type: 'breakdown',
 																},
 															],
 														}
-													: testCase.name === 'accounts.usersList'
+													: testCase.name === 'insights.listEnabledFeatures'
 														? {
 																data: [
 																	{
-																		id: 'user-1',
-																		name: 'Test User',
-																		tasks: ['ANALYZE'],
+																		feature_name: 'impression_device',
+																		status: 'enabled',
 																	},
 																],
 															}
-														: testCase.method === 'DELETE' ||
-																testCase.name.endsWith('.update')
-															? successResponse
-															: isCreate
-																? createResponse
-																: isList
-																	? testCase.name.startsWith('insights.')
-																		? {
-																				data: [
-																					{ impressions: '10', spend: '1.00' },
-																				],
-																			}
-																		: listResponse
-																	: objectResponse;
+														: testCase.name === 'insights.enableFeature'
+															? { id: 'act_123' }
+															: testCase.name === 'audiences.sessionsList'
+																? {
+																		data: [
+																			{
+																				session_id: '123',
+																				stage: 'COMPLETED',
+																				num_received: '2',
+																			},
+																		],
+																	}
+																: testCase.name === 'accounts.usersList'
+																	? {
+																			data: [
+																				{
+																					id: 'user-1',
+																					name: 'Test User',
+																					tasks: ['ANALYZE'],
+																				},
+																			],
+																		}
+																	: testCase.method === 'DELETE' ||
+																			testCase.name.endsWith('.update')
+																		? successResponse
+																		: isCreate
+																			? createResponse
+																			: isList
+																				? testCase.name.startsWith('insights.')
+																					? {
+																							data: [
+																								{
+																									impressions: '10',
+																									spend: '1.00',
+																								},
+																							],
+																						}
+																					: listResponse
+																				: objectResponse;
 			mockedRequest.mockResolvedValue(response);
 
 			await testCase.call();

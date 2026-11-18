@@ -189,6 +189,51 @@ export const campaignsList = operation({
 	output: MetaAdsListSchema,
 	request: (input) => ({ query: pageParams(input) }),
 });
+export const campaignsAdSetsList = operation({
+	name: 'campaigns.adSetsList',
+	method: 'GET',
+	path: (input) => `${idPath(input.campaignId)}/adsets`,
+	input: MetaAdsEndpointInputSchemas.campaignsAdSetsList,
+	output: MetaAdsListSchema,
+	request: (input) => ({ query: pageParams(input) }),
+});
+export const campaignsAdsList = operation({
+	name: 'campaigns.adsList',
+	method: 'GET',
+	path: (input) => `${idPath(input.campaignId)}/ads`,
+	input: MetaAdsEndpointInputSchemas.campaignsAdsList,
+	output: MetaAdsListSchema,
+	request: (input) => ({ query: pageParams(input) }),
+});
+export const campaignsCopiesList = operation({
+	name: 'campaigns.copiesList',
+	method: 'GET',
+	path: (input) => `${idPath(input.campaignId)}/copies`,
+	input: MetaAdsEndpointInputSchemas.campaignsCopiesList,
+	output: MetaAdsListSchema,
+	request: (input) => ({ query: pageParams(input) }),
+});
+export const campaignsCopy = operation({
+	name: 'campaigns.copy',
+	method: 'POST',
+	path: (input) => `${idPath(input.campaignId)}/copies`,
+	input: MetaAdsEndpointInputSchemas.campaignsCopy,
+	output: MetaAdsEndpointOutputSchemas.campaignsCopy,
+	request: (input) => ({
+		body: {
+			status_option: 'PAUSED',
+			...(input.renameOptions
+				? {
+						rename_options: {
+							rename_strategy: input.renameOptions.renameStrategy,
+							rename_prefix: input.renameOptions.renamePrefix,
+							rename_suffix: input.renameOptions.renameSuffix,
+						},
+					}
+				: {}),
+		},
+	}),
+});
 export const campaignsGet = operation({
 	name: 'campaigns.get',
 	method: 'GET',
@@ -248,6 +293,54 @@ export const adSetsList = operation({
 	input: MetaAdsEndpointInputSchemas.adSetsList,
 	output: MetaAdsListSchema,
 	request: (input) => ({ query: pageParams(input) }),
+});
+export const adSetsAdsList = operation({
+	name: 'adSets.adsList',
+	method: 'GET',
+	path: (input) => `${idPath(input.adSetId)}/ads`,
+	input: MetaAdsEndpointInputSchemas.adSetsAdsList,
+	output: MetaAdsListSchema,
+	request: (input) => ({ query: pageParams(input) }),
+});
+export const adSetsAdCreativesList = operation({
+	name: 'adSets.adCreativesList',
+	method: 'GET',
+	path: (input) => `${idPath(input.adSetId)}/adcreatives`,
+	input: MetaAdsEndpointInputSchemas.adSetsAdCreativesList,
+	output: MetaAdsListSchema,
+	request: emptyRequest,
+});
+export const adSetsCopiesList = operation({
+	name: 'adSets.copiesList',
+	method: 'GET',
+	path: (input) => `${idPath(input.adSetId)}/copies`,
+	input: MetaAdsEndpointInputSchemas.adSetsCopiesList,
+	output: MetaAdsListSchema,
+	request: (input) => ({ query: pageParams(input) }),
+});
+export const adSetsCopy = operation({
+	name: 'adSets.copy',
+	method: 'POST',
+	path: (input) => `${idPath(input.adSetId)}/copies`,
+	input: MetaAdsEndpointInputSchemas.adSetsCopy,
+	output: MetaAdsEndpointOutputSchemas.adSetsCopy,
+	request: (input) => ({
+		body: {
+			status_option: 'PAUSED',
+			...(input.campaignId !== undefined
+				? { campaign_id: input.campaignId }
+				: {}),
+			...(input.renameOptions
+				? {
+						rename_options: {
+							rename_strategy: input.renameOptions.renameStrategy,
+							rename_prefix: input.renameOptions.renamePrefix,
+							rename_suffix: input.renameOptions.renameSuffix,
+						},
+					}
+				: {}),
+		},
+	}),
 });
 export const adSetsGet = operation({
 	name: 'adSets.get',
@@ -313,6 +406,44 @@ export const adsList = operation({
 	input: MetaAdsEndpointInputSchemas.adsList,
 	output: MetaAdsListSchema,
 	request: (input) => ({ query: pageParams(input) }),
+});
+export const adsAdCreativesList = operation({
+	name: 'ads.adCreativesList',
+	method: 'GET',
+	path: (input) => `${idPath(input.adId)}/adcreatives`,
+	input: MetaAdsEndpointInputSchemas.adsAdCreativesList,
+	output: MetaAdsListSchema,
+	request: emptyRequest,
+});
+export const adsCopiesList = operation({
+	name: 'ads.copiesList',
+	method: 'GET',
+	path: (input) => `${idPath(input.adId)}/copies`,
+	input: MetaAdsEndpointInputSchemas.adsCopiesList,
+	output: MetaAdsListSchema,
+	request: (input) => ({ query: pageParams(input) }),
+});
+export const adsCopy = operation({
+	name: 'ads.copy',
+	method: 'POST',
+	path: (input) => `${idPath(input.adId)}/copies`,
+	input: MetaAdsEndpointInputSchemas.adsCopy,
+	output: MetaAdsEndpointOutputSchemas.adsCopy,
+	request: (input) => ({
+		body: {
+			status_option: 'PAUSED',
+			...(input.adSetId !== undefined ? { adset_id: input.adSetId } : {}),
+			...(input.renameOptions
+				? {
+						rename_options: {
+							rename_strategy: input.renameOptions.renameStrategy,
+							rename_prefix: input.renameOptions.renamePrefix,
+							rename_suffix: input.renameOptions.renameSuffix,
+						},
+					}
+				: {}),
+		},
+	}),
 });
 export const adsGet = operation({
 	name: 'ads.get',
@@ -429,6 +560,14 @@ export const audiencesList = operation({
 	output: MetaAdsListSchema,
 	request: (input) => ({ query: pageParams(input) }),
 });
+export const audiencesAdsList = operation({
+	name: 'audiences.adsList',
+	method: 'GET',
+	path: (input) => `${idPath(input.audienceId)}/ads`,
+	input: MetaAdsEndpointInputSchemas.audiencesAdsList,
+	output: MetaAdsListSchema,
+	request: (input) => ({ query: pageParams(input) }),
+});
 export const audiencesGet = operation({
 	name: 'audiences.get',
 	method: 'GET',
@@ -447,6 +586,7 @@ export const audiencesCreate = operation({
 		form({
 			name: input.name,
 			description: input.description,
+			customer_file_source: input.customerFileSource,
 			subtype: input.subtype,
 		}),
 });
@@ -520,7 +660,12 @@ export const audiencesUsersRemove = operation({
 	}),
 });
 
-function insightsParams(input: MetaAdsEndpointInputs['insightsList']) {
+type InsightParamsInput = Omit<
+	MetaAdsEndpointInputs['insightsList'],
+	'accountId' | 'limit' | 'after' | 'before'
+>;
+
+function insightsParams(input: InsightParamsInput) {
 	return {
 		fields: input.fields.join(','),
 		date_preset: input.datePreset,
@@ -547,6 +692,51 @@ export const insightsList = operation({
 	method: 'GET',
 	path: (input) => `${accountPath(input.accountId)}/insights`,
 	input: MetaAdsEndpointInputSchemas.insightsList,
+	output: InsightsListSchema,
+	request: (input) => ({
+		query: {
+			...insightsParams(input),
+			limit: input.limit,
+			after: input.after,
+			before: input.before,
+		},
+	}),
+});
+export const insightsListForCampaign = operation({
+	name: 'insights.listForCampaign',
+	method: 'GET',
+	path: (input) => `${idPath(input.campaignId)}/insights`,
+	input: MetaAdsEndpointInputSchemas.insightsListForCampaign,
+	output: InsightsListSchema,
+	request: (input) => ({
+		query: {
+			...insightsParams(input),
+			limit: input.limit,
+			after: input.after,
+			before: input.before,
+		},
+	}),
+});
+export const insightsListForAdSet = operation({
+	name: 'insights.listForAdSet',
+	method: 'GET',
+	path: (input) => `${idPath(input.adSetId)}/insights`,
+	input: MetaAdsEndpointInputSchemas.insightsListForAdSet,
+	output: InsightsListSchema,
+	request: (input) => ({
+		query: {
+			...insightsParams(input),
+			limit: input.limit,
+			after: input.after,
+			before: input.before,
+		},
+	}),
+});
+export const insightsListForAd = operation({
+	name: 'insights.listForAd',
+	method: 'GET',
+	path: (input) => `${idPath(input.adId)}/insights`,
+	input: MetaAdsEndpointInputSchemas.insightsListForAd,
 	output: InsightsListSchema,
 	request: (input) => ({
 		query: {
@@ -621,6 +811,10 @@ export const Images = {
 };
 export const Campaigns = {
 	list: campaignsList,
+	adSetsList: campaignsAdSetsList,
+	adsList: campaignsAdsList,
+	copiesList: campaignsCopiesList,
+	copy: campaignsCopy,
 	get: campaignsGet,
 	create: campaignsCreate,
 	update: campaignsUpdate,
@@ -628,6 +822,10 @@ export const Campaigns = {
 };
 export const AdSets = {
 	list: adSetsList,
+	adsList: adSetsAdsList,
+	adCreativesList: adSetsAdCreativesList,
+	copiesList: adSetsCopiesList,
+	copy: adSetsCopy,
 	get: adSetsGet,
 	create: adSetsCreate,
 	update: adSetsUpdate,
@@ -635,6 +833,9 @@ export const AdSets = {
 };
 export const Ads = {
 	list: adsList,
+	adCreativesList: adsAdCreativesList,
+	copiesList: adsCopiesList,
+	copy: adsCopy,
 	get: adsGet,
 	create: adsCreate,
 	update: adsUpdate,
@@ -649,6 +850,7 @@ export const Creatives = {
 };
 export const Audiences = {
 	list: audiencesList,
+	adsList: audiencesAdsList,
 	get: audiencesGet,
 	create: audiencesCreate,
 	update: audiencesUpdate,
@@ -659,6 +861,9 @@ export const Audiences = {
 };
 export const Insights = {
 	list: insightsList,
+	listForCampaign: insightsListForCampaign,
+	listForAdSet: insightsListForAdSet,
+	listForAd: insightsListForAd,
 	createAsync: insightsCreateAsync,
 	getAsyncReport: insightsGetAsyncReport,
 	getAsyncResults: insightsGetAsyncResults,

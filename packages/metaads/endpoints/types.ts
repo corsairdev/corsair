@@ -149,6 +149,27 @@ const accountUsersListInput = z
 	.strict();
 
 const campaignListInput = z.object({ accountId: id, ...listOptions }).strict();
+const campaignAdSetsListInput = z
+	.object({ campaignId: id, ...listOptions })
+	.strict();
+const campaignAdsListInput = z
+	.object({ campaignId: id, ...listOptions })
+	.strict();
+const campaignCopiesListInput = z
+	.object({ campaignId: id, ...listOptions })
+	.strict();
+const renameOptionsInput = z
+	.object({
+		renameStrategy: z
+			.enum(['DEEP_RENAME', 'ONLY_TOP_LEVEL_RENAME', 'NO_RENAME'])
+			.optional(),
+		renamePrefix: z.string().max(100).optional(),
+		renameSuffix: z.string().max(100).optional(),
+	})
+	.strict();
+const campaignCopyInput = z
+	.object({ campaignId: id, renameOptions: renameOptionsInput.optional() })
+	.strict();
 const campaignGetInput = z.object({ campaignId: id, fields }).strict();
 const campaignCreateInput = z
 	.object({
@@ -206,6 +227,16 @@ const campaignUpdateInput = z
 	.refine((value) => Object.keys(value).some((key) => key !== 'campaignId'));
 
 const adSetListInput = z.object({ accountId: id, ...listOptions }).strict();
+const adSetAdsListInput = z.object({ adSetId: id, ...listOptions }).strict();
+const adSetAdCreativesListInput = z.object({ adSetId: id }).strict();
+const adSetCopiesListInput = z.object({ adSetId: id, ...listOptions }).strict();
+const adSetCopyInput = z
+	.object({
+		adSetId: id,
+		campaignId: id.optional(),
+		renameOptions: renameOptionsInput.optional(),
+	})
+	.strict();
 const adSetGetInput = z.object({ adSetId: id, fields }).strict();
 // `unknown` is necessary because targeting contains provider-defined nested, versioned JSON keys.
 const targeting = z.record(z.string(), z.unknown());
@@ -295,6 +326,15 @@ const adSetUpdateInput = z
 	.refine((value) => Object.keys(value).some((key) => key !== 'adSetId'));
 
 const adListInput = z.object({ accountId: id, ...listOptions }).strict();
+const adAdCreativesListInput = z.object({ adId: id }).strict();
+const adCopiesListInput = z.object({ adId: id, ...listOptions }).strict();
+const adCopyInput = z
+	.object({
+		adId: id,
+		adSetId: id.optional(),
+		renameOptions: renameOptionsInput.optional(),
+	})
+	.strict();
 const adGetInput = z.object({ adId: id, fields }).strict();
 // Nested content fields are provider-defined JSON objects with versioned documented subfields.
 const creativeStoryContent = z.record(z.string(), z.unknown());
@@ -382,12 +422,22 @@ const creativeUpdateInput = z
 const creativeDeleteInput = z.object({ creativeId: id }).strict();
 
 const audienceListInput = z.object({ accountId: id, ...listOptions }).strict();
+const audienceAdsListInput = z
+	.object({ audienceId: id, ...listOptions })
+	.strict();
 const audienceGetInput = z.object({ audienceId: id, fields }).strict();
 const audienceCreateInput = z
 	.object({
 		accountId: id,
 		name: z.string().min(1),
 		description: z.string().optional(),
+		customerFileSource: z
+			.enum([
+				'USER_PROVIDED_ONLY',
+				'PARTNER_PROVIDED_ONLY',
+				'BOTH_USER_AND_PARTNER_PROVIDED',
+			])
+			.optional(),
 		subtype: z.literal('CUSTOM').default('CUSTOM'),
 	})
 	.strict();
@@ -639,8 +689,7 @@ const datePreset = z.enum([
 	'this_week_sun_today',
 	'this_year',
 ]);
-const insightRequestShape = {
-	accountId: id,
+const insightParamsShape = {
 	fields: insightFields,
 	datePreset: datePreset.optional(),
 	since: z
@@ -663,6 +712,7 @@ const insightRequestShape = {
 	defaultSummary: z.boolean().optional(),
 	productIdLimit: z.number().int().positive().optional(),
 };
+const insightRequestShape = { accountId: id, ...insightParamsShape };
 const validateInsightsParameters = <
 	T extends {
 		datePreset?: string;
@@ -697,6 +747,39 @@ const insightsInput = validateInsightsParameters(
 	z
 		.object({
 			...insightRequestShape,
+			limit: pageSize,
+			after: cursor,
+			before: cursor,
+		})
+		.strict(),
+);
+const insightsForCampaignInput = validateInsightsParameters(
+	z
+		.object({
+			...insightParamsShape,
+			campaignId: id,
+			limit: pageSize,
+			after: cursor,
+			before: cursor,
+		})
+		.strict(),
+);
+const insightsForAdSetInput = validateInsightsParameters(
+	z
+		.object({
+			...insightParamsShape,
+			adSetId: id,
+			limit: pageSize,
+			after: cursor,
+			before: cursor,
+		})
+		.strict(),
+);
+const insightsForAdInput = validateInsightsParameters(
+	z
+		.object({
+			...insightParamsShape,
+			adId: id,
 			limit: pageSize,
 			after: cursor,
 			before: cursor,
@@ -751,6 +834,36 @@ const AsyncReportSchema = z
 const InsightsAsyncCreateSchema = z.object({
 	report_run_id: z.union([z.string().min(1), z.number().int().positive()]),
 });
+const copiedObjectIdsSchema = z.array(
+	z.object({
+		ad_object_type: z.enum([
+			'unique_adcreative',
+			'ad',
+			'ad_set',
+			'campaign',
+			'opportunities',
+			'privacy_info_center',
+			'topline',
+			'ad_account',
+			'product',
+		]),
+		source_id: id,
+		copied_id: id,
+	}),
+);
+const campaignCopyOutputSchema = z
+	.object({
+		copied_campaign_id: id,
+		ad_object_ids: copiedObjectIdsSchema.optional(),
+	})
+	.passthrough();
+const adSetCopyOutputSchema = z
+	.object({
+		copied_adset_id: id,
+		ad_object_ids: copiedObjectIdsSchema.optional(),
+	})
+	.passthrough();
+const adCopyOutputSchema = z.object({ copied_ad_id: id }).passthrough();
 const InsightsFeatureName = z.enum([
 	'comscore',
 	'impression_device',
@@ -835,16 +948,27 @@ export type MetaAdsEndpointInputs = {
 	imagesUpload: z.infer<typeof AdImageUploadInput>;
 	imagesDelete: z.infer<typeof AdImageDeleteInput>;
 	campaignsList: z.infer<typeof campaignListInput>;
+	campaignsAdSetsList: z.infer<typeof campaignAdSetsListInput>;
+	campaignsAdsList: z.infer<typeof campaignAdsListInput>;
+	campaignsCopiesList: z.infer<typeof campaignCopiesListInput>;
+	campaignsCopy: z.infer<typeof campaignCopyInput>;
 	campaignsGet: z.infer<typeof campaignGetInput>;
 	campaignsCreate: z.infer<typeof campaignCreateInput>;
 	campaignsUpdate: z.infer<typeof campaignUpdateInput>;
 	campaignsDelete: { campaignId: string };
 	adSetsList: z.infer<typeof adSetListInput>;
+	adSetsAdsList: z.infer<typeof adSetAdsListInput>;
+	adSetsAdCreativesList: z.infer<typeof adSetAdCreativesListInput>;
+	adSetsCopiesList: z.infer<typeof adSetCopiesListInput>;
+	adSetsCopy: z.infer<typeof adSetCopyInput>;
 	adSetsGet: z.infer<typeof adSetGetInput>;
 	adSetsCreate: z.infer<typeof adSetCreateInput>;
 	adSetsUpdate: z.infer<typeof adSetUpdateInput>;
 	adSetsDelete: { adSetId: string };
 	adsList: z.infer<typeof adListInput>;
+	adsAdCreativesList: z.infer<typeof adAdCreativesListInput>;
+	adsCopiesList: z.infer<typeof adCopiesListInput>;
+	adsCopy: z.infer<typeof adCopyInput>;
 	adsGet: z.infer<typeof adGetInput>;
 	adsCreate: z.infer<typeof adCreateInput>;
 	adsUpdate: z.infer<typeof adUpdateInput>;
@@ -855,6 +979,7 @@ export type MetaAdsEndpointInputs = {
 	creativesUpdate: z.infer<typeof creativeUpdateInput>;
 	creativesDelete: z.infer<typeof creativeDeleteInput>;
 	audiencesList: z.infer<typeof audienceListInput>;
+	audiencesAdsList: z.infer<typeof audienceAdsListInput>;
 	audiencesGet: z.infer<typeof audienceGetInput>;
 	audiencesCreate: z.input<typeof audienceCreateInput>;
 	audiencesUpdate: z.infer<typeof audienceUpdateInput>;
@@ -863,6 +988,9 @@ export type MetaAdsEndpointInputs = {
 	audiencesUsersAdd: z.infer<typeof audienceUsersAddInput>;
 	audiencesUsersRemove: z.infer<typeof audienceUsersRemoveInput>;
 	insightsList: z.infer<typeof insightsInput>;
+	insightsListForCampaign: z.infer<typeof insightsForCampaignInput>;
+	insightsListForAdSet: z.infer<typeof insightsForAdSetInput>;
+	insightsListForAd: z.infer<typeof insightsForAdInput>;
 	insightsCreateAsync: z.infer<typeof insightsAsyncCreateInput>;
 	insightsGetAsyncReport: z.infer<typeof insightsAsyncReportInput>;
 	insightsGetAsyncResults: z.infer<typeof insightsAsyncResultsInput>;
@@ -879,16 +1007,27 @@ export type MetaAdsEndpointOutputs = {
 	imagesUpload: z.infer<typeof AdImageUploadSchema>;
 	imagesDelete: z.infer<typeof MetaAdsDeleteSchema>;
 	campaignsList: z.infer<typeof MetaAdsListSchema>;
+	campaignsAdSetsList: z.infer<typeof MetaAdsListSchema>;
+	campaignsAdsList: z.infer<typeof MetaAdsListSchema>;
+	campaignsCopiesList: z.infer<typeof MetaAdsListSchema>;
+	campaignsCopy: z.infer<typeof campaignCopyOutputSchema>;
 	campaignsGet: z.infer<typeof MetaAdsObjectSchema>;
 	campaignsCreate: z.infer<typeof MetaAdsMutationSchema>;
 	campaignsUpdate: { success: boolean };
 	campaignsDelete: z.infer<typeof MetaAdsDeleteSchema>;
 	adSetsList: z.infer<typeof MetaAdsListSchema>;
+	adSetsAdsList: z.infer<typeof MetaAdsListSchema>;
+	adSetsAdCreativesList: z.infer<typeof MetaAdsListSchema>;
+	adSetsCopiesList: z.infer<typeof MetaAdsListSchema>;
+	adSetsCopy: z.infer<typeof adSetCopyOutputSchema>;
 	adSetsGet: z.infer<typeof MetaAdsObjectSchema>;
 	adSetsCreate: z.infer<typeof MetaAdsMutationSchema>;
 	adSetsUpdate: { success: boolean };
 	adSetsDelete: z.infer<typeof MetaAdsDeleteSchema>;
 	adsList: z.infer<typeof MetaAdsListSchema>;
+	adsAdCreativesList: z.infer<typeof MetaAdsListSchema>;
+	adsCopiesList: z.infer<typeof MetaAdsListSchema>;
+	adsCopy: z.infer<typeof adCopyOutputSchema>;
 	adsGet: z.infer<typeof MetaAdsObjectSchema>;
 	adsCreate: z.infer<typeof MetaAdsMutationSchema>;
 	adsUpdate: { success: boolean };
@@ -899,6 +1038,7 @@ export type MetaAdsEndpointOutputs = {
 	creativesUpdate: z.infer<typeof MetaAdsDeleteSchema>;
 	creativesDelete: z.infer<typeof MetaAdsDeleteSchema>;
 	audiencesList: z.infer<typeof MetaAdsListSchema>;
+	audiencesAdsList: z.infer<typeof MetaAdsListSchema>;
 	audiencesGet: z.infer<typeof MetaAdsObjectSchema>;
 	audiencesCreate: z.infer<typeof MetaAdsMutationSchema>;
 	audiencesUpdate: { success: boolean };
@@ -907,6 +1047,9 @@ export type MetaAdsEndpointOutputs = {
 	audiencesUsersAdd: z.infer<typeof audienceUsersResultSchema>;
 	audiencesUsersRemove: z.infer<typeof audienceUsersResultSchema>;
 	insightsList: z.infer<typeof InsightsListSchema>;
+	insightsListForCampaign: z.infer<typeof InsightsListSchema>;
+	insightsListForAdSet: z.infer<typeof InsightsListSchema>;
+	insightsListForAd: z.infer<typeof InsightsListSchema>;
 	insightsCreateAsync: z.infer<typeof InsightsAsyncCreateSchema>;
 	insightsGetAsyncReport: z.infer<typeof AsyncReportSchema>;
 	insightsGetAsyncResults: z.infer<typeof InsightsListSchema>;
@@ -925,16 +1068,27 @@ export const MetaAdsEndpointInputSchemas = {
 	imagesUpload: AdImageUploadInput,
 	imagesDelete: AdImageDeleteInput,
 	campaignsList: campaignListInput,
+	campaignsAdSetsList: campaignAdSetsListInput,
+	campaignsAdsList: campaignAdsListInput,
+	campaignsCopiesList: campaignCopiesListInput,
+	campaignsCopy: campaignCopyInput,
 	campaignsGet: campaignGetInput,
 	campaignsCreate: campaignCreateInput,
 	campaignsUpdate: campaignUpdateInput,
 	campaignsDelete: z.object({ campaignId: id }).strict(),
 	adSetsList: adSetListInput,
+	adSetsAdsList: adSetAdsListInput,
+	adSetsAdCreativesList: adSetAdCreativesListInput,
+	adSetsCopiesList: adSetCopiesListInput,
+	adSetsCopy: adSetCopyInput,
 	adSetsGet: adSetGetInput,
 	adSetsCreate: adSetCreateInput,
 	adSetsUpdate: adSetUpdateInput,
 	adSetsDelete: z.object({ adSetId: id }).strict(),
 	adsList: adListInput,
+	adsAdCreativesList: adAdCreativesListInput,
+	adsCopiesList: adCopiesListInput,
+	adsCopy: adCopyInput,
 	adsGet: adGetInput,
 	adsCreate: adCreateInput,
 	adsUpdate: adUpdateInput,
@@ -945,6 +1099,7 @@ export const MetaAdsEndpointInputSchemas = {
 	creativesUpdate: creativeUpdateInput,
 	creativesDelete: creativeDeleteInput,
 	audiencesList: audienceListInput,
+	audiencesAdsList: audienceAdsListInput,
 	audiencesGet: audienceGetInput,
 	audiencesCreate: audienceCreateInput,
 	audiencesUpdate: audienceUpdateInput,
@@ -953,6 +1108,9 @@ export const MetaAdsEndpointInputSchemas = {
 	audiencesUsersAdd: audienceUsersAddInput,
 	audiencesUsersRemove: audienceUsersRemoveInput,
 	insightsList: insightsInput,
+	insightsListForCampaign: insightsForCampaignInput,
+	insightsListForAdSet: insightsForAdSetInput,
+	insightsListForAd: insightsForAdInput,
 	insightsCreateAsync: insightsAsyncCreateInput,
 	insightsGetAsyncReport: insightsAsyncReportInput,
 	insightsGetAsyncResults: insightsAsyncResultsInput,
@@ -969,16 +1127,27 @@ export const MetaAdsEndpointOutputSchemas = {
 	imagesUpload: AdImageUploadSchema,
 	imagesDelete: MetaAdsDeleteSchema,
 	campaignsList: MetaAdsListSchema,
+	campaignsAdSetsList: MetaAdsListSchema,
+	campaignsAdsList: MetaAdsListSchema,
+	campaignsCopiesList: MetaAdsListSchema,
+	campaignsCopy: campaignCopyOutputSchema,
 	campaignsGet: MetaAdsObjectSchema,
 	campaignsCreate: MetaAdsMutationSchema,
 	campaignsUpdate: MetaAdsDeleteSchema,
 	campaignsDelete: MetaAdsDeleteSchema,
 	adSetsList: MetaAdsListSchema,
+	adSetsAdsList: MetaAdsListSchema,
+	adSetsAdCreativesList: MetaAdsListSchema,
+	adSetsCopiesList: MetaAdsListSchema,
+	adSetsCopy: adSetCopyOutputSchema,
 	adSetsGet: MetaAdsObjectSchema,
 	adSetsCreate: MetaAdsMutationSchema,
 	adSetsUpdate: MetaAdsDeleteSchema,
 	adSetsDelete: MetaAdsDeleteSchema,
 	adsList: MetaAdsListSchema,
+	adsAdCreativesList: MetaAdsListSchema,
+	adsCopiesList: MetaAdsListSchema,
+	adsCopy: adCopyOutputSchema,
 	adsGet: MetaAdsObjectSchema,
 	adsCreate: MetaAdsMutationSchema,
 	adsUpdate: MetaAdsDeleteSchema,
@@ -989,6 +1158,7 @@ export const MetaAdsEndpointOutputSchemas = {
 	creativesUpdate: MetaAdsDeleteSchema,
 	creativesDelete: MetaAdsDeleteSchema,
 	audiencesList: MetaAdsListSchema,
+	audiencesAdsList: MetaAdsListSchema,
 	audiencesGet: MetaAdsObjectSchema,
 	audiencesCreate: MetaAdsMutationSchema,
 	audiencesUpdate: MetaAdsDeleteSchema,
@@ -997,6 +1167,9 @@ export const MetaAdsEndpointOutputSchemas = {
 	audiencesUsersAdd: audienceUsersResultSchema,
 	audiencesUsersRemove: audienceUsersResultSchema,
 	insightsList: InsightsListSchema,
+	insightsListForCampaign: InsightsListSchema,
+	insightsListForAdSet: InsightsListSchema,
+	insightsListForAd: InsightsListSchema,
 	insightsCreateAsync: InsightsAsyncCreateSchema,
 	insightsGetAsyncReport: AsyncReportSchema,
 	insightsGetAsyncResults: InsightsListSchema,

@@ -7,18 +7,33 @@ apiNotes:
   images.upload: "Accepts base64 bytes or copies an image by source account and hash. The adapter removes upload form data from propagated core errors."
   images.delete: "Only images not currently used by an ad creative can be deleted from the account library."
   campaigns.list: "Pass returned paging.cursors.after to continue and use paging.hasNextPage to detect continuation; the adapter never returns or follows Meta's paging.next URL because it may contain credentials."
+  campaigns.adSetsList: "Lists the documented ad sets edge for one campaign; use the cursor fields to continue through results."
+  campaigns.adsList: "Lists the documented ads edge for one campaign; use the cursor fields to continue through results."
+  campaigns.copiesList: "Lists the documented campaign copies edge and supports Graph cursor pagination."
+  campaigns.copy: "Creates a shallow campaign copy with status_option fixed to PAUSED. Deep-copying child ads and arbitrary campaign parameter overrides are not exposed, and the non-idempotent write is not retried."
   campaigns.create: "Campaign creation requires objective (for example OUTCOME_TRAFFIC) and specialAdCategories (use [] when no special category applies). Meta v27's campaign-create example uses OUTCOME_TRAFFIC with an empty special_ad_categories array. This consequential write is destructive and isn't automatically retried. Budget values are integer smallest-currency units."
   campaigns.update: "Budget and spend-cap edits are consequential writes and aren't automatically retried."
   adSets.list: "Pass returned paging.cursors.after to continue and use paging.hasNextPage to detect continuation; the adapter never returns or follows Meta's paging.next URL because it may contain credentials."
+  adSets.adsList: "Lists the documented ads edge for one ad set; use the cursor fields to continue through results."
+  adSets.adCreativesList: "Lists creatives associated with the ad set; Graph returns cursor paging but documents no edge query parameters."
+  adSets.copiesList: "Lists the documented ad-set copies edge and supports Graph cursor pagination."
+  adSets.copy: "Creates a copy with status_option fixed to PAUSED. Deep-copying child ads is not exposed and the non-idempotent write is not retried. EU-targeted copies may require DSA payor and beneficiary settings."
   adSets.create: "Supply optimizationGoal (REACH) and billingEvent (IMPRESSIONS), a documented Meta v27 ad-set example. This consequential write is destructive and isn't automatically retried. Budgets use integer smallest-currency units; initial status defaults to PAUSED. Meta v27 can enable cross-device expansion for eligible Sales ad sets unless the documented targeting automation setting is set to 0; EU targeting needs beneficiary/payer account defaults or explicit values."
   ads.create: "Use an existing creative ID or an inline creative with object_story_spec. New ads enter review and can deliver after approval; this consequential write isn't automatically retried."
+  ads.adCreativesList: "Lists creatives attached to the ad; Graph returns cursor paging but documents no edge query parameters."
+  ads.copiesList: "Lists the documented ad copies edge and supports Graph cursor pagination."
+  ads.copy: "Creates a copy with status_option fixed to PAUSED. Creative overrides and arbitrary ad-set changes are not exposed; the non-idempotent write is not retried."
   creatives.create: "Use either an existing Page post ID or object_story_spec with page_id and exactly one documented content type: link_data, photo_data, video_data, text_data, or template_data. Political issue/election creatives need the documented authorizationCategory."
-  audiences.create: "Creates the documented blank CUSTOM audience; Meta's v27 blank-audience example omits customer_file_source and does not mark it required. That optional enum (USER_PROVIDED_ONLY, PARTNER_PROVIDED_ONLY, BOTH_USER_AND_PARTNER_PROVIDED) is not exposed here; customer hashes are uploaded later through usersAdd/usersRemove, using SHA-256 email or phone hashes only, up to 10000 hashes per request. Adds also require upload-session and batch metadata. Raw identifiers and multi-key matching are not exposed. Request payloads are omitted from propagated error metadata and echoed invalid-entry samples are stripped from successful results."
+  audiences.create: "Creates a blank CUSTOM audience. Pass customerFileSource (USER_PROVIDED_ONLY, PARTNER_PROVIDED_ONLY, or BOTH_USER_AND_PARTNER_PROVIDED) for customer-file uploads; the field is optional in the general create reference, though Meta's Customer File guide says to specify it for that workflow. Add or remove members later with usersAdd/usersRemove; only single-key SHA-256 email or phone hashes are accepted, up to 10000 per request. Adds also require upload-session and batch metadata. Raw identifiers and multi-key matching are not exposed. Request payloads are omitted from propagated error metadata and echoed invalid-entry samples are stripped from successful results."
+  audiences.adsList: "Lists ads associated with the custom audience; this is a read-only edge and requires permission to read the audience and its ads."
   audiences.delete: "Deletion is permanent and ads using the audience stop; they cannot be restarted."
   audiences.sessionsList: "Reads documented upload session status fields; it does not upload audience members."
   audiences.usersAdd: "Set schema to EMAIL_SHA256 or PHONE_SHA256; only single-key SHA-256 hashes are accepted, up to 10000 per batch. Use a unique ad-account session ID and sequential batch numbers; input payloads are omitted from propagated error metadata and invalid-entry samples are stripped from results."
   audiences.usersRemove: "Set schema to EMAIL_SHA256 or PHONE_SHA256; removes up to 10000 single-key SHA-256 hashes. Input payloads are omitted from propagated error metadata."
   insights.list: "Synchronous metrics with allow-listed fields, breakdowns, filters, attribution windows, sorting, summary, and time increments. Meta may reject unsupported field/breakdown combinations."
+  insights.listForCampaign: "Reads the same typed synchronous Insights fields directly from a campaign node."
+  insights.listForAdSet: "Reads the same typed synchronous Insights fields directly from an ad-set node."
+  insights.listForAd: "Reads the same typed synchronous Insights fields directly from an ad node."
   insights.createAsync: "Starts a non-idempotent Insights report job. Poll insights.getAsyncReport until completion, then call insights.getAsyncResults; report IDs expire after 30 days."
   insights.getAsyncReport: "Poll async_status and async_percent_completion. Failed jobs include documented error details on v25 and later."
   insights.getAsyncResults: "Fetch cursor-paginated results only after the report job completes."
@@ -42,6 +57,14 @@ apiExamples:
     hash: "0123456789abcdef0123456789abcdef"
   campaigns.list:
     accountId: "1234567890"
+  campaigns.adSetsList:
+    campaignId: "120000000000001"
+  campaigns.adsList:
+    campaignId: "120000000000001"
+  campaigns.copiesList:
+    campaignId: "120000000000001"
+  campaigns.copy:
+    campaignId: "120000000000001"
   campaigns.get:
     campaignId: "120000000000001"
   campaigns.create:
@@ -59,6 +82,14 @@ apiExamples:
     campaignId: "120000000000001"
   adSets.list:
     accountId: "1234567890"
+  adSets.adsList:
+    adSetId: "120000000000002"
+  adSets.adCreativesList:
+    adSetId: "120000000000002"
+  adSets.copiesList:
+    adSetId: "120000000000002"
+  adSets.copy:
+    adSetId: "120000000000002"
   adSets.get:
     adSetId: "120000000000002"
   adSets.create:
@@ -78,6 +109,12 @@ apiExamples:
     adSetId: "120000000000002"
   ads.list:
     accountId: "1234567890"
+  ads.adCreativesList:
+    adId: "120000000000003"
+  ads.copiesList:
+    adId: "120000000000003"
+  ads.copy:
+    adId: "120000000000003"
   ads.get:
     adId: "120000000000003"
   ads.create:
@@ -105,6 +142,8 @@ apiExamples:
     creativeId: "120000000000004"
   audiences.list:
     accountId: "1234567890"
+  audiences.adsList:
+    audienceId: "120000000000005"
   audiences.get:
     audienceId: "120000000000005"
   audiences.create:
@@ -143,6 +182,15 @@ apiExamples:
       - field: "campaign.id"
         operator: IN
         value: ["120000000000001"]
+  insights.listForCampaign:
+    campaignId: "120000000000001"
+    fields: [impressions, spend]
+  insights.listForAdSet:
+    adSetId: "120000000000002"
+    fields: [impressions, spend]
+  insights.listForAd:
+    adId: "120000000000003"
+    fields: [impressions, spend]
   insights.createAsync:
     accountId: "1234567890"
     fields: [impressions, spend]
