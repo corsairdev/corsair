@@ -77,7 +77,7 @@ describe('bound-account call path cost', () => {
 	});
 	afterEach(() => env.cleanup());
 
-	it('costs this many queries and scrypts per operation', async () => {
+	async function boot() {
 		const counted = env.db.withPlugin({
 			transformQuery: (args) => {
 				queries++;
@@ -132,15 +132,34 @@ describe('bound-account call path cost', () => {
 		});
 		// first call pins the account; measure the steady state after it
 		await t.demo.api.token();
+		return { t, corsair };
+	}
+
+	it('costs this many queries and scrypts per operation', async () => {
+		const { t } = await boot();
 		const token = await cost(() => t.demo.api.token());
 		const upsert = await cost(() => t.demo.api.note());
 		const event = await cost(() =>
 			(t.demo.api as unknown as { event(): Promise<unknown> }).event(),
 		);
 		expect({ token, upsert, event }).toEqual({
-			token: { queries: 4, scrypt: 0 },
+			token: { queries: 1, scrypt: 0 },
 			upsert: { queries: 7, scrypt: 0 },
 			event: { queries: 3, scrypt: 0 },
 		});
+	});
+
+	it('a settled read is never reused: a rotated token is seen by the next call', async () => {
+		const { t, corsair } = await boot();
+		expect(await t.demo.api.token()).toBe('tok-a');
+		await createAccountKeyManager({
+			authType: 'oauth_2',
+			integrationName: 'demo',
+			tenantId: 't1',
+			kek: KEK,
+			database: getCorsairInternal(corsair).database!,
+			account: { ref: 'a' },
+		}).set_access_token('tok-b');
+		expect(await t.demo.api.token()).toBe('tok-b');
 	});
 });
