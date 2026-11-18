@@ -326,6 +326,7 @@ export const BaseProviders = [
 	'googlecalendar',
 	'googleclassroom',
 	'googlecloudvision',
+	'googlecontacts',
 	'googledocs',
 	'googledrive',
 	'googlemaps',
@@ -1058,6 +1059,7 @@ export const ProviderDisplayNames = {
 	googlecalendar: 'Google Calendar',
 	googleclassroom: 'Google Classroom',
 	googlecloudvision: 'Google Cloud Vision',
+	googlecontacts: 'Google Contacts',
 	googledocs: 'Google Docs',
 	googledrive: 'Google Drive',
 	googlemaps: 'Google Maps',
@@ -1797,6 +1799,7 @@ export type AllProviders =
 	| 'googlecalendar'
 	| 'googleclassroom'
 	| 'googlecloudvision'
+	| 'googlecontacts'
 	| 'googledocs'
 	| 'googledrive'
 	| 'googlemaps'

@@ -2731,6 +2731,14 @@
                 ]
               },
               {
+                "group": "Google Contacts",
+                "pages": [
+                  "plugins/googlecontacts/overview",
+                  "plugins/googlecontacts/api",
+                  "plugins/googlecontacts/database"
+                ]
+              },
+              {
                 "group": "Google Docs",
                 "pages": [
                   "plugins/googledocs/overview",
