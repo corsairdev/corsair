@@ -11,10 +11,9 @@
  * sitemaps list. URL inspection is left out because it has its own 2,000 per
  * day quota, and a smoke test should not spend part of it.
  */
-import { logEventFromContext } from 'corsair/core';
 import { query as analyticsQuery } from './endpoints/search-analytics';
-import { list as sitesList } from './endpoints/sites';
 import { list as sitemapsList } from './endpoints/sitemaps';
+import { list as sitesList } from './endpoints/sites';
 import { GoogleSearchConsoleEndpointOutputSchemas } from './endpoints/types';
 
 jest.mock('corsair/core', () => ({
@@ -73,9 +72,9 @@ describeLive('googlesearchconsole live API', () => {
 	it('sites.list returns a parseable list', async () => {
 		const page = await sitesList(ctx, {});
 
-		expect(
-			page.siteEntry === undefined || Array.isArray(page.siteEntry),
-		).toBe(true);
+		expect(page.siteEntry === undefined || Array.isArray(page.siteEntry)).toBe(
+			true,
+		);
 		expect(
 			GoogleSearchConsoleEndpointOutputSchemas.sitesList.safeParse(page)
 				.success,
