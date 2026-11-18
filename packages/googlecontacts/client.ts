@@ -59,6 +59,7 @@ export async function makePeopleRequest<T>(
 // `unknown`: the caught value may not be an ApiError; anything else is rethrown untouched.
 function withoutRequestBody(error: unknown): unknown {
 	if (!(error instanceof ApiError)) return error;
+	// `unknown`: core types request.query loosely; only the `query` key is read.
 	const query = error.request?.query as Record<string, unknown> | undefined;
 	const searched = query !== undefined && 'query' in query;
 	if (error.request?.body === undefined && !searched) return error;

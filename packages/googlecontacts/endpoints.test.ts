@@ -600,6 +600,7 @@ describe('Google Contacts plugin', () => {
 				.create(ctx, {
 					person: { emailAddresses: [{ value: 'ada@example.com' }] },
 				})
+				// unknown: a rejection can be any value; the assertions narrow it.
 				.catch((e: unknown) => e);
 
 			expect(error).toBeInstanceOf(ApiError);
@@ -727,6 +728,7 @@ describe('Google Contacts plugin', () => {
 
 			const error = await plugin.endpoints.contacts
 				.search(ctx, { query: 'ada@example.com' })
+				// unknown: a rejection can be any value; the assertions narrow it.
 				.catch((e: unknown) => e);
 
 			expect(error).toBeInstanceOf(ApiError);
