@@ -140,6 +140,7 @@ const ContactGroupSchema = z.object({
 
 const personFields = z
 	.array(z.string())
+	.min(1)
 	.optional()
 	.describe(
 		'Person fields to return, e.g. ["names","emailAddresses","phoneNumbers"]. Defaults to names, emailAddresses and phoneNumbers.',

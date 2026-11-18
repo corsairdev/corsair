@@ -23,7 +23,7 @@ pnpm add @corsair-dev/googlecontacts
 | `contacts.deletePhoto` | `googlecontacts.api.contacts.deletePhoto` | `destructive` | Remove a contact's photo [DESTRUCTIVE] |
 | `contacts.get` | `googlecontacts.api.contacts.get` | `read` | Get a single contact |
 | `contacts.list` | `googlecontacts.api.contacts.list` | `read` | List the user's contacts |
-| `contacts.search` | `googlecontacts.api.contacts.search` | `read` | Search contacts by name, email or phone |
+| `contacts.search` | `googlecontacts.api.contacts.search` | `read` | Search contacts by name, email or phone. Google warms this index per account, so the first call after connecting can return nothing; retry it. |
 | `contacts.update` | `googlecontacts.api.contacts.update` | `write` | Update an existing contact |
 | `contacts.updatePhoto` | `googlecontacts.api.contacts.updatePhoto` | `write` | Set or replace a contact's photo |
 | `otherContacts.copyToContacts` | `googlecontacts.api.otherContacts.copyToContacts` | `write` | Copy an auto-saved contact into the saved contacts |

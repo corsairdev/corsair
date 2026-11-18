@@ -1,3 +1,4 @@
+import { GoogleContactsEndpointInputSchemas } from './endpoints/types';
 import { GoogleContactsSchema } from './schema';
 
 describe('GoogleContacts schema', () => {
@@ -15,6 +16,13 @@ describe('GoogleContacts schema', () => {
 		for (const entity of Object.values(GoogleContactsSchema.entities)) {
 			expect(entity).toBeDefined();
 		}
+	});
+
+	it('rejects an empty personFields mask, which Google answers with a 400', () => {
+		const list = GoogleContactsEndpointInputSchemas.contactsList;
+		expect(list.safeParse({ personFields: [] }).success).toBe(false);
+		expect(list.safeParse({ personFields: ['names'] }).success).toBe(true);
+		expect(list.safeParse({}).success).toBe(true);
 	});
 });
 
