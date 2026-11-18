@@ -289,7 +289,7 @@ describe('describeFailure', () => {
 				'fallback',
 			),
 		).toBe(
-			"Honeybadger 422 validation_error: The body is invalid. (name: can't be blank; check_ins.nightly.report_period: is invalid)",
+			"Honeybadger 422 validation_error: The body is invalid. (name: can't be blank; check_ins.<slug>: is invalid)",
 		);
 	});
 

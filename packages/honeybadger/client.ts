@@ -118,7 +118,8 @@ export function readErrorBody(
  * Renders `details`, one of three documented shapes: a list of
  * `{field, message}` for a validation failure, `{required_scope, token_scopes}`
  * for a scope refusal, or `{merged_into, location}` for a merge. Only field
- * names and codes are printed, never a value the caller sent.
+ * names and codes are printed, never a value the caller sent; a check-in slug
+ * inside a field name is replaced with `<slug>`.
  */
 function describeDetails(details: JsonValue | undefined): string | undefined {
 	if (Array.isArray(details)) {
@@ -128,7 +129,12 @@ function describeDetails(details: JsonValue | undefined): string | undefined {
 				const field = record?.field;
 				const message = record?.message;
 				if (typeof field !== 'string') return undefined;
-				return typeof message === 'string' ? `${field}: ${message}` : field;
+				// checkIns.replace reports a failed entry as `check_ins.<slug>`,
+				// and the slug is the caller's text, so it is not printed.
+				const name = field.startsWith('check_ins.')
+					? 'check_ins.<slug>'
+					: field;
+				return typeof message === 'string' ? `${name}: ${message}` : name;
 			})
 			.filter((part): part is string => part !== undefined);
 		return parts.length > 0 ? parts.join('; ') : undefined;
