@@ -61,7 +61,7 @@ Auth: API key in the `X-API-KEY` header. Corsair prompts your tenant for credent
 
 ## Webhooks
 
-Handles 2 webhook events (`tweet`, `test`). Deliveries are verified with `X-TwittrAPI-Signature: t=<unix>,v1=<HMAC-SHA256("<t>.<raw body>")>` using the webhook's `whsec_` secret, deduplicated by event ID, and routed to a tenant by the webhook ID in `X-TwittrAPI-Webhook` (store it as the account's `webhook_id`). See the reference for payloads and `webhookHooks`.
+Handles 2 webhook events (`tweet`, `test`). Deliveries are verified with `X-TwittrAPI-Signature: t=<unix>,v1=<HMAC-SHA256("<t>.<raw body>")>` using the webhook's `whsec_` secret, stored by event ID (a redelivery overwrites the same rows, but each delivery is logged and reaches `webhookHooks`, so dedupe on `id` where a hook must run once), and routed to a tenant by the webhook ID in `X-TwittrAPI-Webhook` (store it as the account's `webhook_id`). See the reference for payloads and `webhookHooks`.
 
 ## Reference
 
