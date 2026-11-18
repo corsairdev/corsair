@@ -36,7 +36,7 @@ describe('QuickBooks endpoint schemas', () => {
 		const schema = QuickBooksEndpointInputSchemas.accountsCreate;
 		expect(
 			schema.safeParse({
-				realmId: '9341452109871234',
+				realmId: '12345678',
 				name: 'Checking',
 				accountType: 'Bank',
 			}).success,
@@ -127,7 +127,7 @@ describe('QuickBooks endpoint schemas', () => {
 			QuickBooksEndpointOutputSchemas.companyGet.safeParse({
 				CompanyInfo: {
 					Id: '123',
-					CompanyName: 'Example Company',
+					CompanyName: 'Demo Company',
 					DefaultTimeZone: 'America/Los_Angeles',
 				},
 				time: '2026-11-18T12:00:00Z',
@@ -142,7 +142,7 @@ describe('QuickBooks endpoint schemas', () => {
 		expect(
 			QuickBooksEndpointOutputSchemas.companyList.safeParse({
 				QueryResponse: {
-					CompanyInfo: [{ Id: '123', CompanyName: 'Example Company' }],
+					CompanyInfo: [{ Id: '123', CompanyName: 'Demo Company' }],
 				},
 				time: '2026-11-18T12:00:00Z',
 			}).success,

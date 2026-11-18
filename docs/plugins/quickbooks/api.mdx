@@ -19,7 +19,7 @@ Create a QuickBooks account in the company chart of accounts
 **Risk:** `write`
 
 ```ts
-await corsair.quickbooks.api.accounts.create({ realmId: '9341452109871234', name: 'Operating Checking', accountType: 'Bank' });
+await corsair.quickbooks.api.accounts.create({ realmId: '12345678', name: 'Operating Checking', accountType: 'Bank' });
 ```
 
 **Input**
@@ -146,7 +146,7 @@ Read one account by its QuickBooks account ID
 **Risk:** `read`
 
 ```ts
-await corsair.quickbooks.api.accounts.get({ realmId: '9341452109871234', accountId: '35' });
+await corsair.quickbooks.api.accounts.get({ realmId: '12345678', accountId: '35' });
 ```
 
 **Input**
@@ -256,7 +256,7 @@ List accounts with QuickBooks query pagination
 **Risk:** `read`
 
 ```ts
-await corsair.quickbooks.api.accounts.list({ realmId: '9341452109871234', startPosition: 1, maxResults: 50 });
+await corsair.quickbooks.api.accounts.list({ realmId: '12345678', startPosition: 1, maxResults: 50 });
 ```
 
 **Input**
@@ -374,7 +374,7 @@ Read basic company information for a realm
 **Risk:** `read`
 
 ```ts
-await corsair.quickbooks.api.company.get({ realmId: '9341452109871234' });
+await corsair.quickbooks.api.company.get({ realmId: '12345678' });
 ```
 
 **Input**
@@ -622,7 +622,7 @@ Query the CompanyInfo resource for a realm
 **Risk:** `read`
 
 ```ts
-await corsair.quickbooks.api.company.list({ realmId: '9341452109871234' });
+await corsair.quickbooks.api.company.list({ realmId: '12345678' });
 ```
 
 **Input**

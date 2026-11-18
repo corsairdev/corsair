@@ -100,7 +100,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.quickbooks.api.accounts.list({ realmId: '9341452109871234', startPosition: 1, maxResults: 10 });
+await tenant.quickbooks.api.accounts.list({ realmId: '12345678', startPosition: 1, maxResults: 10 });
 ```
 
 
@@ -108,7 +108,7 @@ await tenant.quickbooks.api.accounts.list({ realmId: '9341452109871234', startPo
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.quickbooks.api.accounts.create({ realmId: '9341452109871234', name: 'Operating Receivables', accountSubType: 'AccountsReceivable' });
+await tenant.quickbooks.api.accounts.create({ realmId: '12345678', name: 'Operating Receivables', accountSubType: 'AccountsReceivable' });
 ```
 
 

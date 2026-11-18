@@ -36,24 +36,24 @@ examples:
     path: accounts.list
     title: List accounts
     args:
-      realmId: "9341452109871234"
+      realmId: "12345678"
       startPosition: 1
       maxResults: 10
   write:
     path: accounts.create
     title: Create a receivables account
     args:
-      realmId: "9341452109871234"
+      realmId: "12345678"
       name: Operating Receivables
       accountSubType: "AccountsReceivable"
 apiExamples:
   accounts.create:
-    call: "{ realmId: '9341452109871234', name: 'Operating Checking', accountType: 'Bank' }"
+    call: "{ realmId: '12345678', name: 'Operating Checking', accountType: 'Bank' }"
   accounts.get:
-    call: "{ realmId: '9341452109871234', accountId: '35' }"
+    call: "{ realmId: '12345678', accountId: '35' }"
   accounts.list:
-    call: "{ realmId: '9341452109871234', startPosition: 1, maxResults: 50 }"
+    call: "{ realmId: '12345678', startPosition: 1, maxResults: 50 }"
   company.get:
-    call: "{ realmId: '9341452109871234' }"
+    call: "{ realmId: '12345678' }"
   company.list:
-    call: "{ realmId: '9341452109871234' }"
+    call: "{ realmId: '12345678' }"

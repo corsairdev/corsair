@@ -40,7 +40,7 @@ describe('QuickBooks verified endpoint requests', () => {
 			mockJsonResponse({ Account: account, time: '2026-11-18T12:00:00Z' }),
 		);
 		const result = await AccountsEndpoints.create(context, {
-			realmId: '9341452109871234',
+			realmId: '12345678',
 			name: 'Operating Checking',
 			accountType: 'Bank',
 		});
@@ -52,7 +52,7 @@ describe('QuickBooks verified endpoint requests', () => {
 		if (!call) throw new Error('Expected the provider request');
 		const [url, init] = call;
 		expect(url).toBe(
-			'https://sandbox-quickbooks.api.intuit.com/v3/company/9341452109871234/account',
+			'https://sandbox-quickbooks.api.intuit.com/v3/company/12345678/account',
 		);
 		expect(init?.method).toBe('POST');
 		expect(new Headers(init?.headers).get('authorization')).toBe(
@@ -72,7 +72,7 @@ describe('QuickBooks verified endpoint requests', () => {
 			mockJsonResponse({ Account: account, time: '2026-11-18T12:00:00Z' }),
 		);
 		await AccountsEndpoints.get(context, {
-			realmId: '9341452109871234',
+			realmId: '12345678',
 			accountId: '35',
 		});
 
@@ -80,7 +80,7 @@ describe('QuickBooks verified endpoint requests', () => {
 		expect(call).toBeDefined();
 		if (!call) throw new Error('Expected the provider request');
 		expect(call[0]).toBe(
-			'https://sandbox-quickbooks.api.intuit.com/v3/company/9341452109871234/account/35',
+			'https://sandbox-quickbooks.api.intuit.com/v3/company/12345678/account/35',
 		);
 		expect(call[1]?.method).toBe('GET');
 	});
@@ -97,7 +97,7 @@ describe('QuickBooks verified endpoint requests', () => {
 			}),
 		);
 		const result = await AccountsEndpoints.list(context, {
-			realmId: '9341452109871234',
+			realmId: '12345678',
 			startPosition: 11,
 			maxResults: 10,
 		});
@@ -108,7 +108,7 @@ describe('QuickBooks verified endpoint requests', () => {
 		if (!call) throw new Error('Expected the provider request');
 		const url = new URL(String(call[0]));
 		expect(url.origin).toBe('https://sandbox-quickbooks.api.intuit.com');
-		expect(url.pathname).toBe('/v3/company/9341452109871234/query');
+		expect(url.pathname).toBe('/v3/company/12345678/query');
 		expect(url.searchParams.get('query')).toBe(
 			'SELECT * FROM Account STARTPOSITION 11 MAXRESULTS 10',
 		);
@@ -118,23 +118,23 @@ describe('QuickBooks verified endpoint requests', () => {
 		fetchMock.mockResolvedValue(
 			mockJsonResponse({
 				CompanyInfo: {
-					Id: '9341452109871234',
-					CompanyName: 'Example Company',
+					Id: '12345678',
+					CompanyName: 'Demo Company',
 					DefaultTimeZone: 'America/Los_Angeles',
 				},
 				time: '2026-11-18T12:00:00Z',
 			}),
 		);
 		const result = await CompanyEndpoints.get(context, {
-			realmId: '9341452109871234',
+			realmId: '12345678',
 		});
 
-		expect(result.CompanyInfo.CompanyName).toBe('Example Company');
+		expect(result.CompanyInfo.CompanyName).toBe('Demo Company');
 		const call = fetchMock.mock.calls.at(0);
 		expect(call).toBeDefined();
 		if (!call) throw new Error('Expected the provider request');
 		expect(call[0]).toBe(
-			'https://sandbox-quickbooks.api.intuit.com/v3/company/9341452109871234/companyinfo/9341452109871234',
+			'https://sandbox-quickbooks.api.intuit.com/v3/company/12345678/companyinfo/12345678',
 		);
 	});
 
@@ -142,32 +142,30 @@ describe('QuickBooks verified endpoint requests', () => {
 		fetchMock.mockResolvedValue(
 			mockJsonResponse({
 				QueryResponse: {
-					CompanyInfo: [
-						{ Id: '9341452109871234', CompanyName: 'Example Company' },
-					],
+					CompanyInfo: [{ Id: '12345678', CompanyName: 'Demo Company' }],
 				},
 				time: '2026-11-18T12:00:00Z',
 			}),
 		);
 		const result = await CompanyEndpoints.list(context, {
-			realmId: '9341452109871234',
+			realmId: '12345678',
 		});
 
 		expect(result.QueryResponse.CompanyInfo?.[0]?.CompanyName).toBe(
-			'Example Company',
+			'Demo Company',
 		);
 		const call = fetchMock.mock.calls.at(0);
 		expect(call).toBeDefined();
 		if (!call) throw new Error('Expected the provider request');
 		const url = new URL(String(call[0]));
-		expect(url.pathname).toBe('/v3/company/9341452109871234/query');
+		expect(url.pathname).toBe('/v3/company/12345678/query');
 		expect(url.searchParams.get('query')).toBe('SELECT * FROM CompanyInfo');
 	});
 
 	it('rejects invalid strict input before network I/O', async () => {
 		const input = Object.assign(
 			{
-				realmId: '9341452109871234',
+				realmId: '12345678',
 				name: 'Operating Checking',
 				accountType: 'Bank' as const,
 			},
@@ -186,7 +184,7 @@ describe('QuickBooks verified endpoint requests', () => {
 		);
 		await expect(
 			AccountsEndpoints.get(context, {
-				realmId: '9341452109871234',
+				realmId: '12345678',
 				accountId: '35',
 			}),
 		).rejects.toThrow();
