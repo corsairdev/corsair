@@ -1,0 +1,32 @@
+module.exports = {
+	preset: 'ts-jest',
+	testEnvironment: 'node',
+	roots: ['<rootDir>'],
+	testMatch: ['**/*.test.ts'],
+	transform: {
+		'^.+\\.yaml$': '<rootDir>/../corsair/jest-yaml-transform.cjs',
+		'^.+\\.ts$': [
+			'ts-jest',
+			{
+				useESM: true,
+				tsconfig: {
+					esModuleInterop: true,
+					allowSyntheticDefaultImports: true,
+					verbatimModuleSyntax: false,
+					module: 'ESNext',
+					moduleResolution: 'Bundler',
+				},
+			},
+		],
+		'.*\\.js$': ['ts-jest', { useESM: true }],
+	},
+	moduleNameMapper: {
+		'^corsair/core$': '<rootDir>/../corsair/core.ts',
+		'^corsair/http$': '<rootDir>/../corsair/http.ts',
+		'^corsair/tests$': '<rootDir>/../corsair/tests/index.ts',
+		'^(\\.\\.?/.*)\\.js$': '$1',
+	},
+	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],
+	extensionsToTreatAsEsm: ['.ts'],
+	testTimeout: 30000,
+};

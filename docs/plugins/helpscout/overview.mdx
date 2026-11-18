@@ -1,0 +1,146 @@
+---
+title: "Help Scout plugin"
+sidebarTitle: "Overview"
+description: "Manage mailboxes, conversations, customer profiles, threads, tags, saved replies, and reports with Help Scout Mailbox API 2.0."
+---
+
+Use **Help Scout** through Corsair: one client, typed API calls.
+
+**Authentication.** Help Scout has no API keys: every token comes from a Help Scout app (Your Profile &gt; My Apps) and lasts 2 days. Two ways to connect. `oauth_2` (default): each Help Scout account authorizes through an OAuth app, Corsair's or your own; Corsair renews the token with the stored refresh token. `api_key`: connect one Help Scout account with its own app by storing the app's App ID as `client_id` and App Secret as `client_secret` (no redirect URL needed): `pnpm corsair setup --plugin=helpscout client_id=<app-id> client_secret=<app-secret>`, or the Client ID and Client secret fields of Hub's connect page, with the API key field left empty. The plugin mints a token with Help Scout's client-credentials grant, keeps it in `api_key` and mints a new one before it expires. Either way, a read that gets a 401 renews the token once and retries; a write that gets a 401 fails and is not retried. Passing `key` in plugin options sends that token as is, with no renewal.
+
+**Rate Limiting.** The Mailbox API enforces rate limits per tenant. Corsair's HTTP transport retries a 429 up to three times, honoring `Retry-After`.
+
+**Resource Identification.** Help Scout numeric IDs are integers or digit strings. Path parameters accept both numbers and numeric strings.
+
+**What you get:**
+
+- 55 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/helpscout better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/helpscout better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/helpscout better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/helpscout better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { helpscout } from '@corsair-dev/helpscout';
+
+export const corsair = createCorsair({
+	plugins: [
+		helpscout(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="OAuth 2.0 (Recommended)">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Help Scout OAuth app.
+
+```ts
+helpscout()
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+<Tab title="API Key">
+
+Store the Help Scout API key before the first call: `pnpm corsair setup --plugin=helpscout --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+helpscout({
+	authType: 'api_key',
+})
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'helpscout',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List mailboxes**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.helpscout.api.mailboxes.list({});
+```
+
+
+**Delete a conversation**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.helpscout.api.conversations.delete({ conversationId: 1000 });
+```
+
+
+See the full list on the [API](/plugins/helpscout/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/helpscout/api">
+    Every `helpscout.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

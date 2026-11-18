@@ -155,7 +155,7 @@ await corsair.mailsso.api.validations.single({ email: 'hello@example.com' });
 |------|------|----------|-------------|
 | `email` | `string` | Yes | The email address to validate. A malformed address is not an error: Mails.so answers it as undeliverable with reason invalid_format. |
 
-A malformed address answers 200 with result undeliverable and reason invalid_format, not an error. Mails.so reports the failure of a request as { data: null, error }, which the plugin throws as MailssoAPIError.
+A malformed address answers 200 with result undeliverable and reason invalid_format, not an error. Mails.so reports the failure of a request as &#123; data: null, error &#125;, which the plugin throws as MailssoAPIError.
 
 
 

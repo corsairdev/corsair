@@ -227,6 +227,39 @@ describe('getOAuthAccessToken switchboard', () => {
 		}
 	});
 
+	it('single-flights one account refreshed through two key managers', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			await seed(
+				database,
+				{ client_id: 'cid', client_secret: 'csecret' },
+				{ access_token: 'stale', expires_at: '1', refresh_token: 'rot-rt' },
+			);
+			let calls = 0;
+			global.fetch = (async () => {
+				calls += 1;
+				return jsonResponse({
+					access_token: 'rotated',
+					refresh_token: 'rot-rt-2',
+					expires_in: 3600,
+				});
+			}) as unknown as typeof fetch;
+			const opts = {
+				plugin: 'linear',
+				tokenUrl: 'https://api.linear.app/oauth/token',
+			};
+			const tokens = await Promise.all(
+				[makeKeys(database), makeKeys(database)].map((keys) =>
+					getOAuthAccessToken({ keys, tenantId: 'default' }, opts),
+				),
+			);
+			expect(tokens).toEqual(['rotated', 'rotated']);
+			expect(calls).toBe(1);
+		} finally {
+			cleanup();
+		}
+	});
+
 	it('_refreshAuth force-refreshes even when the local token still looks fresh', async () => {
 		const { database, cleanup } = createTestDatabase();
 		try {

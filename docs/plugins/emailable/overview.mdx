@@ -1,0 +1,143 @@
+---
+title: "Emailable plugin"
+sidebarTitle: "Overview"
+description: "Verify email addresses one at a time or in bulk batches with Emailable, and read the account's credits."
+---
+
+Use **Emailable** through Corsair: one client, typed API calls, local DB sync.
+
+Create a secret API key under API in Emailable. It is sent as a Bearer token, so it never appears in a URL or request body. A test key (starts with `test_`) returns sample results and spends no credits; with it, addresses such as deliverable@example.com, risky@example.com or disposable@example.com return that result.
+`verifications.verify` uses one credit per address. When Emailable needs more time it answers HTTP 249; the plugin then returns `pending: true`, and calling again within 5 minutes costs nothing extra. `batches.create` verifies up to 50,000 addresses for one credit each and is marked destructive; poll `batches.get` until `done` is true.
+Only credits, a verification's state, score and reason (keyed by address), and batch ids are stored. Names Emailable guesses from an address are returned but not stored. Verified addresses are kept out of events and are removed from propagated errors.
+
+**What you get:**
+
+- 4 typed API operations
+- 3 synced entities (`accounts`, `batches`, `verifications`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/emailable better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/emailable better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/emailable better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/emailable better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { emailable } from '@corsair-dev/emailable';
+
+export const corsair = createCorsair({
+	plugins: [
+		emailable(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Emailable API key before the first call: `pnpm corsair setup --plugin=emailable --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+emailable()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'emailable',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Verify one address**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.emailable.api.verifications.verify({ email: 'deliverable@example.com' });
+```
+
+
+**Verify a list of addresses**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.emailable.api.batches.create({
+	emails: ['deliverable@example.com', 'risky@example.com'],
+});
+```
+
+
+See the full list on the [API](/plugins/emailable/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.emailable.db.<entity>.search()` and `.list()`: `accounts`, `batches`, `verifications`.
+
+See [Database](/plugins/emailable/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/emailable/api">
+    Every `emailable.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/emailable/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

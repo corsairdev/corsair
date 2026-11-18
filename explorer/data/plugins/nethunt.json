@@ -1,0 +1,652 @@
+{
+  "id": "nethunt",
+  "displayName": "NetHunt CRM",
+  "description": "List NetHunt folders and their field names, search and page records, read the change history, and create, update, comment on, log calls against and delete records.",
+  "npmPackageName": "@corsair-dev/nethunt",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 16,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "email"]
+    }
+  ],
+  "api": [
+    {
+      "path": "nethunt.api.account.verify",
+      "shortPath": "account.verify",
+      "description": "Confirm the email and key pair work and return the user behind them",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ personalName?: string | null, emailAddress?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nethunt.api.folders.fields",
+      "shortPath": "folders.fields",
+      "description": "List a folder's field names, which are user-defined and are what a create or update must use",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folderId",
+            "optional": false,
+            "type": "string",
+            "description": "The folder's id, from folders.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "{ name?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nethunt.api.folders.list",
+      "shortPath": "folders.list",
+      "description": "List the folders this account can read, or only the ones it may create records in",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "writable",
+            "optional": true,
+            "type": "boolean",
+            "description": "True to list only folders the user may create records in, false for every readable folder. Defaults to every readable folder."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folders",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nethunt.api.records.callLog",
+      "shortPath": "records.callLog",
+      "description": "Log a call on a record’s timeline with its start time and duration in minutes",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "string",
+            "description": "The record id."
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string",
+            "description": "The call log text."
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string",
+            "description": "When the call started, as an ISO 8601 instant in UTC."
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number",
+            "description": "How long the call lasted, in minutes."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "callLogId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nethunt.api.records.changes",
+      "shortPath": "records.changes",
+      "description": "Read the audit trail for a folder: who changed which field and when, as the values removed and added, including deletes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folderId",
+            "optional": false,
+            "type": "string",
+            "description": "The folder's id, from folders.list."
+          },
+          {
+            "key": "recordId",
+            "optional": true,
+            "type": "string",
+            "description": "The record id."
+          },
+          {
+            "key": "fieldNames",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string",
+            "description": "An ISO 8601 instant, e.g. 2026-01-01T00:00:00.000Z."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "changes",
+            "optional": false,
+            "type": "{ id?: string | null, recordId?: string | null, time?: string | null, user?: { personalName?: string | null, emailAddress?: string | null } | null, recordAction?: string | null, fieldActions?: Record<string, { remove?: string | number | boolean | null | (string | number | boolean)[], add?: string | number | boolean | null | (string | number | boolean)[] }> | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nethunt.api.records.comment",
+      "shortPath": "records.comment",
+      "description": "Add a comment to a record’s timeline",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "string",
+            "description": "The record id."
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string",
+            "description": "The comment text."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "commentId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nethunt.api.records.create",
+      "shortPath": "records.create",
+      "description": "Create one record in a folder from a flat map of the folder’s field names, with the time zone NetHunt needs to read dates",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folderId",
+            "optional": false,
+            "type": "string",
+            "description": "The folder's id, from folders.list."
+          },
+          {
+            "key": "timeZone",
+            "optional": false,
+            "type": "string",
+            "description": "The user’s time zone, an IANA name such as Europe/London. NetHunt requires it on every create and uses it to interpret date fields."
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "Record<string, string | number | boolean | null | (string | number | boolean)[]>",
+            "description": "The folder’s field names mapped to their values. Names are per-folder and set by the user."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recordId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "Record<string, string | number | boolean | null | (string | number | boolean)[]> | null",
+            "description": "The folder’s field names mapped to their values. Names are per-folder and set by the user."
+          }
+        ]
+      }
+    },
+    {
+      "path": "nethunt.api.records.delete",
+      "shortPath": "records.delete",
+      "description": "Delete a record permanently; NetHunt has no restore route and the audit trail keeps only the change entry",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "string",
+            "description": "The record id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nethunt.api.records.find",
+      "shortPath": "records.find",
+      "description": "Find records in a folder by id or by a text query such as Name:Doe",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folderId",
+            "optional": false,
+            "type": "string",
+            "description": "The folder's id, from folders.list."
+          },
+          {
+            "key": "recordId",
+            "optional": true,
+            "type": "string",
+            "description": "The record id."
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "A search query such as Name:Doe. NetHunt matches per field and ignores case."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Most records to return. NetHunt defaults to 1."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "records",
+            "optional": false,
+            "type": "{ id?: string | null, recordId?: string | null, createdAt?: string | null, updatedAt?: string | null, fields?: Record<string, string | number | boolean | null | (string | number | boolean)[]> | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nethunt.api.records.linkThread",
+      "shortPath": "records.linkThread",
+      "description": "Attach an existing Gmail thread to a record",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "string",
+            "description": "The record id."
+          },
+          {
+            "key": "gmailThreadId",
+            "optional": false,
+            "type": "string",
+            "description": "The Gmail thread id to attach to the record."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "linked",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "gmailThreadId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nethunt.api.records.recent",
+      "shortPath": "records.recent",
+      "description": "List records created in a folder after a timestamp; NetHunt defaults the window to 24 hours",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folderId",
+            "optional": false,
+            "type": "string",
+            "description": "The folder's id, from folders.list."
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string",
+            "description": "Only records created after this instant. Defaults at NetHunt to 24 hours before the request."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "records",
+            "optional": false,
+            "type": "{ id?: string | null, recordId?: string | null, createdAt?: string | null, updatedAt?: string | null, fields?: Record<string, string | number | boolean | null | (string | number | boolean)[]> | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nethunt.api.records.recentCallLogs",
+      "shortPath": "records.recentCallLogs",
+      "description": "List calls logged on records in a folder after a timestamp, with start, end and duration",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folderId",
+            "optional": false,
+            "type": "string",
+            "description": "The folder's id, from folders.list."
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string",
+            "description": "Only items created after this instant. Defaults at NetHunt to 24 hours before the request."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "callLogs",
+            "optional": false,
+            "type": "{ id?: string | null, callLogId?: string | null, recordId?: string | null, createdAt?: string | null, text?: string | null, time?: string | null, duration?: number | null, endTime?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nethunt.api.records.recentComments",
+      "shortPath": "records.recentComments",
+      "description": "List comments added to records in a folder after a timestamp; NetHunt defaults the window to 24 hours",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folderId",
+            "optional": false,
+            "type": "string",
+            "description": "The folder's id, from folders.list."
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string",
+            "description": "Only items created after this instant. Defaults at NetHunt to 24 hours before the request."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comments",
+            "optional": false,
+            "type": "{ id?: string | null, commentId?: string | null, recordId?: string | null, createdAt?: string | null, text?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nethunt.api.records.recentFiles",
+      "shortPath": "records.recentFiles",
+      "description": "List Google Drive files attached to records in a folder after a timestamp",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folderId",
+            "optional": false,
+            "type": "string",
+            "description": "The folder's id, from folders.list."
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string",
+            "description": "Only items created after this instant. Defaults at NetHunt to 24 hours before the request."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "files",
+            "optional": false,
+            "type": "{ id?: string | null, fileId?: string | null, folderId?: string | null, recordId?: string | null, createdAt?: string | null, googleDriveFileId?: string | null, description?: string | null, iconUrl?: string | null, mimeType?: string | null, name?: string | null, url?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nethunt.api.records.update",
+      "shortPath": "records.update",
+      "description": "Update a record’s fields through per-field actions, each able to overwrite, remove or add values",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "string",
+            "description": "The record id."
+          },
+          {
+            "key": "overwrite",
+            "optional": true,
+            "type": "boolean",
+            "description": "The default for every field action. NetHunt defaults it to false."
+          },
+          {
+            "key": "fieldActions",
+            "optional": false,
+            "type": "Record<string, { overwrite?: boolean, remove?: string | number | boolean | null | (string | number | boolean)[] | (string | number | boolean | null | (string | number | boolean)[])[], add?: string | number | boolean | null | (string | number | boolean)[] | (string | number | boolean | null | (string | number | boolean)[])[] }>",
+            "description": "Field name to the action to perform on it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recordId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "Record<string, string | number | boolean | null | (string | number | boolean)[]> | null",
+            "description": "The folder’s field names mapped to their values. Names are per-folder and set by the user."
+          }
+        ]
+      }
+    },
+    {
+      "path": "nethunt.api.records.updated",
+      "shortPath": "records.updated",
+      "description": "List records updated in a folder after a timestamp, optionally only when named fields changed",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folderId",
+            "optional": false,
+            "type": "string",
+            "description": "The folder's id, from folders.list."
+          },
+          {
+            "key": "fieldNames",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only report changes to these fields. Repeatable at the provider; several names are sent as separate parameters."
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string",
+            "description": "Only records updated after this instant. Defaults at NetHunt to 24 hours before the request."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "records",
+            "optional": false,
+            "type": "{ id?: string | null, recordId?: string | null, createdAt?: string | null, updatedAt?: string | null, fields?: Record<string, string | number | boolean | null | (string | number | boolean)[]> | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

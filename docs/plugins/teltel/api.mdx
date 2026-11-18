@@ -1,0 +1,1804 @@
+---
+title: "TelTEL API reference"
+sidebarTitle: "API"
+description: "API reference for the TelTEL plugin in Corsair: every `teltel.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### balance
+
+`account.balance`
+
+Read the account balance, its credit limit and the outstanding amount where one is owed
+
+**Risk:** `read`
+
+```ts
+await corsair.teltel.api.account.balance({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  credit?: number | null,
+  credit_limit?: number | null,
+  balance?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Calls
+
+### create
+
+`calls.create`
+
+Place a click-to-call between two numbers, which bills per minute once answered
+
+**Risk:** `destructive`
+
+```ts
+await corsair.teltel.api.calls.create({ caller_number: '37126111111', destination_number: '37126111112', destination_displayname: 'Support' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `caller_number` | `string` | Yes | The phone number or SIP device that places the call. |
+| `caller_displayname` | `string` | No | — |
+| `destination_number` | `string` | Yes | The number to dial. |
+| `destination_displayname` | `string` | Yes | The display name shown to the destination. |
+
+destination_displayname is required alongside both numbers.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  status?: number | null,
+  message?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`calls.list`
+
+List calls with their duration, cost and hangup reason, filtered by direction or start time
+
+**Risk:** `read`
+
+```ts
+await corsair.teltel.api.calls.list({ direction: 'outbound', limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Results to return, 1 to 5000. TelTEL defaults it to 500. |
+| `offset` | `number` | No | Results to skip. TelTEL defaults it to 0. |
+| `sort` | `string` | No | Fields to sort by; prefix one with "-" for descending. |
+| `direction` | `inbound \| outbound` | No | — |
+| `starttime[from]` | `string` | No | Only calls started after this timestamp (strict). |
+| `starttime[to]` | `string` | No | Only calls started before this timestamp (strict). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  call_id: string,
+  starttime?: string | null,
+  stoptime?: string | null,
+  direction?: string | null,
+  type?: string | null,
+  status?: string | null,
+  duration_sec?: number | null,
+  waiting_sec?: number | null,
+  handle_sec?: number | null,
+  rate?: number | null,
+  cost?: number | null,
+  caller?: {
+    number?: string | null,
+    type?: string | null,
+    cid?: string | null,
+    dnid?: string | null,
+    user_id?: number | null
+  } | null,
+  callee?: {
+    number?: string | null,
+    type?: string | null,
+    user_id?: number | null
+  } | null,
+  extra_prefix?: string | null,
+  hangup_by?: string | null,
+  hangup_value?: string | null,
+  call_flow?: string | null,
+  audio_url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Campaigns
+
+### action
+
+`campaigns.action`
+
+Start, pause or stop a campaign; start sends to every contact in its groups
+
+**Risk:** `destructive`
+
+```ts
+await corsair.teltel.api.campaigns.action({ campaignId: 781, action: 'start' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `number` | Yes | The campaign to act on. |
+| `action` | `start \| pause \| stop` | Yes | What to do: start sending, pause, or stop for good. |
+
+start sends to every contact in the campaign groups, pause stops it temporarily and stop ends it.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  action?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`campaigns.create`
+
+Create an SMS campaign for a set of contact groups; it does not send until `campaigns.action` starts it
+
+**Risk:** `write`
+
+```ts
+await corsair.teltel.api.campaigns.create({ title: 'Spring sale', from: '37126118199', contact_groups: [5, 6], message: 'Spring sale starts now' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | The campaign title. |
+| `from` | `string` | Yes | The sender for the campaign. |
+| `contact_groups` | `number[]` | Yes | The contact group IDs to send to. |
+| `message` | `string` | Yes | The message body. |
+| `rate` | `number` | No | Messages per minute. TelTEL picks its own rate when omitted. |
+| `unicode` | `boolean` | No | — |
+| `type` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  title?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`campaigns.delete`
+
+Delete an SMS campaign and its history
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.teltel.api.campaigns.delete({ campaignId: 781 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `number` | Yes | The SMS campaign ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  deleted?: boolean | null,
+  updated?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`campaigns.get`
+
+Read one SMS campaign by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.teltel.api.campaigns.get({ campaignId: 781 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `number` | Yes | The SMS campaign ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  title?: string | null,
+  from?: string | null,
+  contact_groups?: number[] | null,
+  message?: string | null,
+  rate?: number | null,
+  unicode?: boolean | null,
+  state?: string | null,
+  type?: string | null,
+  created_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`campaigns.list`
+
+List SMS campaigns with their state, sender and rate
+
+**Risk:** `read`
+
+```ts
+await corsair.teltel.api.campaigns.list({ limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Results to return, 1 to 5000. TelTEL defaults it to 500. |
+| `offset` | `number` | No | Results to skip. TelTEL defaults it to 0. |
+| `sort` | `string` | No | — |
+| `state` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  title?: string | null,
+  from?: string | null,
+  contact_groups?: number[] | null,
+  message?: string | null,
+  rate?: number | null,
+  unicode?: boolean | null,
+  state?: string | null,
+  type?: string | null,
+  created_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`campaigns.update`
+
+Change a campaign's title, sender, groups, message or rate
+
+**Risk:** `write`
+
+```ts
+await corsair.teltel.api.campaigns.update({ campaignId: 781, title: 'Spring sale 2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `number` | Yes | The campaign to change. |
+| `title` | `string` | No | — |
+| `from` | `string` | No | — |
+| `contact_groups` | `number[]` | No | — |
+| `message` | `string` | No | — |
+| `rate` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  deleted?: boolean | null,
+  updated?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contact Groups
+
+### contacts
+
+`contactGroups.contacts`
+
+List the contacts in one group
+
+**Risk:** `read`
+
+```ts
+await corsair.teltel.api.contactGroups.contacts({ groupId: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Results to return, 1 to 5000. TelTEL defaults it to 500. |
+| `offset` | `number` | No | Results to skip. TelTEL defaults it to 0. |
+| `groupId` | `number` | Yes | The contact group ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | string | null,
+  group_id?: number | string | null,
+  phone?: string | null,
+  param_1?: string | null,
+  param_2?: string | null,
+  param_3?: string | null,
+  param_4?: string | null,
+  param_5?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`contactGroups.create`
+
+Create a contact group
+
+**Risk:** `write`
+
+```ts
+await corsair.teltel.api.contactGroups.create({ name: 'Customers' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The group name. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  total_contacts?: number | null,
+  created?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`contactGroups.delete`
+
+Delete a contact group and its contacts
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.teltel.api.contactGroups.delete({ groupId: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupId` | `number` | Yes | The group to delete. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  deleted?: boolean | null,
+  updated?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`contactGroups.get`
+
+Read one contact group by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.teltel.api.contactGroups.get({ groupId: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupId` | `number` | Yes | The contact group ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  total_contacts?: number | null,
+  created?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`contactGroups.list`
+
+List contact groups with their contact counts
+
+**Risk:** `read`
+
+```ts
+await corsair.teltel.api.contactGroups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Results to return, 1 to 5000. TelTEL defaults it to 500. |
+| `offset` | `number` | No | Results to skip. TelTEL defaults it to 0. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  total_contacts?: number | null,
+  created?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`contactGroups.update`
+
+Rename a contact group
+
+**Risk:** `write`
+
+```ts
+await corsair.teltel.api.contactGroups.update({ groupId: 5, name: 'Clients' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupId` | `number` | Yes | The group to rename. |
+| `name` | `string` | Yes | The new group name. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  deleted?: boolean | null,
+  updated?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Add a contact to a contact group
+
+**Risk:** `write`
+
+```ts
+await corsair.teltel.api.contacts.create({ phone: '37121234567', group_id: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `phone` | `string` | Yes | The contact phone number. |
+| `group_id` | `number` | Yes | The contact group ID, from `contactGroups.list`. |
+| `param_1` | `string` | No | A custom field. |
+| `param_2` | `string` | No | — |
+| `param_3` | `string` | No | — |
+| `param_4` | `string` | No | — |
+| `param_5` | `string` | No | — |
+
+group_id is required; get it from contactGroups.list.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  phone?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createBulk
+
+`contacts.createBulk`
+
+Add many contacts in one call; a partial result reports which entries failed
+
+**Risk:** `write`
+
+```ts
+await corsair.teltel.api.contacts.createBulk({ contacts: [{ phone: '37121234567', group_id: 5 }, { phone: '37121234568', group_id: 5 }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contacts` | `object[]` | Yes | The contacts to create in one call. |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  phone: string,
+  group_id: number,
+  param_1?: string,
+  param_2?: string,
+  param_3?: string,
+  param_4?: string,
+  param_5?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number | string
+}[] | {
+  success?: {
+    id: number | string
+  }[] | null,
+  errors?: {
+    index?: number | null,
+    title?: string | null,
+    detail?: string | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Delete a contact
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.teltel.api.contacts.delete({ contactId: 981 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `number` | Yes | The contact to delete. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  deleted?: boolean | null,
+  updated?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`contacts.get`
+
+Read one contact by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.teltel.api.contacts.get({ contactId: 981 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `number` | Yes | The contact ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | string | null,
+  group_id?: number | string | null,
+  phone?: string | null,
+  param_1?: string | null,
+  param_2?: string | null,
+  param_3?: string | null,
+  param_4?: string | null,
+  param_5?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+List contacts with their group and custom fields
+
+**Risk:** `read`
+
+```ts
+await corsair.teltel.api.contacts.list({ group_id: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Results to return, 1 to 5000. TelTEL defaults it to 500. |
+| `offset` | `number` | No | Results to skip. TelTEL defaults it to 0. |
+| `sort` | `string` | No | — |
+| `group_id` | `number` | No | — |
+| `phone` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | string | null,
+  group_id?: number | string | null,
+  phone?: string | null,
+  param_1?: string | null,
+  param_2?: string | null,
+  param_3?: string | null,
+  param_4?: string | null,
+  param_5?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Change a contact's phone, group or custom fields
+
+**Risk:** `write`
+
+```ts
+await corsair.teltel.api.contacts.update({ contactId: 981, param_1: 'VIP' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `number` | Yes | The contact to change. |
+| `phone` | `string` | No | — |
+| `group_id` | `number` | No | — |
+| `param_1` | `string` | No | — |
+| `param_2` | `string` | No | — |
+| `param_3` | `string` | No | — |
+| `param_4` | `string` | No | — |
+| `param_5` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  deleted?: boolean | null,
+  updated?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Inbox
+
+### get
+
+`inbox.get`
+
+Read one inbound message by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.teltel.api.inbox.get({ inboxMessageId: 991 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inboxMessageId` | `number` | Yes | The inbound message ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  from?: string | null,
+  to?: string | null,
+  state?: string | null,
+  received_at?: string | null,
+  message?: string | null,
+  error_msg?: number | null,
+  sms_handler_email?: string | null,
+  sms_handler_url?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`inbox.list`
+
+List inbound messages with their sender and handler
+
+**Risk:** `read`
+
+```ts
+await corsair.teltel.api.inbox.list({ limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Results to return, 1 to 5000. TelTEL defaults it to 500. |
+| `offset` | `number` | No | Results to skip. TelTEL defaults it to 0. |
+| `sort` | `string` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  from?: string | null,
+  to?: string | null,
+  state?: string | null,
+  received_at?: string | null,
+  message?: string | null,
+  error_msg?: number | null,
+  sms_handler_email?: string | null,
+  sms_handler_url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Number Countries
+
+### get
+
+`numberCountries.get`
+
+Read one number country by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.teltel.api.numberCountries.get({ countryId: 115 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `countryId` | `number` | Yes | The country resource ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  prefix?: string | null,
+  sms_support?: number | null,
+  needs_verification?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`numberCountries.list`
+
+List the countries numbers can be ordered in, with their prefix and SMS support
+
+**Risk:** `read`
+
+```ts
+await corsair.teltel.api.numberCountries.list({});
+```
+
+**Input:** _empty object_
+
+Returns every country in one answer; the route takes no paging.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  prefix?: string | null,
+  sms_support?: number | null,
+  needs_verification?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Numbers
+
+### get
+
+`numbers.get`
+
+Read one DID number by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.teltel.api.numbers.get({ numberId: 115 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `numberId` | `number` | Yes | The DID number resource ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  activated?: number | null,
+  iduser?: number | null,
+  country_id?: number | null,
+  country_name?: string | null,
+  did?: string | null,
+  overphone?: string | null,
+  description?: string | null,
+  monthly_price?: number | null,
+  reservation_date?: string | null,
+  release_date?: string | null,
+  next_payment_date?: string | null,
+  month_payed?: number | null,
+  auto_renew?: number | null,
+  sms_support?: number | null,
+  sms_handler_url?: string | null,
+  sms_handler_email?: string | null,
+  spam_score?: number | null,
+  spam_checked_at?: string | null,
+  spam_score_details?: string | null,
+  groups?: any[] | null,
+  users?: any[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`numbers.list`
+
+List the DID numbers on the account with their renewal date and SMS settings
+
+**Risk:** `read`
+
+```ts
+await corsair.teltel.api.numbers.list({ limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Results to return, 1 to 5000. TelTEL defaults it to 500. |
+| `offset` | `number` | No | Results to skip. TelTEL defaults it to 0. |
+| `sort` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  activated?: number | null,
+  iduser?: number | null,
+  country_id?: number | null,
+  country_name?: string | null,
+  did?: string | null,
+  overphone?: string | null,
+  description?: string | null,
+  monthly_price?: number | null,
+  reservation_date?: string | null,
+  release_date?: string | null,
+  next_payment_date?: string | null,
+  month_payed?: number | null,
+  auto_renew?: number | null,
+  sms_support?: number | null,
+  sms_handler_url?: string | null,
+  sms_handler_email?: string | null,
+  spam_score?: number | null,
+  spam_checked_at?: string | null,
+  spam_score_details?: string | null,
+  groups?: any[] | null,
+  users?: any[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`numbers.update`
+
+Change a number's auto-renew or SMS handler URL and email
+
+**Risk:** `write`
+
+```ts
+await corsair.teltel.api.numbers.update({ numberId: 115, auto_renew: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `numberId` | `number` | Yes | The number to change. |
+| `auto_renew` | `boolean` | No | — |
+| `sms_handler_url` | `string \| null` | No | — |
+| `sms_handler_email` | `string \| null` | No | — |
+
+auto_renew is a boolean in the request; the answer is the updated number, where auto_renew reads 0 or 1.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  activated?: number | null,
+  iduser?: number | null,
+  country_id?: number | null,
+  country_name?: string | null,
+  did?: string | null,
+  overphone?: string | null,
+  description?: string | null,
+  monthly_price?: number | null,
+  reservation_date?: string | null,
+  release_date?: string | null,
+  next_payment_date?: string | null,
+  month_payed?: number | null,
+  auto_renew?: number | null,
+  sms_support?: number | null,
+  sms_handler_url?: string | null,
+  sms_handler_email?: string | null,
+  spam_score?: number | null,
+  spam_checked_at?: string | null,
+  spam_score_details?: string | null,
+  groups?: any[] | null,
+  users?: any[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Price Groups
+
+### list
+
+`priceGroups.list`
+
+List a country's price groups, whose IDs an order takes
+
+**Risk:** `read`
+
+```ts
+await corsair.teltel.api.priceGroups.list({ countryId: 115 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `countryId` | `number` | Yes | The country resource ID the price groups belong to. |
+| `limit` | `number` | No | Results to return, 1 to 5000. TelTEL defaults it to 500. |
+| `offset` | `number` | No | Results to skip. TelTEL defaults it to 0. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  price_group_id: number,
+  country_id?: number | null,
+  name?: string | null,
+  prefix?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sms
+
+### send
+
+`sms.send`
+
+Send one SMS from a verified number or sender ID, charging the account per part
+
+**Risk:** `destructive`
+
+```ts
+await corsair.teltel.api.sms.send({ from: '37126118199', to: '37126118198', message: 'Hello from TelTEL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `string` | Yes | The sender: a numeric number or a 3 to 11 character alphanumeric sender ID. Only verified numbers work unless dynamic sender IDs are enabled. |
+| `to` | `string` | Yes | The destination number in international format. |
+| `message` | `string` | Yes | The message body. |
+| `callback` | `boolean \| string` | No | A delivery receipt URL, or a boolean to use the account default. |
+
+Charges the account per part; a numeric sender must be a DID on the account and an alphanumeric sender ID must be 3 to 11 characters.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sendBulk
+
+`sms.sendBulk`
+
+Send many SMS in one call; a partial result answers 207 with the messages that failed
+
+**Risk:** `destructive`
+
+```ts
+await corsair.teltel.api.sms.sendBulk({ messages: [{ from: '37126118199', to: '37126118198', message: 'One' }, { from: '37126118199', to: '37126118197', message: 'Two' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messages` | `object[]` | Yes | The messages to send, one entry per recipient. |
+
+A partial result answers 207 with success and errors arrays under data; both shapes parse.
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  from: string,
+  to: string,
+  message: string,
+  callback?: boolean | string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| object \| null` | No | — |
+| `success` | `object[] \| null` | No | — |
+| `errors` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  index?: number | null
+}[] | {
+  success?: {
+    id?: string | null,
+    index?: number | null
+  }[] | null,
+  errors?: {
+    index?: number | null,
+    title?: string | null,
+    detail?: string | null
+  }[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="success full type">
+
+```ts
+{
+  id?: string | null,
+  index?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+{
+  index?: number | null,
+  title?: string | null,
+  detail?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sms Reports
+
+### get
+
+`smsReports.get`
+
+Read one outbound message report by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.teltel.api.smsReports.get({ reportId: 1832256 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reportId` | `number` | Yes | The message report ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  from?: string | null,
+  to?: string | null,
+  country?: {
+    id?: number | null,
+    name?: string | null,
+    iso?: string | null,
+    mcc?: number | null
+  } | null,
+  operator?: {
+    id?: number | null,
+    name?: string | null,
+    mnc?: number | null
+  } | null,
+  created_at?: string | null,
+  delivered?: string | null,
+  multipart?: boolean | null,
+  parts?: number | null,
+  price?: number | null,
+  sum?: number | null,
+  state?: string | null,
+  detailed_state?: string | null,
+  message?: string | null,
+  campaign_id?: number | null,
+  error_msg?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`smsReports.list`
+
+List outbound messages with their state, price and delivery details, filtered by number or date
+
+**Risk:** `read`
+
+```ts
+await corsair.teltel.api.smsReports.list({ limit: 100, offset: 0, state: 'DONE' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Results to return, 1 to 5000. TelTEL defaults it to 500. |
+| `offset` | `number` | No | Results to skip. TelTEL defaults it to 0. |
+| `sort` | `string` | No | A field to sort by; prefix it with "-" for descending. |
+| `state` | `string` | No | Only messages in this state: NEW, PROC, WAIT, DONE, ERROR or CANCEL. |
+| `from` | `string` | No | Only messages from this number. |
+| `to` | `string` | No | Only messages to this number. |
+| `created_at[from]` | `string` | No | Only messages created after this timestamp (strict), e.g. "2024-03-01T00:00:00". |
+| `created_at[to]` | `string` | No | Only messages created before this timestamp (strict), e.g. "2024-03-31T23:59:59". |
+
+limit runs from 1 to 5000 and defaults to 500; offset skips results. state is NEW, PROC, WAIT, DONE, ERROR or CANCEL; filters travel in one filter value.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  from?: string | null,
+  to?: string | null,
+  country?: {
+    id?: number | null,
+    name?: string | null,
+    iso?: string | null,
+    mcc?: number | null
+  } | null,
+  operator?: {
+    id?: number | null,
+    name?: string | null,
+    mnc?: number | null
+  } | null,
+  created_at?: string | null,
+  delivered?: string | null,
+  multipart?: boolean | null,
+  parts?: number | null,
+  price?: number | null,
+  sum?: number | null,
+  state?: string | null,
+  detailed_state?: string | null,
+  message?: string | null,
+  campaign_id?: number | null,
+  error_msg?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### list
+
+`users.list`
+
+List the account users with their login and email; their API keys are left out
+
+**Risk:** `read`
+
+```ts
+await corsair.teltel.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Results to return, 1 to 5000. TelTEL defaults it to 500. |
+| `offset` | `number` | No | Results to skip. TelTEL defaults it to 0. |
+
+Each user comes back without the api_key field TelTEL includes.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  realname?: string | null,
+  email?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

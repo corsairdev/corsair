@@ -1,0 +1,447 @@
+---
+title: "Docparser API reference"
+sidebarTitle: "API"
+description: "API reference for the Docparser plugin in Corsair: every `docparser.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Documents
+
+### fetch
+
+`documents.fetch`
+
+Import a document from a public URL into a parser. Uses parsing credits (one per 5 pages). Parsing takes a few minutes; check documents.status, then read results.get.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.docparser.api.documents.fetch({ parserId: 'balhnyuzdezt', url: 'https://example.com/invoices/inv-1001.pdf', remoteId: 'inv-1001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parserId` | `string` | Yes | Parser id from parsers.list. |
+| `url` | `string` | Yes | Publicly reachable URL of the document (PDF, image, Word, ...). |
+| `remoteId` | `string` | No | Your own id for the document; it comes back with the results. |
+
+`POST /v2/document/fetch/{parserId}` as form data.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+| `quotaUsed` | `number` | No | — |
+| `quotaLeft` | `number` | No | — |
+| `quotaRefill` | `string` | No | — |
+
+
+
+---
+
+### reintegrate
+
+`documents.reintegrate`
+
+Send documents' parsed data to the parser's integrations and webhooks again.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.docparser.api.documents.reintegrate({ parserId: 'balhnyuzdezt', documentIds: ['8cb0a36831b2140707e11a4beb07cb36'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parserId` | `string` | Yes | Parser id from parsers.list. |
+| `documentIds` | `string[]` | Yes | — |
+
+`POST /v1/document/reintegrate/{parserId}` with document_ids[].
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scheduled` | `number` | Yes | How many documents Docparser queued. |
+
+
+
+---
+
+### reparse
+
+`documents.reparse`
+
+Parse documents again with the parser's current rules, replacing their parsed data. Uses no extra credits.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.docparser.api.documents.reparse({ parserId: 'balhnyuzdezt', documentIds: ['8cb0a36831b2140707e11a4beb07cb36'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parserId` | `string` | Yes | Parser id from parsers.list. |
+| `documentIds` | `string[]` | Yes | — |
+
+`POST /v1/document/reparse/{parserId}` with document_ids[].
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scheduled` | `number` | Yes | How many documents Docparser queued. |
+
+
+
+---
+
+### status
+
+`documents.status`
+
+Check whether a document has been imported and parsed (done), and list any failed jobs.
+
+**Risk:** `read`
+
+```ts
+await corsair.docparser.api.documents.status({ parserId: 'balhnyuzdezt', documentId: '8cb0a36831b2140707e11a4beb07cb36' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parserId` | `string` | Yes | Parser id from parsers.list. |
+| `documentId` | `string` | Yes | Document id from documents.fetch, documents.upload or results. |
+
+`GET /v2/document/status/{parserId}/{documentId}`. done is true once import and parsing finished.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | Yes | — |
+| `done` | `boolean` | Yes | True once the document is imported and parsed with no job running. |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  remote_id?: string | null,
+  filename?: string | null,
+  pages?: number | null,
+  supported?: boolean,
+  importing_in_progress?: boolean,
+  processing_in_progress?: boolean,
+  uploaded_at?: number | null,
+  processed_at?: number | null,
+  failed_jobs?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upload
+
+`documents.upload`
+
+Upload a base64-encoded document into a parser. Uses parsing credits (one per 5 pages). Parsing takes a few minutes; check documents.status, then read results.get.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.docparser.api.documents.upload({ parserId: 'balhnyuzdezt', fileContent: 'JVBERi0xLjQK...', fileName: 'inv-1001.pdf' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parserId` | `string` | Yes | Parser id from parsers.list. |
+| `fileContent` | `string` | Yes | The file, base64-encoded. |
+| `fileName` | `string` | No | File name with extension, e.g. invoice.pdf. |
+| `remoteId` | `string` | No | Your own id for the document; it comes back with the results. |
+
+`POST /v1/document/upload/{parserId}` with file_content (base64) as form data.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+| `quotaUsed` | `number` | No | — |
+| `quotaLeft` | `number` | No | — |
+| `quotaRefill` | `string` | No | — |
+
+
+
+---
+
+## Models
+
+### list
+
+`models.list`
+
+List the model layouts of one parser.
+
+**Risk:** `read`
+
+```ts
+await corsair.docparser.api.models.list({ parserId: 'balhnyuzdezt' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parserId` | `string` | Yes | Parser id from parsers.list. |
+
+`GET /v1/parser/models/{parserId}`. The stored id is parser id plus layout id.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `models` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="models full type">
+
+```ts
+{
+  id: string,
+  label?: string,
+  parserId: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Parsers
+
+### list
+
+`parsers.list`
+
+List document parsers (id and label).
+
+**Risk:** `read`
+
+```ts
+await corsair.docparser.api.parsers.list({});
+```
+
+**Input:** _empty object_
+
+`GET /v1/parsers`. Stores id and label.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parsers` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parsers full type">
+
+```ts
+{
+  id: string,
+  label?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Ping
+
+### ping
+
+`ping`
+
+Check that the API key is accepted.
+
+**Risk:** `read`
+
+```ts
+await corsair.docparser.api.ping({});
+```
+
+**Input:** _empty object_
+
+`GET /v1/ping`.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ping` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="ping full type">
+
+```ts
+{
+  id: ping,
+  msg?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Results
+
+### get
+
+`results.get`
+
+Get the parsed data of one document.
+
+**Risk:** `read`
+
+```ts
+await corsair.docparser.api.results.get({ parserId: 'balhnyuzdezt', documentId: '8cb0a36831b2140707e11a4beb07cb36' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parserId` | `string` | Yes | Parser id from parsers.list. |
+| `documentId` | `string` | Yes | Document id from documents.fetch, documents.upload or results. |
+| `format` | `object \| flat` | No | object (default) keeps nested fields; flat returns key/value pairs. |
+| `includeChildren` | `boolean` | No | Also return documents split off this one during preprocessing. |
+
+`GET /v1/results/{parserId}/{documentId}`. Returns a list with one row (more with includeChildren).
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  document_id?: string,
+  remote_id?: string | null,
+  file_name?: string | null,
+  page_count?: number | null,
+  uploaded_at?: string | null,
+  processed_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`results.list`
+
+Get the parsed data of a parser's documents, newest first (100 by default). Filter by upload or processing date or remote id. Each row holds the fields the parser extracted.
+
+**Risk:** `read`
+
+```ts
+await corsair.docparser.api.results.list({ parserId: 'balhnyuzdezt', list: 'processed_after', date: '2026-11-01T00:00:00+00:00' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parserId` | `string` | Yes | Parser id from parsers.list. |
+| `format` | `object \| flat` | No | object (default) keeps nested fields; flat returns key/value pairs. |
+| `list` | `last_uploaded \| uploaded_after \| processed_after` | No | last_uploaded (default) returns the newest documents; the other two need date. |
+| `date` | `string \| number` | No | ISO 8601 date or UNIX time. Required with uploaded_after or processed_after. |
+| `limit` | `number` | No | Documents to return. Docparser defaults to 100. |
+| `offset` | `number` | No | — |
+| `remoteId` | `string` | No | Only documents imported with this remote id. |
+| `includeProcessingQueue` | `boolean` | No | Also return documents that are not fully processed yet. |
+| `sortBy` | `parsed_at \| processed_at \| uploaded_at \| first_processed_at \| imported_at \| integrated_at \| dispatched_webhook_at \| preprocessed_at` | No | — |
+| `sortOrder` | `ASC \| DESC` | No | — |
+
+`GET /v1/results/{parserId}`. Stores id, document id, file name, page count, and timestamps.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  document_id?: string,
+  remote_id?: string | null,
+  file_name?: string | null,
+  page_count?: number | null,
+  uploaded_at?: string | null,
+  processed_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

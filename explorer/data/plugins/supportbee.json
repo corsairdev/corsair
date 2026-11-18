@@ -1,0 +1,2045 @@
+{
+  "id": "supportbee",
+  "displayName": "Supportbee",
+  "description": "Help desk for reading, replying to and routing support tickets, with users, teams, labels, snippets and reports.",
+  "npmPackageName": "@corsair-dev/supportbee",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 50,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "company"]
+    }
+  ],
+  "api": [
+    {
+      "path": "supportbee.api.attachments.create",
+      "shortPath": "attachments.create",
+      "description": "Upload one file and get the id to attach to a reply, comment, draft or ticket",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filename",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content_type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "content_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "{ original?: string | null, thumb?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.comments.create",
+      "shortPath": "comments.create",
+      "description": "Add an internal comment to a ticket. Only staff see it; the requester is not notified",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticket_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ text?: string, html?: string, attachment_ids?: number[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comment",
+            "optional": false,
+            "type": "{ id: number, created_at?: string | number | null, ticket?: { replies_count?: number | null, comments_count?: number | null } | null, commenter?: { id?: number | null, email?: string | null, name?: string | null, agent?: boolean | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null }[] | { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null } | null, content?: { text?: string | null, html?: string | null, attachments?: { id?: number | null, created_at?: string | number | null, filename?: string | null, content_type?: string | null, url?: { original?: string | null, thumb?: string | null } | null }[] | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.comments.list",
+      "shortPath": "comments.list",
+      "description": "List the internal comments on one ticket",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticket_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comments",
+            "optional": false,
+            "type": "{ id: number, created_at?: string | number | null, ticket?: { replies_count?: number | null, comments_count?: number | null } | null, commenter?: { id?: number | null, email?: string | null, name?: string | null, agent?: boolean | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null }[] | { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null } | null, content?: { text?: string | null, html?: string | null, attachments?: { id?: number | null, created_at?: string | number | null, filename?: string | null, content_type?: string | null, url?: { original?: string | null, thumb?: string | null } | null }[] | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.drafts.create",
+      "shortPath": "drafts.create",
+      "description": "Save a reply draft on a ticket",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticket_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ text?: string, html?: string, attachment_ids?: number[] }"
+          },
+          {
+            "key": "cc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bcc",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "draft",
+            "optional": false,
+            "type": "{ id?: number | null, cc?: { email?: string | null, name?: string | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null }[] | null, bcc?: { email?: string | null, name?: string | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null }[] | null, last_saved_by?: { id?: number | null, email?: string | null, name?: string | null, agent?: boolean | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null }[] | { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null } | null, last_saved_at?: string | number | null, content?: { text?: string | null, html?: string | null, attachments?: { id?: number | null, created_at?: string | number | null, filename?: string | null, content_type?: string | null, url?: { original?: string | null, thumb?: string | null } | null }[] | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.drafts.delete",
+      "shortPath": "drafts.delete",
+      "description": "Delete the reply draft on a ticket. The draft text is not returned anywhere afterwards",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticket_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticket_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.drafts.get",
+      "shortPath": "drafts.get",
+      "description": "Read the reply draft on a ticket, or a new one quoting the last message when none exists",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticket_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "quote",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "time_zone",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "draft",
+            "optional": false,
+            "type": "{ id?: number | null, cc?: { email?: string | null, name?: string | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null }[] | null, bcc?: { email?: string | null, name?: string | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null }[] | null, last_saved_by?: { id?: number | null, email?: string | null, name?: string | null, agent?: boolean | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null }[] | { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null } | null, last_saved_at?: string | number | null, content?: { text?: string | null, html?: string | null, attachments?: { id?: number | null, created_at?: string | number | null, filename?: string | null, content_type?: string | null, url?: { original?: string | null, thumb?: string | null } | null }[] | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.drafts.update",
+      "shortPath": "drafts.update",
+      "description": "Replace the reply draft on a ticket",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticket_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ text?: string, html?: string, attachment_ids?: number[] }"
+          },
+          {
+            "key": "cc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bcc",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "draft",
+            "optional": false,
+            "type": "{ id?: number | null, cc?: { email?: string | null, name?: string | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null }[] | null, bcc?: { email?: string | null, name?: string | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null }[] | null, last_saved_by?: { id?: number | null, email?: string | null, name?: string | null, agent?: boolean | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null }[] | { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null } | null, last_saved_at?: string | number | null, content?: { text?: string | null, html?: string | null, attachments?: { id?: number | null, created_at?: string | number | null, filename?: string | null, content_type?: string | null, url?: { original?: string | null, thumb?: string | null } | null }[] | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.emails.create",
+      "shortPath": "emails.create",
+      "description": "Add a forwarding address. SupportBee generates the address that mail is forwarded to",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_spam",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "use_agent_name",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "forwarding_address",
+            "optional": false,
+            "type": "{ id?: number | null, forward_to?: string | null, from?: string | null, name?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.emails.list",
+      "shortPath": "emails.list",
+      "description": "List the forwarding addresses that turn mail into tickets",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "forwarding_addresses",
+            "optional": false,
+            "type": "{ id?: number | null, forward_to?: string | null, from?: string | null, name?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.filters.create",
+      "shortPath": "filters.create",
+      "description": "Link a rule to a consequence, which is what makes the filter act on matching tickets",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rule_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "consequence_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rule_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "consequence_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filter_id",
+            "optional": true,
+            "type": "string",
+            "description": "The new filter id, when returned."
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.filters.createConsequence",
+      "shortPath": "filters.createConsequence",
+      "description": "Create the action half of a filter: archive, spam, trash, label or assign",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "archive",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "spam",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trash",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assign_user",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assign_team",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "consequence",
+            "optional": false,
+            "type": "{ id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.filters.createRule",
+      "shortPath": "filters.createRule",
+      "description": "Create the matching half of a filter. It does nothing until a filter links it to a consequence",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requester_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivered_to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rule",
+            "optional": false,
+            "type": "{ id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.labels.list",
+      "shortPath": "labels.list",
+      "description": "List the company label names and colours",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "labels",
+            "optional": false,
+            "type": "{ name?: string | null, color?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.replies.create",
+      "shortPath": "replies.create",
+      "description": "Send a reply to the requester. The mail leaves SupportBee, so this reaches the real customer",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticket_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ text?: string, html?: string, attachment_ids?: number[] }"
+          },
+          {
+            "key": "cc",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "bcc",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "on_behalf_of",
+            "optional": true,
+            "type": "{ id?: number, email?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reply",
+            "optional": false,
+            "type": "{ id: number, created_at?: string | number | null, summary?: string | null, cc?: string[] | null, bcc?: string[] | null, ticket?: { replies_count?: number | null, comments_count?: number | null } | null, replier?: { id?: number | null, email?: string | null, name?: string | null, agent?: boolean | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null } | null, content?: { body?: string | null, html?: string | null, attachments?: { id?: number | null, created_at?: string | number | null, filename?: string | null, content_type?: string | null, url?: { original?: string | null, thumb?: string | null } | null }[] | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.replies.get",
+      "shortPath": "replies.get",
+      "description": "Read one reply on one ticket",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticket_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cc",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "bcc",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "ticket",
+            "optional": true,
+            "type": "{ replies_count?: number | null, comments_count?: number | null } | null"
+          },
+          {
+            "key": "replier",
+            "optional": true,
+            "type": "{ id?: number | null, email?: string | null, name?: string | null, agent?: boolean | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null } | null"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "{ body?: string | null, html?: string | null, attachments?: { id?: number | null, created_at?: string | number | null, filename?: string | null, content_type?: string | null, url?: { original?: string | null, thumb?: string | null } | null }[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.replies.list",
+      "shortPath": "replies.list",
+      "description": "List the replies on one ticket",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticket_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "replies",
+            "optional": false,
+            "type": "{ id: number, created_at?: string | number | null, summary?: string | null, cc?: string[] | null, bcc?: string[] | null, ticket?: { replies_count?: number | null, comments_count?: number | null } | null, replier?: { id?: number | null, email?: string | null, name?: string | null, agent?: boolean | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null } | null, content?: { body?: string | null, html?: string | null, attachments?: { id?: number | null, created_at?: string | number | null, filename?: string | null, content_type?: string | null, url?: { original?: string | null, thumb?: string | null } | null }[] | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.reports.avgFirstResponseTime",
+      "shortPath": "reports.avgFirstResponseTime",
+      "description": "Daily average first-response time, as string data points with timestamps",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data_points",
+            "optional": false,
+            "type": "{ value?: string | null, timestamp?: string | number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.reports.repliesCount",
+      "shortPath": "reports.repliesCount",
+      "description": "Daily reply count, as string data points with timestamps",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data_points",
+            "optional": false,
+            "type": "{ value?: string | null, timestamp?: string | number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.reports.ticketsCount",
+      "shortPath": "reports.ticketsCount",
+      "description": "Daily ticket count, as string data points with timestamps",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data_points",
+            "optional": false,
+            "type": "{ value?: string | null, timestamp?: string | number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.snippets.create",
+      "shortPath": "snippets.create",
+      "description": "Create a reply snippet with plain text or HTML",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ text?: string, html?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "snippet",
+            "optional": false,
+            "type": "{ id: number, created_at?: string | number | null, name?: string | null, tags?: string | null, content?: { text?: string | null, html?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.snippets.delete",
+      "shortPath": "snippets.delete",
+      "description": "Delete a reply snippet. The text is not returned anywhere afterwards",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.snippets.list",
+      "shortPath": "snippets.list",
+      "description": "List the reply snippets of the desk",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "snippets",
+            "optional": false,
+            "type": "{ id: number, created_at?: string | number | null, name?: string | null, tags?: string | null, content?: { text?: string | null, html?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.snippets.update",
+      "shortPath": "snippets.update",
+      "description": "Change a snippet name, tags or content",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ text?: string, html?: string }"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "snippet",
+            "optional": false,
+            "type": "{ id: number, created_at?: string | number | null, name?: string | null, tags?: string | null, content?: { text?: string | null, html?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.teams.list",
+      "shortPath": "teams.list",
+      "description": "List the teams of the desk, optionally with their members",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "with_users",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teams",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null }[] | { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.tickets.addLabel",
+      "shortPath": "tickets.addLabel",
+      "description": "Add a label to a ticket. The label has to exist on the company first",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticket_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "label_name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "label",
+            "optional": true,
+            "type": "{ id?: number | null, label?: string | null, ticket?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.tickets.archive",
+      "shortPath": "tickets.archive",
+      "description": "Archive a ticket, which takes it out of the default list. The ticket stays readable",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "updated",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.tickets.assignTeam",
+      "shortPath": "tickets.assignTeam",
+      "description": "Assign a ticket to a team. Reassigning to another team clears the user assignee",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_assignment",
+            "optional": true,
+            "type": "{ id?: number | null, created_at?: string | number | null, ticket?: { id?: number | null } | null } | null"
+          },
+          {
+            "key": "asignee",
+            "optional": true,
+            "type": "{ team?: { id?: number | null, email?: string | null, name?: string | null, agent?: boolean | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null }[] | { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null } | { id?: number | null, name?: string | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null }[] | { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.tickets.assignUser",
+      "shortPath": "tickets.assignUser",
+      "description": "Assign a ticket to a user. If the ticket is already assigned to a team, the user must be a member of it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_assignment",
+            "optional": true,
+            "type": "{ id?: number | null, created_at?: string | number | null, ticket?: { id?: number | null } | null } | null"
+          },
+          {
+            "key": "asignee",
+            "optional": true,
+            "type": "{ user?: { id?: number | null, email?: string | null, name?: string | null, agent?: boolean | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null }[] | { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null } | { id?: number | null, name?: string | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null }[] | { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.tickets.audit",
+      "shortPath": "tickets.audit",
+      "description": "Read the audit trail of one ticket, oldest action first",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "audit",
+            "optional": false,
+            "type": "{ action?: string | null, actor?: { name?: string | null, profile_picture_url?: string | null } | null, url?: string | null, severity?: string | null, happened_at?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.tickets.create",
+      "shortPath": "tickets.create",
+      "description": "Open a ticket for a requester, which emails them when notify_requester is set. This plugin always sends the API token",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "requester_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "requester_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cc",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "bcc",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "notify_requester",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "{ text?: string, html?: string, attachment_ids?: number[] }"
+          },
+          {
+            "key": "forwarding_address_id",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "replies_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "comments_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "last_activity_at",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "unanswered",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "spam",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string[] | Record<string, string | null> | null"
+          },
+          {
+            "key": "cc",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "bcc",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "(string | { id?: number | null, name?: string | null, color?: string | null })[] | null"
+          },
+          {
+            "key": "requester",
+            "optional": true,
+            "type": "{ id?: number | null, email?: string | null, name?: string | null, role?: string | null, agent?: boolean | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null }[] | { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null } | null"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "{ text?: string | null, html?: string | null, attachments?: { id?: number | null, created_at?: string | number | null, filename?: string | null, content_type?: string | null, url?: { original?: string | null, thumb?: string | null } | null }[] | null } | null"
+          },
+          {
+            "key": "current_user_asignee",
+            "optional": true,
+            "type": "{ id?: number | null, email?: string | null, name?: string | null, agent?: boolean | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null }[] | { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null } | null"
+          },
+          {
+            "key": "current_team_asignee",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null }[] | { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null } | null"
+          },
+          {
+            "key": "current_user_assignee",
+            "optional": true,
+            "type": "{ id?: number | null, email?: string | null, name?: string | null, agent?: boolean | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null }[] | { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null } | null"
+          },
+          {
+            "key": "current_team_assignee",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null }[] | { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.tickets.delete",
+      "shortPath": "tickets.delete",
+      "description": "Delete a trashed ticket for good. Only an admin can delete, and only a ticket already in the trash",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.tickets.get",
+      "shortPath": "tickets.get",
+      "description": "Read one ticket with its requester, content and assignment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticket",
+            "optional": false,
+            "type": "{ id: number, subject?: string | null, replies_count?: number | null, comments_count?: number | null, last_activity_at?: string | number | null, created_at?: string | number | null, unanswered?: boolean | null, archived?: boolean | null, spam?: boolean | null, summary?: string | null, source?: string[] | Record<string, string | null> | null, cc?: string[] | null, bcc?: string[] | null, labels?: (string | { id?: number | null, name?: string | null, color?: string | null })[] | null, requester?: { id?: number | null, email?: string | null, name?: string | null, role?: string | null, agent?: boolean | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null }[] | { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null } | null, content?: { text?: string | null, html?: string | null, attachments?: { id?: number | null, created_at?: string | number | null, filename?: string | null, content_type?: string | null, url?: { original?: string | null, thumb?: string | null } | null }[] | null } | null, current_user_asignee?: { id?: number | null, email?: string | null, name?: string | null, agent?: boolean | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null }[] | { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null } | null, current_team_asignee?: { id?: number | null, name?: string | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null }[] | { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null } | null, current_user_assignee?: { id?: number | null, email?: string | null, name?: string | null, agent?: boolean | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null }[] | { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null } | null, current_team_assignee?: { id?: number | null, name?: string | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null }[] | { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.tickets.list",
+      "shortPath": "tickets.list",
+      "description": "List unarchived tickets in last-activity order, filtered by assignee, team, label, requester or date",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "spam",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trash",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "max_replies",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "assigned_user",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assigned_team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "requester_emails",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total_only",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "current_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total_pages",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "tickets",
+            "optional": true,
+            "type": "{ id: number, subject?: string | null, replies_count?: number | null, comments_count?: number | null, last_activity_at?: string | number | null, created_at?: string | number | null, unanswered?: boolean | null, archived?: boolean | null, spam?: boolean | null, summary?: string | null, source?: string[] | Record<string, string | null> | null, cc?: string[] | null, bcc?: string[] | null, labels?: (string | { id?: number | null, name?: string | null, color?: string | null })[] | null, requester?: { id?: number | null, email?: string | null, name?: string | null, role?: string | null, agent?: boolean | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null }[] | { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null } | null, content?: { text?: string | null, html?: string | null, attachments?: { id?: number | null, created_at?: string | number | null, filename?: string | null, content_type?: string | null, url?: { original?: string | null, thumb?: string | null } | null }[] | null } | null, current_user_asignee?: { id?: number | null, email?: string | null, name?: string | null, agent?: boolean | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null }[] | { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null } | null, current_team_asignee?: { id?: number | null, name?: string | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null }[] | { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null } | null, current_user_assignee?: { id?: number | null, email?: string | null, name?: string | null, agent?: boolean | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null }[] | { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null } | null, current_team_assignee?: { id?: number | null, name?: string | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null }[] | { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.tickets.markAnswered",
+      "shortPath": "tickets.markAnswered",
+      "description": "Mark a ticket answered without sending a reply, which is how an off-system answer is recorded",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "updated",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.tickets.markSpam",
+      "shortPath": "tickets.markSpam",
+      "description": "Mark a ticket as spam",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "updated",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.tickets.markUnanswered",
+      "shortPath": "tickets.markUnanswered",
+      "description": "Mark a ticket unanswered so it returns to the open queue",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "updated",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.tickets.removeLabel",
+      "shortPath": "tickets.removeLabel",
+      "description": "Remove one label from a ticket",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticket_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "label_name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticket_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "label_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "removed",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.tickets.search",
+      "shortPath": "tickets.search",
+      "description": "Search tickets by text across subjects, bodies and requesters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "spam",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trash",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "current_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total_pages",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "tickets",
+            "optional": false,
+            "type": "{ id: number, subject?: string | null, replies_count?: number | null, comments_count?: number | null, last_activity_at?: string | number | null, created_at?: string | number | null, unanswered?: boolean | null, archived?: boolean | null, spam?: boolean | null, summary?: string | null, source?: string[] | Record<string, string | null> | null, cc?: string[] | null, bcc?: string[] | null, labels?: (string | { id?: number | null, name?: string | null, color?: string | null })[] | null, requester?: { id?: number | null, email?: string | null, name?: string | null, role?: string | null, agent?: boolean | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null }[] | { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null } | null, content?: { text?: string | null, html?: string | null, attachments?: { id?: number | null, created_at?: string | number | null, filename?: string | null, content_type?: string | null, url?: { original?: string | null, thumb?: string | null } | null }[] | null } | null, current_user_asignee?: { id?: number | null, email?: string | null, name?: string | null, agent?: boolean | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null }[] | { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null } | null, current_team_asignee?: { id?: number | null, name?: string | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null }[] | { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null } | null, current_user_assignee?: { id?: number | null, email?: string | null, name?: string | null, agent?: boolean | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null }[] | { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null } | null, current_team_assignee?: { id?: number | null, name?: string | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null }[] | { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.tickets.trash",
+      "shortPath": "tickets.trash",
+      "description": "Move a ticket to the trash. It stays restorable until an admin deletes it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "updated",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.tickets.unarchive",
+      "shortPath": "tickets.unarchive",
+      "description": "Return an archived ticket to the default list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "updated",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.tickets.unassignTeam",
+      "shortPath": "tickets.unassignTeam",
+      "description": "Remove the ticket team assignee",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "updated",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.tickets.unassignUser",
+      "shortPath": "tickets.unassignUser",
+      "description": "Remove the ticket assignee",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "updated",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.tickets.unmarkSpam",
+      "shortPath": "tickets.unmarkSpam",
+      "description": "Clear the spam flag from a ticket",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "updated",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.tickets.untrash",
+      "shortPath": "tickets.untrash",
+      "description": "Restore a trashed ticket",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "updated",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.users.addMember",
+      "shortPath": "users.addMember",
+      "description": "Add a user to a customer group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "member_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ id: number, type?: string | null, email?: string | null, first_name?: string | null, last_name?: string | null, name?: string | null, role?: string | null, agent?: boolean | null, two_factor_authentication_enabled?: boolean | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null, can_members_access_group_tickets?: boolean | null, email_domains?: string[] | null, members_count?: number | null, active_tickets_count?: number | null, requested_tickets_count?: number | null, teams?: { id?: number | null, name?: string | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null }[] | { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.users.create",
+      "shortPath": "users.create",
+      "description": "Create a user or a customer group. A new agent or admin gets an invitation email; a group is a user with type customer_group",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "team_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "can_members_access_group_tickets",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "email_domains",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ id: number, type?: string | null, email?: string | null, first_name?: string | null, last_name?: string | null, name?: string | null, role?: string | null, agent?: boolean | null, two_factor_authentication_enabled?: boolean | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null, can_members_access_group_tickets?: boolean | null, email_domains?: string[] | null, members_count?: number | null, active_tickets_count?: number | null, requested_tickets_count?: number | null, teams?: { id?: number | null, name?: string | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null }[] | { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.users.get",
+      "shortPath": "users.get",
+      "description": "Read one user or customer group",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "max_tickets",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ id: number, type?: string | null, email?: string | null, first_name?: string | null, last_name?: string | null, name?: string | null, role?: string | null, agent?: boolean | null, two_factor_authentication_enabled?: boolean | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null, can_members_access_group_tickets?: boolean | null, email_domains?: string[] | null, members_count?: number | null, active_tickets_count?: number | null, requested_tickets_count?: number | null, teams?: { id?: number | null, name?: string | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null }[] | { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.users.list",
+      "shortPath": "users.list",
+      "description": "List the users and customer groups of the desk, optionally with invited members or roles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "with_invited",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "with_roles",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ id: number, type?: string | null, email?: string | null, first_name?: string | null, last_name?: string | null, name?: string | null, role?: string | null, agent?: boolean | null, two_factor_authentication_enabled?: boolean | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null, can_members_access_group_tickets?: boolean | null, email_domains?: string[] | null, members_count?: number | null, active_tickets_count?: number | null, requested_tickets_count?: number | null, teams?: { id?: number | null, name?: string | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null }[] | { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.users.listMembers",
+      "shortPath": "users.listMembers",
+      "description": "List the members of a customer group",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ id: number, type?: string | null, email?: string | null, first_name?: string | null, last_name?: string | null, name?: string | null, role?: string | null, agent?: boolean | null, two_factor_authentication_enabled?: boolean | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null, can_members_access_group_tickets?: boolean | null, email_domains?: string[] | null, members_count?: number | null, active_tickets_count?: number | null, requested_tickets_count?: number | null, teams?: { id?: number | null, name?: string | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null }[] | { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supportbee.api.users.update",
+      "shortPath": "users.update",
+      "description": "Change a user name, email, role, teams or group settings. The caller cannot update their own account here",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "team_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "can_members_access_group_tickets",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "email_domains",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ id: number, type?: string | null, email?: string | null, first_name?: string | null, last_name?: string | null, name?: string | null, role?: string | null, agent?: boolean | null, two_factor_authentication_enabled?: boolean | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null, can_members_access_group_tickets?: boolean | null, email_domains?: string[] | null, members_count?: number | null, active_tickets_count?: number | null, requested_tickets_count?: number | null, teams?: { id?: number | null, name?: string | null, picture?: { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null }[] | { thumb20?: string | null, thumb24?: string | null, thumb32?: string | null, thumb48?: string | null, thumb64?: string | null, thum128?: string | null, thum256?: string | null } | null }[] | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

@@ -1,0 +1,2423 @@
+{
+  "id": "simplekpi",
+  "displayName": "SimpleKPI",
+  "description": "KPIs from SimpleKPI - create and manage KPIs, categories and units, write actuals and targets as entries one at a time or in bulk, read aggregated reports, and look up users, frequencies, icons and breakdowns.",
+  "npmPackageName": "@corsair-dev/simplekpi",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 38,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "simplekpi.api.breakdownItems.create",
+      "shortPath": "breakdownItems.create",
+      "description": "Create a breakdown item, such as a person, team, product or region; its id is what an entry sends as source_id",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "breakdown_id",
+            "optional": true,
+            "type": "number",
+            "description": "Omit it for an item that combines several breakdowns."
+          },
+          {
+            "key": "is_archived",
+            "optional": true,
+            "type": "boolean",
+            "description": "Archive the item. An update replaces the item, so send it again."
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "number",
+            "description": "Display position. An update replaces the item, so send it again."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "breakdown_id",
+            "optional": true,
+            "type": "number | string | null",
+            "description": "Null when the item combines more than one breakdown."
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | string | null",
+            "description": "Set for a People breakdown item, null for every other kind."
+          },
+          {
+            "key": "is_system",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_archived",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplekpi.api.breakdownItems.delete",
+      "shortPath": "breakdownItems.delete",
+      "description": "Delete a breakdown item. SimpleKPI answers 204 but keeps the item archived (is_archived true) rather than removing it",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A positive integer assigned by SimpleKPI."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplekpi.api.breakdownItems.get",
+      "shortPath": "breakdownItems.get",
+      "description": "Read one breakdown item by id, with the breakdown it belongs to",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A positive integer assigned by SimpleKPI."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "breakdown_id",
+            "optional": true,
+            "type": "number | string | null",
+            "description": "Null when the item combines more than one breakdown."
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | string | null",
+            "description": "Set for a People breakdown item, null for every other kind."
+          },
+          {
+            "key": "is_system",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_archived",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplekpi.api.breakdownItems.list",
+      "shortPath": "breakdownItems.list",
+      "description": "List the breakdown items a KPI can be broken down by, a page at a time; the API has no breakdown filter, so filter on breakdown_id across the pages",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Which page to return, counting from 1."
+          },
+          {
+            "key": "rows",
+            "optional": true,
+            "type": "number",
+            "description": "How many rows per page, 500 by default. Page until one comes back short, because there is no total."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number | string, name?: string | null, breakdown_id?: number | string | null, user_id?: number | string | null, is_system?: boolean | null, is_archived?: boolean | null, sort_order?: number | string | null, created_at?: string | null, updated_at?: string | null }[]"
+      }
+    },
+    {
+      "path": "simplekpi.api.breakdownItems.update",
+      "shortPath": "breakdownItems.update",
+      "description": "Replace a breakdown item; anything left out is reset to its default",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A positive integer assigned by SimpleKPI."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "breakdown_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "A positive integer assigned by SimpleKPI."
+          },
+          {
+            "key": "is_archived",
+            "optional": true,
+            "type": "boolean",
+            "description": "Archive the item. An update replaces the item, so send it again."
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "number",
+            "description": "Display position. An update replaces the item, so send it again."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "breakdown_id",
+            "optional": true,
+            "type": "number | string | null",
+            "description": "Null when the item combines more than one breakdown."
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | string | null",
+            "description": "Set for a People breakdown item, null for every other kind."
+          },
+          {
+            "key": "is_system",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_archived",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplekpi.api.kpiCategories.create",
+      "shortPath": "kpiCategories.create",
+      "description": "Create a KPI category, which groups KPIs on the dashboard",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplekpi.api.kpiCategories.delete",
+      "shortPath": "kpiCategories.delete",
+      "description": "Delete a KPI category; the KPIs in it are affected and this cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A positive integer assigned by SimpleKPI."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplekpi.api.kpiCategories.get",
+      "shortPath": "kpiCategories.get",
+      "description": "Read one KPI category by id, with its name and sort order",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A positive integer assigned by SimpleKPI."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplekpi.api.kpiCategories.kpis.create",
+      "shortPath": "kpiCategories.kpis.create",
+      "description": "Create a KPI inside one category; it lands in the category in the path even when the body names another",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "category_id",
+            "optional": false,
+            "type": "number",
+            "description": "A positive integer assigned by SimpleKPI."
+          },
+          {
+            "key": "icon_id",
+            "optional": false,
+            "type": "number",
+            "description": "A real icon id from kpiIcons. Omit it and the request fails."
+          },
+          {
+            "key": "unit_id",
+            "optional": false,
+            "type": "number",
+            "description": "A real unit id from kpiUnits. Omit it and the request fails."
+          },
+          {
+            "key": "frequency_id",
+            "optional": false,
+            "type": "string",
+            "description": "A frequency id from kpiFrequencies: D daily, W weekly, M monthly, Q quarterly, Y yearly. Case sensitive."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "target_default",
+            "optional": true,
+            "type": "number | null",
+            "description": "Applied to new entries with no target."
+          },
+          {
+            "key": "value_direction",
+            "optional": false,
+            "type": "U | D | N",
+            "description": "U up is good, D down is good, N neither."
+          },
+          {
+            "key": "aggregate_function",
+            "optional": false,
+            "type": "SUM | AVG",
+            "description": "How values roll up across a period."
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "category_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "icon_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "unit_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "frequency_id",
+            "optional": true,
+            "type": "string | null",
+            "description": "A frequency id from kpiFrequencies: D daily, W weekly, M monthly, Q quarterly, Y yearly. Case sensitive."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "target_default",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "value_direction",
+            "optional": true,
+            "type": "U | D | N | null"
+          },
+          {
+            "key": "aggregate_function",
+            "optional": true,
+            "type": "SUM | AVG | null"
+          },
+          {
+            "key": "is_calculated",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Calculated KPIs take no entries through the API."
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplekpi.api.kpiCategories.kpis.delete",
+      "shortPath": "kpiCategories.kpis.delete",
+      "description": "Delete a KPI through its category, with every entry recorded against it; this cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "category_id",
+            "optional": false,
+            "type": "number",
+            "description": "A positive integer assigned by SimpleKPI."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A positive integer assigned by SimpleKPI."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplekpi.api.kpiCategories.kpis.get",
+      "shortPath": "kpiCategories.kpis.get",
+      "description": "Read one KPI through its category. A KPI under a different category answers 404",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "category_id",
+            "optional": false,
+            "type": "number",
+            "description": "A positive integer assigned by SimpleKPI."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A positive integer assigned by SimpleKPI."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "category_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "icon_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "unit_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "frequency_id",
+            "optional": true,
+            "type": "string | null",
+            "description": "A frequency id from kpiFrequencies: D daily, W weekly, M monthly, Q quarterly, Y yearly. Case sensitive."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "target_default",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "value_direction",
+            "optional": true,
+            "type": "U | D | N | null"
+          },
+          {
+            "key": "aggregate_function",
+            "optional": true,
+            "type": "SUM | AVG | null"
+          },
+          {
+            "key": "is_calculated",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Calculated KPIs take no entries through the API."
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplekpi.api.kpiCategories.kpis.list",
+      "shortPath": "kpiCategories.kpis.list",
+      "description": "List the KPIs inside one category",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "category_id",
+            "optional": false,
+            "type": "number",
+            "description": "A positive integer assigned by SimpleKPI."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Which page to return, counting from 1."
+          },
+          {
+            "key": "rows",
+            "optional": true,
+            "type": "number",
+            "description": "How many rows per page, 500 by default. Page until one comes back short, because there is no total."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number | string, category_id?: number | string | null, icon_id?: number | string | null, unit_id?: number | string | null, frequency_id?: string | null, name?: string | null, description?: string | null, target_default?: number | null, value_direction?: U | D | N | null, aggregate_function?: SUM | AVG | null, is_calculated?: boolean | null, sort_order?: number | string | null, is_active?: boolean | null, created_at?: string | null, updated_at?: string | null }[]"
+      }
+    },
+    {
+      "path": "simplekpi.api.kpiCategories.kpis.update",
+      "shortPath": "kpiCategories.kpis.update",
+      "description": "Replace a KPI through its category. Anything left out is reset to its default",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "category_id",
+            "optional": false,
+            "type": "number",
+            "description": "A positive integer assigned by SimpleKPI."
+          },
+          {
+            "key": "icon_id",
+            "optional": false,
+            "type": "number",
+            "description": "A real icon id from kpiIcons. Omit it and the request fails."
+          },
+          {
+            "key": "unit_id",
+            "optional": false,
+            "type": "number",
+            "description": "A real unit id from kpiUnits. Omit it and the request fails."
+          },
+          {
+            "key": "frequency_id",
+            "optional": false,
+            "type": "string",
+            "description": "A frequency id from kpiFrequencies: D daily, W weekly, M monthly, Q quarterly, Y yearly. Case sensitive."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "target_default",
+            "optional": true,
+            "type": "number | null",
+            "description": "Applied to new entries with no target."
+          },
+          {
+            "key": "value_direction",
+            "optional": false,
+            "type": "U | D | N",
+            "description": "U up is good, D down is good, N neither."
+          },
+          {
+            "key": "aggregate_function",
+            "optional": false,
+            "type": "SUM | AVG",
+            "description": "How values roll up across a period."
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A positive integer assigned by SimpleKPI."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "category_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "icon_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "unit_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "frequency_id",
+            "optional": true,
+            "type": "string | null",
+            "description": "A frequency id from kpiFrequencies: D daily, W weekly, M monthly, Q quarterly, Y yearly. Case sensitive."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "target_default",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "value_direction",
+            "optional": true,
+            "type": "U | D | N | null"
+          },
+          {
+            "key": "aggregate_function",
+            "optional": true,
+            "type": "SUM | AVG | null"
+          },
+          {
+            "key": "is_calculated",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Calculated KPIs take no entries through the API."
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplekpi.api.kpiCategories.list",
+      "shortPath": "kpiCategories.list",
+      "description": "List the KPI categories on the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Which page to return, counting from 1."
+          },
+          {
+            "key": "rows",
+            "optional": true,
+            "type": "number",
+            "description": "How many rows per page, 500 by default. Page until one comes back short, because there is no total."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number | string, name?: string | null, sort_order?: number | string | null, created_at?: string | null, updated_at?: string | null }[]"
+      }
+    },
+    {
+      "path": "simplekpi.api.kpiCategories.update",
+      "shortPath": "kpiCategories.update",
+      "description": "Replace a KPI category; anything left out is reset to its default",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A positive integer assigned by SimpleKPI."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplekpi.api.kpiEntries.create",
+      "shortPath": "kpiEntries.create",
+      "description": "Write or update one KPI entry. kpi_id, source_id and entry_date identify it, so the same trio again updates rather than duplicating. A write with every value empty answers stored: false",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "The user the entry is against."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null",
+            "description": "Identifies the user by email instead of user_id. Send one, not both."
+          },
+          {
+            "key": "kpi_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "source_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "The breakdown source. Omit it for the KPI's default source."
+          },
+          {
+            "key": "entry_date",
+            "optional": false,
+            "type": "string",
+            "description": "A date the KPI's frequency allows. A weekly KPI rejects a mid-week date."
+          },
+          {
+            "key": "actual",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "target",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "setActual",
+            "optional": true,
+            "type": "boolean",
+            "description": "True writes actual, false leaves the stored value untouched."
+          },
+          {
+            "key": "setTarget",
+            "optional": true,
+            "type": "boolean",
+            "description": "True writes target, false leaves the stored value untouched."
+          },
+          {
+            "key": "setNotes",
+            "optional": true,
+            "type": "boolean",
+            "description": "True writes notes, false leaves the stored text untouched."
+          },
+          {
+            "key": "addToActual",
+            "optional": true,
+            "type": "boolean",
+            "description": "True adds actual to the stored value instead of replacing it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number | string, user_id?: number | string | null, source_id?: number | string | null, kpi_id?: number | string | null, entry_date?: string | null, actual?: number | null, target?: number | null, notes?: string | null, created_at?: string | null, updated_at?: string | null } | { stored: false, source_id?: number | string | null, kpi_id?: number | string | null, entry_date?: string | null, detail?: string | null }"
+      }
+    },
+    {
+      "path": "simplekpi.api.kpiEntries.createBatch",
+      "shortPath": "kpiEntries.createBatch",
+      "description": "Write many KPI entries in one request. It answers 200 even when every row was rejected, so rows_added is the only signal; a batch that stored nothing throws",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entries",
+            "optional": false,
+            "type": "{ user_id?: number | null, email?: string | null, kpi_id: number, source_id?: number | null, entry_date: string, actual?: number | null, target?: number | null, notes?: string | null, setActual?: boolean, setTarget?: boolean, setNotes?: boolean, addToActual?: boolean }[]",
+            "description": "The entries to write; each takes the single-entry shape."
+          },
+          {
+            "key": "hasActuals",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hasTargets",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hasNotes",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rows_added",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "rows_rejected",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplekpi.api.kpiEntries.delete",
+      "shortPath": "kpiEntries.delete",
+      "description": "Delete one KPI entry; this cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A positive integer assigned by SimpleKPI."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplekpi.api.kpiEntries.get",
+      "shortPath": "kpiEntries.get",
+      "description": "Read one KPI entry by id, with its actual, target and notes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A positive integer assigned by SimpleKPI."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "source_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "kpi_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "entry_date",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "actual",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "target",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplekpi.api.kpiEntries.list",
+      "shortPath": "kpiEntries.list",
+      "description": "List KPI entries, filtered by user, KPI, breakdown source and date range; narrow by KPI and dates or the response gets large",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number",
+            "description": "Only entries for this user."
+          },
+          {
+            "key": "kpiId",
+            "optional": true,
+            "type": "number",
+            "description": "Only entries for this KPI."
+          },
+          {
+            "key": "sourceId",
+            "optional": true,
+            "type": "number",
+            "description": "Only entries for this breakdown source."
+          },
+          {
+            "key": "dateFrom",
+            "optional": true,
+            "type": "string",
+            "description": "Earliest entry date, inclusive."
+          },
+          {
+            "key": "dateTo",
+            "optional": true,
+            "type": "string",
+            "description": "Latest entry date, inclusive."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Which page to return, counting from 1."
+          },
+          {
+            "key": "rows",
+            "optional": true,
+            "type": "number",
+            "description": "How many rows per page, 500 by default. Page until one comes back short, because there is no total."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number | string, user_id?: number | string | null, source_id?: number | string | null, kpi_id?: number | string | null, entry_date?: string | null, actual?: number | null, target?: number | null, notes?: string | null, created_at?: string | null, updated_at?: string | null }[]"
+      }
+    },
+    {
+      "path": "simplekpi.api.kpiEntries.update",
+      "shortPath": "kpiEntries.update",
+      "description": "Change one KPI entry named in the path; the setActual, setTarget and setNotes flags choose which values are written",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A positive integer assigned by SimpleKPI."
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "The user the entry is against."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null",
+            "description": "Identifies the user by email instead of user_id. Send one, not both."
+          },
+          {
+            "key": "kpi_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "source_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "The breakdown source. Omit it for the KPI's default source."
+          },
+          {
+            "key": "entry_date",
+            "optional": false,
+            "type": "string",
+            "description": "A date the KPI's frequency allows. A weekly KPI rejects a mid-week date."
+          },
+          {
+            "key": "actual",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "target",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "setActual",
+            "optional": true,
+            "type": "boolean",
+            "description": "True writes actual, false leaves the stored value untouched."
+          },
+          {
+            "key": "setTarget",
+            "optional": true,
+            "type": "boolean",
+            "description": "True writes target, false leaves the stored value untouched."
+          },
+          {
+            "key": "setNotes",
+            "optional": true,
+            "type": "boolean",
+            "description": "True writes notes, false leaves the stored text untouched."
+          },
+          {
+            "key": "addToActual",
+            "optional": true,
+            "type": "boolean",
+            "description": "True adds actual to the stored value instead of replacing it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number | string, user_id?: number | string | null, source_id?: number | string | null, kpi_id?: number | string | null, entry_date?: string | null, actual?: number | null, target?: number | null, notes?: string | null, created_at?: string | null, updated_at?: string | null } | { stored: false, source_id?: number | string | null, kpi_id?: number | string | null, entry_date?: string | null, detail?: string | null }"
+      }
+    },
+    {
+      "path": "simplekpi.api.kpiFrequencies.get",
+      "shortPath": "kpiFrequencies.get",
+      "description": "Read one KPI frequency by its id, such as W for weekly",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "A frequency id such as W. Case sensitive."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplekpi.api.kpiFrequencies.list",
+      "shortPath": "kpiFrequencies.list",
+      "description": "List the frequencies a KPI can use: D daily, W weekly, M monthly, Q quarterly, Y yearly",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string | null }[]"
+      }
+    },
+    {
+      "path": "simplekpi.api.kpiIcons.get",
+      "shortPath": "kpiIcons.get",
+      "description": "Read one KPI icon by id, which is what a KPI sends as icon_id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A positive integer assigned by SimpleKPI."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplekpi.api.kpiIcons.list",
+      "shortPath": "kpiIcons.list",
+      "description": "List the icons a KPI can use, which is where a valid icon_id comes from",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number | string, name?: string | null }[]"
+      }
+    },
+    {
+      "path": "simplekpi.api.kpis.create",
+      "shortPath": "kpis.create",
+      "description": "Create a KPI. icon_id and unit_id must be real ids from kpiIcons and kpiUnits even though the contract does not mark them mandatory",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "category_id",
+            "optional": true,
+            "type": "number",
+            "description": "The category the KPI belongs to."
+          },
+          {
+            "key": "icon_id",
+            "optional": false,
+            "type": "number",
+            "description": "A real icon id from kpiIcons. Omit it and the request fails."
+          },
+          {
+            "key": "unit_id",
+            "optional": false,
+            "type": "number",
+            "description": "A real unit id from kpiUnits. Omit it and the request fails."
+          },
+          {
+            "key": "frequency_id",
+            "optional": false,
+            "type": "string",
+            "description": "A frequency id from kpiFrequencies: D daily, W weekly, M monthly, Q quarterly, Y yearly. Case sensitive."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "target_default",
+            "optional": true,
+            "type": "number | null",
+            "description": "Applied to new entries with no target."
+          },
+          {
+            "key": "value_direction",
+            "optional": false,
+            "type": "U | D | N",
+            "description": "U up is good, D down is good, N neither."
+          },
+          {
+            "key": "aggregate_function",
+            "optional": false,
+            "type": "SUM | AVG",
+            "description": "How values roll up across a period."
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "category_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "icon_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "unit_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "frequency_id",
+            "optional": true,
+            "type": "string | null",
+            "description": "A frequency id from kpiFrequencies: D daily, W weekly, M monthly, Q quarterly, Y yearly. Case sensitive."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "target_default",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "value_direction",
+            "optional": true,
+            "type": "U | D | N | null"
+          },
+          {
+            "key": "aggregate_function",
+            "optional": true,
+            "type": "SUM | AVG | null"
+          },
+          {
+            "key": "is_calculated",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Calculated KPIs take no entries through the API."
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplekpi.api.kpis.delete",
+      "shortPath": "kpis.delete",
+      "description": "Delete a KPI and every entry recorded against it; this cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A positive integer assigned by SimpleKPI."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplekpi.api.kpis.get",
+      "shortPath": "kpis.get",
+      "description": "Read one KPI by id, with its frequency, unit, icon, value direction and aggregate function",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A positive integer assigned by SimpleKPI."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "category_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "icon_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "unit_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "frequency_id",
+            "optional": true,
+            "type": "string | null",
+            "description": "A frequency id from kpiFrequencies: D daily, W weekly, M monthly, Q quarterly, Y yearly. Case sensitive."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "target_default",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "value_direction",
+            "optional": true,
+            "type": "U | D | N | null"
+          },
+          {
+            "key": "aggregate_function",
+            "optional": true,
+            "type": "SUM | AVG | null"
+          },
+          {
+            "key": "is_calculated",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Calculated KPIs take no entries through the API."
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplekpi.api.kpis.list",
+      "shortPath": "kpis.list",
+      "description": "List the KPIs on the account with their frequency, unit, icon, value direction and aggregate function; page until a page comes back short",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Which page to return, counting from 1."
+          },
+          {
+            "key": "rows",
+            "optional": true,
+            "type": "number",
+            "description": "How many rows per page, 500 by default. Page until one comes back short, because there is no total."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number | string, category_id?: number | string | null, icon_id?: number | string | null, unit_id?: number | string | null, frequency_id?: string | null, name?: string | null, description?: string | null, target_default?: number | null, value_direction?: U | D | N | null, aggregate_function?: SUM | AVG | null, is_calculated?: boolean | null, sort_order?: number | string | null, is_active?: boolean | null, created_at?: string | null, updated_at?: string | null }[]"
+      }
+    },
+    {
+      "path": "simplekpi.api.kpis.update",
+      "shortPath": "kpis.update",
+      "description": "Replace a KPI wholesale. Anything left out is reset to its default rather than kept, so read it first and send it back changed",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A positive integer assigned by SimpleKPI."
+          },
+          {
+            "key": "category_id",
+            "optional": true,
+            "type": "number",
+            "description": "The category the KPI belongs to."
+          },
+          {
+            "key": "icon_id",
+            "optional": false,
+            "type": "number",
+            "description": "A real icon id from kpiIcons. Omit it and the request fails."
+          },
+          {
+            "key": "unit_id",
+            "optional": false,
+            "type": "number",
+            "description": "A real unit id from kpiUnits. Omit it and the request fails."
+          },
+          {
+            "key": "frequency_id",
+            "optional": false,
+            "type": "string",
+            "description": "A frequency id from kpiFrequencies: D daily, W weekly, M monthly, Q quarterly, Y yearly. Case sensitive."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "target_default",
+            "optional": true,
+            "type": "number | null",
+            "description": "Applied to new entries with no target."
+          },
+          {
+            "key": "value_direction",
+            "optional": false,
+            "type": "U | D | N",
+            "description": "U up is good, D down is good, N neither."
+          },
+          {
+            "key": "aggregate_function",
+            "optional": false,
+            "type": "SUM | AVG",
+            "description": "How values roll up across a period."
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "category_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "icon_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "unit_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "frequency_id",
+            "optional": true,
+            "type": "string | null",
+            "description": "A frequency id from kpiFrequencies: D daily, W weekly, M monthly, Q quarterly, Y yearly. Case sensitive."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "target_default",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "value_direction",
+            "optional": true,
+            "type": "U | D | N | null"
+          },
+          {
+            "key": "aggregate_function",
+            "optional": true,
+            "type": "SUM | AVG | null"
+          },
+          {
+            "key": "is_calculated",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Calculated KPIs take no entries through the API."
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplekpi.api.kpiUnits.create",
+      "shortPath": "kpiUnits.create",
+      "description": "Create a KPI unit with a numeric entry format and a display format",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entry_format",
+            "optional": false,
+            "type": "string",
+            "description": "Such as #,##0.00 or 0.##."
+          },
+          {
+            "key": "display_format",
+            "optional": false,
+            "type": "string",
+            "description": "Same notation as entry_format."
+          },
+          {
+            "key": "is_percentage",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "entry_format",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "display_format",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_percentage",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplekpi.api.kpiUnits.delete",
+      "shortPath": "kpiUnits.delete",
+      "description": "Delete a KPI unit; KPIs using it are affected, and this cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A positive integer assigned by SimpleKPI."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplekpi.api.kpiUnits.get",
+      "shortPath": "kpiUnits.get",
+      "description": "Read one KPI unit by id, with its entry and display formats",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A positive integer assigned by SimpleKPI."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "entry_format",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "display_format",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_percentage",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplekpi.api.kpiUnits.list",
+      "shortPath": "kpiUnits.list",
+      "description": "List the units a KPI can use, with their entry and display formats",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Which page to return, counting from 1."
+          },
+          {
+            "key": "rows",
+            "optional": true,
+            "type": "number",
+            "description": "How many rows per page, 500 by default. Page until one comes back short, because there is no total."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number | string, name?: string | null, entry_format?: string | null, display_format?: string | null, is_percentage?: boolean | null, created_at?: string | null, updated_at?: string | null }[]"
+      }
+    },
+    {
+      "path": "simplekpi.api.kpiUnits.update",
+      "shortPath": "kpiUnits.update",
+      "description": "Replace a KPI unit; anything left out is reset to its default",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A positive integer assigned by SimpleKPI."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entry_format",
+            "optional": false,
+            "type": "string",
+            "description": "Such as #,##0.00 or 0.##."
+          },
+          {
+            "key": "display_format",
+            "optional": false,
+            "type": "string",
+            "description": "Same notation as entry_format."
+          },
+          {
+            "key": "is_percentage",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "entry_format",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "display_format",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_percentage",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplekpi.api.reports.allDataEntries",
+      "shortPath": "reports.allDataEntries",
+      "description": "Read actuals and targets as one row per KPI, breakdown source and period, already aggregated to each KPI's own frequency",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kpiIDs",
+            "optional": true,
+            "type": "number[]",
+            "description": "The KPIs to report on. Sent as a comma separated list."
+          },
+          {
+            "key": "dateFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userIDs",
+            "optional": true,
+            "type": "number[]",
+            "description": "Only these users. Sent as a comma separated list."
+          },
+          {
+            "key": "groupItemIDs",
+            "optional": true,
+            "type": "number[]",
+            "description": "Only these breakdown items. Sent as a comma separated list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ kpi_id: number | string, kpi_name?: string | null, kpi_description?: string | null, item_id?: number | string | null, item_name?: string | null, period_id?: string | null, period?: string | null, label_format?: string | null, is_percentage?: boolean | null, has_target?: boolean | null, direction?: string | null, direction_name?: string | null, entry_date?: string | null, actual?: number | null, target?: number | null, notes?: string | null }[]"
+      }
+    },
+    {
+      "path": "simplekpi.api.users.get",
+      "shortPath": "users.get",
+      "description": "Read one user by id, which is what an entry sends as user_id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A positive integer assigned by SimpleKPI."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "user_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "user_status_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplekpi.api.users.list",
+      "shortPath": "users.list",
+      "description": "List the people on the account with their role and status; read-only, because people are added in the app",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Which page to return, counting from 1."
+          },
+          {
+            "key": "rows",
+            "optional": true,
+            "type": "number",
+            "description": "How many rows per page, 500 by default. Page until one comes back short, because there is no total."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number | string, user_type?: string | null, user_status_id?: string | null, first_name?: string | null, last_name?: string | null, email?: string | null, created_at?: string | null, updated_at?: string | null }[]"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
