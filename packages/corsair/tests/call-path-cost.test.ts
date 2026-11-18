@@ -6,6 +6,7 @@ jest.mock('crypto', () => {
 	const actual = jest.requireActual('crypto');
 	return {
 		...actual,
+		// unknown: a pass-through to crypto.scrypt, whose overloads take several argument shapes.
 		scrypt: (...args: unknown[]) => {
 			scryptCalls.n++;
 			return actual.scrypt(...args);
@@ -32,6 +33,7 @@ const KEK = 'test-kek-with-at-least-32-characters!!';
 
 type EventCtx = Parameters<typeof logEventFromContext>[0];
 
+// unknown (cast below): a minimal plugin literal; CorsairPlugin's full shape is not needed here.
 const demo = {
 	id: 'demo',
 	options: { authType: 'oauth_2' as const },
@@ -43,6 +45,7 @@ const demo = {
 	endpoints: {
 		// the real oauth path reads both together
 		token: async (ctx: EndpointCtx) => {
+			// unknown: EndpointCtx types keys for the fixture plugin, which declares no oauth accessors.
 			const keys = ctx.keys as unknown as Record<
 				string,
 				() => Promise<string | null>
@@ -57,6 +60,7 @@ const demo = {
 			await ctx.db.notes.upsertByEntityId('n1', { title: 'hi' });
 			return true;
 		},
+		// unknown: logEventFromContext needs the internal database and kek that EndpointCtx does not type.
 		event: async (ctx: EndpointCtx) =>
 			logEventFromContext(ctx as unknown as EventCtx, 'demo.ping', { a: 1 }),
 	},
@@ -65,6 +69,7 @@ const demo = {
 describe('bound-account call path cost', () => {
 	let env: ReturnType<typeof createTestDatabase>;
 	let queries = 0;
+	// unknown: the operation's result is ignored; only its query and scrypt counts are read.
 	const cost = async (fn: () => Promise<unknown>) => {
 		queries = 0;
 		scryptCalls.n = 0;
@@ -140,6 +145,7 @@ describe('bound-account call path cost', () => {
 		const token = await cost(() => t.demo.api.token());
 		const upsert = await cost(() => t.demo.api.note());
 		const event = await cost(() =>
+			// unknown: the typed client does not see endpoints of a plugin cast from a literal.
 			(t.demo.api as unknown as { event(): Promise<unknown> }).event(),
 		);
 		expect({ token, upsert, event }).toEqual({
