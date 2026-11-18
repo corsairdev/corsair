@@ -1,0 +1,144 @@
+---
+title: "Google Admin plugin"
+sidebarTitle: "Overview"
+description: "Manage Google Workspace users, groups, group members, organizational units and domains through the Admin SDK Directory API."
+---
+
+Use **Google Admin** through Corsair: one client, typed API calls.
+
+The Directory API administers a Google Workspace account: users, their aliases and photos, groups and memberships, organizational units, domains and the customer record.
+
+Calls must be made as a signed-in administrator. A service account needs domain-wide delegation to impersonate one, and the OAuth client needs its scope granted in the Admin console.
+
+Things to know before you call:
+
+- **Every list is paginated, and two of them cap page size.** Users accept 1 to 500 per page (default 100). Groups and group members accept 1 to 200, which is also their default. Domain and organizational unit lists take no page size at all. Pass `nextPageToken` back as `pageToken`.
+- **A page token expires after three days** on the user list. Re-run the first page rather than retrying an expired token.
+- **`userKey` and `groupKey` are emails, aliases or IDs.** They travel in the URL path, so the plugin encodes them.
+- **`users.undelete` takes the immutable user ID only**, not an email address. A delete keeps the account recoverable this way, so `users.delete` is destructive but not irreversible.
+- **A rename can take up to 10 minutes to reach every service.** Changing `primaryEmail` returns success long before every Google product sees the new address.
+- **A user that was just created can refuse a follow-up call** with a 409 until Google's backends finish propagating. The docs name this as "User creation is not complete"; retrying that call later is the documented fix.
+- **Rate limits arrive in two shapes.** A 429 is the per-account concurrency limit and cannot be raised. A 403 with reason `userRateLimitExceeded` (2,400 queries per minute per user per project by default) or `quotaExceeded` is a throughput limit, and Google's guidance for both is exponential backoff. A 403 with `dailyLimitExceeded` or `limitExceeded` is an exhausted day quota, which no retry can refill. The plugin retries the first group and reports the second.
+- **`showDeleted` is a string, not a boolean.** Google types it that way; the plugin keeps Google's type so `true` arrives as `"true"`.
+- **Updates are patch-style.** `users.update` uses the PUT that Google documents as patch-semantics for users, so absent fields are preserved and a field sent as `null` is cleared. Groups, members and organizational units go through PATCH, which is the method their docs give patch semantics to.
+- **No inbound webhooks.** The Directory API pushes changes to a callback URL a tenant hosts, so this plugin registers no webhook route.
+
+**What you get:**
+
+- 37 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/googleadmin better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/googleadmin better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/googleadmin better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/googleadmin better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { googleadmin } from '@corsair-dev/googleadmin';
+
+export const corsair = createCorsair({
+	plugins: [
+		googleadmin(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="OAuth 2.0 (Recommended)">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Google Admin OAuth app.
+
+```ts
+googleadmin()
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'googleadmin',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the first 50 users in the account**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.googleadmin.api.users.list({ customer: 'my_customer', maxResults: 50 });
+```
+
+
+**Add a user to a group as a plain member, which is the API default role**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.googleadmin.api.members.insert({ groupKey: 'engineering@example.com', email: 'ada@example.com' });
+```
+
+
+See the full list on the [API](/plugins/googleadmin/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/googleadmin/api">
+    Every `googleadmin.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
