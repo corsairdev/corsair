@@ -2580,6 +2580,14 @@
                 ]
               },
               {
+                "group": "HypeAuditor",
+                "pages": [
+                  "plugins/hypeauditor/overview",
+                  "plugins/hypeauditor/api",
+                  "plugins/hypeauditor/database"
+                ]
+              },
+              {
                 "group": "Klipfolio",
                 "pages": [
                   "plugins/klipfolio/overview",
