@@ -483,6 +483,30 @@ describe('Zoho Invoice endpoint handlers', () => {
 		);
 	});
 
+	it('keeps page and per_page given in query', async () => {
+		requestSpy.mockResolvedValue({ invoices: [] });
+		await zohoinvoice().endpoints!.invoices.list(makeCtx() as never, {
+			organizationId,
+			query: { page: 2, per_page: 50 },
+		});
+		expect(requestSpy.mock.calls[0]?.[2]?.query).toEqual({
+			page: 2,
+			per_page: 50,
+		});
+	});
+
+	it('types responses by their key', async () => {
+		requestSpy.mockResolvedValue({
+			contact: { contact_id: 'c1', contact_name: 'Acme' },
+		});
+		const result = await zohoinvoice().endpoints!.customers.get(
+			makeCtx() as never,
+			{ organizationId, contactId: 'c1' },
+		);
+		const contactId: string | number = result.contact.contact_id;
+		expect(contactId).toBe('c1');
+	});
+
 	it('organizations.list sends no organization header', async () => {
 		requestSpy.mockResolvedValue({
 			organizations: [{ organization_id: '60096700553', name: 'Acme' }],

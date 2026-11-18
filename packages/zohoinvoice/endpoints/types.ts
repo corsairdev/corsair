@@ -39,6 +39,7 @@ const CustomFieldSchema = z
 	.object({
 		customfield_id: ref.optional(),
 		label: z.string().optional(),
+		// A custom field holds text, a number, a date or a list, per its type.
 		value: z.unknown().optional(),
 	})
 	.loose();
@@ -126,6 +127,7 @@ const PaymentSchema = z
 		customer_id: ref.optional(),
 		customer_name: z.string().optional(),
 		reference_number: z.string().optional(),
+		// Applied-invoice rows; Zoho adds fields per payment type.
 		invoices: z.array(z.record(z.string(), z.unknown())).optional(),
 	})
 	.loose();
@@ -163,10 +165,12 @@ const emailBody = body
 		'Optional: to_mail_ids, cc_mail_ids, subject, body. Without it Zoho emails the customer contacts with the default template.',
 	);
 const status = z.object({ code: z.number(), message: z.string() }).loose();
-const list = (key: string, schema: z.ZodType) =>
-	z.object({ [key]: z.array(schema) }).loose();
-const single = (key: string, schema: z.ZodType) =>
-	z.object({ [key]: schema }).loose();
+// Keep the response key and record type, so `result.contact.contact_id`
+// type-checks.
+const list = <K extends string, S extends z.ZodType>(key: K, schema: S) =>
+	z.object({ [key]: z.array(schema) } as { [P in K]: z.ZodArray<S> }).loose();
+const single = <K extends string, S extends z.ZodType>(key: K, schema: S) =>
+	z.object({ [key]: schema } as { [P in K]: S }).loose();
 
 export const ZohoInvoiceEndpointInputSchemas = {
 	customersList: organization.extend(page.shape).extend({ query: queryFields }),

@@ -63,12 +63,14 @@ function describeInput(
 	return described;
 }
 
+// A zod-checked id (string or number) from the input.
 function pathId(value: unknown): string {
 	return encodeURIComponent(String(value));
 }
 
 // ── Organization ──────────────────────────────────────────────────────────────
 
+// organization_id is a string in practice; unknown until checked below.
 type Organizations = { organizations?: Array<{ organization_id?: unknown }> };
 
 /**
@@ -78,6 +80,7 @@ type Organizations = { organizations?: Array<{ organization_id?: unknown }> };
  */
 async function resolveOrganizationId(
 	ctx: RequestContext,
+	// The parsed input's organizationId: a string or undefined.
 	given: unknown,
 ): Promise<string> {
 	if (typeof given === 'string' && given) return given;
@@ -117,12 +120,14 @@ type Table = {
 	upsertByEntityId: (
 		id: string,
 		row: { id: string; data: Record<string, unknown> },
+		// Return values the plugin ignores.
 	) => Promise<unknown>;
 	deleteByEntityId: (id: string) => Promise<unknown>;
 };
 
 // Local tables, or undefined without a database (core's stubs throw).
 function table(ctx: RequestContext, entity: Entity): Table | undefined {
+	// Only whether a database is configured matters here.
 	const withDb = ctx as { database?: unknown; db?: Record<string, Table> };
 	return withDb.database ? withDb.db?.[entity] : undefined;
 }
@@ -173,15 +178,17 @@ function endpoint<K extends EndpointKey>(
 			typeof parsedInput.page === 'number' ? parsedInput.page : undefined;
 		const perPage =
 			typeof parsedInput.perPage === 'number' ? parsedInput.perPage : undefined;
+		// Top-level page/perPage win only when given, so query.page survives.
 		const query = {
 			...(definition.query?.(parsedInput) ?? {}),
-			page,
-			per_page: perPage,
+			...(page !== undefined ? { page } : {}),
+			...(perPage !== undefined ? { per_page: perPage } : {}),
 		};
 		const organizationId =
 			definition.organization === false
 				? undefined
 				: await resolveOrganizationId(ctx, parsedInput.organizationId);
+		// unknown until the output schema parses it below.
 		const response = await makeZohoInvoiceRequest<unknown>(
 			definition.path(parsedInput),
 			ctx.key,
