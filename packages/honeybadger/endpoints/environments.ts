@@ -69,7 +69,12 @@ export const environmentsCreate: HoneybadgerEndpoints['environmentsCreate'] = (
 			// environment, but it still fails, so it is not replayed.
 			replayable: false,
 		}),
-		{ log: ({ name }) => ({ name }) },
+		{
+			log: ({ project_id }, result) => ({
+				projectId: project_id,
+				environmentId: result.data.id,
+			}),
+		},
 	);
 
 export const environmentsUpdate: HoneybadgerEndpoints['environmentsUpdate'] = (

@@ -109,7 +109,7 @@ export const create: HoneybadgerEndpoints['projectsCreate'] = (ctx, input) =>
 					: undefined),
 			},
 		}),
-		{ log: ({ name }) => ({ name }) },
+		{ log: (_, result) => ({ projectId: result.data.id }) },
 	);
 
 export const update: HoneybadgerEndpoints['projectsUpdate'] = (ctx, input) =>

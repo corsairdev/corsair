@@ -109,7 +109,13 @@ export const sitesCreate: HoneybadgerEndpoints['sitesCreate'] = (ctx, input) =>
 			// A second site for the same URL is a second monitor, not a repeat.
 			replayable: false,
 		}),
-		{ log: ({ url }) => ({ url }) },
+		// The monitored URL can carry a token or credentials; log the IDs only.
+		{
+			log: ({ project_id }, result) => ({
+				projectId: project_id,
+				siteId: result.data.id,
+			}),
+		},
 	);
 
 export const sitesUpdate: HoneybadgerEndpoints['sitesUpdate'] = (ctx, input) =>

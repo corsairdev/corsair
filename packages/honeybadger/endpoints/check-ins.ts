@@ -101,9 +101,10 @@ export const checkInsCreate: HoneybadgerEndpoints['checkInsCreate'] = (
 			replayable: false,
 		}),
 		{
-			log: ({ slug, name }) => ({
-				slug: slug ?? undefined,
-				name: name ?? undefined,
+			// Names and slugs are free text; log the IDs only.
+			log: ({ project_id }, result) => ({
+				projectId: project_id,
+				checkInId: result.data.id,
 			}),
 		},
 	);
