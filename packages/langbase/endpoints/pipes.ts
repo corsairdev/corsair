@@ -41,10 +41,7 @@ export const pipes = {
 		return ListPipesOutputSchema.parse(raw);
 	},
 
-	get: async (
-		input: GetPipeInput,
-		apiKey?: string,
-	): Promise<GetPipeOutput> => {
+	get: async (input: GetPipeInput, apiKey?: string): Promise<GetPipeOutput> => {
 		const raw = await makeLangbaseRequest<unknown>(
 			`/pipes/${encodeURIComponent(input.name)}`,
 			apiKey,

@@ -68,7 +68,9 @@ describe('Langbase endpoints', () => {
 		});
 
 		it('pipes.create calls POST /pipes with pipe definition', async () => {
-			mockFetchResponse({ pipe: { name: 'sales-agent', model: 'openai:gpt-4o' } });
+			mockFetchResponse({
+				pipe: { name: 'sales-agent', model: 'openai:gpt-4o' },
+			});
 			const res = await pipes.create(
 				{ name: 'sales-agent', model: 'openai:gpt-4o' },
 				'test-key',
@@ -83,7 +85,9 @@ describe('Langbase endpoints', () => {
 		});
 
 		it('pipes.update calls PATCH /pipes/:name with body', async () => {
-			mockFetchResponse({ pipe: { name: 'sales-agent', description: 'Updated' } });
+			mockFetchResponse({
+				pipe: { name: 'sales-agent', description: 'Updated' },
+			});
 			const res = await pipes.update(
 				{ name: 'sales-agent', description: 'Updated' },
 				'test-key',
@@ -146,7 +150,9 @@ describe('Langbase endpoints', () => {
 
 	describe('tools endpoints', () => {
 		it('tools.webSearch calls POST /tools/web-search with query', async () => {
-			mockFetchResponse({ results: [{ title: 'Langbase Docs', url: 'https://langbase.com' }] });
+			mockFetchResponse({
+				results: [{ title: 'Langbase Docs', url: 'https://langbase.com' }],
+			});
 			const res = await tools.webSearch(
 				{ query: 'Langbase AI', totalResults: 3 },
 				'test-key',
