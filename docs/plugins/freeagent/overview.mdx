@@ -1,16 +1,16 @@
 ---
 title: "FreeAgent plugin"
 sidebarTitle: "Overview"
-description: "Manage FreeAgent company records, verified sender addresses, contacts, projects, invoices, and tracking groups through its OAuth 2.0 REST API."
+description: "Manage FreeAgent company accounting, contacts, invoices, estimates, expenses, banking, tax, payroll, users, and time records through the OAuth 2.0 REST API."
 ---
 
 Use **FreeAgent** through Corsair: one client, typed API calls.
 
-Connect a FreeAgent OAuth 2.0 app (client ID and secret from dev.freeagent.com). Access tokens last an hour and refresh automatically. Pass sandbox: true to use api.sandbox.freeagent.com for both OAuth and the API. This plugin exposes company profile, verified sender addresses, contacts, projects, selected invoice and recurring invoice operations, and tracking groups. Many other official company API routes remain unimplemented; see the linked route inventory in the package README. The Accountancy Practice API requires practice-enabled OAuth and X-Subdomain client scoping and is excluded.
+Connect a FreeAgent OAuth 2.0 app (client ID and secret from dev.freeagent.com). Access tokens last an hour and refresh automatically. Pass sandbox: true to use api.sandbox.freeagent.com for both OAuth and the API. Route coverage and all unresolved or excluded contracts are listed in the package README; coverage remains partial and is not a claim of full API coverage. The Tasks resource's published delete path is unresolved, and Timeslips batch-create is withheld because its response is undocumented. The Accountancy Practice API requires practice-enabled OAuth and X-Subdomain client scoping and is excluded.
 
 **What you get:**
 
-- 36 typed API operations
+- 202 typed API operations
 
 ## Setup
 

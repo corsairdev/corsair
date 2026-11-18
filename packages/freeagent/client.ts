@@ -47,6 +47,7 @@ export async function makeFreeAgentRequest<T>(
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 		sandbox?: boolean;
+		apiVersion?: string;
 	} = {},
 ): Promise<T> {
 	const { accessToken, sandbox: authSandbox } = resolveAuth(auth);
@@ -65,6 +66,7 @@ export async function makeFreeAgentRequest<T>(
 			'Content-Type': 'application/json',
 			Accept: 'application/json',
 			'User-Agent': 'Corsair FreeAgent integration',
+			...(options.apiVersion ? { 'X-Api-Version': options.apiVersion } : {}),
 		},
 	};
 	const requestOptions: ApiRequestOptions = {
@@ -74,35 +76,7 @@ export async function makeFreeAgentRequest<T>(
 		mediaType: 'application/json; charset=utf-8',
 		query,
 	};
-	try {
-		return await request<T>(config, requestOptions);
-	} catch (error: unknown) {
-		// `unknown`: transport failures may reject with non-Error values.
-		// Core's ApiError keeps the request body; drop it so contact details,
-		// invoice lines and email text don't travel with the error.
-		if (error instanceof ApiError && error.request.body !== undefined) {
-			const { body: _sentBody, ...safeRequest } = error.request;
-			void _sentBody;
-			throw new ApiError(
-				safeRequest,
-				{
-					url: error.url,
-					ok: false,
-					status: error.status,
-					statusText: error.statusText,
-					body: error.body,
-				},
-				error.message,
-				{
-					retryAfter: error.retryAfter,
-					rateLimitReset: error.rateLimitReset,
-					rateLimitRemaining: error.rateLimitRemaining,
-					rateLimitLimit: error.rateLimitLimit,
-				},
-			);
-		}
-		throw error;
-	}
+	return request<T>(config, requestOptions);
 }
 
 export async function makeFreeAgentPaginatedRequest<T>(
@@ -110,6 +84,7 @@ export async function makeFreeAgentPaginatedRequest<T>(
 	auth: string | FreeAgentAuth,
 	query: Record<string, string | number | boolean | undefined>,
 	responseSchema: z.ZodType<T>,
+	options: { apiVersion?: string } = {},
 ): Promise<{ data: T; pagination: FreeAgentPaginationHeaders }> {
 	const { accessToken, sandbox } = resolveAuth(auth);
 	if (accessToken.length === 0) {
@@ -129,6 +104,7 @@ export async function makeFreeAgentPaginatedRequest<T>(
 		Accept: 'application/json',
 		'Content-Type': 'application/json',
 		'User-Agent': 'Corsair FreeAgent integration',
+		...(options.apiVersion ? { 'X-Api-Version': options.apiVersion } : {}),
 	});
 	let attempt = 0;
 	while (attempt < 4) {

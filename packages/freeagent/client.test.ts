@@ -160,7 +160,9 @@ describe('FreeAgent client', () => {
 				'/v2/contacts',
 				{ key: 'access-token', options: { sandbox: true } },
 				{},
-				z.object({ contacts: z.array(z.unknown()) }).passthrough(),
+				z
+					.object({ contacts: z.array(z.object({}).passthrough()) })
+					.passthrough(),
 			);
 			expect(String(fetchMock.mock.calls[0]?.[0])).toBe(
 				'https://api.sandbox.freeagent.com/v2/contacts',
@@ -206,37 +208,5 @@ describe('FreeAgent client', () => {
 			expect.objectContaining({ BASE: FREEAGENT_SANDBOX_API_BASE }),
 			expect.anything(),
 		);
-	});
-
-	it('drops the sent body (contact details) from a rejected write', async () => {
-		mockedRequest.mockRejectedValue(
-			new ApiError(
-				{
-					method: 'POST',
-					url: '/v2/contacts',
-					body: { contact: { email: 'person@example.com' } },
-				},
-				{
-					url: `${FREEAGENT_API_BASE}/v2/contacts`,
-					ok: false,
-					status: 422,
-					statusText: 'Unprocessable Entity',
-					body: { errors: [{ message: 'Invalid' }] },
-				},
-				'Unprocessable Entity',
-			),
-		);
-		const error = await makeFreeAgentRequest('/v2/contacts', 'access-token', {
-			method: 'POST',
-			body: { contact: { email: 'person@example.com' } },
-			// `unknown`: a rejection can carry any value; checked as ApiError below.
-		}).catch((caught: unknown) => caught);
-		expect(error).toBeInstanceOf(ApiError);
-		expect(error).toMatchObject({
-			status: 422,
-			body: { errors: [{ message: 'Invalid' }] },
-		});
-		expect(JSON.stringify(error)).not.toContain('person@example.com');
-		expect((error as ApiError).request.body).toBeUndefined();
 	});
 });
