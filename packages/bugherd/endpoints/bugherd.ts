@@ -36,15 +36,18 @@ function store(ctx: BugherdContext) {
 	return ctx.database ? ctx.db : undefined;
 }
 
-// The part of core's entity table these helpers use. Return values they
-// ignore are unknown; a stored row's data is whatever an earlier save wrote.
+// The part of core's entity table these helpers use.
 type Table<T> = {
+	// unknown: the saved entity, which the helpers don't read.
 	upsertByEntityId: (id: string, row: T) => Promise<unknown>;
+	// unknown: core's boolean, which the helpers don't read.
 	deleteByEntityId: (id: string) => Promise<unknown>;
+	// unknown: whatever an earlier save wrote; checked before use.
 	findByEntityId: (id: string) => Promise<{ data: unknown } | null>;
 	list: (options?: {
 		limit?: number;
 		offset?: number;
+		// unknown: whatever an earlier save wrote; checked before use.
 	}) => Promise<Array<{ entity_id: string; data: unknown }>>;
 };
 
@@ -91,19 +94,21 @@ async function drop(
 }
 
 /**
- * Removes every local row whose data matches `where` (e.g. a task's comments).
+ * Removes every local row whose data `matches`, in one pass over the table.
  * Pages through list() and filters in memory: search() on data fields is
- * refused when encryptDataAtRest is on, and a search page could stop short.
- * Matches are collected first so deletes don't shift the pages.
+ * refused when encryptDataAtRest is on. Matches are collected first so this
+ * call's deletes don't shift its pages. Best effort: a row another call
+ * deletes mid-scan can shift a page, and the next read of the project
+ * re-saves or replaces what is left.
  */
 async function dropWhere(
 	table: Pick<Table<never>, 'deleteByEntityId' | 'list'> | undefined,
-	where: Record<string, string | number>,
+	matches: (data: Record<string, unknown>) => boolean,
 	label: string,
 ): Promise<string[]> {
 	if (!table) return [];
 	const PAGE = 500;
-	const matches: string[] = [];
+	const found: string[] = [];
 	try {
 		for (let offset = 0; ; offset += PAGE) {
 			const rows = await table.list({ limit: PAGE, offset });
@@ -112,23 +117,29 @@ async function dropWhere(
 					row.data && typeof row.data === 'object'
 						? (row.data as Record<string, unknown>)
 						: {};
-				if (Object.entries(where).every(([key, value]) => data[key] === value))
-					matches.push(row.entity_id);
+				if (matches(data)) found.push(row.entity_id);
 			}
 			if (rows.length < PAGE) break;
 		}
 	} catch {
 		console.warn(`Failed to read saved BugHerd ${label}s`);
 	}
-	for (const id of matches) await drop(table, id, label);
-	return matches;
+	for (const id of found) await drop(table, id, label);
+	return found;
 }
 
-/** A deleted task takes its saved comments and attachments with it. */
-async function dropTaskChildren(ctx: BugherdContext, taskId: number | string) {
+/** Deleted tasks take their saved comments and attachments with them. */
+async function dropTaskChildren(
+	ctx: BugherdContext,
+	taskIds: ReadonlyArray<number | string>,
+) {
+	if (taskIds.length === 0) return;
+	const ids = new Set(taskIds.map(Number));
 	const db = store(ctx);
-	await dropWhere(db?.comments, { task_id: Number(taskId) }, 'comment');
-	await dropWhere(db?.attachments, { task_id: Number(taskId) }, 'attachment');
+	const ofTasks = (data: Record<string, unknown>) =>
+		ids.has(Number(data.task_id));
+	await dropWhere(db?.comments, ofTasks, 'comment');
+	await dropWhere(db?.attachments, ofTasks, 'attachment');
 }
 
 const projectRow = (p: BugherdProjectRecord) => ({
@@ -448,13 +459,10 @@ export const deleteProject: Endpoint<'deleteProject'> = async (ctx, input) => {
 	>(`${projectPath(input.project_id)}.json`, ctx.key, { method: 'DELETE' });
 	const db = store(ctx);
 	await drop(db?.projects, input.project_id, 'project');
-	await dropWhere(db?.columns, { project_id: input.project_id }, 'column');
-	for (const taskId of await dropWhere(
-		db?.tasks,
-		{ project_id: input.project_id },
-		'task',
-	))
-		await dropTaskChildren(ctx, taskId);
+	const inProject = (data: Record<string, unknown>) =>
+		data.project_id === input.project_id;
+	await dropWhere(db?.columns, inProject, 'column');
+	await dropTaskChildren(ctx, await dropWhere(db?.tasks, inProject, 'task'));
 	await logEventFromContext(
 		ctx,
 		'bugherd.projects.delete',
@@ -642,7 +650,7 @@ export const deleteTask: Endpoint<'deleteTask'> = async (ctx, input) => {
 		{ method: 'DELETE' },
 	);
 	await drop(store(ctx)?.tasks, input.task_id, 'task');
-	await dropTaskChildren(ctx, input.task_id);
+	await dropTaskChildren(ctx, [input.task_id]);
 	await logEventFromContext(
 		ctx,
 		'bugherd.tasks.delete',
@@ -661,12 +669,13 @@ export const moveTasks: Endpoint<'moveTasks'> = async (ctx, input) => {
 		{ method: 'POST', body: { destination_project_id, task_ids } },
 	);
 	// Saved rows still name the old project; the next read re-saves them.
-	for (const localId of task_ids)
-		await dropWhere(
-			store(ctx)?.tasks,
-			{ project_id, local_task_id: localId },
-			'task',
-		);
+	const moved = new Set(task_ids);
+	await dropWhere(
+		store(ctx)?.tasks,
+		(data) =>
+			data.project_id === project_id && moved.has(Number(data.local_task_id)),
+		'task',
+	);
 	await logEventFromContext(
 		ctx,
 		'bugherd.tasks.move',

@@ -600,7 +600,10 @@ describe('attachments', () => {
 		mockRequest.mockResolvedValue({ attachments: [ATTACHMENT] });
 		const db = tables();
 		await B.listAttachments(context(db), { project_id: 1, task_id: 2 });
-		expect(call()?.url).toBe('/projects/1/tasks/2/attachments.json');
+		expect(call()).toMatchObject({
+			method: 'GET',
+			url: '/projects/1/tasks/2/attachments.json',
+		});
 		expect(db.attachments.upsertByEntityId).toHaveBeenCalledWith(
 			'331',
 			expect.objectContaining({ task_id: 2 }),
@@ -644,7 +647,7 @@ describe('attachments', () => {
 		// Live run 11-18: a multipart upload is stored as "attachment" with
 		// file_name null; the raw body with ?file_name= keeps the name.
 		mockRequest.mockResolvedValue({ attachment: ATTACHMENT });
-		await B.uploadAttachment(context(), {
+		const out = await bugherd().endpoints!.tasks.uploadAttachment(context(), {
 			project_id: 1,
 			task_id: 2,
 			file: {
@@ -652,6 +655,10 @@ describe('attachments', () => {
 				filename: 'note.txt',
 				contentType: 'text/plain',
 			},
+		});
+		expect(out).toEqual({ attachment: ATTACHMENT });
+		expect(mockRequest.mock.calls[0]?.[0]?.HEADERS).toMatchObject({
+			Authorization: `Basic ${btoa('test-key:x')}`,
 		});
 		const options = call();
 		expect(options).toMatchObject({
@@ -683,6 +690,22 @@ describe('attachments', () => {
 		expect(await (call()?.body as Blob).text()).toBe('{"a":1}');
 	});
 
+	it('tasks.uploadAttachment lets an API error through', async () => {
+		const error = new ApiError(
+			{ method: 'POST', url: '/projects/1/tasks/2/attachments/upload' },
+			{ url: '/x', ok: false, status: 422, statusText: '', body: {} },
+			'422',
+		);
+		mockRequest.mockRejectedValue(error);
+		await expect(
+			B.uploadAttachment(context(), {
+				project_id: 1,
+				task_id: 2,
+				file: { base64: Buffer.from('x').toString('base64') },
+			}),
+		).rejects.toBe(error);
+	});
+
 	it('tasks.deleteAttachment removes the local row', async () => {
 		const db = tables();
 		mockRequest.mockResolvedValue({ success: true });
@@ -704,14 +727,20 @@ describe('columns', () => {
 		const db = tables();
 		mockRequest.mockResolvedValue({ columns: [COLUMN] });
 		await B.listColumns(context(db), { project_id: 552668 });
-		expect(call()?.url).toBe('/projects/552668/columns.json');
+		expect(call()).toMatchObject({
+			method: 'GET',
+			url: '/projects/552668/columns.json',
+		});
 		expect(db.columns.upsertByEntityId).toHaveBeenCalledTimes(1);
 	});
 
 	it('columns.show', async () => {
 		mockRequest.mockResolvedValue({ column: COLUMN });
 		await B.showColumn(context(), { project_id: 552668, column_id: 2387619 });
-		expect(call()?.url).toBe('/projects/552668/columns/2387619.json');
+		expect(call()).toMatchObject({
+			method: 'GET',
+			url: '/projects/552668/columns/2387619.json',
+		});
 	});
 
 	it('columns.create wraps the name in column', async () => {
@@ -858,10 +887,12 @@ describe('local storage', () => {
 		await B.moveTasks(context(db), {
 			project_id: 1,
 			destination_project_id: 2,
-			task_ids: [4],
+			task_ids: [4, 6],
 		});
 		expect(db.tasks.deleteByEntityId).toHaveBeenCalledWith('98765');
 		expect(db.tasks.deleteByEntityId).not.toHaveBeenCalledWith('98766');
+		// One scan of the table, however many tasks moved.
+		expect(db.tasks.list).toHaveBeenCalledTimes(1);
 	});
 
 	it('cleanup reads every page of saved rows', async () => {
