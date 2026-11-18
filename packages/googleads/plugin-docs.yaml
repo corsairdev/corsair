@@ -1,0 +1,81 @@
+displayName: Google Ads
+description: Run Google Ads Query Language reports and manage campaigns, budgets and ad groups through the Google Ads API.
+domain: ads.google.com
+recommendedAuth: oauth_2
+overviewNote: |
+  The Google Ads API is query-and-mutate shaped. `reporting.search` runs a Google Ads Query Language statement and returns rows; `reporting.mutate` applies operations to any entity; the typed operations cover campaigns, campaign budgets and ad groups.
+
+  Two credentials are needed beyond the OAuth token. The **developer token** comes from the Google Ads API Center in a manager account and identifies the application, so it is stored on the integration as `developer_token`. When calling a client account through its manager, also store the manager's customer ID as `login_customer_id`; the plugin sends it as the `login-customer-id` header. The OAuth scope is `https://www.googleapis.com/auth/adwords`, which is the only scope the API accepts.
+
+  Things to know before you call:
+
+  - **A developer token is not optional.** Without one, Google answers a `HeaderError` even when the OAuth token is valid.
+  - **Customer IDs are digits.** Google rejects a hyphenated ID with `CLIENT_CUSTOMER_ID_INVALID`, so the plugin removes the hyphens for you.
+  - **`search` pages at 10,000 rows.** Pass `nextPageToken` back as `pageToken`. `searchStream` returns everything in one response, as a JSON array of chunks that the plugin flattens into one `results` list.
+  - **Money is micros, sent as strings.** `5000000` is 5.00 in the account currency. The plugin keeps Google's string type so no precision is lost.
+  - **An update needs `updateMask`.** Google ignores an update without one. The plugin makes it required.
+  - **A remove is a status change to `REMOVED`.** The row stays and its metrics stay readable, but the campaign cannot be brought back; the plugin marks `campaigns.remove` irreversible.
+  - **`customers.update` takes a single operation and answers a single `result`.** It is the one mutate that is not a batch, and only the tracking fields are writable.
+  - **Errors branch on the canonical status first.** `429` is a quota rejection, `403` a permission problem, `400` a bad request. The specific reason is a `GoogleAdsFailure` detail, which the plugin keeps on the error body.
+  - **No inbound webhooks.** The Google Ads API does not send any, so this plugin registers no webhook route.
+references:
+  - title: REST interface, search and SearchStream
+    url: https://developers.google.com/google-ads/api/rest/common/search
+  - title: REST interface, mutate operations and updateMask
+    url: https://developers.google.com/google-ads/api/rest/common/mutate
+  - title: OAuth, the developer token and login-customer-id headers
+    url: https://developers.google.com/google-ads/api/rest/auth
+  - title: Canonical error codes and the GoogleAdsFailure detail
+    url: https://developers.google.com/google-ads/api/docs/best-practices/understand-api-errors
+examples:
+  read:
+    path: reporting.search
+    title: Read the enabled campaigns in an account
+    args:
+      customerId: "1234567890"
+      query: SELECT campaign.id, campaign.name FROM campaign WHERE campaign.status = 'ENABLED'
+  write:
+    path: campaignBudgets.update
+    title: Raise a budget to 7.50 a day
+    args:
+      customerId: "1234567890"
+      campaignBudgetId: "789"
+      campaignBudget:
+        amountMicros: "7500000"
+      updateMask: amountMicros
+apiExamples:
+  reporting.search:
+    call: "{ customerId: '1234567890', query: \"SELECT campaign.id, campaign.name FROM campaign LIMIT 10\" }"
+  reporting.searchStream:
+    call: "{ customerId: '1234567890', query: \"SELECT campaign.id FROM campaign\" }"
+  reporting.mutate:
+    call: "{ customerId: '1234567890', mutateOperations: [{ campaignOperation: { update: { resourceName: 'customers/1234567890/campaigns/111', status: 'PAUSED' }, updateMask: 'status' } }] }"
+  campaigns.create:
+    call: "{ customerId: '1234567890', campaign: { name: 'Search - Brand', advertisingChannelType: 'SEARCH', campaignBudget: 'customers/1234567890/campaignBudgets/789', manualCpc: {} } }"
+  campaigns.update:
+    call: "{ customerId: '1234567890', campaignId: '111', campaign: { status: 'PAUSED' }, updateMask: 'status' }"
+  campaigns.remove:
+    call: "{ customerId: '1234567890', campaignId: '111' }"
+  campaignBudgets.create:
+    call: "{ customerId: '1234567890', campaignBudget: { name: 'Brand budget', amountMicros: '5000000' } }"
+  campaignBudgets.update:
+    call: "{ customerId: '1234567890', campaignBudgetId: '789', campaignBudget: { amountMicros: '7500000' }, updateMask: 'amountMicros' }"
+  adGroups.create:
+    call: "{ customerId: '1234567890', adGroup: { name: 'Brand keywords', campaign: 'customers/1234567890/campaigns/111', type: 'SEARCH_STANDARD', cpcBidMicros: '1000000' } }"
+  adGroups.update:
+    call: "{ customerId: '1234567890', adGroupId: '222', adGroup: { status: 'PAUSED' }, updateMask: 'status' }"
+  customers.update:
+    call: "{ customerId: '1234567890', customer: { autoTaggingEnabled: true }, updateMask: 'autoTaggingEnabled' }"
+  customers.listAccessible:
+    call: "{}"
+  googleAdsFields.search:
+    call: "{ query: \"SELECT name FROM google_ads_field WHERE name = 'campaign.id'\" }"
+apiNotes:
+  reporting.search: 'Pages at 10,000 rows; pass `nextPageToken` back as `pageToken`.'
+  reporting.searchStream: 'No paging. The response is an array of chunks, which the plugin flattens into one `results` list.'
+  reporting.mutate: 'Each entry names its own entity operation, e.g. `{ campaignOperation: { remove } }`. `partialFailure` lets the good entries land.'
+  campaigns.create: 'Requires a bidding strategy: `manualCpc: {}` or `targetSpend: {}`, not both.'
+  campaigns.remove: 'Sets the status to REMOVED. The row and its metrics stay, but the campaign cannot be restored.'
+  campaignBudgets.update: 'Amounts are micros as strings: `5000000` is 5.00 in the account currency.'
+  customers.update: 'Takes one operation and answers one `result`. Only the tracking fields are writable.'
+  googleAdsFields.search: 'Takes no customer path; it lists the fields any GAQL statement may select.'

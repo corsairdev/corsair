@@ -1,0 +1,148 @@
+---
+title: "Google Ads plugin"
+sidebarTitle: "Overview"
+description: "Run Google Ads Query Language reports and manage campaigns, budgets and ad groups through the Google Ads API."
+---
+
+Use **Google Ads** through Corsair: one client, typed API calls.
+
+The Google Ads API is query-and-mutate shaped. `reporting.search` runs a Google Ads Query Language statement and returns rows; `reporting.mutate` applies operations to any entity; the typed operations cover campaigns, campaign budgets and ad groups.
+
+Two credentials are needed beyond the OAuth token. The **developer token** comes from the Google Ads API Center in a manager account and identifies the application, so it is stored on the integration as `developer_token`. When calling a client account through its manager, also store the manager's customer ID as `login_customer_id`; the plugin sends it as the `login-customer-id` header. The OAuth scope is `https://www.googleapis.com/auth/adwords`, which is the only scope the API accepts.
+
+Things to know before you call:
+
+- **A developer token is not optional.** Without one, Google answers a `HeaderError` even when the OAuth token is valid.
+- **Customer IDs are digits.** Google rejects a hyphenated ID with `CLIENT_CUSTOMER_ID_INVALID`, so the plugin removes the hyphens for you.
+- **`search` pages at 10,000 rows.** Pass `nextPageToken` back as `pageToken`. `searchStream` returns everything in one response, as a JSON array of chunks that the plugin flattens into one `results` list.
+- **Money is micros, sent as strings.** `5000000` is 5.00 in the account currency. The plugin keeps Google's string type so no precision is lost.
+- **An update needs `updateMask`.** Google ignores an update without one. The plugin makes it required.
+- **A remove is a status change to `REMOVED`.** The row stays and its metrics stay readable, but the campaign cannot be brought back; the plugin marks `campaigns.remove` irreversible.
+- **`customers.update` takes a single operation and answers a single `result`.** It is the one mutate that is not a batch, and only the tracking fields are writable.
+- **Errors branch on the canonical status first.** `429` is a quota rejection, `403` a permission problem, `400` a bad request. The specific reason is a `GoogleAdsFailure` detail, which the plugin keeps on the error body.
+- **No inbound webhooks.** The Google Ads API does not send any, so this plugin registers no webhook route.
+
+**What you get:**
+
+- 13 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/googleads better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/googleads better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/googleads better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/googleads better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { googleads } from '@corsair-dev/googleads';
+
+export const corsair = createCorsair({
+	plugins: [
+		googleads(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="OAuth 2.0 (Recommended)">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Google Ads OAuth app.
+
+```ts
+googleads()
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'googleads',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read the enabled campaigns in an account**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.googleads.api.reporting.search({ customerId: '1234567890', query: 'SELECT campaign.id, campaign.name FROM campaign WHERE campaign.status = \'ENABLED\'' });
+```
+
+
+**Raise a budget to 7.50 a day**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.googleads.api.campaignBudgets.update({
+	customerId: '1234567890',
+	campaignBudgetId: '789',
+	campaignBudget: { amountMicros: '7500000' },
+	updateMask: 'amountMicros',
+});
+```
+
+
+See the full list on the [API](/plugins/googleads/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/googleads/api">
+    Every `googleads.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

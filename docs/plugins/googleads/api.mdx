@@ -1,0 +1,852 @@
+---
+title: "Google Ads API reference"
+sidebarTitle: "API"
+description: "API reference for the Google Ads plugin in Corsair: every `googleads.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Ad Groups
+
+### create
+
+`adGroups.create`
+
+Create an ad group inside an existing campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.googleads.api.adGroups.create({ customerId: '1234567890', adGroup: { name: 'Brand keywords', campaign: 'customers/1234567890/campaigns/111', type: 'SEARCH_STANDARD', cpcBidMicros: '1000000' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | The account's customer ID, e.g. `1234567890`. A hyphenated `123-456-7890` is accepted and the hyphens are removed, which is what the docs ask |
+| `adGroup` | `object` | Yes | — |
+| `validateOnly` | `boolean \| null` | No | Validate the request without applying it: Google returns only errors, never results |
+
+<AccordionGroup>
+<Accordion title="adGroup full type">
+
+```ts
+{
+  name: string,
+  campaign: string,
+  status?: UNSPECIFIED | UNKNOWN | ENABLED | PAUSED | REMOVED | null,
+  type?: UNSPECIFIED | UNKNOWN | SEARCH_STANDARD | DISPLAY_STANDARD | SHOPPING_PRODUCT_ADS | HOTEL_ADS | VIDEO_BUMPER | VIDEO_TRUE_VIEW_IN_STREAM | VIDEO_TRUE_VIEW_IN_DISPLAY | VIDEO_NON_SKIPPABLE_IN_STREAM | VIDEO_OUTSTREAM | SEARCH_DYNAMIC_ADS | SHOPPING_SMART_ADS | DISPLAY_GMAIL_AD | SHOPPING_COMPARISON_LISTING_ADS | SMART_CAMPAIGN | VIDEO_RESPONSIVE | DISPLAY_SMART_CAMPAIGN | null,
+  cpcBidMicros?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[] \| null` | No | One result per operation, in order, each naming the resource |
+| `partialFailureError` | `object \| null` | No | Present when partialFailure was set and some operations failed |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  resourceName?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="partialFailureError full type">
+
+```ts
+{
+  errors?: {
+    errorCode?: Record<string, string> | null,
+    message?: string | null,
+    trigger?: Record<string, any> | null,
+    location?: {
+      fieldPathElements?: {
+        fieldName?: string | null,
+        index?: number | null
+      }[] | null
+    } | null
+  }[] | null,
+  requestId?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`adGroups.update`
+
+Change an ad group's name, status or default CPC bid; updateMask names the fields that change
+
+**Risk:** `write`
+
+```ts
+await corsair.googleads.api.adGroups.update({ customerId: '1234567890', adGroupId: '222', adGroup: { status: 'PAUSED' }, updateMask: 'status' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | The account's customer ID, e.g. `1234567890`. A hyphenated `123-456-7890` is accepted and the hyphens are removed, which is what the docs ask |
+| `adGroupId` | `string` | Yes | The ad group id, or its resource name |
+| `adGroup` | `object` | Yes | — |
+| `updateMask` | `string` | Yes | Comma-separated fields to change, e.g. `status` |
+| `validateOnly` | `boolean \| null` | No | Validate the request without applying it: Google returns only errors, never results |
+
+<AccordionGroup>
+<Accordion title="adGroup full type">
+
+```ts
+{
+  name?: string | null,
+  status?: UNSPECIFIED | UNKNOWN | ENABLED | PAUSED | REMOVED | null,
+  cpcBidMicros?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[] \| null` | No | One result per operation, in order, each naming the resource |
+| `partialFailureError` | `object \| null` | No | Present when partialFailure was set and some operations failed |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  resourceName?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="partialFailureError full type">
+
+```ts
+{
+  errors?: {
+    errorCode?: Record<string, string> | null,
+    message?: string | null,
+    trigger?: Record<string, any> | null,
+    location?: {
+      fieldPathElements?: {
+        fieldName?: string | null,
+        index?: number | null
+      }[] | null
+    } | null
+  }[] | null,
+  requestId?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Campaign Budgets
+
+### create
+
+`campaignBudgets.create`
+
+Create a campaign budget in micros of the account currency
+
+**Risk:** `write`
+
+```ts
+await corsair.googleads.api.campaignBudgets.create({ customerId: '1234567890', campaignBudget: { name: 'Brand budget', amountMicros: '5000000' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | The account's customer ID, e.g. `1234567890`. A hyphenated `123-456-7890` is accepted and the hyphens are removed, which is what the docs ask |
+| `campaignBudget` | `object` | Yes | — |
+| `validateOnly` | `boolean \| null` | No | Validate the request without applying it: Google returns only errors, never results |
+
+<AccordionGroup>
+<Accordion title="campaignBudget full type">
+
+```ts
+{
+  name: string,
+  amountMicros: string,
+  deliveryMethod?: UNSPECIFIED | UNKNOWN | STANDARD | ACCELERATED | null,
+  explicitlyShared?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[] \| null` | No | One result per operation, in order, each naming the resource |
+| `partialFailureError` | `object \| null` | No | Present when partialFailure was set and some operations failed |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  resourceName?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="partialFailureError full type">
+
+```ts
+{
+  errors?: {
+    errorCode?: Record<string, string> | null,
+    message?: string | null,
+    trigger?: Record<string, any> | null,
+    location?: {
+      fieldPathElements?: {
+        fieldName?: string | null,
+        index?: number | null
+      }[] | null
+    } | null
+  }[] | null,
+  requestId?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`campaignBudgets.update`
+
+Change a budget amount or name, which changes how much the campaigns using it can spend
+
+**Risk:** `write`
+
+```ts
+await corsair.googleads.api.campaignBudgets.update({ customerId: '1234567890', campaignBudgetId: '789', campaignBudget: { amountMicros: '7500000' }, updateMask: 'amountMicros' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | The account's customer ID, e.g. `1234567890`. A hyphenated `123-456-7890` is accepted and the hyphens are removed, which is what the docs ask |
+| `campaignBudgetId` | `string` | Yes | The budget id, or its resource name |
+| `campaignBudget` | `object` | Yes | — |
+| `updateMask` | `string` | Yes | Comma-separated fields to change, e.g. `amountMicros` |
+| `validateOnly` | `boolean \| null` | No | Validate the request without applying it: Google returns only errors, never results |
+
+Amounts are micros as strings: `5000000` is 5.00 in the account currency.
+
+<AccordionGroup>
+<Accordion title="campaignBudget full type">
+
+```ts
+{
+  name?: string | null,
+  amountMicros?: string | null,
+  deliveryMethod?: UNSPECIFIED | UNKNOWN | STANDARD | ACCELERATED | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[] \| null` | No | One result per operation, in order, each naming the resource |
+| `partialFailureError` | `object \| null` | No | Present when partialFailure was set and some operations failed |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  resourceName?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="partialFailureError full type">
+
+```ts
+{
+  errors?: {
+    errorCode?: Record<string, string> | null,
+    message?: string | null,
+    trigger?: Record<string, any> | null,
+    location?: {
+      fieldPathElements?: {
+        fieldName?: string | null,
+        index?: number | null
+      }[] | null
+    } | null
+  }[] | null,
+  requestId?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Campaigns
+
+### create
+
+`campaigns.create`
+
+Create a campaign that starts serving unless status is PAUSED, against an existing budget
+
+**Risk:** `write`
+
+```ts
+await corsair.googleads.api.campaigns.create({ customerId: '1234567890', campaign: { name: 'Search - Brand', advertisingChannelType: 'SEARCH', campaignBudget: 'customers/1234567890/campaignBudgets/789', manualCpc: {} } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | The account's customer ID, e.g. `1234567890`. A hyphenated `123-456-7890` is accepted and the hyphens are removed, which is what the docs ask |
+| `campaign` | `object` | Yes | — |
+| `validateOnly` | `boolean \| null` | No | Validate the request without applying it: Google returns only errors, never results |
+
+Requires a bidding strategy: `manualCpc: {}` or `targetSpend: {}`, not both.
+
+<AccordionGroup>
+<Accordion title="campaign full type">
+
+```ts
+{
+  name: string,
+  status?: UNSPECIFIED | UNKNOWN | ENABLED | PAUSED | REMOVED | null,
+  advertisingChannelType: SEARCH | DISPLAY | SHOPPING | VIDEO | MULTI_CHANNEL | LOCAL | SMART | PERFORMANCE_MAX | LOCAL_SERVICES | TRAVEL | DEMAND_GEN,
+  campaignBudget: string,
+  startDateTime?: string | null,
+  endDateTime?: string | null,
+  networkSettings?: {
+    targetGoogleSearch?: boolean | null,
+    targetSearchNetwork?: boolean | null,
+    targetContentNetwork?: boolean | null,
+    targetPartnerSearchNetwork?: boolean | null
+  } | null,
+  manualCpc?: {
+    enhancedCpcEnabled?: boolean | null
+  } | null,
+  targetSpend?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[] \| null` | No | One result per operation, in order, each naming the resource |
+| `partialFailureError` | `object \| null` | No | Present when partialFailure was set and some operations failed |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  resourceName?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="partialFailureError full type">
+
+```ts
+{
+  errors?: {
+    errorCode?: Record<string, string> | null,
+    message?: string | null,
+    trigger?: Record<string, any> | null,
+    location?: {
+      fieldPathElements?: {
+        fieldName?: string | null,
+        index?: number | null
+      }[] | null
+    } | null
+  }[] | null,
+  requestId?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`campaigns.remove`
+
+Remove a campaign: its status becomes REMOVED and it cannot be restored, only recreated as a new campaign
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.googleads.api.campaigns.remove({ customerId: '1234567890', campaignId: '111' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | The account's customer ID, e.g. `1234567890`. A hyphenated `123-456-7890` is accepted and the hyphens are removed, which is what the docs ask |
+| `campaignId` | `string` | Yes | — |
+| `validateOnly` | `boolean \| null` | No | Validate the request without applying it: Google returns only errors, never results |
+
+Sets the status to REMOVED. The row and its metrics stay, but the campaign cannot be restored.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[] \| null` | No | One result per operation, in order, each naming the resource |
+| `partialFailureError` | `object \| null` | No | Present when partialFailure was set and some operations failed |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  resourceName?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="partialFailureError full type">
+
+```ts
+{
+  errors?: {
+    errorCode?: Record<string, string> | null,
+    message?: string | null,
+    trigger?: Record<string, any> | null,
+    location?: {
+      fieldPathElements?: {
+        fieldName?: string | null,
+        index?: number | null
+      }[] | null
+    } | null
+  }[] | null,
+  requestId?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`campaigns.update`
+
+Change a campaign's name, status or dates; updateMask names the fields that change
+
+**Risk:** `write`
+
+```ts
+await corsair.googleads.api.campaigns.update({ customerId: '1234567890', campaignId: '111', campaign: { status: 'PAUSED' }, updateMask: 'status' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | The account's customer ID, e.g. `1234567890`. A hyphenated `123-456-7890` is accepted and the hyphens are removed, which is what the docs ask |
+| `campaignId` | `string` | Yes | The campaign id, or its full resource name, e.g. `1234567890` |
+| `campaign` | `object` | Yes | — |
+| `updateMask` | `string` | Yes | Comma-separated fields the update changes, e.g. `name,status`. Required: Google ignores an update without one |
+| `validateOnly` | `boolean \| null` | No | Validate the request without applying it: Google returns only errors, never results |
+
+<AccordionGroup>
+<Accordion title="campaign full type">
+
+```ts
+{
+  name?: string | null,
+  status?: UNSPECIFIED | UNKNOWN | ENABLED | PAUSED | REMOVED | null,
+  startDateTime?: string | null,
+  endDateTime?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[] \| null` | No | One result per operation, in order, each naming the resource |
+| `partialFailureError` | `object \| null` | No | Present when partialFailure was set and some operations failed |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  resourceName?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="partialFailureError full type">
+
+```ts
+{
+  errors?: {
+    errorCode?: Record<string, string> | null,
+    message?: string | null,
+    trigger?: Record<string, any> | null,
+    location?: {
+      fieldPathElements?: {
+        fieldName?: string | null,
+        index?: number | null
+      }[] | null
+    } | null
+  }[] | null,
+  requestId?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Customers
+
+### listAccessible
+
+`customers.listAccessible`
+
+List the accounts the credentials can call, which is how a caller finds a customer ID
+
+**Risk:** `read`
+
+```ts
+await corsair.googleads.api.customers.listAccessible({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceNames` | `string[] \| null` | No | e.g. `customers/1234567890`, the accounts the token can call |
+
+
+
+---
+
+### update
+
+`customers.update`
+
+Update the account record itself: auto-tagging, final URL suffix and call reporting
+
+**Risk:** `write`
+
+```ts
+await corsair.googleads.api.customers.update({ customerId: '1234567890', customer: { autoTaggingEnabled: true }, updateMask: 'autoTaggingEnabled' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | The account's customer ID, e.g. `1234567890`. A hyphenated `123-456-7890` is accepted and the hyphens are removed, which is what the docs ask |
+| `updateMask` | `string` | Yes | The customer fields to change. Only `autoTaggingEnabled`, `finalUrlSuffix` and the tracking settings are writable |
+| `customer` | `Record<string, any>` | Yes | The Customer resource fields named in updateMask |
+| `validateOnly` | `boolean \| null` | No | Validate the request without applying it: Google returns only errors, never results |
+
+Takes one operation and answers one `result`. Only the tracking fields are writable.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `object \| null` | No | The mutated customer, named by its resource name |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  resourceName?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Google Ads Fields
+
+### search
+
+`googleAdsFields.search`
+
+Search the queryable fields, which is how a caller finds what a GAQL statement may select
+
+**Risk:** `read`
+
+```ts
+await corsair.googleads.api.googleAdsFields.search({ query: "SELECT name FROM google_ads_field WHERE name = 'campaign.id'" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | A Google Ads Query Language statement, e.g. `SELECT campaign.id, campaign.name FROM campaign WHERE campaign.status = 'ENABLED'` |
+| `pageSize` | `number \| null` | No | 1 to 10,000 rows. Omitted, Google chooses |
+| `pageToken` | `string \| null` | No | nextPageToken from a previous page of the same query |
+
+Takes no customer path; it lists the fields any GAQL statement may select.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[] \| null` | No | — |
+| `nextPageToken` | `string \| null` | No | — |
+| `totalResultsCount` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  resourceName?: string | null,
+  name?: string | null,
+  category?: string | null,
+  selectable?: boolean | null,
+  filterable?: boolean | null,
+  sortable?: boolean | null,
+  selectableWith?: string[] | null,
+  attributeResources?: string[] | null,
+  metrics?: string[] | null,
+  segments?: string[] | null,
+  dataType?: string | null,
+  typeUrl?: string | null,
+  isRepeated?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reporting
+
+### mutate
+
+`reporting.mutate`
+
+Mutate any entity in one call: each entry names its own operation, and removing is permanent for that entity
+
+**Risk:** `write`
+
+```ts
+await corsair.googleads.api.reporting.mutate({ customerId: '1234567890', mutateOperations: [{ campaignOperation: { update: { resourceName: 'customers/1234567890/campaigns/111', status: 'PAUSED' }, updateMask: 'status' } }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | The account's customer ID, e.g. `1234567890`. A hyphenated `123-456-7890` is accepted and the hyphens are removed, which is what the docs ask |
+| `mutateOperations` | `Record<string, any>[]` | Yes | One entry per entity, each naming its operation, e.g. `{ campaignOperation: { update: { resourceName, name }, updateMask: "name" } }` |
+| `partialFailure` | `boolean \| null` | No | Let the request succeed for the operations that can, reporting the rest in partialFailureError. Off by default, which makes the batch all-or-nothing |
+| `validateOnly` | `boolean \| null` | No | Validate the request without applying it: Google returns only errors, never results |
+| `responseContentType` | `UNSPECIFIED \| RESOURCE_NAME_ONLY \| MUTABLE_RESOURCE \| null` | No | `MUTABLE_RESOURCE` returns the changed resource; the default returns only the resource name |
+
+Each entry names its own entity operation, e.g. `{ campaignOperation: { remove } }`. `partialFailure` lets the good entries land.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[] \| null` | No | One result per operation, in order, each naming the resource |
+| `partialFailureError` | `object \| null` | No | Present when partialFailure was set and some operations failed |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  resourceName?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="partialFailureError full type">
+
+```ts
+{
+  errors?: {
+    errorCode?: Record<string, string> | null,
+    message?: string | null,
+    trigger?: Record<string, any> | null,
+    location?: {
+      fieldPathElements?: {
+        fieldName?: string | null,
+        index?: number | null
+      }[] | null
+    } | null
+  }[] | null,
+  requestId?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`reporting.search`
+
+Run a Google Ads Query Language statement and read its rows, 10,000 at a time
+
+**Risk:** `read`
+
+```ts
+await corsair.googleads.api.reporting.search({ customerId: '1234567890', query: "SELECT campaign.id, campaign.name FROM campaign LIMIT 10" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | The account's customer ID, e.g. `1234567890`. A hyphenated `123-456-7890` is accepted and the hyphens are removed, which is what the docs ask |
+| `query` | `string` | Yes | A Google Ads Query Language statement, e.g. `SELECT campaign.id, campaign.name FROM campaign WHERE campaign.status = 'ENABLED'` |
+| `pageSize` | `number \| null` | No | 1 to 10,000 rows. Omitted, Google chooses |
+| `pageToken` | `string \| null` | No | nextPageToken from a previous page of the same query |
+| `validateOnly` | `boolean \| null` | No | Validate the request without applying it: Google returns only errors, never results |
+
+Pages at 10,000 rows; pass `nextPageToken` back as `pageToken`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `Record<string, any>[] \| null` | No | Absent when the query matched nothing |
+| `nextPageToken` | `string \| null` | No | Pass back as pageToken. Absent on the last page |
+| `totalResultsCount` | `string \| null` | No | int64 as a string, and only counted when the query asks for the total |
+| `fieldMask` | `string \| null` | No | Comma-separated fields the response carries |
+| `queryResourceConsumption` | `string \| null` | No | int64 as a string: the quota cost this query used |
+
+
+
+---
+
+### searchStream
+
+`reporting.searchStream`
+
+Run a query and read the whole result set in one response, without paging
+
+**Risk:** `read`
+
+```ts
+await corsair.googleads.api.reporting.searchStream({ customerId: '1234567890', query: "SELECT campaign.id FROM campaign" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | The account's customer ID, e.g. `1234567890`. A hyphenated `123-456-7890` is accepted and the hyphens are removed, which is what the docs ask |
+| `query` | `string` | Yes | A Google Ads Query Language statement, e.g. `SELECT campaign.id, campaign.name FROM campaign WHERE campaign.status = 'ENABLED'` |
+| `validateOnly` | `boolean \| null` | No | Validate the request without applying it: Google returns only errors, never results |
+
+No paging. The response is an array of chunks, which the plugin flattens into one `results` list.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `Record<string, any>[]` | Yes | — |
+| `fieldMask` | `string \| null` | No | — |
+| `queryResourceConsumption` | `string \| null` | No | — |
+
+
+
+---
+
