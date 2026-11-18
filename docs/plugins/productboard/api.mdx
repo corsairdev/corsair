@@ -1043,7 +1043,24 @@ await corsair.productboard.api.notes.create({
       name: string
     },
     metadata?: Record<string, JsonValue>,
-    relationships?: Record<string, JsonValue>
+    relationships?: (
+      {
+        type: customer,
+        target: {
+          id: string,
+          type: user | company
+        } | {
+          email: string,
+          type: user
+        }
+      } | {
+        type: link,
+        target: {
+          id: string,
+          type: link
+        }
+      }
+    )[]
   }
 }
 ```
