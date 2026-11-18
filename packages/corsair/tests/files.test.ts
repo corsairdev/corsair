@@ -4,6 +4,7 @@ import {
 	FileInputSchema,
 	FileOutputSchema,
 	resolveFileInput,
+	setFileSink,
 	toFileOutput,
 } from '../async-core/files';
 import type {
@@ -678,5 +679,72 @@ describe("request with responseType 'binary'", () => {
 				responseType: 'binary',
 			}),
 		).rejects.toMatchObject({ status: 404, body: { message: 'No such file' } });
+	});
+});
+
+describe('setFileSink', () => {
+	afterEach(() => setFileSink(() => undefined));
+
+	it("hands a host the bytes of a file over the limit, and the output carries the host's id", () => {
+		const big = new Uint8Array(FILE_OUTPUT_MAX_BYTES + 1).fill(7);
+		const held: Array<{
+			bytes: Uint8Array;
+			contentType: string;
+			filename?: string;
+		}> = [];
+		setFileSink(() => (file) => {
+			held.push(file);
+			return 'held_1';
+		});
+		const out = toFileOutput(big, 'video/mp4; codecs=avc1', {
+			filename: 'clip.mp4',
+		});
+		expect(out).toEqual({
+			contentType: 'video/mp4',
+			byteLength: FILE_OUTPUT_MAX_BYTES + 1,
+			filename: 'clip.mp4',
+			fileId: 'held_1',
+		});
+		expect(held).toHaveLength(1);
+		expect(held[0]!.bytes).toBe(big);
+		expect(held[0]!).toMatchObject({
+			contentType: 'video/mp4',
+			filename: 'clip.mp4',
+		});
+		expect(FileOutputSchema.parse(out)).toEqual(out);
+	});
+
+	it('leaves the content out as before when no sink is set or the sink declines', () => {
+		const big = new Uint8Array(FILE_OUTPUT_MAX_BYTES + 1);
+		const omitted = {
+			contentType: 'video/mp4',
+			byteLength: big.byteLength,
+			contentOmitted: 'over_limit',
+		};
+		expect(toFileOutput(big, 'video/mp4')).toEqual(omitted);
+		setFileSink(() => () => null);
+		expect(toFileOutput(big, 'video/mp4')).toEqual(omitted);
+	});
+
+	it('is never asked for a file that fits or content nobody asked for', () => {
+		const sink = jest.fn(() => 'held_1');
+		setFileSink(() => sink);
+		expect(toFileOutput(PDF, 'application/pdf').contentBase64).toBeDefined();
+		const big = new Uint8Array(FILE_OUTPUT_MAX_BYTES + 1);
+		expect(
+			toFileOutput(big, 'video/mp4', { includeContent: false }).contentOmitted,
+		).toBe('not_requested');
+		expect(sink).not.toHaveBeenCalled();
+	});
+
+	it('follows maxBytes: a caller-raised limit keeps the content inline', () => {
+		const sink = jest.fn(() => 'held_1');
+		setFileSink(() => sink);
+		const mid = new Uint8Array(FILE_OUTPUT_MAX_BYTES + 1);
+		expect(
+			toFileOutput(mid, 'image/png', { maxBytes: FILE_OUTPUT_MAX_BYTES * 2 })
+				.contentBase64,
+		).toBeDefined();
+		expect(sink).not.toHaveBeenCalled();
 	});
 });
