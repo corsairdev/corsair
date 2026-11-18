@@ -77,45 +77,52 @@ function sanitizeValue(value: unknown, secrets: string[]): unknown {
 	return value;
 }
 
-export function sanitizeApiError(error: ApiError, apiKey?: string): ApiError {
+// `unknown` because untrusted error is checked at runtime
+export function sanitizeApiError<T>(error: T, apiKey?: string): T {
+	if (!(error instanceof ApiError)) return error;
+
 	const secrets: string[] = [];
 	if (apiKey && apiKey.length >= 4) {
 		secrets.push(apiKey);
 	}
 
-	const { body: _body, headers: _headers, ...cleanRequest } = error.request;
-
-	// `unknown` because the sanitized body maintains the structure of the provider error body
-	const sanitizedBody: unknown = sanitizeValue(error.body, secrets);
-
-	const sanitizedError = new ApiError(
-		{
-			...cleanRequest,
-			url: error.request.url.split('?')[0] ?? error.request.url,
-		},
-		{
-			url: error.url.split('?')[0] ?? error.url,
-			ok: error.status >= 200 && error.status < 300,
-			status: error.status,
-			statusText: error.statusText,
-			body: sanitizedBody,
-		},
-		typeof error.message === 'string'
-			? (sanitizeValue(error.message, secrets) as string)
-			: error.message,
-		{
-			retryAfter: error.retryAfter,
-			rateLimitReset: error.rateLimitReset,
-			rateLimitRemaining: error.rateLimitRemaining,
-			rateLimitLimit: error.rateLimitLimit,
-		},
-	);
-
-	if (error.stack) {
-		sanitizedError.stack = sanitizeValue(error.stack, secrets) as string;
+	if (typeof error.message === 'string') {
+		error.message = sanitizeValue(error.message, secrets) as string;
 	}
 
-	return sanitizedError;
+	if (typeof error.url === 'string') {
+		error.url = error.url.split('?')[0] ?? error.url;
+	}
+
+	if (error.request) {
+		if (typeof error.request.url === 'string') {
+			error.request.url = error.request.url.split('?')[0] ?? error.request.url;
+		}
+		if (error.request.headers) {
+			// `unknown` because header values can be arbitrary primitives
+			error.request.headers = sanitizeValue(
+				error.request.headers,
+				secrets,
+			) as Record<string, string>;
+		}
+		if (error.request.body) {
+			// `unknown` because body shape is dynamic
+			error.request.body = sanitizeValue(error.request.body, secrets) as
+				| Record<string, unknown>
+				| undefined;
+		}
+	}
+
+	if (error.body) {
+		// `unknown` because response body shape is dynamic
+		error.body = sanitizeValue(error.body, secrets);
+	}
+
+	if (error.stack) {
+		error.stack = sanitizeValue(error.stack, secrets) as string;
+	}
+
+	return error;
 }
 
 export async function makeLodgifyRequest<T>(

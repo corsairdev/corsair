@@ -141,7 +141,10 @@ describe('makeLodgifyRequest', () => {
 			'https://api.lodgify.com/v2/reservations/bookings',
 		);
 		expect(sanitized.request.url).toBe('/v2/reservations/bookings');
-		expect(sanitized.request.body).toBeUndefined();
+		expect(sanitized).toBe(rawError);
+		expect((sanitized.request.body as Record<string, unknown>).apikey).toBe(
+			'[REDACTED]',
+		);
 		// `unknown` because body may be of any shape
 		const body = sanitized.body as Record<string, unknown>;
 		expect(body.message).toContain('[REDACTED]');
