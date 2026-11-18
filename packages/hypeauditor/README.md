@@ -15,7 +15,7 @@ pnpm add @corsair-dev/hypeauditor
 | `account.planInfo` | `hypeauditor.api.account.planInfo` | `read` | Read the report credits and discovery calls left in the plan; API subscriptions only |
 | `account.unlockedReports` | `hypeauditor.api.account.unlockedReports` | `read` | List the reports unlocked on the account, with `refunded` marking a credit returned after a failed build |
 | `discovery.keywords` | `hypeauditor.api.discovery.keywords` | `read` | Read the posts behind a keyword search by their content IDs, which is free and safe to repeat |
-| `discovery.search` | `hypeauditor.api.discovery.search` | `write` | Search creators with the documented filters, 20 per page; each page costs one discovery call, and `sandbox` answers sample data without spending one |
+| `discovery.search` | `hypeauditor.api.discovery.search` | `read` | Search creators with the documented filters, 20 per page; each page costs one discovery call, and `sandbox` answers sample data without spending one |
 | `history.instagram` | `hypeauditor.api.history.instagram` | `read` | Read the Instagram metrics history for a username, which is free and safe to repeat |
 | `history.tiktok` | `hypeauditor.api.history.tiktok` | `read` | Read the TikTok metrics history for a channel, which is free and safe to repeat |
 | `history.twitch` | `hypeauditor.api.history.twitch` | `read` | Read the Twitch metrics history for a channel, which is free and safe to repeat |
@@ -30,12 +30,12 @@ pnpm add @corsair-dev/hypeauditor
 | `media.youtube` | `hypeauditor.api.media.youtube` | `read` | Read a YouTube channel’s media, one page at a time, which is free and safe to repeat |
 | `mentions.tiktok` | `hypeauditor.api.mentions.tiktok` | `read` | Read the brands a TikTok account’s videos mention, which is free and safe to repeat |
 | `mentions.youtube` | `hypeauditor.api.mentions.youtube` | `read` | Read the brands a YouTube channel’s videos mention, which is free and safe to repeat |
-| `reports.instagram` | `hypeauditor.api.reports.instagram` | `write` | Read the Instagram report by username or user ID; the first request for a creator spends a credit, and a 202 answer carries `retryTtl` |
-| `reports.snapchat` | `hypeauditor.api.reports.snapchat` | `write` | Read the Snapchat report by username; the first request for a creator spends a credit, and a 202 answer carries `retryTtl` |
-| `reports.tiktok` | `hypeauditor.api.reports.tiktok` | `write` | Read the TikTok report by username or user ID; the first request for a creator spends a credit, and a 202 answer carries `retryTtl` |
-| `reports.twitch` | `hypeauditor.api.reports.twitch` | `write` | Read the Twitch report by username; the first request for a creator spends a credit, and a 202 answer carries `retryTtl` |
-| `reports.twitter` | `hypeauditor.api.reports.twitter` | `write` | Read the Twitter report by username; the first request for a creator spends a credit, and a 202 answer carries `retryTtl` |
-| `reports.youtube` | `hypeauditor.api.reports.youtube` | `write` | Read the YouTube report by channel ID or username; the first request for a creator spends a credit, and a 202 answer carries `retryTtl` |
+| `reports.instagram` | `hypeauditor.api.reports.instagram` | `read` | Read the Instagram report by username or user ID; the first request for a creator spends a credit, and a 202 answer carries `retryTtl` |
+| `reports.snapchat` | `hypeauditor.api.reports.snapchat` | `read` | Read the Snapchat report by username; the first request for a creator spends a credit, and a 202 answer carries `retryTtl` |
+| `reports.tiktok` | `hypeauditor.api.reports.tiktok` | `read` | Read the TikTok report by username or user ID; the first request for a creator spends a credit, and a 202 answer carries `retryTtl` |
+| `reports.twitch` | `hypeauditor.api.reports.twitch` | `read` | Read the Twitch report by username; the first request for a creator spends a credit, and a 202 answer carries `retryTtl` |
+| `reports.twitter` | `hypeauditor.api.reports.twitter` | `read` | Read the Twitter report by username; the first request for a creator spends a credit, and a 202 answer carries `retryTtl` |
+| `reports.youtube` | `hypeauditor.api.reports.youtube` | `read` | Read the YouTube report by channel ID or username; the first request for a creator spends a credit, and a 202 answer carries `retryTtl` |
 | `suggester.get` | `hypeauditor.api.suggester.get` | `read` | Suggest a channel name from a partial one, which is free and safe to repeat |
 | `taxonomy.get` | `hypeauditor.api.taxonomy.get` | `read` | Read the category, thematics and language ids the discovery filters take |
 

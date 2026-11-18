@@ -113,9 +113,11 @@ export type HypeAuditorReportPending = z.infer<typeof ReportPendingSchema>;
  * success, so the output accepts both and the caller branches on
  * `report_state` or on `retryTtl` being present.
  */
+// The pending branch goes first: the report branch's result is loose with every
+// field optional, so it would also match a pending body and skip the retryTtl check.
 export const ReportOrPendingSchema = z.union([
+	z.object({ result: ReportPendingSchema }).loose(),
 	ReportResponseSchema,
-	z.object({ result: ReportPendingSchema }),
 ]);
 export type HypeAuditorReportOrPending = z.infer<typeof ReportOrPendingSchema>;
 
@@ -524,7 +526,16 @@ export const HypeAuditorEndpointInputSchemas = {
 	'reports.snapchat': ReportsByChannelInputSchema,
 	'media.instagram': z.object({ ...ChannelInputShape }).strict(),
 	'media.youtube': YoutubeMediaInputSchema,
-	'media.tiktok': z.object({ ...ChannelInputShape }).strict(),
+	'media.tiktok': z
+		.object({
+			channel: z
+				.string()
+				.min(1)
+				.describe(
+					'The numeric TikTok user ID (`result.report.basic.id` in the TikTok report), sent as `channelId`. Not the username.',
+				),
+		})
+		.strict(),
 	'history.instagram': z.object({ ...ChannelInputShape }).strict(),
 	'history.youtube': z.object({ ...ChannelInputShape }).strict(),
 	'history.tiktok': z.object({ ...ChannelInputShape }).strict(),
