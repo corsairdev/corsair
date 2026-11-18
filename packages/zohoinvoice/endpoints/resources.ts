@@ -70,9 +70,6 @@ function pathId(value: unknown): string {
 
 // ── Organization ──────────────────────────────────────────────────────────────
 
-// organization_id is a string in practice; unknown until checked below.
-type Organizations = { organizations?: Array<{ organization_id?: unknown }> };
-
 /**
  * The organization to send: the input's, else the one saved when the account
  * connected, else the account's only organization (saved for next time).
@@ -95,15 +92,13 @@ async function resolveOrganizationId(
 	const stored = await keys?.get_organization_id?.();
 	if (stored) return stored;
 
-	const body = await makeZohoInvoiceRequest<Organizations>(
-		'/organizations',
-		ctx.key,
-		{ region: ctx.options.region as ZohoInvoiceRegion | undefined },
+	// Parsed before anything is saved: a malformed id must not be stored.
+	const body = ZohoInvoiceEndpointOutputSchemas.organizationsList.parse(
+		await makeZohoInvoiceRequest<unknown>('/organizations', ctx.key, {
+			region: ctx.options.region as ZohoInvoiceRegion | undefined,
+		}),
 	);
-	const ids = (body.organizations ?? [])
-		.map((org) => org.organization_id)
-		.filter((orgId) => orgId !== undefined && orgId !== null)
-		.map(String);
+	const ids = body.organizations.map((org) => String(org.organization_id));
 	if (ids.length !== 1 || !ids[0]) {
 		throw new Error(
 			`Zoho Invoice: this account has ${ids.length} organizations. Pass organizationId (organizations.list lists them).`,

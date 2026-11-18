@@ -5,9 +5,9 @@ import { zohoInvoiceApiBase } from '../client';
 
 /**
  * After OAuth, saves the default organization's id as the account's
- * `organization_id`, so calls can leave organizationId out. Uses the
- * token's api_domain when Zoho sends one (it names the data center),
- * else the configured region.
+ * `organization_id`, so calls can leave organizationId out. Looks the org up
+ * in the configured region, the same data center the calls go to (and the
+ * one whose sign-in issued the token).
  */
 export async function resolveZohoInvoiceOAuthWebhookTenantLink(
 	tokens: TokenResponse,
@@ -22,17 +22,15 @@ export async function resolveZohoInvoiceOAuthWebhookTenantLink(
 	if (!accessToken) return null;
 
 	try {
-		const rawDomain =
-			typeof tokens.api_domain === 'string' &&
-			/^https:\/\/www\.zohoapis\.[a-z.]+\/?$/.test(tokens.api_domain)
-				? tokens.api_domain
-				: undefined;
-		const base = rawDomain
-			? `${rawDomain.replace(/\/$/, '')}/invoice/v3`
-			: zohoInvoiceApiBase(region);
-		const response = await fetch(`${base}/organizations`, {
-			headers: { Authorization: `Zoho-oauthtoken ${accessToken}` },
-		});
+		// Bounds the lookup and the body read; connecting must not hang on it.
+		const signal = AbortSignal.timeout(10_000);
+		const response = await fetch(
+			`${zohoInvoiceApiBase(region)}/organizations`,
+			{
+				headers: { Authorization: `Zoho-oauthtoken ${accessToken}` },
+				signal,
+			},
+		);
 		if (!response.ok) return null;
 
 		const payload = asRecord(await response.json());

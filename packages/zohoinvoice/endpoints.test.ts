@@ -547,6 +547,18 @@ describe('Zoho Invoice endpoint handlers', () => {
 		expect(set).toHaveBeenCalledWith('only');
 	});
 
+	it('does not save a malformed organization id', async () => {
+		requestSpy.mockResolvedValueOnce({
+			organizations: [{ organization_id: {} }],
+		});
+		const set = jest.fn();
+		const ctx = { ...makeCtx(), keys: { set_organization_id: set } };
+		await expect(
+			zohoinvoice().endpoints!.customers.list(ctx as never, {}),
+		).rejects.toThrow();
+		expect(set).not.toHaveBeenCalled();
+	});
+
 	it('asks for organizationId when the account has several', async () => {
 		requestSpy.mockResolvedValueOnce({
 			organizations: [{ organization_id: 'a' }, { organization_id: 'b' }],
@@ -643,7 +655,7 @@ describe('oauth tenant link', () => {
 		);
 	});
 
-	it('uses api_domain from the token response when present', async () => {
+	it('looks the organization up in the configured region', async () => {
 		globalThis.fetch = jest.fn().mockResolvedValue({
 			ok: true,
 			json: async () => ({
@@ -651,10 +663,10 @@ describe('oauth tenant link', () => {
 			}),
 		}) as never;
 
-		await resolveZohoInvoiceOAuthWebhookTenantLink({
-			access_token: 'tok',
-			api_domain: 'https://www.zohoapis.in',
-		});
+		await resolveZohoInvoiceOAuthWebhookTenantLink(
+			{ access_token: 'tok', api_domain: 'https://www.zohoapis.eu' },
+			'in',
+		);
 
 		expect(String(jest.mocked(globalThis.fetch).mock.calls[0]?.[0])).toBe(
 			'https://www.zohoapis.in/invoice/v3/organizations',
