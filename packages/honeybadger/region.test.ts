@@ -30,7 +30,7 @@ function context(region: string | null, optionRegion?: 'us' | 'eu') {
 }
 
 async function hostFor(ctx: HoneybadgerContext): Promise<string> {
-	const endpoints = honeybadger().endpoints;
+	const endpoints = honeybadger().endpoints!;
 	// Only the request matters here, not whether the stub body parses.
 	await endpoints.projects.list(ctx, {}).catch(() => undefined);
 	const [url] = fetchMock.mock.calls.at(-1) as [string];
@@ -46,6 +46,14 @@ describe('region', () => {
 	it('falls back to the US app when nothing is stored or the value is unknown', async () => {
 		expect(await hostFor(context(null))).toBe('app.honeybadger.io');
 		expect(await hostFor(context('mars'))).toBe('app.honeybadger.io');
+	});
+
+	it('falls back to the US app when the account has nothing stored to read', async () => {
+		const ctx = context(null);
+		(
+			ctx.keys as unknown as { get_region: jest.Mock }
+		).get_region.mockRejectedValue(new Error('No DEK found for account'));
+		expect(await hostFor(ctx)).toBe('app.honeybadger.io');
 	});
 
 	it('lets the plugin option override the stored field', async () => {

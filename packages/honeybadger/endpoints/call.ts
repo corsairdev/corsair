@@ -16,7 +16,14 @@ export async function resolveRegion(
 	ctx: HoneybadgerContext,
 ): Promise<HoneybadgerRegion> {
 	if (ctx.options?.region) return ctx.options.region;
-	const stored = (await ctx.keys?.get_region?.())?.trim().toLowerCase();
+	let stored: string | undefined;
+	try {
+		stored = (await ctx.keys?.get_region?.())?.trim().toLowerCase();
+	} catch {
+		// No stored account (a key passed in code, nothing initialised): the
+		// lookup throws, and the US default applies.
+		stored = undefined;
+	}
 	return stored && stored in HONEYBADGER_HOSTS
 		? (stored as HoneybadgerRegion)
 		: 'us';

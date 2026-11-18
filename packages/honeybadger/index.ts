@@ -63,7 +63,11 @@ export type HoneybadgerPluginOptions = {
 
 export type HoneybadgerContext = CorsairPluginContext<
 	typeof HoneybadgerSchema,
-	HoneybadgerPluginOptions
+	HoneybadgerPluginOptions,
+	// Endpoints are not passed: they reference this context, which would make
+	// the type circular.
+	undefined,
+	typeof honeybadgerAuthConfig
 >;
 
 export type HoneybadgerKeyBuilderContext =
