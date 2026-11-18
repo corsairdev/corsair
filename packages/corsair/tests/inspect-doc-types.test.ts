@@ -65,6 +65,7 @@ const plugin = {
 					.prefault({ notify: false })
 					.describe('Task options'),
 				pageSize: z.number().int().prefault(50),
+				big: z.coerce.number().prefault(1n).describe('Count'),
 			}),
 			output: z.object({
 				results: z.array(z.string()).nullable(),
@@ -184,6 +185,11 @@ describe('docs introspection types', () => {
 			type: 'number',
 			optional: true,
 			description: 'Defaults to 50.',
+		});
+		// A prefault JSON can't write (BigInt) keeps its description; no throw.
+		expect(input.get('big')).toMatchObject({
+			optional: true,
+			description: 'Count',
 		});
 	});
 

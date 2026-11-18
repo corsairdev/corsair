@@ -1262,11 +1262,19 @@ const MAX_DEFAULT_TEXT = 40;
 /** `Defaults to 10.` appended to an input description, unless it already says so. */
 function describeDefault(
 	description: string | undefined,
-	// unknown: the default from findDefault, any JSON value; it is only stringified.
+	// unknown: the default from findDefault; it is only stringified.
 	value: unknown,
 ): string | undefined {
 	if (description && /\bdefault/i.test(description)) return description;
-	const text = JSON.stringify(value);
+	// A .prefault() value has the input type, which need not be JSON (a BigInt
+	// for z.coerce.number(), a cycle): keep the description rather than throw
+	// and fail the plugin's docs.
+	let text: string | undefined;
+	try {
+		text = JSON.stringify(value);
+	} catch {
+		return description;
+	}
 	if (text === undefined || text.length > MAX_DEFAULT_TEXT) return description;
 	const sentence = `Defaults to ${text}.`;
 	if (!description) return sentence;
