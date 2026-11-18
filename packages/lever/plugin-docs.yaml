@@ -1,0 +1,357 @@
+displayName: Lever
+description: Applicant tracking system for sourcing, managing, and hiring candidates with postings, interviews, and pipeline management.
+domain: lever.co
+recommendedAuth: api_key
+examples:
+  read:
+    path: opportunities.list
+    args:
+      limit: 50
+  write:
+    path: opportunities.create
+    args:
+      perform_as: 8d49b010-cc6a-4f40-ace5-e86061c677ed
+      name: Jane Doe
+      headline: Backend engineer
+apiExamples:
+  opportunities.list:
+    limit: 50
+    stage_id: 00922a60-7c15-422b-b086-f62000824fd7
+  opportunities.retrieve:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    expand: stage
+  opportunities.listDeleted:
+    deleted_at_start: 1711929600000
+  opportunities.listFileActions:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+  opportunities.create:
+    perform_as: 8d49b010-cc6a-4f40-ace5-e86061c677ed
+    name: Jane Doe
+    headline: Backend engineer
+    emails:
+      - jane@example.com
+    postings:
+      - f2f01e16-27f8-4711-a728-7d49499795a0
+  opportunities.updateStage:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    stage: 00922a60-7c15-422b-b086-f62000824fd7
+  opportunities.updateArchivedState:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    reason: 63dd55b2-a99f-4e7b-985f-22c7bf80ab42
+    cleanInterviews: true
+  opportunities.addLinks:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    links:
+      - linkedin.com/in/jane-doe
+  opportunities.removeLinks:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    links:
+      - linkedin.com/in/jane-doe
+  opportunities.addTags:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    tags:
+      - remote
+  opportunities.removeTags:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    tags:
+      - remote
+  opportunities.addSources:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    sources:
+      - LinkedIn
+  opportunities.removeSources:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    sources:
+      - LinkedIn
+  applications.list:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+  applications.retrieve:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    applicationId: 6ffe4153-60bb-4e30-bfbe-bd9b9775879c
+  applications.listDeleted:
+    deleted_at_start: 1711929600000
+    deleted_at_end: 1714521600000
+  postings.list:
+    state: published
+    limit: 50
+  postings.retrieve:
+    postingId: 5d0f2f8a-1b2c-4d3e-9f4a-5b6c7d8e9f0a
+  postings.listDeleted:
+    deleted_at_start: 1711929600000
+    deleted_at_end: 1714521600000
+  postings.create:
+    perform_as: 8d49b010-cc6a-4f40-ace5-e86061c677ed
+    text: Senior Backend Engineer
+    categories:
+      team: Platform
+      department: Engineering
+      location: San Francisco
+      commitment: Full-time
+    content:
+      descriptionHtml: <div>Build and run our core services.</div>
+  postings.update:
+    postingId: 5d0f2f8a-1b2c-4d3e-9f4a-5b6c7d8e9f0a
+    perform_as: 8d49b010-cc6a-4f40-ace5-e86061c677ed
+    text: Staff Backend Engineer
+  postings.retrieveApplicationQuestions:
+    postingId: 5d0f2f8a-1b2c-4d3e-9f4a-5b6c7d8e9f0a
+  postings.listUsers:
+    postingId: 5d0f2f8a-1b2c-4d3e-9f4a-5b6c7d8e9f0a
+  postings.apply:
+    postingId: 5d0f2f8a-1b2c-4d3e-9f4a-5b6c7d8e9f0a
+    personalInformation:
+      - name: fullName
+        value: Jane Doe
+      - name: email
+        value: jane@example.com
+  interviews.list:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+  interviews.retrieve:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    interviewId: 6ff55c8e-fe04-4eb4-835a-630b1c0da421
+  interviews.create:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    perform_as: 8d49b010-cc6a-4f40-ace5-e86061c677ed
+    panel: fdb313e8-13c5-47de-9e51-6a21a4d76ff6
+    interviewers:
+      - id: 412f5bf5-1509-4916-ba5b-8b16a5c3ce6d
+    date: 1700000000000
+    duration: 60
+  interviews.update:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    interviewId: 6ff55c8e-fe04-4eb4-835a-630b1c0da421
+    perform_as: 8d49b010-cc6a-4f40-ace5-e86061c677ed
+    panel: fdb313e8-13c5-47de-9e51-6a21a4d76ff6
+    interviewers:
+      - id: 412f5bf5-1509-4916-ba5b-8b16a5c3ce6d
+    date: 1700100000000
+    duration: 60
+  interviews.delete:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    interviewId: 6ff55c8e-fe04-4eb4-835a-630b1c0da421
+    perform_as: 8d49b010-cc6a-4f40-ace5-e86061c677ed
+  notes.list:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+  notes.retrieve:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    noteId: b1dbbcfe-281c-46a0-8f51-57049158d3f3
+  notes.create:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    value: Strong backend background
+  notes.update:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    noteId: b1dbbcfe-281c-46a0-8f51-57049158d3f3
+    values:
+      - value: Strong backend background
+      - value: Moving to onsite
+  notes.delete:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    noteId: b1dbbcfe-281c-46a0-8f51-57049158d3f3
+  archiveReasons.list: {}
+  archiveReasons.retrieve:
+    archiveReasonId: 63dd55b2-a99f-4e7b-985f-22c7bf80ab42
+  stages.list: {}
+  stages.retrieve:
+    stageId: 4a2b1c3d-5e6f-4a7b-8c9d-0e1f2a3b4c5d
+  panels.list:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+  panels.retrieve:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    panelId: a402cff4-ecca-4e40-8a89-9f21d374aea3
+  panels.create:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    perform_as: 8d49b010-cc6a-4f40-ace5-e86061c677ed
+    timezone: America/Los_Angeles
+    note: Panel for Rachel
+    interviews:
+      - interviewers:
+          - id: 412f5bf5-1509-4916-ba5b-8b16a5c3ce6d
+        date: 1700000000000
+        duration: 30
+  panels.update:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    panelId: a402cff4-ecca-4e40-8a89-9f21d374aea3
+    perform_as: 8d49b010-cc6a-4f40-ace5-e86061c677ed
+    timezone: America/Los_Angeles
+    note: Updated panel
+    interviews:
+      - id: 4f5beb46-1404-48f7-b841-2c100278d4de
+        interviewers:
+          - id: 412f5bf5-1509-4916-ba5b-8b16a5c3ce6d
+        date: 1700000000000
+        duration: 45
+  panels.delete:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    panelId: a402cff4-ecca-4e40-8a89-9f21d374aea3
+    perform_as: 8d49b010-cc6a-4f40-ace5-e86061c677ed
+  feedback.list:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+  feedback.retrieve:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    feedbackId: c64fb192-d6d8-42dc-ac82-47cb87e9839c
+  feedback.create:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    perform_as: 8d49b010-cc6a-4f40-ace5-e86061c677ed
+    baseTemplateId: a12851f5-25cd-495b-9dae-b29b02d0b49d
+    fieldValues:
+      - id: 6ee25ace-dae2-4aa1-a1d2-9687464a691f
+        value: 4 - Strong Hire
+  feedback.update:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    feedbackId: c64fb192-d6d8-42dc-ac82-47cb87e9839c
+    perform_as: 8d49b010-cc6a-4f40-ace5-e86061c677ed
+    completedAt: 1600275449372
+  feedback.delete:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    feedbackId: c64fb192-d6d8-42dc-ac82-47cb87e9839c
+    perform_as: 8d49b010-cc6a-4f40-ace5-e86061c677ed
+  feedbackTemplates.list: {}
+  feedbackTemplates.retrieve:
+    feedbackTemplateId: 5b0f589c-b0c2-4e84-bf83-0f2ca48fc48a
+  feedbackTemplates.create:
+    text: Phone Screen Feedback Form
+    instructions: Please fill out all required fields.
+  feedbackTemplates.update:
+    feedbackTemplateId: 5b0f589c-b0c2-4e84-bf83-0f2ca48fc48a
+    text: Updated feedback form
+  feedbackTemplates.delete:
+    feedbackTemplateId: 5b0f589c-b0c2-4e84-bf83-0f2ca48fc48a
+  files.list:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+  files.retrieve:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    fileId: b02a3b97-dc41-48e3-b003-44d211ed2a4c
+  files.download:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    fileId: b02a3b97-dc41-48e3-b003-44d211ed2a4c
+  files.delete:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    fileId: b02a3b97-dc41-48e3-b003-44d211ed2a4c
+    perform_as: 8d49b010-cc6a-4f40-ace5-e86061c677ed
+  formTemplates.list: {}
+  formTemplates.retrieve:
+    formTemplateId: 8f1c2d3e-4a5b-4c6d-8e9f-0a1b2c3d4e5f
+  formTemplates.create:
+    text: Offer information
+    fields:
+      - type: date
+        text: Start Date
+        required: true
+  formTemplates.update:
+    formTemplateId: 8f1c2d3e-4a5b-4c6d-8e9f-0a1b2c3d4e5f
+    text: Updated offer information
+  formTemplates.delete:
+    formTemplateId: 8f1c2d3e-4a5b-4c6d-8e9f-0a1b2c3d4e5f
+  requisitionFields.list: {}
+  requisitionFields.retrieve:
+    requisitionFieldId: work_type
+  requisitionFields.create:
+    id: work_type
+    text: Work type
+    type: dropdown
+    options:
+      - text: full time
+      - text: part time
+  requisitionFields.update:
+    requisitionFieldId: work_type
+    text: Work type
+    type: dropdown
+  requisitionFields.delete:
+    requisitionFieldId: work_type
+  requisitionFields.addOptions:
+    requisitionFieldId: work_type
+    values:
+      - text: hourly
+  requisitionFields.replaceOptions:
+    requisitionFieldId: work_type
+    values:
+      - id: 401cac37-a8a2-40b8-b175-b45fa0d69301
+        text: remote - part time
+  requisitionFields.deleteOptions:
+    requisitionFieldId: work_type
+    values:
+      - 5dc3d8e7-db49-44e5-99e9-fec13a305533
+  requisitions.list:
+    status: open
+  requisitions.create:
+    requisitionCode: ENG-9
+    name: Junior Software Engineer, Platform
+    headcountTotal: 10
+  requisitions.retrieve:
+    requisitionId: 52881d44-4f95-4fcb-bf28-2b344ea58889
+  requisitions.update:
+    requisitionId: 52881d44-4f95-4fcb-bf28-2b344ea58889
+    requisitionCode: ENG-9
+    name: Junior Software Engineer, Platform
+    headcountTotal: 10
+    internalNotes: Filled in Q3
+  requisitions.delete:
+    requisitionId: 52881d44-4f95-4fcb-bf28-2b344ea58889
+  forms.list:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+  forms.retrieve:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    formId: 8f1c2d3e-4a5b-4c6d-8e9f-0a1b2c3d4e5f
+  forms.create:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    baseTemplateId: 806ad14a-2fe5-4b42-b2da-3f90dc0a16d9
+    fields:
+      - type: currency
+        text: Compensation
+        value: 75000
+  resumes.list:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+  resumes.retrieve:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    resumeId: b02a3b97-dc41-48e3-b003-44d211ed2a4c
+  resumes.download:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    resumeId: b02a3b97-dc41-48e3-b003-44d211ed2a4c
+  users.list:
+    includeDeactivated: false
+  users.retrieve:
+    userId: 8d49b010-cc6a-4f40-ace5-e86061c677ed
+  users.create:
+    name: Chandler Bing
+    email: chandler@example.com
+  users.update:
+    userId: 8d49b010-cc6a-4f40-ace5-e86061c677ed
+    name: Chandler Bing
+  users.deactivate:
+    userId: 8d49b010-cc6a-4f40-ace5-e86061c677ed
+  users.reactivate:
+    userId: 8d49b010-cc6a-4f40-ace5-e86061c677ed
+  referrals.list:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+  referrals.retrieve:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    referralId: 4f7b1a2e-0d8c-4b0a-9e2b-9f1b7b2f3a4b
+  contacts.retrieve:
+    contactId: c38e60e9-5992-45e5-8f81-d4b2d65c95b1
+  contacts.update:
+    contactId: c38e60e9-5992-45e5-8f81-d4b2d65c95b1
+    name: Jane Doe
+  eeo.retrieveWithPii: {}
+  eeo.retrieveAnonymous: {}
+  dispositionStages.list: {}
+  surveys.retrieveDiversity:
+    postingId: 5d0f2f8a-1b2c-4d3e-9f4a-5b6c7d8e9f0a
+    country_code: US
+  webhooks.list: {}
+  webhooks.create:
+    url: https://example.test/hook
+    event: candidateStageChange
+  webhooks.update:
+    webhookId: 7988b225-3cc1-44f3-8fcb-bae013cc490d
+    url: https://example.test/hook
+  webhooks.delete:
+    webhookId: 7988b225-3cc1-44f3-8fcb-bae013cc490d
+  auditEvents.list:
+    type: user:added
+  sources.list: {}
+  tags.list: {}
+  offers.list:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+  offers.download:
+    opportunityId: 250d8f03-738a-4bba-a671-8a3d73477145
+    offerId: a72d66c0-0fd7-4bf8-99ce-dc5979358862

@@ -220,7 +220,7 @@ const GetPostCommentsInputSchema = z.object({
 });
 const GetPostCommentsResponseSchema = z
 	.object({
-		post: PostDataSchema,
+		post: PostDataSchema.nullable(),
 		comments: z.array(CommentDataSchema),
 		after: z.string().nullable(),
 		before: z.string().nullable(),

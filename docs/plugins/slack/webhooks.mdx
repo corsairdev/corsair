@@ -1,6 +1,7 @@
 ---
-title: Webhooks
-description: "Slack incoming webhooks: event paths, payloads, and response data."
+title: "Slack webhooks"
+sidebarTitle: "Webhooks"
+description: "Slack incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
 ---
 
 The Slack plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/slack/overview) for setup context and the exact URL shape).
@@ -35,9 +36,23 @@ import { corsair } from "@/server/corsair";
 
 export async function POST(request: Request) {
     const headers = Object.fromEntries(request.headers);
-    const body = await request.json();
-    const result = await processWebhook(corsair, headers, body);
-    return result.response;
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
 }
 ```
 
@@ -119,7 +134,7 @@ A new channel was created in the workspace
 
 ```ts
 {
-  enterprise_id?: string | null,
+  enterprise_id: string | null,
   team_id: string,
   user_id: string,
   is_bot: boolean,
@@ -240,7 +255,7 @@ A file was uploaded or created
 
 ```ts
 {
-  enterprise_id?: string | null,
+  enterprise_id: string | null,
   team_id: string,
   user_id: string,
   is_bot: boolean,
@@ -329,7 +344,7 @@ A file was made publicly accessible
 
 ```ts
 {
-  enterprise_id?: string | null,
+  enterprise_id: string | null,
   team_id: string,
   user_id: string,
   is_bot: boolean,
@@ -418,7 +433,7 @@ A file was shared into a channel
 
 ```ts
 {
-  enterprise_id?: string | null,
+  enterprise_id: string | null,
   team_id: string,
   user_id: string,
   is_bot: boolean,
@@ -511,7 +526,7 @@ A message was posted or updated in a channel
 
 ```ts
 {
-  enterprise_id?: string | null,
+  enterprise_id: string | null,
   team_id: string,
   user_id: string,
   is_bot: boolean,
@@ -535,8 +550,7 @@ A message was posted or updated in a channel
     name: string,
     app_id: string,
     team_id: string,
-    icons: {
-    },
+    icons: Record<string, string>,
     updated: number,
     deleted: boolean
   },
@@ -586,8 +600,8 @@ A message was posted or updated in a channel
   files?: {
     id: string,
     created: number,
-    name?: string | null,
-    title?: string | null,
+    name: string | null,
+    title: string | null,
     mimetype: string,
     filetype: string,
     pretty_type: string,
@@ -596,17 +610,17 @@ A message was posted or updated in a channel
     size: number,
     mode: hosted | external | snippet | post,
     is_external: boolean,
-    external_type?: string | null,
+    external_type: string | null,
     is_public: boolean,
     public_url_shared: boolean,
     display_as_bot: boolean,
-    username?: string | null,
+    username: string | null,
     url_private?: string,
     url_private_download?: string,
     permalink: string,
     permalink_public?: string,
-    channels?: string[] | null,
-    groups?: string[] | null,
+    channels: string[] | null,
+    groups: string[] | null,
     users?: string[],
     is_starred?: boolean,
     num_stars?: number
@@ -624,8 +638,7 @@ A message was posted or updated in a channel
     count: number,
     users: string[]
   }[],
-  assistant_thread?: {
-  }
+  assistant_thread?: Record<string, any>
 } | {
   type: message,
   subtype: bot_message,
@@ -819,8 +832,8 @@ A message was posted or updated in a channel
   files?: {
     id: string,
     created: number,
-    name?: string | null,
-    title?: string | null,
+    name: string | null,
+    title: string | null,
     mimetype: string,
     filetype: string,
     pretty_type: string,
@@ -829,17 +842,17 @@ A message was posted or updated in a channel
     size: number,
     mode: hosted | external | snippet | post,
     is_external: boolean,
-    external_type?: string | null,
+    external_type: string | null,
     is_public: boolean,
     public_url_shared: boolean,
     display_as_bot: boolean,
-    username?: string | null,
+    username: string | null,
     url_private?: string,
     url_private_download?: string,
     permalink: string,
     permalink_public?: string,
-    channels?: string[] | null,
-    groups?: string[] | null,
+    channels: string[] | null,
+    groups: string[] | null,
     users?: string[],
     is_starred?: boolean,
     num_stars?: number
@@ -934,7 +947,997 @@ A message was posted or updated in a channel
   channel_type: channel | group | im | mpim | app_home,
   ts: string,
   deleted_ts: string,
-  previous_message: lazy
+  previous_message: {
+    type: message,
+    event_ts: string,
+    team?: string,
+    channel: string,
+    user: string,
+    bot_id?: string,
+    bot_profile?: {
+      id: string,
+      name: string,
+      app_id: string,
+      team_id: string,
+      icons: Record<string, string>,
+      updated: number,
+      deleted: boolean
+    },
+    text?: string,
+    ts: string,
+    thread_ts?: string,
+    channel_type: channel | group | im | mpim | app_home,
+    attachments?: {
+      blocks?: (
+        {
+          type: section | divider | image | actions | context | input | file | header | video | rich_text,
+          block_id?: string
+        } | {
+          type: string,
+          block_id?: string
+        }
+      )[],
+      fallback?: string,
+      color?: string,
+      pretext?: string,
+      author_name?: string,
+      author_link?: string,
+      author_icon?: string,
+      title?: string,
+      title_link?: string,
+      text?: string,
+      fields?: {
+        title: string,
+        value: string,
+        short?: boolean
+      }[],
+      image_url?: string,
+      thumb_url?: string,
+      footer?: string,
+      footer_icon?: string,
+      ts?: string
+    }[],
+    blocks?: (
+      {
+        type: section | divider | image | actions | context | input | file | header | video | rich_text,
+        block_id?: string
+      } | {
+        type: string,
+        block_id?: string
+      }
+    )[],
+    files?: {
+      id: string,
+      created: number,
+      name: string | null,
+      title: string | null,
+      mimetype: string,
+      filetype: string,
+      pretty_type: string,
+      user?: string,
+      editable: boolean,
+      size: number,
+      mode: hosted | external | snippet | post,
+      is_external: boolean,
+      external_type: string | null,
+      is_public: boolean,
+      public_url_shared: boolean,
+      display_as_bot: boolean,
+      username: string | null,
+      url_private?: string,
+      url_private_download?: string,
+      permalink: string,
+      permalink_public?: string,
+      channels: string[] | null,
+      groups: string[] | null,
+      users?: string[],
+      is_starred?: boolean,
+      num_stars?: number
+    }[],
+    edited?: {
+      user: string,
+      ts: string
+    },
+    client_msg_id?: string,
+    parent_user_id?: string,
+    is_starred?: boolean,
+    pinned_to?: string[],
+    reactions?: {
+      name: string,
+      count: number,
+      users: string[]
+    }[],
+    assistant_thread?: Record<string, any>
+  } | {
+    type: message,
+    subtype: bot_message,
+    event_ts: string,
+    channel: string,
+    channel_type: channel | group | im | mpim | app_home,
+    streaming_state?: in_progress | completed | errored,
+    ts: string,
+    text: string,
+    bot_id: string,
+    username?: string,
+    user?: string,
+    attachments?: {
+      blocks?: (
+        {
+          type: section | divider | image | actions | context | input | file | header | video | rich_text,
+          block_id?: string
+        } | {
+          type: string,
+          block_id?: string
+        }
+      )[],
+      fallback?: string,
+      color?: string,
+      pretext?: string,
+      author_name?: string,
+      author_link?: string,
+      author_icon?: string,
+      title?: string,
+      title_link?: string,
+      text?: string,
+      fields?: {
+        title: string,
+        value: string,
+        short?: boolean
+      }[],
+      image_url?: string,
+      thumb_url?: string,
+      footer?: string,
+      footer_icon?: string,
+      ts?: string
+    }[],
+    blocks?: (
+      {
+        type: section | divider | image | actions | context | input | file | header | video | rich_text,
+        block_id?: string
+      } | {
+        type: string,
+        block_id?: string
+      }
+    )[],
+    edited?: {
+      user: string,
+      ts: string
+    },
+    thread_ts?: string
+  } | {
+    type: message,
+    subtype: channel_archive,
+    team: string,
+    user: string,
+    channel: string,
+    channel_type: channel | group | im | mpim | app_home,
+    text: string,
+    ts: string,
+    event_ts: string
+  } | {
+    type: message,
+    subtype: channel_join,
+    team: string,
+    user: string,
+    inviter: string,
+    channel: string,
+    channel_type: channel | group | im | mpim | app_home,
+    text: string,
+    ts: string,
+    event_ts: string
+  } | {
+    type: message,
+    subtype: channel_leave,
+    team: string,
+    user: string,
+    channel: string,
+    channel_type: channel | group | im | mpim | app_home,
+    text: string,
+    ts: string,
+    event_ts: string
+  } | {
+    type: message,
+    subtype: channel_name,
+    team: string,
+    user: string,
+    name: string,
+    old_name: string,
+    channel: string,
+    channel_type: channel | group | im | mpim | app_home,
+    text: string,
+    ts: string,
+    event_ts: string
+  } | {
+    type: message,
+    subtype: channel_posting_permissions,
+    user: string,
+    channel: string,
+    channel_type: channel | group | im | mpim | app_home,
+    text: string,
+    ts: string,
+    event_ts: string
+  } | {
+    type: message,
+    subtype: channel_purpose,
+    user: string,
+    channel: string,
+    channel_type: channel | group | im | mpim | app_home,
+    text: string,
+    purpose: string,
+    ts: string,
+    event_ts: string
+  } | {
+    type: message,
+    subtype: channel_topic,
+    user: string,
+    channel: string,
+    channel_type: channel | group | im | mpim | app_home,
+    text: string,
+    topic: string,
+    ts: string,
+    event_ts: string
+  } | {
+    type: message,
+    subtype: channel_unarchive,
+    team: string,
+    user: string,
+    channel: string,
+    channel_type: channel | group | im | mpim | app_home,
+    text: string,
+    ts: string,
+    event_ts: string
+  } | {
+    type: message,
+    subtype: ekm_access_denied,
+    event_ts: string,
+    channel: string,
+    channel_type: channel | group | im | mpim | app_home,
+    ts: string,
+    text: string,
+    user: UREVOKEDU
+  } | {
+    type: message,
+    subtype: file_share,
+    text: string,
+    attachments?: {
+      blocks?: (
+        {
+          type: section | divider | image | actions | context | input | file | header | video | rich_text,
+          block_id?: string
+        } | {
+          type: string,
+          block_id?: string
+        }
+      )[],
+      fallback?: string,
+      color?: string,
+      pretext?: string,
+      author_name?: string,
+      author_link?: string,
+      author_icon?: string,
+      title?: string,
+      title_link?: string,
+      text?: string,
+      fields?: {
+        title: string,
+        value: string,
+        short?: boolean
+      }[],
+      image_url?: string,
+      thumb_url?: string,
+      footer?: string,
+      footer_icon?: string,
+      ts?: string
+    }[],
+    blocks?: (
+      {
+        type: section | divider | image | actions | context | input | file | header | video | rich_text,
+        block_id?: string
+      } | {
+        type: string,
+        block_id?: string
+      }
+    )[],
+    files?: {
+      id: string,
+      created: number,
+      name: string | null,
+      title: string | null,
+      mimetype: string,
+      filetype: string,
+      pretty_type: string,
+      user?: string,
+      editable: boolean,
+      size: number,
+      mode: hosted | external | snippet | post,
+      is_external: boolean,
+      external_type: string | null,
+      is_public: boolean,
+      public_url_shared: boolean,
+      display_as_bot: boolean,
+      username: string | null,
+      url_private?: string,
+      url_private_download?: string,
+      permalink: string,
+      permalink_public?: string,
+      channels: string[] | null,
+      groups: string[] | null,
+      users?: string[],
+      is_starred?: boolean,
+      num_stars?: number
+    }[],
+    upload?: boolean,
+    display_as_bot?: boolean,
+    x_files?: string[],
+    user: string,
+    parent_user_id?: string,
+    ts: string,
+    thread_ts?: string,
+    channel: string,
+    channel_type: channel | group | im | mpim | app_home,
+    event_ts: string
+  } | {
+    type: message,
+    subtype: me_message,
+    event_ts: string,
+    channel: string,
+    channel_type: channel | group | im | mpim | app_home,
+    user: string,
+    text: string,
+    ts: string
+  } | {
+    type: message,
+    subtype: message_changed,
+    event_ts: string,
+    hidden: true,
+    channel: string,
+    channel_type: channel | group | im | mpim | app_home,
+    ts: string,
+    message: {
+      type: message,
+      subtype?: string,
+      user?: string,
+      bot_id?: string,
+      ts: string,
+      client_msg_id?: string,
+      text?: string,
+      team?: string,
+      source_team?: string,
+      user_team?: string,
+      edited?: {
+        user: string,
+        ts: string
+      },
+      blocks?: {
+        type: string,
+        block_id?: string
+      }[],
+      thread_ts?: string,
+      reply_count?: number,
+      reply_users_count?: number,
+      latest_reply?: string,
+      reply_users?: string[],
+      subscribed?: boolean,
+      is_locked?: boolean
+    },
+    previous_message: {
+      type: message,
+      subtype?: string,
+      user?: string,
+      bot_id?: string,
+      ts: string,
+      client_msg_id?: string,
+      text?: string,
+      team?: string,
+      source_team?: string,
+      user_team?: string,
+      edited?: {
+        user: string,
+        ts: string
+      },
+      blocks?: {
+        type: string,
+        block_id?: string
+      }[],
+      thread_ts?: string,
+      reply_count?: number,
+      reply_users_count?: number,
+      latest_reply?: string,
+      reply_users?: string[],
+      subscribed?: boolean,
+      is_locked?: boolean
+    }
+  } | {
+    type: message,
+    subtype: message_deleted,
+    event_ts: string,
+    hidden: true,
+    channel: string,
+    channel_type: channel | group | im | mpim | app_home,
+    ts: string,
+    deleted_ts: string,
+    previous_message: (recursive)
+  } | {
+    type: message,
+    subtype: message_replied,
+    event_ts: string,
+    hidden: true,
+    channel: string,
+    channel_type: channel | group | im | mpim | app_home,
+    ts: string,
+    message: (
+      {
+        type: message,
+        event_ts: string,
+        team?: string,
+        channel: string,
+        user: string,
+        bot_id?: string,
+        bot_profile?: {
+          id: string,
+          name: string,
+          app_id: string,
+          team_id: string,
+          icons: Record<string, string>,
+          updated: number,
+          deleted: boolean
+        },
+        text?: string,
+        ts: string,
+        thread_ts?: string,
+        channel_type: channel | group | im | mpim | app_home,
+        attachments?: {
+          blocks?: (
+            {
+              type: section | divider | image | actions | context | input | file | header | video | rich_text,
+              block_id?: string
+            } | {
+              type: string,
+              block_id?: string
+            }
+          )[],
+          fallback?: string,
+          color?: string,
+          pretext?: string,
+          author_name?: string,
+          author_link?: string,
+          author_icon?: string,
+          title?: string,
+          title_link?: string,
+          text?: string,
+          fields?: {
+            title: string,
+            value: string,
+            short?: boolean
+          }[],
+          image_url?: string,
+          thumb_url?: string,
+          footer?: string,
+          footer_icon?: string,
+          ts?: string
+        }[],
+        blocks?: (
+          {
+            type: section | divider | image | actions | context | input | file | header | video | rich_text,
+            block_id?: string
+          } | {
+            type: string,
+            block_id?: string
+          }
+        )[],
+        files?: {
+          id: string,
+          created: number,
+          name: string | null,
+          title: string | null,
+          mimetype: string,
+          filetype: string,
+          pretty_type: string,
+          user?: string,
+          editable: boolean,
+          size: number,
+          mode: hosted | external | snippet | post,
+          is_external: boolean,
+          external_type: string | null,
+          is_public: boolean,
+          public_url_shared: boolean,
+          display_as_bot: boolean,
+          username: string | null,
+          url_private?: string,
+          url_private_download?: string,
+          permalink: string,
+          permalink_public?: string,
+          channels: string[] | null,
+          groups: string[] | null,
+          users?: string[],
+          is_starred?: boolean,
+          num_stars?: number
+        }[],
+        edited?: {
+          user: string,
+          ts: string
+        },
+        client_msg_id?: string,
+        parent_user_id?: string,
+        is_starred?: boolean,
+        pinned_to?: string[],
+        reactions?: {
+          name: string,
+          count: number,
+          users: string[]
+        }[],
+        assistant_thread?: Record<string, any>
+      } | {
+        type: message,
+        subtype: bot_message,
+        event_ts: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        streaming_state?: in_progress | completed | errored,
+        ts: string,
+        text: string,
+        bot_id: string,
+        username?: string,
+        user?: string,
+        attachments?: {
+          blocks?: (
+            {
+              type: section | divider | image | actions | context | input | file | header | video | rich_text,
+              block_id?: string
+            } | {
+              type: string,
+              block_id?: string
+            }
+          )[],
+          fallback?: string,
+          color?: string,
+          pretext?: string,
+          author_name?: string,
+          author_link?: string,
+          author_icon?: string,
+          title?: string,
+          title_link?: string,
+          text?: string,
+          fields?: {
+            title: string,
+            value: string,
+            short?: boolean
+          }[],
+          image_url?: string,
+          thumb_url?: string,
+          footer?: string,
+          footer_icon?: string,
+          ts?: string
+        }[],
+        blocks?: (
+          {
+            type: section | divider | image | actions | context | input | file | header | video | rich_text,
+            block_id?: string
+          } | {
+            type: string,
+            block_id?: string
+          }
+        )[],
+        edited?: {
+          user: string,
+          ts: string
+        },
+        thread_ts?: string
+      } | {
+        type: message,
+        subtype: channel_archive,
+        team: string,
+        user: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        text: string,
+        ts: string,
+        event_ts: string
+      } | {
+        type: message,
+        subtype: channel_join,
+        team: string,
+        user: string,
+        inviter: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        text: string,
+        ts: string,
+        event_ts: string
+      } | {
+        type: message,
+        subtype: channel_leave,
+        team: string,
+        user: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        text: string,
+        ts: string,
+        event_ts: string
+      } | {
+        type: message,
+        subtype: channel_name,
+        team: string,
+        user: string,
+        name: string,
+        old_name: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        text: string,
+        ts: string,
+        event_ts: string
+      } | {
+        type: message,
+        subtype: channel_posting_permissions,
+        user: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        text: string,
+        ts: string,
+        event_ts: string
+      } | {
+        type: message,
+        subtype: channel_purpose,
+        user: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        text: string,
+        purpose: string,
+        ts: string,
+        event_ts: string
+      } | {
+        type: message,
+        subtype: channel_topic,
+        user: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        text: string,
+        topic: string,
+        ts: string,
+        event_ts: string
+      } | {
+        type: message,
+        subtype: channel_unarchive,
+        team: string,
+        user: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        text: string,
+        ts: string,
+        event_ts: string
+      } | {
+        type: message,
+        subtype: ekm_access_denied,
+        event_ts: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        ts: string,
+        text: string,
+        user: UREVOKEDU
+      } | {
+        type: message,
+        subtype: file_share,
+        text: string,
+        attachments?: {
+          blocks?: (
+            {
+              type: section | divider | image | actions | context | input | file | header | video | rich_text,
+              block_id?: string
+            } | {
+              type: string,
+              block_id?: string
+            }
+          )[],
+          fallback?: string,
+          color?: string,
+          pretext?: string,
+          author_name?: string,
+          author_link?: string,
+          author_icon?: string,
+          title?: string,
+          title_link?: string,
+          text?: string,
+          fields?: {
+            title: string,
+            value: string,
+            short?: boolean
+          }[],
+          image_url?: string,
+          thumb_url?: string,
+          footer?: string,
+          footer_icon?: string,
+          ts?: string
+        }[],
+        blocks?: (
+          {
+            type: section | divider | image | actions | context | input | file | header | video | rich_text,
+            block_id?: string
+          } | {
+            type: string,
+            block_id?: string
+          }
+        )[],
+        files?: {
+          id: string,
+          created: number,
+          name: string | null,
+          title: string | null,
+          mimetype: string,
+          filetype: string,
+          pretty_type: string,
+          user?: string,
+          editable: boolean,
+          size: number,
+          mode: hosted | external | snippet | post,
+          is_external: boolean,
+          external_type: string | null,
+          is_public: boolean,
+          public_url_shared: boolean,
+          display_as_bot: boolean,
+          username: string | null,
+          url_private?: string,
+          url_private_download?: string,
+          permalink: string,
+          permalink_public?: string,
+          channels: string[] | null,
+          groups: string[] | null,
+          users?: string[],
+          is_starred?: boolean,
+          num_stars?: number
+        }[],
+        upload?: boolean,
+        display_as_bot?: boolean,
+        x_files?: string[],
+        user: string,
+        parent_user_id?: string,
+        ts: string,
+        thread_ts?: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        event_ts: string
+      } | {
+        type: message,
+        subtype: me_message,
+        event_ts: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        user: string,
+        text: string,
+        ts: string
+      } | {
+        type: message,
+        subtype: message_changed,
+        event_ts: string,
+        hidden: true,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        ts: string,
+        message: {
+          type: message,
+          subtype?: string,
+          user?: string,
+          bot_id?: string,
+          ts: string,
+          client_msg_id?: string,
+          text?: string,
+          team?: string,
+          source_team?: string,
+          user_team?: string,
+          edited?: {
+            user: string,
+            ts: string
+          },
+          blocks?: {
+            type: string,
+            block_id?: string
+          }[],
+          thread_ts?: string,
+          reply_count?: number,
+          reply_users_count?: number,
+          latest_reply?: string,
+          reply_users?: string[],
+          subscribed?: boolean,
+          is_locked?: boolean
+        },
+        previous_message: {
+          type: message,
+          subtype?: string,
+          user?: string,
+          bot_id?: string,
+          ts: string,
+          client_msg_id?: string,
+          text?: string,
+          team?: string,
+          source_team?: string,
+          user_team?: string,
+          edited?: {
+            user: string,
+            ts: string
+          },
+          blocks?: {
+            type: string,
+            block_id?: string
+          }[],
+          thread_ts?: string,
+          reply_count?: number,
+          reply_users_count?: number,
+          latest_reply?: string,
+          reply_users?: string[],
+          subscribed?: boolean,
+          is_locked?: boolean
+        }
+      } | {
+        type: message,
+        subtype: message_deleted,
+        event_ts: string,
+        hidden: true,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        ts: string,
+        deleted_ts: string,
+        previous_message: (recursive)
+      } | {
+        type: message,
+        subtype: message_replied,
+        event_ts: string,
+        hidden: true,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        ts: string,
+        message: (recursive)& {
+          thread_ts: string,
+          reply_count: number,
+          reply_users_count?: number,
+          latest_reply?: string,
+          reply_users?: string[],
+          replies: {
+            user: string,
+            ts: string
+          }[]
+        }
+      } | {
+        type: message,
+        subtype: thread_broadcast,
+        event_ts: string,
+        text: string,
+        attachments?: {
+          blocks?: (
+            {
+              type: section | divider | image | actions | context | input | file | header | video | rich_text,
+              block_id?: string
+            } | {
+              type: string,
+              block_id?: string
+            }
+          )[],
+          fallback?: string,
+          color?: string,
+          pretext?: string,
+          author_name?: string,
+          author_link?: string,
+          author_icon?: string,
+          title?: string,
+          title_link?: string,
+          text?: string,
+          fields?: {
+            title: string,
+            value: string,
+            short?: boolean
+          }[],
+          image_url?: string,
+          thumb_url?: string,
+          footer?: string,
+          footer_icon?: string,
+          ts?: string
+        }[],
+        blocks?: (
+          {
+            type: section | divider | image | actions | context | input | file | header | video | rich_text,
+            block_id?: string
+          } | {
+            type: string,
+            block_id?: string
+          }
+        )[],
+        user: string,
+        ts: string,
+        thread_ts?: string,
+        root: {
+          type: message,
+          event_ts: string,
+          channel: string,
+          ts: string,
+          channel_type: channel | group | im | mpim | app_home,
+          thread_ts: string,
+          reply_count: number,
+          reply_users_count: number,
+          latest_reply: string,
+          reply_users: string[],
+          user?: string,
+          text?: string,
+          bot_id?: string
+        },
+        client_msg_id: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home
+      }
+    )& {
+      thread_ts: string,
+      reply_count: number,
+      reply_users_count?: number,
+      latest_reply?: string,
+      reply_users?: string[],
+      replies: {
+        user: string,
+        ts: string
+      }[]
+    }
+  } | {
+    type: message,
+    subtype: thread_broadcast,
+    event_ts: string,
+    text: string,
+    attachments?: {
+      blocks?: (
+        {
+          type: section | divider | image | actions | context | input | file | header | video | rich_text,
+          block_id?: string
+        } | {
+          type: string,
+          block_id?: string
+        }
+      )[],
+      fallback?: string,
+      color?: string,
+      pretext?: string,
+      author_name?: string,
+      author_link?: string,
+      author_icon?: string,
+      title?: string,
+      title_link?: string,
+      text?: string,
+      fields?: {
+        title: string,
+        value: string,
+        short?: boolean
+      }[],
+      image_url?: string,
+      thumb_url?: string,
+      footer?: string,
+      footer_icon?: string,
+      ts?: string
+    }[],
+    blocks?: (
+      {
+        type: section | divider | image | actions | context | input | file | header | video | rich_text,
+        block_id?: string
+      } | {
+        type: string,
+        block_id?: string
+      }
+    )[],
+    user: string,
+    ts: string,
+    thread_ts?: string,
+    root: {
+      type: message,
+      event_ts: string,
+      channel: string,
+      ts: string,
+      channel_type: channel | group | im | mpim | app_home,
+      thread_ts: string,
+      reply_count: number,
+      reply_users_count: number,
+      latest_reply: string,
+      reply_users: string[],
+      user?: string,
+      text?: string,
+      bot_id?: string
+    },
+    client_msg_id: string,
+    channel: string,
+    channel_type: channel | group | im | mpim | app_home
+  }
 } | {
   type: message,
   subtype: message_replied,
@@ -943,7 +1946,997 @@ A message was posted or updated in a channel
   channel: string,
   channel_type: channel | group | im | mpim | app_home,
   ts: string,
-  message: lazy & {
+  message: (
+    {
+      type: message,
+      event_ts: string,
+      team?: string,
+      channel: string,
+      user: string,
+      bot_id?: string,
+      bot_profile?: {
+        id: string,
+        name: string,
+        app_id: string,
+        team_id: string,
+        icons: Record<string, string>,
+        updated: number,
+        deleted: boolean
+      },
+      text?: string,
+      ts: string,
+      thread_ts?: string,
+      channel_type: channel | group | im | mpim | app_home,
+      attachments?: {
+        blocks?: (
+          {
+            type: section | divider | image | actions | context | input | file | header | video | rich_text,
+            block_id?: string
+          } | {
+            type: string,
+            block_id?: string
+          }
+        )[],
+        fallback?: string,
+        color?: string,
+        pretext?: string,
+        author_name?: string,
+        author_link?: string,
+        author_icon?: string,
+        title?: string,
+        title_link?: string,
+        text?: string,
+        fields?: {
+          title: string,
+          value: string,
+          short?: boolean
+        }[],
+        image_url?: string,
+        thumb_url?: string,
+        footer?: string,
+        footer_icon?: string,
+        ts?: string
+      }[],
+      blocks?: (
+        {
+          type: section | divider | image | actions | context | input | file | header | video | rich_text,
+          block_id?: string
+        } | {
+          type: string,
+          block_id?: string
+        }
+      )[],
+      files?: {
+        id: string,
+        created: number,
+        name: string | null,
+        title: string | null,
+        mimetype: string,
+        filetype: string,
+        pretty_type: string,
+        user?: string,
+        editable: boolean,
+        size: number,
+        mode: hosted | external | snippet | post,
+        is_external: boolean,
+        external_type: string | null,
+        is_public: boolean,
+        public_url_shared: boolean,
+        display_as_bot: boolean,
+        username: string | null,
+        url_private?: string,
+        url_private_download?: string,
+        permalink: string,
+        permalink_public?: string,
+        channels: string[] | null,
+        groups: string[] | null,
+        users?: string[],
+        is_starred?: boolean,
+        num_stars?: number
+      }[],
+      edited?: {
+        user: string,
+        ts: string
+      },
+      client_msg_id?: string,
+      parent_user_id?: string,
+      is_starred?: boolean,
+      pinned_to?: string[],
+      reactions?: {
+        name: string,
+        count: number,
+        users: string[]
+      }[],
+      assistant_thread?: Record<string, any>
+    } | {
+      type: message,
+      subtype: bot_message,
+      event_ts: string,
+      channel: string,
+      channel_type: channel | group | im | mpim | app_home,
+      streaming_state?: in_progress | completed | errored,
+      ts: string,
+      text: string,
+      bot_id: string,
+      username?: string,
+      user?: string,
+      attachments?: {
+        blocks?: (
+          {
+            type: section | divider | image | actions | context | input | file | header | video | rich_text,
+            block_id?: string
+          } | {
+            type: string,
+            block_id?: string
+          }
+        )[],
+        fallback?: string,
+        color?: string,
+        pretext?: string,
+        author_name?: string,
+        author_link?: string,
+        author_icon?: string,
+        title?: string,
+        title_link?: string,
+        text?: string,
+        fields?: {
+          title: string,
+          value: string,
+          short?: boolean
+        }[],
+        image_url?: string,
+        thumb_url?: string,
+        footer?: string,
+        footer_icon?: string,
+        ts?: string
+      }[],
+      blocks?: (
+        {
+          type: section | divider | image | actions | context | input | file | header | video | rich_text,
+          block_id?: string
+        } | {
+          type: string,
+          block_id?: string
+        }
+      )[],
+      edited?: {
+        user: string,
+        ts: string
+      },
+      thread_ts?: string
+    } | {
+      type: message,
+      subtype: channel_archive,
+      team: string,
+      user: string,
+      channel: string,
+      channel_type: channel | group | im | mpim | app_home,
+      text: string,
+      ts: string,
+      event_ts: string
+    } | {
+      type: message,
+      subtype: channel_join,
+      team: string,
+      user: string,
+      inviter: string,
+      channel: string,
+      channel_type: channel | group | im | mpim | app_home,
+      text: string,
+      ts: string,
+      event_ts: string
+    } | {
+      type: message,
+      subtype: channel_leave,
+      team: string,
+      user: string,
+      channel: string,
+      channel_type: channel | group | im | mpim | app_home,
+      text: string,
+      ts: string,
+      event_ts: string
+    } | {
+      type: message,
+      subtype: channel_name,
+      team: string,
+      user: string,
+      name: string,
+      old_name: string,
+      channel: string,
+      channel_type: channel | group | im | mpim | app_home,
+      text: string,
+      ts: string,
+      event_ts: string
+    } | {
+      type: message,
+      subtype: channel_posting_permissions,
+      user: string,
+      channel: string,
+      channel_type: channel | group | im | mpim | app_home,
+      text: string,
+      ts: string,
+      event_ts: string
+    } | {
+      type: message,
+      subtype: channel_purpose,
+      user: string,
+      channel: string,
+      channel_type: channel | group | im | mpim | app_home,
+      text: string,
+      purpose: string,
+      ts: string,
+      event_ts: string
+    } | {
+      type: message,
+      subtype: channel_topic,
+      user: string,
+      channel: string,
+      channel_type: channel | group | im | mpim | app_home,
+      text: string,
+      topic: string,
+      ts: string,
+      event_ts: string
+    } | {
+      type: message,
+      subtype: channel_unarchive,
+      team: string,
+      user: string,
+      channel: string,
+      channel_type: channel | group | im | mpim | app_home,
+      text: string,
+      ts: string,
+      event_ts: string
+    } | {
+      type: message,
+      subtype: ekm_access_denied,
+      event_ts: string,
+      channel: string,
+      channel_type: channel | group | im | mpim | app_home,
+      ts: string,
+      text: string,
+      user: UREVOKEDU
+    } | {
+      type: message,
+      subtype: file_share,
+      text: string,
+      attachments?: {
+        blocks?: (
+          {
+            type: section | divider | image | actions | context | input | file | header | video | rich_text,
+            block_id?: string
+          } | {
+            type: string,
+            block_id?: string
+          }
+        )[],
+        fallback?: string,
+        color?: string,
+        pretext?: string,
+        author_name?: string,
+        author_link?: string,
+        author_icon?: string,
+        title?: string,
+        title_link?: string,
+        text?: string,
+        fields?: {
+          title: string,
+          value: string,
+          short?: boolean
+        }[],
+        image_url?: string,
+        thumb_url?: string,
+        footer?: string,
+        footer_icon?: string,
+        ts?: string
+      }[],
+      blocks?: (
+        {
+          type: section | divider | image | actions | context | input | file | header | video | rich_text,
+          block_id?: string
+        } | {
+          type: string,
+          block_id?: string
+        }
+      )[],
+      files?: {
+        id: string,
+        created: number,
+        name: string | null,
+        title: string | null,
+        mimetype: string,
+        filetype: string,
+        pretty_type: string,
+        user?: string,
+        editable: boolean,
+        size: number,
+        mode: hosted | external | snippet | post,
+        is_external: boolean,
+        external_type: string | null,
+        is_public: boolean,
+        public_url_shared: boolean,
+        display_as_bot: boolean,
+        username: string | null,
+        url_private?: string,
+        url_private_download?: string,
+        permalink: string,
+        permalink_public?: string,
+        channels: string[] | null,
+        groups: string[] | null,
+        users?: string[],
+        is_starred?: boolean,
+        num_stars?: number
+      }[],
+      upload?: boolean,
+      display_as_bot?: boolean,
+      x_files?: string[],
+      user: string,
+      parent_user_id?: string,
+      ts: string,
+      thread_ts?: string,
+      channel: string,
+      channel_type: channel | group | im | mpim | app_home,
+      event_ts: string
+    } | {
+      type: message,
+      subtype: me_message,
+      event_ts: string,
+      channel: string,
+      channel_type: channel | group | im | mpim | app_home,
+      user: string,
+      text: string,
+      ts: string
+    } | {
+      type: message,
+      subtype: message_changed,
+      event_ts: string,
+      hidden: true,
+      channel: string,
+      channel_type: channel | group | im | mpim | app_home,
+      ts: string,
+      message: {
+        type: message,
+        subtype?: string,
+        user?: string,
+        bot_id?: string,
+        ts: string,
+        client_msg_id?: string,
+        text?: string,
+        team?: string,
+        source_team?: string,
+        user_team?: string,
+        edited?: {
+          user: string,
+          ts: string
+        },
+        blocks?: {
+          type: string,
+          block_id?: string
+        }[],
+        thread_ts?: string,
+        reply_count?: number,
+        reply_users_count?: number,
+        latest_reply?: string,
+        reply_users?: string[],
+        subscribed?: boolean,
+        is_locked?: boolean
+      },
+      previous_message: {
+        type: message,
+        subtype?: string,
+        user?: string,
+        bot_id?: string,
+        ts: string,
+        client_msg_id?: string,
+        text?: string,
+        team?: string,
+        source_team?: string,
+        user_team?: string,
+        edited?: {
+          user: string,
+          ts: string
+        },
+        blocks?: {
+          type: string,
+          block_id?: string
+        }[],
+        thread_ts?: string,
+        reply_count?: number,
+        reply_users_count?: number,
+        latest_reply?: string,
+        reply_users?: string[],
+        subscribed?: boolean,
+        is_locked?: boolean
+      }
+    } | {
+      type: message,
+      subtype: message_deleted,
+      event_ts: string,
+      hidden: true,
+      channel: string,
+      channel_type: channel | group | im | mpim | app_home,
+      ts: string,
+      deleted_ts: string,
+      previous_message: {
+        type: message,
+        event_ts: string,
+        team?: string,
+        channel: string,
+        user: string,
+        bot_id?: string,
+        bot_profile?: {
+          id: string,
+          name: string,
+          app_id: string,
+          team_id: string,
+          icons: Record<string, string>,
+          updated: number,
+          deleted: boolean
+        },
+        text?: string,
+        ts: string,
+        thread_ts?: string,
+        channel_type: channel | group | im | mpim | app_home,
+        attachments?: {
+          blocks?: (
+            {
+              type: section | divider | image | actions | context | input | file | header | video | rich_text,
+              block_id?: string
+            } | {
+              type: string,
+              block_id?: string
+            }
+          )[],
+          fallback?: string,
+          color?: string,
+          pretext?: string,
+          author_name?: string,
+          author_link?: string,
+          author_icon?: string,
+          title?: string,
+          title_link?: string,
+          text?: string,
+          fields?: {
+            title: string,
+            value: string,
+            short?: boolean
+          }[],
+          image_url?: string,
+          thumb_url?: string,
+          footer?: string,
+          footer_icon?: string,
+          ts?: string
+        }[],
+        blocks?: (
+          {
+            type: section | divider | image | actions | context | input | file | header | video | rich_text,
+            block_id?: string
+          } | {
+            type: string,
+            block_id?: string
+          }
+        )[],
+        files?: {
+          id: string,
+          created: number,
+          name: string | null,
+          title: string | null,
+          mimetype: string,
+          filetype: string,
+          pretty_type: string,
+          user?: string,
+          editable: boolean,
+          size: number,
+          mode: hosted | external | snippet | post,
+          is_external: boolean,
+          external_type: string | null,
+          is_public: boolean,
+          public_url_shared: boolean,
+          display_as_bot: boolean,
+          username: string | null,
+          url_private?: string,
+          url_private_download?: string,
+          permalink: string,
+          permalink_public?: string,
+          channels: string[] | null,
+          groups: string[] | null,
+          users?: string[],
+          is_starred?: boolean,
+          num_stars?: number
+        }[],
+        edited?: {
+          user: string,
+          ts: string
+        },
+        client_msg_id?: string,
+        parent_user_id?: string,
+        is_starred?: boolean,
+        pinned_to?: string[],
+        reactions?: {
+          name: string,
+          count: number,
+          users: string[]
+        }[],
+        assistant_thread?: Record<string, any>
+      } | {
+        type: message,
+        subtype: bot_message,
+        event_ts: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        streaming_state?: in_progress | completed | errored,
+        ts: string,
+        text: string,
+        bot_id: string,
+        username?: string,
+        user?: string,
+        attachments?: {
+          blocks?: (
+            {
+              type: section | divider | image | actions | context | input | file | header | video | rich_text,
+              block_id?: string
+            } | {
+              type: string,
+              block_id?: string
+            }
+          )[],
+          fallback?: string,
+          color?: string,
+          pretext?: string,
+          author_name?: string,
+          author_link?: string,
+          author_icon?: string,
+          title?: string,
+          title_link?: string,
+          text?: string,
+          fields?: {
+            title: string,
+            value: string,
+            short?: boolean
+          }[],
+          image_url?: string,
+          thumb_url?: string,
+          footer?: string,
+          footer_icon?: string,
+          ts?: string
+        }[],
+        blocks?: (
+          {
+            type: section | divider | image | actions | context | input | file | header | video | rich_text,
+            block_id?: string
+          } | {
+            type: string,
+            block_id?: string
+          }
+        )[],
+        edited?: {
+          user: string,
+          ts: string
+        },
+        thread_ts?: string
+      } | {
+        type: message,
+        subtype: channel_archive,
+        team: string,
+        user: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        text: string,
+        ts: string,
+        event_ts: string
+      } | {
+        type: message,
+        subtype: channel_join,
+        team: string,
+        user: string,
+        inviter: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        text: string,
+        ts: string,
+        event_ts: string
+      } | {
+        type: message,
+        subtype: channel_leave,
+        team: string,
+        user: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        text: string,
+        ts: string,
+        event_ts: string
+      } | {
+        type: message,
+        subtype: channel_name,
+        team: string,
+        user: string,
+        name: string,
+        old_name: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        text: string,
+        ts: string,
+        event_ts: string
+      } | {
+        type: message,
+        subtype: channel_posting_permissions,
+        user: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        text: string,
+        ts: string,
+        event_ts: string
+      } | {
+        type: message,
+        subtype: channel_purpose,
+        user: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        text: string,
+        purpose: string,
+        ts: string,
+        event_ts: string
+      } | {
+        type: message,
+        subtype: channel_topic,
+        user: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        text: string,
+        topic: string,
+        ts: string,
+        event_ts: string
+      } | {
+        type: message,
+        subtype: channel_unarchive,
+        team: string,
+        user: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        text: string,
+        ts: string,
+        event_ts: string
+      } | {
+        type: message,
+        subtype: ekm_access_denied,
+        event_ts: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        ts: string,
+        text: string,
+        user: UREVOKEDU
+      } | {
+        type: message,
+        subtype: file_share,
+        text: string,
+        attachments?: {
+          blocks?: (
+            {
+              type: section | divider | image | actions | context | input | file | header | video | rich_text,
+              block_id?: string
+            } | {
+              type: string,
+              block_id?: string
+            }
+          )[],
+          fallback?: string,
+          color?: string,
+          pretext?: string,
+          author_name?: string,
+          author_link?: string,
+          author_icon?: string,
+          title?: string,
+          title_link?: string,
+          text?: string,
+          fields?: {
+            title: string,
+            value: string,
+            short?: boolean
+          }[],
+          image_url?: string,
+          thumb_url?: string,
+          footer?: string,
+          footer_icon?: string,
+          ts?: string
+        }[],
+        blocks?: (
+          {
+            type: section | divider | image | actions | context | input | file | header | video | rich_text,
+            block_id?: string
+          } | {
+            type: string,
+            block_id?: string
+          }
+        )[],
+        files?: {
+          id: string,
+          created: number,
+          name: string | null,
+          title: string | null,
+          mimetype: string,
+          filetype: string,
+          pretty_type: string,
+          user?: string,
+          editable: boolean,
+          size: number,
+          mode: hosted | external | snippet | post,
+          is_external: boolean,
+          external_type: string | null,
+          is_public: boolean,
+          public_url_shared: boolean,
+          display_as_bot: boolean,
+          username: string | null,
+          url_private?: string,
+          url_private_download?: string,
+          permalink: string,
+          permalink_public?: string,
+          channels: string[] | null,
+          groups: string[] | null,
+          users?: string[],
+          is_starred?: boolean,
+          num_stars?: number
+        }[],
+        upload?: boolean,
+        display_as_bot?: boolean,
+        x_files?: string[],
+        user: string,
+        parent_user_id?: string,
+        ts: string,
+        thread_ts?: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        event_ts: string
+      } | {
+        type: message,
+        subtype: me_message,
+        event_ts: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        user: string,
+        text: string,
+        ts: string
+      } | {
+        type: message,
+        subtype: message_changed,
+        event_ts: string,
+        hidden: true,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        ts: string,
+        message: {
+          type: message,
+          subtype?: string,
+          user?: string,
+          bot_id?: string,
+          ts: string,
+          client_msg_id?: string,
+          text?: string,
+          team?: string,
+          source_team?: string,
+          user_team?: string,
+          edited?: {
+            user: string,
+            ts: string
+          },
+          blocks?: {
+            type: string,
+            block_id?: string
+          }[],
+          thread_ts?: string,
+          reply_count?: number,
+          reply_users_count?: number,
+          latest_reply?: string,
+          reply_users?: string[],
+          subscribed?: boolean,
+          is_locked?: boolean
+        },
+        previous_message: {
+          type: message,
+          subtype?: string,
+          user?: string,
+          bot_id?: string,
+          ts: string,
+          client_msg_id?: string,
+          text?: string,
+          team?: string,
+          source_team?: string,
+          user_team?: string,
+          edited?: {
+            user: string,
+            ts: string
+          },
+          blocks?: {
+            type: string,
+            block_id?: string
+          }[],
+          thread_ts?: string,
+          reply_count?: number,
+          reply_users_count?: number,
+          latest_reply?: string,
+          reply_users?: string[],
+          subscribed?: boolean,
+          is_locked?: boolean
+        }
+      } | {
+        type: message,
+        subtype: message_deleted,
+        event_ts: string,
+        hidden: true,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        ts: string,
+        deleted_ts: string,
+        previous_message: (recursive)
+      } | {
+        type: message,
+        subtype: message_replied,
+        event_ts: string,
+        hidden: true,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        ts: string,
+        message: (recursive)& {
+          thread_ts: string,
+          reply_count: number,
+          reply_users_count?: number,
+          latest_reply?: string,
+          reply_users?: string[],
+          replies: {
+            user: string,
+            ts: string
+          }[]
+        }
+      } | {
+        type: message,
+        subtype: thread_broadcast,
+        event_ts: string,
+        text: string,
+        attachments?: {
+          blocks?: (
+            {
+              type: section | divider | image | actions | context | input | file | header | video | rich_text,
+              block_id?: string
+            } | {
+              type: string,
+              block_id?: string
+            }
+          )[],
+          fallback?: string,
+          color?: string,
+          pretext?: string,
+          author_name?: string,
+          author_link?: string,
+          author_icon?: string,
+          title?: string,
+          title_link?: string,
+          text?: string,
+          fields?: {
+            title: string,
+            value: string,
+            short?: boolean
+          }[],
+          image_url?: string,
+          thumb_url?: string,
+          footer?: string,
+          footer_icon?: string,
+          ts?: string
+        }[],
+        blocks?: (
+          {
+            type: section | divider | image | actions | context | input | file | header | video | rich_text,
+            block_id?: string
+          } | {
+            type: string,
+            block_id?: string
+          }
+        )[],
+        user: string,
+        ts: string,
+        thread_ts?: string,
+        root: {
+          type: message,
+          event_ts: string,
+          channel: string,
+          ts: string,
+          channel_type: channel | group | im | mpim | app_home,
+          thread_ts: string,
+          reply_count: number,
+          reply_users_count: number,
+          latest_reply: string,
+          reply_users: string[],
+          user?: string,
+          text?: string,
+          bot_id?: string
+        },
+        client_msg_id: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home
+      }
+    } | {
+      type: message,
+      subtype: message_replied,
+      event_ts: string,
+      hidden: true,
+      channel: string,
+      channel_type: channel | group | im | mpim | app_home,
+      ts: string,
+      message: (recursive)& {
+        thread_ts: string,
+        reply_count: number,
+        reply_users_count?: number,
+        latest_reply?: string,
+        reply_users?: string[],
+        replies: {
+          user: string,
+          ts: string
+        }[]
+      }
+    } | {
+      type: message,
+      subtype: thread_broadcast,
+      event_ts: string,
+      text: string,
+      attachments?: {
+        blocks?: (
+          {
+            type: section | divider | image | actions | context | input | file | header | video | rich_text,
+            block_id?: string
+          } | {
+            type: string,
+            block_id?: string
+          }
+        )[],
+        fallback?: string,
+        color?: string,
+        pretext?: string,
+        author_name?: string,
+        author_link?: string,
+        author_icon?: string,
+        title?: string,
+        title_link?: string,
+        text?: string,
+        fields?: {
+          title: string,
+          value: string,
+          short?: boolean
+        }[],
+        image_url?: string,
+        thumb_url?: string,
+        footer?: string,
+        footer_icon?: string,
+        ts?: string
+      }[],
+      blocks?: (
+        {
+          type: section | divider | image | actions | context | input | file | header | video | rich_text,
+          block_id?: string
+        } | {
+          type: string,
+          block_id?: string
+        }
+      )[],
+      user: string,
+      ts: string,
+      thread_ts?: string,
+      root: {
+        type: message,
+        event_ts: string,
+        channel: string,
+        ts: string,
+        channel_type: channel | group | im | mpim | app_home,
+        thread_ts: string,
+        reply_count: number,
+        reply_users_count: number,
+        latest_reply: string,
+        reply_users: string[],
+        user?: string,
+        text?: string,
+        bot_id?: string
+      },
+      client_msg_id: string,
+      channel: string,
+      channel_type: channel | group | im | mpim | app_home
+    }
+  )& {
     thread_ts: string,
     reply_count: number,
     reply_users_count?: number,
@@ -1042,8 +3035,7 @@ A message was posted or updated in a channel
     name: string,
     app_id: string,
     team_id: string,
-    icons: {
-    },
+    icons: Record<string, string>,
     updated: number,
     deleted: boolean
   },
@@ -1093,8 +3085,8 @@ A message was posted or updated in a channel
   files?: {
     id: string,
     created: number,
-    name?: string | null,
-    title?: string | null,
+    name: string | null,
+    title: string | null,
     mimetype: string,
     filetype: string,
     pretty_type: string,
@@ -1103,17 +3095,17 @@ A message was posted or updated in a channel
     size: number,
     mode: hosted | external | snippet | post,
     is_external: boolean,
-    external_type?: string | null,
+    external_type: string | null,
     is_public: boolean,
     public_url_shared: boolean,
     display_as_bot: boolean,
-    username?: string | null,
+    username: string | null,
     url_private?: string,
     url_private_download?: string,
     permalink: string,
     permalink_public?: string,
-    channels?: string[] | null,
-    groups?: string[] | null,
+    channels: string[] | null,
+    groups: string[] | null,
     users?: string[],
     is_starred?: boolean,
     num_stars?: number
@@ -1131,8 +3123,7 @@ A message was posted or updated in a channel
     count: number,
     users: string[]
   }[],
-  assistant_thread?: {
-  }
+  assistant_thread?: Record<string, any>
 } | {
   type: message,
   subtype: bot_message,
@@ -1326,8 +3317,8 @@ A message was posted or updated in a channel
   files?: {
     id: string,
     created: number,
-    name?: string | null,
-    title?: string | null,
+    name: string | null,
+    title: string | null,
     mimetype: string,
     filetype: string,
     pretty_type: string,
@@ -1336,17 +3327,17 @@ A message was posted or updated in a channel
     size: number,
     mode: hosted | external | snippet | post,
     is_external: boolean,
-    external_type?: string | null,
+    external_type: string | null,
     is_public: boolean,
     public_url_shared: boolean,
     display_as_bot: boolean,
-    username?: string | null,
+    username: string | null,
     url_private?: string,
     url_private_download?: string,
     permalink: string,
     permalink_public?: string,
-    channels?: string[] | null,
-    groups?: string[] | null,
+    channels: string[] | null,
+    groups: string[] | null,
     users?: string[],
     is_starred?: boolean,
     num_stars?: number
@@ -1441,7 +3432,997 @@ A message was posted or updated in a channel
   channel_type: channel | group | im | mpim | app_home,
   ts: string,
   deleted_ts: string,
-  previous_message: lazy
+  previous_message: {
+    type: message,
+    event_ts: string,
+    team?: string,
+    channel: string,
+    user: string,
+    bot_id?: string,
+    bot_profile?: {
+      id: string,
+      name: string,
+      app_id: string,
+      team_id: string,
+      icons: Record<string, string>,
+      updated: number,
+      deleted: boolean
+    },
+    text?: string,
+    ts: string,
+    thread_ts?: string,
+    channel_type: channel | group | im | mpim | app_home,
+    attachments?: {
+      blocks?: (
+        {
+          type: section | divider | image | actions | context | input | file | header | video | rich_text,
+          block_id?: string
+        } | {
+          type: string,
+          block_id?: string
+        }
+      )[],
+      fallback?: string,
+      color?: string,
+      pretext?: string,
+      author_name?: string,
+      author_link?: string,
+      author_icon?: string,
+      title?: string,
+      title_link?: string,
+      text?: string,
+      fields?: {
+        title: string,
+        value: string,
+        short?: boolean
+      }[],
+      image_url?: string,
+      thumb_url?: string,
+      footer?: string,
+      footer_icon?: string,
+      ts?: string
+    }[],
+    blocks?: (
+      {
+        type: section | divider | image | actions | context | input | file | header | video | rich_text,
+        block_id?: string
+      } | {
+        type: string,
+        block_id?: string
+      }
+    )[],
+    files?: {
+      id: string,
+      created: number,
+      name: string | null,
+      title: string | null,
+      mimetype: string,
+      filetype: string,
+      pretty_type: string,
+      user?: string,
+      editable: boolean,
+      size: number,
+      mode: hosted | external | snippet | post,
+      is_external: boolean,
+      external_type: string | null,
+      is_public: boolean,
+      public_url_shared: boolean,
+      display_as_bot: boolean,
+      username: string | null,
+      url_private?: string,
+      url_private_download?: string,
+      permalink: string,
+      permalink_public?: string,
+      channels: string[] | null,
+      groups: string[] | null,
+      users?: string[],
+      is_starred?: boolean,
+      num_stars?: number
+    }[],
+    edited?: {
+      user: string,
+      ts: string
+    },
+    client_msg_id?: string,
+    parent_user_id?: string,
+    is_starred?: boolean,
+    pinned_to?: string[],
+    reactions?: {
+      name: string,
+      count: number,
+      users: string[]
+    }[],
+    assistant_thread?: Record<string, any>
+  } | {
+    type: message,
+    subtype: bot_message,
+    event_ts: string,
+    channel: string,
+    channel_type: channel | group | im | mpim | app_home,
+    streaming_state?: in_progress | completed | errored,
+    ts: string,
+    text: string,
+    bot_id: string,
+    username?: string,
+    user?: string,
+    attachments?: {
+      blocks?: (
+        {
+          type: section | divider | image | actions | context | input | file | header | video | rich_text,
+          block_id?: string
+        } | {
+          type: string,
+          block_id?: string
+        }
+      )[],
+      fallback?: string,
+      color?: string,
+      pretext?: string,
+      author_name?: string,
+      author_link?: string,
+      author_icon?: string,
+      title?: string,
+      title_link?: string,
+      text?: string,
+      fields?: {
+        title: string,
+        value: string,
+        short?: boolean
+      }[],
+      image_url?: string,
+      thumb_url?: string,
+      footer?: string,
+      footer_icon?: string,
+      ts?: string
+    }[],
+    blocks?: (
+      {
+        type: section | divider | image | actions | context | input | file | header | video | rich_text,
+        block_id?: string
+      } | {
+        type: string,
+        block_id?: string
+      }
+    )[],
+    edited?: {
+      user: string,
+      ts: string
+    },
+    thread_ts?: string
+  } | {
+    type: message,
+    subtype: channel_archive,
+    team: string,
+    user: string,
+    channel: string,
+    channel_type: channel | group | im | mpim | app_home,
+    text: string,
+    ts: string,
+    event_ts: string
+  } | {
+    type: message,
+    subtype: channel_join,
+    team: string,
+    user: string,
+    inviter: string,
+    channel: string,
+    channel_type: channel | group | im | mpim | app_home,
+    text: string,
+    ts: string,
+    event_ts: string
+  } | {
+    type: message,
+    subtype: channel_leave,
+    team: string,
+    user: string,
+    channel: string,
+    channel_type: channel | group | im | mpim | app_home,
+    text: string,
+    ts: string,
+    event_ts: string
+  } | {
+    type: message,
+    subtype: channel_name,
+    team: string,
+    user: string,
+    name: string,
+    old_name: string,
+    channel: string,
+    channel_type: channel | group | im | mpim | app_home,
+    text: string,
+    ts: string,
+    event_ts: string
+  } | {
+    type: message,
+    subtype: channel_posting_permissions,
+    user: string,
+    channel: string,
+    channel_type: channel | group | im | mpim | app_home,
+    text: string,
+    ts: string,
+    event_ts: string
+  } | {
+    type: message,
+    subtype: channel_purpose,
+    user: string,
+    channel: string,
+    channel_type: channel | group | im | mpim | app_home,
+    text: string,
+    purpose: string,
+    ts: string,
+    event_ts: string
+  } | {
+    type: message,
+    subtype: channel_topic,
+    user: string,
+    channel: string,
+    channel_type: channel | group | im | mpim | app_home,
+    text: string,
+    topic: string,
+    ts: string,
+    event_ts: string
+  } | {
+    type: message,
+    subtype: channel_unarchive,
+    team: string,
+    user: string,
+    channel: string,
+    channel_type: channel | group | im | mpim | app_home,
+    text: string,
+    ts: string,
+    event_ts: string
+  } | {
+    type: message,
+    subtype: ekm_access_denied,
+    event_ts: string,
+    channel: string,
+    channel_type: channel | group | im | mpim | app_home,
+    ts: string,
+    text: string,
+    user: UREVOKEDU
+  } | {
+    type: message,
+    subtype: file_share,
+    text: string,
+    attachments?: {
+      blocks?: (
+        {
+          type: section | divider | image | actions | context | input | file | header | video | rich_text,
+          block_id?: string
+        } | {
+          type: string,
+          block_id?: string
+        }
+      )[],
+      fallback?: string,
+      color?: string,
+      pretext?: string,
+      author_name?: string,
+      author_link?: string,
+      author_icon?: string,
+      title?: string,
+      title_link?: string,
+      text?: string,
+      fields?: {
+        title: string,
+        value: string,
+        short?: boolean
+      }[],
+      image_url?: string,
+      thumb_url?: string,
+      footer?: string,
+      footer_icon?: string,
+      ts?: string
+    }[],
+    blocks?: (
+      {
+        type: section | divider | image | actions | context | input | file | header | video | rich_text,
+        block_id?: string
+      } | {
+        type: string,
+        block_id?: string
+      }
+    )[],
+    files?: {
+      id: string,
+      created: number,
+      name: string | null,
+      title: string | null,
+      mimetype: string,
+      filetype: string,
+      pretty_type: string,
+      user?: string,
+      editable: boolean,
+      size: number,
+      mode: hosted | external | snippet | post,
+      is_external: boolean,
+      external_type: string | null,
+      is_public: boolean,
+      public_url_shared: boolean,
+      display_as_bot: boolean,
+      username: string | null,
+      url_private?: string,
+      url_private_download?: string,
+      permalink: string,
+      permalink_public?: string,
+      channels: string[] | null,
+      groups: string[] | null,
+      users?: string[],
+      is_starred?: boolean,
+      num_stars?: number
+    }[],
+    upload?: boolean,
+    display_as_bot?: boolean,
+    x_files?: string[],
+    user: string,
+    parent_user_id?: string,
+    ts: string,
+    thread_ts?: string,
+    channel: string,
+    channel_type: channel | group | im | mpim | app_home,
+    event_ts: string
+  } | {
+    type: message,
+    subtype: me_message,
+    event_ts: string,
+    channel: string,
+    channel_type: channel | group | im | mpim | app_home,
+    user: string,
+    text: string,
+    ts: string
+  } | {
+    type: message,
+    subtype: message_changed,
+    event_ts: string,
+    hidden: true,
+    channel: string,
+    channel_type: channel | group | im | mpim | app_home,
+    ts: string,
+    message: {
+      type: message,
+      subtype?: string,
+      user?: string,
+      bot_id?: string,
+      ts: string,
+      client_msg_id?: string,
+      text?: string,
+      team?: string,
+      source_team?: string,
+      user_team?: string,
+      edited?: {
+        user: string,
+        ts: string
+      },
+      blocks?: {
+        type: string,
+        block_id?: string
+      }[],
+      thread_ts?: string,
+      reply_count?: number,
+      reply_users_count?: number,
+      latest_reply?: string,
+      reply_users?: string[],
+      subscribed?: boolean,
+      is_locked?: boolean
+    },
+    previous_message: {
+      type: message,
+      subtype?: string,
+      user?: string,
+      bot_id?: string,
+      ts: string,
+      client_msg_id?: string,
+      text?: string,
+      team?: string,
+      source_team?: string,
+      user_team?: string,
+      edited?: {
+        user: string,
+        ts: string
+      },
+      blocks?: {
+        type: string,
+        block_id?: string
+      }[],
+      thread_ts?: string,
+      reply_count?: number,
+      reply_users_count?: number,
+      latest_reply?: string,
+      reply_users?: string[],
+      subscribed?: boolean,
+      is_locked?: boolean
+    }
+  } | {
+    type: message,
+    subtype: message_deleted,
+    event_ts: string,
+    hidden: true,
+    channel: string,
+    channel_type: channel | group | im | mpim | app_home,
+    ts: string,
+    deleted_ts: string,
+    previous_message: (recursive)
+  } | {
+    type: message,
+    subtype: message_replied,
+    event_ts: string,
+    hidden: true,
+    channel: string,
+    channel_type: channel | group | im | mpim | app_home,
+    ts: string,
+    message: (
+      {
+        type: message,
+        event_ts: string,
+        team?: string,
+        channel: string,
+        user: string,
+        bot_id?: string,
+        bot_profile?: {
+          id: string,
+          name: string,
+          app_id: string,
+          team_id: string,
+          icons: Record<string, string>,
+          updated: number,
+          deleted: boolean
+        },
+        text?: string,
+        ts: string,
+        thread_ts?: string,
+        channel_type: channel | group | im | mpim | app_home,
+        attachments?: {
+          blocks?: (
+            {
+              type: section | divider | image | actions | context | input | file | header | video | rich_text,
+              block_id?: string
+            } | {
+              type: string,
+              block_id?: string
+            }
+          )[],
+          fallback?: string,
+          color?: string,
+          pretext?: string,
+          author_name?: string,
+          author_link?: string,
+          author_icon?: string,
+          title?: string,
+          title_link?: string,
+          text?: string,
+          fields?: {
+            title: string,
+            value: string,
+            short?: boolean
+          }[],
+          image_url?: string,
+          thumb_url?: string,
+          footer?: string,
+          footer_icon?: string,
+          ts?: string
+        }[],
+        blocks?: (
+          {
+            type: section | divider | image | actions | context | input | file | header | video | rich_text,
+            block_id?: string
+          } | {
+            type: string,
+            block_id?: string
+          }
+        )[],
+        files?: {
+          id: string,
+          created: number,
+          name: string | null,
+          title: string | null,
+          mimetype: string,
+          filetype: string,
+          pretty_type: string,
+          user?: string,
+          editable: boolean,
+          size: number,
+          mode: hosted | external | snippet | post,
+          is_external: boolean,
+          external_type: string | null,
+          is_public: boolean,
+          public_url_shared: boolean,
+          display_as_bot: boolean,
+          username: string | null,
+          url_private?: string,
+          url_private_download?: string,
+          permalink: string,
+          permalink_public?: string,
+          channels: string[] | null,
+          groups: string[] | null,
+          users?: string[],
+          is_starred?: boolean,
+          num_stars?: number
+        }[],
+        edited?: {
+          user: string,
+          ts: string
+        },
+        client_msg_id?: string,
+        parent_user_id?: string,
+        is_starred?: boolean,
+        pinned_to?: string[],
+        reactions?: {
+          name: string,
+          count: number,
+          users: string[]
+        }[],
+        assistant_thread?: Record<string, any>
+      } | {
+        type: message,
+        subtype: bot_message,
+        event_ts: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        streaming_state?: in_progress | completed | errored,
+        ts: string,
+        text: string,
+        bot_id: string,
+        username?: string,
+        user?: string,
+        attachments?: {
+          blocks?: (
+            {
+              type: section | divider | image | actions | context | input | file | header | video | rich_text,
+              block_id?: string
+            } | {
+              type: string,
+              block_id?: string
+            }
+          )[],
+          fallback?: string,
+          color?: string,
+          pretext?: string,
+          author_name?: string,
+          author_link?: string,
+          author_icon?: string,
+          title?: string,
+          title_link?: string,
+          text?: string,
+          fields?: {
+            title: string,
+            value: string,
+            short?: boolean
+          }[],
+          image_url?: string,
+          thumb_url?: string,
+          footer?: string,
+          footer_icon?: string,
+          ts?: string
+        }[],
+        blocks?: (
+          {
+            type: section | divider | image | actions | context | input | file | header | video | rich_text,
+            block_id?: string
+          } | {
+            type: string,
+            block_id?: string
+          }
+        )[],
+        edited?: {
+          user: string,
+          ts: string
+        },
+        thread_ts?: string
+      } | {
+        type: message,
+        subtype: channel_archive,
+        team: string,
+        user: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        text: string,
+        ts: string,
+        event_ts: string
+      } | {
+        type: message,
+        subtype: channel_join,
+        team: string,
+        user: string,
+        inviter: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        text: string,
+        ts: string,
+        event_ts: string
+      } | {
+        type: message,
+        subtype: channel_leave,
+        team: string,
+        user: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        text: string,
+        ts: string,
+        event_ts: string
+      } | {
+        type: message,
+        subtype: channel_name,
+        team: string,
+        user: string,
+        name: string,
+        old_name: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        text: string,
+        ts: string,
+        event_ts: string
+      } | {
+        type: message,
+        subtype: channel_posting_permissions,
+        user: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        text: string,
+        ts: string,
+        event_ts: string
+      } | {
+        type: message,
+        subtype: channel_purpose,
+        user: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        text: string,
+        purpose: string,
+        ts: string,
+        event_ts: string
+      } | {
+        type: message,
+        subtype: channel_topic,
+        user: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        text: string,
+        topic: string,
+        ts: string,
+        event_ts: string
+      } | {
+        type: message,
+        subtype: channel_unarchive,
+        team: string,
+        user: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        text: string,
+        ts: string,
+        event_ts: string
+      } | {
+        type: message,
+        subtype: ekm_access_denied,
+        event_ts: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        ts: string,
+        text: string,
+        user: UREVOKEDU
+      } | {
+        type: message,
+        subtype: file_share,
+        text: string,
+        attachments?: {
+          blocks?: (
+            {
+              type: section | divider | image | actions | context | input | file | header | video | rich_text,
+              block_id?: string
+            } | {
+              type: string,
+              block_id?: string
+            }
+          )[],
+          fallback?: string,
+          color?: string,
+          pretext?: string,
+          author_name?: string,
+          author_link?: string,
+          author_icon?: string,
+          title?: string,
+          title_link?: string,
+          text?: string,
+          fields?: {
+            title: string,
+            value: string,
+            short?: boolean
+          }[],
+          image_url?: string,
+          thumb_url?: string,
+          footer?: string,
+          footer_icon?: string,
+          ts?: string
+        }[],
+        blocks?: (
+          {
+            type: section | divider | image | actions | context | input | file | header | video | rich_text,
+            block_id?: string
+          } | {
+            type: string,
+            block_id?: string
+          }
+        )[],
+        files?: {
+          id: string,
+          created: number,
+          name: string | null,
+          title: string | null,
+          mimetype: string,
+          filetype: string,
+          pretty_type: string,
+          user?: string,
+          editable: boolean,
+          size: number,
+          mode: hosted | external | snippet | post,
+          is_external: boolean,
+          external_type: string | null,
+          is_public: boolean,
+          public_url_shared: boolean,
+          display_as_bot: boolean,
+          username: string | null,
+          url_private?: string,
+          url_private_download?: string,
+          permalink: string,
+          permalink_public?: string,
+          channels: string[] | null,
+          groups: string[] | null,
+          users?: string[],
+          is_starred?: boolean,
+          num_stars?: number
+        }[],
+        upload?: boolean,
+        display_as_bot?: boolean,
+        x_files?: string[],
+        user: string,
+        parent_user_id?: string,
+        ts: string,
+        thread_ts?: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        event_ts: string
+      } | {
+        type: message,
+        subtype: me_message,
+        event_ts: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        user: string,
+        text: string,
+        ts: string
+      } | {
+        type: message,
+        subtype: message_changed,
+        event_ts: string,
+        hidden: true,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        ts: string,
+        message: {
+          type: message,
+          subtype?: string,
+          user?: string,
+          bot_id?: string,
+          ts: string,
+          client_msg_id?: string,
+          text?: string,
+          team?: string,
+          source_team?: string,
+          user_team?: string,
+          edited?: {
+            user: string,
+            ts: string
+          },
+          blocks?: {
+            type: string,
+            block_id?: string
+          }[],
+          thread_ts?: string,
+          reply_count?: number,
+          reply_users_count?: number,
+          latest_reply?: string,
+          reply_users?: string[],
+          subscribed?: boolean,
+          is_locked?: boolean
+        },
+        previous_message: {
+          type: message,
+          subtype?: string,
+          user?: string,
+          bot_id?: string,
+          ts: string,
+          client_msg_id?: string,
+          text?: string,
+          team?: string,
+          source_team?: string,
+          user_team?: string,
+          edited?: {
+            user: string,
+            ts: string
+          },
+          blocks?: {
+            type: string,
+            block_id?: string
+          }[],
+          thread_ts?: string,
+          reply_count?: number,
+          reply_users_count?: number,
+          latest_reply?: string,
+          reply_users?: string[],
+          subscribed?: boolean,
+          is_locked?: boolean
+        }
+      } | {
+        type: message,
+        subtype: message_deleted,
+        event_ts: string,
+        hidden: true,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        ts: string,
+        deleted_ts: string,
+        previous_message: (recursive)
+      } | {
+        type: message,
+        subtype: message_replied,
+        event_ts: string,
+        hidden: true,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        ts: string,
+        message: (recursive)& {
+          thread_ts: string,
+          reply_count: number,
+          reply_users_count?: number,
+          latest_reply?: string,
+          reply_users?: string[],
+          replies: {
+            user: string,
+            ts: string
+          }[]
+        }
+      } | {
+        type: message,
+        subtype: thread_broadcast,
+        event_ts: string,
+        text: string,
+        attachments?: {
+          blocks?: (
+            {
+              type: section | divider | image | actions | context | input | file | header | video | rich_text,
+              block_id?: string
+            } | {
+              type: string,
+              block_id?: string
+            }
+          )[],
+          fallback?: string,
+          color?: string,
+          pretext?: string,
+          author_name?: string,
+          author_link?: string,
+          author_icon?: string,
+          title?: string,
+          title_link?: string,
+          text?: string,
+          fields?: {
+            title: string,
+            value: string,
+            short?: boolean
+          }[],
+          image_url?: string,
+          thumb_url?: string,
+          footer?: string,
+          footer_icon?: string,
+          ts?: string
+        }[],
+        blocks?: (
+          {
+            type: section | divider | image | actions | context | input | file | header | video | rich_text,
+            block_id?: string
+          } | {
+            type: string,
+            block_id?: string
+          }
+        )[],
+        user: string,
+        ts: string,
+        thread_ts?: string,
+        root: {
+          type: message,
+          event_ts: string,
+          channel: string,
+          ts: string,
+          channel_type: channel | group | im | mpim | app_home,
+          thread_ts: string,
+          reply_count: number,
+          reply_users_count: number,
+          latest_reply: string,
+          reply_users: string[],
+          user?: string,
+          text?: string,
+          bot_id?: string
+        },
+        client_msg_id: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home
+      }
+    )& {
+      thread_ts: string,
+      reply_count: number,
+      reply_users_count?: number,
+      latest_reply?: string,
+      reply_users?: string[],
+      replies: {
+        user: string,
+        ts: string
+      }[]
+    }
+  } | {
+    type: message,
+    subtype: thread_broadcast,
+    event_ts: string,
+    text: string,
+    attachments?: {
+      blocks?: (
+        {
+          type: section | divider | image | actions | context | input | file | header | video | rich_text,
+          block_id?: string
+        } | {
+          type: string,
+          block_id?: string
+        }
+      )[],
+      fallback?: string,
+      color?: string,
+      pretext?: string,
+      author_name?: string,
+      author_link?: string,
+      author_icon?: string,
+      title?: string,
+      title_link?: string,
+      text?: string,
+      fields?: {
+        title: string,
+        value: string,
+        short?: boolean
+      }[],
+      image_url?: string,
+      thumb_url?: string,
+      footer?: string,
+      footer_icon?: string,
+      ts?: string
+    }[],
+    blocks?: (
+      {
+        type: section | divider | image | actions | context | input | file | header | video | rich_text,
+        block_id?: string
+      } | {
+        type: string,
+        block_id?: string
+      }
+    )[],
+    user: string,
+    ts: string,
+    thread_ts?: string,
+    root: {
+      type: message,
+      event_ts: string,
+      channel: string,
+      ts: string,
+      channel_type: channel | group | im | mpim | app_home,
+      thread_ts: string,
+      reply_count: number,
+      reply_users_count: number,
+      latest_reply: string,
+      reply_users: string[],
+      user?: string,
+      text?: string,
+      bot_id?: string
+    },
+    client_msg_id: string,
+    channel: string,
+    channel_type: channel | group | im | mpim | app_home
+  }
 } | {
   type: message,
   subtype: message_replied,
@@ -1450,7 +4431,997 @@ A message was posted or updated in a channel
   channel: string,
   channel_type: channel | group | im | mpim | app_home,
   ts: string,
-  message: lazy & {
+  message: (
+    {
+      type: message,
+      event_ts: string,
+      team?: string,
+      channel: string,
+      user: string,
+      bot_id?: string,
+      bot_profile?: {
+        id: string,
+        name: string,
+        app_id: string,
+        team_id: string,
+        icons: Record<string, string>,
+        updated: number,
+        deleted: boolean
+      },
+      text?: string,
+      ts: string,
+      thread_ts?: string,
+      channel_type: channel | group | im | mpim | app_home,
+      attachments?: {
+        blocks?: (
+          {
+            type: section | divider | image | actions | context | input | file | header | video | rich_text,
+            block_id?: string
+          } | {
+            type: string,
+            block_id?: string
+          }
+        )[],
+        fallback?: string,
+        color?: string,
+        pretext?: string,
+        author_name?: string,
+        author_link?: string,
+        author_icon?: string,
+        title?: string,
+        title_link?: string,
+        text?: string,
+        fields?: {
+          title: string,
+          value: string,
+          short?: boolean
+        }[],
+        image_url?: string,
+        thumb_url?: string,
+        footer?: string,
+        footer_icon?: string,
+        ts?: string
+      }[],
+      blocks?: (
+        {
+          type: section | divider | image | actions | context | input | file | header | video | rich_text,
+          block_id?: string
+        } | {
+          type: string,
+          block_id?: string
+        }
+      )[],
+      files?: {
+        id: string,
+        created: number,
+        name: string | null,
+        title: string | null,
+        mimetype: string,
+        filetype: string,
+        pretty_type: string,
+        user?: string,
+        editable: boolean,
+        size: number,
+        mode: hosted | external | snippet | post,
+        is_external: boolean,
+        external_type: string | null,
+        is_public: boolean,
+        public_url_shared: boolean,
+        display_as_bot: boolean,
+        username: string | null,
+        url_private?: string,
+        url_private_download?: string,
+        permalink: string,
+        permalink_public?: string,
+        channels: string[] | null,
+        groups: string[] | null,
+        users?: string[],
+        is_starred?: boolean,
+        num_stars?: number
+      }[],
+      edited?: {
+        user: string,
+        ts: string
+      },
+      client_msg_id?: string,
+      parent_user_id?: string,
+      is_starred?: boolean,
+      pinned_to?: string[],
+      reactions?: {
+        name: string,
+        count: number,
+        users: string[]
+      }[],
+      assistant_thread?: Record<string, any>
+    } | {
+      type: message,
+      subtype: bot_message,
+      event_ts: string,
+      channel: string,
+      channel_type: channel | group | im | mpim | app_home,
+      streaming_state?: in_progress | completed | errored,
+      ts: string,
+      text: string,
+      bot_id: string,
+      username?: string,
+      user?: string,
+      attachments?: {
+        blocks?: (
+          {
+            type: section | divider | image | actions | context | input | file | header | video | rich_text,
+            block_id?: string
+          } | {
+            type: string,
+            block_id?: string
+          }
+        )[],
+        fallback?: string,
+        color?: string,
+        pretext?: string,
+        author_name?: string,
+        author_link?: string,
+        author_icon?: string,
+        title?: string,
+        title_link?: string,
+        text?: string,
+        fields?: {
+          title: string,
+          value: string,
+          short?: boolean
+        }[],
+        image_url?: string,
+        thumb_url?: string,
+        footer?: string,
+        footer_icon?: string,
+        ts?: string
+      }[],
+      blocks?: (
+        {
+          type: section | divider | image | actions | context | input | file | header | video | rich_text,
+          block_id?: string
+        } | {
+          type: string,
+          block_id?: string
+        }
+      )[],
+      edited?: {
+        user: string,
+        ts: string
+      },
+      thread_ts?: string
+    } | {
+      type: message,
+      subtype: channel_archive,
+      team: string,
+      user: string,
+      channel: string,
+      channel_type: channel | group | im | mpim | app_home,
+      text: string,
+      ts: string,
+      event_ts: string
+    } | {
+      type: message,
+      subtype: channel_join,
+      team: string,
+      user: string,
+      inviter: string,
+      channel: string,
+      channel_type: channel | group | im | mpim | app_home,
+      text: string,
+      ts: string,
+      event_ts: string
+    } | {
+      type: message,
+      subtype: channel_leave,
+      team: string,
+      user: string,
+      channel: string,
+      channel_type: channel | group | im | mpim | app_home,
+      text: string,
+      ts: string,
+      event_ts: string
+    } | {
+      type: message,
+      subtype: channel_name,
+      team: string,
+      user: string,
+      name: string,
+      old_name: string,
+      channel: string,
+      channel_type: channel | group | im | mpim | app_home,
+      text: string,
+      ts: string,
+      event_ts: string
+    } | {
+      type: message,
+      subtype: channel_posting_permissions,
+      user: string,
+      channel: string,
+      channel_type: channel | group | im | mpim | app_home,
+      text: string,
+      ts: string,
+      event_ts: string
+    } | {
+      type: message,
+      subtype: channel_purpose,
+      user: string,
+      channel: string,
+      channel_type: channel | group | im | mpim | app_home,
+      text: string,
+      purpose: string,
+      ts: string,
+      event_ts: string
+    } | {
+      type: message,
+      subtype: channel_topic,
+      user: string,
+      channel: string,
+      channel_type: channel | group | im | mpim | app_home,
+      text: string,
+      topic: string,
+      ts: string,
+      event_ts: string
+    } | {
+      type: message,
+      subtype: channel_unarchive,
+      team: string,
+      user: string,
+      channel: string,
+      channel_type: channel | group | im | mpim | app_home,
+      text: string,
+      ts: string,
+      event_ts: string
+    } | {
+      type: message,
+      subtype: ekm_access_denied,
+      event_ts: string,
+      channel: string,
+      channel_type: channel | group | im | mpim | app_home,
+      ts: string,
+      text: string,
+      user: UREVOKEDU
+    } | {
+      type: message,
+      subtype: file_share,
+      text: string,
+      attachments?: {
+        blocks?: (
+          {
+            type: section | divider | image | actions | context | input | file | header | video | rich_text,
+            block_id?: string
+          } | {
+            type: string,
+            block_id?: string
+          }
+        )[],
+        fallback?: string,
+        color?: string,
+        pretext?: string,
+        author_name?: string,
+        author_link?: string,
+        author_icon?: string,
+        title?: string,
+        title_link?: string,
+        text?: string,
+        fields?: {
+          title: string,
+          value: string,
+          short?: boolean
+        }[],
+        image_url?: string,
+        thumb_url?: string,
+        footer?: string,
+        footer_icon?: string,
+        ts?: string
+      }[],
+      blocks?: (
+        {
+          type: section | divider | image | actions | context | input | file | header | video | rich_text,
+          block_id?: string
+        } | {
+          type: string,
+          block_id?: string
+        }
+      )[],
+      files?: {
+        id: string,
+        created: number,
+        name: string | null,
+        title: string | null,
+        mimetype: string,
+        filetype: string,
+        pretty_type: string,
+        user?: string,
+        editable: boolean,
+        size: number,
+        mode: hosted | external | snippet | post,
+        is_external: boolean,
+        external_type: string | null,
+        is_public: boolean,
+        public_url_shared: boolean,
+        display_as_bot: boolean,
+        username: string | null,
+        url_private?: string,
+        url_private_download?: string,
+        permalink: string,
+        permalink_public?: string,
+        channels: string[] | null,
+        groups: string[] | null,
+        users?: string[],
+        is_starred?: boolean,
+        num_stars?: number
+      }[],
+      upload?: boolean,
+      display_as_bot?: boolean,
+      x_files?: string[],
+      user: string,
+      parent_user_id?: string,
+      ts: string,
+      thread_ts?: string,
+      channel: string,
+      channel_type: channel | group | im | mpim | app_home,
+      event_ts: string
+    } | {
+      type: message,
+      subtype: me_message,
+      event_ts: string,
+      channel: string,
+      channel_type: channel | group | im | mpim | app_home,
+      user: string,
+      text: string,
+      ts: string
+    } | {
+      type: message,
+      subtype: message_changed,
+      event_ts: string,
+      hidden: true,
+      channel: string,
+      channel_type: channel | group | im | mpim | app_home,
+      ts: string,
+      message: {
+        type: message,
+        subtype?: string,
+        user?: string,
+        bot_id?: string,
+        ts: string,
+        client_msg_id?: string,
+        text?: string,
+        team?: string,
+        source_team?: string,
+        user_team?: string,
+        edited?: {
+          user: string,
+          ts: string
+        },
+        blocks?: {
+          type: string,
+          block_id?: string
+        }[],
+        thread_ts?: string,
+        reply_count?: number,
+        reply_users_count?: number,
+        latest_reply?: string,
+        reply_users?: string[],
+        subscribed?: boolean,
+        is_locked?: boolean
+      },
+      previous_message: {
+        type: message,
+        subtype?: string,
+        user?: string,
+        bot_id?: string,
+        ts: string,
+        client_msg_id?: string,
+        text?: string,
+        team?: string,
+        source_team?: string,
+        user_team?: string,
+        edited?: {
+          user: string,
+          ts: string
+        },
+        blocks?: {
+          type: string,
+          block_id?: string
+        }[],
+        thread_ts?: string,
+        reply_count?: number,
+        reply_users_count?: number,
+        latest_reply?: string,
+        reply_users?: string[],
+        subscribed?: boolean,
+        is_locked?: boolean
+      }
+    } | {
+      type: message,
+      subtype: message_deleted,
+      event_ts: string,
+      hidden: true,
+      channel: string,
+      channel_type: channel | group | im | mpim | app_home,
+      ts: string,
+      deleted_ts: string,
+      previous_message: {
+        type: message,
+        event_ts: string,
+        team?: string,
+        channel: string,
+        user: string,
+        bot_id?: string,
+        bot_profile?: {
+          id: string,
+          name: string,
+          app_id: string,
+          team_id: string,
+          icons: Record<string, string>,
+          updated: number,
+          deleted: boolean
+        },
+        text?: string,
+        ts: string,
+        thread_ts?: string,
+        channel_type: channel | group | im | mpim | app_home,
+        attachments?: {
+          blocks?: (
+            {
+              type: section | divider | image | actions | context | input | file | header | video | rich_text,
+              block_id?: string
+            } | {
+              type: string,
+              block_id?: string
+            }
+          )[],
+          fallback?: string,
+          color?: string,
+          pretext?: string,
+          author_name?: string,
+          author_link?: string,
+          author_icon?: string,
+          title?: string,
+          title_link?: string,
+          text?: string,
+          fields?: {
+            title: string,
+            value: string,
+            short?: boolean
+          }[],
+          image_url?: string,
+          thumb_url?: string,
+          footer?: string,
+          footer_icon?: string,
+          ts?: string
+        }[],
+        blocks?: (
+          {
+            type: section | divider | image | actions | context | input | file | header | video | rich_text,
+            block_id?: string
+          } | {
+            type: string,
+            block_id?: string
+          }
+        )[],
+        files?: {
+          id: string,
+          created: number,
+          name: string | null,
+          title: string | null,
+          mimetype: string,
+          filetype: string,
+          pretty_type: string,
+          user?: string,
+          editable: boolean,
+          size: number,
+          mode: hosted | external | snippet | post,
+          is_external: boolean,
+          external_type: string | null,
+          is_public: boolean,
+          public_url_shared: boolean,
+          display_as_bot: boolean,
+          username: string | null,
+          url_private?: string,
+          url_private_download?: string,
+          permalink: string,
+          permalink_public?: string,
+          channels: string[] | null,
+          groups: string[] | null,
+          users?: string[],
+          is_starred?: boolean,
+          num_stars?: number
+        }[],
+        edited?: {
+          user: string,
+          ts: string
+        },
+        client_msg_id?: string,
+        parent_user_id?: string,
+        is_starred?: boolean,
+        pinned_to?: string[],
+        reactions?: {
+          name: string,
+          count: number,
+          users: string[]
+        }[],
+        assistant_thread?: Record<string, any>
+      } | {
+        type: message,
+        subtype: bot_message,
+        event_ts: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        streaming_state?: in_progress | completed | errored,
+        ts: string,
+        text: string,
+        bot_id: string,
+        username?: string,
+        user?: string,
+        attachments?: {
+          blocks?: (
+            {
+              type: section | divider | image | actions | context | input | file | header | video | rich_text,
+              block_id?: string
+            } | {
+              type: string,
+              block_id?: string
+            }
+          )[],
+          fallback?: string,
+          color?: string,
+          pretext?: string,
+          author_name?: string,
+          author_link?: string,
+          author_icon?: string,
+          title?: string,
+          title_link?: string,
+          text?: string,
+          fields?: {
+            title: string,
+            value: string,
+            short?: boolean
+          }[],
+          image_url?: string,
+          thumb_url?: string,
+          footer?: string,
+          footer_icon?: string,
+          ts?: string
+        }[],
+        blocks?: (
+          {
+            type: section | divider | image | actions | context | input | file | header | video | rich_text,
+            block_id?: string
+          } | {
+            type: string,
+            block_id?: string
+          }
+        )[],
+        edited?: {
+          user: string,
+          ts: string
+        },
+        thread_ts?: string
+      } | {
+        type: message,
+        subtype: channel_archive,
+        team: string,
+        user: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        text: string,
+        ts: string,
+        event_ts: string
+      } | {
+        type: message,
+        subtype: channel_join,
+        team: string,
+        user: string,
+        inviter: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        text: string,
+        ts: string,
+        event_ts: string
+      } | {
+        type: message,
+        subtype: channel_leave,
+        team: string,
+        user: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        text: string,
+        ts: string,
+        event_ts: string
+      } | {
+        type: message,
+        subtype: channel_name,
+        team: string,
+        user: string,
+        name: string,
+        old_name: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        text: string,
+        ts: string,
+        event_ts: string
+      } | {
+        type: message,
+        subtype: channel_posting_permissions,
+        user: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        text: string,
+        ts: string,
+        event_ts: string
+      } | {
+        type: message,
+        subtype: channel_purpose,
+        user: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        text: string,
+        purpose: string,
+        ts: string,
+        event_ts: string
+      } | {
+        type: message,
+        subtype: channel_topic,
+        user: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        text: string,
+        topic: string,
+        ts: string,
+        event_ts: string
+      } | {
+        type: message,
+        subtype: channel_unarchive,
+        team: string,
+        user: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        text: string,
+        ts: string,
+        event_ts: string
+      } | {
+        type: message,
+        subtype: ekm_access_denied,
+        event_ts: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        ts: string,
+        text: string,
+        user: UREVOKEDU
+      } | {
+        type: message,
+        subtype: file_share,
+        text: string,
+        attachments?: {
+          blocks?: (
+            {
+              type: section | divider | image | actions | context | input | file | header | video | rich_text,
+              block_id?: string
+            } | {
+              type: string,
+              block_id?: string
+            }
+          )[],
+          fallback?: string,
+          color?: string,
+          pretext?: string,
+          author_name?: string,
+          author_link?: string,
+          author_icon?: string,
+          title?: string,
+          title_link?: string,
+          text?: string,
+          fields?: {
+            title: string,
+            value: string,
+            short?: boolean
+          }[],
+          image_url?: string,
+          thumb_url?: string,
+          footer?: string,
+          footer_icon?: string,
+          ts?: string
+        }[],
+        blocks?: (
+          {
+            type: section | divider | image | actions | context | input | file | header | video | rich_text,
+            block_id?: string
+          } | {
+            type: string,
+            block_id?: string
+          }
+        )[],
+        files?: {
+          id: string,
+          created: number,
+          name: string | null,
+          title: string | null,
+          mimetype: string,
+          filetype: string,
+          pretty_type: string,
+          user?: string,
+          editable: boolean,
+          size: number,
+          mode: hosted | external | snippet | post,
+          is_external: boolean,
+          external_type: string | null,
+          is_public: boolean,
+          public_url_shared: boolean,
+          display_as_bot: boolean,
+          username: string | null,
+          url_private?: string,
+          url_private_download?: string,
+          permalink: string,
+          permalink_public?: string,
+          channels: string[] | null,
+          groups: string[] | null,
+          users?: string[],
+          is_starred?: boolean,
+          num_stars?: number
+        }[],
+        upload?: boolean,
+        display_as_bot?: boolean,
+        x_files?: string[],
+        user: string,
+        parent_user_id?: string,
+        ts: string,
+        thread_ts?: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        event_ts: string
+      } | {
+        type: message,
+        subtype: me_message,
+        event_ts: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        user: string,
+        text: string,
+        ts: string
+      } | {
+        type: message,
+        subtype: message_changed,
+        event_ts: string,
+        hidden: true,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        ts: string,
+        message: {
+          type: message,
+          subtype?: string,
+          user?: string,
+          bot_id?: string,
+          ts: string,
+          client_msg_id?: string,
+          text?: string,
+          team?: string,
+          source_team?: string,
+          user_team?: string,
+          edited?: {
+            user: string,
+            ts: string
+          },
+          blocks?: {
+            type: string,
+            block_id?: string
+          }[],
+          thread_ts?: string,
+          reply_count?: number,
+          reply_users_count?: number,
+          latest_reply?: string,
+          reply_users?: string[],
+          subscribed?: boolean,
+          is_locked?: boolean
+        },
+        previous_message: {
+          type: message,
+          subtype?: string,
+          user?: string,
+          bot_id?: string,
+          ts: string,
+          client_msg_id?: string,
+          text?: string,
+          team?: string,
+          source_team?: string,
+          user_team?: string,
+          edited?: {
+            user: string,
+            ts: string
+          },
+          blocks?: {
+            type: string,
+            block_id?: string
+          }[],
+          thread_ts?: string,
+          reply_count?: number,
+          reply_users_count?: number,
+          latest_reply?: string,
+          reply_users?: string[],
+          subscribed?: boolean,
+          is_locked?: boolean
+        }
+      } | {
+        type: message,
+        subtype: message_deleted,
+        event_ts: string,
+        hidden: true,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        ts: string,
+        deleted_ts: string,
+        previous_message: (recursive)
+      } | {
+        type: message,
+        subtype: message_replied,
+        event_ts: string,
+        hidden: true,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home,
+        ts: string,
+        message: (recursive)& {
+          thread_ts: string,
+          reply_count: number,
+          reply_users_count?: number,
+          latest_reply?: string,
+          reply_users?: string[],
+          replies: {
+            user: string,
+            ts: string
+          }[]
+        }
+      } | {
+        type: message,
+        subtype: thread_broadcast,
+        event_ts: string,
+        text: string,
+        attachments?: {
+          blocks?: (
+            {
+              type: section | divider | image | actions | context | input | file | header | video | rich_text,
+              block_id?: string
+            } | {
+              type: string,
+              block_id?: string
+            }
+          )[],
+          fallback?: string,
+          color?: string,
+          pretext?: string,
+          author_name?: string,
+          author_link?: string,
+          author_icon?: string,
+          title?: string,
+          title_link?: string,
+          text?: string,
+          fields?: {
+            title: string,
+            value: string,
+            short?: boolean
+          }[],
+          image_url?: string,
+          thumb_url?: string,
+          footer?: string,
+          footer_icon?: string,
+          ts?: string
+        }[],
+        blocks?: (
+          {
+            type: section | divider | image | actions | context | input | file | header | video | rich_text,
+            block_id?: string
+          } | {
+            type: string,
+            block_id?: string
+          }
+        )[],
+        user: string,
+        ts: string,
+        thread_ts?: string,
+        root: {
+          type: message,
+          event_ts: string,
+          channel: string,
+          ts: string,
+          channel_type: channel | group | im | mpim | app_home,
+          thread_ts: string,
+          reply_count: number,
+          reply_users_count: number,
+          latest_reply: string,
+          reply_users: string[],
+          user?: string,
+          text?: string,
+          bot_id?: string
+        },
+        client_msg_id: string,
+        channel: string,
+        channel_type: channel | group | im | mpim | app_home
+      }
+    } | {
+      type: message,
+      subtype: message_replied,
+      event_ts: string,
+      hidden: true,
+      channel: string,
+      channel_type: channel | group | im | mpim | app_home,
+      ts: string,
+      message: (recursive)& {
+        thread_ts: string,
+        reply_count: number,
+        reply_users_count?: number,
+        latest_reply?: string,
+        reply_users?: string[],
+        replies: {
+          user: string,
+          ts: string
+        }[]
+      }
+    } | {
+      type: message,
+      subtype: thread_broadcast,
+      event_ts: string,
+      text: string,
+      attachments?: {
+        blocks?: (
+          {
+            type: section | divider | image | actions | context | input | file | header | video | rich_text,
+            block_id?: string
+          } | {
+            type: string,
+            block_id?: string
+          }
+        )[],
+        fallback?: string,
+        color?: string,
+        pretext?: string,
+        author_name?: string,
+        author_link?: string,
+        author_icon?: string,
+        title?: string,
+        title_link?: string,
+        text?: string,
+        fields?: {
+          title: string,
+          value: string,
+          short?: boolean
+        }[],
+        image_url?: string,
+        thumb_url?: string,
+        footer?: string,
+        footer_icon?: string,
+        ts?: string
+      }[],
+      blocks?: (
+        {
+          type: section | divider | image | actions | context | input | file | header | video | rich_text,
+          block_id?: string
+        } | {
+          type: string,
+          block_id?: string
+        }
+      )[],
+      user: string,
+      ts: string,
+      thread_ts?: string,
+      root: {
+        type: message,
+        event_ts: string,
+        channel: string,
+        ts: string,
+        channel_type: channel | group | im | mpim | app_home,
+        thread_ts: string,
+        reply_count: number,
+        reply_users_count: number,
+        latest_reply: string,
+        reply_users: string[],
+        user?: string,
+        text?: string,
+        bot_id?: string
+      },
+      client_msg_id: string,
+      channel: string,
+      channel_type: channel | group | im | mpim | app_home
+    }
+  )& {
     thread_ts: string,
     reply_count: number,
     reply_users_count?: number,
@@ -1578,7 +5549,7 @@ A reaction emoji was added to a message
 
 ```ts
 {
-  enterprise_id?: string | null,
+  enterprise_id: string | null,
   team_id: string,
   user_id: string,
   is_bot: boolean,
@@ -1675,7 +5646,7 @@ A new user joined the workspace
 
 ```ts
 {
-  enterprise_id?: string | null,
+  enterprise_id: string | null,
   team_id: string,
   user_id: string,
   is_bot: boolean,
@@ -1732,8 +5703,10 @@ A new user joined the workspace
       image_512: string,
       image_1024?: string,
       team: string,
-      fields: {
-      } | never[] | null
+      fields: Record<string, {
+        value: string,
+        alt: string
+      }> | never[] | null
     },
     is_admin: boolean,
     is_owner: boolean,
@@ -1820,8 +5793,10 @@ A new user joined the workspace
       image_512: string,
       image_1024?: string,
       team: string,
-      fields: {
-      } | never[] | null
+      fields: Record<string, {
+        value: string,
+        alt: string
+      }> | never[] | null
     },
     is_admin: boolean,
     is_owner: boolean,
@@ -1902,7 +5877,7 @@ A user's profile or account settings were updated
 
 ```ts
 {
-  enterprise_id?: string | null,
+  enterprise_id: string | null,
   team_id: string,
   user_id: string,
   is_bot: boolean,
@@ -1959,8 +5934,10 @@ A user's profile or account settings were updated
       image_512: string,
       image_1024?: string,
       team: string,
-      fields: {
-      } | never[] | null
+      fields: Record<string, {
+        value: string,
+        alt: string
+      }> | never[] | null
     },
     is_admin: boolean,
     is_owner: boolean,
@@ -2047,8 +6024,10 @@ A user's profile or account settings were updated
       image_512: string,
       image_1024?: string,
       team: string,
-      fields: {
-      } | never[] | null
+      fields: Record<string, {
+        value: string,
+        alt: string
+      }> | never[] | null
     },
     is_admin: boolean,
     is_owner: boolean,

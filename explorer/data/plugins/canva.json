@@ -243,7 +243,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, { type: text, text: string } | { type: image, asset_id: string } | { type: video, asset_id: string } | { type: chart, chart_data: Record<string, any> } | { type: sheet, sheet_data: Record<string, any> }>"
           },
           {
             "key": "title",
@@ -336,7 +336,7 @@
           {
             "key": "dataset",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, { type: text | image | chart }>"
           }
         ]
       }
@@ -670,7 +670,7 @@
           {
             "key": "formats",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, { page_numbers?: number[] }>"
           }
         ]
       }
@@ -928,7 +928,7 @@
           {
             "key": "item_types",
             "optional": true,
-            "type": "design | folder | image | brand_template[]"
+            "type": "(design | folder | image | brand_template)[]"
           },
           {
             "key": "sort_by",
@@ -1275,6 +1275,11 @@
         },
         {
           "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

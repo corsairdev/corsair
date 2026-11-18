@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Google Drive: every `googledrive.api.*` operation with input and output types."
+title: "Google Drive API reference"
+sidebarTitle: "API"
+description: "API reference for the Google Drive plugin in Corsair: every `googledrive.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `googledrive.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -47,8 +46,8 @@ await corsair.googledrive.api.files.copy({});
 | `trashed` | `boolean` | No | — |
 | `explicitlyTrashed` | `boolean` | No | — |
 | `parents` | `string[]` | No | — |
-| `properties` | `object` | No | — |
-| `appProperties` | `object` | No | — |
+| `properties` | `Record<string, string>` | No | — |
+| `appProperties` | `Record<string, string>` | No | — |
 | `spaces` | `string[]` | No | — |
 | `version` | `string` | No | — |
 | `webViewLink` | `string` | No | — |
@@ -79,24 +78,6 @@ await corsair.googledrive.api.files.copy({});
 | `resourceKey` | `string` | No | — |
 | `sha1Checksum` | `string` | No | — |
 | `sha256Checksum` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="appProperties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -138,8 +119,8 @@ await corsair.googledrive.api.files.createFromText({});
 | `trashed` | `boolean` | No | — |
 | `explicitlyTrashed` | `boolean` | No | — |
 | `parents` | `string[]` | No | — |
-| `properties` | `object` | No | — |
-| `appProperties` | `object` | No | — |
+| `properties` | `Record<string, string>` | No | — |
+| `appProperties` | `Record<string, string>` | No | — |
 | `spaces` | `string[]` | No | — |
 | `version` | `string` | No | — |
 | `webViewLink` | `string` | No | — |
@@ -170,24 +151,6 @@ await corsair.googledrive.api.files.createFromText({});
 | `resourceKey` | `string` | No | — |
 | `sha1Checksum` | `string` | No | — |
 | `sha256Checksum` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="appProperties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -224,7 +187,7 @@ await corsair.googledrive.api.files.delete({});
 
 `files.download`
 
-Download the content of a file
+Download a file. A text file comes back as text, any other file as base64, up to about 700 KB; size and type are always returned. Google Docs, Sheets and Slides cannot be downloaded this way.
 
 **Risk:** `read`
 
@@ -241,7 +204,17 @@ await corsair.googledrive.api.files.download({});
 
 
 
-**Output:** `any`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentBase64` | `string` | No | The file, base64-encoded. Missing when the file came back as text or contentOmitted is set. |
+| `text` | `string` | No | The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8. |
+| `contentType` | `string` | Yes | Media type of the file, for example application/pdf. |
+| `byteLength` | `number` | Yes | Size of the file in bytes. |
+| `filename` | `string` | No | The file name, when known. |
+| `contentOmitted` | `not_requested \| over_limit` | No | Set when the content was left out: the caller did not ask for it, or the file was over the limit. |
+
 
 
 ---
@@ -282,8 +255,8 @@ await corsair.googledrive.api.files.get({});
 | `trashed` | `boolean` | No | — |
 | `explicitlyTrashed` | `boolean` | No | — |
 | `parents` | `string[]` | No | — |
-| `properties` | `object` | No | — |
-| `appProperties` | `object` | No | — |
+| `properties` | `Record<string, string>` | No | — |
+| `appProperties` | `Record<string, string>` | No | — |
 | `spaces` | `string[]` | No | — |
 | `version` | `string` | No | — |
 | `webViewLink` | `string` | No | — |
@@ -314,24 +287,6 @@ await corsair.googledrive.api.files.get({});
 | `resourceKey` | `string` | No | — |
 | `sha1Checksum` | `string` | No | — |
 | `sha256Checksum` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="appProperties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -390,10 +345,8 @@ await corsair.googledrive.api.files.list({});
   trashed?: boolean,
   explicitlyTrashed?: boolean,
   parents?: string[],
-  properties?: {
-  },
-  appProperties?: {
-  },
+  properties?: Record<string, string>,
+  appProperties?: Record<string, string>,
   spaces?: string[],
   version?: string,
   webViewLink?: string,
@@ -469,8 +422,8 @@ await corsair.googledrive.api.files.move({});
 | `trashed` | `boolean` | No | — |
 | `explicitlyTrashed` | `boolean` | No | — |
 | `parents` | `string[]` | No | — |
-| `properties` | `object` | No | — |
-| `appProperties` | `object` | No | — |
+| `properties` | `Record<string, string>` | No | — |
+| `appProperties` | `Record<string, string>` | No | — |
 | `spaces` | `string[]` | No | — |
 | `version` | `string` | No | — |
 | `webViewLink` | `string` | No | — |
@@ -501,24 +454,6 @@ await corsair.googledrive.api.files.move({});
 | `resourceKey` | `string` | No | — |
 | `sha1Checksum` | `string` | No | — |
 | `sha256Checksum` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="appProperties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -601,28 +536,10 @@ await corsair.googledrive.api.files.update({});
 | `parents` | `string[]` | No | — |
 | `addParents` | `string` | No | — |
 | `removeParents` | `string` | No | — |
-| `properties` | `object` | No | — |
-| `appProperties` | `object` | No | — |
+| `properties` | `Record<string, string>` | No | — |
+| `appProperties` | `Record<string, string>` | No | — |
 | `supportsAllDrives` | `boolean` | No | — |
 | `supportsTeamDrives` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="appProperties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -638,8 +555,8 @@ await corsair.googledrive.api.files.update({});
 | `trashed` | `boolean` | No | — |
 | `explicitlyTrashed` | `boolean` | No | — |
 | `parents` | `string[]` | No | — |
-| `properties` | `object` | No | — |
-| `appProperties` | `object` | No | — |
+| `properties` | `Record<string, string>` | No | — |
+| `appProperties` | `Record<string, string>` | No | — |
 | `spaces` | `string[]` | No | — |
 | `version` | `string` | No | — |
 | `webViewLink` | `string` | No | — |
@@ -670,24 +587,6 @@ await corsair.googledrive.api.files.update({});
 | `resourceKey` | `string` | No | — |
 | `sha1Checksum` | `string` | No | — |
 | `sha256Checksum` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="appProperties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -728,8 +627,8 @@ await corsair.googledrive.api.files.upload({});
 | `trashed` | `boolean` | No | — |
 | `explicitlyTrashed` | `boolean` | No | — |
 | `parents` | `string[]` | No | — |
-| `properties` | `object` | No | — |
-| `appProperties` | `object` | No | — |
+| `properties` | `Record<string, string>` | No | — |
+| `appProperties` | `Record<string, string>` | No | — |
 | `spaces` | `string[]` | No | — |
 | `version` | `string` | No | — |
 | `webViewLink` | `string` | No | — |
@@ -760,24 +659,6 @@ await corsair.googledrive.api.files.upload({});
 | `resourceKey` | `string` | No | — |
 | `sha1Checksum` | `string` | No | — |
 | `sha256Checksum` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="appProperties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -819,8 +700,8 @@ await corsair.googledrive.api.folders.create({});
 | `trashed` | `boolean` | No | — |
 | `explicitlyTrashed` | `boolean` | No | — |
 | `parents` | `string[]` | No | — |
-| `properties` | `object` | No | — |
-| `appProperties` | `object` | No | — |
+| `properties` | `Record<string, string>` | No | — |
+| `appProperties` | `Record<string, string>` | No | — |
 | `spaces` | `string[]` | No | — |
 | `version` | `string` | No | — |
 | `webViewLink` | `string` | No | — |
@@ -851,24 +732,6 @@ await corsair.googledrive.api.folders.create({});
 | `resourceKey` | `string` | No | — |
 | `sha1Checksum` | `string` | No | — |
 | `sha256Checksum` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="appProperties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -936,8 +799,8 @@ await corsair.googledrive.api.folders.get({});
 | `trashed` | `boolean` | No | — |
 | `explicitlyTrashed` | `boolean` | No | — |
 | `parents` | `string[]` | No | — |
-| `properties` | `object` | No | — |
-| `appProperties` | `object` | No | — |
+| `properties` | `Record<string, string>` | No | — |
+| `appProperties` | `Record<string, string>` | No | — |
 | `spaces` | `string[]` | No | — |
 | `version` | `string` | No | — |
 | `webViewLink` | `string` | No | — |
@@ -968,24 +831,6 @@ await corsair.googledrive.api.folders.get({});
 | `resourceKey` | `string` | No | — |
 | `sha1Checksum` | `string` | No | — |
 | `sha256Checksum` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="appProperties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1044,10 +889,8 @@ await corsair.googledrive.api.folders.list({});
   trashed?: boolean,
   explicitlyTrashed?: boolean,
   parents?: string[],
-  properties?: {
-  },
-  appProperties?: {
-  },
+  properties?: Record<string, string>,
+  appProperties?: Record<string, string>,
   spaces?: string[],
   version?: string,
   webViewLink?: string,
@@ -1195,10 +1038,8 @@ await corsair.googledrive.api.search.filesAndFolders({});
   trashed?: boolean,
   explicitlyTrashed?: boolean,
   parents?: string[],
-  properties?: {
-  },
-  appProperties?: {
-  },
+  properties?: Record<string, string>,
+  appProperties?: Record<string, string>,
   spaces?: string[],
   version?: string,
   webViewLink?: string,

@@ -1,0 +1,1088 @@
+---
+title: "Heyy API reference"
+sidebarTitle: "API"
+description: "API reference for the Heyy plugin in Corsair: every `heyy.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Api Webhooks
+
+### create
+
+`apiWebhooks.create`
+
+Register an HTTPS endpoint for message events on the channels named in each event; Heyy then POSTs every matching message, with its content and sender, to that URL
+
+**Risk:** `write`
+
+```ts
+await corsair.heyy.api.apiWebhooks.create({ url: 'https://example.com/heyy/events', events: [{ type: 'message.received', scopes: [{ type: 'channel', ids: ['b1a2c3d4-0000-4000-8000-000000000000'] }] }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | HTTPS URL that receives the webhook POSTs. |
+| `events` | `object[]` | Yes | The events to deliver to this URL. |
+
+The URL must be https. Events are `message.received`, `message.sent`, `message.updated`, `whatsapp_message_received` or `whatsapp_message_status`, each scoped to at least one channel id from `channels.search`. Heyy then POSTs every matching message, with its content and sender, to that URL.
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  type: whatsapp_message_received | whatsapp_message_status | message.received | message.sent | message.updated,
+  scopes: {
+    type: channel,
+    ids: string[]
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook` | `object` | Yes | — |
+| `success` | `true` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  id: string,
+  createdAt: string,
+  updatedAt: string,
+  url: string,
+  status: string,
+  events?: {
+    type: string,
+    scopes?: {
+      type: string,
+      ids: string[]
+    }[] | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`apiWebhooks.remove`
+
+Delete a webhook endpoint by id; Heyy stops delivering to it immediately
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.heyy.api.apiWebhooks.remove({ webhookId: 'b1a2c3d4-0000-4000-8000-000000000000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | The webhook to delete, a UUID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `object` | Yes | — |
+| `success` | `true` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  deletedIds: string[],
+  notFoundIds: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`apiWebhooks.search`
+
+List the registered webhook endpoints with their URL, status and subscribed events
+
+**Risk:** `read`
+
+```ts
+await corsair.heyy.api.apiWebhooks.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sortBy` | `string` | No | Sort expression, such as "desc(createdAt)" or "asc(name)", with an optional null placement like "desc(updatedAt, 'nulls last')". Chain keys with sort(...). |
+| `search` | `string` | No | Free-text search over the resource's searchable fields. `query` is the field for structured filters; the two can be combined. |
+| `pagination` | `object` | No | Paging. Defaults to page 0, limit 10. |
+| `query` | `string` | No | Structured filter, such as "equals(status, 'active')". Filterable fields: id, createdAt, updatedAt, status, url, events. Combine with and(), or(), not(); see the query syntax reference. Can be combined with `search`. Omit for no filter. |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  page: number,
+  limit: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhooks` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+| `success` | `true` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhooks full type">
+
+```ts
+{
+  id: string,
+  createdAt: string,
+  updatedAt: string,
+  url: string,
+  status: string,
+  events?: {
+    type: string,
+    scopes?: {
+      type: string,
+      ids: string[]
+    }[] | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page: number,
+  limit: number,
+  total: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`apiWebhooks.update`
+
+Change a webhook's URL or events, or pause deliveries by setting it inactive
+
+**Risk:** `write`
+
+```ts
+await corsair.heyy.api.apiWebhooks.update({ webhookId: 'b1a2c3d4-0000-4000-8000-000000000000', status: 'inactive' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | The webhook to change, a UUID. |
+| `url` | `string` | No | New HTTPS URL for deliveries. |
+| `status` | `active \| inactive` | No | Pause deliveries with `inactive`. |
+| `events` | `object[]` | No | Replace the delivered events. |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  type: whatsapp_message_received | whatsapp_message_status | message.received | message.sent | message.updated,
+  scopes: {
+    type: channel,
+    ids: string[]
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook` | `object` | Yes | — |
+| `success` | `true` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  id: string,
+  createdAt: string,
+  updatedAt: string,
+  url: string,
+  status: string,
+  events?: {
+    type: string,
+    scopes?: {
+      type: string,
+      ids: string[]
+    }[] | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Attributes
+
+### create
+
+`attributes.create`
+
+Define a custom contact attribute: text, number, select or date, with the options a select needs and where it appears
+
+**Risk:** `write`
+
+```ts
+await corsair.heyy.api.attributes.create({ type: 'single_select', displayName: 'Plan', visibility: { inbox: true, contacts: true, create: true }, details: { options: [{ value: 'pro', color: '#3B82F6' }] } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `text \| number \| single_select \| multi_select \| date \| datetime` | Yes | The kind of value the attribute holds. |
+| `displayName` | `string` | Yes | The name shown in the app. |
+| `visibility` | `object` | Yes | Where the attribute appears in Heyy. |
+| `details` | `object` | No | Options for a single_select or multi_select attribute. Required for those two types. |
+
+A single_select or multi_select attribute needs `details.options`; any other type must omit it.
+
+<AccordionGroup>
+<Accordion title="visibility full type">
+
+```ts
+{
+  inbox: boolean,
+  contacts: boolean,
+  create: boolean
+}
+```
+</Accordion>
+
+<Accordion title="details full type">
+
+```ts
+{
+  options?: {
+    value: string,
+    color: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attribute` | `object` | Yes | — |
+| `success` | `true` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="attribute full type">
+
+```ts
+{
+  id: string,
+  createdAt: string,
+  updatedAt: string,
+  name: string,
+  type: string,
+  displayName?: string | null,
+  visibility?: {
+    inbox: boolean,
+    contacts: boolean,
+    create: boolean
+  } | null,
+  details?: {
+    options?: {
+      value: string,
+      color: string
+    }[] | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`attributes.remove`
+
+Delete a custom contact attribute by id; the values contacts had for it are gone and cannot be restored. An id that does not exist fails with 404 attribute_not_found
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.heyy.api.attributes.remove({ attributeId: 'b1a2c3d4-0000-4000-8000-000000000000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attributeId` | `string` | Yes | The attribute to delete, a UUID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `object` | Yes | — |
+| `success` | `true` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  deletedIds: string[],
+  notFoundIds: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`attributes.search`
+
+Search the custom contact attributes defined on the workspace, with their type, options and where they appear in Heyy
+
+**Risk:** `read`
+
+```ts
+await corsair.heyy.api.attributes.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sortBy` | `string` | No | Sort expression, such as "desc(createdAt)" or "asc(name)", with an optional null placement like "desc(updatedAt, 'nulls last')". Chain keys with sort(...). |
+| `search` | `string` | No | Free-text search over the resource's searchable fields. `query` is the field for structured filters; the two can be combined. |
+| `pagination` | `object` | No | Paging. Defaults to page 0, limit 10. |
+| `query` | `string` | No | Structured filter, such as "equals(type, 'single_select')". Filterable fields: id, createdAt, updatedAt, name, type, displayName, description, visibility, details. Combine with and(), or(), not(); see the query syntax reference. Can be combined with `search`. Omit for no filter. |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  page: number,
+  limit: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attributes` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+| `success` | `true` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+  id: string,
+  createdAt: string,
+  updatedAt: string,
+  name: string,
+  type: string,
+  displayName?: string | null,
+  visibility?: {
+    inbox: boolean,
+    contacts: boolean,
+    create: boolean
+  } | null,
+  details?: {
+    options?: {
+      value: string,
+      color: string
+    }[] | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page: number,
+  limit: number,
+  total: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Automations
+
+### search
+
+`automations.search`
+
+List the automation workflows on the workspace with their status: draft, active or paused
+
+**Risk:** `read`
+
+```ts
+await corsair.heyy.api.automations.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sortBy` | `string` | No | Sort expression, such as "desc(createdAt)" or "asc(name)", with an optional null placement like "desc(updatedAt, 'nulls last')". Chain keys with sort(...). |
+| `search` | `string` | No | Free-text search over the resource's searchable fields. `query` is the field for structured filters; the two can be combined. |
+| `pagination` | `object` | No | Paging. Defaults to page 0, limit 10. |
+| `query` | `string` | No | Structured filter, such as "equals(status, 'active')". Filterable fields: id, createdAt, updatedAt, name, status, activeVersionId, activeVersionTriggerType, activeVersionTriggerParametersChannelId, latestVersionTriggerType, latestVersionTriggerParametersChannelId, latestVersionId. Combine with and(), or(), not(); see the query syntax reference. Can be combined with `search`. Omit for no filter. |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  page: number,
+  limit: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automations` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+| `success` | `true` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="automations full type">
+
+```ts
+{
+  id: string,
+  createdAt: string,
+  updatedAt: string,
+  name: string,
+  status: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page: number,
+  limit: number,
+  total: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Channels
+
+### search
+
+`channels.search`
+
+List the connected channels (WhatsApp, Instagram, Messenger, SMS or live chat) with their type and connection status
+
+**Risk:** `read`
+
+```ts
+await corsair.heyy.api.channels.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sortBy` | `string` | No | Sort expression, such as "desc(createdAt)" or "asc(name)", with an optional null placement like "desc(updatedAt, 'nulls last')". Chain keys with sort(...). |
+| `search` | `string` | No | Free-text search over the resource's searchable fields. `query` is the field for structured filters; the two can be combined. |
+| `pagination` | `object` | No | Paging. Defaults to page 0, limit 10. |
+| `query` | `string` | No | Structured filter, such as "equals(type, 'whatsapp')". Filterable fields: id, createdAt, updatedAt, name, type, status, vendor, vendorId. Combine with and(), or(), not(); see the query syntax reference. Can be combined with `search`. Omit for no filter. |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  page: number,
+  limit: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channels` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+| `success` | `true` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="channels full type">
+
+```ts
+{
+  id: string,
+  createdAt: string,
+  updatedAt: string,
+  name: string,
+  type: string,
+  status: string,
+  vendor?: string | null,
+  vendorId?: string | null,
+  vendorDetails?: Record<string, JsonValue> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page: number,
+  limit: number,
+  total: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Create a contact with a name, phone number or email, attach labels by id and set custom attribute values
+
+**Risk:** `write`
+
+```ts
+await corsair.heyy.api.contacts.create({ firstName: 'Jordan', lastName: 'Reyes', email: 'jordan@acme.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `firstName` | `string \| null` | No | Contact first name. |
+| `lastName` | `string \| null` | No | Contact last name. |
+| `phoneNumber` | `string \| null` | No | Phone number, in E.164 where the channel needs it. |
+| `email` | `string \| null` | No | Contact email address. |
+| `attributes` | `object[]` | No | Custom attribute values. |
+| `labels` | `object[]` | No | Label ids, from `labels.search`, to attach on creation. |
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+  id: string,
+  value: string | number | string[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `object` | Yes | — |
+| `success` | `true` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  id: string,
+  createdAt: string,
+  updatedAt: string,
+  firstName?: string | null,
+  lastName?: string | null,
+  fullName?: string | null,
+  displayName?: string | null,
+  isSubscribed?: boolean | null,
+  phoneNumber?: string | null,
+  email?: string | null,
+  labels?: (string | {
+    id: string
+  })[] | null,
+  attributes?: {
+    id?: string | null,
+    contactId?: string | null,
+    attribute?: {
+      id: string,
+      name: string,
+      displayName?: string | null,
+      type?: string | null
+    } | null,
+    value?: string | number | string[] | null
+  }[] | null,
+  handles?: Record<string, JsonValue>[] | null,
+  chats?: Record<string, JsonValue>[] | null,
+  metadata?: Record<string, JsonValue> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`contacts.search`
+
+Search contacts with a structured filter, free-text search, sorting and paging; returns the matched contacts with their labels and attribute values
+
+**Risk:** `read`
+
+```ts
+await corsair.heyy.api.contacts.search({ query: "contains(firstName, 'Jordan')", pagination: { page: 0, limit: 25 } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sortBy` | `string` | No | Sort expression, such as "desc(createdAt)" or "asc(name)", with an optional null placement like "desc(updatedAt, 'nulls last')". Chain keys with sort(...). |
+| `search` | `string` | No | Free-text search over the resource's searchable fields. `query` is the field for structured filters; the two can be combined. |
+| `pagination` | `object` | No | Paging. Defaults to page 0, limit 10. |
+| `query` | `string` | No | Structured filter, such as "equals(email, 'jordan@acme.com')". Filterable fields: id, createdAt, updatedAt, firstName, lastName, isSubscribed, labels, notes, groups, phoneNumber, email; custom attributes through getBy('attributes', 'name', 'plan'). Combine with and(), or(), not(); see the query syntax reference. Can be combined with `search`. Omit for no filter. |
+
+`query` is a structured expression such as `equals(email, 'a@b.com')` over `firstName`, `lastName`, `email`, `phoneNumber`, `isSubscribed`, `labels` and the other listed fields; `search` is free text over name, phone and email. They can be combined.
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  page: number,
+  limit: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contacts` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+| `success` | `true` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  id: string,
+  createdAt: string,
+  updatedAt: string,
+  firstName?: string | null,
+  lastName?: string | null,
+  fullName?: string | null,
+  displayName?: string | null,
+  isSubscribed?: boolean | null,
+  phoneNumber?: string | null,
+  email?: string | null,
+  labels?: (string | {
+    id: string
+  })[] | null,
+  attributes?: {
+    id?: string | null,
+    contactId?: string | null,
+    attribute?: {
+      id: string,
+      name: string,
+      displayName?: string | null,
+      type?: string | null
+    } | null,
+    value?: string | number | string[] | null
+  }[] | null,
+  handles?: Record<string, JsonValue>[] | null,
+  chats?: Record<string, JsonValue>[] | null,
+  metadata?: Record<string, JsonValue> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page: number,
+  limit: number,
+  total: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Labels
+
+### create
+
+`labels.create`
+
+Create a label with a name and a hex colour
+
+**Risk:** `write`
+
+```ts
+await corsair.heyy.api.labels.create({ name: 'Priority', color: '#EF4444' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Label name. |
+| `color` | `string` | Yes | Hex colour for the label, such as #3B82F6. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `label` | `object` | Yes | — |
+| `success` | `true` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="label full type">
+
+```ts
+{
+  id: string,
+  createdAt: string,
+  updatedAt: string,
+  name: string,
+  color?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`labels.remove`
+
+Delete a label by id; it is detached from every contact that carried it
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.heyy.api.labels.remove({ labelId: 'b1a2c3d4-0000-4000-8000-000000000000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `labelId` | `string` | Yes | The label to delete, a UUID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `object` | Yes | — |
+| `success` | `true` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  deletedIds: string[],
+  notFoundIds: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`labels.search`
+
+Search the labels used to group contacts, with their colours
+
+**Risk:** `read`
+
+```ts
+await corsair.heyy.api.labels.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sortBy` | `string` | No | Sort expression, such as "desc(createdAt)" or "asc(name)", with an optional null placement like "desc(updatedAt, 'nulls last')". Chain keys with sort(...). |
+| `search` | `string` | No | Free-text search over the resource's searchable fields. `query` is the field for structured filters; the two can be combined. |
+| `pagination` | `object` | No | Paging. Defaults to page 0, limit 10. |
+| `query` | `string` | No | Structured filter, such as "contains(name, 'VIP')". Filterable fields: id, createdAt, updatedAt, name. Combine with and(), or(), not(); see the query syntax reference. Can be combined with `search`. Omit for no filter. |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  page: number,
+  limit: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `labels` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+| `success` | `true` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="labels full type">
+
+```ts
+{
+  id: string,
+  createdAt: string,
+  updatedAt: string,
+  name: string,
+  color?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page: number,
+  limit: number,
+  total: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Message Templates
+
+### search
+
+`messageTemplates.search`
+
+List the message templates available for a channel, with their status, content and variables
+
+**Risk:** `read`
+
+```ts
+await corsair.heyy.api.messageTemplates.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sortBy` | `string` | No | Sort expression, such as "desc(createdAt)" or "asc(name)", with an optional null placement like "desc(updatedAt, 'nulls last')". Chain keys with sort(...). |
+| `search` | `string` | No | Free-text search over the resource's searchable fields. `query` is the field for structured filters; the two can be combined. |
+| `pagination` | `object` | No | Paging. Defaults to page 0, limit 10. |
+| `query` | `string` | No | Structured filter, such as "equals(channelId, 'channel-id')". Filterable fields: id, createdAt, updatedAt, name, vendorId, status, channelId, type, vendorDetailsName. Combine with and(), or(), not(); see the query syntax reference. Can be combined with `search`. Omit for no filter. |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  page: number,
+  limit: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messageTemplates` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+| `success` | `true` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="messageTemplates full type">
+
+```ts
+{
+  id: string,
+  createdAt: string,
+  updatedAt: string,
+  name: string,
+  type?: string | null,
+  status?: string | null,
+  vendorId?: string | null,
+  channelId?: string | null,
+  messageContent?: Record<string, JsonValue> | null,
+  variables?: string[] | null,
+  vendorDetails?: Record<string, JsonValue> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page: number,
+  limit: number,
+  total: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

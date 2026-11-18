@@ -50,7 +50,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     },
     {
@@ -90,7 +90,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     },
     {
@@ -110,7 +110,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     },
     {
@@ -130,7 +130,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     },
     {
@@ -150,7 +150,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     },
     {
@@ -175,7 +175,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     },
     {
@@ -195,7 +195,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     },
     {
@@ -215,7 +215,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     },
     {
@@ -240,7 +240,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     },
     {
@@ -284,13 +284,13 @@
           {
             "key": "custom_fields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     },
     {
@@ -310,7 +310,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     },
     {
@@ -330,7 +330,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     },
     {
@@ -344,7 +344,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     },
     {
@@ -358,13 +358,13 @@
           {
             "key": "payload",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     },
     {
@@ -384,7 +384,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     },
     {
@@ -404,7 +404,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     },
     {
@@ -429,7 +429,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     },
     {
@@ -443,13 +443,13 @@
           {
             "key": "payload",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     },
     {
@@ -463,7 +463,7 @@
           {
             "key": "payload",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "X-Shopify-Topic",
@@ -529,7 +529,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     },
     {
@@ -543,7 +543,7 @@
           {
             "key": "payload",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "X-Shopify-Topic",
@@ -609,7 +609,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     },
     {
@@ -623,7 +623,7 @@
           {
             "key": "payload",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "X-Shopify-Topic",
@@ -689,7 +689,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     },
     {
@@ -703,7 +703,7 @@
           {
             "key": "webhook_payload",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "X-Shopify-Topic",
@@ -769,7 +769,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     },
     {
@@ -783,7 +783,7 @@
           {
             "key": "payload",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "X-Shopify-Topic",
@@ -819,7 +819,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     },
     {
@@ -833,7 +833,7 @@
           {
             "key": "payload",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "X-Shopify-Topic",
@@ -899,7 +899,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     },
     {
@@ -913,7 +913,7 @@
           {
             "key": "payload",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "X-Shopify-Event-Id",
@@ -984,7 +984,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     },
     {
@@ -1002,7 +1002,7 @@
           {
             "key": "payload",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1022,7 +1022,7 @@
           {
             "key": "payload",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1042,7 +1042,7 @@
           {
             "key": "payload",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1088,7 +1088,7 @@
           {
             "key": "interactive",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1098,7 +1098,7 @@
           {
             "key": "payload",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1124,7 +1124,7 @@
           {
             "key": "payload",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1146,7 +1146,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     },
     {
@@ -1160,7 +1160,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     },
     {
@@ -1185,7 +1185,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     },
     {
@@ -1205,7 +1205,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     },
     {
@@ -1225,7 +1225,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     },
     {
@@ -1255,7 +1255,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     },
     {
@@ -1295,7 +1295,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     },
     {
@@ -1341,7 +1341,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     },
     {
@@ -1361,7 +1361,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     },
     {
@@ -1386,7 +1386,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     },
     {
@@ -1400,7 +1400,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     },
     {
@@ -1435,7 +1435,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[] | string | number | boolean | null"
+        "type": "Record<string, any> | any[] | string | number | boolean | null"
       }
     }
   ],

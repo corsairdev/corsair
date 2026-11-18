@@ -1,0 +1,118 @@
+displayName: Miro
+description: Collaborative whiteboard boards from Miro - create and manage boards, add sticky notes, shapes, cards, text, frames, embeds and connectors, and organise a board with tags and members.
+domain: miro.com
+recommendedAuth: api_key
+overviewNote: |
+  Send a Miro access token as a bearer token. Create an app in Miro under Settings, Your apps, install it on your team and copy the access token it gives you.
+
+  Leave **Expire user authorization token** unticked when you create the app. An expiring token lasts 60 minutes, and this plugin stores the token as an API key and does not refresh it, so calls start failing with 401 once it lapses. Miro does not let you change this after the app is created.
+
+  Things that shape the calls:
+
+  - **Boards page by offset, items by cursor.** `boards.list` takes `limit` and `offset` and reports `total`; `items.list` and `connectors.list` take a `cursor` and return the next one. Members, tags and `tags.items` page by offset. `tags.ofItem` returns every tag on the item in one response.
+  - **List rows arrive as `data`.** Miro names every list array `data` whatever the resource, so each operation renames it after the resource: `boards`, `items`, `tags`, `members`, `connectors`. `tags.ofItem` is the exception and keys them `tags`.
+  - **Item writes are nested.** Miro expects a sticky note's `content` and `shape` under `data`, its colour under `style`, and its frame under `parent.id`. This plugin takes them flat and groups them for you.
+  - **Connectors need two existing items.** Both `startItemId` and `endItemId` are required and must already be on the board; a connector cannot be created against a loose point.
+  - **Tags on items travel in the query.** `tags.attach` and `tags.removeFromItem` both address `/v2/boards/{boardId}/items/{itemId}` with `tag_id` as a query parameter. Each call handles one tag, so attach several by calling it once per tag; an earlier tag stays attached.
+  - **`boards.copy` is a PUT on the collection** with `copy_from` as a required query parameter, not a body field.
+  - **Scopes.** Reads need `boards:read`, writes need `boards:write`. A token without the write scope gets 403.
+  - **Rate limits** are per minute by tier, and a 429 carries `Retry-After`; retries are capped at three.
+  - **A 5xx is retried on reads only.** A write that answers 5xx may still have been applied, so it is not sent again; check the board before repeating it.
+examples:
+  read:
+    path: boards.list
+    title: List the boards you can see
+    args:
+      limit: 10
+  write:
+    path: stickyNotes.create
+    title: Add a sticky note to a board
+    args:
+      boardId: uXjVK1abcd=
+      content: Ship the roadmap
+apiExamples:
+  boards.list:
+    call: "{ limit: 10, sort: 'last_modified' }"
+  boards.create:
+    call: "{ name: 'Product roadmap', description: 'Q1 planning' }"
+  boards.get:
+    call: "{ boardId: 'uXjVK1abcd=' }"
+  boards.update:
+    call: "{ boardId: 'uXjVK1abcd=', name: 'Roadmap 2027' }"
+  boards.remove:
+    call: "{ boardId: 'uXjVK1abcd=' }"
+  boards.copy:
+    call: "{ boardId: 'uXjVK1abcd=', name: 'Copy of roadmap' }"
+  members.list:
+    call: "{ boardId: 'uXjVK1abcd=' }"
+  members.share:
+    call: "{ boardId: 'uXjVK1abcd=', emails: ['jordan@acme.com'], role: 'editor' }"
+  items.list:
+    call: "{ boardId: 'uXjVK1abcd=', type: ['sticky_note'] }"
+  stickyNotes.create:
+    call: "{ boardId: 'uXjVK1abcd=', content: 'Ship the roadmap', fillColor: 'light_yellow' }"
+  shapes.create:
+    call: "{ boardId: 'uXjVK1abcd=', shape: 'rectangle', content: 'Design' }"
+  cards.create:
+    call: "{ boardId: 'uXjVK1abcd=', title: 'Review designs', dueDate: '2026-12-01T00:00:00Z' }"
+  texts.create:
+    call: "{ boardId: 'uXjVK1abcd=', content: 'Sprint 12' }"
+  frames.create:
+    call: "{ boardId: 'uXjVK1abcd=', title: 'Discovery', position: { x: 0, y: 0 } }"
+  embeds.create:
+    call: "{ boardId: 'uXjVK1abcd=', url: 'https://www.youtube.com/watch?v=abc' }"
+  connectors.create:
+    call: "{ boardId: 'uXjVK1abcd=', startItemId: '3458764513820541002', endItemId: '3458764513820541003' }"
+  tags.create:
+    call: "{ boardId: 'uXjVK1abcd=', title: 'priority', fillColor: 'red' }"
+  tags.attach:
+    call: "{ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001', tagId: '3458764513820541008' }"
+  tags.items:
+    call: "{ boardId: 'uXjVK1abcd=', tagId: '3458764513820541008' }"
+  stickyNotes.update:
+    call: "{ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001', content: 'Updated text' }"
+  shapes.update:
+    call: "{ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001', style: { fillColor: '#dbeafe' } }"
+  cards.update:
+    call: "{ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001', title: 'Reopened' }"
+  texts.update:
+    call: "{ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001', content: 'Sprint 13' }"
+  frames.update:
+    call: "{ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001', title: 'Build' }"
+  embeds.update:
+    call: "{ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001', mode: 'modal' }"
+  items.get:
+    call: "{ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001' }"
+  items.remove:
+    call: "{ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001' }"
+  members.get:
+    call: "{ boardId: 'uXjVK1abcd=', memberId: '3074457345618258603' }"
+  members.update:
+    call: "{ boardId: 'uXjVK1abcd=', memberId: '3074457345618258603', role: 'commenter' }"
+  members.remove:
+    call: "{ boardId: 'uXjVK1abcd=', memberId: '3074457345618258603' }"
+  connectors.list:
+    call: "{ boardId: 'uXjVK1abcd=', limit: 10 }"
+  connectors.get:
+    call: "{ boardId: 'uXjVK1abcd=', connectorId: '3458764513820541007' }"
+  connectors.update:
+    call: "{ boardId: 'uXjVK1abcd=', connectorId: '3458764513820541007', strokeColor: '#f24726' }"
+  connectors.remove:
+    call: "{ boardId: 'uXjVK1abcd=', connectorId: '3458764513820541007' }"
+  tags.list:
+    call: "{ boardId: 'uXjVK1abcd=', limit: 20 }"
+  tags.get:
+    call: "{ boardId: 'uXjVK1abcd=', tagId: '3458764513820541008' }"
+  tags.update:
+    call: "{ boardId: 'uXjVK1abcd=', tagId: '3458764513820541008', fillColor: 'blue' }"
+  tags.remove:
+    call: "{ boardId: 'uXjVK1abcd=', tagId: '3458764513820541008' }"
+  tags.removeFromItem:
+    call: "{ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001', tagId: '3458764513820541008' }"
+  tags.ofItem:
+    call: "{ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001' }"
+
+apiNotes:
+  items.list: 'Miro filters on a single item type, so `type` takes one value. Pass `parentItemId` to read only what sits inside a frame.'
+  boards.copy: 'The source board is a required `copy_from` query parameter on a PUT to the collection, which this operation fills from `boardId`.'
+  tags.attach: 'The tag id goes in the query string, not the body. One call attaches one tag, and calling it again adds another without removing the first.'

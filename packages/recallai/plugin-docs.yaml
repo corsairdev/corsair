@@ -1,0 +1,238 @@
+displayName: Recall.ai
+description: Meeting bots, recordings and transcripts with Recall.ai - send bots to Zoom, Google Meet, Teams and Webex calls, control them in the call, read recordings, transcripts and media, schedule bots from calendars, and manage Google logins and Zoom OAuth credentials.
+domain: recall.ai
+recommendedAuth: api_key
+overviewNote: |
+  Recall.ai needs two things from each tenant: an API key and the region it was created in. Create the key in the Recall dashboard of your region (for example `https://us-west-2.recall.ai/dashboard/developers/api-keys`). Recall runs a separate deployment per region, so a key only works on its own region's host. Corsair asks for the key on the first call that needs it; store the region with it in the tenant's `region` account field. Self-hosted setups can pass both to the factory instead:
+
+  ```ts
+  recallai({ key: process.env.RECALLAI_API_KEY, region: 'eu-central-1' })
+  ```
+
+  Things to know:
+
+  - **Region.** One of `us-west-2`, `us-east-1`, `eu-central-1` or `ap-northeast-1`. A pasted host such as `eu-central-1.recall.ai` is read as its region; any other value is rejected, so requests only ever go to the four Recall hosts. Without a region, requests go to `us-west-2`. A 401 usually means the key and the region do not match.
+  - **Bots cost money.** `bots.create` sends a bot to the meeting, and Recall bills for its time there. Without `join_at`, or with one less than 10 minutes out, the bot joins right away; Recall recommends scheduling at least 10 minutes ahead. `bots.update` and `bots.delete` work only on a scheduled bot that has not joined yet.
+  - **In-call actions.** The `botActions` calls (chat, recording, pinning, audio, video and screenshare output) need the bot in the call; otherwise Recall answers 400. The calls that start something return the updated bot; the `stop*Output*` and `stopScreenshare` calls return nothing. `leaveBotCall` and `deleteBotMedia` cannot be undone.
+  - **Transcripts after the call.** `recordings.createTranscript` takes the provider as an object keyed by provider name, for example `{ recallai_async: { language_code: 'en' } }`. Recall allows five a minute per bot.
+  - **Calendar V1.** The meeting calls (`calendar.listMeetings`, `retrieveMeeting`, `updateMeeting`, `refreshMeetings`) and the user calls (`calendar.retrieveUser`, `updateUser`, `deleteUser`, `disconnectPlatform`) act for one calendar user and take their `calendar_auth_token`. Get it from `calendar.authenticate`; it is valid for a day. Calendar V2 (`calendars.*` and the `calendar` event calls) uses the API key alone.
+  - **Paging.** `bots.list` pages by `page` number, or by cursor when you pass `use_cursor`. `calendar.listUsers` returns every user unless you pass `paginate: true`; then it pages by `page` number. The other lists return `next` as a URL; pass its `cursor` value back to get the next page.
+  - **Rate limits.** Most lists allow 60 requests a minute per workspace. A 429 is retried up to five times, waiting for Recall's `Retry-After`.
+  - **Webhooks.** The plugin does not receive Recall's webhooks. Bot and recording status changes arrive there; Recall asks integrations not to poll `bots.list` for them.
+  - **No local data.** Every call returns live data from Recall.
+examples:
+  read:
+    path: bots.list
+    title: List finished bots
+    args:
+      status:
+        - done
+  write:
+    path: bots.create
+    title: Send a bot to a meeting
+    args:
+      meeting_url: https://meet.google.com/abc-defg-hij
+      bot_name: Meeting Notetaker
+apiExamples:
+  audioMixed.delete:
+    call: "{ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' }"
+  audioMixed.list:
+    call: "{ recording_id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455', status_code: 'done' }"
+  audioMixed.retrieve:
+    call: "{ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' }"
+  audioMixed.update:
+    call: "{ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f', metadata: { reviewed: 'true' } }"
+  audioSeparate.delete:
+    call: "{ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' }"
+  audioSeparate.list:
+    call: "{ recording_id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455', status_code: 'done' }"
+  audioSeparate.retrieve:
+    call: "{ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' }"
+  audioSeparate.update:
+    call: "{ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f', metadata: { reviewed: 'true' } }"
+  billing.retrieveUsage:
+    call: "{ start: '2026-10-01T00:00:00Z', end: '2026-11-01T00:00:00Z' }"
+  botActions.deleteBotMedia:
+    call: "{ id: '550e8400-e29b-41d4-a716-446655440000' }"
+  botActions.leaveBotCall:
+    call: "{ id: '550e8400-e29b-41d4-a716-446655440000' }"
+  botActions.outputAudio:
+    call: "{ id: '550e8400-e29b-41d4-a716-446655440000', kind: 'mp3', b64_data: 'SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA' }"
+  botActions.outputMedia:
+    call: "{ id: '550e8400-e29b-41d4-a716-446655440000', camera: { kind: 'webpage', config: { url: 'https://example.com/avatar' } } }"
+  botActions.outputVideo:
+    call: "{ id: '550e8400-e29b-41d4-a716-446655440000', kind: 'jpeg', b64_data: '/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsL' }"
+  botActions.pauseRecording:
+    call: "{ id: '550e8400-e29b-41d4-a716-446655440000' }"
+  botActions.pinParticipant:
+    call: "{ bot_id: '550e8400-e29b-41d4-a716-446655440000', participant_id: 100 }"
+  botActions.resumeRecording:
+    call: "{ id: '550e8400-e29b-41d4-a716-446655440000' }"
+  botActions.sendChatMessage:
+    call: "{ id: '550e8400-e29b-41d4-a716-446655440000', message: 'This meeting is being recorded.' }"
+  botActions.startRecording:
+    call: "{ id: '550e8400-e29b-41d4-a716-446655440000' }"
+  botActions.startScreenshare:
+    call: "{ id: '550e8400-e29b-41d4-a716-446655440000', kind: 'jpeg', b64_data: '/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsL' }"
+  botActions.stopOutputAudio:
+    call: "{ id: '550e8400-e29b-41d4-a716-446655440000' }"
+  botActions.stopOutputMedia:
+    call: "{ id: '550e8400-e29b-41d4-a716-446655440000', camera: true, screenshare: false }"
+  botActions.stopOutputVideo:
+    call: "{ id: '550e8400-e29b-41d4-a716-446655440000' }"
+  botActions.stopRecording:
+    call: "{ id: '550e8400-e29b-41d4-a716-446655440000' }"
+  botActions.stopScreenshare:
+    call: "{ id: '550e8400-e29b-41d4-a716-446655440000' }"
+  bots.create:
+    call: "{ meeting_url: 'https://meet.google.com/abc-defg-hij', bot_name: 'Meeting Notetaker', join_at: '2026-11-20T15:00:00Z', recording_config: { transcript: { provider: { recallai_streaming: {} } } } }"
+  bots.delete:
+    call: "{ id: '550e8400-e29b-41d4-a716-446655440000' }"
+  bots.list:
+    call: "{ status: ['done'], join_at_after: '2026-11-01' }"
+  bots.retrieve:
+    call: "{ id: '550e8400-e29b-41d4-a716-446655440000' }"
+  bots.update:
+    call: "{ id: '550e8400-e29b-41d4-a716-446655440000', join_at: '2026-11-20T16:00:00Z' }"
+  calendar.authenticate:
+    call: "{ user_id: 'user-123' }"
+  calendar.deleteUser:
+    call: "{ calendar_auth_token: 'calendar-auth-token-from-authenticate' }"
+  calendar.disconnectPlatform:
+    call: "{ calendar_auth_token: 'calendar-auth-token-from-authenticate', platform: 'google' }"
+  calendar.listEvents:
+    call: "{ calendar_id: '7a8b9c0d-1e2f-4a3b-9c4d-5e6f7a8b9c0d', start_time__gte: '2026-11-01T00:00:00Z' }"
+  calendar.listMeetings:
+    call: "{ calendar_auth_token: 'calendar-auth-token-from-authenticate', start_time_after: '2026-11-01T00:00:00Z' }"
+  calendar.listUsers:
+    call: "{ paginate: true, page: 2 }"
+  calendar.refreshMeetings:
+    call: "{ calendar_auth_token: 'calendar-auth-token-from-authenticate' }"
+  calendar.retrieveEvent:
+    call: "{ id: '8b9c0d1e-2f3a-4b4c-8d5e-6f7a8b9c0d1e' }"
+  calendar.retrieveMeeting:
+    call: "{ id: '9c0d1e2f-3a4b-4c5d-8e6f-7a8b9c0d1e2f', calendar_auth_token: 'calendar-auth-token-from-authenticate' }"
+  calendar.retrieveUser:
+    call: "{ calendar_auth_token: 'calendar-auth-token-from-authenticate' }"
+  calendar.scheduleBot:
+    call: "{ id: '8b9c0d1e-2f3a-4b4c-8d5e-6f7a8b9c0d1e', deduplication_key: 'standup-2026-11-20', bot_config: { bot_name: 'Meeting Notetaker' } }"
+  calendar.unscheduleBot:
+    call: "{ id: '8b9c0d1e-2f3a-4b4c-8d5e-6f7a8b9c0d1e' }"
+  calendar.updateMeeting:
+    call: "{ id: '9c0d1e2f-3a4b-4c5d-8e6f-7a8b9c0d1e2f', calendar_auth_token: 'calendar-auth-token-from-authenticate', override_should_record: true }"
+  calendar.updateUser:
+    call: "{ calendar_auth_token: 'calendar-auth-token-from-authenticate', preferences: { record_external: true, record_internal: false } }"
+  calendars.create:
+    call: "{ platform: 'google_calendar', oauth_client_id: '1234567890-abc.apps.googleusercontent.com', oauth_client_secret: 'GOCSPX-client-secret', oauth_refresh_token: '1//0g-refresh-token' }"
+  calendars.createAccessToken:
+    call: "{ id: '7a8b9c0d-1e2f-4a3b-9c4d-5e6f7a8b9c0d' }"
+  calendars.delete:
+    call: "{ id: '7a8b9c0d-1e2f-4a3b-9c4d-5e6f7a8b9c0d' }"
+  calendars.retrieve:
+    call: "{ id: '7a8b9c0d-1e2f-4a3b-9c4d-5e6f7a8b9c0d' }"
+  calendars.update:
+    call: "{ id: '7a8b9c0d-1e2f-4a3b-9c4d-5e6f7a8b9c0d', metadata: { team: 'sales' } }"
+  googleLoginGroups.create:
+    call: "{ name: 'Sales bots', login_mode: 'only_if_required' }"
+  googleLoginGroups.delete:
+    call: "{ id: 'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d' }"
+  googleLoginGroups.partialUpdate:
+    call: "{ id: 'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d', login_mode: 'always' }"
+  googleLoginGroups.retrieve:
+    call: "{ id: 'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d' }"
+  googleLoginGroups.update:
+    call: "{ id: 'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d', name: 'Sales bots', login_mode: 'always' }"
+  googleLogins.create:
+    call: "{ email: 'notetaker@acme.com', sso_v2_workspace_domain: 'acme.com', sso_v2_private_key: '-----BEGIN PRIVATE KEY-----...', sso_v2_cert: '-----BEGIN CERTIFICATE-----...', group_id: 'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d' }"
+  googleLogins.delete:
+    call: "{ id: 'b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e' }"
+  googleLogins.partialUpdate:
+    call: "{ id: 'b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e', is_active: false }"
+  googleLogins.retrieve:
+    call: "{ id: 'b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e' }"
+  googleLogins.update:
+    call: "{ id: 'b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e', email: 'notetaker@acme.com', is_active: true, sso_v2_workspace_domain: 'acme.com', sso_v2_private_key: '-----BEGIN PRIVATE KEY-----...', sso_v2_cert: '-----BEGIN CERTIFICATE-----...', group_id: 'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d' }"
+  meetingDirectConnects.retrieve:
+    call: "{ id: 'e5f6a7b8-c9d0-4e1f-8a2b-4c5d6e7f8a9b' }"
+  meetingDirectConnects.create:
+    call: "{ google_meet_media_api: { space_name: 'spaces/jQCFfuBOdN5z', access_token: 'ya29.google-oauth-access-token' }, metadata: { source: 'meet-addon' } }"
+  meetingMetadata.delete:
+    call: "{ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' }"
+  meetingMetadata.list:
+    call: "{ recording_id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455', status_code: 'done' }"
+  meetingMetadata.retrieve:
+    call: "{ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' }"
+  meetingMetadata.update:
+    call: "{ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f', metadata: { reviewed: 'true' } }"
+  participantEvents.delete:
+    call: "{ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' }"
+  participantEvents.list:
+    call: "{ recording_id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455', status_code: 'done' }"
+  participantEvents.retrieve:
+    call: "{ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' }"
+  participantEvents.update:
+    call: "{ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f', metadata: { reviewed: 'true' } }"
+  realtimeEndpoints.list:
+    call: "{ recording_id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455', status_code: 'running' }"
+  realtimeEndpoints.retrieve:
+    call: "{ id: '0a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d' }"
+  realtimeEndpoints.update:
+    call: "{ id: '0a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d', metadata: { consumer: 'live-notes' } }"
+  recordings.createTranscript:
+    call: "{ id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455', provider: { recallai_async: { language_code: 'en' } }, diarization: { use_separate_streams_when_available: true } }"
+  recordings.delete:
+    call: "{ id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455' }"
+  recordings.list:
+    call: "{ bot_id: '550e8400-e29b-41d4-a716-446655440000', status_code: 'done' }"
+  recordings.retrieve:
+    call: "{ id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455' }"
+  recordings.update:
+    call: "{ id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455', metadata: { crm_deal_id: 'D-1042' } }"
+  sdkUploads.retrieve:
+    call: "{ id: 'f6a7b8c9-d0e1-4f2a-9b3c-5d6e7f8a9b0c' }"
+  sdkUploads.create:
+    call: "{ recording_config: { transcript: { provider: { recallai_streaming: {} } } }, metadata: { source: 'desktop-app' } }"
+  transcripts.delete:
+    call: "{ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' }"
+  transcripts.list:
+    call: "{ recording_id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455', status_code: 'done' }"
+  transcripts.retrieve:
+    call: "{ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' }"
+  transcripts.update:
+    call: "{ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f', metadata: { reviewed: 'true' } }"
+  videoMixed.delete:
+    call: "{ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' }"
+  videoMixed.list:
+    call: "{ recording_id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455', status_code: 'done' }"
+  videoMixed.retrieve:
+    call: "{ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' }"
+  videoMixed.update:
+    call: "{ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f', metadata: { reviewed: 'true' } }"
+  videoSeparate.delete:
+    call: "{ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' }"
+  videoSeparate.list:
+    call: "{ recording_id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455', status_code: 'done' }"
+  videoSeparate.retrieve:
+    call: "{ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' }"
+  videoSeparate.update:
+    call: "{ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f', metadata: { reviewed: 'true' } }"
+  zoomOAuthApps.create:
+    call: "{ kind: 'account_level', client_id: 'zoom-client-id', client_secret: 'zoom-client-secret', webhook_secret: 'zoom-webhook-secret' }"
+  zoomOAuthApps.delete:
+    call: "{ id: 'c3d4e5f6-a7b8-4c9d-8e0f-2a3b4c5d6e7f' }"
+  zoomOAuthApps.retrieve:
+    call: "{ id: 'c3d4e5f6-a7b8-4c9d-8e0f-2a3b4c5d6e7f' }"
+  zoomOAuthApps.update:
+    call: "{ id: 'c3d4e5f6-a7b8-4c9d-8e0f-2a3b4c5d6e7f', webhook_secret: 'new-zoom-webhook-secret' }"
+  zoomOAuthCredentials.create:
+    call: "{ oauth_app: 'c3d4e5f6-a7b8-4c9d-8e0f-2a3b4c5d6e7f', authorization_code: { code: 'zoom-authorization-code', redirect_uri: 'https://app.acme.com/zoom/callback' } }"
+  zoomOAuthCredentials.delete:
+    call: "{ id: 'd4e5f6a7-b8c9-4d0e-9f1a-3b4c5d6e7f8a' }"
+  zoomOAuthCredentials.retrieve:
+    call: "{ id: 'd4e5f6a7-b8c9-4d0e-9f1a-3b4c5d6e7f8a' }"
+  zoomOAuthCredentials.retrieveAccessToken:
+    call: "{ id: 'd4e5f6a7-b8c9-4d0e-9f1a-3b4c5d6e7f8a' }"
+  zoomOAuthCredentials.syncMeetings:
+    call: "{ id: 'd4e5f6a7-b8c9-4d0e-9f1a-3b4c5d6e7f8a' }"
+  zoomOAuthCredentials.validate:
+    call: "{ id: 'd4e5f6a7-b8c9-4d0e-9f1a-3b4c5d6e7f8a' }"

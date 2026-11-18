@@ -1,7 +1,7 @@
 {
   "id": "everhour",
   "displayName": "Everhour",
-  "description": "Everhour plugin for Corsair",
+  "description": "Time tracking tool for managing projects, tasks, sections, clients, timers, time records, timecards, expenses, and invoices.",
   "npmPackageName": "@corsair-dev/everhour",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "api_key",
@@ -101,7 +101,7 @@
           {
             "key": "businessDetails",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -182,7 +182,7 @@
           {
             "key": "businessDetails",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -203,7 +203,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -288,7 +288,7 @@
           {
             "key": "businessDetails",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -323,7 +323,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -353,7 +353,7 @@
           {
             "key": "project",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       },
@@ -378,7 +378,7 @@
           {
             "key": "project",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "active",
@@ -454,7 +454,7 @@
           {
             "key": "project",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "active",
@@ -529,7 +529,7 @@
           {
             "key": "project",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "active",
@@ -560,7 +560,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -609,7 +609,7 @@
           {
             "key": "client",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "privacy",
@@ -639,7 +639,7 @@
           {
             "key": "client",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "client_id",
@@ -725,7 +725,7 @@
           {
             "key": "client",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "client_id",
@@ -766,7 +766,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "page",
@@ -821,7 +821,7 @@
           {
             "key": "client",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "privacy",
@@ -856,7 +856,7 @@
           {
             "key": "client",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "client_id",
@@ -947,7 +947,7 @@
           {
             "key": "collapsed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           }
         ]
       }
@@ -1018,7 +1018,7 @@
           {
             "key": "collapsed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           }
         ]
       }
@@ -1123,7 +1123,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "estimate",
@@ -1143,7 +1143,7 @@
           {
             "key": "section",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "labels",
@@ -1194,7 +1194,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "estimate",
@@ -1214,7 +1214,7 @@
           {
             "key": "section",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "labels",
@@ -1376,7 +1376,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -1401,7 +1401,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -1491,7 +1491,7 @@
           {
             "key": "end_date",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "duration",
@@ -1658,7 +1658,7 @@
           {
             "key": "end_date",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "duration",
@@ -2268,7 +2268,7 @@
           {
             "key": "headline",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "team",
@@ -2303,7 +2303,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "limit",
@@ -2339,11 +2339,11 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: string, created_at: string, data: {} }",
+      "responseType": "{ type: string, created_at: string, data: Record<string, any> }",
       "usageExample": "everhour({\n    webhookHooks: {\n        client: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2366,11 +2366,11 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: string, created_at: string, data: {} }",
+      "responseType": "{ type: string, created_at: string, data: Record<string, any> }",
       "usageExample": "everhour({\n    webhookHooks: {\n        client: {\n            updated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2393,11 +2393,11 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: string, created_at: string, data: {} }",
+      "responseType": "{ type: string, created_at: string, data: Record<string, any> }",
       "usageExample": "everhour({\n    webhookHooks: {\n        estimate: {\n            updated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2420,11 +2420,11 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: string, created_at: string, data: {} }",
+      "responseType": "{ type: string, created_at: string, data: Record<string, any> }",
       "usageExample": "everhour({\n    webhookHooks: {\n        invoice: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2447,11 +2447,11 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: string, created_at: string, data: {} }",
+      "responseType": "{ type: string, created_at: string, data: Record<string, any> }",
       "usageExample": "everhour({\n    webhookHooks: {\n        invoice: {\n            deleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2474,11 +2474,11 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: string, created_at: string, data: {} }",
+      "responseType": "{ type: string, created_at: string, data: Record<string, any> }",
       "usageExample": "everhour({\n    webhookHooks: {\n        invoice: {\n            updated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2501,11 +2501,11 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: string, created_at: string, data: {} }",
+      "responseType": "{ type: string, created_at: string, data: Record<string, any> }",
       "usageExample": "everhour({\n    webhookHooks: {\n        project: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2528,11 +2528,11 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: string, created_at: string, data: {} }",
+      "responseType": "{ type: string, created_at: string, data: Record<string, any> }",
       "usageExample": "everhour({\n    webhookHooks: {\n        project: {\n            removed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2555,11 +2555,11 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: string, created_at: string, data: {} }",
+      "responseType": "{ type: string, created_at: string, data: Record<string, any> }",
       "usageExample": "everhour({\n    webhookHooks: {\n        project: {\n            updated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2582,11 +2582,11 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: string, created_at: string, data: {} }",
+      "responseType": "{ type: string, created_at: string, data: Record<string, any> }",
       "usageExample": "everhour({\n    webhookHooks: {\n        section: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2609,11 +2609,11 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: string, created_at: string, data: {} }",
+      "responseType": "{ type: string, created_at: string, data: Record<string, any> }",
       "usageExample": "everhour({\n    webhookHooks: {\n        section: {\n            recovered: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2636,11 +2636,11 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: string, created_at: string, data: {} }",
+      "responseType": "{ type: string, created_at: string, data: Record<string, any> }",
       "usageExample": "everhour({\n    webhookHooks: {\n        section: {\n            removed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2663,11 +2663,11 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: string, created_at: string, data: {} }",
+      "responseType": "{ type: string, created_at: string, data: Record<string, any> }",
       "usageExample": "everhour({\n    webhookHooks: {\n        section: {\n            updated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2690,11 +2690,11 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: string, created_at: string, data: {} }",
+      "responseType": "{ type: string, created_at: string, data: Record<string, any> }",
       "usageExample": "everhour({\n    webhookHooks: {\n        task: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2717,11 +2717,11 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: string, created_at: string, data: {} }",
+      "responseType": "{ type: string, created_at: string, data: Record<string, any> }",
       "usageExample": "everhour({\n    webhookHooks: {\n        task: {\n            recovered: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2744,11 +2744,11 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: string, created_at: string, data: {} }",
+      "responseType": "{ type: string, created_at: string, data: Record<string, any> }",
       "usageExample": "everhour({\n    webhookHooks: {\n        task: {\n            removed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2771,11 +2771,11 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: string, created_at: string, data: {} }",
+      "responseType": "{ type: string, created_at: string, data: Record<string, any> }",
       "usageExample": "everhour({\n    webhookHooks: {\n        task: {\n            updated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2825,11 +2825,11 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: string, created_at: string, data: {} }",
+      "responseType": "{ type: string, created_at: string, data: Record<string, any> }",
       "usageExample": "everhour({\n    webhookHooks: {\n        timer: {\n            started: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2852,11 +2852,11 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ type: string, created_at: string, data: {} }",
+      "responseType": "{ type: string, created_at: string, data: Record<string, any> }",
       "usageExample": "everhour({\n    webhookHooks: {\n        timer: {\n            stopped: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     }
   ],

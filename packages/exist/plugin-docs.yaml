@@ -1,0 +1,19 @@
+displayName: Exist
+description: Personal analytics service that collects tracked data and returns attributes, averages, correlations, and insights, and lets you write attribute values.
+domain: exist.io
+examples:
+  read:
+    path: attributes.list
+    title: List attributes
+  write:
+    path: attributes.update
+    title: Update attribute values
+    args:
+      attributes:
+        - name: steps
+          date: '2026-01-15'
+          value: 8500
+dbExample:
+  entity: attributes
+  note: Search synced attributes without hitting Exist.
+  limit: 50

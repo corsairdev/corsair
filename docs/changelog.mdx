@@ -1,0 +1,175 @@
+---
+title: "Changelog"
+description: "What each release of the Corsair SDK and plugins changed, week by week."
+rss: true
+---
+
+Written from merged pull requests each time packages are released.
+
+<Update label="Week of November 16, 2026" description="corsair 0.2.6" tags={["SDK", "Plugins", "Cloud"]}>
+
+## SDK: corsair 0.2.6
+
+Also released: `@corsair-dev/cli` 0.1.87, `@corsair-dev/langchain` 0.1.62, `@corsair-dev/llamaindex` 0.1.62, `@corsair-dev/mastra` 0.1.62, `@corsair-dev/mcp` 0.1.90, `@corsair-dev/studio` 0.1.73, `@corsair-dev/ui` 0.1.67.
+
+- Add a new account beside an unnamed one instead of taking it over ([#2596](https://github.com/corsairdev/corsair/pull/2596))
+- Bump CORSAIR\_SDK\_VERSION with corsair's package version ([#2595](https://github.com/corsairdev/corsair/pull/2595))
+- ToFileOutput returns a text file as text ([#2568](https://github.com/corsairdev/corsair/pull/2568))
+- One shape for a file going into an endpoint and coming out ([#2468](https://github.com/corsairdev/corsair/pull/2468))
+
+## Corsair Cloud
+
+Now runs corsair 0.2.5.
+
+## 101 new plugins
+
+[Fly.io](/plugins/fly/overview), [Shopify](/plugins/shopify/overview), [Freshdesk](/plugins/freshdesk/overview), [ShipStation API (formerly ShipEngine)](/plugins/shipengine/overview), [GoDial](/plugins/godial/overview), [Modelry](/plugins/modelry/overview), [Parma](/plugins/parma/overview), [etermin](/plugins/etermin/overview), [Klipfolio](/plugins/klipfolio/overview), [SSLMate Cert Spotter](/plugins/certspotter/overview), [Thanks.io](/plugins/thanksio/overview), [SimpleKPI](/plugins/simplekpi/overview), [TextCortex](/plugins/textcortex/overview), [TRIGGERcmd](/plugins/triggercmd/overview), [Simple Analytics](/plugins/simpleanalytics/overview), [Spotlightr](/plugins/spotlightr/overview), [TomTom](/plugins/tomtom/overview), [SuperSaaS](/plugins/supersaas/overview), [Simplero](/plugins/simplero/overview), [Tomba](/plugins/tomba/overview), [SuiteDash](/plugins/suitedash/overview), [Templated](/plugins/templated/overview), [Simplesat](/plugins/simplesat/overview), [TaxJar](/plugins/taxjar/overview), [Telnyx](/plugins/telnyx/overview), [Truvera](/plugins/truvera/overview), [Pipedrive](/plugins/pipedrive/overview), [FreeAgent](/plugins/freeagent/overview), [LaunchDarkly](/plugins/launchdarkly/overview), [SignWell](/plugins/signwell/overview), [Storyblok](/plugins/storyblok/overview), [Supportbee](/plugins/supportbee/overview), [SurveyMonkey](/plugins/surveymonkey/overview), [SwaggerHub](/plugins/swaggerhub/overview), [TalentHR](/plugins/talenthr/overview), [Twelve Data](/plugins/twelvedata/overview), [Hex](/plugins/hex/overview), [Jotform](/plugins/jotform/overview), [Square](/plugins/square/overview), [Simla.com](/plugins/simlacom/overview), [Splitwise](/plugins/splitwise/overview), [TelTEL](/plugins/teltel/overview), [Kalshi](/plugins/kalshi/overview), [Superchat](/plugins/superchat/overview), [Doppler Marketing Automation](/plugins/dopplermarketingautomation/overview), [Helpwise](/plugins/helpwise/overview), [D2L Brightspace](/plugins/d2lbrightspace/overview), [SMS Alert](/plugins/smsalert/overview), [Similarweb](/plugins/similarweb/overview), [ToneDen](/plugins/toneden/overview), [Jungle Scout](/plugins/junglescout/overview), [Thinkific](/plugins/thinkific/overview), [JobNimbus](/plugins/jobnimbus/overview), [SignPath](/plugins/signpath/overview), [Tapfiliate](/plugins/tapfiliate/overview), [Mistral AI](/plugins/mistralai/overview), [Tave](/plugins/tave/overview), [ForceManager](/plugins/forcemanager/overview), [Draftable](/plugins/draftable/overview), [Labs64 NetLicensing](/plugins/labs64netlicensing/overview), [Serply](/plugins/serply/overview), [CurrencyScoop](/plugins/currencyscoop/overview), [Logo.dev](/plugins/logodev/overview), [NewsAPI](/plugins/newsapi/overview), [PDFLess](/plugins/pdfless/overview), [Plate Recognizer](/plugins/platerecognizer/overview), [Globalping](/plugins/globalping/overview), [ScreenshotOne](/plugins/screenshotone/overview), [SearchAPI](/plugins/searchapi/overview), [ParseHub](/plugins/parsehub/overview), [Sensibo](/plugins/sensibo/overview), [Teamwork](/plugins/teamwork/overview), [Ecologi](/plugins/ecologi/overview), [Sympla](/plugins/sympla/overview), [Echtpost](/plugins/echtpost/overview), [Help Scout](/plugins/helpscout/overview), [2Captcha](/plugins/twocaptcha/overview), [IP2Proxy](/plugins/ip2proxy/overview), [IP2WHOIS](/plugins/ip2whois/overview), [Proofly](/plugins/proofly/overview), [Deepline](/plugins/deepline/overview), [JumpCloud](/plugins/jumpcloud/overview), [Microsoft Clarity](/plugins/microsoftclarity/overview), [NASA](/plugins/nasa/overview), [Nasdaq Data Link](/plugins/nasdaq/overview), [Needle](/plugins/needle/overview), [NetHunt CRM](/plugins/nethunt/overview), [Neutrino API](/plugins/neutrino/overview), [New Relic](/plugins/newrelic/overview), [ngrok](/plugins/ngrok/overview), [Ninox](/plugins/ninox/overview), [Paperform](/plugins/paperform/overview), [Stormglass](/plugins/stormglass/overview), [Docparser](/plugins/docparser/overview), [Emailable](/plugins/emailable/overview), [Linkup](/plugins/linkup/overview), [IdentityCheck](/plugins/identitycheck/overview), [NEURONwriter](/plugins/neuronwriter/overview), [NiftyImages](/plugins/niftyimages/overview), [PostOnce](/plugins/postonce/overview), [Nango](/plugins/nango/overview)
+
+## 12 plugins updated
+
+- **Facebook 0.1.2:** Accept corsair 0.2.0 as a peer ([#2594](https://github.com/corsairdev/corsair/pull/2594))
+- **Spotify 0.1.8:** Send the request body on DELETE so playlists.removeItem works ([#2393](https://github.com/corsairdev/corsair/pull/2393))
+- **Linear 0.1.8:** Issues.list filter/orderBy; store issue assignee and state ([#2477](https://github.com/corsairdev/corsair/pull/2477))
+- **Airtable 0.1.6:** Align webhooks.getPayloads schema keys with runtime ([#2354](https://github.com/corsairdev/corsair/pull/2354))
+- **OneDrive, Google Drive, Dropbox and 1 more:** Download Drive, OneDrive, Dropbox and Box files as bytes ([#2573](https://github.com/corsairdev/corsair/pull/2573))
+- **Reducto 0.1.4:** Files.upload takes a link or base64, not only a Blob ([#2567](https://github.com/corsairdev/corsair/pull/2567))
+- **Vercel 0.1.4:** Current REST API, 55 operations, OAuth and managed auth ([#2550](https://github.com/corsairdev/corsair/pull/2550))
+- **Elorus 0.1.1:** Accept the responses the live API returns ([#2543](https://github.com/corsairdev/corsair/pull/2543))
+- **GatherUp 0.1.1:** Accept the numeric counters the live API returns ([#2542](https://github.com/corsairdev/corsair/pull/2542))
+- **Reducto 0.1.3:** Accept null in every parse block and OCR field Reducto may leave empty ([#2467](https://github.com/corsairdev/corsair/pull/2467))
+
+</Update>
+
+<Update label="Week of November 9, 2026" description="corsair 0.1.200" tags={["SDK", "Plugins", "Cloud"]}>
+
+## SDK: corsair 0.1.200
+
+Also released: `@corsair-dev/cli` 0.1.68, `@corsair-dev/langchain` 0.1.43, `@corsair-dev/llamaindex` 0.1.43, `@corsair-dev/mastra` 0.1.43, `@corsair-dev/mcp` 0.1.71, `@corsair-dev/studio` 0.1.53, `@corsair-dev/ui` 0.1.48.
+
+- Report connection status after a call only when it changes ([#2469](https://github.com/corsairdev/corsair/pull/2469))
+- Retry a 401 for every OAuth plugin and tell a revoked grant from a broken app ([#2324](https://github.com/corsairdev/corsair/pull/2324))
+- Plugin error handlers first, kek check before the call, honest webhook results ([#2335](https://github.com/corsairdev/corsair/pull/2335))
+- Keep the error body on failed calls and redact more key names ([#2320](https://github.com/corsairdev/corsair/pull/2320))
+- Let endpoints refresh an OAuth token after a 401 ([#2319](https://github.com/corsairdev/corsair/pull/2319))
+- Render catalog and docs types as the schemas declare them ([#2090](https://github.com/corsairdev/corsair/pull/2090))
+- Let an operation declare the long job it starts ([#2053](https://github.com/corsairdev/corsair/pull/2053))
+- **studio:** Typed client for the Corsair Cloud management API ([#1894](https://github.com/corsairdev/corsair/pull/1894))
+- **studio:** Remove duplicate aria-label props on ScriptPage ([#1798](https://github.com/corsairdev/corsair/pull/1798))
+- **cli:** Validate --port in the ui command ([#1824](https://github.com/corsairdev/corsair/pull/1824))
+
+## Corsair Cloud
+
+Now runs corsair 0.1.190.
+
+## 188 new plugins
+
+[ElevenLabs](/plugins/elevenlabs/overview), [Higgsfield](/plugins/higgsfield/overview), [InboxKit](/plugins/inboxkit/overview), [Eventzilla](/plugins/eventzilla/overview), [CoinMarketCap](/plugins/coinmarketcap/overview), [DeskTime](/plugins/desktime/overview), [OpenSea](/plugins/opensea/overview), [Foursquare](/plugins/foursquare/overview), [CodeREADr](/plugins/codereadr/overview), [ServiceNow](/plugins/servicenow/overview), [Re:amaze](/plugins/reamaze/overview), [Klaviyo](/plugins/klaviyo/overview), [Miro](/plugins/miro/overview), [Quaderno](/plugins/quaderno/overview), [Fidel](/plugins/fidel/overview), [Fluxguard](/plugins/fluxguard/overview), [Shippo](/plugins/shippo/overview), [Eventbrite](/plugins/eventbrite/overview), [Missive](/plugins/missive/overview), [Leiga](/plugins/leiga/overview), [Finage](/plugins/finage/overview), [Nutshell](/plugins/nutshell/overview), [Nanonets](/plugins/nanonets/overview), [Mixmax](/plugins/mixmax/overview), [ZenRows](/plugins/zenrows/overview), [Lemon Squeezy](/plugins/lemonsqueezy/overview), [Linguapop](/plugins/linguapop/overview), [Taggun](/plugins/taggun/overview), [Teamcamp](/plugins/teamcamp/overview), [tl;dv](/plugins/tldv/overview), [Sanity](/plugins/sanity/overview), [Adyntel](/plugins/adyntel/overview), [OpenGraph.io](/plugins/opengraph/overview), [Placid](/plugins/placid/overview), [CommCare](/plugins/commcare/overview), [Happy Scribe](/plugins/happyscribe/overview), [ImageKit](/plugins/imagekit/overview), [CraftMyPDF](/plugins/craftmypdf/overview), [Databox](/plugins/databox/overview), [MemberSpot](/plugins/memberspot/overview), [Dropcontact](/plugins/dropcontact/overview), [Heyy](/plugins/heyy/overview), [OneDesk](/plugins/onedesk/overview), [Mails.so](/plugins/mailsso/overview), [Mapbox](/plugins/mapbox/overview), [Melo](/plugins/melo/overview), [Gong](/plugins/gong/overview), [Demio](/plugins/demio/overview), [Knack](/plugins/knack/overview), [SatisMeter](/plugins/satismeter/overview), [ScrapingAnt](/plugins/scrapingant/overview), [Rocketlane](/plugins/rocketlane/overview), [Route4Me](/plugins/route4me/overview), [Rentman](/plugins/rentman/overview), [RedCircle API](/plugins/redcircle/overview), [Referral Rock](/plugins/referralrock/overview), [Retently](/plugins/retently/overview), [RealPhoneValidation](/plugins/realphonevalidation/overview), [Remote Retrieval](/plugins/remoteretrieval/overview), [respond.io](/plugins/respondio/overview), [U301](/plugins/u301/overview), [Unisender](/plugins/unisender/overview), [VectorShift](/plugins/vectorshift/overview), [VirusTotal](/plugins/virustotal/overview), [Wachete](/plugins/wachete/overview), [WATI](/plugins/wati/overview), [Worksnaps](/plugins/worksnaps/overview), [Wrike](/plugins/wrike/overview), [Yandex Translate](/plugins/yandex/overview), [Google Slides](/plugins/googleslides/overview), [Klazify](/plugins/klazify/overview), [Scrape.do](/plugins/scrapedo/overview), [RepairShopr](/plugins/repairshopr/overview), [Raisely](/plugins/raisely/overview), [Roam HQ](/plugins/roam/overview), [Radar](/plugins/radar/overview), [Recruitee](/plugins/recruitee/overview), [Revolt (Stoat)](/plugins/revolt/overview), [Rollbar](/plugins/rollbar/overview), [RiteKit](/plugins/ritekit/overview), [RocketReach](/plugins/rocketreach/overview), [RudderStack Transformations](/plugins/rudderstacktransform/overview), [Refiner](/plugins/refiner/overview), [Ragic](/plugins/ragic/overview), [Renderform](/plugins/renderform/overview), [Roboflow](/plugins/roboflow/overview), [Remarkety](/plugins/remarkety/overview), [Rosette](/plugins/rosette/overview), [UptimeRobot](/plugins/uptimerobot/overview), [Userflow](/plugins/userflow/overview), [Userlist](/plugins/userlist/overview), [WaiverFile](/plugins/waiverfile/overview), [Webex](/plugins/webex/overview), [Web Scraper Cloud](/plugins/webscraperio/overview), [YNAB](/plugins/ynab/overview), [Ramp](/plugins/ramp/overview), [CloudConvert](/plugins/cloudconvert/overview), [Cloudflare Browser Run](/plugins/cloudflarebrowserrendering/overview), [Cloudlayer](/plugins/cloudlayer/overview), [CompanyEnrich](/plugins/companyenrich/overview), [Conversion Tools](/plugins/conversiontools/overview), [CustomJS](/plugins/customjs/overview), [Documenso](/plugins/documenso/overview), [deployhq](/plugins/deployhq/overview), [Keyword](/plugins/keyword/overview), [Kickbox](/plugins/kickbox/overview), [Kit](/plugins/kit/overview), [Ko-fi](/plugins/kofi/overview), [Kontent.ai](/plugins/kontentai/overview), [Gamma](/plugins/gamma/overview), [Kraken.io](/plugins/krakenio/overview), [Genderize](/plugins/genderize/overview), [Gender API](/plugins/genderapi/overview), [Endorsal](/plugins/endorsal/overview), [Encodian](/plugins/encodian/overview), [Eventee](/plugins/eventee/overview), [E2B](/plugins/e2b/overview), [GenderAPI.io](/plugins/genderapiio/overview), [Felt](/plugins/felt/overview), [Geoapify](/plugins/geoapify/overview), [Finmei](/plugins/finmei/overview), [Folk](/plugins/folk/overview), [Fireberry](/plugins/fireberry/overview), [Formdesk](/plugins/formdesk/overview), [Dialpad](/plugins/dialpad/overview), [DigiCert](/plugins/digicert/overview), [Fibery](/plugins/fibery/overview), [Kadoa](/plugins/kadoa/overview), [Kanbanize](/plugins/kanbanize/overview), [Keen](/plugins/keen/overview), [GageList](/plugins/gagelist/overview), [GatherUp](/plugins/gatherup/overview), [Elorus](/plugins/elorus/overview), [Fathom](/plugins/fathom/overview), [Fomo](/plugins/fomo/overview), [Parallel](/plugins/parallel/overview), [Shortcut](/plugins/shortcut/overview), [Monday MCP](/plugins/mondaymcp/overview), [Prismic](/plugins/prismic/overview), [Gorgias](/plugins/gorgias/overview), [Postmark](/plugins/postmark/overview), [Polygon.io](/plugins/polygonio/overview), [Google Tasks](/plugins/googletasks/overview), [Kommo](/plugins/kommo/overview), [Svix](/plugins/svix/overview), [Hyperbrowser](/plugins/hyperbrowser/overview), [Make](/plugins/make/overview), [Geocodio](/plugins/geocodio/overview), [sevdesk](/plugins/sevdesk/overview), [Grist](/plugins/grist/overview), [NeverBounce](/plugins/neverbounce/overview), [Sendbird](/plugins/sendbird/overview), [Imgix](/plugins/imgix/overview), [Stack Exchange](/plugins/stackexchange/overview), [Google Classroom](/plugins/googleclassroom/overview), [Memberstack](/plugins/memberstack/overview), [Prerender](/plugins/prerender/overview), [ServiceM8](/plugins/servicem8/overview), [Hub Planner](/plugins/hubplanner/overview), [HoneyHive](/plugins/honeyhive/overview), [TextIt](/plugins/textit/overview), [ERPNext](/plugins/erpnext/overview), [PDF-API.io](/plugins/pdfapi/overview), [GoSquared](/plugins/gosquared/overview), [Geokeo](/plugins/geokeo/overview), [Minerstat](/plugins/minerstat/overview), [Pointagram](/plugins/pointagram/overview), [Handwrytten](/plugins/handwrytten/overview), [MoonClerk](/plugins/moonclerk/overview), [Postalytics](/plugins/postalytics/overview), [DocsBot AI](/plugins/docsbotai/overview), [GetProspect](/plugins/getprospect/overview), [Ignisign](/plugins/ignisign/overview), [LiveSession](/plugins/livesession/overview), [Findymail](/plugins/findymail/overview), [Trustpilot](/plugins/trustpilot/overview), [Pushover](/plugins/pushover/overview), [Motion](/plugins/motion/overview), [PostGrid](/plugins/postgrid/overview), [Postiz](/plugins/postiz/overview), [Polygon OMS](/plugins/polygon/overview), [Short.io](/plugins/shortio/overview), [Gleap](/plugins/gleap/overview), [Gigasheet](/plugins/gigasheet/overview), [Givebutter](/plugins/givebutter/overview), [ProAbono](/plugins/proabono/overview), [StackAI](/plugins/stackai/overview), [Gift Up!](/plugins/giftup/overview)
+
+## 6 plugins updated
+
+- **Zoho Desk 0.1.1:** Turn off core's 401 refresh, the endpoints already decide which 401s get one ([#2358](https://github.com/corsairdev/corsair/pull/2358))
+- **PostHog 0.1.5:** Read, query and manage PostHog data with a personal API key ([#2283](https://github.com/corsairdev/corsair/pull/2283))
+- **Ahrefs 0.1.2:** Cover every Ahrefs MCP tool (Search Console, site audit, web analytics, more) ([#2282](https://github.com/corsairdev/corsair/pull/2282))
+- **tl;dv 0.1.1:** List webhook\_signature once in the account fields ([#2210](https://github.com/corsairdev/corsair/pull/2210))
+- **ServiceNow and Quaderno:** Required tax fields and a duplicate account field ([#2165](https://github.com/corsairdev/corsair/pull/2165))
+
+</Update>
+
+<Update label="Week of November 2, 2026" tags={["SDK", "Plugins"]}>
+
+## SDK
+
+- Give back a call whose answer list came back empty ([#2022](https://github.com/corsairdev/corsair/pull/2022))
+
+## 27 new plugins
+
+[Browser Use](/plugins/browseruse/overview), [DNSFilter](/plugins/dnsfilter/overview), [eSputnik](/plugins/esputnik/overview), [FinerWorks](/plugins/finerworks/overview), [Lever](/plugins/lever/overview), [Render](/plugins/render/overview), [Turbot Pipes](/plugins/turbotpipes/overview), [Woodpecker Co](/plugins/woodpeckerco/overview), [Workable](/plugins/workable/overview), [Zoho Desk](/plugins/zohodesk/overview), [Codacy](/plugins/codacy/overview), [EmailOctopus](/plugins/emailoctopus/overview), [Enginemailer](/plugins/enginemailer/overview), [Enigma](/plugins/enigma/overview), [eSignatures](/plugins/esignatures/overview), [Gumroad](/plugins/gumroad/overview), [Mem0](/plugins/mem0/overview), [NetSuite](/plugins/netsuite/overview), [Qdrant](/plugins/qdrant/overview), [Recall.ai](/plugins/recallai/overview), [Retell AI](/plugins/retellai/overview), [Snowflake](/plugins/snowflake/overview), [Ticketmaster](/plugins/ticketmaster/overview), [fal](/plugins/fal/overview), [Follow Up Boss](/plugins/followupboss/overview), [Salesflare](/plugins/salesflare/overview), [Timely](/plugins/timely/overview)
+
+## 13 plugins updated
+
+- **Gmail:** Keep stored messages and labels when listing ([#1993](https://github.com/corsairdev/corsair/pull/1993))
+- **Trello:** Delete local card and boards ([#1892](https://github.com/corsairdev/corsair/pull/1892))
+- **Todoist:** Send tasks.move to the move route ([#1849](https://github.com/corsairdev/corsair/pull/1849))
+- **Reddit:** Return null post in getComments when the post is missing ([#1848](https://github.com/corsairdev/corsair/pull/1848))
+- **Google Sheets:** Persist appendRow via updates.updatedRange ([#1896](https://github.com/corsairdev/corsair/pull/1896))
+- **GitLab:** Clean up local records after deletion ([#1893](https://github.com/corsairdev/corsair/pull/1893))
+- **Figma:** Delete local comment row on comments.delete ([#1887](https://github.com/corsairdev/corsair/pull/1887))
+- **AgentQL:** Stabilize cache keys across parameter order ([#1877](https://github.com/corsairdev/corsair/pull/1877))
+- **Replicate:** Declare the jobs its predictions and trainings start ([#2054](https://github.com/corsairdev/corsair/pull/2054))
+- **Vestaboard:** Accept key:secret in the API key field ([#2021](https://github.com/corsairdev/corsair/pull/2021))
+- **DataForSEO:** Accept login:password in the API key field ([#2018](https://github.com/corsairdev/corsair/pull/2018))
+- **Chaser:** Accept key:secret in the API key field ([#2020](https://github.com/corsairdev/corsair/pull/2020))
+- **Bonsai:** Accept key:secret in the API key field ([#2019](https://github.com/corsairdev/corsair/pull/2019))
+
+</Update>
+
+<Update label="Week of October 26, 2026" tags={["SDK", "Plugins"]}>
+
+## SDK
+
+- Report failed managed calls so Hub refunds them ([#1970](https://github.com/corsairdev/corsair/pull/1970))
+- Report what a per-unit call used ([#1971](https://github.com/corsairdev/corsair/pull/1971))
+- Send a job's cap and id, report its start and reads ([#1973](https://github.com/corsairdev/corsair/pull/1973))
+- Give back a call whose answer says it failed ([#2016](https://github.com/corsairdev/corsair/pull/2016))
+- Charge every managed call ([#1964](https://github.com/corsairdev/corsair/pull/1964))
+- Sign the cloud runtime's key requests ([#1972](https://github.com/corsairdev/corsair/pull/1972))
+- Encrypt data at rest ([#1981](https://github.com/corsairdev/corsair/pull/1981))
+
+## 7 new plugins
+
+[Unipile](/plugins/unipile/overview), [AnyAPI](/plugins/anyapi/overview), [Excel](/plugins/excel/overview), [GMI Cloud](/plugins/gmicloud/overview), [Instantly](/plugins/instantly/overview), [TikHub](/plugins/tikhub/overview), [TypeSafe](/plugins/typesafe/overview)
+
+## 1 plugin updated
+
+- **Reducto:** Accept null chart\_data and ocr in parse results ([#1965](https://github.com/corsairdev/corsair/pull/1965))
+
+</Update>
+
+<Update label="Week of October 19, 2026" tags={["Plugins"]}>
+
+## 56 new plugins
+
+[Akta](/plugins/akta/overview), [Alibaba Cloud Model Studio](/plugins/alibaba/overview), [Apollo.io](/plugins/apollo/overview), [Benzinga](/plugins/benzinga/overview), [Blackbaud](/plugins/blackbaud/overview), [BuiltWith](/plugins/builtwith/overview), [ByteDance](/plugins/bytedance/overview), [Callingly](/plugins/callingly/overview), [CallPage](/plugins/callpage/overview), [Celigo](/plugins/celigo/overview), [Chatwork](/plugins/chatwork/overview), [Claid.ai](/plugins/claidai/overview), [Clay](/plugins/clay/overview), [ClickSend](/plugins/clicksend/overview), [ClickUp](/plugins/clickup/overview), [cloro](/plugins/cloro/overview), [Close](/plugins/close/overview), [Coda](/plugins/coda/overview), [Code Interpreter](/plugins/codeinterpreter/overview), [CoinMarketCal](/plugins/coinmarketcal/overview), [Composio](/plugins/composio/overview), [ContactOut](/plugins/contactout/overview), [Context.dev](/plugins/contextdev/overview), [Convex](/plugins/convex/overview), [Cutt.ly](/plugins/cuttly/overview), [Daffy](/plugins/daffy/overview), [DataForSEO](/plugins/dataforseo/overview), [Docmosis](/plugins/docmosis/overview), [Docsumo](/plugins/docsumo/overview), [DocuSign](/plugins/docusign/overview), [Fixer](/plugins/fixer/overview), [Fundable](/plugins/fundable/overview), [Hunter.io](/plugins/hunterio/overview), [Keenable](/plugins/keenable/overview), [Kling](/plugins/kling/overview), [LiteScrape](/plugins/litescrape/overview), [Magic Hour](/plugins/magichour/overview), [MiniMax](/plugins/minimax/overview), [MrScraper](/plugins/mrscraper/overview), [Octen](/plugins/octen/overview), [Orbit](/plugins/orbit/overview), [People Data Labs](/plugins/pdl/overview), [Ploid](/plugins/ploid/overview), [Remoet](/plugins/remoet/overview), [Rev AI](/plugins/revai/overview), [Saperly](/plugins/saperly/overview), [Search1API](/plugins/search1api/overview), [Starton](/plugins/starton/overview), [Surf](/plugins/surf/overview), [Suzanne](/plugins/suzanne/overview), [TinyFish](/plugins/tinyfish/overview), [TinyPNG](/plugins/tinypng/overview), [Turso](/plugins/turso/overview), [Updown.io](/plugins/updownio/overview), [Vaquill](/plugins/vaquill/overview), [Coassemble](/plugins/coassemble/overview)
+
+## 4 plugins updated
+
+- **Gmail:** Send metadataHeaders and labelIds as repeated parameters ([#1941](https://github.com/corsairdev/corsair/pull/1941))
+- **Discord:** Buttons, select menus and allowed\_mentions on messages ([#1942](https://github.com/corsairdev/corsair/pull/1942))
+- **Spotify:** Use current user playlists endpoint ([#1850](https://github.com/corsairdev/corsair/pull/1850))
+- **Anthropic Admin:** Add DB persistence and typed responses ([#1430](https://github.com/corsairdev/corsair/pull/1430))
+
+</Update>
+
+<Update label="Week of October 12, 2026" tags={["SDK", "Plugins"]}>
+
+## SDK
+
+- One mode and one admin line per link ([#1899](https://github.com/corsairdev/corsair/pull/1899))
+- Typed client for the Corsair Cloud management API ([#1894](https://github.com/corsairdev/corsair/pull/1894))
+- Set the permission mode per call, not per plugin ([#1898](https://github.com/corsairdev/corsair/pull/1898))
+- Add managed pricing auth type ([#1897](https://github.com/corsairdev/corsair/pull/1897))
+
+## 5 plugins updated
+
+- **Firecrawl:** Add managed pricing auth type ([#1897](https://github.com/corsairdev/corsair/pull/1897))
+- **Jira:** Correct search pagination and synced creation dates ([#1882](https://github.com/corsairdev/corsair/pull/1882))
+- **GitHub:** Convert write request body keys to snake\_case ([#1883](https://github.com/corsairdev/corsair/pull/1883))
+- **Dropbox:** Clean up folder row on files.delete ([#1885](https://github.com/corsairdev/corsair/pull/1885))
+- **Ambee:** Treat a zoneless ISO timestamp as UTC ([#1886](https://github.com/corsairdev/corsair/pull/1886))
+
+</Update>
+
+<Update label="Week of October 5, 2026" tags={["SDK", "Plugins"]}>
+
+## SDK
+
+- Pin the instance on every hub call ([#1890](https://github.com/corsairdev/corsair/pull/1890))
+- Ignore malformed connect request payloads ([#1860](https://github.com/corsairdev/corsair/pull/1860))
+- Db table naming ([#1866](https://github.com/corsairdev/corsair/pull/1866))
+
+## 2 plugins updated
+
+- **Gemini:** Preserve Gemini multipart content ([#1750](https://github.com/corsairdev/corsair/pull/1750))
+- **Todoist:** Use v1 tasks/quick path for quickAdd ([#1852](https://github.com/corsairdev/corsair/pull/1852))
+
+</Update>

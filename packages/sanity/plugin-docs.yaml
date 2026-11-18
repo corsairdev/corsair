@@ -1,0 +1,113 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+displayName: Sanity
+description: Sanity's Content Lake from an agent. Query documents with GROQ, create and edit drafts, publish, upload images and files, read history, run Sanity's AI Agent Actions, manage datasets and webhooks, and receive signed document webhooks.
+domain: sanity.io
+overviewNote: |
+  Connect with an API token from sanity.io/manage under API > Tokens, plus the project id and the dataset you use most. A Viewer token can read. Writing documents needs Editor. Datasets and webhooks need a token with the Administrator or Developer role. Each call can name another dataset with `dataset`.
+
+  Writes follow the Studio's draft model. `documents.create` and `documents.edit` change the draft (`drafts.<id>`), and readers of published content see nothing until `documents.publish`. Pass `publish: true` to do both in one transaction. `documents.patch` and `documents.mutate` write the exact ids you give them, so a published id changes the live document at once.
+
+  Before writing a type you don't know, call `schemas.list`. It returns each deployed schema's types and fields, and the `schemaId` the Agent Actions need. A project deploys its schema with `sanity schema deploy`, and the list only shows what was last deployed.
+
+  The Agent Actions (`generate`, `transform`, `translate`, `prompt`) use one Sanity AI credit per call and stop with a 429 when the organization's AI budget runs out. They write to drafts unless `forcePublishedWrite` is set. `noWrite: true` returns the result without saving it. Sanity marks these actions experimental, and they run on API version `vX`.
+
+  The plugin retries reads after a 5xx or a network failure. It never repeats a write that may have landed. Sanity's 429 for too many requests means nothing ran, so those are retried for writes too.
+examples:
+  read:
+    path: documents.query
+    title: List the latest published posts
+    args:
+      query: "*[_type == $type] | order(_createdAt desc)[0...10]{ _id, title, 'slug': slug.current }"
+      params:
+        type: post
+  write:
+    path: documents.create
+    title: Create a draft post
+    args:
+      document:
+        _type: post
+        title: Shipping the Sanity plugin
+        slug:
+          _type: slug
+          current: shipping-the-sanity-plugin
+exampleWebhook:
+  path: documents.changed
+  note: "Create the webhook with `webhooks.create`, or under API > Webhooks at sanity.io/manage, and give it a secret. Store the same secret with `keys.set_webhook_signature`. Corsair keeps one secret per tenant, so all of one tenant's webhooks must share it. `sanity({ webhookSecret })` covers accounts with no stored secret, and a stored one takes precedence. Use that option only in a single-tenant app. Every tenant without a stored secret falls back to it, and then a delivery signed for one tenant also verifies under another's `tenantId`. Deliveries without a valid signature are refused. Hand `processWebhook` the raw body text (`await request.text()`), because a parsed body cannot verify. A delivery that fails verification makes `processWebhook` report a failure. Answer it with a 5xx and Sanity retries twice, 30 seconds apart. Signatures more than 15 minutes from now are refused. Deliveries can repeat, so deduplicate by `idempotencyKey`. The event's `body` is the webhook's GROQ projection, and its operation, document id and dataset come from Sanity's headers. On Corsair's cloud, Hub routes each delivery by its `sanity-project-id` header to the account that stored that project id. In your own handler, `processWebhook` takes the tenant from `?tenantId=` and uses `default` without it, so in a multi-tenant app give each tenant its own webhook with `?tenantId=` on the URL and pass `Object.fromEntries(new URL(request.url).searchParams)` to `processWebhook` as the fourth argument. The signature covers the body but not the URL, so give each tenant's webhook its own secret. A delivery replayed under another `tenantId` then fails that tenant's check. A `before` hook runs ahead of the signature check, so keep side effects in `after`."
+  after: "if (result.data?.operation === 'update') console.log(result.data.documentId, result.data.body);"
+apiNotes:
+  documents.query: Sends the query as a POST, so long queries and large params work. Reads published documents unless you pass `perspective` (`drafts`, `raw`, or a list of release names). Pass user input as `params`, never inside the query string. Project the fields you need and slice the results, since answers above 1 MB can be cut off on Corsair's cloud.
+  documents.get: Reads by exact id and always sees the latest write, unlike a query. Ids that don't exist or that the token can't read come back in `omitted` with the reason.
+  documents.create: Uses the Actions API, the same one the Studio uses. `ifExists` only checks the draft. With the `_id` of a published document, a new draft is made over it.
+  documents.edit: Patches the draft and makes one from the published version first when there is none. The edit action takes no revision check. Use `documents.patch` with `ifRevisionId` when two writers might collide.
+  documents.patch: A wrong `ifRevisionId` gets a 409 and changes nothing.
+  documents.publish: Fails with a 404 when the document has no draft.
+  documents.unpublish: Moves the published content back into a draft. Webhooks see this as a delete.
+  documents.discardDraft: The published version stays. Discarding a draft that doesn't exist is a 404.
+  documents.delete: Deletes each published document together with its draft. Documents with strong references to them block the delete until the references go. Ids that don't exist are skipped.
+  documents.mutate: Applies everything in one transaction or nothing. Pass your own `transactionId` to make a retry safe, since Sanity refuses a used one with a 409.
+  documents.history: "`lastRevision: true` reads a deleted document as it was just before the delete, which is how you recover one. How far back history goes depends on the plan."
+  documents.transactions: Sanity requires the export without document content, so each mutation shows its kind and id only. Read a revision with `documents.history`. Sanity merges quick successive edits by one author into one entry.
+  assets.upload: "Up to 25 MB as base64. Uploading the same bytes again returns the existing asset. Reference an image from a document as `{ _type: 'image', asset: { _type: 'reference', _ref: asset._id } }`."
+  datasets.create: Sanity's free plan refuses private datasets.
+  datasets.delete: Deletes every document and asset in the dataset. `confirmName` must repeat the name.
+  schemas.list: Reads the route `sanity schemas list` uses, which Sanity's HTTP reference doesn't cover yet.
+  agentActions.generate: "Give `documentId` to write into an existing document, or `targetDocument` to create one. `target` limits which fields it writes. It can't write file fields or fields the schema marks hidden or read-only, and it writes date fields only with `localeSettings`. Long generations can outlast a Corsair script, so pass `async: true` and read the document later."
+  agentActions.transform: The instruction can be at most 2,000 characters once params are filled in.
+  agentActions.translate: Usually paired with `targetDocument` set to `create`, so the source stays as it is.
+  agentActions.prompt: "Writes nothing. With `format: 'json'`, the instruction must contain the word json."
+  webhooks.list: Sanity returns each webhook's secret. The plugin drops it and returns `hasSecret` instead.
+  webhooks.update: Changing `on`, `filter` or `projection` keeps the parts of the rule you leave out.
+  webhooks.attempts: Shows the status your endpoint answered for each delivery and why a failed one failed.
+apiExamples:
+  documents.query:
+    call: "{ query: '*[_type == $type && slug.current == $slug][0]', params: { type: 'post', slug: 'hello-world' }, perspective: 'drafts' }"
+  documents.get:
+    call: "{ ids: ['<id>', 'drafts.<id>'] }"
+  documents.create:
+    call: "{ document: { _type: 'post', title: 'Hello world' }, publish: false }"
+  documents.edit:
+    call: "{ id: '<id>', set: { title: 'A better title' }, setIfMissing: { tags: [] }, insert: { after: 'tags[-1]', items: ['news'] } }"
+  documents.patch:
+    call: "{ id: '<id>', inc: { views: 1 }, ifRevisionId: '<_rev>' }"
+  documents.publish:
+    call: "{ id: '<id>' }"
+  documents.unpublish:
+    call: "{ id: '<id>' }"
+  documents.discardDraft:
+    call: "{ id: '<id>' }"
+  documents.delete:
+    call: "{ ids: ['<id>'] }"
+  documents.mutate:
+    call: "{ mutations: [{ createOrReplace: { _id: 'settings', _type: 'siteSettings', title: 'Docs' } }, { delete: { id: 'old-page' } }], transactionId: '<your id>' }"
+  documents.history:
+    call: "{ id: '<id>', time: '2026-11-01T00:00:00Z' }"
+  documents.transactions:
+    call: "{ ids: ['<id>', 'drafts.<id>'], limit: 20, reverse: true }"
+  assets.upload:
+    call: "{ kind: 'image', contentBase64: '<base64 bytes>', contentType: 'image/png', filename: 'cover.png' }"
+  datasets.list:
+    call: "{}"
+  datasets.create:
+    call: "{ name: 'staging' }"
+  datasets.delete:
+    call: "{ name: 'staging', confirmName: 'staging' }"
+  schemas.list:
+    call: "{ type: 'post' }"
+  agentActions.generate:
+    call: "{ schemaId: '_.schemas.default', targetDocument: { operation: 'create', _type: 'post' }, instruction: 'Write a short post about $topic', instructionParams: { topic: 'GROQ joins' } }"
+  agentActions.transform:
+    call: "{ schemaId: '_.schemas.default', documentId: '<id>', instruction: 'Rewrite in plain British English', target: { path: 'body' } }"
+  agentActions.translate:
+    call: "{ schemaId: '_.schemas.default', documentId: '<id>', toLanguage: { id: 'de-DE', title: 'German' }, targetDocument: { operation: 'create' } }"
+  agentActions.prompt:
+    call: "{ instruction: 'Suggest three titles for $doc as json', instructionParams: { doc: { type: 'document', documentId: '<id>' } }, format: 'json' }"
+  webhooks.list:
+    call: "{}"
+  webhooks.create:
+    call: "{ name: 'Revalidate blog', url: 'https://example.com/api/webhooks?tenantId=acme', on: ['create', 'update', 'delete'], filter: \"_type == 'post'\", projection: \"{ _id, 'slug': slug.current }\", secret: '<a long random string>' }"
+  webhooks.update:
+    call: "{ id: '<webhook id>', disabled: true }"
+  webhooks.delete:
+    call: "{ id: '<webhook id>' }"
+  webhooks.attempts:
+    call: "{ id: '<webhook id>', state: 'failure' }"

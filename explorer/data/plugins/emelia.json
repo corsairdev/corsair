@@ -1,7 +1,7 @@
 {
   "id": "emelia",
   "displayName": "Emelia",
-  "description": "Emelia plugin for Corsair",
+  "description": "B2B prospecting tool for managing email and LinkedIn campaigns, contacts, webhooks, sending providers, and the blacklist.",
   "npmPackageName": "@corsair-dev/emelia",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -33,7 +33,7 @@
           {
             "key": "me",
             "optional": true,
-            "type": "{ uid?: string, name?: string, email?: string, showMailbox?: boolean, picture?: string, due_invoice?: boolean, joinedDate?: string }"
+            "type": "{ uid?: string, name?: string, email?: string, showMailbox?: boolean, picture?: string, due_invoice?: boolean, joinedDate?: string } | null"
           }
         ]
       }
@@ -116,7 +116,7 @@
           {
             "key": "contact",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -142,7 +142,7 @@
           {
             "key": "options",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -152,7 +152,7 @@
           {
             "key": "all_campaigns",
             "optional": true,
-            "type": "{ _id: string, name?: string, status?: string, createdAt?: string, provider?: string, useManyProviders?: boolean, plannedStart?: string }[]"
+            "type": "{ _id: string, name?: string, status?: string, createdAt?: string, provider?: string, useManyProviders?: boolean, plannedStart?: string }[] | null"
           }
         ]
       }
@@ -204,7 +204,7 @@
           {
             "key": "contact",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -234,7 +234,7 @@
           {
             "key": "contact_lists",
             "optional": true,
-            "type": "{ _id: string, name?: string, contactCount?: number, fields?: string[], usedInCampaign?: boolean }[]"
+            "type": "{ _id: string, name?: string, contactCount?: number, fields?: string[], usedInCampaign?: boolean }[] | null"
           }
         ]
       }
@@ -255,7 +255,7 @@
           {
             "key": "contact",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },

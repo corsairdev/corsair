@@ -1,0 +1,37 @@
+displayName: Snowflake
+description: "Run SQL on a Snowflake account: submit a statement, fetch one result partition, or cancel execution."
+domain: snowflakecomputing.com
+recommendedAuth: api_key
+factory:
+  note: |
+    Statement calls also need the account host. Pass `account` here, or store it as the account credential. It is the identifier in `https://<account>.snowflakecomputing.com`, or that full URL. That is separate from `corsair.withTenant()`.
+  options:
+    account: acme-prod
+examples:
+  read:
+    path: statements.get
+    title: Fetch a result partition
+    args:
+      statementHandle: 019c06a4-0000-df4f-0000-00100006589e
+      partition: 0
+  write:
+    path: statements.submit
+    title: Submit a SQL statement
+    args:
+      statement: SELECT 1
+      timeout: 10
+apiExamples:
+  statements.submit:
+    args:
+      statement: SELECT 1
+      timeout: 10
+      warehouse: COMPUTE_WH
+  statements.get:
+    args:
+      statementHandle: 019c06a4-0000-df4f-0000-00100006589e
+      partition: 0
+  statements.cancel:
+    args:
+      statementHandle: 019c06a4-0000-df4f-0000-00100006589e
+apiNotes:
+  statements.submit: "`parameters.client_result_chunk_size` is in megabytes, from 16 to 160."

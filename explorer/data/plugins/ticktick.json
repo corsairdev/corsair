@@ -101,37 +101,37 @@
           {
             "key": "color",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sortOrder",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "closed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "viewMode",
             "optional": true,
-            "type": "list | kanban | timeline"
+            "type": "list | kanban | timeline | null"
           },
           {
             "key": "kind",
             "optional": true,
-            "type": "TASK | NOTE"
+            "type": "TASK | NOTE | null"
           },
           {
             "key": "groupId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "permission",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -193,37 +193,37 @@
           {
             "key": "color",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sortOrder",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "closed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "viewMode",
             "optional": true,
-            "type": "list | kanban | timeline"
+            "type": "list | kanban | timeline | null"
           },
           {
             "key": "kind",
             "optional": true,
-            "type": "TASK | NOTE"
+            "type": "TASK | NOTE | null"
           },
           {
             "key": "groupId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "permission",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -334,37 +334,37 @@
           {
             "key": "color",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sortOrder",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "closed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "viewMode",
             "optional": true,
-            "type": "list | kanban | timeline"
+            "type": "list | kanban | timeline | null"
           },
           {
             "key": "kind",
             "optional": true,
-            "type": "TASK | NOTE"
+            "type": "TASK | NOTE | null"
           },
           {
             "key": "groupId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "permission",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -473,7 +473,7 @@
           {
             "key": "projectId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
@@ -483,84 +483,84 @@
           {
             "key": "content",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "desc",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "priority",
             "optional": true,
-            "type": "number",
+            "type": "number | null",
             "description": "0 (None), 1 (Low), 3 (Medium), 5 (High)"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "-1 | 0 | 2",
+            "type": "-1 | 0 | 2 | null",
             "description": "-1 (Abandoned), 0 (Undone), 2 (Completed)"
           },
           {
             "key": "dueDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "startDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "completedTime",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "timeZone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isAllDay",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "columnId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "parentId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sortOrder",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "reminders",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "tags",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "repeatFlag",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "items",
             "optional": true,
-            "type": "{ id?: string, title: string, status: number, startDate?: string, isAllDay?: boolean }[]"
+            "type": "{ id?: string, title: string, status: number, startDate?: string, isAllDay?: boolean }[] | null"
           }
         ]
       }
@@ -627,7 +627,7 @@
           {
             "key": "projectId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
@@ -637,84 +637,84 @@
           {
             "key": "content",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "desc",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "priority",
             "optional": true,
-            "type": "number",
+            "type": "number | null",
             "description": "0 (None), 1 (Low), 3 (Medium), 5 (High)"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "-1 | 0 | 2",
+            "type": "-1 | 0 | 2 | null",
             "description": "-1 (Abandoned), 0 (Undone), 2 (Completed)"
           },
           {
             "key": "dueDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "startDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "completedTime",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "timeZone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isAllDay",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "columnId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "parentId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sortOrder",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "reminders",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "tags",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "repeatFlag",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "items",
             "optional": true,
-            "type": "{ id?: string, title: string, status: number, startDate?: string, isAllDay?: boolean }[]"
+            "type": "{ id?: string, title: string, status: number, startDate?: string, isAllDay?: boolean }[] | null"
           }
         ]
       }
@@ -811,7 +811,7 @@
           {
             "key": "projectId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
@@ -821,84 +821,84 @@
           {
             "key": "content",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "desc",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "priority",
             "optional": true,
-            "type": "number",
+            "type": "number | null",
             "description": "0 (None), 1 (Low), 3 (Medium), 5 (High)"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "-1 | 0 | 2",
+            "type": "-1 | 0 | 2 | null",
             "description": "-1 (Abandoned), 0 (Undone), 2 (Completed)"
           },
           {
             "key": "dueDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "startDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "completedTime",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "timeZone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isAllDay",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "columnId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "parentId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sortOrder",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "reminders",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "tags",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "repeatFlag",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "items",
             "optional": true,
-            "type": "{ id?: string, title: string, status: number, startDate?: string, isAllDay?: boolean }[]"
+            "type": "{ id?: string, title: string, status: number, startDate?: string, isAllDay?: boolean }[] | null"
           }
         ]
       }

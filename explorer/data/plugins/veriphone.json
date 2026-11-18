@@ -1,7 +1,7 @@
 {
   "id": "veriphone",
   "displayName": "Veriphone",
-  "description": "Veriphone plugin for Corsair",
+  "description": "Phone number validation API for verifying numbers, listing supported countries, checking credit usage, and fetching example numbers.",
   "npmPackageName": "@corsair-dev/veriphone",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -306,37 +306,37 @@
           {
             "key": "original_mccmnc",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "current_carrier",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "current_line_type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "current_mccmnc",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "current_lookup",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ported",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "carrier_data_source",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }

@@ -59,6 +59,14 @@ export function SiteFooter() {
 								</Link>
 							</li>
 							<li>
+								<Link
+									href="/use-cases"
+									className="text-sm text-[#1c1c1c99] no-underline transition-colors hover:text-[#1c1c1c]"
+								>
+									Use cases
+								</Link>
+							</li>
+							<li>
 								<a
 									href={DOCS_URL}
 									target="_blank"
@@ -212,6 +220,12 @@ export function SiteFooter() {
 							&copy; {currentYear} Corsair. All rights reserved.
 						</p>
 						<div className="flex items-center gap-4">
+							<Link
+								href="/security"
+								className="text-xs text-[#1c1c1c66] no-underline transition-colors hover:text-[#1c1c1c]"
+							>
+								Security
+							</Link>
 							<Link
 								href="/privacy-policy"
 								className="text-xs text-[#1c1c1c66] no-underline transition-colors hover:text-[#1c1c1c]"

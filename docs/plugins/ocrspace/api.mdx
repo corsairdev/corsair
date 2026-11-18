@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for OCR.space: every `ocrspace.api.*` operation with input and output types."
+title: "OCR.space API reference"
+sidebarTitle: "API"
+description: "API reference for the OCR.space plugin in Corsair: every `ocrspace.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `ocrspace.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -35,10 +34,10 @@ await corsair.ocrspace.api.account.conversions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `count_total` | `number` | No | — |
-| `count_engine1` | `number` | No | — |
-| `count_engine2` | `number` | No | — |
-| `count_engine3` | `number` | No | — |
+| `count_total` | `number \| null` | No | — |
+| `count_engine1` | `number \| null` | No | — |
+| `count_engine2` | `number \| null` | No | — |
+| `count_engine3` | `number \| null` | No | — |
 
 
 
@@ -81,13 +80,13 @@ await corsair.ocrspace.api.ocr.parse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `ParsedResults` | `object[]` | No | — |
-| `OCRExitCode` | `number` | No | — |
-| `IsErroredOnProcessing` | `boolean` | No | — |
-| `ErrorMessage` | `string \| string[]` | No | — |
-| `ErrorDetails` | `string` | No | — |
-| `SearchablePDFURL` | `string` | No | — |
-| `ProcessingTimeInMilliseconds` | `string \| number` | No | — |
+| `ParsedResults` | `object[] \| null` | No | — |
+| `OCRExitCode` | `number \| null` | No | — |
+| `IsErroredOnProcessing` | `boolean \| null` | No | — |
+| `ErrorMessage` | `string \| string[] \| null` | No | — |
+| `ErrorDetails` | `string \| null` | No | — |
+| `SearchablePDFURL` | `string \| null` | No | — |
+| `ProcessingTimeInMilliseconds` | `string \| number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="ParsedResults full type">
@@ -115,7 +114,7 @@ await corsair.ocrspace.api.ocr.parse({});
   } | null,
   ErrorMessage?: string | string[] | null,
   ErrorDetails?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -157,13 +156,13 @@ await corsair.ocrspace.api.ocr.parseImageUrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `ParsedResults` | `object[]` | No | — |
-| `OCRExitCode` | `number` | No | — |
-| `IsErroredOnProcessing` | `boolean` | No | — |
-| `ErrorMessage` | `string \| string[]` | No | — |
-| `ErrorDetails` | `string` | No | — |
-| `SearchablePDFURL` | `string` | No | — |
-| `ProcessingTimeInMilliseconds` | `string \| number` | No | — |
+| `ParsedResults` | `object[] \| null` | No | — |
+| `OCRExitCode` | `number \| null` | No | — |
+| `IsErroredOnProcessing` | `boolean \| null` | No | — |
+| `ErrorMessage` | `string \| string[] \| null` | No | — |
+| `ErrorDetails` | `string \| null` | No | — |
+| `SearchablePDFURL` | `string \| null` | No | — |
+| `ProcessingTimeInMilliseconds` | `string \| number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="ParsedResults full type">
@@ -191,7 +190,7 @@ await corsair.ocrspace.api.ocr.parseImageUrl({});
   } | null,
   ErrorMessage?: string | string[] | null,
   ErrorDetails?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>

@@ -1,0 +1,1158 @@
+{
+  "id": "opengraph",
+  "displayName": "OpenGraph.io",
+  "description": "Web data extraction with OpenGraph.io - unfurl link preview metadata, scrape raw HTML, capture screenshots, pull structured elements, ask AI questions about pages, resolve oEmbed cards, convert pages to Markdown and analyze brands.",
+  "npmPackageName": "@corsair-dev/opengraph",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 8,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "opengraph.api.brand.analyze",
+      "shortPath": "brand.analyze",
+      "description": "Analyze the brand behind a website: identity, products, audiences, positioning, messaging, voice, visual style and links",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The target URL. It is percent-encoded into the request path."
+          },
+          {
+            "key": "sections",
+            "optional": true,
+            "type": "Record<string, boolean>",
+            "description": "Set a section to false to skip it, e.g. { visual: false }."
+          },
+          {
+            "key": "questions",
+            "optional": true,
+            "type": "{ key: string, question: string, type?: string | boolean | number | string[] | object }[]",
+            "description": "Up to 3 custom questions; answers come back under custom.<key>."
+          },
+          {
+            "key": "include_meta",
+            "optional": true,
+            "type": "boolean",
+            "description": "Add a _meta object with the source pages behind each field."
+          },
+          {
+            "key": "cache_ok",
+            "optional": true,
+            "type": "boolean",
+            "description": "Reuse a cached analysis up to 7 days old. Default true."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brand",
+            "optional": true,
+            "type": "{ domain?: string | null, name?: string | null, description?: string | null, tagline?: string | null, category?: string | null } | null"
+          },
+          {
+            "key": "identity",
+            "optional": true,
+            "type": "{ logos?: { url?: string | null, type?: string | null, theme?: string | null, format?: string | null }[] | null, logo_svg?: { svg?: string | null, type?: string | null, theme?: string | null } | null, icon?: { url?: string | null, format?: string | null } | null, colors?: { hex?: string | null, role?: string | null }[] | null, fonts?: { family?: string | null, role?: string | null, weights?: number[] | null }[] | null } | null"
+          },
+          {
+            "key": "products",
+            "optional": true,
+            "type": "{ name?: string | null, description?: string | null, url?: string | null, category?: string | null }[] | null"
+          },
+          {
+            "key": "audiences",
+            "optional": true,
+            "type": "{ name?: string | null, description?: string | null }[] | null"
+          },
+          {
+            "key": "positioning",
+            "optional": true,
+            "type": "{ value_proposition?: string | null, market_position?: string | null, differentiators?: string[] | null } | null"
+          },
+          {
+            "key": "messaging",
+            "optional": true,
+            "type": "{ key_messages?: string[] | null, themes?: string[] | null, claims?: string[] | null, common_phrases?: string[] | null } | null"
+          },
+          {
+            "key": "voice",
+            "optional": true,
+            "type": "{ traits?: string[] | null, description?: string | null, formality?: number | null, technicality?: number | null, energy?: number | null, do?: string[] | null, avoid?: string[] | null } | null"
+          },
+          {
+            "key": "visual",
+            "optional": true,
+            "type": "{ style?: string | null, imagery?: string | null, ui_style?: string | null } | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ website?: string | null, about?: string | null, socials?: Record<string, string> | null, brand_assets?: string | string[] | null, pricing?: string | null } | null"
+          },
+          {
+            "key": "custom",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "_meta",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "is_cache",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "opengraph.api.extract.run",
+      "shortPath": "extract.run",
+      "description": "Extract chosen HTML elements as structured data plus concatenated clean text from a URL, ready for LLM pipelines",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site",
+            "optional": false,
+            "type": "string",
+            "description": "The URL to extract from."
+          },
+          {
+            "key": "selectors",
+            "optional": true,
+            "type": "Record<string, { selector: string, multiple?: boolean, type?: text | attr, attr?: string }>",
+            "description": "CSS selectors to pull as structured data, keyed by your own names."
+          },
+          {
+            "key": "html_elements",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated tags behind concatenatedText. Default title,h1,h2,h3,h4,h5,p."
+          },
+          {
+            "key": "wait_for_selector",
+            "optional": true,
+            "type": "string",
+            "description": "Wait for this CSS selector before capturing. Enables JavaScript rendering."
+          },
+          {
+            "key": "scroll_to_bottom",
+            "optional": true,
+            "type": "boolean",
+            "description": "Scroll the page to trigger lazy-loaded content. Enables JavaScript rendering."
+          },
+          {
+            "key": "load_more_selector",
+            "optional": true,
+            "type": "string",
+            "description": "A load-more button to click before capturing. Enables JavaScript rendering."
+          },
+          {
+            "key": "load_more_clicks",
+            "optional": true,
+            "type": "number",
+            "description": "How many times to click the load-more button. Default 3."
+          },
+          {
+            "key": "load_more_wait",
+            "optional": true,
+            "type": "number",
+            "description": "Milliseconds to wait after each click. Default 1500."
+          },
+          {
+            "key": "cache_ok",
+            "optional": true,
+            "type": "boolean",
+            "description": "Allow a cached result. OpenGraph.io defaults this to true."
+          },
+          {
+            "key": "max_cache_age",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum age of an acceptable cached result, in seconds."
+          },
+          {
+            "key": "full_render",
+            "optional": true,
+            "type": "boolean",
+            "description": "Render the page in a headless browser before extracting."
+          },
+          {
+            "key": "use_proxy",
+            "optional": true,
+            "type": "boolean",
+            "description": "Fetch through the standard datacenter proxy (10 credits)."
+          },
+          {
+            "key": "use_premium",
+            "optional": true,
+            "type": "boolean",
+            "description": "Fetch through the residential proxy (20 credits)."
+          },
+          {
+            "key": "use_superior",
+            "optional": true,
+            "type": "boolean",
+            "description": "Fetch through the mobile proxy for heavily protected sites (30 credits)."
+          },
+          {
+            "key": "auto_proxy",
+            "optional": true,
+            "type": "boolean",
+            "description": "Let OpenGraph.io pick the proxy for the domain. v3.0 default: true."
+          },
+          {
+            "key": "auto_render",
+            "optional": true,
+            "type": "boolean",
+            "description": "Let OpenGraph.io render JavaScript when the page needs it. v3.0 default: true."
+          },
+          {
+            "key": "retry",
+            "optional": true,
+            "type": "boolean",
+            "description": "Retry a failed fetch with a stronger proxy tier. v3.0 default: true."
+          },
+          {
+            "key": "ai_sanitize",
+            "optional": true,
+            "type": "boolean",
+            "description": "Scan the extracted text for prompt injection (1 extra credit)."
+          },
+          {
+            "key": "ai_sanitize_mode",
+            "optional": true,
+            "type": "sanitize | warn | block",
+            "description": "What to do on detected injection risk. Default sanitize."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "concatenatedText",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "ai_safety",
+            "optional": true,
+            "type": "{ risk_score?: number | null, risk_level?: string | null, action_taken?: string | null, signals?: Record<string, any> | string[] | null, recommendation?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "opengraph.api.markdown.get",
+      "shortPath": "markdown.get",
+      "description": "Convert a URL to clean Markdown with optional heading-aware chunking, keyword passage search and structure extraction",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The target URL. It is percent-encoded into the request path."
+          },
+          {
+            "key": "only_main_content",
+            "optional": true,
+            "type": "boolean",
+            "description": "Strip navigation, sidebars and footers. Default true."
+          },
+          {
+            "key": "include_tags",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated CSS selectors to keep, e.g. article,main."
+          },
+          {
+            "key": "exclude_tags",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated CSS selectors to drop, e.g. nav,.sidebar,footer."
+          },
+          {
+            "key": "max_chars",
+            "optional": true,
+            "type": "number",
+            "description": "Cap the Markdown at this many characters."
+          },
+          {
+            "key": "chunking",
+            "optional": true,
+            "type": "boolean",
+            "description": "Split the document into chunks sized for embedding. Default false."
+          },
+          {
+            "key": "chunk_size",
+            "optional": true,
+            "type": "number",
+            "description": "Target chunk size in characters. Default 2000."
+          },
+          {
+            "key": "chunk_overlap",
+            "optional": true,
+            "type": "number",
+            "description": "Characters repeated from the end of the previous chunk, at most half of chunk_size. Default 0."
+          },
+          {
+            "key": "heading_aware",
+            "optional": true,
+            "type": "boolean",
+            "description": "Start a new chunk at each section heading. Default true."
+          },
+          {
+            "key": "heading_aware_level",
+            "optional": true,
+            "type": "number",
+            "description": "Which heading level starts a new chunk. Default 2."
+          },
+          {
+            "key": "max_chunks",
+            "optional": true,
+            "type": "number",
+            "description": "Most chunks to return. Default 500."
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "Return only passages matching these keywords, with relevance scores. Implies chunking."
+          },
+          {
+            "key": "query_top_k",
+            "optional": true,
+            "type": "number",
+            "description": "How many matching passages to return. Default 5."
+          },
+          {
+            "key": "include_markdown",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include the document itself. Default true."
+          },
+          {
+            "key": "include_metadata",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include the page metadata block. Default true."
+          },
+          {
+            "key": "include_chunks",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include the chunk texts. Default true."
+          },
+          {
+            "key": "include_headings",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the heading outline and table and code block counts. Default false."
+          },
+          {
+            "key": "include_links",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return every link from the main content as an absolute URL. Default false."
+          },
+          {
+            "key": "include_images",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return every image with its source and alt text. Default false."
+          },
+          {
+            "key": "ai_sanitize",
+            "optional": true,
+            "type": "boolean",
+            "description": "Scan the page for prompt injection (1 extra credit)."
+          },
+          {
+            "key": "ai_sanitize_mode",
+            "optional": true,
+            "type": "sanitize | warn | block",
+            "description": "What to do on detected injection risk. Default sanitize."
+          },
+          {
+            "key": "cache_ok",
+            "optional": true,
+            "type": "boolean",
+            "description": "Allow a cached result. OpenGraph.io defaults this to true."
+          },
+          {
+            "key": "max_cache_age",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum age of an acceptable cached result, in milliseconds."
+          },
+          {
+            "key": "full_render",
+            "optional": true,
+            "type": "boolean",
+            "description": "Always render in a browser first. Adds 5-10 seconds and is billed."
+          },
+          {
+            "key": "wait_for_selector",
+            "optional": true,
+            "type": "string",
+            "description": "Wait for this CSS selector before reading. Enables rendering."
+          },
+          {
+            "key": "scroll_to_bottom",
+            "optional": true,
+            "type": "boolean",
+            "description": "Scroll the page to trigger lazy-loaded content. Enables rendering."
+          },
+          {
+            "key": "load_more_selector",
+            "optional": true,
+            "type": "string",
+            "description": "A load-more button to click before reading. Enables rendering."
+          },
+          {
+            "key": "use_proxy",
+            "optional": true,
+            "type": "boolean",
+            "description": "Fetch through the standard datacenter proxy (10 credits)."
+          },
+          {
+            "key": "use_premium",
+            "optional": true,
+            "type": "boolean",
+            "description": "Fetch through the residential proxy (20 credits)."
+          },
+          {
+            "key": "use_superior",
+            "optional": true,
+            "type": "boolean",
+            "description": "Fetch through the mobile proxy for heavily protected sites (30 credits)."
+          },
+          {
+            "key": "proxy_country",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter country code to fetch from, e.g. US."
+          },
+          {
+            "key": "accept_lang",
+            "optional": true,
+            "type": "string",
+            "description": "Accept-Language header sent to the page, e.g. en-US."
+          },
+          {
+            "key": "auto_render",
+            "optional": true,
+            "type": "boolean",
+            "description": "Let OpenGraph.io render JavaScript when the page needs it. v3.0 default: true."
+          },
+          {
+            "key": "auto_proxy",
+            "optional": true,
+            "type": "boolean",
+            "description": "Let OpenGraph.io pick the proxy for the domain. v3.0 default: true."
+          },
+          {
+            "key": "retry",
+            "optional": true,
+            "type": "boolean",
+            "description": "Retry a failed fetch with a stronger proxy tier. v3.0 default: true."
+          },
+          {
+            "key": "max_retries",
+            "optional": true,
+            "type": "number",
+            "description": "Attempts before giving up, 1 to 4. Default 4."
+          },
+          {
+            "key": "retry_escalate",
+            "optional": true,
+            "type": "boolean",
+            "description": "Move each retry up a proxy tier (default true). false keeps retries on the tier you chose, which avoids the costlier tiers."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "markdown",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{ title?: string | null, description?: string | null, canonical_url?: string | null, site_name?: string | null, image?: string | null, language?: string | null, final_url?: string | null } | null"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ character_count?: number | null, estimated_token_count?: number | null, truncated?: boolean | null, truncation_reason?: string | null, max_chars?: number | null, chunk_count?: number | null, chunks_truncated?: boolean | null, chunk_error?: string | null, structure_error?: string | null, headings_truncated?: boolean | null, links_truncated?: boolean | null, images_truncated?: boolean | null } | null"
+          },
+          {
+            "key": "debug",
+            "optional": true,
+            "type": "{ full_render_used?: boolean | null, auto_render_triggered?: boolean | null, proxy_used?: string | null, retry_used?: boolean | null, retry_attempts?: number | null, final_status_code?: number | null } | null"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "chunks",
+            "optional": true,
+            "type": "{ index?: number | null, text?: string | null, heading_path?: string[] | null, character_count?: number | null, estimated_token_count?: number | null, start_offset?: number | null, end_offset?: number | null, overlap_character_count?: number | null, split_mid_block?: boolean | null, relevance_score?: number | null }[] | null"
+          },
+          {
+            "key": "headings",
+            "optional": true,
+            "type": "{ level?: number | null, text?: string | null }[] | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ url?: string | null, text?: string | null, rel?: string | null, internal?: boolean | null }[] | null"
+          },
+          {
+            "key": "images",
+            "optional": true,
+            "type": "{ url?: string | null, alt?: string | null }[] | null"
+          },
+          {
+            "key": "tables_detected",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "code_blocks_detected",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "ai_safety",
+            "optional": true,
+            "type": "{ risk_score?: number | null, risk_level?: string | null, action_taken?: string | null, signals?: Record<string, any> | string[] | null, recommendation?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "opengraph.api.oembed.get",
+      "shortPath": "oembed.get",
+      "description": "Resolve embeddable HTML for a URL: a native provider embed, an oEmbed discovery link, or a hosted fallback card",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The target URL. It is percent-encoded into the request path."
+          },
+          {
+            "key": "orientation",
+            "optional": true,
+            "type": "vertical | horizontal",
+            "description": "Fallback frame orientation: vertical 800x600 (default) or horizontal 400x150."
+          },
+          {
+            "key": "always_og_frame",
+            "optional": true,
+            "type": "boolean",
+            "description": "Force a hosted OpenGraph.io card even when a native embed exists."
+          },
+          {
+            "key": "maxwidth",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum embed width in pixels."
+          },
+          {
+            "key": "maxheight",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum embed height in pixels."
+          },
+          {
+            "key": "theme",
+            "optional": true,
+            "type": "light | dark | auto",
+            "description": "Color scheme for hosted fallback cards. Default auto."
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "default | compact | horizontal",
+            "description": "Layout preset for fallback cards; overrides orientation when set."
+          },
+          {
+            "key": "cache_ok",
+            "optional": true,
+            "type": "boolean",
+            "description": "Allow cached page metadata for fallback cards. Default true."
+          },
+          {
+            "key": "max_cache_age",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum age of acceptable cached metadata, in milliseconds. Default 432000000."
+          },
+          {
+            "key": "full_render",
+            "optional": true,
+            "type": "boolean",
+            "description": "Render the target page before reading metadata for a fallback card."
+          },
+          {
+            "key": "use_proxy",
+            "optional": true,
+            "type": "boolean",
+            "description": "Fetch through the standard datacenter proxy (10 credits)."
+          },
+          {
+            "key": "use_premium",
+            "optional": true,
+            "type": "boolean",
+            "description": "Fetch through the residential proxy (20 credits)."
+          },
+          {
+            "key": "use_superior",
+            "optional": true,
+            "type": "boolean",
+            "description": "Fetch through the mobile proxy for heavily protected sites (30 credits)."
+          },
+          {
+            "key": "proxy_country",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter country code to fetch from, e.g. US."
+          },
+          {
+            "key": "auto_proxy",
+            "optional": true,
+            "type": "boolean",
+            "description": "Let OpenGraph.io pick the proxy for the domain. v3.0 default: true."
+          },
+          {
+            "key": "auto_render",
+            "optional": true,
+            "type": "boolean",
+            "description": "Let OpenGraph.io render JavaScript when the page needs it. v3.0 default: true."
+          },
+          {
+            "key": "retry",
+            "optional": true,
+            "type": "boolean",
+            "description": "Retry a failed fetch with a stronger proxy tier. v3.0 default: true."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "provider_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "embed_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "frame_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "opengraph.api.query.run",
+      "shortPath": "query.run",
+      "description": "Ask an AI question about a URL and get an answer shaped by a requested structure, from a nano or mini model",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The target URL. It is percent-encoded into the request path."
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "The question to answer from the page."
+          },
+          {
+            "key": "responseStructure",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Shape the answer should take, e.g. { products: [\"string\"] }."
+          },
+          {
+            "key": "modelSize",
+            "optional": true,
+            "type": "nano | mini",
+            "description": "AI model size. nano (default) costs 100 credits, mini 200; a cached answer costs 1."
+          },
+          {
+            "key": "cache_ok",
+            "optional": true,
+            "type": "boolean",
+            "description": "Allow a cached result. OpenGraph.io defaults this to true."
+          },
+          {
+            "key": "full_render",
+            "optional": true,
+            "type": "boolean",
+            "description": "Render the page in a headless browser before answering."
+          },
+          {
+            "key": "use_proxy",
+            "optional": true,
+            "type": "boolean",
+            "description": "Fetch through the standard datacenter proxy (10 credits)."
+          },
+          {
+            "key": "use_premium",
+            "optional": true,
+            "type": "boolean",
+            "description": "Fetch through the residential proxy (20 credits)."
+          },
+          {
+            "key": "use_superior",
+            "optional": true,
+            "type": "boolean",
+            "description": "Fetch through the mobile proxy for heavily protected sites (30 credits)."
+          },
+          {
+            "key": "auto_proxy",
+            "optional": true,
+            "type": "boolean",
+            "description": "Let OpenGraph.io pick the proxy for the domain. v3.0 default: true."
+          },
+          {
+            "key": "auto_render",
+            "optional": true,
+            "type": "boolean",
+            "description": "Let OpenGraph.io render JavaScript when the page needs it. v3.0 default: true."
+          },
+          {
+            "key": "retry",
+            "optional": true,
+            "type": "boolean",
+            "description": "Retry a failed fetch with a stronger proxy tier. v3.0 default: true."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "answer",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "requestInfo",
+            "optional": true,
+            "type": "{ redirects?: number | null, host?: string | null, responseCode?: number | null, responseContentType?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "opengraph.api.scrape.fetch",
+      "shortPath": "scrape.fetch",
+      "description": "Fetch the raw HTML of a URL, with optional JavaScript rendering and proxy tiers for protected sites",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The target URL. It is percent-encoded into the request path."
+          },
+          {
+            "key": "full_render",
+            "optional": true,
+            "type": "boolean",
+            "description": "Render the page in a headless browser, required for JavaScript apps."
+          },
+          {
+            "key": "cache_ok",
+            "optional": true,
+            "type": "boolean",
+            "description": "Allow a cached result. OpenGraph.io defaults this to true."
+          },
+          {
+            "key": "use_proxy",
+            "optional": true,
+            "type": "boolean",
+            "description": "Fetch through the standard datacenter proxy (10 credits)."
+          },
+          {
+            "key": "use_premium",
+            "optional": true,
+            "type": "boolean",
+            "description": "Fetch through the residential proxy (20 credits)."
+          },
+          {
+            "key": "use_superior",
+            "optional": true,
+            "type": "boolean",
+            "description": "Fetch through the mobile proxy for heavily protected sites (30 credits)."
+          },
+          {
+            "key": "accept_lang",
+            "optional": true,
+            "type": "string",
+            "description": "Accept-Language header sent to the page, e.g. en-US."
+          },
+          {
+            "key": "auto_proxy",
+            "optional": true,
+            "type": "boolean",
+            "description": "Let OpenGraph.io pick the proxy for the domain. v3.0 default: true."
+          },
+          {
+            "key": "auto_render",
+            "optional": true,
+            "type": "boolean",
+            "description": "Let OpenGraph.io render JavaScript when the page needs it. v3.0 default: true."
+          },
+          {
+            "key": "retry",
+            "optional": true,
+            "type": "boolean",
+            "description": "Retry a failed fetch with a stronger proxy tier. v3.0 default: true."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "htmlContent",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "requestInfo",
+            "optional": true,
+            "type": "{ redirects?: number | null, host?: string | null, responseCode?: number | null, responseContentType?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "opengraph.api.screenshot.capture",
+      "shortPath": "screenshot.capture",
+      "description": "Capture a screenshot of a URL and get a CDN link that expires after 24 hours, with viewport, format and selector controls",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The target URL. It is percent-encoded into the request path."
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "jpeg | png | webp",
+            "description": "Image format. Default jpeg."
+          },
+          {
+            "key": "quality",
+            "optional": true,
+            "type": "number",
+            "description": "Image quality, rounded to the nearest 10. Default 80."
+          },
+          {
+            "key": "full_page",
+            "optional": true,
+            "type": "boolean",
+            "description": "Capture the entire scrollable page instead of the viewport."
+          },
+          {
+            "key": "dimensions",
+            "optional": true,
+            "type": "xs | sm | md | lg",
+            "description": "Viewport size: xs 375x812, sm 1024x768, md 1366x768 (default), lg 1920x1080."
+          },
+          {
+            "key": "selector",
+            "optional": true,
+            "type": "string",
+            "description": "CSS selector to capture only that element."
+          },
+          {
+            "key": "exclude_selectors",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated CSS selectors to hide, e.g. .header,.footer."
+          },
+          {
+            "key": "block_cookie_banner",
+            "optional": true,
+            "type": "boolean",
+            "description": "Auto-block known cookie consent banners. Default true."
+          },
+          {
+            "key": "dark_mode",
+            "optional": true,
+            "type": "boolean",
+            "description": "Set the browser preference to dark mode."
+          },
+          {
+            "key": "cache_ok",
+            "optional": true,
+            "type": "boolean",
+            "description": "Allow a cached result. OpenGraph.io defaults this to true."
+          },
+          {
+            "key": "use_proxy",
+            "optional": true,
+            "type": "boolean",
+            "description": "Fetch through a proxy for protected sites (20 credits for a screenshot)."
+          },
+          {
+            "key": "capture_delay",
+            "optional": true,
+            "type": "number",
+            "description": "Milliseconds to wait before the capture."
+          },
+          {
+            "key": "navigationTimeout",
+            "optional": true,
+            "type": "number",
+            "description": "Navigation timeout in milliseconds. Default 30000."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "screenshotUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "dimensions",
+            "optional": true,
+            "type": "{ width?: number | null, height?: number | null } | null"
+          },
+          {
+            "key": "requestInfo",
+            "optional": true,
+            "type": "{ redirects?: number | null, host?: string | null, responseCode?: number | null, responseContentType?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "opengraph.api.site.get",
+      "shortPath": "site.get",
+      "description": "Extract OpenGraph, Twitter Card and HTML meta tags from a URL as a merged hybrid graph for link previews",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The target URL. It is percent-encoded into the request path."
+          },
+          {
+            "key": "cache_ok",
+            "optional": true,
+            "type": "boolean",
+            "description": "Allow a cached result. OpenGraph.io defaults this to true."
+          },
+          {
+            "key": "max_cache_age",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum age of an acceptable cached result, in seconds. Default 432000 (5 days)."
+          },
+          {
+            "key": "full_render",
+            "optional": true,
+            "type": "boolean",
+            "description": "Render the page in a headless browser before reading tags."
+          },
+          {
+            "key": "use_proxy",
+            "optional": true,
+            "type": "boolean",
+            "description": "Fetch through the standard datacenter proxy (10 credits)."
+          },
+          {
+            "key": "use_premium",
+            "optional": true,
+            "type": "boolean",
+            "description": "Fetch through the residential proxy (20 credits)."
+          },
+          {
+            "key": "use_superior",
+            "optional": true,
+            "type": "boolean",
+            "description": "Fetch through the mobile proxy for heavily protected sites (30 credits)."
+          },
+          {
+            "key": "use_ai",
+            "optional": true,
+            "type": "boolean",
+            "description": "Let AI improve the extracted metadata when tags are missing."
+          },
+          {
+            "key": "accept_lang",
+            "optional": true,
+            "type": "string",
+            "description": "Accept-Language header sent to the page, e.g. en-US."
+          },
+          {
+            "key": "proxy_country",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter country code to fetch from, e.g. US."
+          },
+          {
+            "key": "auto_proxy",
+            "optional": true,
+            "type": "boolean",
+            "description": "Let OpenGraph.io pick the proxy for the domain. v3.0 default: true."
+          },
+          {
+            "key": "auto_render",
+            "optional": true,
+            "type": "boolean",
+            "description": "Let OpenGraph.io render JavaScript when the page needs it. v3.0 default: true."
+          },
+          {
+            "key": "retry",
+            "optional": true,
+            "type": "boolean",
+            "description": "Retry a failed fetch with a stronger proxy tier. v3.0 default: true."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hybridGraph",
+            "optional": true,
+            "type": "{ title?: string | null, description?: string | null, image?: string | { url?: string | null, width?: number | null, height?: number | null } | null, url?: string | null, site_name?: string | null, type?: string | null, favicon?: string | null } | null"
+          },
+          {
+            "key": "openGraph",
+            "optional": true,
+            "type": "{ title?: string | null, description?: string | null, type?: string | null, url?: string | null, site_name?: string | null, image?: string | { url?: string | null, width?: number | null, height?: number | null } | null } | null"
+          },
+          {
+            "key": "twitterCard",
+            "optional": true,
+            "type": "{ card?: string | null, site?: string | null, title?: string | null, description?: string | null, image?: string | { url?: string | null, width?: number | null, height?: number | null } | null } | null"
+          },
+          {
+            "key": "htmlInferred",
+            "optional": true,
+            "type": "{ title?: string | null, description?: string | null, favicon?: string | null } | null"
+          },
+          {
+            "key": "requestInfo",
+            "optional": true,
+            "type": "{ redirects?: number | null, host?: string | null, responseCode?: number | null, responseContentType?: string | null } | null"
+          },
+          {
+            "key": "retryInfo",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

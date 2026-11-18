@@ -217,7 +217,7 @@
           {
             "key": "items",
             "optional": true,
-            "type": "{ id?: string, etag?: string, kind?: string, snippet?: { channelId?: string, title?: string, description?: string, publishedAt?: string, type?: string, thumbnails?: { default?: { url?: string, width?: number, height?: number }, medium?: { url?: string, width?: number, height?: number }, high?: { url?: string, width?: number, height?: number }, standard?: { url?: string, width?: number, height?: number }, maxres?: { url?: string, width?: number, height?: number } } }, contentDetails?: {} }[]"
+            "type": "{ id?: string, etag?: string, kind?: string, snippet?: { channelId?: string, title?: string, description?: string, publishedAt?: string, type?: string, thumbnails?: { default?: { url?: string, width?: number, height?: number }, medium?: { url?: string, width?: number, height?: number }, high?: { url?: string, width?: number, height?: number }, standard?: { url?: string, width?: number, height?: number }, maxres?: { url?: string, width?: number, height?: number } } }, contentDetails?: Record<string, any> }[]"
           },
           {
             "key": "pageInfo",
@@ -400,7 +400,7 @@
           {
             "key": "localizations",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "onBehalfOfContentOwner",
@@ -440,12 +440,12 @@
           {
             "key": "brandingSettings",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "localizations",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }

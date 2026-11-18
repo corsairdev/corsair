@@ -1,6 +1,7 @@
 ---
-title: Database
-description: "Bookingmood local sync: searchable entities, `.search()` filters, and operators."
+title: "Bookingmood database"
+sidebarTitle: "Database"
+description: "Bookingmood local sync in Corsair: the entities stored in your database, the `.search()` filters each one accepts, and the filter operators."
 ---
 
 The Bookingmood plugin syncs data locally. Use `corsair.bookingmood.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
@@ -154,6 +155,7 @@ const rows = await corsair.bookingmood.db.members.search({
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `organization_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `user_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `role` | `string` | equals, contains, startsWith, endsWith, in |
 | `created_at` | `string` | equals, contains, startsWith, endsWith, in |
 | `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
 
@@ -240,6 +242,8 @@ const rows = await corsair.bookingmood.db.products.search({
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `organization_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `interaction` | `string` | equals, contains, startsWith, endsWith, in |
+| `rent_period` | `string` | equals, contains, startsWith, endsWith, in |
 | `timezone` | `string` | equals, contains, startsWith, endsWith, in |
 | `approximate_address` | `string` | equals, contains, startsWith, endsWith, in |
 | `exact_address` | `string` | equals, contains, startsWith, endsWith, in |

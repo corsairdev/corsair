@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Bunnycdn: every `bunnycdn.api.*` operation with input and output types."
+title: "bunny.net API reference"
+sidebarTitle: "API"
+description: "API reference for the bunny.net plugin in Corsair: every `bunnycdn.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `bunnycdn.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -32,7 +31,7 @@ await corsair.bunnycdn.api.apiKeys.list({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -574,7 +573,7 @@ await corsair.bunnycdn.api.dnsZone.list({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -681,7 +680,7 @@ await corsair.bunnycdn.api.edgeScripts.list({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1010,11 +1009,11 @@ await corsair.bunnycdn.api.pullZone.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `Id` | `number` | Yes | — |
-| `Name` | `string` | No | — |
-| `OriginUrl` | `string` | No | — |
+| `Name` | `string \| null` | No | — |
+| `OriginUrl` | `string \| null` | No | — |
 | `Enabled` | `boolean` | No | — |
 | `Suspended` | `boolean` | No | — |
-| `Hostnames` | `object[]` | No | — |
+| `Hostnames` | `object[] \| null` | No | — |
 | `StorageZoneId` | `number` | No | — |
 | `MonthlyBandwidthUsed` | `number` | No | — |
 | `MonthlyCharges` | `number` | No | — |
@@ -1028,7 +1027,7 @@ await corsair.bunnycdn.api.pullZone.create({});
   Value?: string | null,
   ForceSSL?: boolean,
   HasCertificate?: boolean
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1178,11 +1177,11 @@ await corsair.bunnycdn.api.pullZone.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `Id` | `number` | Yes | — |
-| `Name` | `string` | No | — |
-| `OriginUrl` | `string` | No | — |
+| `Name` | `string \| null` | No | — |
+| `OriginUrl` | `string \| null` | No | — |
 | `Enabled` | `boolean` | No | — |
 | `Suspended` | `boolean` | No | — |
-| `Hostnames` | `object[]` | No | — |
+| `Hostnames` | `object[] \| null` | No | — |
 | `StorageZoneId` | `number` | No | — |
 | `MonthlyBandwidthUsed` | `number` | No | — |
 | `MonthlyCharges` | `number` | No | — |
@@ -1196,7 +1195,7 @@ await corsair.bunnycdn.api.pullZone.get({});
   Value?: string | null,
   ForceSSL?: boolean,
   HasCertificate?: boolean
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1228,7 +1227,7 @@ await corsair.bunnycdn.api.pullZone.list({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1763,11 +1762,11 @@ await corsair.bunnycdn.api.pullZone.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `Id` | `number` | Yes | — |
-| `Name` | `string` | No | — |
-| `OriginUrl` | `string` | No | — |
+| `Name` | `string \| null` | No | — |
+| `OriginUrl` | `string \| null` | No | — |
 | `Enabled` | `boolean` | No | — |
 | `Suspended` | `boolean` | No | — |
-| `Hostnames` | `object[]` | No | — |
+| `Hostnames` | `object[] \| null` | No | — |
 | `StorageZoneId` | `number` | No | — |
 | `MonthlyBandwidthUsed` | `number` | No | — |
 | `MonthlyCharges` | `number` | No | — |
@@ -1781,7 +1780,7 @@ await corsair.bunnycdn.api.pullZone.update({});
   Value?: string | null,
   ForceSSL?: boolean,
   HasCertificate?: boolean
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3222,7 +3221,7 @@ await corsair.bunnycdn.api.storageZone.list({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3429,7 +3428,7 @@ await corsair.bunnycdn.api.videoLibrary.list({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">

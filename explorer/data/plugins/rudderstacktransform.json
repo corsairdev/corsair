@@ -1,0 +1,1125 @@
+{
+  "id": "rudderstacktransform",
+  "displayName": "RudderStack Transformations",
+  "description": "Create, version, publish and connect RudderStack transformations, and manage the reusable libraries they import.",
+  "npmPackageName": "@corsair-dev/rudderstacktransform",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 17,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "rudderstacktransform.api.libraries.create",
+      "shortPath": "libraries.create",
+      "description": "Create a reusable library whose importName transformations import it by",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The library name, used as the module name when imported."
+          },
+          {
+            "key": "language",
+            "optional": false,
+            "type": "javascript | pythonfaas",
+            "description": "javascript or pythonfaas. A resource cannot change language after it is created."
+          },
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string",
+            "description": "The library code."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "publish",
+            "optional": true,
+            "type": "boolean",
+            "description": "True publishes the library immediately. Defaults to false."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "versionId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "importName",
+            "optional": true,
+            "type": "string | null",
+            "description": "The name a transformation imports this library by. It cannot be changed after creation."
+          },
+          {
+            "key": "isPublished",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Documented on revision rows, but the live API left it out on 11-12."
+          }
+        ]
+      }
+    },
+    {
+      "path": "rudderstacktransform.api.libraries.delete",
+      "shortPath": "libraries.delete",
+      "description": "Delete a library by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The library to delete."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "rudderstacktransform.api.libraries.get",
+      "shortPath": "libraries.get",
+      "description": "Read one published library by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The published library ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "versionId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "importName",
+            "optional": true,
+            "type": "string | null",
+            "description": "The name a transformation imports this library by. It cannot be changed after creation."
+          },
+          {
+            "key": "isPublished",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Documented on revision rows, but the live API left it out on 11-12."
+          }
+        ]
+      }
+    },
+    {
+      "path": "rudderstacktransform.api.libraries.getVersion",
+      "shortPath": "libraries.getVersion",
+      "description": "Read one revision of a library",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The library ID."
+          },
+          {
+            "key": "versionId",
+            "optional": false,
+            "type": "string",
+            "description": "The revision to read."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "versionId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "importName",
+            "optional": true,
+            "type": "string | null",
+            "description": "The name a transformation imports this library by. It cannot be changed after creation."
+          },
+          {
+            "key": "isPublished",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Documented on revision rows, but the live API left it out on 11-12."
+          }
+        ]
+      }
+    },
+    {
+      "path": "rudderstacktransform.api.libraries.list",
+      "shortPath": "libraries.list",
+      "description": "List the published libraries in the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "libraries",
+            "optional": true,
+            "type": "{ id?: string | null, versionId?: string | null, name?: string | null, description?: string | null, code?: string | null, language?: string | null, createdAt?: string | null, updatedAt?: string | null, importName?: string | null, isPublished?: boolean | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rudderstacktransform.api.libraries.listVersions",
+      "shortPath": "libraries.listVersions",
+      "description": "List the revisions of a library, newest or oldest first",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number",
+            "description": "How many revisions to return. Defaults to the first 5."
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "Order on createdAt. Defaults to asc."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The library whose revisions to list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "libraryVersions",
+            "optional": true,
+            "type": "{ id?: string | null, versionId?: string | null, name?: string | null, description?: string | null, code?: string | null, language?: string | null, createdAt?: string | null, updatedAt?: string | null, importName?: string | null, isPublished?: boolean | null }[] | null",
+            "description": "The revisions. The live API sends them under `libraries`; the plugin moves them here."
+          }
+        ]
+      }
+    },
+    {
+      "path": "rudderstacktransform.api.libraries.publish",
+      "shortPath": "libraries.publish",
+      "description": "Publish chosen transformation and library revisions after RudderStack runs their code, so a failing test publishes nothing",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transformations",
+            "optional": true,
+            "type": "{ versionId: string, testInput?: Record<string, JsonValue>[] }[]"
+          },
+          {
+            "key": "libraries",
+            "optional": true,
+            "type": "{ versionId: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "published",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True when every revision passed and went live."
+          }
+        ]
+      }
+    },
+    {
+      "path": "rudderstacktransform.api.libraries.update",
+      "shortPath": "libraries.update",
+      "description": "Update a library, writing a new revision and publishing it only when publish is true; the name and language cannot change",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The library to update."
+          },
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string",
+            "description": "The updated library code."
+          },
+          {
+            "key": "language",
+            "optional": false,
+            "type": "javascript | pythonfaas",
+            "description": "The library's language. It cannot be changed from the one it was created with."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "publish",
+            "optional": true,
+            "type": "boolean",
+            "description": "True publishes the new revision. Defaults to false."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "versionId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "importName",
+            "optional": true,
+            "type": "string | null",
+            "description": "The name a transformation imports this library by. It cannot be changed after creation."
+          },
+          {
+            "key": "isPublished",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Documented on revision rows, but the live API left it out on 11-12."
+          }
+        ]
+      }
+    },
+    {
+      "path": "rudderstacktransform.api.transformations.connect",
+      "shortPath": "transformations.connect",
+      "description": "Connect a published transformation to a destination, replacing any transformation already connected to it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "destinationId",
+            "optional": false,
+            "type": "string",
+            "description": "The destination to act on."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The transformation to connect. It must be published, or RudderStack answers 400 \"Transformation is not published\"."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "versionId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Identifies this revision; pass it to libraries.publish."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null",
+            "description": "The JavaScript or Python code."
+          },
+          {
+            "key": "codeVersion",
+            "optional": true,
+            "type": "string | null",
+            "description": "Always \"1\" for API calls, as RudderStack sends it."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string | Record<string, JsonValue> | null",
+            "description": "A string ID or a workspace object, depending on the route."
+          },
+          {
+            "key": "destinations",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, enabled?: boolean | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rudderstacktransform.api.transformations.create",
+      "shortPath": "transformations.create",
+      "description": "Create a transformation; unpublished unless publish is true, and only a published one can be connected to a destination",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The transformation name."
+          },
+          {
+            "key": "language",
+            "optional": false,
+            "type": "javascript | pythonfaas",
+            "description": "javascript or pythonfaas. A resource cannot change language after it is created."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string",
+            "description": "The transformation code."
+          },
+          {
+            "key": "publish",
+            "optional": true,
+            "type": "boolean",
+            "description": "True makes the code live for incoming traffic and allows destinations to be connected. Defaults to false, which only creates a revision."
+          },
+          {
+            "key": "destinationIds",
+            "optional": true,
+            "type": "string[]",
+            "description": "Destinations to connect. Ignored unless publish is true."
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "Record<string, JsonValue>[]",
+            "description": "JSON events to test the code against while creating it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "versionId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Identifies this revision; pass it to libraries.publish."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null",
+            "description": "The JavaScript or Python code."
+          },
+          {
+            "key": "codeVersion",
+            "optional": true,
+            "type": "string | null",
+            "description": "Always \"1\" for API calls, as RudderStack sends it."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string | Record<string, JsonValue> | null",
+            "description": "A string ID or a workspace object, depending on the route."
+          },
+          {
+            "key": "destinations",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, enabled?: boolean | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rudderstacktransform.api.transformations.delete",
+      "shortPath": "transformations.delete",
+      "description": "Delete a published transformation; its revisions are never deleted",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The published transformation to delete. Its revisions are never deleted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "rudderstacktransform.api.transformations.disconnect",
+      "shortPath": "transformations.disconnect",
+      "description": "Disconnect a transformation from a destination",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "destinationId",
+            "optional": false,
+            "type": "string",
+            "description": "The destination to act on."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The transformation to connect. It must be published, or RudderStack answers 400 \"Transformation is not published\"."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "versionId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Identifies this revision; pass it to libraries.publish."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null",
+            "description": "The JavaScript or Python code."
+          },
+          {
+            "key": "codeVersion",
+            "optional": true,
+            "type": "string | null",
+            "description": "Always \"1\" for API calls, as RudderStack sends it."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string | Record<string, JsonValue> | null",
+            "description": "A string ID or a workspace object, depending on the route."
+          },
+          {
+            "key": "destinations",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, enabled?: boolean | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rudderstacktransform.api.transformations.get",
+      "shortPath": "transformations.get",
+      "description": "Read one published transformation by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The published transformation ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "versionId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Identifies this revision; pass it to libraries.publish."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null",
+            "description": "The JavaScript or Python code."
+          },
+          {
+            "key": "codeVersion",
+            "optional": true,
+            "type": "string | null",
+            "description": "Always \"1\" for API calls, as RudderStack sends it."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string | Record<string, JsonValue> | null",
+            "description": "A string ID or a workspace object, depending on the route."
+          },
+          {
+            "key": "destinations",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, enabled?: boolean | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rudderstacktransform.api.transformations.getVersion",
+      "shortPath": "transformations.getVersion",
+      "description": "Read one revision of a transformation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The transformation ID."
+          },
+          {
+            "key": "versionId",
+            "optional": false,
+            "type": "string",
+            "description": "The revision to read."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "versionId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Identifies this revision; pass it to libraries.publish."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null",
+            "description": "The JavaScript or Python code."
+          },
+          {
+            "key": "codeVersion",
+            "optional": true,
+            "type": "string | null",
+            "description": "Always \"1\" for API calls, as RudderStack sends it."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string | Record<string, JsonValue> | null",
+            "description": "A string ID or a workspace object, depending on the route."
+          },
+          {
+            "key": "destinations",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, enabled?: boolean | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rudderstacktransform.api.transformations.list",
+      "shortPath": "transformations.list",
+      "description": "List the published transformations in the workspace with their code, language and connected destinations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transformations",
+            "optional": true,
+            "type": "{ id?: string | null, versionId?: string | null, name?: string | null, description?: string | null, code?: string | null, codeVersion?: string | null, language?: string | null, createdAt?: string | null, updatedAt?: string | null, workspaceId?: string | Record<string, JsonValue> | null, destinations?: { id?: string | null, name?: string | null, enabled?: boolean | null }[] | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rudderstacktransform.api.transformations.listVersions",
+      "shortPath": "transformations.listVersions",
+      "description": "List the revisions of a transformation, newest or oldest first",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number",
+            "description": "How many revisions to return. Defaults to the first 5."
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "Order on createdAt. Defaults to asc."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The transformation whose revisions to list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "TransformationVersions",
+            "optional": true,
+            "type": "{ id?: string | null, versionId?: string | null, name?: string | null, description?: string | null, code?: string | null, codeVersion?: string | null, language?: string | null, createdAt?: string | null, updatedAt?: string | null, workspaceId?: string | Record<string, JsonValue> | null, destinations?: { id?: string | null, name?: string | null, enabled?: boolean | null }[] | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rudderstacktransform.api.transformations.update",
+      "shortPath": "transformations.update",
+      "description": "Update a transformation, which always writes a new revision and makes it live only when publish is true",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The transformation to update."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "publish",
+            "optional": true,
+            "type": "boolean",
+            "description": "True publishes the new revision, making it live. False only creates a revision. Defaults to false."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "versionId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Identifies this revision; pass it to libraries.publish."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null",
+            "description": "The JavaScript or Python code."
+          },
+          {
+            "key": "codeVersion",
+            "optional": true,
+            "type": "string | null",
+            "description": "Always \"1\" for API calls, as RudderStack sends it."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string | Record<string, JsonValue> | null",
+            "description": "A string ID or a workspace object, depending on the route."
+          },
+          {
+            "key": "destinations",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, enabled?: boolean | null }[] | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

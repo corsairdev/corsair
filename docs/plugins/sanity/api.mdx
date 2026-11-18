@@ -1,0 +1,1406 @@
+---
+title: "Sanity API reference"
+sidebarTitle: "API"
+description: "API reference for the Sanity plugin in Corsair: every `sanity.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Agent Actions
+
+### generate
+
+`agentActions.generate`
+
+Have Sanity's AI write content into a document's fields from an instruction, following the schema. Writes to the draft unless forcePublishedWrite; noWrite returns it without saving. Costs one Sanity AI credit.
+
+**Risk:** `write`
+
+```ts
+await corsair.sanity.api.agentActions.generate({ schemaId: '_.schemas.default', targetDocument: { operation: 'create', _type: 'post' }, instruction: 'Write a short post about $topic', instructionParams: { topic: 'GROQ joins' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `schemaId` | `string` | Yes | The deployed schema the action reads, for example _.schemas.default. List them with schemas.list; a project deploys one with 'sanity schema deploy'. |
+| `noWrite` | `boolean` | No | Return the result without saving anything. Not with async. |
+| `async` | `boolean` | No | Start the action and return the target document id at once; the write lands later. For long generations. |
+| `forcePublishedWrite` | `boolean` | No | Write to the published document instead of its draft, so the change is live at once. Default false. |
+| `temperature` | `number` | No | — |
+| `localeSettings` | `object` | No | Needed for the action to write date and datetime fields: &#123; locale: 'en-US', timeZone: 'Europe/Oslo' &#125;. |
+| `conditionalPaths` | `Record<string, any>` | No | — |
+| `dataset` | `string` | No | The dataset to use. Left out: the connection's dataset, else production. |
+| `instruction` | `string` | Yes | What to write, for example "Write an SEO description of $title under 160 characters". |
+| `instructionParams` | `Record<string, string \| Record<string, any>>` | No | Values for $names in the instruction: a string, &#123; type: 'constant', value &#125;, &#123; type: 'field', path, documentId? &#125;, &#123; type: 'document', documentId? &#125; or &#123; type: 'groq', query, params? &#125;. |
+| `documentId` | `string` | No | An existing document to write into. Or give targetDocument. |
+| `targetDocument` | `object` | No | Where the result goes: &#123; operation: 'create', _type: 'post' &#125; writes a new document, &#123; operation: 'edit', _id &#125; an existing one. Writes go to the draft unless forcePublishedWrite. |
+| `target` | `Record<string, any> \| Record<string, any>[]` | No | Which fields to write, for example &#123; path: 'title' &#125; or [&#123; path: ['body'] &#125;, &#123; path: 'description', operation: 'set' &#125;]. Left out, every field the action can write. |
+
+Give `documentId` to write into an existing document, or `targetDocument` to create one. `target` limits which fields it writes. It can't write file fields or fields the schema marks hidden or read-only, and it writes date fields only with `localeSettings`. Long generations can outlast a Corsair script, so pass `async: true` and read the document later.
+
+<AccordionGroup>
+<Accordion title="localeSettings full type">
+
+```ts
+{
+  locale: string,
+  timeZone: string
+}
+```
+</Accordion>
+
+<Accordion title="targetDocument full type">
+
+```ts
+{
+  operation: edit | create | createIfNotExists | createOrReplace,
+  _id?: string,
+  _type?: string,
+  initialValues?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `document` | `object` | Yes | The document as the action left it; with async, only its _id, since the write happens later. |
+
+<AccordionGroup>
+<Accordion title="document full type">
+
+```ts
+{
+  _id: string,
+  _type?: string,
+  _rev?: string | null,
+  _createdAt?: string | null,
+  _updatedAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### prompt
+
+`agentActions.prompt`
+
+Ask Sanity's AI a question, optionally about documents passed as params, and get text or JSON back. Writes nothing. Costs one Sanity AI credit.
+
+**Risk:** `read`
+
+```ts
+await corsair.sanity.api.agentActions.prompt({ instruction: 'Suggest three titles for $doc as json', instructionParams: { doc: { type: 'document', documentId: '<id>' } }, format: 'json' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `instruction` | `string` | Yes | — |
+| `instructionParams` | `Record<string, string \| Record<string, any>>` | No | Values for $names in the instruction: a string, &#123; type: 'constant', value &#125;, &#123; type: 'field', path, documentId? &#125;, &#123; type: 'document', documentId? &#125; or &#123; type: 'groq', query, params? &#125;. |
+| `format` | `string \| json` | No | string (default): text. json: a JSON value, and the instruction must contain the word 'json'. |
+| `temperature` | `number` | No | — |
+| `dataset` | `string` | No | The dataset to use. Left out: the connection's dataset, else production. |
+
+Writes nothing. With `format: 'json'`, the instruction must contain the word json.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string \| null` | No | The answer, when format is 'string'. |
+| `json` | `any` | No | The answer, when format is 'json'. |
+
+
+
+---
+
+### transform
+
+`agentActions.transform`
+
+Have Sanity's AI rewrite a document's existing content by an instruction (tone, length, style), in place or into another document. Costs one Sanity AI credit.
+
+**Risk:** `write`
+
+```ts
+await corsair.sanity.api.agentActions.transform({ schemaId: '_.schemas.default', documentId: '<id>', instruction: 'Rewrite in plain British English', target: { path: 'body' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `schemaId` | `string` | Yes | The deployed schema the action reads, for example _.schemas.default. List them with schemas.list; a project deploys one with 'sanity schema deploy'. |
+| `noWrite` | `boolean` | No | Return the result without saving anything. Not with async. |
+| `async` | `boolean` | No | Start the action and return the target document id at once; the write lands later. For long generations. |
+| `forcePublishedWrite` | `boolean` | No | Write to the published document instead of its draft, so the change is live at once. Default false. |
+| `temperature` | `number` | No | — |
+| `localeSettings` | `object` | No | Needed for the action to write date and datetime fields: &#123; locale: 'en-US', timeZone: 'Europe/Oslo' &#125;. |
+| `conditionalPaths` | `Record<string, any>` | No | — |
+| `dataset` | `string` | No | The dataset to use. Left out: the connection's dataset, else production. |
+| `documentId` | `string` | Yes | The source document. |
+| `instruction` | `string` | Yes | How to change it, for example "Rewrite in plain British English". 2,000 characters at most once params are filled in. |
+| `instructionParams` | `Record<string, string \| Record<string, any>>` | No | Values for $names in the instruction: a string, &#123; type: 'constant', value &#125;, &#123; type: 'field', path, documentId? &#125;, &#123; type: 'document', documentId? &#125; or &#123; type: 'groq', query, params? &#125;. |
+| `targetDocument` | `object` | No | Write the result to another document instead of the source. |
+| `target` | `Record<string, any> \| Record<string, any>[]` | No | Which fields to write, for example &#123; path: 'title' &#125; or [&#123; path: ['body'] &#125;, &#123; path: 'description', operation: 'set' &#125;]. Left out, every field the action can write. |
+
+The instruction can be at most 2,000 characters once params are filled in.
+
+<AccordionGroup>
+<Accordion title="localeSettings full type">
+
+```ts
+{
+  locale: string,
+  timeZone: string
+}
+```
+</Accordion>
+
+<Accordion title="targetDocument full type">
+
+```ts
+{
+  operation: edit | create | createIfNotExists | createOrReplace,
+  _id?: string,
+  _type?: string,
+  initialValues?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `document` | `object` | Yes | The document as the action left it; with async, only its _id, since the write happens later. |
+
+<AccordionGroup>
+<Accordion title="document full type">
+
+```ts
+{
+  _id: string,
+  _type?: string,
+  _rev?: string | null,
+  _createdAt?: string | null,
+  _updatedAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### translate
+
+`agentActions.translate`
+
+Have Sanity's AI translate a document into another language, usually into a new document. Costs one Sanity AI credit.
+
+**Risk:** `write`
+
+```ts
+await corsair.sanity.api.agentActions.translate({ schemaId: '_.schemas.default', documentId: '<id>', toLanguage: { id: 'de-DE', title: 'German' }, targetDocument: { operation: 'create' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `schemaId` | `string` | Yes | The deployed schema the action reads, for example _.schemas.default. List them with schemas.list; a project deploys one with 'sanity schema deploy'. |
+| `noWrite` | `boolean` | No | Return the result without saving anything. Not with async. |
+| `async` | `boolean` | No | Start the action and return the target document id at once; the write lands later. For long generations. |
+| `forcePublishedWrite` | `boolean` | No | Write to the published document instead of its draft, so the change is live at once. Default false. |
+| `temperature` | `number` | No | — |
+| `localeSettings` | `object` | No | Needed for the action to write date and datetime fields: &#123; locale: 'en-US', timeZone: 'Europe/Oslo' &#125;. |
+| `conditionalPaths` | `Record<string, any>` | No | — |
+| `dataset` | `string` | No | The dataset to use. Left out: the connection's dataset, else production. |
+| `documentId` | `string` | Yes | The source document. |
+| `toLanguage` | `object` | Yes | — |
+| `fromLanguage` | `object` | No | — |
+| `styleGuide` | `string` | No | How to translate: tone, terms to keep. 2,000 characters at most. |
+| `protectedPhrases` | `string[]` | No | Words to leave untranslated, such as product names. |
+| `languageFieldPath` | `string` | No | A field to set to toLanguage.id, for document-level localization. |
+| `targetDocument` | `object` | No | Write the translation to another document, usually &#123; operation: 'create' &#125;, instead of over the source. |
+| `target` | `Record<string, any> \| Record<string, any>[]` | No | Which fields to write, for example &#123; path: 'title' &#125; or [&#123; path: ['body'] &#125;, &#123; path: 'description', operation: 'set' &#125;]. Left out, every field the action can write. |
+
+Usually paired with `targetDocument` set to `create`, so the source stays as it is.
+
+<AccordionGroup>
+<Accordion title="localeSettings full type">
+
+```ts
+{
+  locale: string,
+  timeZone: string
+}
+```
+</Accordion>
+
+<Accordion title="toLanguage full type">
+
+```ts
+{
+  id: string,
+  title?: string
+}
+```
+</Accordion>
+
+<Accordion title="fromLanguage full type">
+
+```ts
+{
+  id: string,
+  title?: string
+}
+```
+</Accordion>
+
+<Accordion title="targetDocument full type">
+
+```ts
+{
+  operation: edit | create | createIfNotExists | createOrReplace,
+  _id?: string,
+  _type?: string,
+  initialValues?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `document` | `object` | Yes | The document as the action left it; with async, only its _id, since the write happens later. |
+
+<AccordionGroup>
+<Accordion title="document full type">
+
+```ts
+{
+  _id: string,
+  _type?: string,
+  _rev?: string | null,
+  _createdAt?: string | null,
+  _updatedAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Assets
+
+### upload
+
+`assets.upload`
+
+Upload an image or file (base64, up to 25 MB) as a Sanity asset and get its asset document and CDN URL, ready to reference from a document.
+
+**Risk:** `write`
+
+```ts
+await corsair.sanity.api.assets.upload({ kind: 'image', contentBase64: '<base64 bytes>', contentType: 'image/png', filename: 'cover.png' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `image \| file` | Yes | image: a picture Sanity can crop and resize (JPEG, PNG, WebP, GIF, SVG, AVIF, TIFF). file: anything else (PDF, audio, video...). |
+| `contentBase64` | `string` | Yes | The file as base64, up to 25 MB decoded. |
+| `contentType` | `string` | Yes | The MIME type, for example image/png or application/pdf. |
+| `filename` | `string` | No | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `label` | `string` | No | — |
+| `imageMetadata` | `(exif \| location \| lqip \| palette \| blurhash)[]` | No | Images only: metadata to extract. Sanity always extracts dimensions; lqip, palette and blurhash are on by default. |
+| `dataset` | `string` | No | The dataset to use. Left out: the connection's dataset, else production. |
+
+Up to 25 MB as base64. Uploading the same bytes again returns the existing asset. Reference an image from a document as `{ _type: 'image', asset: { _type: 'reference', _ref: asset._id } }`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset` | `object` | Yes | The asset document. Reference it from a document: &#123; _type: 'image', asset: &#123; _type: 'reference', _ref: asset._id &#125; &#125;. Uploading the same bytes again returns the existing asset. |
+
+<AccordionGroup>
+<Accordion title="asset full type">
+
+```ts
+{
+  _id: string,
+  _type: string,
+  _rev?: string | null,
+  _createdAt?: string | null,
+  _updatedAt?: string | null,
+  url?: string | null,
+  originalFilename?: string | null,
+  mimeType?: string | null,
+  size?: number | null,
+  sha1hash?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Datasets
+
+### create
+
+`datasets.create`
+
+Create an empty dataset in the project. Needs an administrator token.
+
+**Risk:** `write`
+
+```ts
+await corsair.sanity.api.datasets.create({ name: 'staging' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The dataset name. |
+| `aclMode` | `public \| private` | No | public: published documents can be read without a token. private: reading needs a token; Sanity's free plan refuses it. Left out, Sanity's default (public) applies. |
+
+Sanity's free plan refuses private datasets.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasetName` | `string \| null` | No | — |
+| `aclMode` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`datasets.delete`
+
+Delete a dataset with every document and asset in it, for good. Needs the name twice and an administrator token.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.sanity.api.datasets.delete({ name: 'staging', confirmName: 'staging' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The dataset name. |
+| `confirmName` | `string` | Yes | The dataset name typed again. Must equal name: deleting a dataset deletes every document and asset in it for good. |
+
+Deletes every document and asset in the dataset. `confirmName` must repeat the name.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean \| null` | No | — |
+
+
+
+---
+
+### list
+
+`datasets.list`
+
+The project's datasets and whether each is public.
+
+**Risk:** `read`
+
+```ts
+await corsair.sanity.api.datasets.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasets` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="datasets full type">
+
+```ts
+{
+  name: string,
+  aclMode?: string | null,
+  createdAt?: string | null,
+  datasetProfile?: string | null,
+  tags?: any[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Documents
+
+### create
+
+`documents.create`
+
+Create a document as a draft (default) or, with publish: true, publish it at once. Returns its id and draft id.
+
+**Risk:** `write`
+
+```ts
+await corsair.sanity.api.documents.create({ document: { _type: 'post', title: 'Hello world' }, publish: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `document` | `object` | Yes | The new document's fields: &#123; _type: 'post', title: '...', slug: &#123; _type: 'slug', current: '...' &#125; &#125;. Objects in arrays need a unique _key. Read the dataset's schema or an existing document of the type for its fields. |
+| `publish` | `boolean` | No | false (default): the document is created as a draft, which nothing reading published content sees until documents.publish. true: created and published at once. |
+| `ifExists` | `fail \| ignore` | No | When a draft with this id already exists: fail (default) errors, ignore leaves it and returns. Only the draft is checked: with an _id of a published document, a new draft is made over it. |
+| `dryRun` | `boolean` | No | Check the change without making it. |
+| `dataset` | `string` | No | The dataset to use. Left out: the connection's dataset, else production. |
+
+Uses the Actions API, the same one the Studio uses. `ifExists` only checks the draft. With the `_id` of a published document, a new draft is made over it.
+
+<AccordionGroup>
+<Accordion title="document full type">
+
+```ts
+{
+  _type: string,
+  _id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transactionId` | `string \| null` | No | The transaction that made the change. Missing when there was nothing to change. |
+| `id` | `string` | Yes | The published id. Pass it to documents.publish, documents.edit and the rest. |
+| `draftId` | `string` | Yes | The draft, drafts.&lt;id&gt;. |
+| `published` | `boolean` | Yes | Whether the change was also published in this call. |
+
+
+
+---
+
+### delete
+
+`documents.delete`
+
+Delete up to 100 documents, published and draft together. Documents that reference them must drop the references first. With purge, they also leave the history.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.sanity.api.documents.delete({ ids: ['<id>'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | Documents to delete, up to 100, published and draft together. |
+| `purge` | `boolean` | No | Also remove it from the document history. Default false, so documents.history can still read it. |
+| `dryRun` | `boolean` | No | — |
+| `dataset` | `string` | No | The dataset to use. Left out: the connection's dataset, else production. |
+
+Deletes each published document together with its draft. Documents with strong references to them block the delete until the references go. Ids that don't exist are skipped.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transactionId` | `string \| null` | No | The transaction that made the change. Missing when there was nothing to change. |
+| `ids` | `string[]` | Yes | — |
+
+
+
+---
+
+### discardDraft
+
+`documents.discardDraft`
+
+Throw away a document's unpublished changes (its draft). The published version stays. With purge, the draft also leaves the history.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.sanity.api.documents.discardDraft({ id: '<id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The document id. A drafts. prefix is accepted and dropped: drafts and the published document share this id. |
+| `purge` | `boolean` | No | Also remove it from the document history. Default false, so documents.history can still read it. |
+| `dryRun` | `boolean` | No | — |
+| `dataset` | `string` | No | The dataset to use. Left out: the connection's dataset, else production. |
+
+The published version stays. Discarding a draft that doesn't exist is a 404.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transactionId` | `string \| null` | No | The transaction that made the change. Missing when there was nothing to change. |
+| `id` | `string` | Yes | — |
+| `draftId` | `string` | Yes | — |
+
+
+
+---
+
+### edit
+
+`documents.edit`
+
+Change a document the way the Studio does: the patch goes to its draft, made from the published version if needed, and nothing goes live until documents.publish (or publish: true).
+
+**Risk:** `write`
+
+```ts
+await corsair.sanity.api.documents.edit({ id: '<id>', set: { title: 'A better title' }, setIfMissing: { tags: [] }, insert: { after: 'tags[-1]', items: ['news'] } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The document id. A drafts. prefix is accepted and dropped: drafts and the published document share this id. |
+| `set` | `Record<string, any>` | No | Fields to set, by path: &#123; title: 'New title', 'seo.description': '...', 'body[_key=="a1"].text': '...' &#125;. |
+| `setIfMissing` | `Record<string, any>` | No | Fields to set only where they have no value yet. Use it before inserting into an array that may not exist: &#123; tags: [] &#125;. |
+| `unset` | `string[]` | No | Paths to remove, for example ['subtitle', 'tags[0]']. |
+| `inc` | `Record<string, number>` | No | Numbers to add to, by path. |
+| `dec` | `Record<string, number>` | No | Numbers to subtract from, by path. |
+| `insert` | `object` | No | Insert items into an array at a path: &#123; after: 'tags[-1]', items: ['news'] &#125; appends. Objects in an array need a unique _key. |
+| `diffMatchPatch` | `Record<string, string>` | No | diff-match-patch strings to apply to text fields, by path. |
+| `publish` | `boolean` | No | false (default): the edit stays in the draft until documents.publish. true: published in the same transaction. |
+| `dryRun` | `boolean` | No | — |
+| `dataset` | `string` | No | The dataset to use. Left out: the connection's dataset, else production. |
+
+Patches the draft and makes one from the published version first when there is none. The edit action takes no revision check. Use `documents.patch` with `ifRevisionId` when two writers might collide.
+
+<AccordionGroup>
+<Accordion title="insert full type">
+
+```ts
+{
+  before?: string,
+  after?: string,
+  replace?: string,
+  items: any[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transactionId` | `string \| null` | No | The transaction that made the change. Missing when there was nothing to change. |
+| `id` | `string` | Yes | The published id. Pass it to documents.publish, documents.edit and the rest. |
+| `draftId` | `string` | Yes | The draft, drafts.&lt;id&gt;. |
+| `published` | `boolean` | Yes | Whether the change was also published in this call. |
+
+
+
+---
+
+### get
+
+`documents.get`
+
+Fetch up to 100 documents by exact id (drafts.&lt;id&gt; for a draft). Ids that are missing or unreadable come back in omitted.
+
+**Risk:** `read`
+
+```ts
+await corsair.sanity.api.documents.get({ ids: ['<id>', 'drafts.<id>'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | Exact document ids, up to 100. A draft is drafts.&lt;id&gt;, a release version versions.&lt;release&gt;.&lt;id&gt;. |
+| `dataset` | `string` | No | The dataset to use. Left out: the connection's dataset, else production. |
+
+Reads by exact id and always sees the latest write, unlike a query. Ids that don't exist or that the token can't read come back in `omitted` with the reason.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documents` | `object[]` | Yes | — |
+| `omitted` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="documents full type">
+
+```ts
+{
+  _id: string,
+  _type: string,
+  _rev?: string | null,
+  _createdAt?: string | null,
+  _updatedAt?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="omitted full type">
+
+```ts
+{
+  id: string,
+  reason: string
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### history
+
+`documents.history`
+
+A document as it stood at a revision or a point in time. How far back depends on the plan's history retention.
+
+**Risk:** `read`
+
+```ts
+await corsair.sanity.api.documents.history({ id: '<id>', time: '2026-11-01T00:00:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The exact document id, drafts.&lt;id&gt; for a draft. |
+| `revision` | `string` | No | A _rev, from a document or documents.transactions. |
+| `time` | `string` | No | An ISO time: the document as it stood then. |
+| `lastRevision` | `boolean` | No | The last version it had, including just before it was deleted. The way to recover a deleted document. |
+| `dataset` | `string` | No | The dataset to use. Left out: the connection's dataset, else production. |
+
+`lastRevision: true` reads a deleted document as it was just before the delete, which is how you recover one. How far back history goes depends on the plan.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `document` | `object \| null` | Yes | The document at that point, or null when it didn't exist then or the history has been purged. How far back history reaches depends on the plan. |
+
+<AccordionGroup>
+<Accordion title="document full type">
+
+```ts
+{
+  _id: string,
+  _type: string,
+  _rev?: string | null,
+  _createdAt?: string | null,
+  _updatedAt?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### mutate
+
+`documents.mutate`
+
+Apply raw Sanity mutations (create, createOrReplace, createIfNotExists, patch, delete, by id or by query) in one transaction. For anything documents.create, edit, patch and delete can't express.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.sanity.api.documents.mutate({ mutations: [{ createOrReplace: { _id: 'settings', _type: 'siteSettings', title: 'Docs' } }, { delete: { id: 'old-page' } }], transactionId: '<your id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mutations` | `Record<string, any>[]` | Yes | Sanity mutations, applied in one transaction: &#123; create: &#123;...&#125; &#125;, &#123; createOrReplace: &#123;...&#125; &#125;, &#123; createIfNotExists: &#123;...&#125; &#125;, &#123; patch: &#123; id, set, ... , ifRevisionID &#125; &#125; or &#123; delete: &#123; id &#125; &#125;. A patch or delete can take query + params instead of id to hit every match. They write the exact ids given: a published id is live at once. |
+| `transactionId` | `string` | No | Your own id for the transaction. Sending one already used is refused, so a retry cannot apply twice. |
+| `returnDocuments` | `boolean` | No | Return each changed document. Default false: ids only. |
+| `visibility` | `sync \| async \| deferred` | No | sync (default): answer once queries see the change. async: answer on commit. deferred: fastest, for bulk imports. |
+| `autoGenerateArrayKeys` | `boolean` | No | Add a _key to array objects that have none. |
+| `dryRun` | `boolean` | No | — |
+| `dataset` | `string` | No | The dataset to use. Left out: the connection's dataset, else production. |
+
+Applies everything in one transaction or nothing. Pass your own `transactionId` to make a retry safe, since Sanity refuses a used one with a 409.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transactionId` | `string` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | null,
+  operation?: string | null,
+  document?: {
+    _id: string,
+    _type: string,
+    _rev?: string | null,
+    _createdAt?: string | null,
+    _updatedAt?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### patch
+
+`documents.patch`
+
+Patch one exact document id directly and get it back. A published id changes the live document at once; use documents.edit to go through a draft. ifRevisionId guards against overwriting someone else's change.
+
+**Risk:** `write`
+
+```ts
+await corsair.sanity.api.documents.patch({ id: '<id>', inc: { views: 1 }, ifRevisionId: '<_rev>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The exact document to patch: a published id changes the live document at once, drafts.&lt;id&gt; the draft. |
+| `set` | `Record<string, any>` | No | Fields to set, by path: &#123; title: 'New title', 'seo.description': '...', 'body[_key=="a1"].text': '...' &#125;. |
+| `setIfMissing` | `Record<string, any>` | No | Fields to set only where they have no value yet. Use it before inserting into an array that may not exist: &#123; tags: [] &#125;. |
+| `unset` | `string[]` | No | Paths to remove, for example ['subtitle', 'tags[0]']. |
+| `inc` | `Record<string, number>` | No | Numbers to add to, by path. |
+| `dec` | `Record<string, number>` | No | Numbers to subtract from, by path. |
+| `insert` | `object` | No | Insert items into an array at a path: &#123; after: 'tags[-1]', items: ['news'] &#125; appends. Objects in an array need a unique _key. |
+| `diffMatchPatch` | `Record<string, string>` | No | diff-match-patch strings to apply to text fields, by path. |
+| `ifRevisionId` | `string` | No | Apply only if the document's _rev is still this; otherwise Sanity answers 409 and nothing changes. |
+| `dryRun` | `boolean` | No | — |
+| `dataset` | `string` | No | The dataset to use. Left out: the connection's dataset, else production. |
+
+A wrong `ifRevisionId` gets a 409 and changes nothing.
+
+<AccordionGroup>
+<Accordion title="insert full type">
+
+```ts
+{
+  before?: string,
+  after?: string,
+  replace?: string,
+  items: any[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transactionId` | `string \| null` | No | The transaction that made the change. Missing when there was nothing to change. |
+| `document` | `object \| null` | No | The document after the patch. |
+
+<AccordionGroup>
+<Accordion title="document full type">
+
+```ts
+{
+  _id: string,
+  _type: string,
+  _rev?: string | null,
+  _createdAt?: string | null,
+  _updatedAt?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### publish
+
+`documents.publish`
+
+Publish a document's draft: the draft replaces the published version and goes away. Fails when there is no draft.
+
+**Risk:** `write`
+
+```ts
+await corsair.sanity.api.documents.publish({ id: '<id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The document id. A drafts. prefix is accepted and dropped: drafts and the published document share this id. |
+| `ifDraftRevisionId` | `string` | No | Publish only if the draft's _rev is still this. |
+| `ifPublishedRevisionId` | `string` | No | Publish only if the published document's _rev is still this. |
+| `dryRun` | `boolean` | No | — |
+| `dataset` | `string` | No | The dataset to use. Left out: the connection's dataset, else production. |
+
+Fails with a 404 when the document has no draft.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transactionId` | `string \| null` | No | The transaction that made the change. Missing when there was nothing to change. |
+| `id` | `string` | Yes | — |
+| `draftId` | `string` | Yes | — |
+
+
+
+---
+
+### query
+
+`documents.query`
+
+Run a GROQ query against a dataset and get its result. Reads published documents unless perspective says otherwise. Pass user input as params.
+
+**Risk:** `read`
+
+```ts
+await corsair.sanity.api.documents.query({ query: '*[_type == $type && slug.current == $slug][0]', params: { type: 'post', slug: 'hello-world' }, perspective: 'drafts' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | A GROQ query, for example *[_type == 'post' && defined(slug.current)] \| order(publishedAt desc)[0...10]&#123; _id, title, 'slug': slug.current &#125;. Project only the fields you need and slice the results: answers above 1 MB can be cut off on Corsair's cloud. |
+| `params` | `Record<string, any>` | No | Values for $parameters in the query, without the $: &#123; type: 'post' &#125; for $type. Pass user input this way, never by building it into the query. |
+| `perspective` | `published \| drafts \| raw \| string[]` | No | Which version of each document the query sees. published (default): live documents only. drafts: drafts where they exist, else published. raw: everything, drafts and release versions under their own ids. A list of release names reads those releases stacked over published, for example ['rSummerLaunch', 'drafts']. |
+| `dataset` | `string` | No | The dataset to use. Left out: the connection's dataset, else production. |
+
+Sends the query as a POST, so long queries and large params work. Reads published documents unless you pass `perspective` (`drafts`, `raw`, or a list of release names). Pass user input as `params`, never inside the query string. Project the fields you need and slice the results, since answers above 1 MB can be cut off on Corsair's cloud.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `any` | Yes | The query's result: any JSON value. |
+| `ms` | `number \| null` | No | Server time in milliseconds. |
+
+
+
+---
+
+### transactions
+
+`documents.transactions`
+
+The transactions that changed some documents: when, by whom and which revisions, optionally with each mutation.
+
+**Risk:** `read`
+
+```ts
+await corsair.sanity.api.documents.transactions({ ids: ['<id>', 'drafts.<id>'], limit: 20, reverse: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | — |
+| `fromTime` | `string` | No | — |
+| `toTime` | `string` | No | — |
+| `fromTransaction` | `string` | No | — |
+| `toTransaction` | `string` | No | — |
+| `limit` | `number` | No | How many transactions, default 20, at most 100. Sanity merges quick successive edits by one author into one entry. |
+| `reverse` | `boolean` | No | Newest first. |
+| `authors` | `string[]` | No | Only transactions by these user or token ids. |
+| `dataset` | `string` | No | The dataset to use. Left out: the connection's dataset, else production. |
+
+Sanity requires the export without document content, so each mutation shows its kind and id only. Read a revision with `documents.history`. Sanity merges quick successive edits by one author into one entry.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transactions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="transactions full type">
+
+```ts
+{
+  id: string,
+  timestamp: string,
+  author?: string | null,
+  mutations?: Record<string, any>[] | null,
+  documentIDs?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unpublish
+
+`documents.unpublish`
+
+Take a published document off the published perspective; its content stays as a draft.
+
+**Risk:** `write`
+
+```ts
+await corsair.sanity.api.documents.unpublish({ id: '<id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The document id. A drafts. prefix is accepted and dropped: drafts and the published document share this id. |
+| `dryRun` | `boolean` | No | — |
+| `dataset` | `string` | No | The dataset to use. Left out: the connection's dataset, else production. |
+
+Moves the published content back into a draft. Webhooks see this as a delete.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transactionId` | `string \| null` | No | The transaction that made the change. Missing when there was nothing to change. |
+| `id` | `string` | Yes | — |
+| `draftId` | `string` | Yes | — |
+
+
+
+---
+
+## Schemas
+
+### list
+
+`schemas.list`
+
+The schemas deployed to a dataset: their ids (the schemaId Agent Actions take) and each type's fields. Pass type for one type's full definition. Read this before writing documents of a type you don't know.
+
+**Risk:** `read`
+
+```ts
+await corsair.sanity.api.schemas.list({ type: 'post' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | A type name, for example 'post': its full definition comes back as definition, with every field's options and validation. |
+| `dataset` | `string` | No | The dataset to use. Left out: the connection's dataset, else production. |
+
+Reads the route `sanity schemas list` uses, which Sanity's HTTP reference doesn't cover yet.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `schemas` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="schemas full type">
+
+```ts
+{
+  schemaId: string,
+  workspace?: string | null,
+  title?: string | null,
+  deployedAt?: string | null,
+  types: {
+    name: string,
+    type?: string | null,
+    title?: string | null,
+    fields?: {
+      name: string,
+      type?: string | null,
+      title?: string | null,
+      of?: any[] | null,
+      to?: any[] | null
+    }[] | null
+  }[],
+  definition?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### attempts
+
+`webhooks.attempts`
+
+Recent delivery attempts of a webhook with the status your endpoint answered, to debug failing deliveries.
+
+**Risk:** `read`
+
+```ts
+await corsair.sanity.api.webhooks.attempts({ id: '<webhook id>', state: 'failure' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `state` | `success \| failure` | No | Only successful or only failed attempts. |
+| `limit` | `number` | No | Default 25. |
+| `offset` | `number` | No | — |
+
+Shows the status your endpoint answered for each delivery and why a failed one failed.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attempts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="attempts full type">
+
+```ts
+{
+  id: string,
+  isFailure?: boolean | null,
+  failureReason?: string | null,
+  resultCode?: number | null,
+  resultBody?: string | null,
+  duration?: number | null,
+  createdAt?: string | null,
+  messageId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`webhooks.create`
+
+Create a webhook that POSTs to a URL when documents matching a GROQ filter are created, updated or deleted. Set a secret so deliveries can be verified.
+
+**Risk:** `write`
+
+```ts
+await corsair.sanity.api.webhooks.create({ name: 'Revalidate blog', url: 'https://example.com/api/webhooks?tenantId=acme', on: ['create', 'update', 'delete'], filter: "_type == 'post'", projection: "{ _id, 'slug': slug.current }", secret: '<a long random string>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `url` | `string` | Yes | Where Sanity sends deliveries. For a Corsair app, its webhook endpoint (add ?tenantId= when several tenants share one Sanity project). |
+| `dataset` | `string` | No | The dataset to watch, or '*' for all. Left out: the connection's dataset. |
+| `on` | `(create \| update \| delete)[]` | Yes | Which changes fire it. Unpublishing fires delete. |
+| `filter` | `string` | No | A GROQ filter, for example _type == 'post'. Left out: every document. |
+| `projection` | `string` | No | The body to send, as a GROQ projection, for example &#123; _id, title, 'slug': slug.current &#125;. Left out: the whole document. |
+| `includeDrafts` | `boolean` | No | Fire on drafts too. Default false: published documents only. |
+| `secret` | `string` | No | Signs every delivery. Store the same value with keys.set_webhook_signature: deliveries without a valid signature are refused. |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  type?: string | null,
+  url?: string | null,
+  dataset?: string | null,
+  httpMethod?: string | null,
+  apiVersion?: string | null,
+  rule?: Record<string, any> | null,
+  includeDrafts?: boolean | null,
+  isDisabled?: boolean | null,
+  isDisabledByUser?: boolean | null,
+  createdAt?: string | null,
+  hasSecret: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Delete a webhook; deliveries stop at once.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.sanity.api.webhooks.delete({ id: '<webhook id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `deleted` | `boolean \| number \| null` | Yes | — |
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+The project's GROQ-powered webhooks: url, dataset, filter, projection and whether each is signed (never the secret).
+
+**Risk:** `read`
+
+```ts
+await corsair.sanity.api.webhooks.list({});
+```
+
+**Input:** _empty object_
+
+Sanity returns each webhook's secret. The plugin drops it and returns `hasSecret` instead.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhooks` | `object[]` | Yes | The project's webhooks. |
+
+<AccordionGroup>
+<Accordion title="webhooks full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  type?: string | null,
+  url?: string | null,
+  dataset?: string | null,
+  httpMethod?: string | null,
+  apiVersion?: string | null,
+  rule?: Record<string, any> | null,
+  includeDrafts?: boolean | null,
+  isDisabled?: boolean | null,
+  isDisabledByUser?: boolean | null,
+  createdAt?: string | null,
+  hasSecret: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Change a webhook's url, filter, projection, events or secret, or pause and resume it with disabled.
+
+**Risk:** `write`
+
+```ts
+await corsair.sanity.api.webhooks.update({ id: '<webhook id>', disabled: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `url` | `string` | No | Where Sanity sends deliveries. For a Corsair app, its webhook endpoint (add ?tenantId= when several tenants share one Sanity project). |
+| `dataset` | `string` | No | The dataset to watch, or '*' for all. Left out: the connection's dataset. |
+| `on` | `(create \| update \| delete)[]` | No | Which changes fire it. Unpublishing fires delete. |
+| `filter` | `string` | No | A GROQ filter, for example _type == 'post'. Left out: every document. |
+| `projection` | `string` | No | The body to send, as a GROQ projection, for example &#123; _id, title, 'slug': slug.current &#125;. Left out: the whole document. |
+| `includeDrafts` | `boolean` | No | Fire on drafts too. Default false: published documents only. |
+| `secret` | `string` | No | Signs every delivery. Store the same value with keys.set_webhook_signature: deliveries without a valid signature are refused. |
+| `description` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `disabled` | `boolean` | No | true pauses deliveries, false resumes them. |
+
+Changing `on`, `filter` or `projection` keeps the parts of the rule you leave out.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  type?: string | null,
+  url?: string | null,
+  dataset?: string | null,
+  httpMethod?: string | null,
+  apiVersion?: string | null,
+  rule?: Record<string, any> | null,
+  includeDrafts?: boolean | null,
+  isDisabled?: boolean | null,
+  isDisabledByUser?: boolean | null,
+  createdAt?: string | null,
+  hasSecret: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

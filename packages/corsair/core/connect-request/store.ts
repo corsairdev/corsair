@@ -1,5 +1,12 @@
 import { generateUUID } from '../../core/utils';
+import {
+	isSealed,
+	loadAccountDek,
+	openJson,
+	sealJson,
+} from '../../db/data-at-rest';
 import type { CorsairDatabase } from '../../db/kysely/database';
+import { findAccountRow } from '../account-lookup';
 import type { ConnectRequest } from '../management/types';
 
 // A connect-request is the bridge between a server-side auth-missing failure and
@@ -18,6 +25,13 @@ export type RecordConnectRequestInput = {
 	tenantId: string;
 	plugin: string;
 	connectUrl: string;
+	/**
+	 * When true, the payload must be sealed. An empty `kek` rejects the write
+	 * instead of storing the document in plaintext.
+	 */
+	encryptDataAtRest?: boolean;
+	/** Set only when encryptDataAtRest is on. Seals the event payload. */
+	kek?: string;
 };
 
 /**
@@ -39,12 +53,10 @@ async function resolveAccountId(
 		.executeTakeFirst();
 	if (!integration) return null;
 
-	const account = await database.db
-		.selectFrom('corsair_accounts')
-		.select('id')
-		.where('tenant_id', '=', tenantId)
-		.where('integration_id', '=', integration.id)
-		.executeTakeFirst();
+	const account = await findAccountRow(database.db, {
+		tenantId,
+		integrationId: integration.id,
+	});
 	return account?.id ?? null;
 }
 
@@ -105,9 +117,17 @@ async function appendConnectEvent(
 	eventType: string,
 	payload: Record<string, unknown>,
 	now: number,
+	kek?: string,
+	encryptDataAtRest?: boolean,
 ): Promise<void> {
+	if (encryptDataAtRest && !kek) {
+		throw new Error('encryptDataAtRest requires kek');
+	}
 	const stamp = await nextConnectEventCreatedAt(database, accountId, now);
 	const at = new Date(stamp);
+	const stored = kek
+		? sealJson(payload, await loadAccountDek(database.db, accountId, kek))
+		: payload;
 	await database.db
 		.insertInto('corsair_events')
 		.values({
@@ -116,7 +136,7 @@ async function appendConnectEvent(
 			updated_at: at,
 			account_id: accountId,
 			event_type: eventType,
-			payload,
+			payload: stored,
 		})
 		.execute();
 }
@@ -138,6 +158,8 @@ export async function recordConnectRequest(
 		CONNECT_REQUEST_EVENT,
 		{ plugin: input.plugin, connectUrl: input.connectUrl },
 		now,
+		input.kek,
+		input.encryptDataAtRest,
 	);
 }
 
@@ -145,6 +167,28 @@ type LiveRequest = ConnectRequest & {
 	requestedAtMs: number;
 	accountId: string;
 };
+
+/**
+ * Payload is unknown because persisted event rows may predate the current schema
+ * or have been corrupted outside the typed write path.
+ */
+function parseConnectRequestPayload(
+	payload: unknown,
+): Record<string, unknown> | null {
+	let parsed = payload;
+	if (typeof payload === 'string') {
+		try {
+			parsed = JSON.parse(payload);
+		} catch {
+			return null;
+		}
+	}
+
+	if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+		return null;
+	}
+	return parsed as Record<string, unknown>;
+}
 
 /**
  * The account's live connect-request, or null when its newest connect event is a
@@ -159,6 +203,7 @@ async function latestConnectEventForAccount(
 	tenantId: string,
 	now: number,
 	ttlMs: number,
+	kek?: string,
 ): Promise<LiveRequest | null> {
 	const latest = await database.db
 		.selectFrom('corsair_events')
@@ -177,10 +222,26 @@ async function latestConnectEventForAccount(
 			: Date.parse(String(latest.created_at));
 	if (now - requestedAtMs > ttlMs) return null;
 
-	const payload =
-		typeof latest.payload === 'string'
-			? (JSON.parse(latest.payload) as Record<string, unknown>)
-			: ((latest.payload ?? {}) as Record<string, unknown>);
+	let raw: unknown = latest.payload;
+	if (typeof raw === 'string') {
+		try {
+			raw = JSON.parse(raw);
+		} catch {
+			return null;
+		}
+	}
+	if (isSealed(raw)) {
+		if (!kek) return null;
+		try {
+			// A missing DEK or an auth-tag mismatch (for example after a KEK
+			// change) must not 500 the tenant read. Same outcome as a malformed payload.
+			raw = openJson(raw, await loadAccountDek(database.db, accountId, kek));
+		} catch {
+			return null;
+		}
+	}
+	const payload = parseConnectRequestPayload(raw);
+	if (!payload) return null;
 	const plugin = payload.plugin;
 	const connectUrl = payload.connectUrl;
 	if (typeof plugin !== 'string' || typeof connectUrl !== 'string') return null;
@@ -207,6 +268,7 @@ export async function readConnectRequest(
 	tenantId: string,
 	now: number = Date.now(),
 	ttlMs: number = CONNECT_REQUEST_TTL_MS,
+	kek?: string,
 ): Promise<ConnectRequest | null> {
 	const accountIds = await tenantAccountIds(database, tenantId);
 	if (accountIds.length === 0) return null;
@@ -214,7 +276,7 @@ export async function readConnectRequest(
 	const live = (
 		await Promise.all(
 			accountIds.map((id) =>
-				latestConnectEventForAccount(database, id, tenantId, now, ttlMs),
+				latestConnectEventForAccount(database, id, tenantId, now, ttlMs, kek),
 			),
 		)
 	).filter((r): r is LiveRequest => r !== null);
@@ -240,18 +302,34 @@ export async function clearConnectRequest(
 	tenantId: string,
 	now: number = Date.now(),
 	plugin?: string,
+	kek?: string,
+	encryptDataAtRest?: boolean,
 ): Promise<void> {
 	let accountId: string | null;
 	if (plugin) {
 		accountId = await resolveAccountId(database, tenantId, plugin);
 	} else {
-		const live = await readConnectRequest(database, tenantId, now);
+		const live = await readConnectRequest(
+			database,
+			tenantId,
+			now,
+			undefined,
+			kek,
+		);
 		accountId = live
 			? await resolveAccountId(database, tenantId, live.plugin)
 			: null;
 	}
 	if (!accountId) return;
-	await appendConnectEvent(database, accountId, CONNECT_CLEARED_EVENT, {}, now);
+	await appendConnectEvent(
+		database,
+		accountId,
+		CONNECT_CLEARED_EVENT,
+		{},
+		now,
+		kek,
+		encryptDataAtRest,
+	);
 }
 
 // Called from the failing tool-call path, so it must never throw or block: a
@@ -263,6 +341,8 @@ export async function recordConnectRequestBestEffort(
 		tenantId: string | undefined;
 		plugin: string | null | undefined;
 		connectUrl: string | null | undefined;
+		encryptDataAtRest?: boolean;
+		kek?: string;
 	},
 ): Promise<void> {
 	if (!database || !input.plugin || !input.connectUrl) return;
@@ -271,6 +351,8 @@ export async function recordConnectRequestBestEffort(
 			tenantId: input.tenantId ?? 'default',
 			plugin: input.plugin,
 			connectUrl: input.connectUrl,
+			encryptDataAtRest: input.encryptDataAtRest,
+			kek: input.kek,
 		});
 	} catch {}
 }

@@ -1,6 +1,7 @@
 ---
-title: Database
-description: "Hacker News local sync: searchable entities, `.search()` filters, and operators."
+title: "Hacker News database"
+sidebarTitle: "Database"
+description: "Hacker News local sync in Corsair: the entities stored in your database, the `.search()` filters each one accepts, and the filter operators."
 ---
 
 The Hacker News plugin syncs data locally. Use `corsair.hackernews.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
@@ -27,6 +28,7 @@ const rows = await corsair.hackernews.db.items.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `number` | equals, gt, gte, lt, lte, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
 | `by` | `string` | equals, contains, startsWith, endsWith, in |
 | `title` | `string` | equals, contains, startsWith, endsWith, in |
 | `url` | `string` | equals, contains, startsWith, endsWith, in |

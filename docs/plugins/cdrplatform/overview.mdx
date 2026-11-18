@@ -1,6 +1,7 @@
 ---
-title: Overview
-description: "CDR Platform plugin for Corsair"
+title: "CDR Platform plugin"
+sidebarTitle: "Overview"
+description: "Carbon dioxide removal API. Price and purchase CO2 removal portfolios, retrieve removal certificates, and check service health."
 ---
 
 Use **CDR Platform** through Corsair: one client, typed API calls, local DB sync.
@@ -17,16 +18,20 @@ Use **CDR Platform** through Corsair: one client, typed API calls, local DB sync
 <Step title="Install">
 <CodeGroup>
 ```bash npm
-npm install corsair @corsair-dev/cdrplatform
+npm install corsair @corsair-dev/cdrplatform better-sqlite3
+npm install --save-dev @types/better-sqlite3
 ```
 ```bash yarn
-yarn add corsair @corsair-dev/cdrplatform
+yarn add corsair @corsair-dev/cdrplatform better-sqlite3
+yarn add --dev @types/better-sqlite3
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/cdrplatform
+pnpm install corsair @corsair-dev/cdrplatform better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
 ```
 ```bash bun
-bun add corsair @corsair-dev/cdrplatform
+bun add corsair @corsair-dev/cdrplatform better-sqlite3
+bun add --dev @types/better-sqlite3
 ```
 </CodeGroup>
 
@@ -44,6 +49,7 @@ export const corsair = createCorsair({
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
 	hub: {
 		projectApiKey: process.env.CORSAIR_API_KEY!,
 		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
@@ -51,7 +57,7 @@ export const corsair = createCorsair({
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
@@ -59,7 +65,7 @@ Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See 
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+Store the CDR Platform API key before the first call: `pnpm corsair setup --plugin=cdrplatform --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
 
 ```ts
 cdrplatform()
@@ -89,19 +95,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`cdr.price`**
+**Get a certificate**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.cdrplatform.api.cdr.price({});
+await tenant.cdrplatform.api.certificate.get({ id: 'abc-def-ghi' });
 ```
 
 
-**`cdr.purchase`**
+**Check service health**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.cdrplatform.api.cdr.purchase({});
+await tenant.cdrplatform.api.health.check({});
 ```
 
 
@@ -109,9 +115,17 @@ See the full list on the [API](/plugins/cdrplatform/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.cdrplatform.db.<entity>.search()` and `.list()`: `certificates`, `priceQuotes`, `removalRequests`.
+Search synced certificates without hitting CDR Platform.
 
-See [Database](/plugins/cdrplatform/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.cdrplatform.db.certificates.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `certificates`, `priceQuotes`, `removalRequests`. See [Database](/plugins/cdrplatform/database) for filters and operators.
 
 ## What's next
 

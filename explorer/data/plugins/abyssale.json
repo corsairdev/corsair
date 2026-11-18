@@ -104,7 +104,7 @@
           {
             "key": "elements",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, {}>"
           },
           {
             "key": "template_format_names",
@@ -154,7 +154,7 @@
           {
             "key": "pages",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, {}>"
           }
         ]
       },
@@ -185,7 +185,7 @@
           {
             "key": "elements",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, {}>"
           },
           {
             "key": "template_format_name",
@@ -612,6 +612,11 @@
         },
         {
           "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         }

@@ -96,7 +96,7 @@
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
@@ -106,47 +106,47 @@
           {
             "key": "city",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "address",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "address_2",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "zip",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "website",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "invoice_extra_fields",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           }
         ]
       }
@@ -210,7 +210,7 @@
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
@@ -220,47 +220,47 @@
           {
             "key": "city",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "address",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "address_2",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "zip",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "website",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "invoice_extra_fields",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           }
         ]
       }
@@ -409,7 +409,7 @@
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
@@ -419,47 +419,47 @@
           {
             "key": "city",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "address",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "address_2",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "zip",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "website",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "invoice_extra_fields",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           }
         ]
       }
@@ -523,7 +523,7 @@
           {
             "key": "client_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "name",
@@ -533,32 +533,32 @@
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "mobile",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ext",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "avatar",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -622,7 +622,7 @@
           {
             "key": "client_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "name",
@@ -632,32 +632,32 @@
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "mobile",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ext",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "avatar",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -823,7 +823,7 @@
           {
             "key": "client_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "name",
@@ -833,32 +833,32 @@
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "mobile",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ext",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "avatar",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -968,12 +968,12 @@
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date",
@@ -983,12 +983,12 @@
           {
             "key": "client_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "note",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -1028,17 +1028,17 @@
           {
             "key": "tax_label",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tax2_label",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tax3_label",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "compound_tax",
@@ -1048,7 +1048,7 @@
           {
             "key": "summary",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "estimate_items",
@@ -1117,12 +1117,12 @@
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date",
@@ -1132,12 +1132,12 @@
           {
             "key": "client_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "note",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -1177,17 +1177,17 @@
           {
             "key": "tax_label",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tax2_label",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tax3_label",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "compound_tax",
@@ -1197,7 +1197,7 @@
           {
             "key": "summary",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "estimate_items",
@@ -1530,12 +1530,12 @@
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date",
@@ -1545,12 +1545,12 @@
           {
             "key": "client_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "note",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -1590,17 +1590,17 @@
           {
             "key": "tax_label",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tax2_label",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tax3_label",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "compound_tax",
@@ -1610,7 +1610,7 @@
           {
             "key": "summary",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "estimate_items",
@@ -1668,27 +1668,27 @@
           {
             "key": "client_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "project_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "invoice_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "invoice_item_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "user_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "amount",
@@ -1698,7 +1698,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "incurred_on",
@@ -1767,27 +1767,27 @@
           {
             "key": "client_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "project_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "invoice_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "invoice_item_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "user_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "amount",
@@ -1797,7 +1797,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "incurred_on",
@@ -2017,27 +2017,27 @@
           {
             "key": "client_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "project_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "invoice_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "invoice_item_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "user_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "amount",
@@ -2047,7 +2047,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "incurred_on",
@@ -2112,7 +2112,7 @@
           {
             "key": "user_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "title",
@@ -2122,7 +2122,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date",
@@ -2137,12 +2137,12 @@
           {
             "key": "rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "billed?",
@@ -2216,7 +2216,7 @@
           {
             "key": "user_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "title",
@@ -2226,7 +2226,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date",
@@ -2241,12 +2241,12 @@
           {
             "key": "rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "billed?",
@@ -2356,7 +2356,7 @@
           {
             "key": "user_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "title",
@@ -2366,7 +2366,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date",
@@ -2381,12 +2381,12 @@
           {
             "key": "rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "billed?",
@@ -2512,12 +2512,12 @@
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date",
@@ -2527,22 +2527,22 @@
           {
             "key": "due_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "client_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "note",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "po",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -2592,17 +2592,17 @@
           {
             "key": "tax_label",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tax2_label",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tax3_label",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "compound_tax",
@@ -2612,7 +2612,7 @@
           {
             "key": "summary",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "invoice_items",
@@ -2691,12 +2691,12 @@
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date",
@@ -2706,22 +2706,22 @@
           {
             "key": "due_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "client_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "note",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "po",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -2771,17 +2771,17 @@
           {
             "key": "tax_label",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tax2_label",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tax3_label",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "compound_tax",
@@ -2791,7 +2791,7 @@
           {
             "key": "summary",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "invoice_items",
@@ -3211,12 +3211,12 @@
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date",
@@ -3226,22 +3226,22 @@
           {
             "key": "due_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "client_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "note",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "po",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -3291,17 +3291,17 @@
           {
             "key": "tax_label",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tax2_label",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tax3_label",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "compound_tax",
@@ -3311,7 +3311,7 @@
           {
             "key": "summary",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "invoice_items",
@@ -3409,7 +3409,7 @@
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
@@ -3419,47 +3419,47 @@
           {
             "key": "city",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "address",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "address_2",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "zip",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "website",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "invoice_extra_fields",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           }
         ]
       }
@@ -3523,7 +3523,7 @@
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
@@ -3533,47 +3533,47 @@
           {
             "key": "city",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "address",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "address_2",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "zip",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "website",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "invoice_extra_fields",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           }
         ]
       }
@@ -3716,7 +3716,7 @@
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
@@ -3726,47 +3726,47 @@
           {
             "key": "city",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "address",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "address_2",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "zip",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "website",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "invoice_extra_fields",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           }
         ]
       }
@@ -3874,47 +3874,47 @@
           {
             "key": "gateway_token",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "address",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "city",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "zip",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "expiration_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -4066,7 +4066,7 @@
           {
             "key": "note",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "received_on",
@@ -4076,12 +4076,12 @@
           {
             "key": "transaction_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "transaction_fee_amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -4266,7 +4266,7 @@
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
@@ -4276,7 +4276,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -4296,47 +4296,47 @@
           {
             "key": "budget",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "worked_hours",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "unbilled_hours",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "currency_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "start_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "end_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "client",
             "optional": true,
-            "type": "{ id: number, number?: string | null, name: string, city?: string | null, address?: string | null, address_2?: string | null, zip?: string | null, country?: string | null, state?: string | null, website?: string | null, description?: string | null, invoice_extra_fields?: any | null }"
+            "type": "{ id: number, number?: string | null, name: string, city?: string | null, address?: string | null, address_2?: string | null, zip?: string | null, country?: string | null, state?: string | null, website?: string | null, description?: string | null, invoice_extra_fields?: any | null } | null"
           }
         ]
       }
@@ -4400,7 +4400,7 @@
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
@@ -4410,7 +4410,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -4430,47 +4430,47 @@
           {
             "key": "budget",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "worked_hours",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "unbilled_hours",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "currency_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "start_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "end_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "client",
             "optional": true,
-            "type": "{ id: number, number?: string | null, name: string, city?: string | null, address?: string | null, address_2?: string | null, zip?: string | null, country?: string | null, state?: string | null, website?: string | null, description?: string | null, invoice_extra_fields?: any | null }"
+            "type": "{ id: number, number?: string | null, name: string, city?: string | null, address?: string | null, address_2?: string | null, zip?: string | null, country?: string | null, state?: string | null, website?: string | null, description?: string | null, invoice_extra_fields?: any | null } | null"
           }
         ]
       }
@@ -4677,7 +4677,7 @@
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
@@ -4687,7 +4687,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -4707,47 +4707,47 @@
           {
             "key": "budget",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "worked_hours",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "unbilled_hours",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "currency_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "start_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "end_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "client",
             "optional": true,
-            "type": "{ id: number, number?: string | null, name: string, city?: string | null, address?: string | null, address_2?: string | null, zip?: string | null, country?: string | null, state?: string | null, website?: string | null, description?: string | null, invoice_extra_fields?: any | null }"
+            "type": "{ id: number, number?: string | null, name: string, city?: string | null, address?: string | null, address_2?: string | null, zip?: string | null, country?: string | null, state?: string | null, website?: string | null, description?: string | null, invoice_extra_fields?: any | null } | null"
           }
         ]
       }
@@ -4901,7 +4901,7 @@
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
@@ -4911,7 +4911,7 @@
           {
             "key": "note",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -4951,22 +4951,22 @@
           {
             "key": "occurrences_remaining",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "payment_profile_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "po",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "summary",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "subtotal",
@@ -4996,17 +4996,17 @@
           {
             "key": "tax_label",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tax2_label",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tax3_label",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "compound_tax",
@@ -5016,12 +5016,12 @@
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "client",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "recurring_schedule_items",
@@ -5095,7 +5095,7 @@
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
@@ -5105,7 +5105,7 @@
           {
             "key": "note",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -5145,22 +5145,22 @@
           {
             "key": "occurrences_remaining",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "payment_profile_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "po",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "summary",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "subtotal",
@@ -5190,17 +5190,17 @@
           {
             "key": "tax_label",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tax2_label",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tax3_label",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "compound_tax",
@@ -5210,12 +5210,12 @@
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "client",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "recurring_schedule_items",
@@ -5422,7 +5422,7 @@
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
@@ -5432,7 +5432,7 @@
           {
             "key": "note",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -5472,22 +5472,22 @@
           {
             "key": "occurrences_remaining",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "payment_profile_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "po",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "summary",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "subtotal",
@@ -5517,17 +5517,17 @@
           {
             "key": "tax_label",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tax2_label",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tax3_label",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "compound_tax",
@@ -5537,12 +5537,12 @@
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "client",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "recurring_schedule_items",
@@ -5579,7 +5579,7 @@
           {
             "key": "client_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "name",
@@ -5589,32 +5589,32 @@
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "mobile",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ext",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "avatar",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -5687,22 +5687,22 @@
           {
             "key": "client_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "project_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "user_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "assignee_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "title",
@@ -5712,7 +5712,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "complete",
@@ -5722,12 +5722,12 @@
           {
             "key": "completed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "due_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
@@ -5801,22 +5801,22 @@
           {
             "key": "client_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "project_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "user_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "assignee_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "title",
@@ -5826,7 +5826,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "complete",
@@ -5836,12 +5836,12 @@
           {
             "key": "completed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "due_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
@@ -6016,22 +6016,22 @@
           {
             "key": "client_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "project_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "user_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "assignee_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "title",
@@ -6041,7 +6041,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "complete",
@@ -6051,12 +6051,12 @@
           {
             "key": "completed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "due_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",

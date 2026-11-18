@@ -1,0 +1,21 @@
+displayName: CastingWords
+description: Transcription service. Place and upgrade orders, fetch audiofiles, transcripts, and invoices, check prepay balance and SKUs, and manage webhooks.
+domain: castingwords.com
+examples:
+  read:
+    path: skus.list
+    title: List SKUs
+  write:
+    path: order.create
+    title: Place a test order
+    args:
+      url: https://example.com/audio/interview.mp3
+      sku:
+        - TRANS14
+      test: true
+dbExample:
+  entity: skus
+  note: >-
+    This table exists, but CastingWords calls don't fill it yet. This returns only rows
+    you have written yourself.
+  limit: 50

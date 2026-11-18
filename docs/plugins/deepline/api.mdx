@@ -1,0 +1,6197 @@
+---
+title: "Deepline API reference"
+sidebarTitle: "API"
+description: "API reference for the Deepline plugin in Corsair: every `deepline.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Auth
+
+### status
+
+`auth.status`
+
+Show the API key, user, workspace and rate-limit tier this plugin is using
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.auth.status({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `api_key_id` | `string \| null` | No | — |
+| `user_id` | `string \| null` | No | — |
+| `org_id` | `string \| null` | No | — |
+| `org_name` | `string \| null` | No | — |
+| `org_slug` | `string \| null` | No | — |
+| `rate_limit_tier` | `string \| null` | No | — |
+| `features` | `string[] \| null` | No | — |
+
+
+
+---
+
+## Billing
+
+### autoRecharge.get
+
+`billing.autoRecharge.get`
+
+Read the automatic credit recharge settings
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.billing.autoRecharge.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_id` | `string` | Yes | — |
+| `enabled` | `boolean` | Yes | — |
+| `available` | `boolean` | Yes | — |
+| `reason` | `string \| null \| null` | No | — |
+| `threshold_credits` | `number \| null \| null` | No | — |
+| `refill_to_credits` | `number \| null \| null` | No | — |
+| `rolling_limit_cents` | `number \| null \| null` | No | — |
+| `purchase_limit_cents` | `number \| null \| null` | No | — |
+| `purchase_limit_credits` | `number \| null \| null` | No | — |
+| `rolling_committed_cents` | `number \| null` | No | — |
+| `rolling_committed_credits` | `number \| null` | No | — |
+
+
+
+---
+
+### autoRecharge.update
+
+`billing.autoRecharge.update`
+
+Turn automatic recharge on or off or change its limits (lets Deepline charge the saved card automatically)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.deepline.api.billing.autoRecharge.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `enabled` | `boolean` | Yes | true turns automatic recharge on (the saved card is charged whenever the balance drops below threshold_credits); false turns it off. |
+| `threshold_credits` | `number` | No | Required when enabled is true: recharge when the balance drops below this many credits. |
+| `refill_to_credits` | `number` | No | Required when enabled is true: buy enough credits to bring the balance back to this amount. |
+| `purchase_limit_credits` | `number \| null` | No | Only with enabled true: maximum credits bought automatically over a rolling 30 days; 0 stops purchases, null removes the cap. |
+| `idempotencyKey` | `string` | Yes | Required caller-owned key, 1-200 printable ASCII characters with no surrounding whitespace (a UUID works). Persist it before calling. Retrying with the same key and the same input replays the original operation instead of charging again; never generate a fresh key to retry an uncertain call. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_id` | `string` | Yes | — |
+| `enabled` | `boolean` | Yes | — |
+| `available` | `boolean` | Yes | — |
+| `reason` | `string \| null \| null` | No | — |
+| `threshold_credits` | `number \| null \| null` | No | — |
+| `refill_to_credits` | `number \| null \| null` | No | — |
+| `rolling_limit_cents` | `number \| null \| null` | No | — |
+| `purchase_limit_cents` | `number \| null \| null` | No | — |
+| `purchase_limit_credits` | `number \| null \| null` | No | — |
+| `rolling_committed_cents` | `number \| null` | No | — |
+| `rolling_committed_credits` | `number \| null` | No | — |
+
+
+
+---
+
+### balance
+
+`billing.balance`
+
+Get workspace credit balance
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.billing.balance({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `view` | `pill` | No | Set pill for the compact display response; omit for the full balance and exposure breakdown. |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  org_id: string,
+  balance: number,
+  balance_display?: string | null,
+  rough_usd_balance?: number | null,
+  posted_balance_credits?: number | null | null,
+  pending_spend_credits?: number | null | null,
+  spendable_balance_credits: number | null,
+  spendable_balance_status: string,
+  spendable_balance_checked_at?: string | null | null,
+  spendable_balance_message?: string | null,
+  temporary_hold_credits?: number | null | null,
+  temporary_hold_credits_truncated?: boolean | null | null,
+  rough_usd_temporary_holds?: number | null | null,
+  estimated_hold_credits?: number | null | null,
+  incurred_unsettled_credits?: number | null | null,
+  pending_wallet_debit_credits?: number | null | null,
+  pending_wallet_refund_credits?: number | null | null,
+  unpriced_unsettled_reservation_count?: number | null | null,
+  exposure_status: string,
+  exposure_message?: string | null,
+  temporary_hold_message?: string | null,
+  balance_status?: string | null,
+  has_payment_method?: boolean | null,
+  payment_method?: Record<string, any> | null | null,
+  recovery?: Record<string, any> | null,
+  updated_at?: string | null | null
+} | {
+  org_id: string,
+  view: pill,
+  balance: number,
+  balance_display: string,
+  rough_usd_balance: number,
+  balance_status: string,
+  updated_at: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### catalog
+
+`billing.catalog`
+
+Read the published plan catalog, meters and the plan the workspace is on
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.billing.catalog({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `catalog_id` | `string` | Yes | — |
+| `catalog_version` | `string` | Yes | — |
+| `active_plan` | `object` | Yes | — |
+| `plans` | `object[]` | Yes | — |
+| `meters` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="active_plan full type">
+
+```ts
+{
+  plan_family_id: string,
+  plan_version_id: string,
+  public_name: string,
+  display_name?: string | null,
+  rate_card_id?: string | null,
+  assigned_by?: string | null,
+  assigned_at?: string | null | null,
+  has_subscription?: boolean | null
+}
+```
+</Accordion>
+
+<Accordion title="plans full type">
+
+```ts
+{
+  plan_family_id: string,
+  plan_version_id: string,
+  public_name: string,
+  display_name?: string | null,
+  price_usd?: number | null | null,
+  price_interval?: string | null | null,
+  monthly_grant_credits: number,
+  rollover?: {
+    mode: string,
+    max_credits?: number | null
+  } | null,
+  acquirable: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="meters full type">
+
+```ts
+{
+  id: string,
+  name: string
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### creditPurchases.create
+
+`billing.creditPurchases.create`
+
+Buy credits through a payment-gated purchase (spends money)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.deepline.api.billing.creditPurchases.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credits` | `number` | Yes | Deepline credits to buy through the payment-gated commercial purchase flow. |
+| `idempotencyKey` | `string` | Yes | Required caller-owned key, 1-200 printable ASCII characters with no surrounding whitespace (a UUID works). Persist it before calling. Retrying with the same key and the same input replays the original operation instead of charging again; never generate a fresh key to retry an uncertain call. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, any>` | Yes | — |
+| `operation` | `object` | Yes | — |
+| `request_id` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="operation full type">
+
+```ts
+{
+  id: string,
+  state: string,
+  version: number,
+  next_action?: string | null | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### creditPurchases.recover
+
+`billing.creditPurchases.recover`
+
+Check or retire an uncertain credit purchase by its original key (never charges)
+
+**Risk:** `write`
+
+```ts
+await corsair.deepline.api.billing.creditPurchases.recover({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credits` | `number` | Yes | The exact credit amount of the original purchase. |
+| `org_id` | `string` | Yes | The original workspace org_id; must match the authenticated workspace. |
+| `idempotencyKey` | `string` | Yes | The ORIGINAL purchase idempotency key. Never generate a new key for recovery. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, any>` | Yes | — |
+| `operation` | `object` | Yes | — |
+| `request_id` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="operation full type">
+
+```ts
+{
+  id: string,
+  state: string,
+  version: number,
+  next_action?: string | null | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### entitlements
+
+`billing.entitlements`
+
+Read current workspace provider benefits
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.billing.entitlements({});
+```
+
+**Input:** `Record<string, any>`
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_id` | `string` | Yes | — |
+| `as_of` | `number` | Yes | — |
+| `plan` | `object \| null` | Yes | — |
+| `benefits` | `object` | Yes | — |
+| `effective_limits` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="plan full type">
+
+```ts
+{
+  sku?: string | null,
+  name?: string | null,
+  catalog_revision?: string | null | null,
+  included_credits?: number | null,
+  interval?: string | null | null
+} | null
+```
+</Accordion>
+
+<Accordion title="benefits full type">
+
+```ts
+{
+  quickenrichUnlimited?: {
+    status: string,
+    value: {
+      enabled: boolean,
+      requestsPerMinute: number
+    },
+    expiresAt?: number | null
+  } | null,
+  peopleSearch?: {
+    status: string,
+    value: {
+      enabled: boolean,
+      requestsPerMinute: number,
+      profilesPerMonth: number,
+      overageCreditsPerProfile?: number | null
+    },
+    expiresAt?: number | null,
+    usage: {
+      month: string,
+      periodStartsAt?: number | null,
+      resetsAt?: number | null,
+      resetsOn?: string | null,
+      limit: number,
+      consumed: number,
+      remaining: number
+    }
+  } | null,
+  includedStorage?: {
+    status: string,
+    usage: {
+      limit: number,
+      consumed: number,
+      remaining: number,
+      measuredDay: string,
+      overageCharged: boolean
+    }
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="effective_limits full type">
+
+```ts
+{
+  quickenrichUnlimited?: {
+    baseline: number,
+    effective: number,
+    source: string,
+    override_expires_at?: number | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### includedCompute
+
+`billing.includedCompute`
+
+Read Play compute pricing, included minutes and minutes used this period
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.billing.includedCompute({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `include_overage` | `boolean` | No | true also returns overage_credits: settled plan-rate sandbox credits paid beyond included compute this period. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `credits_per_minute` | `number \| null \| null` | No | — |
+| `included_minutes` | `number` | Yes | — |
+| `plan` | `object` | Yes | — |
+| `period_start_at` | `string` | Yes | — |
+| `period_end_at` | `string` | Yes | — |
+| `resets_on` | `string` | Yes | — |
+| `included_minutes_used` | `number` | Yes | — |
+| `included_credits_used` | `number \| null` | No | — |
+| `overage_credits` | `number \| null` | No | — |
+| `minutes_used` | `number` | Yes | — |
+| `days` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="plan full type">
+
+```ts
+{
+  included_minutes: number,
+  credits_per_minute: number
+}
+```
+</Accordion>
+
+<Accordion title="days full type">
+
+```ts
+{
+  day: string,
+  minutes: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### invoices
+
+`billing.invoices`
+
+List subscription invoices and credit purchase receipts, newest first
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.billing.invoices({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Maximum entries, 1-100; the server default is 24. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_id` | `string` | Yes | — |
+| `entries` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+{
+  kind: string,
+  id: string,
+  created_at: string,
+  description: string,
+  amount_cents: number,
+  currency: string,
+  status: string,
+  url?: string | null | null,
+  pdf_url?: string | null | null,
+  invoice_url?: string | null | null,
+  receipt_url?: string | null | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### ledger
+
+`billing.ledger`
+
+List or export the credit ledger
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.billing.ledger({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | JSON page size; default 50, clamped to 5000. CSV export ignores the requested page limit. |
+| `since_at` | `number` | No | Lower creation-time bound as Unix milliseconds. |
+| `before_at` | `number` | No | Upper creation-time bound as Unix milliseconds. |
+| `cursor` | `string` | No | Opaque next_cursor from the previous JSON page. Preserve all filters. Ignored for CSV. |
+| `run_id` | `string` | No | Exact public run ID. |
+| `operation` | `string` | No | Exact billed operation name. |
+
+Requires workspace admin access. Returns JSON pages, including has_more and next_cursor.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_id` | `string` | Yes | — |
+| `scope` | `object` | Yes | — |
+| `entries` | `object[]` | Yes | — |
+| `has_more` | `boolean` | Yes | — |
+| `next_cursor` | `string \| null` | Yes | — |
+| `next_before_at` | `null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="scope full type">
+
+```ts
+{
+  kind: org
+}
+```
+</Accordion>
+
+<Accordion title="entries full type">
+
+```ts
+{
+  id: string,
+  delta: number,
+  reason: string,
+  provider: string | null,
+  operation: string | null,
+  request_id: string | null,
+  run_id: string | null,
+  billing_stage: string | null,
+  charge_state: string | null,
+  billing_mode: string | null,
+  pricing_model: string | null,
+  pricing_basis: string | null,
+  charge_credits: number,
+  outcome: string | null,
+  result_count: number | null,
+  deepline_rough_usd: number | null,
+  api_key_id: string | null,
+  metadata: Record<string, any> | null,
+  billing_audit: Record<string, any>,
+  stripe_session_id: string | null,
+  created_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### plans
+
+`billing.plans`
+
+List plans that can be started or changed to, and check a promo code without redeeming it
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.billing.plans({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `promo_code` | `string` | No | Optional plan promo code to evaluate; the response reports its status (applied, unknown, expired, already_redeemed, unavailable). Reading never redeems it. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_id` | `string` | Yes | — |
+| `plans` | `object[]` | Yes | — |
+| `current_plan_sku` | `string` | Yes | — |
+| `pending_plan_sku` | `string \| null \| null` | No | — |
+| `pending_plan_display_name` | `string \| null \| null` | No | — |
+| `acquisition_enabled` | `boolean` | Yes | — |
+| `enabled_offer_keys` | `string[] \| null` | No | — |
+| `promo_code` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="plans full type">
+
+```ts
+{
+  sku: string,
+  name: string,
+  display_name?: string | null,
+  recurring_price_usd: number,
+  first_month_price_usd?: number | null | null,
+  bonus_credits?: number | null | null,
+  interval: string,
+  included_credits: number,
+  benefits?: Record<string, any> | null,
+  purchased_credit_price_usd: number,
+  acquisition_enabled: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="promo_code full type">
+
+```ts
+{
+  code: string,
+  status: string,
+  plan_skus: string[],
+  expires_at?: string | null | null
+} | null | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### planTransitions.create
+
+`billing.planTransitions.create`
+
+Start, change, cancel or restore the billing plan (changes what the workspace pays)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.deepline.api.billing.planTransitions.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | `start_or_change \| cancel \| undo_cancel` | Yes | start_or_change starts or changes the plan; cancel ends it at period end; undo_cancel restores a pending cancellation. |
+| `target_plan_sku` | `string` | No | Required for start_or_change: plan SKU from billing.plans, e.g. payg-v1, builder-v1, growth-v1, team-v2. |
+| `billing_email` | `string` | No | Only for start_or_change: billing email for plan invoices. |
+| `promo_code` | `string` | No | Only for start_or_change: plan promo code; an unknown, expired or used code refuses the change. |
+| `idempotencyKey` | `string` | Yes | Required caller-owned key, 1-200 printable ASCII characters with no surrounding whitespace (a UUID works). Persist it before calling. Retrying with the same key and the same input replays the original operation instead of charging again; never generate a fresh key to retry an uncertain call. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, any>` | Yes | — |
+| `operation` | `object` | Yes | — |
+| `request_id` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="operation full type">
+
+```ts
+{
+  id: string,
+  state: string,
+  version: number,
+  next_action?: string | null | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### portalSessions.create
+
+`billing.portalSessions.create`
+
+Create a Stripe billing portal link for payment details and invoices (the link grants billing access)
+
+**Risk:** `write`
+
+```ts
+await corsair.deepline.api.billing.portalSessions.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `flow` | `customer_update` | No | customer_update opens the billing address editor directly; omit for the general portal (payment recovery and invoices). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+
+
+
+---
+
+### quote
+
+`billing.quote`
+
+Estimate the maximum credits for Play sandbox sessions (quote only, spends nothing)
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.billing.quote({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `quantity` | `number` | Yes | Number of Play sandbox sessions to quote. |
+| `sandbox_runtime` | `object` | No | Runtime declaration for each session; omit for defaults. |
+
+<AccordionGroup>
+<Accordion title="sandbox_runtime full type">
+
+```ts
+{
+  timeout?: string,
+  size?: standard | large | xlarge | 1gb | 4gb | 8gb
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scope` | `string` | Yes | — |
+| `quantity` | `number` | Yes | — |
+| `resources` | `object` | Yes | — |
+| `maximum_backend` | `string \| null` | No | — |
+| `priced_backends` | `string[] \| null` | No | — |
+| `maximum_credits` | `number` | Yes | — |
+| `maximum_billing_seconds` | `number` | Yes | — |
+| `total_play_credits` | `number \| null \| null` | No | — |
+| `total_budget_supported` | `boolean \| null` | No | — |
+| `unbounded_components` | `string[]` | Yes | — |
+| `explanation` | `string` | Yes | — |
+| `plan_version_id` | `string \| null` | No | — |
+| `rate_card_id` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="resources full type">
+
+```ts
+{
+  timeoutSeconds: number,
+  memoryGiB: number,
+  cpu: number,
+  diskGiB: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### status
+
+`billing.status`
+
+Read plan, payment, recharge and invoice state
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.billing.status({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_id` | `string` | Yes | — |
+| `plan` | `object` | Yes | — |
+| `state` | `string` | Yes | — |
+| `changes_allowed` | `boolean` | Yes | — |
+| `payment_state` | `string` | Yes | — |
+| `recharge_state` | `string` | Yes | — |
+| `billing_email` | `string \| null \| null` | No | — |
+| `billing_address` | `Record<string, any> \| null \| null` | No | — |
+| `collection_method` | `string \| null` | No | — |
+| `payment_access_policy` | `string \| null` | No | — |
+| `plan_invoice` | `Record<string, any> \| null \| null` | No | — |
+| `outstanding_invoice` | `Record<string, any> \| null \| null` | No | — |
+| `next_action` | `string \| null \| null` | No | — |
+| `pending_plan_sku` | `string \| null \| null` | No | — |
+| `pending_plan_starts_at` | `string \| null \| null` | No | — |
+| `current_period_end` | `string \| null \| null` | No | — |
+| `as_of` | `string \| null \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="plan full type">
+
+```ts
+{
+  sku: string,
+  name: string,
+  display_name?: string | null,
+  recurring_price_usd?: number | null | null,
+  interval?: string | null | null,
+  included_credits?: number | null | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### subscription.cancel
+
+`billing.subscription.cancel`
+
+Cancel the subscription at period end, or undo a pending cancellation (changes the subscription)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.deepline.api.billing.subscription.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | `cancel \| undo_cancel` | Yes | cancel schedules cancellation at the end of the paid period (credits are kept); undo_cancel reverses a pending cancellation before the period ends. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_id` | `string` | Yes | — |
+| `subscription_id` | `string` | Yes | — |
+| `cancel_at_period_end` | `boolean` | Yes | — |
+| `current_period_end` | `string \| null \| null` | No | — |
+| `status` | `string` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### subscription.status
+
+`billing.subscription.status`
+
+Read subscription state, renewal and cancellation facts, and remaining credit pools
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.billing.subscription.status({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_id` | `string` | Yes | — |
+| `plan_version_id` | `string` | Yes | — |
+| `plan_name` | `string` | Yes | — |
+| `plan_display_name` | `string \| null` | No | — |
+| `plan_family_id` | `string` | Yes | — |
+| `subscribed` | `boolean` | Yes | — |
+| `price_usd` | `number \| null \| null` | No | — |
+| `price_interval` | `string \| null \| null` | No | — |
+| `monthly_grant_credits` | `number` | Yes | — |
+| `assigned_by` | `string \| null` | No | — |
+| `assigned_at` | `string \| null \| null` | No | — |
+| `credit_pools` | `object[]` | Yes | — |
+| `pooled_credits_remaining` | `number` | Yes | — |
+| `current_period_end` | `string \| null \| null` | No | — |
+| `cancel_at_period_end` | `boolean \| null \| null` | No | — |
+| `stripe_status` | `string \| null \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="credit_pools full type">
+
+```ts
+{
+  grant_id?: string | null,
+  pool: string,
+  credits_remaining: number,
+  credits_granted: number,
+  source: string,
+  cycle_key?: string | null | null,
+  effective_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### topUp
+
+`billing.topUp`
+
+Charge the saved payment method and add credits (spends money)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.deepline.api.billing.topUp({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credits` | `number` | Yes | Deepline credits to buy and charge to the saved payment method. |
+| `idempotencyKey` | `string` | Yes | Required caller-owned key, 1-200 printable ASCII characters with no surrounding whitespace (a UUID works). Persist it before calling. Retrying with the same key and the same input replays the original operation instead of charging again; never generate a fresh key to retry an uncertain call. |
+| `receipt` | `boolean` | No | true requests a durable operation receipt (status pending or applied) instead of waiting for the charge result; a pending receipt does not mean payment or credits have landed. |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  status: pending,
+  operation_id: string,
+  operation_state: string,
+  requested_credits: number,
+  amount_cents: number,
+  currency: string
+} | {
+  status: applied,
+  operation_id: string,
+  operation_state: string,
+  applied_credits: number,
+  amount_cents: number,
+  currency: string,
+  balance?: number | null,
+  stripe_payment_intent_id?: string | null
+} | {
+  ok: true,
+  credits: number,
+  amount_cents: number,
+  currency: string,
+  balance: number,
+  stripe_payment_intent_id: string,
+  payment_method?: Record<string, any> | null | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### usage
+
+`billing.usage`
+
+Get usage and recent charges
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.billing.usage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `run_id` | `string` | No | Filter recent charges and include spend for this exact public run ID. |
+| `request_id` | `string` | No | Exact call lookup, at most 200 characters. Cannot be combined with run_id, recent_cursor, or recent_offset. Returns only org_id and recent. |
+| `recent_limit` | `number` | No | Recent page size; default 10, clamped to 100. Ignored for request_id. |
+| `recent_offset` | `number` | No | Zero-based recent activity offset, at most 500. Follow recent.next_offset while recent.has_more is true. |
+| `recent_cursor` | `string` | No | Legacy cursor input. Prefer recent_offset; cannot be combined with request_id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_id` | `string` | Yes | — |
+| `balance` | `number \| null` | No | — |
+| `balance_display` | `string \| null` | No | — |
+| `rough_usd_balance` | `number \| null` | No | — |
+| `balance_updated_at` | `string \| null \| null` | No | — |
+| `plan` | `object \| null` | No | — |
+| `managed_usd_per_email` | `number \| null \| null` | No | — |
+| `has_payment_method` | `boolean \| null` | No | — |
+| `payment_method` | `Record<string, any> \| null \| null` | No | — |
+| `usage` | `object \| null` | No | — |
+| `run` | `object \| null` | No | — |
+| `quota` | `object \| null` | No | — |
+| `autobill` | `Record<string, any> \| null` | No | — |
+| `recent` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="plan full type">
+
+```ts
+{
+  public_name: string,
+  usd_per_credit: number
+} | null
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  month_spent_credits: number,
+  rough_usd_spent: number,
+  last_30_days_usage_credits: number,
+  rough_usd_last_30_days_usage: number,
+  temporary_hold_credits: number,
+  temporary_hold_credits_truncated: boolean,
+  rough_usd_temporary_holds: number,
+  period_start_at: string,
+  period_end_at: string
+} | null
+```
+</Accordion>
+
+<Accordion title="run full type">
+
+```ts
+{
+  run_id?: string | null,
+  spent_credits?: number | null,
+  rough_usd_spent?: number | null,
+  event_count?: number | null
+} | null | null
+```
+</Accordion>
+
+<Accordion title="quota full type">
+
+```ts
+{
+  enabled: boolean,
+  monthly_credits_limit: number | null,
+  monthly_rough_usd_limit: number | null,
+  remaining_credits: number | null,
+  remaining_rough_usd: number | null,
+  updated_at: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="recent full type">
+
+```ts
+{
+  run_id: string | null,
+  request_id?: string | null,
+  total: number,
+  total_is_exact?: boolean | null,
+  total_lower_bound?: number | null,
+  offset: number,
+  limit: number,
+  next_offset: number,
+  next_cursor: string | null,
+  has_more: boolean,
+  incomplete: boolean,
+  entries: {
+    id: string,
+    provider: string,
+    operation: string,
+    status: string,
+    request_id: string,
+    run_id: string | null,
+    play_run_id?: string | null | null,
+    workflow_id?: string | null | null,
+    billing_run_id?: string | null | null,
+    execution_run_id?: string | null | null,
+    included_in_run_id?: string | null | null,
+    billing_scope?: string | null | null,
+    step_block_id?: string | null | null,
+    step_alias?: string | null | null,
+    auth_type?: string | null | null,
+    user_id?: string | null | null,
+    api_key_id?: string | null | null,
+    credits: number,
+    billing_mode?: string | null | null,
+    pricing_model?: string | null | null,
+    pricing_basis?: string | null | null,
+    pricing_unit_amount?: number | null | null,
+    outcome?: string | null | null,
+    policy_id?: string | null | null,
+    provider_units?: number | null | null,
+    batch_count?: number | null | null,
+    total_results?: number | null | null,
+    delta?: number | null | null,
+    reason?: string | null | null,
+    stripe_session_id?: string | null | null,
+    metadata?: Record<string, any> | null | null,
+    billing_note?: string | null | null,
+    charge_state: string,
+    charge_finality?: string | null,
+    rough_usd_cost?: number | null | null,
+    created_at?: string | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### usageEvents
+
+`billing.usageEvents`
+
+Page raw per-request usage events, or look up one by request_id (not a final charge)
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.billing.usageEvents({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | No | Exact lookup of one execution by the request_id/job_id from a tool execution, 1-200 characters. Cannot be combined with limit, cursor or run_id. An unknown request_id is a 404 error. |
+| `limit` | `number` | No | Page size, 1-500; the server default is 200. |
+| `cursor` | `string` | No | Opaque next_cursor from the preceding page. Follow next_cursor until it is null, even when a page is empty. |
+| `run_id` | `string` | No | Only events attributed to this exact public run ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_id` | `string` | Yes | — |
+| `run_id` | `string \| null \| null` | No | — |
+| `next_cursor` | `string \| null \| null` | No | — |
+| `entries` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+{
+  id?: string | null | null,
+  provider: string,
+  operation: string,
+  status: string,
+  request_id: string,
+  billing_outcome_reason?: string | null | null,
+  credits?: number | null | null,
+  billing_mode?: string | null | null,
+  pricing_model?: string | null | null,
+  policy_id?: string | null | null,
+  created_at: string,
+  run_id?: string | null | null,
+  charge_state?: any,
+  charge_finality?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Datasets
+
+### history
+
+`datasets.history`
+
+Read immutable run row history with coverage and continuation cursor
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.datasets.history({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `playName` | `string` | Yes | — |
+| `runId` | `string` | Yes | — |
+| `tableNamespace` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+Follow nextCursor. Read coverage before concluding that history is complete.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entries` | `object[]` | Yes | — |
+| `nextCursor` | `string \| null` | Yes | — |
+| `coverage` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+{
+  runId: string,
+  datasetId: string,
+  rowKey: string,
+  phase: string,
+  generation: string,
+  attemptSeq: number | null,
+  rowVersion: number | null,
+  inputIndex: number | null,
+  inputDigest: string,
+  status: string,
+  data: Record<string, any>,
+  source: Record<string, any>,
+  recordedAt: string
+}[]
+```
+</Accordion>
+
+<Accordion title="coverage full type">
+
+```ts
+{
+  complete: boolean,
+  expectedRows: number | null,
+  captureStartedAt: string | null,
+  captureCompletedAt: string | null,
+  reason: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### rows
+
+`datasets.rows`
+
+Read a page of saved dataset rows, optionally scoped to a run
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.datasets.rows({ playName: 'prebuilt/person-linkedin-to-email', tableNamespace: 'result.rows', runId: '<run.id>', limit: 100, offset: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `playName` | `string` | Yes | — |
+| `tableNamespace` | `string` | Yes | — |
+| `runId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `rowMode` | `output \| all \| live` | No | — |
+| `summary` | `full \| counts` | No | — |
+
+Pass runId to require rows from that run. Use the exact dataset namespace reported by the run and advance offset to retrieve further pages.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rows` | `object[]` | Yes | — |
+| `scope` | `object` | No | — |
+| `summaryMode` | `string` | No | — |
+| `summary` | `object` | No | — |
+| `customerDbUrl` | `string` | No | — |
+| `deltaCursor` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="rows full type">
+
+```ts
+{
+  key?: string,
+  status?: string,
+  runId?: string | null,
+  data?: Record<string, any>
+}[]
+```
+</Accordion>
+
+<Accordion title="scope full type">
+
+```ts
+{
+  kind: database
+} | {
+  kind: run,
+  runId: string
+}
+```
+</Accordion>
+
+<Accordion title="summary full type">
+
+```ts
+{
+  stats?: {
+    total?: number,
+    queued?: number,
+    running?: number,
+    completed?: number,
+    failed?: number
+  },
+  columns?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Db
+
+### query
+
+`db.query`
+
+Run SQL on the workspace customer database; writes can change storage tables
+
+**Risk:** `destructive`
+
+```ts
+await corsair.deepline.api.db.query({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sql` | `string` | Yes | One SQL statement for the workspace customer database. SELECT, EXPLAIN and read-only WITH read permitted schemas; CREATE TABLE, INSERT, UPDATE, DELETE, ALTER, DROP, TRUNCATE and CREATE INDEX change schema-qualified storage tables such as storage.agent_notes. |
+| `maxRows` | `number` | No | Maximum rows to return, 1 to 1000. The server also bounds results. |
+| `operationKey` | `string` | No | Recovery key for a write. Resend the same SQL, options and key to recover an uncertain result; a new key starts a new operation. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `command` | `string` | Yes | — |
+| `row_count` | `number \| null` | Yes | — |
+| `row_count_returned` | `number` | Yes | — |
+| `truncated` | `boolean` | Yes | — |
+| `columns` | `object[]` | Yes | — |
+| `rows` | `any[]` | Yes | — |
+| `operation` | `object` | No | — |
+| `scope` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="columns full type">
+
+```ts
+{
+  name: string
+}[]
+```
+</Accordion>
+
+<Accordion title="operation full type">
+
+```ts
+{
+  operation_key: string,
+  completed_at_ms: number,
+  source: string
+}
+```
+</Accordion>
+
+<Accordion title="scope full type">
+
+```ts
+{
+  kind: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Executions
+
+### getByKey
+
+`executions.getByKey`
+
+Recover a tool execution by its idempotency key
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.executions.getByKey({ key: 'company-lookup-001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | The key returned by the related Deepline API call. |
+
+Reads an existing execution without launching another. Inspect responseStatus and executionRecovery.state before interpreting response as a success.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `toolId` | `string` | Yes | — |
+| `requestId` | `string \| null` | No | — |
+| `executionRecovery` | `object` | Yes | — |
+| `response` | `Record<string, any> \| null` | No | — |
+| `responseStatus` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="executionRecovery full type">
+
+```ts
+{
+  idempotencyKey: string,
+  state: string,
+  replayed: boolean,
+  expiresAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Health
+
+### get
+
+`health.get`
+
+Check Runtime API availability
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.health.get({});
+```
+
+**Input:** `Record<string, any>`
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `ok` | Yes | — |
+| `version` | `v2` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+
+
+
+---
+
+## Integrations
+
+### balance
+
+`integrations.balance`
+
+Read the live balance of the workspace's own provider credential (LeadMagic)
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.integrations.balance({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider` | `string` | Yes | Provider whose own workspace credential to read the balance of. Only leadmagic is supported today. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider` | `string` | Yes | — |
+| `credentialScope` | `string` | Yes | — |
+| `unit` | `string` | Yes | — |
+| `observedAt` | `string` | Yes | — |
+| `balance` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="balance full type">
+
+```ts
+{
+  value: number,
+  status: string,
+  source: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### connectLink
+
+`integrations.connectLink`
+
+Get the dashboard link where a workspace admin connects a provider
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.integrations.connectLink({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider` | `string` | Yes | Provider id from tools.providers, for example hubspot. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider` | `string` | Yes | — |
+| `connect_url` | `string` | Yes | — |
+
+
+
+---
+
+### setCredentials
+
+`integrations.setCredentials`
+
+Save provider credential fields for the workspace (replaces the stored credential; values never returned)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.deepline.api.integrations.setCredentials({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider` | `string` | Yes | Provider id from tools.providers, for example leadmagic. |
+| `credentials` | `Record<string, string>` | Yes | Provider-owned credential fields, for example &#123; "api_key": "..." &#125;. Values are stored by Deepline and never returned. |
+| `expectedConnectionId` | `string` | No | Replace only this existing connection; the save is refused if the current connection differs. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `credential_saved` | `boolean` | No | — |
+
+
+
+---
+
+### startOAuth
+
+`integrations.startOAuth`
+
+Start provider OAuth and return the URL a person opens to grant access
+
+**Risk:** `write`
+
+```ts
+await corsair.deepline.api.integrations.startOAuth({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider` | `string` | Yes | Provider id from tools.providers that connects through OAuth. |
+| `preset` | `string` | No | Named scope preset defined by the provider integration. |
+| `scopes` | `string[]` | No | Explicit OAuth scopes to request. Omit to use the defaults. |
+| `optionalScopes` | `string[]` | No | Scopes to request when the user is allowed to grant them. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `redirect_url` | `string` | Yes | — |
+
+
+
+---
+
+## Monitors
+
+### access
+
+`monitors.access`
+
+Check whether the workspace can use Deepline Monitors
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.monitors.access({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `has_access` | `boolean` | Yes | — |
+| `reason` | `string \| null` | No | — |
+
+
+
+---
+
+### available
+
+`monitors.available`
+
+List deployable monitor tools, or describe the payload, outputs and pricing of one tool
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.monitors.available({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tool` | `string` | No | A monitor tool id to describe in full (payload schema, outputs, pricing). Omit to list the catalog. |
+| `provider` | `string` | No | Only list monitor tools from this provider. |
+| `search` | `string` | No | Literal text to match against monitor tool metadata. |
+| `limit` | `number` | No | Maximum monitor tools to list. |
+| `full` | `boolean` | No | In list mode, return payload schemas and streams instead of the compact inventory. Ignored when tool is set. |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  tools: {
+    tool: string,
+    display_name?: string | null,
+    description?: string | null,
+    deployed_count?: number | null
+  }[],
+  total?: number,
+  returned?: number,
+  limit?: number,
+  is_truncated?: boolean
+} | {
+  tool: string,
+  provider?: string | null,
+  display_name?: string | null,
+  payload_schema?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### batch.get
+
+`monitors.batch.get`
+
+Read a monitor batch operation, such as the plan from a dry-run start or stop
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.monitors.batch.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `runId` | `string` | Yes | operation.runId returned by a dry-run monitors.start or monitors.stop. |
+| `cursor` | `string` | No | results.continueCursor from the previous page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | No | — |
+| `rejoined` | `boolean` | No | — |
+| `operation` | `object` | Yes | — |
+| `results` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="operation full type">
+
+```ts
+{
+  runId: string,
+  kind: string,
+  state: string,
+  dryRun: boolean,
+  summary?: Record<string, any> | null,
+  lastError?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+  page: Record<string, any>[],
+  isDone: boolean,
+  continueCursor: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### check
+
+`monitors.check`
+
+Validate a monitor definition and show its plan and pricing without deploying or spending credits
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.monitors.check({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | Stable public key for this monitor, unique within the workspace. |
+| `tool` | `string` | Yes | Monitor tool id from monitors.available, e.g. deepline_native.company_radar. |
+| `name` | `string` | No | Optional human-readable name shown in listings. |
+| `payload` | `Record<string, any>` | Yes | Provider-specific payload matching the payload schema monitors.available returns for this tool. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `valid` | `boolean` | Yes | — |
+| `mode` | `string \| null` | No | — |
+| `issues` | `Record<string, any>[]` | No | — |
+| `monitor` | `Record<string, any>` | No | — |
+
+
+
+---
+
+### delete
+
+`monitors.delete`
+
+Delete a deployed monitor and deprovision its upstream resource; dryRun shows the plan
+
+**Risk:** `destructive`
+
+```ts
+await corsair.deepline.api.monitors.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | Public key of a deployed monitor, as monitors.list returns it. |
+| `dryRun` | `boolean` | No | Return the plan and cost without changing anything. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `plan` | `Record<string, any>` | No | — |
+| `already_deleted` | `boolean` | No | — |
+| `delete_pending` | `boolean` | No | — |
+
+
+
+---
+
+### dependents
+
+`monitors.dependents`
+
+List the published Plays that react to one monitor
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.monitors.dependents({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | Public key of a deployed monitor, as monitors.list returns it. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `plays` | `Record<string, any>[]` | No | — |
+
+
+
+---
+
+### deploy
+
+`monitors.deploy`
+
+Deploy a monitor from a definition; creates an upstream provider resource and may spend credits
+
+**Risk:** `destructive`
+
+```ts
+await corsair.deepline.api.monitors.deploy({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | Stable public key for this monitor, unique within the workspace. |
+| `tool` | `string` | Yes | Monitor tool id from monitors.available, e.g. deepline_native.company_radar. |
+| `name` | `string` | No | Optional human-readable name shown in listings. |
+| `payload` | `Record<string, any>` | Yes | Provider-specific payload matching the payload schema monitors.available returns for this tool. |
+| `dryRun` | `boolean` | No | Validate and return the deploy plan (cost, reuse candidates) through the free check endpoint without deploying. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `valid` | `boolean` | No | — |
+| `monitor` | `Record<string, any> \| null` | No | — |
+
+
+
+---
+
+### fleets.list
+
+`monitors.fleets.list`
+
+List Monitor Fleets, or their overview with status counts
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.monitors.fleets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `overview` | `boolean` | No | Return the Fleets overview (status counts, findings, paused totals) instead of the plain list. Required for q, states, sort and window. |
+| `q` | `string` | No | Overview only: search Fleet ids, source tables, tools, signals. |
+| `states` | `(needs_attention \| paused_credits \| paused_cap \| paused_billing \| setting_up \| running \| deactivated)[]` | No | Overview only: statuses to include. All but deactivated by default. |
+| `sort` | `attention \| findings \| newest \| name` | No | Overview only: row order. attention by default. |
+| `window` | `1d \| 7d \| 30d \| 90d \| 1y` | No | Overview only: the span each Fleet's findings count covers. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `schemaVersion` | `number` | No | — |
+| `fleets` | `Record<string, any>[]` | Yes | — |
+| `total` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`monitors.get`
+
+Get one deployed monitor by its public key
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.monitors.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | Public key of a deployed monitor, as monitors.list returns it. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string \| null` | No | — |
+| `monitor_key` | `string \| null` | No | — |
+| `tool` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `monitor_spec` | `Record<string, any> \| null` | No | — |
+
+
+
+---
+
+### health
+
+`monitors.health`
+
+Read monitor delivery and convergence health
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.monitors.health({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fleetId` | `string` | No | Limit the report to one Monitor Fleet. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | No | — |
+| `scope` | `object` | Yes | — |
+| `scanned` | `number` | Yes | — |
+| `truncated` | `boolean` | Yes | — |
+| `converged` | `number` | No | — |
+| `needs_repair` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="scope full type">
+
+```ts
+{
+  org_id: string,
+  fleet_id?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### jobs.cancel
+
+`monitors.jobs.cancel`
+
+Cancel a running Monitor Job
+
+**Risk:** `destructive`
+
+```ts
+await corsair.deepline.api.monitors.jobs.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | Monitor Job id returned by monitors.start or monitors.stop (job.id). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | No | — |
+| `job` | `object` | No | — |
+| `operation_id` | `string \| null` | No | — |
+| `logs` | `object[]` | No | — |
+| `replayed` | `boolean` | No | — |
+| `already_terminal` | `boolean` | No | — |
+| `next` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="job full type">
+
+```ts
+{
+  id: string,
+  operation_id?: string | null,
+  kind?: string | null,
+  state: string,
+  phase?: string | null,
+  outcome?: string | null,
+  target?: Record<string, any> | null,
+  counts?: Record<string, any> | null,
+  error?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="logs full type">
+
+```ts
+{
+  level: string,
+  phase: string,
+  message: string,
+  monitor_key?: string | null,
+  at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### jobs.get
+
+`monitors.jobs.get`
+
+Get the state, phase and counts of a Monitor Job
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.monitors.jobs.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | Monitor Job id returned by monitors.start or monitors.stop (job.id). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | No | — |
+| `job` | `object` | No | — |
+| `operation_id` | `string \| null` | No | — |
+| `logs` | `object[]` | No | — |
+| `replayed` | `boolean` | No | — |
+| `already_terminal` | `boolean` | No | — |
+| `next` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="job full type">
+
+```ts
+{
+  id: string,
+  operation_id?: string | null,
+  kind?: string | null,
+  state: string,
+  phase?: string | null,
+  outcome?: string | null,
+  target?: Record<string, any> | null,
+  counts?: Record<string, any> | null,
+  error?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="logs full type">
+
+```ts
+{
+  level: string,
+  phase: string,
+  message: string,
+  monitor_key?: string | null,
+  at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### jobs.logs
+
+`monitors.jobs.logs`
+
+Read the logs of a Monitor Job
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.monitors.jobs.logs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | Monitor Job id (job.id). |
+| `limit` | `number` | No | Maximum log entries to return. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | No | — |
+| `job` | `object` | No | — |
+| `operation_id` | `string \| null` | No | — |
+| `logs` | `object[]` | No | — |
+| `replayed` | `boolean` | No | — |
+| `already_terminal` | `boolean` | No | — |
+| `next` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="job full type">
+
+```ts
+{
+  id: string,
+  operation_id?: string | null,
+  kind?: string | null,
+  state: string,
+  phase?: string | null,
+  outcome?: string | null,
+  target?: Record<string, any> | null,
+  counts?: Record<string, any> | null,
+  error?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="logs full type">
+
+```ts
+{
+  level: string,
+  phase: string,
+  message: string,
+  monitor_key?: string | null,
+  at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### ledger.findings
+
+`monitors.ledger.findings`
+
+List the recent findings of one monitor
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.monitors.ledger.findings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | Public key of a deployed monitor, as monitors.list returns it. |
+| `cursor` | `string` | No | Cursor from the previous findings page. |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### ledger.get
+
+`monitors.ledger.get`
+
+Get the ledger entry of one monitor
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.monitors.ledger.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | Public key of a deployed monitor, as monitors.list returns it. |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### ledger.list
+
+`monitors.ledger.list`
+
+List monitors with status, findings counts, signals and the Plays each one triggers
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.monitors.ledger.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | Search name, key, subject, signal and deploy filters. |
+| `states` | `(active \| setting_up \| paused_credits \| paused_cap \| paused_billing \| errored \| stopped)[]` | No | Statuses to include. Every status except stopped by default. |
+| `signals` | `string[]` | No | Signal keys, as the response signals[].key lists them. |
+| `play` | `string` | No | A Play definition id, or none for monitors no Play listens to. |
+| `fleet` | `string` | No | A Monitor Fleet id: only the monitors that Fleet owns. |
+| `sort` | `recent \| installed \| name \| findings` | No | Row order. findings orders by most findings in window. |
+| `window` | `1d \| 7d \| 30d \| 90d \| 1y` | No | The span each row's findings count covers. 30d by default. |
+| `limit` | `number` | No | Maximum rows. |
+| `cursor` | `string` | No | next_cursor from the previous page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `schemaVersion` | `number` | No | — |
+| `monitors` | `Record<string, any>[]` | Yes | — |
+| `total` | `number` | No | — |
+| `next_cursor` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`monitors.list`
+
+List deployed monitors by lifecycle state, with cursor paging
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.monitors.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `state` | `active \| provisioning \| billing_suspended \| errored \| disabled \| all` | No | Lifecycle state to list. The server default is active. |
+| `limit` | `number` | No | Maximum monitors on this page. |
+| `cursor` | `string` | No | next_cursor from the previous page. |
+| `includeConsumers` | `boolean` | No | Include current Play listener delivery health for each monitor. Requires limit of 20 or less. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `monitors` | `object[]` | Yes | — |
+| `total` | `number` | No | — |
+| `returned` | `number` | No | — |
+| `has_more` | `boolean` | No | — |
+| `next_cursor` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="monitors full type">
+
+```ts
+{
+  key?: string | null,
+  monitor_key?: string | null,
+  state?: string | null,
+  tool?: string | null,
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### preview
+
+`monitors.preview`
+
+Sample recent matches for a monitor definition before deploying; each returned match costs credits
+
+**Risk:** `destructive`
+
+```ts
+await corsair.deepline.api.monitors.preview({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | Stable public key for this monitor, unique within the workspace. |
+| `tool` | `string` | Yes | Monitor tool id from monitors.available, e.g. deepline_native.company_radar. |
+| `name` | `string` | No | Optional human-readable name shown in listings. |
+| `payload` | `Record<string, any>` | Yes | Provider-specific payload matching the payload schema monitors.available returns for this tool. |
+| `limit` | `number` | No | Matches to sample, 1-3. The server default is 3. |
+| `idempotencyKey` | `string` | Yes | Required. Persist it before calling; reuse it after an uncertain result to recover the same preview without paying again. A new key runs a new, paid preview. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `idempotency_key` | `string` | Yes | — |
+
+
+
+---
+
+### reactivate
+
+`monitors.reactivate`
+
+Reactivate a disabled monitor, creating a replacement upstream resource; dryRun shows the cost
+
+**Risk:** `destructive`
+
+```ts
+await corsair.deepline.api.monitors.reactivate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | Public key of a deployed monitor, as monitors.list returns it. |
+| `dryRun` | `boolean` | No | Return the plan and cost without changing anything. |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### start
+
+`monitors.start`
+
+Apply the retained definition of a stopped monitor upstream; may spend credits
+
+**Risk:** `destructive`
+
+```ts
+await corsair.deepline.api.monitors.start({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | Public key of a deployed monitor, as monitors.list returns it. |
+| `dryRun` | `boolean` | No | Submit a dry-run batch operation that plans the change without touching the provider. Read the plan with monitors.batch.get and the returned operation.runId. |
+| `idempotencyKey` | `string` | No | Stable retry key. Reusing it joins the original operation instead of starting another. Generated when omitted. |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok?: boolean,
+  rejoined?: boolean,
+  operation: {
+    runId: string,
+    kind: string,
+    state: string,
+    dryRun: boolean,
+    summary?: Record<string, any> | null,
+    lastError?: string | null
+  },
+  results?: {
+    page: Record<string, any>[],
+    isDone: boolean,
+    continueCursor: string
+  }
+} | {
+  ok?: boolean,
+  job?: {
+    id: string,
+    operation_id?: string | null,
+    kind?: string | null,
+    state: string,
+    phase?: string | null,
+    outcome?: string | null,
+    target?: Record<string, any> | null,
+    counts?: Record<string, any> | null,
+    error?: string | null
+  },
+  operation_id?: string | null,
+  logs?: {
+    level: string,
+    phase: string,
+    message: string,
+    monitor_key?: string | null,
+    at: string
+  }[],
+  replayed?: boolean,
+  already_terminal?: boolean,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### stop
+
+`monitors.stop`
+
+Stop a monitor upstream while keeping its definition for monitors.start
+
+**Risk:** `destructive`
+
+```ts
+await corsair.deepline.api.monitors.stop({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | Public key of a deployed monitor, as monitors.list returns it. |
+| `dryRun` | `boolean` | No | Submit a dry-run batch operation that plans the change without touching the provider. Read the plan with monitors.batch.get and the returned operation.runId. |
+| `idempotencyKey` | `string` | No | Stable retry key. Reusing it joins the original operation instead of starting another. Generated when omitted. |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok?: boolean,
+  rejoined?: boolean,
+  operation: {
+    runId: string,
+    kind: string,
+    state: string,
+    dryRun: boolean,
+    summary?: Record<string, any> | null,
+    lastError?: string | null
+  },
+  results?: {
+    page: Record<string, any>[],
+    isDone: boolean,
+    continueCursor: string
+  }
+} | {
+  ok?: boolean,
+  job?: {
+    id: string,
+    operation_id?: string | null,
+    kind?: string | null,
+    state: string,
+    phase?: string | null,
+    outcome?: string | null,
+    target?: Record<string, any> | null,
+    counts?: Record<string, any> | null,
+    error?: string | null
+  },
+  operation_id?: string | null,
+  logs?: {
+    level: string,
+    phase: string,
+    message: string,
+    monitor_key?: string | null,
+    at: string
+  }[],
+  replayed?: boolean,
+  already_terminal?: boolean,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### test
+
+`monitors.test`
+
+Validate an explicit event payload against the webhook contract of a deployed monitor; writes, charges and dispatches nothing
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.monitors.test({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | Public key of a deployed monitor, as monitors.list returns it. |
+| `payload` | `Record<string, any>` | Yes | An explicit event payload to validate against the monitor's webhook contract. Nothing is persisted, charged or dispatched. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accepted` | `boolean` | No | — |
+| `persisted_rows` | `number` | No | — |
+| `dispatched_bound_plays` | `number` | No | — |
+
+
+
+---
+
+### update
+
+`monitors.update`
+
+Update the name or payload of a deployed monitor; payload changes can replace the upstream resource and spend credits
+
+**Risk:** `destructive`
+
+```ts
+await corsair.deepline.api.monitors.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | Public key of a deployed monitor, as monitors.list returns it. |
+| `name` | `string` | No | New display name. |
+| `payload` | `Record<string, any>` | No | Payload fields to change. Top-level fields merge with the stored payload; nested values and arrays replace whole. Changing filters can replace the upstream resource. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `change_summary` | `Record<string, any>` | No | — |
+
+
+
+---
+
+## Notifications
+
+### channels
+
+`notifications.channels`
+
+List Slack channels visible to the connected Deepline Slack app
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.notifications.channels({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | Words to match against channel names. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identity` | `object` | Yes | — |
+| `channels` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="identity full type">
+
+```ts
+{
+  teamId: string,
+  teamName?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="channels full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  isPrivate: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### configuration.change
+
+`notifications.configuration.change`
+
+Save or delete one notification group atomically against the expected workspace version
+
+**Risk:** `write`
+
+```ts
+await corsair.deepline.api.notifications.configuration.change({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `expectedWorkspaceVersion` | `number` | Yes | configuration.workspaceVersion from notifications.configuration.get. A stale version is refused instead of overwriting newer changes. |
+| `change` | `object` | Yes | save_group sends the complete desired group with all of its destinations and rules (start from the objects configuration.get returns, keeping their version fields); delete_group removes one group. |
+
+<AccordionGroup>
+<Accordion title="change full type">
+
+```ts
+{
+  kind: save_group,
+  draft: {
+    group: {
+      groupKey: string,
+      name: string,
+      enabled: boolean,
+      deliveryTiming: {
+        mode: immediate
+      } | {
+        mode: immediate_first | digest_only | rolling_limit,
+        windowMs: number
+      },
+      version: number
+    },
+    destinations: {
+      destinationKey: string,
+      groupKey: string,
+      name: string,
+      enabled: boolean,
+      settings: {
+        kind: slack,
+        targetKind: channel | member,
+        targetId: string,
+        targetName: string,
+        oauthConnectionId: string
+      } | {
+        kind: email_addresses,
+        to: string[],
+        cc?: string[],
+        bcc?: string[]
+      } | {
+        kind: email_roles,
+        roles: string[]
+      },
+      version: number
+    }[],
+    rules: {
+      ruleKey: string,
+      groupKey: string,
+      enabled: boolean,
+      notificationType: string,
+      eventName: string,
+      eventFilter: Record<string, string | number | boolean>,
+      trigger: {
+        kind: string
+      },
+      version: number
+    }[]
+  }
+} | {
+  kind: delete_group,
+  groupKey: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `configuration` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="configuration full type">
+
+```ts
+{
+  workspaceVersion: number,
+  groups: Record<string, any>[],
+  destinations: Record<string, any>[],
+  rules: Record<string, any>[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### configuration.get
+
+`notifications.configuration.get`
+
+Read notification groups, destinations, rules and the workspace version
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.notifications.configuration.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `configuration` | `object` | Yes | — |
+| `catalog` | `Record<string, any>[]` | Yes | — |
+| `slackConnection` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="configuration full type">
+
+```ts
+{
+  workspaceVersion: number,
+  groups: Record<string, any>[],
+  destinations: Record<string, any>[],
+  rules: Record<string, any>[]
+}
+```
+</Accordion>
+
+<Accordion title="slackConnection full type">
+
+```ts
+{
+  connected: boolean,
+  status: string,
+  connectionId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`notifications.create`
+
+Create a named Slack notification for chosen Play events
+
+**Risk:** `write`
+
+```ts
+await corsair.deepline.api.notifications.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of the notification. |
+| `provider` | `slack` | No | Delivery provider. Only slack is supported. Defaults to "slack". |
+| `eventTypes` | `string[]` | Yes | Event ids from the catalog notifications.list returns. |
+| `channel` | `string` | No | Slack channel id or #name from notifications.channels. Give channel or memberId, not both. |
+| `memberId` | `string` | No | Slack member id to message directly. Give channel or memberId. |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### delete
+
+`notifications.delete`
+
+Archive a named notification without touching its Slack integration
+
+**Risk:** `destructive`
+
+```ts
+await corsair.deepline.api.notifications.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `notificationId` | `string` | Yes | Notification id from notifications.list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### dlq.get
+
+`notifications.dlq.get`
+
+Get one dead-lettered notification delivery
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.notifications.dlq.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deliveryId` | `string` | Yes | Dead-lettered delivery id from notifications.dlq.list. |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### dlq.list
+
+`notifications.dlq.list`
+
+List notification deliveries that exhausted their retries
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.notifications.dlq.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Maximum dead-lettered deliveries to return. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | Yes | — |
+| `deliveries` | `Record<string, any>[]` | Yes | — |
+| `hasMore` | `boolean` | Yes | — |
+
+
+
+---
+
+### dlq.update
+
+`notifications.dlq.update`
+
+Retry (send again) or archive one dead-lettered notification delivery
+
+**Risk:** `destructive`
+
+```ts
+await corsair.deepline.api.notifications.dlq.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deliveryId` | `string` | Yes | Dead-lettered delivery id from notifications.dlq.list. |
+| `action` | `retry \| archive` | Yes | retry sends the delivery again now; archive drops it from the queue. Dead-lettered deliveries never replay on their own. |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### list
+
+`notifications.list`
+
+List named notifications, the event catalog, destinations and dead-letter count
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.notifications.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contractVersion` | `number` | Yes | — |
+| `catalog` | `object[]` | Yes | — |
+| `notifications` | `object[]` | No | — |
+| `destinations` | `Record<string, any>[]` | Yes | — |
+| `subscriptions` | `Record<string, any>[]` | Yes | — |
+| `dlq` | `object` | Yes | — |
+| `slackConnection` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="catalog full type">
+
+```ts
+{
+  id: string,
+  label: string,
+  description?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="notifications full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  provider: string,
+  target: {
+    id: string,
+    name: string,
+    kind?: string | null
+  },
+  enabled: boolean,
+  status: string,
+  eventTypes: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="dlq full type">
+
+```ts
+{
+  count: number,
+  capped: boolean
+}
+```
+</Accordion>
+
+<Accordion title="slackConnection full type">
+
+```ts
+{
+  connected: boolean,
+  status: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### test
+
+`notifications.test`
+
+Send a test message to the Slack target of a notification
+
+**Risk:** `destructive`
+
+```ts
+await corsair.deepline.api.notifications.test({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `notificationId` | `string` | Yes | Notification id from notifications.list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `deliveryId` | `string` | Yes | — |
+| `state` | `string` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### update
+
+`notifications.update`
+
+Pause or resume a notification, or change its name, events and Slack target
+
+**Risk:** `write`
+
+```ts
+await corsair.deepline.api.notifications.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `notificationId` | `string` | Yes | Notification id from notifications.list. |
+| `enabled` | `boolean` | No | Pause (false) or resume (true). Send alone. |
+| `name` | `string` | No | New name. Send with eventTypes and one target. |
+| `eventTypes` | `string[]` | No | Event ids from the catalog notifications.list returns. |
+| `channel` | `string` | No | Slack channel id or #name from notifications.channels. Give channel or memberId, not both. |
+| `memberId` | `string` | No | Slack member id to message directly. Give channel or memberId. |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+## Plays
+
+### activity
+
+`plays.activity`
+
+Count Play runs and delivered Monitor findings by day
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.plays.activity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timeZone` | `string` | No | — |
+| `days` | `number` | No | — |
+| `endDate` | `string` | No | — |
+| `groupBy` | `kind \| trigger_source` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timeZone` | `string` | Yes | — |
+| `groupBy` | `string` | Yes | — |
+| `endDate` | `string` | Yes | — |
+| `asOfAt` | `number \| null` | No | — |
+| `buckets` | `object[]` | Yes | — |
+| `coverage` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="buckets full type">
+
+```ts
+{
+  key: string,
+  label: string,
+  startAt: number,
+  endAt: number,
+  groups: {
+    group: string,
+    count: number
+  }[],
+  failedPlayRuns: number,
+  complete: {
+    playRuns: boolean,
+    monitorDeliveries: boolean
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="coverage full type">
+
+```ts
+{
+  playRunsEarliestCompleteAt: number | null,
+  monitorDeliveriesEarliestCompleteAt: number | null,
+  monitorDeliveriesCompleteThroughAt: number | null,
+  projectionPending: boolean,
+  earliestPendingAt: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### clearHistory
+
+`plays.clearHistory`
+
+Permanently delete a Play's run history and saved sheet data, keeping its code and versions
+
+**Risk:** `destructive`
+
+```ts
+await corsair.deepline.api.plays.clearHistory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of a Play owned by this workspace, as returned by plays.list. Prebuilt Plays are read-only. |
+| `tableNamespaces` | `string[]` | No | Dataset keys (ctx.dataset names) to clear. Omit to clear every sheet found for the Play. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `playName` | `string` | Yes | — |
+| `deletedRuns` | `number` | Yes | — |
+| `droppedTables` | `string[]` | Yes | — |
+
+
+
+---
+
+### cost
+
+`plays.cost`
+
+Estimate credits per row or run for one saved or prebuilt Play (does not start a run)
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.plays.cost({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Play name, or prebuilt reference such as prebuilt/&lt;name&gt;, as returned by plays.list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reference` | `string` | Yes | — |
+| `costEstimate` | `object` | Yes | — |
+| `observedCost` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="costEstimate full type">
+
+```ts
+{
+  status: available,
+  source: string,
+  unit: string,
+  lowCredits: number,
+  highCredits: number,
+  sampleRunCount: number,
+  basedOnRunId?: string | null,
+  modelVersion: string
+} | {
+  status: unavailable,
+  reason: string,
+  message: string,
+  modelVersion?: string
+}
+```
+</Accordion>
+
+<Accordion title="observedCost full type">
+
+```ts
+{
+  status: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`plays.delete`
+
+Move a workspace Play to Trash and disable its cron and webhook triggers (restorable)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.deepline.api.plays.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of a Play owned by this workspace, as returned by plays.list. Prebuilt Plays are read-only. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `archived` | `boolean` | Yes | — |
+| `alreadyArchived` | `boolean` | Yes | — |
+| `name` | `string` | Yes | — |
+| `archivedBindingCount` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`plays.get`
+
+Describe one callable Play
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.plays.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The name returned by the related Deepline API call. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `play` | `object` | Yes | — |
+| `latestRuns` | `Record<string, any>[]` | Yes | — |
+| `source` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="play full type">
+
+```ts
+{
+  name: string,
+  reference?: string | null,
+  displayName?: string | null,
+  description?: string | null | null,
+  origin?: string | null,
+  ownerType?: string | null,
+  scope?: string | null,
+  inputSchema?: Record<string, any> | null | null,
+  outputSchema?: Record<string, any> | null | null,
+  currentRevision?: Record<string, any> | null | null,
+  liveRevision?: Record<string, any> | null | null,
+  canEdit?: boolean | null,
+  canClone?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`plays.list`
+
+List and search callable Plays
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.plays.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | Continue with the previous page cursor and the same filters. |
+| `origin` | `prebuilt \| owned` | No | — |
+| `summary_only` | `1` | No | Load compact metadata without source or revisions. Cost and category requests still load the data they require. |
+| `search` | `string` | No | Text to match against callable Play metadata and contracts. Returns every match in one response; cursor and inventory paging apply only without search. |
+| `limit` | `number` | No | Maximum Plays to return. |
+
+Uses SDK inventory pagination. Pass cursor with unchanged filters; search maps to grep on the wire.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `plays` | `object[]` | Yes | — |
+| `cursor` | `string \| null` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="plays full type">
+
+```ts
+{
+  name: string,
+  reference?: string | null,
+  displayName?: string | null,
+  description?: string | null | null,
+  origin?: string | null,
+  ownerType?: string | null,
+  scope?: string | null,
+  inputSchema?: Record<string, any> | null | null,
+  outputSchema?: Record<string, any> | null | null,
+  currentRevision?: Record<string, any> | null | null,
+  liveRevision?: Record<string, any> | null | null,
+  canEdit?: boolean | null,
+  canClone?: boolean | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  cursor: string | null,
+  hasMore: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### paths
+
+`plays.paths`
+
+List the folder locations of workspace Plays, one page
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.plays.paths({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `root` | `person \| team` | No | Only list Plays under this root. |
+| `limit` | `number` | No | Plays to inspect on this page, 1-100. |
+| `cursor` | `string` | No | cursor from the previous page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `paths` | `object[]` | Yes | — |
+| `cursor` | `string \| null` | Yes | — |
+| `hasMore` | `boolean` | Yes | — |
+| `roots` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="paths full type">
+
+```ts
+{
+  path: null | {
+    root: person | team,
+    folders?: string[]
+  },
+  ownerUserId?: string | null,
+  ownerName?: string | null,
+  playName: string
+}[]
+```
+</Accordion>
+
+<Accordion title="roots full type">
+
+```ts
+{
+  value: string,
+  label: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pin
+
+`plays.pin`
+
+Pin or unpin a workspace Play so it sorts first
+
+**Risk:** `write`
+
+```ts
+await corsair.deepline.api.plays.pin({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of a Play owned by this workspace, as returned by plays.list. Prebuilt Plays are read-only. |
+| `pinned` | `boolean` | Yes | true sorts the Play before unpinned Plays; false unpins it. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `pinned` | `boolean` | Yes | — |
+
+
+
+---
+
+### restore
+
+`plays.restore`
+
+Restore a workspace Play from Trash
+
+**Risk:** `write`
+
+```ts
+await corsair.deepline.api.plays.restore({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of a Play this workspace previously moved to Trash. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `restored` | `boolean` | Yes | — |
+| `alreadyActive` | `boolean` | No | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### run
+
+`plays.run`
+
+Start a saved or prebuilt Play run (may spend credits or perform external actions)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.deepline.api.plays.run({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Saved or prebuilt Play reference. |
+| `input` | `Record<string, any>` | No | Input matching the selected Play schema. |
+| `revisionId` | `string` | No | Run a specific saved revision belonging to the named Play. |
+| `force` | `boolean` | No | Compatibility flag. Active sibling runs are allowed. |
+| `forceToolRefresh` | `boolean` | No | Bypass cached dataset and tool-call reuse. |
+| `maxCredits` | `number` | No | Per-run Deepline-credit cap. Replaces the Play’s declared maxCreditsPerRun for this run. |
+| `maxConcurrentExternalCalls` | `number` | No | Per-run ceiling on concurrently resident provider-tool executions and direct HTTP calls. |
+| `maxConcurrentRows` | `number` | No | Run-wide default and ceiling for live dataset-map row resolvers. |
+| `waitForCompletionMs` | `number` | No | Briefly wait for completion. A timeout returns the existing run, not a new execution. |
+| `terminalStatus` | `full` | No | With a completion wait, request the full terminal detail wrapper. |
+
+May spend credits or perform external actions. A wait timeout returns the existing run. Inspect run.id instead of submitting again.
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  schemaVersion: 1,
+  kind: play_run,
+  run: {
+    id: string,
+    playName: string,
+    status: string,
+    dashboardUrl?: string | null,
+    runUrl?: string | null
+  },
+  steps: Record<string, any>[],
+  outputs: Record<string, any>,
+  datasets: Record<string, any>[],
+  next: Record<string, any>
+} | {
+  status: string,
+  result?: any | null,
+  package: {
+    schemaVersion: 1,
+    kind: play_run,
+    run: {
+      id: string,
+      playName: string,
+      status: string,
+      dashboardUrl?: string | null,
+      runUrl?: string | null
+    },
+    steps: Record<string, any>[],
+    outputs: Record<string, any>,
+    datasets: Record<string, any>[],
+    next: Record<string, any>
+  }
+} | {
+  runId: string,
+  snapshot: Record<string, any>,
+  terminalStatus?: any | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### settings.get
+
+`plays.settings.get`
+
+Read a workspace Play's location and display name
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.plays.settings.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of a Play owned by this workspace, as returned by plays.list. Prebuilt Plays are read-only. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `playDefinitionId` | `string` | Yes | — |
+| `ownerUserId` | `string \| null` | No | — |
+| `ownerName` | `string \| null` | No | — |
+| `settings` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+  path?: null | {
+    root: person | team,
+    folders?: string[]
+  },
+  displayName?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### settings.update
+
+`plays.settings.update`
+
+Change a workspace Play's location or display name; omitted fields stay as they are
+
+**Risk:** `write`
+
+```ts
+await corsair.deepline.api.plays.settings.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of a Play owned by this workspace, as returned by plays.list. Prebuilt Plays are read-only. |
+| `path` | `null \| object` | No | New location. null moves it to the creator's personal root. Omit to keep the current location. |
+| `displayName` | `string \| null` | No | Name shown in the UI. null or an empty string uses the name derived from the identifier. Omit to keep the current one. |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+null | {
+  root: person | team,
+  folders?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `playDefinitionId` | `string` | Yes | — |
+| `ownerUserId` | `string \| null` | No | — |
+| `ownerName` | `string \| null` | No | — |
+| `settings` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+  path?: null | {
+    root: person | team,
+    folders?: string[]
+  },
+  displayName?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### share.get
+
+`plays.share.get`
+
+Read a Play's public share page status and revision picker
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.plays.share.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of a Play owned by this workspace, as returned by plays.list. Prebuilt Plays are read-only. |
+| `revisionId` | `string` | No | Keep this revision in the returned revision picker even if it is older. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `playName` | `string` | Yes | — |
+| `share` | `object \| null` | Yes | — |
+| `publishedCopy` | `any` | No | — |
+| `revisions` | `object[]` | Yes | — |
+| `warning` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="share full type">
+
+```ts
+{
+  shareSlug: string,
+  orgSlug: string,
+  publishedRevisionId: string,
+  publishedVersion: number,
+  visibility: string,
+  seoIndexing: string,
+  showAverageDeeplineCost?: boolean,
+  showAverageLatency?: boolean,
+  publicPath: string,
+  canonicalPath?: string
+} | null
+```
+</Accordion>
+
+<Accordion title="revisions full type">
+
+```ts
+{
+  revisionId: string,
+  version: number,
+  isLive?: boolean,
+  isWorking?: boolean,
+  isPublished?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### share.publish
+
+`plays.share.publish`
+
+Publish or repoint a Play's public share page to a revision (publicly viewable)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.deepline.api.plays.share.publish({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of a Play owned by this workspace, as returned by plays.list. Prebuilt Plays are read-only. |
+| `revisionId` | `string` | Yes | Revision to publish or repoint the public page to (from plays.share.get revisions). |
+| `acknowledgedUnlisted` | `true` | Yes | Must be true: confirms the page will be publicly viewable by anyone with the link. |
+| `showAverageDeeplineCost` | `boolean` | No | Show the average Deepline credit cost on the page. |
+| `showAverageLatency` | `boolean` | No | Show the average run latency on the page. |
+| `seoIndexing` | `index \| noindex` | No | Whether search engines may index the public page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `playName` | `string` | Yes | — |
+| `share` | `object \| null` | Yes | — |
+| `publishedCopy` | `any` | No | — |
+| `revisions` | `object[]` | Yes | — |
+| `warning` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="share full type">
+
+```ts
+{
+  shareSlug: string,
+  orgSlug: string,
+  publishedRevisionId: string,
+  publishedVersion: number,
+  visibility: string,
+  seoIndexing: string,
+  showAverageDeeplineCost?: boolean,
+  showAverageLatency?: boolean,
+  publicPath: string,
+  canonicalPath?: string
+} | null
+```
+</Accordion>
+
+<Accordion title="revisions full type">
+
+```ts
+{
+  revisionId: string,
+  version: number,
+  isLive?: boolean,
+  isWorking?: boolean,
+  isPublished?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### share.regenerate
+
+`plays.share.regenerate`
+
+Regenerate a Play's public share page copy with an LLM (rewrites the public page)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.deepline.api.plays.share.regenerate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of a Play owned by this workspace, as returned by plays.list. Prebuilt Plays are read-only. |
+| `revisionId` | `string` | No | Revision whose page copy to regenerate. Omit for the published revision. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `playName` | `string` | Yes | — |
+| `share` | `object \| null` | Yes | — |
+| `publishedCopy` | `any` | No | — |
+| `revisions` | `object[]` | Yes | — |
+| `warning` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="share full type">
+
+```ts
+{
+  shareSlug: string,
+  orgSlug: string,
+  publishedRevisionId: string,
+  publishedVersion: number,
+  visibility: string,
+  seoIndexing: string,
+  showAverageDeeplineCost?: boolean,
+  showAverageLatency?: boolean,
+  publicPath: string,
+  canonicalPath?: string
+} | null
+```
+</Accordion>
+
+<Accordion title="revisions full type">
+
+```ts
+{
+  revisionId: string,
+  version: number,
+  isLive?: boolean,
+  isWorking?: boolean,
+  isPublished?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### share.unpublish
+
+`plays.share.unpublish`
+
+Delete a Play's public share page and its cards
+
+**Risk:** `destructive`
+
+```ts
+await corsair.deepline.api.plays.share.unpublish({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of a Play owned by this workspace, as returned by plays.list. Prebuilt Plays are read-only. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `playName` | `string` | Yes | — |
+| `share` | `object \| null` | Yes | — |
+| `publishedCopy` | `any` | No | — |
+| `revisions` | `object[]` | Yes | — |
+| `warning` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="share full type">
+
+```ts
+{
+  shareSlug: string,
+  orgSlug: string,
+  publishedRevisionId: string,
+  publishedVersion: number,
+  visibility: string,
+  seoIndexing: string,
+  showAverageDeeplineCost?: boolean,
+  showAverageLatency?: boolean,
+  publicPath: string,
+  canonicalPath?: string
+} | null
+```
+</Accordion>
+
+<Accordion title="revisions full type">
+
+```ts
+{
+  revisionId: string,
+  version: number,
+  isLive?: boolean,
+  isWorking?: boolean,
+  isPublished?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### share.update
+
+`plays.share.update`
+
+Change share page settings: search indexing, cost and latency display
+
+**Risk:** `write`
+
+```ts
+await corsair.deepline.api.plays.share.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of a Play owned by this workspace, as returned by plays.list. Prebuilt Plays are read-only. |
+| `showAverageDeeplineCost` | `boolean` | No | Show the average Deepline credit cost on the page. |
+| `showAverageLatency` | `boolean` | No | Show the average run latency on the page. |
+| `seoIndexing` | `index \| noindex` | No | Whether search engines may index the public page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `playName` | `string` | Yes | — |
+| `share` | `object \| null` | Yes | — |
+| `publishedCopy` | `any` | No | — |
+| `revisions` | `object[]` | Yes | — |
+| `warning` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="share full type">
+
+```ts
+{
+  shareSlug: string,
+  orgSlug: string,
+  publishedRevisionId: string,
+  publishedVersion: number,
+  visibility: string,
+  seoIndexing: string,
+  showAverageDeeplineCost?: boolean,
+  showAverageLatency?: boolean,
+  publicPath: string,
+  canonicalPath?: string
+} | null
+```
+</Accordion>
+
+<Accordion title="revisions full type">
+
+```ts
+{
+  revisionId: string,
+  version: number,
+  isLive?: boolean,
+  isWorking?: boolean,
+  isPublished?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### triggers.get
+
+`plays.triggers.get`
+
+Read a workspace Play's cron schedule and inbound webhook trigger, with the webhook URL
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.plays.triggers.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of a Play owned by this workspace, as returned by plays.list. Prebuilt Plays are read-only. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `playDefinitionId` | `string` | Yes | — |
+| `liveRevisionId` | `string \| null` | Yes | — |
+| `liveVersion` | `number \| null` | Yes | — |
+| `readOnly` | `object \| null` | Yes | — |
+| `cron` | `object \| null` | Yes | — |
+| `webhook` | `object \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="readOnly full type">
+
+```ts
+{
+  reason: string,
+  message: string
+} | null
+```
+</Accordion>
+
+<Accordion title="cron full type">
+
+```ts
+{
+  bindingId: string | null,
+  schedule: string,
+  timezone?: string | null,
+  input?: Record<string, any> | null,
+  status?: string | null,
+  nextScheduledAt?: number | null,
+  lastScheduledAt?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="webhook full type">
+
+```ts
+{
+  bindingId: string | null,
+  url: string | null,
+  status?: string | null,
+  auth?: {
+    type: string
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### triggers.history
+
+`plays.triggers.history`
+
+List one trigger's recent runs
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.plays.triggers.history({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bindingId` | `string` | Yes | Trigger bindingId from plays.triggers.inventory. |
+| `limit` | `number` | No | Recent runs to return, 1-30. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recentRuns` | `object[]` | Yes | — |
+| `truncated` | `boolean` | Yes | — |
+| `cronInput` | `Record<string, any> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="recentRuns full type">
+
+```ts
+{
+  workflowId: string,
+  runId: string | null,
+  status: string,
+  createdAt: number,
+  startedAt?: number | null,
+  finishedAt?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### triggers.inventory
+
+`plays.triggers.inventory`
+
+List cron and webhook triggers across the workspace, one page
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.plays.triggers.inventory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | continueCursor from the previous page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `object[]` | Yes | — |
+| `continueCursor` | `string` | Yes | — |
+| `isDone` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  bindingId: string,
+  name: string,
+  type: string,
+  status: string,
+  cron?: string | null,
+  timezone?: string | null,
+  nextScheduledAt?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### triggers.update
+
+`plays.triggers.update`
+
+Set or remove a Play cron schedule or inbound webhook (optional HMAC or Standard Webhooks signing) and publish it live (scheduled runs may spend credits)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.deepline.api.plays.triggers.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of a Play owned by this workspace, as returned by plays.list. Prebuilt Plays are read-only. |
+| `cron` | `object \| null` | No | Desired cron trigger. null removes it; omit to keep it. |
+| `webhook` | `object \| null` | No | Desired webhook trigger. null removes it; omit to keep it. |
+| `expectedRevisionId` | `string` | No | liveRevisionId from plays.triggers.get. The update is refused (409) if the live revision changed. |
+
+<AccordionGroup>
+<Accordion title="cron full type">
+
+```ts
+{
+  schedule: string,
+  timezone?: string,
+  input?: Record<string, any>
+} | null
+```
+</Accordion>
+
+<Accordion title="webhook full type">
+
+```ts
+{
+  auth?: {
+    type: standard-webhooks,
+    headerFamily: standard | svix,
+    signingSecrets: string[],
+    toleranceSeconds?: number
+  } | {
+    type: hmac,
+    secretEnv: string,
+    header?: string,
+    signaturePrefix?: string
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `changed` | `boolean` | Yes | — |
+| `revisionId` | `string \| null` | Yes | — |
+| `version` | `number \| null` | Yes | — |
+| `triggers` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="triggers full type">
+
+```ts
+{
+  name: string,
+  playDefinitionId: string,
+  liveRevisionId: string | null,
+  liveVersion: number | null,
+  readOnly: {
+    reason: string,
+    message: string
+  } | null,
+  cron: {
+    bindingId: string | null,
+    schedule: string,
+    timezone?: string | null,
+    input?: Record<string, any> | null,
+    status?: string | null,
+    nextScheduledAt?: number | null,
+    lastScheduledAt?: number | null
+  } | null,
+  webhook: {
+    bindingId: string | null,
+    url: string | null,
+    status?: string | null,
+    auth?: {
+      type: string
+    } | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### versions.list
+
+`plays.versions.list`
+
+List a Play's saved versions, newest first
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.plays.versions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Play name, or prebuilt reference such as prebuilt/&lt;name&gt;, as returned by plays.list. |
+| `full` | `boolean` | No | Include each revision’s source code and pipeline. Large; leave unset for summaries. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `versions` | `object[]` | Yes | — |
+| `playName` | `string` | No | — |
+| `definitionName` | `string` | No | — |
+| `revisionWindow` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="versions full type">
+
+```ts
+{
+  _id?: string,
+  version: number,
+  description?: string | null,
+  createdAt?: number,
+  updatedAt?: number,
+  isLive?: boolean,
+  isWorking?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="revisionWindow full type">
+
+```ts
+{
+  order: string,
+  complete: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### versions.publish
+
+`plays.versions.publish`
+
+Make a Play version live; its cron and webhook triggers then run that version (may spend credits)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.deepline.api.plays.versions.publish({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of a Play owned by this workspace, as returned by plays.list. Prebuilt Plays are read-only. |
+| `revisionId` | `string` | No | Revision _id from plays.versions.list to make live. Omit to make the current working revision live. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `name` | `string` | Yes | — |
+| `liveVersion` | `number \| null` | No | — |
+
+
+
+---
+
+## Runs
+
+### billing
+
+`runs.billing`
+
+Read credits billed to up to 100 runs and whether they are settling
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.runs.billing({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `runIds` | `string[]` | Yes | One to 100 run ids to read billed credits for. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `runs` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="runs full type">
+
+```ts
+{
+  runId: string,
+  credits?: number,
+  settling: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### children
+
+`runs.children`
+
+List one page of async child Runs
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.runs.children({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `runId` | `string` | Yes | The runId returned by the related Deepline API call. |
+| `launchKey` | `string` | Yes | Authored ctx.runPlayAsync launch key. |
+| `cursor` | `string` | No | Opaque cursor returned by the previous page. |
+| `limit` | `number` | No | Page size from 1 through 50; defaults to 50. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `children` | `object[]` | Yes | — |
+| `nextCursor` | `string \| null` | Yes | — |
+| `hasMore` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="children full type">
+
+```ts
+{
+  runId: string,
+  playName?: string | null | null,
+  launchKey?: string | null | null,
+  status: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### events
+
+`runs.events`
+
+Search structured run events across the workspace or one run
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.runs.events({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `since` | `string` | No | Inclusive UTC timestamp. Defaults to one hour before the request. A window spans at most seven days; events are kept seven days. |
+| `until` | `string` | No | Exclusive UTC timestamp. Defaults to the request time. |
+| `runId` | `string` | No | Only events for this run. Omit to search the whole workspace. |
+| `playName` | `string` | No | Exact Play name. |
+| `kind` | `string` | No | Exact dotted event kind, such as step.failed. |
+| `jsonpath` | `string` | No | JSONPath equality predicates joined with &&, at most eight and 512 bytes, e.g. $.level == "error". |
+| `includePayloads` | `boolean` | No | Include saved event details and receipt results. Limits the page to ten events. |
+| `limit` | `number` | No | Page size: default 100, maximum 200; at most 10 with payloads. |
+| `cursor` | `string` | No | nextCursor from the previous page. Reuse that page’s since, until and filters. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `events` | `object[]` | Yes | — |
+| `nextCursor` | `string \| null` | Yes | — |
+| `since` | `string` | Yes | — |
+| `until` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  eventId: string,
+  occurredAt: string,
+  ingestedAt?: string,
+  runId: string,
+  playName?: string | null,
+  kind: string,
+  level?: string | null | null,
+  message?: string | null | null,
+  searchDoc?: Record<string, any>,
+  eventPayload?: Record<string, any>,
+  payload?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`runs.get`
+
+Get one Play run status
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.runs.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `runId` | `string` | Yes | The runId returned by the related Deepline API call. |
+| `full` | `boolean` | No | true selects the legacy detail wrapper: status and result are top-level, and the compact package is nested under package. |
+| `include` | `string` | No | Optional comma-separated expansions: nodeStates, runInsights, configuration. |
+| `billing` | `boolean` | No | false omits billing enrichment from full or runInsights reads. |
+| `watchSnapshot` | `boolean` | No | true returns the bounded status snapshot used by SDK watch. |
+
+The default is the canonical run package. full true returns the legacy wrapper; watchSnapshot true returns a bounded snapshot.
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  schemaVersion: 1,
+  kind: play_run,
+  run: {
+    id: string,
+    playName: string,
+    status: string,
+    dashboardUrl?: string | null,
+    runUrl?: string | null
+  },
+  steps: Record<string, any>[],
+  outputs: Record<string, any>,
+  datasets: Record<string, any>[],
+  next: Record<string, any>
+} | {
+  status: string,
+  result?: any | null,
+  package: {
+    schemaVersion: 1,
+    kind: play_run,
+    run: {
+      id: string,
+      playName: string,
+      status: string,
+      dashboardUrl?: string | null,
+      runUrl?: string | null
+    },
+    steps: Record<string, any>[],
+    outputs: Record<string, any>,
+    datasets: Record<string, any>[],
+    next: Record<string, any>
+  }
+} | {
+  runId: string,
+  snapshot: Record<string, any>,
+  terminalStatus?: any | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### history
+
+`runs.history`
+
+Search and page workspace run history
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.runs.history({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | Case-insensitive substring, at most 200 characters. |
+| `cursor` | `string` | No | Opaque continuation bound to the same workspace and search. |
+| `type` | `all \| plays \| monitors` | No | Search all, Play or Monitor runs by recorded trigger metadata; requires search. |
+| `limit` | `number` | No | Maximum indexed history entries examined in this page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `runs` | `object[]` | Yes | — |
+| `nextCursor` | `string \| null` | Yes | — |
+| `hasMore` | `boolean` | Yes | — |
+| `avatarsByName` | `Record<string, string> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="runs full type">
+
+```ts
+{
+  runId: string,
+  workflowId: string,
+  workflowName: string,
+  playScope?: string | null | null,
+  status: string,
+  createdAt: number,
+  updatedAt: number,
+  callerName?: string | null | null,
+  callerEmail?: string | null | null,
+  authorName?: string | null | null,
+  authorEmail?: string | null | null,
+  callerAgent?: string | null | null,
+  executionMode?: string | null | null,
+  bindingId?: string | null | null,
+  parentWorkflowName?: string | null | null,
+  outputRowCount?: number | null | null,
+  hasOutput?: boolean | null,
+  billingTotalCredits?: number | null,
+  triggerSource?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### input
+
+`runs.input`
+
+Read the exact original input retained for a run
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.runs.input({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `runId` | `string` | Yes | The run id returned by plays.run, runs.list or runs.history. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `runId` | `string` | Yes | — |
+| `input` | `Record<string, any> \| any[]` | Yes | — |
+| `bytes` | `number` | Yes | — |
+| `sha256` | `string \| null \| null` | No | — |
+| `replayedFromRunId` | `string \| null \| null` | No | — |
+
+
+
+---
+
+### list
+
+`runs.list`
+
+List Play runs filtered by Play, status or run id
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.runs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `play` | `string` | No | Saved Play name to list runs for. |
+| `status` | `string` | No | Run status to filter by, such as running, queued, waiting, completed, failed or cancelled. |
+| `runId` | `string` | No | Return only this run id. Unknown ids return HTTP 404. |
+| `node` | `string` | No | Mermaid node id; adds that node's latest settled input and output to each run. Requires play. |
+| `limit` | `number` | No | Maximum runs to return in this page. |
+| `offset` | `number` | No | Zero-based page offset. A non-zero offset requires play; status-only lists are not paginated. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `runs` | `object[]` | Yes | — |
+| `playName` | `string \| null \| null` | No | — |
+| `total` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="runs full type">
+
+```ts
+{
+  runId: string,
+  workflowId?: string | null,
+  playName?: string | null | null,
+  parentRunId?: string | null | null,
+  rootRunId?: string | null | null,
+  status: string,
+  startedAt?: number | string | null | null,
+  createdAt?: number | string | null | null,
+  finishedAt?: number | string | null | null,
+  billingTotalCredits?: number | null,
+  billingMaxCreditsPerRun?: number | null | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### logs
+
+`runs.logs`
+
+Read retained run logs; continue with lastSeq as afterSeq
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.runs.logs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `runId` | `string` | Yes | — |
+| `afterSeq` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `view` | `failed` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `runId` | `string` | Yes | — |
+| `entries` | `object[]` | Yes | — |
+| `totalLogCount` | `number` | No | — |
+| `firstSeq` | `number \| null` | No | — |
+| `lastSeq` | `number \| null` | No | — |
+| `lastStoredSeq` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `logsTruncated` | `boolean` | No | — |
+| `view` | `string` | No | — |
+| `association` | `string` | No | — |
+| `warning` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+{
+  seq: number,
+  line: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### receipts
+
+`runs.receipts`
+
+Read retained tool results for a run by receipt key, without executing tools
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.runs.receipts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `runId` | `string` | Yes | The run id returned by plays.run, runs.list or runs.history. |
+| `keys` | `string[]` | Yes | Receipt keys from exported evidence or execution metadata, at most 2048 characters each. Sent in batches of 100; results keep this order. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `runId` | `string` | Yes | — |
+| `receipts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="receipts full type">
+
+```ts
+{
+  receiptKey: string,
+  status?: string,
+  result?: {
+    status: string,
+    job_id?: string,
+    toolResponse: Record<string, any>
+  },
+  error?: {
+    code: string,
+    message: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### rerun
+
+`runs.rerun`
+
+Start a new run from a past run's input and revision (may spend credits)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.deepline.api.runs.rerun({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `runId` | `string` | Yes | The run id returned by plays.run, runs.list or runs.history. |
+| `idempotencyKey` | `string` | Yes | Required, sent as Idempotency-Key. Persist it before calling: the same run and key always resolve to the same rerun, so reusing it after an uncertain result never starts a second paid run. |
+| `inputOverrides` | `Record<string, string \| number \| boolean \| null>` | No | Scalar edits to fields present in the original input. They apply only to the new run. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `runId` | `string` | Yes | — |
+| `replayedFromRunId` | `string` | Yes | — |
+| `revisionId` | `string \| null \| null` | No | — |
+| `status` | `string` | Yes | — |
+| `deduplicated` | `boolean` | No | — |
+| `rateLimited` | `Record<string, any> \| null` | No | — |
+| `next` | `Record<string, any>` | No | — |
+
+
+
+---
+
+### resume
+
+`runs.resume`
+
+Continue a failed or cancelled run in place (may spend credits)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.deepline.api.runs.resume({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `runId` | `string` | Yes | The run id returned by plays.run, runs.list or runs.history. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `runId` | `string` | Yes | — |
+| `resumed` | `true` | Yes | — |
+| `epoch` | `number` | Yes | — |
+
+
+
+---
+
+### status
+
+`runs.status`
+
+Read the lifecycle status and progress counters of one run
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.runs.status({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `runId` | `string` | Yes | The run id returned by plays.run, runs.list or runs.history. |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  available: false,
+  runId: string
+} | {
+  available: true,
+  runId: string,
+  lifecycle: {
+    status: string,
+    updatedAt: number,
+    startedAt?: number | null | null,
+    finishedAt?: number | null | null
+  },
+  activity?: Record<string, any> | null,
+  calls?: {
+    logicalCalls: {
+      value: number | null,
+      confirmed: boolean
+    },
+    providerRequests: {
+      value: number | null,
+      confirmed: boolean
+    },
+    provider429s: {
+      value: number | null,
+      confirmed: boolean
+    }
+  },
+  steps?: {
+    observed: number,
+    running: number,
+    completed: number,
+    failed: number,
+    skipped: number,
+    confirmed: boolean
+  },
+  mapStepWork?: Record<string, any>,
+  datasets?: Record<string, any>,
+  wait?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### stop
+
+`runs.stop`
+
+Stop one running Play run
+
+**Risk:** `destructive`
+
+```ts
+await corsair.deepline.api.runs.stop({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `runId` | `string` | Yes | The run id returned by plays.run, runs.list or runs.history. |
+| `reason` | `string` | No | Reason recorded with the stop request. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `runId` | `string` | Yes | — |
+| `state` | `string` | No | — |
+| `stopped` | `boolean` | Yes | — |
+| `cancelling` | `boolean` | No | — |
+| `hitlCancelledCount` | `number` | No | — |
+| `hitlCancellationPending` | `boolean` | No | — |
+| `staleSchedulerState` | `boolean` | No | — |
+| `error` | `string` | No | — |
+
+
+
+---
+
+### stopAll
+
+`runs.stopAll`
+
+Stop every active run in the workspace; dryRun only lists them
+
+**Risk:** `destructive`
+
+```ts
+await corsair.deepline.api.runs.stopAll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dryRun` | `boolean` | No | true lists the active runs a stop-all would target without stopping any. |
+| `reason` | `string` | No | Reason recorded with the stop request. |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  dryRun: true,
+  scope: string,
+  includesChildren: boolean,
+  candidateCount: number,
+  truncated: boolean,
+  runs: {
+    runId: string,
+    playName?: string | null | null,
+    status?: string | null | null,
+    parentRunId?: string | null | null
+  }[]
+} | {
+  stopped: number,
+  cancelling?: number,
+  failed: number,
+  skipped: number,
+  partial?: boolean,
+  runs: {
+    runId: string,
+    state?: string,
+    stopped: boolean,
+    cancelling?: boolean,
+    hitlCancelledCount?: number,
+    hitlCancellationPending?: boolean,
+    staleSchedulerState?: boolean,
+    error?: string,
+    status?: string | null | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Search
+
+### query
+
+`search.query`
+
+Search tools, monitor types, plays, and docs
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.search.query({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | The task or capability to search for. Omit when filtering only by categories or search_terms. |
+| `types` | `string` | No | Comma-separated kinds to search: tools, monitors, prebuilts, custom, plays (prebuilts and custom), or docs. Omit to search everything. |
+| `exclude` | `string` | No | Comma-separated kinds to leave out, using the same names as types. Applied after types. |
+| `categories` | `string` | No | Comma-separated tool categories to filter. |
+| `search_terms` | `string` | No | Comma-separated capability terms to rank and filter by, including when q is empty. |
+| `limit` | `number` | No | Maximum ranked results to return. |
+| `offset` | `number` | No | Zero-based offset into the ranked result set. |
+| `task` | `string` | No | Optional. What the caller is trying to accomplish, in one sentence: the input it has and the result it needs, not a restatement of q. Used to rank candidates; up to 300 characters are used. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `kinds` | `string[]` | Yes | — |
+| `search_ref` | `string \| null` | No | — |
+| `count` | `number \| null` | No | — |
+| `total` | `number \| null` | No | — |
+| `offset` | `number \| null` | No | — |
+| `limit` | `number \| null` | No | — |
+| `next_offset` | `number \| null` | No | — |
+| `total_is_exact` | `boolean \| null` | No | — |
+| `may_have_more` | `boolean \| null` | No | — |
+| `truncated` | `boolean \| null` | No | — |
+| `query` | `string \| null` | No | — |
+| `categories` | `string[] \| null` | No | — |
+| `search_terms` | `string[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  kind: string,
+  displayName?: string | null,
+  description?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Secrets
+
+### inspect
+
+`secrets.inspect`
+
+Check whether a secret is active for the org or a Play, without its value
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.secrets.inspect({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Secret name; normalized to uppercase, for example HUBSPOT_TOKEN. |
+| `playName` | `string` | No | Bare Play name. An active Play secret takes precedence over the org secret; omit to check the org secret only. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `name` | `string` | Yes | — |
+| `playName` | `string \| null` | Yes | — |
+| `reason` | `active \| missing \| disabled \| empty \| invalid_version` | Yes | — |
+| `secret` | `object \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="secret full type">
+
+```ts
+{
+  _id: string,
+  orgId: string,
+  scope: org | play,
+  playName?: string | null,
+  name: string,
+  note?: string | null,
+  status: string,
+  hasValue: boolean,
+  createdAt: number,
+  updatedAt: number,
+  lastUsedAt?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`secrets.list`
+
+List Play secret metadata (never values)
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.secrets.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `secrets` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="secrets full type">
+
+```ts
+{
+  _id: string,
+  orgId: string,
+  scope: org | play,
+  playName?: string | null,
+  name: string,
+  note?: string | null,
+  status: string,
+  hasValue: boolean,
+  createdAt: number,
+  updatedAt: number,
+  lastUsedAt?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### set
+
+`secrets.set`
+
+Create or rotate a Play or org secret (replaces the stored value; value never returned)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.deepline.api.secrets.set({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  name: string,
+  value: string,
+  scope?: org | play,
+  playName?: string,
+  note?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `secret` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="secret full type">
+
+```ts
+{
+  _id: string,
+  orgId: string,
+  scope: org | play,
+  playName?: string | null,
+  name: string,
+  note?: string | null,
+  status: string,
+  hasValue: boolean,
+  createdAt: number,
+  updatedAt: number,
+  lastUsedAt?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateNote
+
+`secrets.updateNote`
+
+Add, replace or clear the non-sensitive note on one secret
+
+**Risk:** `write`
+
+```ts
+await corsair.deepline.api.secrets.updateNote({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `secretId` | `string` | Yes | The _id of the secret from secrets.list. |
+| `note` | `string` | Yes | Non-sensitive note to store on the secret; an empty string clears it. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `secret` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="secret full type">
+
+```ts
+{
+  _id: string,
+  orgId: string,
+  scope: org | play,
+  playName?: string | null,
+  name: string,
+  note?: string | null,
+  status: string,
+  hasValue: boolean,
+  createdAt: number,
+  updatedAt: number,
+  lastUsedAt?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tools
+
+### describeModel
+
+`tools.describeModel`
+
+Describe an AI Gateway model: metadata, provider options and an example input
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.tools.describeModel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | Exact lowercase AI Gateway model id, for example openai/gpt-4o-mini. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `schemaVersion` | `1` | Yes | — |
+| `model` | `string` | Yes | — |
+| `provider` | `string` | Yes | — |
+| `modelMetadata` | `Record<string, any> \| null` | Yes | — |
+| `providerOptions` | `object` | Yes | — |
+| `exampleInput` | `object` | Yes | — |
+| `caveats` | `string[]` | Yes | — |
+| `sources` | `string[]` | Yes | — |
+| `inferencePricing` | `Record<string, any>` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="providerOptions full type">
+
+```ts
+{
+  gateway: Record<string, any>,
+  selectedProvider?: Record<string, any> | null
+}
+```
+</Accordion>
+
+<Accordion title="exampleInput full type">
+
+```ts
+{
+  model: string,
+  providerOptions: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### execute
+
+`tools.execute`
+
+Execute one provider-backed tool (may spend credits or perform external actions)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.deepline.api.tools.execute({ toolId: 'free_simple_company_search', idempotencyKey: 'company-lookup-001', payload: { sql: "SELECT company_name, normalized_domain FROM companies WHERE normalized_domain = 'example.com' LIMIT 1" } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `toolId` | `string` | Yes | The toolId returned by the related Deepline API call. |
+| `idempotencyKey` | `string` | No | Optional caller-owned execution key. Case-sensitive, 1–200 ASCII letters, digits, period, underscore, colon, or hyphen. Persist before dispatch. Changed input conflicts; expired keys cannot be reused. |
+| `payload` | `Record<string, any>` | Yes | Input matching the selected tool input schema. |
+
+May spend credits or perform external actions. Send the provider input under payload. Preserve idempotencyKey before dispatch and reuse it for recovery.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `job_id` | `string \| null` | No | — |
+| `meta` | `Record<string, any> \| null` | No | — |
+| `result` | `any` | No | — |
+| `toolResponse` | `object \| null` | No | — |
+| `extractedLists` | `Record<string, any> \| null` | No | — |
+| `extractedValues` | `Record<string, any> \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="toolResponse full type">
+
+```ts
+{
+  rawV2?: any | null,
+  view?: string | null,
+  responseMeta?: Record<string, any> | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  credits_charged?: number | null,
+  cost_usd?: number | null,
+  pricing_status?: string | null,
+  settlement_status?: string | null,
+  estimated_credits?: number | null,
+  estimated_cost_usd?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`tools.get`
+
+Describe one provider-backed tool
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.tools.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `toolId` | `string` | Yes | The toolId returned by the related Deepline API call. |
+
+Returns the tool's input contract, output contract, access requirements and pricing. Read it before tools.execute.
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  toolId: string,
+  provider: string,
+  operationId: string,
+  description: string,
+  inputSchema?: Record<string, any> | null,
+  outputSchema?: Record<string, any> | null
+} | {
+  toolId: string,
+  provider: string,
+  description: string,
+  kind: string,
+  callable: false,
+  payload_schema?: Record<string, any> | null,
+  streams?: Record<string, any>[] | null,
+  variants?: Record<string, any>[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`tools.list`
+
+List callable provider tools
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.tools.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `categories` | `string` | No | Comma-separated tool categories to include. |
+| `tags` | `string` | No | Comma-separated tool tags to include. |
+| `grep` | `string` | No | Literal terms to match against tool metadata. |
+| `compact` | `boolean` | No | Set false to include input and output schemas. |
+| `grep_mode` | `all \| any \| phrase` | No | How to combine literal grep terms. |
+
+Use a narrow grep or categories filter for large catalogs. compact false includes provider schemas.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tools` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tools full type">
+
+```ts
+{
+  toolId: string,
+  provider: string,
+  operationId: string,
+  description: string,
+  inputSchema?: Record<string, any> | null,
+  outputSchema?: Record<string, any> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### providers
+
+`tools.providers`
+
+List discoverable providers with tool counts and categories, or only recent additions
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.tools.providers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `changed` | `boolean` | No | Set true to list only recently added providers, with their catalog version and release date. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `providers` | `object[]` | Yes | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="providers full type">
+
+```ts
+{
+  provider: string,
+  displayName: string,
+  toolCount: number,
+  categories: string[],
+  version?: string | null,
+  releasedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### quote
+
+`tools.quote`
+
+Price an ai_inference, deeplineagent or ai_evaluate payload without running it
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.tools.quote({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `toolId` | `ai_inference \| deeplineagent \| ai_evaluate` | Yes | Inference tool to price. Dynamic quotes exist only for ai_inference, deeplineagent and ai_evaluate. |
+| `payload` | `Record<string, any>` | Yes | The exact tool payload you plan to execute (for example model, prompt or messages, maxOutputTokens). Nothing runs; only the price is computed. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `quality` | `bounded_max \| estimate_only \| unavailable` | Yes | — |
+| `estimate` | `object` | Yes | — |
+| `authorization` | `object` | Yes | — |
+| `settlement` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="estimate full type">
+
+```ts
+{
+  quality: bounded_max | estimate_only | unavailable,
+  credits?: number,
+  assumptions: {
+    modelCallCount: number,
+    estimatedInputTokens: number,
+    estimatedOutputTokens: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="authorization full type">
+
+```ts
+{
+  quality: bounded_max | estimate_only | unavailable,
+  maximumCredits?: number,
+  assumptions: {
+    modelCallCount: number,
+    estimatedInputTokens: number,
+    estimatedOutputTokens: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`tools.search`
+
+Search callable provider tools
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.tools.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | The task or capability to search for. Omit when filtering only by categories or search_terms. |
+| `categories` | `string` | No | Comma-separated tool categories to filter. |
+| `search_terms` | `string` | No | Comma-separated capability terms to rank and filter by, including when q is empty. |
+| `limit` | `number` | No | Maximum ranked tools to return. |
+| `offset` | `number` | No | Zero-based offset into the ranked result set. |
+| `task` | `string` | No | Optional. What the caller is trying to accomplish, in one sentence: the input it has and the result it needs, not a restatement of q. Used to rank candidates; up to 300 characters are used. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tools` | `object[]` | Yes | — |
+| `count` | `number` | No | — |
+| `total` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `next_offset` | `number \| null` | No | — |
+| `truncated` | `boolean` | No | — |
+| `total_is_exact` | `boolean` | No | — |
+| `may_have_more` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="tools full type">
+
+```ts
+{
+  toolId: string,
+  provider: string,
+  operation: string,
+  description: string,
+  inputFields?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Workspace
+
+### members.list
+
+`workspace.members.list`
+
+List one page of workspace members and their grants
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.workspace.members.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | Continuation cursor from the previous page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `members` | `object[]` | Yes | — |
+| `cursor` | `string \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  id: string,
+  userId: string,
+  role: string,
+  grants: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### serviceAccounts.list
+
+`workspace.serviceAccounts.list`
+
+List workspace service accounts and key metadata (prefix and last 4 only)
+
+**Risk:** `read`
+
+```ts
+await corsair.deepline.api.workspace.serviceAccounts.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceAccounts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="serviceAccounts full type">
+
+```ts
+{
+  id: string,
+  userId: string,
+  memberId?: string | null,
+  name: string,
+  role?: string | null,
+  createdAt: number,
+  createdByUserId: string,
+  activeKeyCount: number,
+  lastUsedAt?: number | null,
+  keys?: {
+    id: string,
+    keyPrefix: string,
+    keyLast4: string,
+    status: string,
+    createdAt: number,
+    lastUsedAt?: number | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

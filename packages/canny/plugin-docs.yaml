@@ -1,0 +1,24 @@
+displayName: Canny
+description: Customer feedback platform. Manage boards, feedback posts, comments, and votes.
+domain: canny.io
+examples:
+  read:
+    path: boards.list
+    title: List boards
+  write:
+    path: posts.create
+    title: Create a post
+    args:
+      authorID: 5f1a2b3c4d5e6f7a8b9c0d1e
+      boardID: 5f1a2b3c4d5e6f7a8b9c0d1f
+      title: Add dark mode
+      details: It would be easier on the eyes at night.
+dbExample:
+  entity: boards
+  note: Search synced boards without hitting Canny.
+  limit: 50
+exampleWebhook:
+  path: posts.created
+  note: Fires when someone creates a post on a board.
+  after: |
+    console.log('Canny post created:', result.data);

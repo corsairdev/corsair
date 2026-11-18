@@ -1,4 +1,5 @@
 import type { CorsairPlugin } from '../core';
+import type { WebhookTenantMatch } from '../core/webhooks';
 import { getHubConfig } from '../hub/config';
 import { reportPluginConnectionStatus } from '../hub/report-connection-status';
 import { getWebhookEndpointUrl } from '../hub/webhook-endpoint-client';
@@ -15,7 +16,7 @@ export async function subscribeAndReport(
 	plugin: CorsairPlugin,
 	tenantId: string,
 	keys: unknown,
-): Promise<void> {
+): Promise<WebhookTenantMatch | undefined> {
 	if (!plugin.subscribe) return;
 	const hub = getHubConfig(corsair);
 	const webhookUrl = await getWebhookEndpointUrl(hub, plugin.id);
@@ -29,4 +30,5 @@ export async function subscribeAndReport(
 		webhookLink: result.webhookLink,
 		webhookSecret: result.webhookSecret,
 	});
+	return result.webhookLink;
 }

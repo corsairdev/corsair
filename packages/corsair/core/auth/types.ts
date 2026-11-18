@@ -39,6 +39,10 @@ export const BASE_AUTH_FIELDS = {
 			'webhook_signature',
 		] as const,
 	},
+	managed_pricing: {
+		integration: [] as const,
+		account: [] as const,
+	},
 } as const satisfies Record<
 	AuthTypes,
 	{
@@ -209,8 +213,14 @@ export type IntegrationKeyManagerFor<
 export type AccountKeyManagerFor<
 	T extends AuthTypes,
 	Config extends PluginAuthConfig | undefined = undefined,
-> = BaseKeyManager &
-	AllFieldAccessors<AccountFieldNames<T, Config>> &
+> = BaseKeyManager & {
+	/**
+	 * Runs `run` once for concurrent callers with the same name on this account,
+	 * however each caller reached it. Optional: key managers built outside the
+	 * SDK need not have it.
+	 */
+	single_flight?: <R>(name: string, run: () => Promise<R>) => Promise<R>;
+} & AllFieldAccessors<AccountFieldNames<T, Config>> &
 	(T extends 'oauth_2'
 		? {
 				/**

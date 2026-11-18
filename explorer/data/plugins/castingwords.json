@@ -1,7 +1,7 @@
 {
   "id": "castingwords",
-  "displayName": "Castingwords",
-  "description": "Castingwords plugin for Corsair",
+  "displayName": "CastingWords",
+  "description": "Transcription service. Place and upgrade orders, fetch audiofiles, transcripts, and invoices, check prepay balance and SKUs, and manage webhooks.",
   "npmPackageName": "@corsair-dev/castingwords",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -70,7 +70,7 @@
           {
             "key": "purchase_order",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "createtime",
@@ -80,7 +80,7 @@
           {
             "key": "paidtime",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total",
@@ -116,7 +116,7 @@
           {
             "key": "sku",
             "optional": false,
-            "type": "TRANS14 | TRANS2 | TRANS6 | TRANS7 | EMSR02 | DIFFQ2 | TSTMP1 | CAPTION1[]"
+            "type": "(TRANS14 | TRANS2 | TRANS6 | TRANS7 | EMSR02 | DIFFQ2 | TSTMP1 | CAPTION1)[]"
           },
           {
             "key": "test",
@@ -252,8 +252,9 @@
           },
           {
             "key": "extension",
-            "optional": false,
-            "type": "txt | doc | rtf | html | srt | docx | tstxt | vtt"
+            "optional": true,
+            "type": "txt | doc | rtf | html | srt | docx | tstxt | vtt",
+            "description": "Defaults to \"txt\"."
           },
           {
             "key": "test",
@@ -283,7 +284,7 @@
           {
             "key": "sku",
             "optional": false,
-            "type": "DIFFQ2 | TSTMP1 | CAPTION1 | EDIT01 | UPGRD1 | UPGRD2 | UPGRD3[]"
+            "type": "(DIFFQ2 | TSTMP1 | CAPTION1 | EDIT01 | UPGRD1 | UPGRD2 | UPGRD3)[]"
           },
           {
             "key": "test",
@@ -323,7 +324,7 @@
           {
             "key": "webhook",
             "optional": true,
-            "type": "string | "
+            "type": "string | \"\" | null"
           }
         ]
       }
@@ -349,7 +350,7 @@
           {
             "key": "webhook",
             "optional": true,
-            "type": "string | "
+            "type": "string | \"\" | null"
           }
         ]
       }
@@ -375,7 +376,7 @@
           {
             "key": "webhook",
             "optional": true,
-            "type": "string | "
+            "type": "string | \"\" | null"
           }
         ]
       }
@@ -458,6 +459,11 @@
           "field": "paidtime",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         }
       ]
     },
@@ -497,6 +503,11 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "kind",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "description",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
@@ -509,6 +520,11 @@
       "filters": [
         {
           "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "webhook",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         }

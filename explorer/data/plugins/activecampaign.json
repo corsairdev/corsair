@@ -147,7 +147,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -337,7 +337,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -537,7 +537,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -763,7 +763,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -896,7 +896,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -1050,7 +1050,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -1183,7 +1183,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -1311,7 +1311,7 @@
           {
             "key": "products",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
@@ -1515,7 +1515,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -1607,12 +1607,12 @@
           {
             "key": "p",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "m",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1715,7 +1715,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -1756,7 +1756,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -1797,7 +1797,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -1838,7 +1838,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -1920,7 +1920,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -2131,7 +2131,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -2295,7 +2295,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -2460,7 +2460,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -2542,7 +2542,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -2645,7 +2645,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -2742,7 +2742,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -2783,7 +2783,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -2850,7 +2850,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -2891,7 +2891,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -2932,7 +2932,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -2973,7 +2973,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -3014,7 +3014,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -3055,7 +3055,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -3096,7 +3096,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -3189,7 +3189,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -3230,7 +3230,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -3271,7 +3271,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -3347,7 +3347,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -3434,7 +3434,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -3691,7 +3691,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -3717,7 +3717,7 @@
           {
             "key": "fields",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
@@ -3758,17 +3758,17 @@
           {
             "key": "labels",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "fields",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "relationships",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
@@ -3912,7 +3912,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -3943,17 +3943,17 @@
           {
             "key": "labels",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "fields",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "relationships",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "id",
@@ -4024,7 +4024,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -4117,7 +4117,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -4312,7 +4312,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -4527,7 +4527,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -4676,7 +4676,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -4904,7 +4904,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -5080,7 +5080,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -5376,7 +5376,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -5473,7 +5473,7 @@
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "relid",
@@ -5701,7 +5701,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -5717,7 +5717,7 @@
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "relid",
@@ -5905,7 +5905,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -6095,7 +6095,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -6203,7 +6203,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -6244,7 +6244,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -6275,12 +6275,12 @@
           {
             "key": "orderProducts",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "orderDiscounts",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "totalPrice",
@@ -6411,8 +6411,8 @@
         "fields": [
           {
             "key": "ecomOrder",
-            "optional": true,
-            "type": "any"
+            "optional": false,
+            "type": "any | null"
           }
         ]
       }
@@ -6484,7 +6484,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -6515,12 +6515,12 @@
           {
             "key": "orderProducts",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "orderDiscounts",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "totalPrice",
@@ -6631,12 +6631,12 @@
           {
             "key": "orderProducts",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "orderDiscounts",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "totalPrice",
@@ -6757,7 +6757,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -6845,7 +6845,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -6964,7 +6964,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -7113,7 +7113,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -7267,7 +7267,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -7467,7 +7467,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -7503,7 +7503,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -7601,7 +7601,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -7761,7 +7761,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -7823,7 +7823,7 @@
           {
             "key": "callback",
             "optional": true,
-            "type": "{ url: string, requestType?: GET | POST | PUT | PATCH, detailed_results?: boolean | true | false, params?: {}, headers?: {} }"
+            "type": "{ url: string, requestType?: GET | POST | PUT | PATCH, detailed_results?: boolean | true | false, params?: Record<string, any>, headers?: Record<string, string> }"
           }
         ]
       },
@@ -7833,32 +7833,32 @@
           {
             "key": "Success",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "success",
             "optional": true,
-            "type": "string | number | boolean"
+            "type": "string | number | boolean | null"
           },
           {
             "key": "batchId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "queued_contacts",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "queuedContacts",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -8123,7 +8123,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -8318,7 +8318,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -8621,7 +8621,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -8730,7 +8730,7 @@
           {
             "key": "orders",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
@@ -8750,7 +8750,7 @@
           {
             "key": "orders",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
@@ -8914,7 +8914,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -9151,7 +9151,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "limit",
@@ -9258,7 +9258,7 @@
           {
             "key": "products",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
@@ -9278,7 +9278,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "limit",
@@ -9314,7 +9314,7 @@
           {
             "key": "recurringPayments",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
@@ -9447,7 +9447,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -9529,7 +9529,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -9648,7 +9648,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -9689,7 +9689,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -9761,7 +9761,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -9792,7 +9792,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -9818,7 +9818,7 @@
           {
             "key": "conditions",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
@@ -10090,7 +10090,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -10147,7 +10147,7 @@
           {
             "key": "conditions",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "id",
@@ -10203,7 +10203,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -10369,7 +10369,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -10549,7 +10549,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -10719,7 +10719,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -10906,7 +10906,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -11229,7 +11229,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -11336,7 +11336,7 @@
           {
             "key": "sources",
             "optional": false,
-            "type": "public | admin | api | system[]"
+            "type": "(public | admin | api | system)[]"
           },
           {
             "key": "listid",
@@ -11439,7 +11439,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: string | number | null }"
+            "type": "{ total?: string | number | null } | null"
           }
         ]
       }
@@ -11470,7 +11470,7 @@
           {
             "key": "sources",
             "optional": true,
-            "type": "public | admin | api | system[]"
+            "type": "(public | admin | api | system)[]"
           },
           {
             "key": "listid",

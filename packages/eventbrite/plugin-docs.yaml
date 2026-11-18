@@ -1,0 +1,108 @@
+displayName: Eventbrite
+description: Manage events and registrations with Eventbrite - read and edit events, ticket classes, registration questions, orders and attendees, and create venues, discount codes and webhook subscriptions.
+domain: eventbrite.com
+recommendedAuth: api_key
+overviewNote: |
+  Eventbrite authenticates with a private token (their UI also calls it a "personal OAuth token") sent as `Authorization: Bearer …`. Create one at https://www.eventbrite.com/platform/api-keys while signed in; a token is issued for a user, and every call acts as that user. The API key and client secret on the same page are only for the OAuth flow that acts on behalf of *other* users, which this plugin does not need.
+
+  Almost every call needs an `organization_id`. `organizations.list` reads the organizations the token's user belongs to; a token whose user belongs to none gets an empty list back, and every organization route then answers 404 or 403 for that organization.
+
+  Things to know before you write:
+
+  - **Ids are strings.** Eventbrite types every id as a string (`"2000937221092"`), and the plugin accepts a number too but always sends and returns the string.
+  - **`name` is not the same type everywhere.** `events.create` and `events.update` need `{ html }` for the event name, description and question text; `ticketClasses.create`, `venues.create` and discount `code` take plain strings. The schema enforces each, so the mistake fails before a request is spent. `summary` is always plain text, capped at 140 characters.
+  - **`summary` and `description` are mutually exclusive**, as are `listed` with `invite_only` or `password`, and `online_event` with `venue_id`. Eventbrite answers 400 `ARGUMENTS_ERROR` for each; the schemas reject them first.
+  - **Writes that need a clean event.** `events.publish` needs a name, an organizer, at least one ticket and valid payment options. `events.delete` and `events.cancel` are refused while any order is pending or completed, and `ticketClasses.delete` is refused once a ticket has sold, or for the last ticket while the event is live.
+  - **Expansions.** Event reads take `expand` (`venue`, `organizer`, `category`, `format`, `logo`, `ticket_availability`, …), which inlines related objects instead of making a second call. Each one slows the response slightly.
+  - **Paging is a continuation token.** Every list returns `pagination.continuation` with `has_more_items`; pass the token back as `continuation` to walk the list. `page_size` defaults to 50 and Eventbrite caps it at 300 — a larger value is silently answered with 300, which is why the schema rejects anything above 300.
+  - **Rate limits are 2,000 calls an hour and 48,000 a day** per token, with `events.create`, `events.copy` and `events.publish` limited to 200 an hour. A 429 carries `HIT_RATE_LIMIT` and no `Retry-After` header, so the plugin retries with a fixed 60-second wait.
+  - **A webhook delivery is a notification, not the object.** The POST body holds only `api_url` (where the changed object lives on the v3 API) and `config.action` (what fired). Eventbrite does not sign deliveries and does not allow a custom header on the subscription, so the receiving URL must be private; the plugin exposes the notification, and reading the object back is a normal authenticated call.
+  - **Orders and attendees are private.** They need a token whose user is an organizer of the event; a bare private token for a user with no organization gets 403 on those routes. `venues.list` answers 500 for an organization with no venues instead of an empty page.
+examples:
+  read:
+    path: events.listByOrganization
+    title: List an organization's live events
+    args:
+      organization_id: '154830740213'
+      name_filter: Launch
+  write:
+    path: events.create
+    title: Create a draft event
+    args:
+      organization_id: '154830740213'
+      event:
+        name:
+          html: Product launch night
+        start:
+          timezone: America/New_York
+          utc: '2027-06-01T14:00:00Z'
+        end:
+          timezone: America/New_York
+          utc: '2027-06-01T18:00:00Z'
+        currency: USD
+        listed: false
+apiExamples:
+  events.get:
+    call: "{ event_id: '2000937221092', expand: ['venue', 'organizer', 'ticket_availability'] }"
+  events.listByOrganization:
+    call: "{ organization_id: '154830740213', status: ['live', 'started'], time_filter: 'current_future' }"
+  events.listByVenue:
+    call: "{ venue_id: '299411783', status: ['live'] }"
+  events.create:
+    call: "{ organization_id: '154830740213', event: { name: { html: 'Launch night' }, start: { timezone: 'America/New_York', utc: '2027-06-01T14:00:00Z' }, end: { timezone: 'America/New_York', utc: '2027-06-01T18:00:00Z' }, currency: 'USD' } }"
+  events.publish:
+    call: "{ event_id: '2000937221092' }"
+  events.update:
+    call: "{ event_id: '2000937221092', event: { summary: 'One evening, three talks' } }"
+  events.copy:
+    call: "{ event_id: '2000937221092', name: 'Launch night (copy)', timezone: 'America/New_York', start_date: '2027-06-08T14:00:00Z' }"
+  events.description:
+    call: "{ event_id: '2000937221092' }"
+  events.displaySettings:
+    call: "{ event_id: '2000937221092' }"
+  ticketClasses.list:
+    call: "{ event_id: '2000937221092' }"
+  ticketClasses.listForSale:
+    call: "{ event_id: '2000937221092', pos: 'online' }"
+  ticketClasses.create:
+    call: "{ event_id: '2000937221092', ticket_class: { name: 'Early bird', cost: 'USD,4500', capacity: 50, auto_hide: true, sales_channels: ['online'] } }"
+  questions.list:
+    call: "{ event_id: '2000937221092' }"
+  questions.create:
+    call: "{ event_id: '2000937221092', question: { question: { html: 'Which session?' }, type: 'dropdown', choices: [{ answer: { html: 'Morning' } }, { answer: { html: 'Evening' } }] } }"
+  questions.listCanned:
+    call: "{ event_id: '2000937221092', include_all: true }"
+  attendees.list:
+    call: "{ event_id: '2000937221092', status: 'attending' }"
+  orders.listByEvent:
+    call: "{ event_id: '2000937221092', status: 'active' }"
+  orders.listByOrganization:
+    call: "{ organization_id: '154830740213' }"
+  users.me: {}
+  organizations.list:
+    call: "{ }"
+  venues.get:
+    call: "{ venue_id: '299411783' }"
+  venues.create:
+    call: "{ organization_id: '154830740213', venue: { name: 'Crimson House', address: { address_1: '1-14-1 Tamagawa', city: 'Setagaya City', country: 'JP' } } }"
+  discounts.create:
+    call: "{ organization_id: '154830740213', discount: { code: 'CORSAIR20', type: 'coded', percent_off: '20', event_id: '2000937221092' } }"
+  discounts.list:
+    call: "{ organization_id: '154830740213', scope: 'event', event_id: '2000937221092' }"
+  webhooks.create:
+    call: "{ organization_id: '154830740213', endpoint_url: 'https://myapp.com/webhooks/eventbrite', actions: ['order.placed', 'attendee.checked_in'] }"
+exampleWebhook:
+  path: notifications.delivery
+  note: |
+    A delivery is a notification, not the changed object. The body holds only `api_url`, which addresses the object on the v3 API, and `config.action`, which names what fired. Read `api_url` back with the tenant's own token to get the object; the plugin only accepts a delivery whose `api_url` is on eventbriteapi.com, so that read never goes to another host. Eventbrite signs neither the delivery nor a custom header, so a delivery cannot be proven to come from Eventbrite: keep the receiving URL private.
+  after: "if (result.data?.action === 'order.placed') console.log('order at', result.data.api_url);"
+apiNotes:
+  events.get: "Event reads take `expand` as one comma-separated value; the plugin joins the array for you."
+  events.listByOrganization: "Pass `pagination.continuation` from the previous page as `continuation` to walk the list."
+  events.create: "`name` and `description` must be `{ html }` objects; Eventbrite rejects a bare string with `event.name - Unknown parameter`."
+  events.copy: "This route takes the copy's fields bare, not wrapped in `event`."
+  events.updateDisplaySettings: "This route requires the `display_settings` wrapper; the other write routes each name their own wrapper."
+  ticketClasses.create: "`cost` is `'<CURRENCY>,<minor units>'`, so `'USD,4500'` is 45.00 USD. A charged ticket needs `cost` and a positive `capacity`; a free or donation ticket must not have `cost`, and a donation ticket accepts capacity 0 or null as unlimited."
+  discounts.list: "`scope` is required, and `event` scope also requires `event_id`. Sorting needs exactly one of `code` and `code_filter`."
+  webhooks.create: "`actions` is sent as one comma-separated string. Eventbrite does not sign deliveries and allows no custom header on the subscription."
+  venues.list: "Answers 500 `INTERNAL_ERROR` for an organization with no venues rather than an empty page."

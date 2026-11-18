@@ -13,19 +13,41 @@ export const LOOPBACK_HOSTS = new Set([
 	'::1',
 ]);
 
-// Slug is the segment after the ck_cloud_ prefix up to the first '.'; the secret
-// is the remainder. The secret is base64url so it never contains '.', which is
-// why the delimiter is unambiguous. Returns null when the key isn't in that
-// shape (e.g. an older flat key with no '.'), so the caller can fall back to an
-// explicit url or error clearly.
-export function cloudUrlFromKey(apiKey: string): string | null {
+/**
+ * The project slug carried inside a `ck_cloud_<slug>.<secret>` key.
+ *
+ * The secret is base64url and so never contains '.', which is what makes the
+ * delimiter unambiguous. Null for a key not in that shape (an older flat key
+ * with no '.'), leaving the caller to fall back to an explicit url.
+ */
+export function projectSlugFromKey(apiKey: string): string | null {
 	if (!apiKey.startsWith('ck_cloud_')) return null;
 	const rest = apiKey.slice('ck_cloud_'.length);
 	const sep = rest.indexOf('.');
 	if (sep <= 0) return null;
 	const slug = rest.slice(0, sep);
-	if (!/^[a-z0-9]+$/.test(slug)) return null;
-	return `https://${CLOUD_API_HOST}/${slug}/api/corsair`;
+	return /^[a-z0-9]+$/.test(slug) ? slug : null;
+}
+
+/** Where this project's operation calls go. */
+export function cloudUrlFromKey(apiKey: string): string | null {
+	const slug = projectSlugFromKey(apiKey);
+	return slug ? `https://${CLOUD_API_HOST}/${slug}/api/corsair` : null;
+}
+
+/**
+ * Where this project's management calls go.
+ *
+ * Derived from the runtime base because the two share a hostname: the front
+ * door splits /v1 off to the management API and leaves the rest to the runtime
+ * fleet. So one `url` override moves both, and a split dev setup overrides the
+ * management URL on its own.
+ */
+export function managementUrlFromBase(
+	runtimeBaseUrl: string,
+	slug: string,
+): string {
+	return `${new URL(runtimeBaseUrl).origin}/v1/projects/${slug}`;
 }
 
 // The project key rides as a bearer token, so http:// would leak it in

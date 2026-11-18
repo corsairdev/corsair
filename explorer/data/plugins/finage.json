@@ -1,0 +1,2770 @@
+{
+  "id": "finage",
+  "displayName": "Finage",
+  "description": "Finage market-data plugin exposing 70 current read-only REST route operations for stocks, forex, crypto, currencies, countries, market discovery, news, bonds, and indicators.",
+  "npmPackageName": "@corsair-dev/finage",
+  "authTypes": ["api_key"],
+  "counts": {
+    "api": 70,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "finage.api.market.convertCrypto",
+      "shortPath": "market.convertCrypto",
+      "description": "Convert an amount between two cryptocurrencies",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.convertCurrency",
+      "shortPath": "market.convertCurrency",
+      "description": "Convert an amount between two fiat currencies",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.getBalanceSheetStatements",
+      "shortPath": "market.getBalanceSheetStatements",
+      "description": "Retrieve a company balance sheet",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "period",
+            "optional": false,
+            "type": "annual | quarter"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ symbol: string | null, date: string | null, period: string | null, fillingDate?: string | null, filingDate?: string | null, acceptedDate?: string | null, link?: string | null, finalLink?: string | null, cashAndCashEquivalents?: number | null, shortTermInvestments?: number | null, cashAndShortTermInvestments?: number | null, netReceivables?: number | null, inventory?: number | null, otherCurrentAssets?: number | null, totalCurrentAssets?: number | null, propertyPlantEquipmentNet?: number | null, goodwill?: number | null, intangibleAssets?: number | null, goodwillAndIntangibleAssets?: number | null, doubleTermInvestments?: number | null, taxAssets?: number | null, otherNonCurrentAssets?: number | null, totalNonCurrentAssets?: number | null, otherAssets?: number | null, longTermInvestments?: number | null, totalAssets?: number | null, accountPayables?: number | null, shortTermDebt?: number | null, taxPayables?: number | null, deferredRevenue?: number | null, otherCurrentLiabilities?: number | null, totalCurrentLiabilities?: number | null, longTermDebt?: number | null, doubleTermDebt?: number | null, deferredRevenueNonCurrent?: number | null, deferredTaxLiabilitiesNonCurrent?: number | null, otherNonCurrentLiabilities?: number | null, totalNonCurrentLiabilities?: number | null, otherLiabilities?: number | null, totalLiabilities?: number | null, commonStock?: number | null, retainedEarnings?: number | null, accumulatedOtherComprehensiveIncomeLoss?: number | null, othertotalStockholdersEquity?: number | null, totalStockholdersEquity?: number | null, totalLiabilitiesAndStockholdersEquity?: number | null, totalInvestments?: number | null, totalDebt?: number | null, netDebt?: number | null }[]"
+      }
+    },
+    {
+      "path": "finage.api.market.getBondsRate",
+      "shortPath": "market.getBondsRate",
+      "description": "Retrieve the latest US bond rate for a symbol",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.getCanadaMarketAggregates",
+      "shortPath": "market.getCanadaMarketAggregates",
+      "description": "Retrieve Canadian stock aggregates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": false,
+            "type": "1min | 5min | 15min | 30min | 45min | 1h | 2h | 4h | 1day | 1week | 1month"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "date_format",
+            "optional": true,
+            "type": "dt | ts"
+          },
+          {
+            "key": "dbt_filter",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "st",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "et",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "totalResults",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ o: number | null | string | null, h: number | null | string | null, l: number | null | string | null, c: number | null | string | null, v?: number | null | string | null, t: number | null | string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.getCanadaMarketLastPrice",
+      "shortPath": "market.getCanadaMarketLastPrice",
+      "description": "Retrieve the latest Canadian stock price",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "price",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "number | null | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.getCashFlowStatements",
+      "shortPath": "market.getCashFlowStatements",
+      "description": "Retrieve a company cash flow statement",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "period",
+            "optional": true,
+            "type": "annual | quarter"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ symbol: string | null, date: string | null, period: string | null, fillingDate?: string | null, filingDate?: string | null, acceptedDate?: string | null, link?: string | null, finalLink?: string | null, netIncome?: number | null, depreciationAndAmortization?: number | null, deferredIncomeTax?: number | null, stockBasedCompensation?: number | null, changeInWorkingCapital?: number | null, accountsReceivables?: number | null, inventory?: number | null, accountsPayables?: number | null, otherWorkingCapital?: number | null, otherNonCashItems?: number | null, netCashProvidedByOperatingActivities?: number | null, investmentsInPropertyPlantAndEquipment?: number | null, acquisitionsNet?: number | null, purchasesOfInvestments?: number | null, salesMaturitiesOfInvestments?: number | null, otherInvestingActivites?: number | null, netCashUsedForInvestingActivites?: number | null, debtRepayment?: number | null, commonStockIssued?: number | null, commonStockRepurchased?: number | null, dividendsPaid?: number | null, otherFinancingActivites?: number | null, netCashUsedProvidedByFinancingActivities?: number | null, effectOfForexChangesOnCash?: number | null, netChangeInCash?: number | null, cashAtEndOfPeriod?: number | null, cashAtBeginningOfPeriod?: number | null, operatingCashFlow?: number | null, capitalExpenditure?: number | null, freeCashFlow?: number | null }[]"
+      }
+    },
+    {
+      "path": "finage.api.market.getCfdEtfLastPrice",
+      "shortPath": "market.getCfdEtfLastPrice",
+      "description": "Retrieve the latest ETF price",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "price",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "number | null | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.getCfdEtfMarketAggregates",
+      "shortPath": "market.getCfdEtfMarketAggregates",
+      "description": "Retrieve historical ETF aggregates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": false,
+            "type": "1min | 5min | 15min | 30min | 45min | 1h | 2h | 4h | 1day | 1week | 1month"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "date_format",
+            "optional": true,
+            "type": "dt | ts"
+          },
+          {
+            "key": "dbt_filter",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "st",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "et",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "totalResults",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ o: number | null | string | null, h: number | null | string | null, l: number | null | string | null, c: number | null | string | null, v?: number | null | string | null, t: number | null | string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.getCfdEtfPreviousClose",
+      "shortPath": "market.getCfdEtfPreviousClose",
+      "description": "Retrieve the previous ETF close",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "totalResults",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ o: number | null | string | null, h: number | null | string | null, l: number | null | string | null, c: number | null | string | null, v?: number | null | string | null, t: number | null | string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.getCfdIndexLastPrice",
+      "shortPath": "market.getCfdIndexLastPrice",
+      "description": "Retrieve the latest index price",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "price",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "number | null | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.getCfdIndexMarketAggregates",
+      "shortPath": "market.getCfdIndexMarketAggregates",
+      "description": "Retrieve historical index aggregates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": false,
+            "type": "1min | 5min | 15min | 30min | 45min | 1h | 2h | 4h | 1day | 1week | 1month"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "date_format",
+            "optional": true,
+            "type": "dt | ts"
+          },
+          {
+            "key": "dbt_filter",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "st",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "et",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "totalResults",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ o: number | null | string | null, h: number | null | string | null, l: number | null | string | null, c: number | null | string | null, v?: number | null | string | null, t: number | null | string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.getCfdIndexPreviousClose",
+      "shortPath": "market.getCfdIndexPreviousClose",
+      "description": "Retrieve the previous index close",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "totalResults",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ o: number | null | string | null, h: number | null | string | null, l: number | null | string | null, c: number | null | string | null, v?: number | null | string | null, t: number | null | string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.getCountryDetail",
+      "shortPath": "market.getCountryDetail",
+      "description": "Retrieve country details used in market data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ country: string | null, country_code: string | null, currency: string | null, currency_code: string | null, phone_code: string | null, country_flag: string | null } | { country: string | null, country_code: string | null, currency: string | null, currency_code: string | null, phone_code: string | null, country_flag: string | null }[]"
+      }
+    },
+    {
+      "path": "finage.api.market.getCryptoAggregates",
+      "shortPath": "market.getCryptoAggregates",
+      "description": "Retrieve historical cryptocurrency aggregates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "multiply",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "time",
+            "optional": false,
+            "type": "minute | hour | day | week | month | quarter | year"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "totalResults",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ o: number | null, h: number | null, l: number | null, c: number | null, v?: number | null, t: number | null | string }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.getCryptoDetail",
+      "shortPath": "market.getCryptoDetail",
+      "description": "Retrieve fundamental details for a cryptocurrency",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "isActive",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "developers",
+            "optional": true,
+            "type": "{ name: string | null, position: string | null }[] | null"
+          },
+          {
+            "key": "opensource",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "startedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hashAlgorithm",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ explorer?: (string | null)[] | null, facebook?: (string | null)[] | null, reddit?: (string | null)[] | null, source_code?: (string | null)[] | null, website?: (string | null)[] | null, youtube?: (string | null)[] | null } | null"
+          },
+          {
+            "key": "thumbnail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "developmentStatus",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hardwareWallet",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "open_source",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "started_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hash_algorithm",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "development_status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hardware_wallet",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.getCryptoDetailed",
+      "shortPath": "market.getCryptoDetailed",
+      "description": "Retrieve detailed data for the latest cryptocurrency market state",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ symbol: string | null, name: string | null, price: number | null, changesPercentage: number | null, change: number | null, high: number | null, open: number | null, low: number | null, close: number | null, yearHigh: number | null, yearLow: number | null, marketCap: number | null, priceAvg50: number | null, priceAvg200: number | null, volume: number | null, avgVolume: number | null, exchange: string | null, sharesOutstanding: number | null, timestamp: number | null } | { symbol: string | null, name: string | null, price: number | null, changesPercentage: number | null, change: number | null, high: number | null, open: number | null, low: number | null, close: number | null, yearHigh: number | null, yearLow: number | null, marketCap: number | null, priceAvg50: number | null, priceAvg200: number | null, volume: number | null, avgVolume: number | null, exchange: string | null, sharesOutstanding: number | null, timestamp: number | null }[]"
+      }
+    },
+    {
+      "path": "finage.api.market.getCryptoLastQuote",
+      "shortPath": "market.getCryptoLastQuote",
+      "description": "Retrieve the latest cryptocurrency quote",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "ask",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "bid",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "asize",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "bsize",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.getCryptoLastTrade",
+      "shortPath": "market.getCryptoLastTrade",
+      "description": "Retrieve the latest cryptocurrency trade",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "price",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.getCryptoNews",
+      "shortPath": "market.getCryptoNews",
+      "description": "Retrieve news for a cryptocurrency",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticker",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "limit",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "news",
+            "optional": false,
+            "type": "{ source: string | null, title: string | null, description: string | null, url: string | null, date: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.getCryptoPreviousClose",
+      "shortPath": "market.getCryptoPreviousClose",
+      "description": "Retrieve the previous cryptocurrency close",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "totalResults",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ o: number | null, h: number | null, l: number | null, c: number | null, v?: number | null, t: number | null | string }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.getCryptoSnapshot",
+      "shortPath": "market.getCryptoSnapshot",
+      "description": "Retrieve a snapshot of cryptocurrency market data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "quotes",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "trades",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "symbols",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "totalResults",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "lastQuotes",
+            "optional": true,
+            "type": "{ s?: string | null, symbol?: string | null, a?: number | null, b?: number | null, asz?: number | null, bsz?: number | null, t?: number | null }[] | null"
+          },
+          {
+            "key": "lastTrades",
+            "optional": true,
+            "type": "{ s?: string | null, symbol?: string | null, p?: number | null, price?: number | null, sz?: number | null, t?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.getCurrencyDetail",
+      "shortPath": "market.getCurrencyDetail",
+      "description": "Retrieve fundamental details for a currency",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ symbol: string | null, from: string | null, to: string | null, from_flag: string | null, to_flag: string | null } | { symbol: string | null, from: string | null, to: string | null, from_flag: string | null, to_flag: string | null }[]"
+      }
+    },
+    {
+      "path": "finage.api.market.getDelistedCompanies",
+      "shortPath": "market.getDelistedCompanies",
+      "description": "List delisted companies",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ symbol: string | null, company_name?: string | null, exchange?: string | null, ipo_date?: string | null, delisted_date?: string | null }[]"
+      }
+    },
+    {
+      "path": "finage.api.market.getDividendsCalendar",
+      "shortPath": "market.getDividendsCalendar",
+      "description": "Retrieve the dividend calendar",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ symbol: string | null, label?: string | null, adj_dividend?: number | null, date: string | null }[]"
+      }
+    },
+    {
+      "path": "finage.api.market.getEarningsCalendar",
+      "shortPath": "market.getEarningsCalendar",
+      "description": "Retrieve the earnings calendar",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ symbol: string | null, eps?: number | null, estimated_eps?: number | null, revenue?: number | null, estimated_revenue?: number | null, time?: string | null, date: string | null }[]"
+      }
+    },
+    {
+      "path": "finage.api.market.getEconomicCalendar",
+      "shortPath": "market.getEconomicCalendar",
+      "description": "Retrieve the economic calendar",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ event: string | null, date: string | null, country?: string | null, countryFlag?: string | null, actual?: number | null, previous?: number | null, change?: number | null, changePercentage?: number | null, estimate?: number | null }[]"
+      }
+    },
+    {
+      "path": "finage.api.market.getFinancialRatios",
+      "shortPath": "market.getFinancialRatios",
+      "description": "Retrieve a company financial ratios",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ symbol: string | null, date: string | null, fiscalYear: string | null, period: string | null, reportedCurrency: string | null, grossProfitMargin?: number | null, ebitMargin?: number | null, ebitdaMargin?: number | null, operatingProfitMargin?: number | null, pretaxProfitMargin?: number | null, continuousOperationsProfitMargin?: number | null, netProfitMargin?: number | null, bottomLineProfitMargin?: number | null, receivablesTurnover?: number | null, payablesTurnover?: number | null, inventoryTurnover?: number | null, fixedAssetTurnover?: number | null, assetTurnover?: number | null, currentRatio?: number | null, quickRatio?: number | null, solvencyRatio?: number | null, cashRatio?: number | null, priceToEarningsRatio?: number | null, priceToEarningsGrowthRatio?: number | null, forwardPriceToEarningsGrowthRatio?: number | null, priceToBookRatio?: number | null, priceToSalesRatio?: number | null, priceToFreeCashFlowRatio?: number | null, priceToOperatingCashFlowRatio?: number | null, debtToAssetsRatio?: number | null, debtToEquityRatio?: number | null, debtToCapitalRatio?: number | null, longTermDebtToCapitalRatio?: number | null, financialLeverageRatio?: number | null, workingCapitalTurnoverRatio?: number | null, operatingCashFlowRatio?: number | null, operatingCashFlowSalesRatio?: number | null, freeCashFlowOperatingCashFlowRatio?: number | null, debtServiceCoverageRatio?: number | null, interestCoverageRatio?: number | null, shortTermOperatingCashFlowCoverageRatio?: number | null, operatingCashFlowCoverageRatio?: number | null, capitalExpenditureCoverageRatio?: number | null, dividendPaidAndCapexCoverageRatio?: number | null, dividendPayoutRatio?: number | null, dividendYield?: number | null, dividendYieldPercentage?: number | null, revenuePerShare?: number | null, netIncomePerShare?: number | null, interestDebtPerShare?: number | null, cashPerShare?: number | null, bookValuePerShare?: number | null, tangibleBookValuePerShare?: number | null, shareholdersEquityPerShare?: number | null, operatingCashFlowPerShare?: number | null, capexPerShare?: number | null, freeCashFlowPerShare?: number | null, netIncomePerEBT?: number | null, ebtPerEbit?: number | null, priceToFairValue?: number | null, debtToMarketCap?: number | null, effectiveTaxRate?: number | null, enterpriseValueMultiple?: number | null }[]"
+      }
+    },
+    {
+      "path": "finage.api.market.getForexLastQuote",
+      "shortPath": "market.getForexLastQuote",
+      "description": "Retrieve the latest forex quote",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "ask",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "bid",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "asize",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "bsize",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.getForexLastTrade",
+      "shortPath": "market.getForexLastTrade",
+      "description": "Retrieve the latest forex trade",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "price",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.getForexMarketAggregates",
+      "shortPath": "market.getForexMarketAggregates",
+      "description": "Retrieve historical forex aggregates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "multiply",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "time",
+            "optional": false,
+            "type": "minute | hour | day | week | month | quarter | year"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "dbt_filter",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "st",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "et",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_format",
+            "optional": true,
+            "type": "dt | ts"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "totalResults",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ o: number | null, h: number | null, l: number | null, c: number | null, v?: number | null, t: number | null | string }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.getForexNews",
+      "shortPath": "market.getForexNews",
+      "description": "Retrieve news for a forex pair",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticker",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "limit",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "news",
+            "optional": false,
+            "type": "{ source: string | null, title: string | null, description: string | null, url: string | null, date: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.getForexPreviousClose",
+      "shortPath": "market.getForexPreviousClose",
+      "description": "Retrieve the previous forex close",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "totalResults",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ o: number | null, h: number | null, l: number | null, c: number | null, v?: number | null, t: number | null | string }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.getForexSignal",
+      "shortPath": "market.getForexSignal",
+      "description": "Retrieve a forex technical signal",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "daily | weekly"
+          },
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ timestamp: string | null, symbol: string | null, signal: string | null, confidence: number | null, indicators: { sma_20: number | null, sma_50: number | null, rsi: number | null, macd: number | null, macd_signal: number | null, macd_diff: number | null, bollinger_high: number | null, bollinger_low: number | null, ma_crossover: boolean | null, macd_cross: boolean | null }, price: number | null } | { timestamp: string | null, symbol: string | null, signal: string | null, confidence: number | null, indicators: { sma_20: number | null, sma_50: number | null, rsi: number | null, macd: number | null, macd_signal: number | null, macd_diff: number | null, bollinger_high: number | null, bollinger_low: number | null, ma_crossover: boolean | null, macd_cross: boolean | null }, price: number | null }[]"
+      }
+    },
+    {
+      "path": "finage.api.market.getForexSnapshot",
+      "shortPath": "market.getForexSnapshot",
+      "description": "Retrieve a snapshot of forex market data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "quotes",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "trades",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "symbols",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "totalResults",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "lastQuotes",
+            "optional": true,
+            "type": "{ s?: string | null, symbol?: string | null, a?: number | null, b?: number | null, asz?: number | null, bsz?: number | null, t?: number | null }[] | null"
+          },
+          {
+            "key": "lastTrades",
+            "optional": true,
+            "type": "{ s?: string | null, symbol?: string | null, p?: number | null, price?: number | null, sz?: number | null, t?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.getHistoricalDividendsCalendar",
+      "shortPath": "market.getHistoricalDividendsCalendar",
+      "description": "Retrieve a company dividend history",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ label?: string | null, adj_dividend?: number | null, dividend?: number | null, record_date?: string | null, payment_date?: string | null, declaration_date?: string | null, date: string | null }[]"
+      }
+    },
+    {
+      "path": "finage.api.market.getHistoricalStockSplitCalendar",
+      "shortPath": "market.getHistoricalStockSplitCalendar",
+      "description": "Retrieve a company stock split history",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ numerator_factor?: number | null, denominator_factor?: number | null, label?: string | null, date: string | null }[]"
+      }
+    },
+    {
+      "path": "finage.api.market.getIncomeStatements",
+      "shortPath": "market.getIncomeStatements",
+      "description": "Retrieve company income statements and international filings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "period",
+            "optional": false,
+            "type": "annual | quarter"
+          },
+          {
+            "key": "exchange_code",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ symbol: string | null, date: string | null, period: string | null, fillingDate?: string | null, filingDate?: string | null, acceptedDate?: string | null, link?: string | null, finalLink?: string | null, revenue?: number | null, costOfRevenue?: number | null, grossProfit?: number | null, grossProfitRatio?: number | null, researchAndDevelopmentExpenses?: number | null, generalAndAdministrativeExpenses?: number | null, sellingAndMarketingExpenses?: number | null, otherExpenses?: number | null, operatingExpenses?: number | null, costAndExpenses?: number | null, interestExpense?: number | null, depreciationAndAmortization?: number | null, ebitda?: number | null, ebitdaratio?: number | null, ebitdaRatio?: number | null, operatingIncome?: number | null, operatingIncomeRatio?: number | null, totalOtherIncomeExpensesNet?: number | null, incomeBeforeTax?: number | null, incomeBeforeTaxRatio?: number | null, incomeTaxExpense?: number | null, netIncome?: number | null, netIncomeRatio?: number | null, eps?: number | null, epsdiluted?: number | null, epsDiluted?: number | null, weightedAverageShsOut?: number | null, weightedAverageShsOutDil?: number | null }[]"
+      }
+    },
+    {
+      "path": "finage.api.market.getIndianMarketAggregates",
+      "shortPath": "market.getIndianMarketAggregates",
+      "description": "Retrieve Indian stock aggregates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": false,
+            "type": "1min | 5min | 15min | 30min | 45min | 1h | 2h | 4h | 1day | 1week | 1month"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "date_format",
+            "optional": true,
+            "type": "dt | ts"
+          },
+          {
+            "key": "dbt_filter",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "st",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "et",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "totalResults",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ o: number | null | string | null, h: number | null | string | null, l: number | null | string | null, c: number | null | string | null, v?: number | null | string | null, t: number | null | string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.getIndianMarketLastPrice",
+      "shortPath": "market.getIndianMarketLastPrice",
+      "description": "Retrieve the latest Indian stock price",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "price",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "number | null | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.getInstitutionalHolders",
+      "shortPath": "market.getInstitutionalHolders",
+      "description": "List institutional holders for a company",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ holder: string | null, shares?: number | null, change?: number | null, report_date?: string | null }[]"
+      }
+    },
+    {
+      "path": "finage.api.market.getIpoCalendar",
+      "shortPath": "market.getIpoCalendar",
+      "description": "Retrieve the IPO calendar",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ symbol: string | null, date: string | null, exchange?: string | null, status?: string | null, shares?: number | null, price_range?: string | null, market_cap?: number | null, company?: string | null }[]"
+      }
+    },
+    {
+      "path": "finage.api.market.getMostActiveStocks",
+      "shortPath": "market.getMostActiveStocks",
+      "description": "List the most active US stocks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ symbol: string | null, price: string | null, change: number | null, change_percentage: string | null, company_name: string | null }[]"
+      }
+    },
+    {
+      "path": "finage.api.market.getMutualFundHolders",
+      "shortPath": "market.getMutualFundHolders",
+      "description": "List mutual fund holders for a company",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ holder: string | null, shares?: number | null, change?: number | null, report_date?: string | null, weight_percentage?: number | null }[]"
+      }
+    },
+    {
+      "path": "finage.api.market.getRussianMarketAggregates",
+      "shortPath": "market.getRussianMarketAggregates",
+      "description": "Retrieve Russian stock aggregates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": false,
+            "type": "1min | 5min | 15min | 30min | 45min | 1h | 2h | 4h | 1day | 1week | 1month"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "date_format",
+            "optional": true,
+            "type": "dt | ts"
+          },
+          {
+            "key": "dbt_filter",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "st",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "et",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "totalResults",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ o: number | null | string | null, h: number | null | string | null, l: number | null | string | null, c: number | null | string | null, v?: number | null | string | null, t: number | null | string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.getRussianMarketLastPrice",
+      "shortPath": "market.getRussianMarketLastPrice",
+      "description": "Retrieve the latest Russian stock price",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "price",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "number | null | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.getSecRssFeed",
+      "shortPath": "market.getSecRssFeed",
+      "description": "Retrieve the SEC funds RSS feed",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ title: string | null, date: string | null, link: string | null, cik: string | null, form_type: string | null, ticker: string | null }[]"
+      }
+    },
+    {
+      "path": "finage.api.market.getSectorPerformance",
+      "shortPath": "market.getSectorPerformance",
+      "description": "Retrieve US stock sector performance",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ sector: string | null, change_percentage: string | null }[]"
+      }
+    },
+    {
+      "path": "finage.api.market.getSharesFloat",
+      "shortPath": "market.getSharesFloat",
+      "description": "Retrieve public float and outstanding shares",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ symbol: string | null, public_float?: number | null, stock_float?: number | null, outstanding_shares?: number | null, date?: string | null }[]"
+      }
+    },
+    {
+      "path": "finage.api.market.getStockCompanyDetails",
+      "shortPath": "market.getStockCompanyDetails",
+      "description": "Retrieve company fundamentals for a stock",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ symbol: string | null, logo?: string | null, name: string | null, url?: string | null, description?: string | null, exchange?: string | null, ceo?: string | null, industry?: string | null, state?: string | null, address?: string | null, employees?: number | null, sector?: string | null, marketcap?: number | null } | { symbol: string | null, logo?: string | null, name: string | null, url?: string | null, description?: string | null, exchange?: string | null, ceo?: string | null, industry?: string | null, state?: string | null, address?: string | null, employees?: number | null, sector?: string | null, marketcap?: number | null }[]"
+      }
+    },
+    {
+      "path": "finage.api.market.getStockLastQuote",
+      "shortPath": "market.getStockLastQuote",
+      "description": "Retrieve the latest stock quote",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "ask",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "bid",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "asize",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "bsize",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.getStockLastTrade",
+      "shortPath": "market.getStockLastTrade",
+      "description": "Retrieve the latest stock trade",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "price",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.getStockMarketAggregates",
+      "shortPath": "market.getStockMarketAggregates",
+      "description": "Retrieve stock market aggregates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "multiply",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "time",
+            "optional": false,
+            "type": "minute | hour | day | week | month | quarter | year"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "dbt_filter",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "st",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "et",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_format",
+            "optional": true,
+            "type": "dt | ts"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "totalResults",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ o: number | null, h: number | null, l: number | null, c: number | null, v?: number | null, t: number | null | string }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.getStockMarketNews",
+      "shortPath": "market.getStockMarketNews",
+      "description": "Retrieve market news for a stock",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticker",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "limit",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "news",
+            "optional": false,
+            "type": "{ source: string | null, title: string | null, description: string | null, url: string | null, date: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.getStockMarketStatus",
+      "shortPath": "market.getStockMarketStatus",
+      "description": "Retrieve current market status and schedules",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currencies",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "holidays",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trading_hours",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "extended_hours",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "market",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "exchanges",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "currencies",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.getStockPreviousClose",
+      "shortPath": "market.getStockPreviousClose",
+      "description": "Retrieve the previous stock close",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "totalResults",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ o: number | null, h: number | null, l: number | null, c: number | null, v?: number | null, t: number | null | string }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.getStockSnapshot",
+      "shortPath": "market.getStockSnapshot",
+      "description": "Retrieve a snapshot of stock market data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "quotes",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "trades",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "symbols",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "totalResults",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "lastQuotes",
+            "optional": true,
+            "type": "{ s?: string | null, symbol?: string | null, a?: number | null, b?: number | null, asz?: number | null, bsz?: number | null, t?: number | null }[] | null"
+          },
+          {
+            "key": "lastTrades",
+            "optional": true,
+            "type": "{ s?: string | null, symbol?: string | null, p?: number | null, price?: number | null, sz?: number | null, t?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.getStockSplitCalendar",
+      "shortPath": "market.getStockSplitCalendar",
+      "description": "Retrieve the stock split calendar",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ symbol: string | null, numerator_factor?: number | null, denominator_factor?: number | null, label?: string | null, date: string | null }[]"
+      }
+    },
+    {
+      "path": "finage.api.market.getTechnicalIndicators",
+      "shortPath": "market.getTechnicalIndicators",
+      "description": "Calculate a technical indicator for a market symbol",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "DEMA | EMA | SMA | WMA | RSI | TEMA | Williams | ADX"
+          },
+          {
+            "key": "time",
+            "optional": false,
+            "type": "daily | 1min | 5min | 15min | 30min | 1hour | 4hour"
+          },
+          {
+            "key": "period",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ type: string | null, date: string | null, open: string | null, high: string | null, low: string | null, close: string | null, volume: string | null, value: string | null }[]"
+      }
+    },
+    {
+      "path": "finage.api.market.getTopGainers",
+      "shortPath": "market.getTopGainers",
+      "description": "List the top gaining US stocks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ symbol: string | null, price: string | null, change: string | null, change_percentage: string | null, company_name: string | null }[]"
+      }
+    },
+    {
+      "path": "finage.api.market.getTopLosers",
+      "shortPath": "market.getTopLosers",
+      "description": "List the top losing US stocks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ symbol: string | null, price: string | null, change: string | null, change_percentage: string | null, company_name: string | null }[]"
+      }
+    },
+    {
+      "path": "finage.api.market.getUkMarketAggregates",
+      "shortPath": "market.getUkMarketAggregates",
+      "description": "Retrieve UK stock aggregates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": false,
+            "type": "1min | 5min | 15min | 30min | 45min | 1h | 2h | 4h | 1day | 1week | 1month"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "date_format",
+            "optional": true,
+            "type": "dt | ts"
+          },
+          {
+            "key": "dbt_filter",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "st",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "et",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "totalResults",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ o: number | null | string | null, h: number | null | string | null, l: number | null | string | null, c: number | null | string | null, v?: number | null | string | null, t: number | null | string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.getUkMarketLastPrice",
+      "shortPath": "market.getUkMarketLastPrice",
+      "description": "Retrieve the latest UK stock price",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "price",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "number | null | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.getUsStocksSignal",
+      "shortPath": "market.getUsStocksSignal",
+      "description": "Retrieve a US stock technical signal",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "daily | weekly"
+          },
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ timestamp: string | null, symbol: string | null, signal: string | null, confidence: number | null, indicators: { sma_20: number | null, sma_50: number | null, rsi: number | null, macd: number | null, macd_signal: number | null, macd_diff: number | null, bollinger_high: number | null, bollinger_low: number | null, ma_crossover: boolean | null, macd_cross: boolean | null }, price: number | null } | { timestamp: string | null, symbol: string | null, signal: string | null, confidence: number | null, indicators: { sma_20: number | null, sma_50: number | null, rsi: number | null, macd: number | null, macd_signal: number | null, macd_diff: number | null, bollinger_high: number | null, bollinger_low: number | null, ma_crossover: boolean | null, macd_cross: boolean | null }, price: number | null }[]"
+      }
+    },
+    {
+      "path": "finage.api.market.listCryptocurrencies",
+      "shortPath": "market.listCryptocurrencies",
+      "description": "List supported cryptocurrencies",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "ASC | DESC"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ totalResults?: number | null, total_results?: number | null, results: { symbol: string | null, name: string | null, thumbnail: string | null, market_cap: number | null, ath: number | null, ath_date: string | null, order: number | null }[] | null } | { totalResults?: number | null, total_results?: number | null, results: { symbol: string | null, name: string | null, thumbnail: string | null, market_cap: number | null, ath: number | null, ath_date: string | null, order: number | null }[] | null }[]"
+      }
+    },
+    {
+      "path": "finage.api.market.listSymbols",
+      "shortPath": "market.listSymbols",
+      "description": "List symbols for a supported market",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "market",
+            "optional": false,
+            "type": "us-stock | ca-stock | in-stock | ru-stock | forex | crypto | index"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "symbols",
+            "optional": false,
+            "type": "{ symbol: string | null, name: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finage.api.market.searchCountry",
+      "shortPath": "market.searchCountry",
+      "description": "Search countries by name or code",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ key: string | null, limit: number | null, results: { country: string | null, country_code: string | null, currency: string | null, currency_code: string | null, phone_code: string | null, country_flag: string | null }[] | null } | { key: string | null, limit: number | null, results: { country: string | null, country_code: string | null, currency: string | null, currency_code: string | null, phone_code: string | null, country_flag: string | null }[] | null }[]"
+      }
+    },
+    {
+      "path": "finage.api.market.searchCryptocurrency",
+      "shortPath": "market.searchCryptocurrency",
+      "description": "Search cryptocurrencies by name or code",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ key: string | null, limit: number | null, results: { name: string | null, symbol: string | null, type: string | null, isActive?: boolean | null, is_active?: boolean | string | null }[] | null } | { key: string | null, limit: number | null, results: { name: string | null, symbol: string | null, type: string | null, isActive?: boolean | null, is_active?: boolean | string | null }[] | null }[]"
+      }
+    },
+    {
+      "path": "finage.api.market.searchCurrency",
+      "shortPath": "market.searchCurrency",
+      "description": "Search currencies by name or code",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ key: string | null, limit: number | null, results: { symbol: string | null, from: string | null, to: string | null, from_flag: string | null, to_flag: string | null }[] | null } | { key: string | null, limit: number | null, results: { symbol: string | null, from: string | null, to: string | null, from_flag: string | null, to_flag: string | null }[] | null }[]"
+      }
+    },
+    {
+      "path": "finage.api.market.searchMarket",
+      "shortPath": "market.searchMarket",
+      "description": "Search symbols within a market",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "market",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ key: string | null, market: string | null, limit: number | null, results: { symbol: string | null, description: string | null, s_type: string | null }[] | null } | { key: string | null, market: string | null, limit: number | null, results: { symbol: string | null, description: string | null, s_type: string | null }[] | null }[]"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

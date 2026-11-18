@@ -1,0 +1,4 @@
+displayName: Surf
+description: Crypto and US equity market data from the Surf Data API.
+provider: Surf
+homepage: https://docs.asksurf.ai/

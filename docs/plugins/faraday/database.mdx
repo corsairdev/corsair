@@ -1,6 +1,7 @@
 ---
-title: Database
-description: "Faraday local sync: searchable entities, `.search()` filters, and operators."
+title: "Faraday database"
+sidebarTitle: "Database"
+description: "Faraday local sync in Corsair: the entities stored in your database, the `.search()` filters each one accepts, and the filter operators."
 ---
 
 The Faraday plugin syncs data locally. Use `corsair.faraday.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
@@ -29,6 +30,7 @@ const rows = await corsair.faraday.db.accounts.search({
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `resource_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `created_at` | `string` | equals, contains, startsWith, endsWith, in |
 | `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
 | `archived_at` | `string` | equals, contains, startsWith, endsWith, in |
@@ -65,6 +67,7 @@ const rows = await corsair.faraday.db.cohorts.search({
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `resource_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `created_at` | `string` | equals, contains, startsWith, endsWith, in |
 | `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
 | `archived_at` | `string` | equals, contains, startsWith, endsWith, in |
@@ -98,6 +101,7 @@ const rows = await corsair.faraday.db.connections.search({
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `resource_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `created_at` | `string` | equals, contains, startsWith, endsWith, in |
 | `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
 | `archived_at` | `string` | equals, contains, startsWith, endsWith, in |
@@ -131,6 +135,7 @@ const rows = await corsair.faraday.db.datasets.search({
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `resource_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `created_at` | `string` | equals, contains, startsWith, endsWith, in |
 | `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
 | `archived_at` | `string` | equals, contains, startsWith, endsWith, in |
@@ -194,6 +199,7 @@ const rows = await corsair.faraday.db.outcomes.search({
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `resource_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `created_at` | `string` | equals, contains, startsWith, endsWith, in |
 | `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
 | `archived_at` | `string` | equals, contains, startsWith, endsWith, in |
@@ -227,6 +233,7 @@ const rows = await corsair.faraday.db.personaSets.search({
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `resource_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `created_at` | `string` | equals, contains, startsWith, endsWith, in |
 | `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
 | `archived_at` | `string` | equals, contains, startsWith, endsWith, in |
@@ -260,6 +267,7 @@ const rows = await corsair.faraday.db.places.search({
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `resource_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `created_at` | `string` | equals, contains, startsWith, endsWith, in |
 | `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
 | `archived_at` | `string` | equals, contains, startsWith, endsWith, in |
@@ -293,6 +301,7 @@ const rows = await corsair.faraday.db.scopes.search({
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `resource_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `created_at` | `string` | equals, contains, startsWith, endsWith, in |
 | `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
 | `archived_at` | `string` | equals, contains, startsWith, endsWith, in |
@@ -326,6 +335,7 @@ const rows = await corsair.faraday.db.streams.search({
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `resource_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `created_at` | `string` | equals, contains, startsWith, endsWith, in |
 | `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
 | `archived_at` | `string` | equals, contains, startsWith, endsWith, in |
@@ -359,6 +369,7 @@ const rows = await corsair.faraday.db.targets.search({
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `resource_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `created_at` | `string` | equals, contains, startsWith, endsWith, in |
 | `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
 | `archived_at` | `string` | equals, contains, startsWith, endsWith, in |
@@ -392,6 +403,7 @@ const rows = await corsair.faraday.db.traits.search({
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `resource_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `created_at` | `string` | equals, contains, startsWith, endsWith, in |
 | `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
 | `archived_at` | `string` | equals, contains, startsWith, endsWith, in |
@@ -424,6 +436,7 @@ const rows = await corsair.faraday.db.webhookEndpoints.search({
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `created_at` | `string` | equals, contains, startsWith, endsWith, in |
 | `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
 

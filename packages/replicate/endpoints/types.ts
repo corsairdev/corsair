@@ -24,12 +24,15 @@ const PredictionSchema = z
 			'aborted',
 		]),
 		model: z.string().optional(),
-		version: z.string().optional(),
+		// Null in the answer to starting an official model (flux-schnell), and
+		// "hidden" when it is read back.
+		version: z.string().nullable().optional(),
 		deployment: z.string().optional(),
 		input: JsonObjectSchema.optional(),
 		output: z.unknown().optional(),
 		error: z.string().nullable().optional(),
-		logs: z.string().optional(),
+		// Null in the answer to a cancel.
+		logs: z.string().nullable().optional(),
 		source: z.enum(['api', 'web']).optional(),
 		data_removed: z.boolean().optional(),
 		created_at: DateTimeSchema.optional(),

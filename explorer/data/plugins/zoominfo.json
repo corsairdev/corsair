@@ -64,7 +64,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ outputFields?: string[][], result: { input?: {}, data: { id?: number, name?: string, website?: string, ticker?: string, domainList?: string[], logo?: string, revenue?: number, employeeCount?: number, phone?: string, street?: string, city?: string, state?: string, zipCode?: string, country?: string, companyStatus?: string }[] }[] }"
+            "type": "{ outputFields?: string[][], result: { input?: Record<string, any>, data: { id?: number, name?: string, website?: string, ticker?: string, domainList?: string[], logo?: string, revenue?: number, employeeCount?: number, phone?: string, street?: string, city?: string, state?: string, zipCode?: string, country?: string, companyStatus?: string }[] }[] }"
           }
         ]
       }
@@ -100,7 +100,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ outputFields?: string[][], result: { input?: {}, data: { id?: number, firstName?: string, middleName?: string, lastName?: string, email?: string, phone?: string, mobilePhone?: string, jobTitle?: string, contactAccuracyScore?: number, lastUpdatedDate?: string, validDate?: string, companyId?: number, companyName?: string, companyWebsite?: string }[] }[] }"
+            "type": "{ outputFields?: string[][], result: { input?: Record<string, any>, data: { id?: number, firstName?: string, middleName?: string, lastName?: string, email?: string, phone?: string, mobilePhone?: string, jobTitle?: string, contactAccuracyScore?: number, lastUpdatedDate?: string, validDate?: string, companyId?: number, companyName?: string, companyWebsite?: string }[] }[] }"
           }
         ]
       }
@@ -891,7 +891,7 @@
           {
             "key": "businessModel",
             "optional": true,
-            "type": "B2C | B2B | B2G[]"
+            "type": "(B2C | B2B | B2G)[]"
           },
           {
             "key": "engagementStartDate",
@@ -906,7 +906,7 @@
           {
             "key": "engagementType",
             "optional": true,
-            "type": "email | phone | online meeting[]"
+            "type": "(email | phone | online meeting)[]"
           },
           {
             "key": "marketingDepartmentBudgetMin",
@@ -1418,7 +1418,7 @@
           {
             "key": "engagementType",
             "optional": true,
-            "type": "email | phone | online meeting[]"
+            "type": "(email | phone | online meeting)[]"
           }
         ]
       },

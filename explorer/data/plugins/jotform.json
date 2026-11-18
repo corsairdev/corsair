@@ -1,0 +1,2543 @@
+{
+  "id": "jotform",
+  "displayName": "Jotform",
+  "description": "Manage Jotform online forms, questions, submissions, reports and labels through the official Jotform REST API.",
+  "npmPackageName": "@corsair-dev/jotform",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 45,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "jotform.api.forms.clone",
+      "shortPath": "forms.clone",
+      "description": "Clone an existing form by duplicating its questions and settings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.forms.create",
+      "shortPath": "forms.create",
+      "description": "Create a new form with questions, properties and email settings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "questions",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.forms.createForms",
+      "shortPath": "forms.createForms",
+      "description": "Create new forms using a complete JSON form content structure",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "formContent",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.forms.createQuestion",
+      "shortPath": "forms.createQuestion",
+      "description": "Add a new question field to a specific form",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "question",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.forms.createQuestions",
+      "shortPath": "forms.createQuestions",
+      "description": "Add multiple questions in batch to a specific form",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "questions",
+            "optional": false,
+            "type": "Record<string, any>[] | Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "Record<string, any>[] | Record<string, any>"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.forms.createReport",
+      "shortPath": "forms.createReport",
+      "description": "Create a new report (grid, excel, csv, etc.) for a specific form",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "list_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ id: string, form_id?: string | null, title?: string | null, type?: string | null, url?: string | null, created_at?: string | null, updated_at?: string | null, fields?: string | null }"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.forms.createSubmission",
+      "shortPath": "forms.createSubmission",
+      "description": "Submit a new entry with field answers to a specific form. Jotform runs the form notifications and autoresponder emails as for a real submission",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "submission",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.forms.createSubmissions",
+      "shortPath": "forms.createSubmissions",
+      "description": "Add multiple submission entries in batch to a specific form. Each one can trigger the form notification and autoresponder emails",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "submissions",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.forms.delete",
+      "shortPath": "forms.delete",
+      "description": "Delete a specific form by ID from the account",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.forms.deleteQuestion",
+      "shortPath": "forms.deleteQuestion",
+      "description": "Delete a specific question field from a form",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "qid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string | Record<string, any>"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.forms.get",
+      "shortPath": "forms.get",
+      "description": "Get basic information and status for a specific form",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ id: string, username?: string | null, title?: string | null, height?: string | number | null, status?: string | null, created_at?: string | null, updated_at?: string | null, last_submission?: string | null, new?: string | number | null, count?: string | number | null, type?: string | null, url?: string | null } | { id: string, username?: string | null, title?: string | null, height?: string | number | null, status?: string | null, created_at?: string | null, updated_at?: string | null, last_submission?: string | null, new?: string | number | null, count?: string | number | null, type?: string | null, url?: string | null }[]"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.forms.getFiles",
+      "shortPath": "forms.getFiles",
+      "description": "Get list of all uploaded files across submissions for a specific form",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ name?: string | null, type?: string | null, size?: string | number | null, username?: string | null, form_id?: string | null, submission_id?: string | null, date?: string | null, url?: string | null }[]"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.forms.getProperties",
+      "shortPath": "forms.getProperties",
+      "description": "Get all form properties such as width, height and redirects",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.forms.getProperty",
+      "shortPath": "forms.getProperty",
+      "description": "Get a specific form property by its configuration key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string | number | Record<string, any> | null"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.forms.getQuestion",
+      "shortPath": "forms.getQuestion",
+      "description": "Get configuration and properties for a specific question on a form",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "qid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "Record<string, any> | Record<string, any>[]"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.forms.getQuestions",
+      "shortPath": "forms.getQuestions",
+      "description": "Get full list of questions and form fields for a specific form",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "Record<string, any> | any[]"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.forms.getReports",
+      "shortPath": "forms.getReports",
+      "description": "Get all reports created for a specific form",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ id: string, form_id?: string | null, title?: string | null, type?: string | null, url?: string | null, created_at?: string | null, updated_at?: string | null, fields?: string | null }[]"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.forms.getSubmissions",
+      "shortPath": "forms.getSubmissions",
+      "description": "Get submissions list for a specific form with pagination and filtering",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ id: string, form_id?: string | null, ip?: string | null, created_at?: string | null, updated_at?: string | null, status?: string | null, new?: string | number | null, flag?: string | number | null, answers?: Record<string, any> }[]"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "resultSet",
+            "optional": true,
+            "type": "{ offset?: number | string, limit?: number | string, count?: number | string, orderby?: string, filter?: Record<string, any> }"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.forms.setProperties",
+      "shortPath": "forms.setProperties",
+      "description": "Update or set configuration properties on a specific form",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.forms.updateQuestion",
+      "shortPath": "forms.updateQuestion",
+      "description": "Update properties or label of a specific question on a form",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "qid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "question",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "Record<string, any> | Record<string, any>[]"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.labels.addResources",
+      "shortPath": "labels.addResources",
+      "description": "Add form resources to a specific label",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "resources",
+            "optional": false,
+            "type": "{ id: string, type: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ id: string, type?: string, title?: string, status?: string }[]"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.labels.create",
+      "shortPath": "labels.create",
+      "description": "Create a new label for organizing forms and assets",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, color?: string | null, parent?: string | null }"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.labels.delete",
+      "shortPath": "labels.delete",
+      "description": "Delete a label and all its sublabels",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string | Record<string, any> | boolean"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.labels.get",
+      "shortPath": "labels.get",
+      "description": "Get details and metadata of a specific label",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, color?: string | null, parent?: string | null }"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.labels.getResources",
+      "shortPath": "labels.getResources",
+      "description": "Get list of assets (forms) grouped under a specific label",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ id: string, type?: string, title?: string, status?: string }[]"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "resultSet",
+            "optional": true,
+            "type": "{ offset?: number | string, limit?: number | string, count?: number | string, orderby?: string, filter?: Record<string, any> }"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.labels.removeResources",
+      "shortPath": "labels.removeResources",
+      "description": "Remove form resources from a specific label",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "resources",
+            "optional": false,
+            "type": "{ id: string, type: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ id: string, type?: string, title?: string, status?: string }[]"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.labels.update",
+      "shortPath": "labels.update",
+      "description": "Update name, color or parent of an existing label",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ id?: string, name?: string | null, color?: string | null, parent?: string | null }"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.reports.delete",
+      "shortPath": "reports.delete",
+      "description": "Delete a specific report by report ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "boolean | Record<string, any>"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.reports.get",
+      "shortPath": "reports.get",
+      "description": "Get configuration and URL for a specific report by report ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ id: string, form_id?: string | null, title?: string | null, type?: string | null, url?: string | null, created_at?: string | null, updated_at?: string | null, fields?: string | null } | { id: string, form_id?: string | null, title?: string | null, type?: string | null, url?: string | null, created_at?: string | null, updated_at?: string | null, fields?: string | null }[]"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.submissions.delete",
+      "shortPath": "submissions.delete",
+      "description": "Delete a specific submission record from a form",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string | Record<string, any>"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.submissions.get",
+      "shortPath": "submissions.get",
+      "description": "Get complete submission data and answer records for a specific submission",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ id: string, form_id?: string | null, ip?: string | null, created_at?: string | null, updated_at?: string | null, status?: string | null, new?: string | number | null, flag?: string | number | null, answers?: Record<string, any> }"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.submissions.update",
+      "shortPath": "submissions.update",
+      "description": "Edit answers or read/flag status of an existing submission",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "submission",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.system.getPlan",
+      "shortPath": "system.getPlan",
+      "description": "Get limits and details for a specific Jotform system plan",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "planName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ name?: string | null, price?: string | number | null, submissions?: string | number | null, uploads?: string | number | null, paymentSubmissions?: string | number | null }"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.user.get",
+      "shortPath": "user.get",
+      "description": "Get user account details, including account type, email, website and usage link",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ username: string, name?: string | null, email?: string | null, website?: string | null, time_zone?: string | null, account_type?: string | null, status?: string | null, created_at?: string | null, updated_at?: string | null, is_verified?: string | number | null, usage?: string | null, industry?: string | null, company?: string | null, avatarUrl?: string | null }"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.user.getForms",
+      "shortPath": "user.getForms",
+      "description": "Get list of forms for this account with pagination, ordering and filtering",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ id: string, username?: string | null, title?: string | null, height?: string | number | null, status?: string | null, created_at?: string | null, updated_at?: string | null, last_submission?: string | null, new?: string | number | null, count?: string | number | null, type?: string | null, favorite?: number | string | null, archived?: number | string | null, url?: string | null }[]"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "resultSet",
+            "optional": true,
+            "type": "{ offset?: number | string, limit?: number | string, count?: number | string, orderby?: string, filter?: Record<string, any> }"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.user.getHistory",
+      "shortPath": "user.getHistory",
+      "description": "Get user activity log history records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string | null, date?: number | string | null, ip?: string | null, form_id?: string | null, username?: string | null, parent?: string | null, title?: string | null }[]"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.user.getInvoices",
+      "shortPath": "user.getInvoices",
+      "description": "Get list of invoices and payment receipts for this account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.user.getLabels",
+      "shortPath": "user.getLabels",
+      "description": "Get all labels created by the user for organizing form assets",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "addResources",
+            "optional": true,
+            "type": "string | boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "Record<string, any> | any[]"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.user.getReports",
+      "shortPath": "user.getReports",
+      "description": "Get list of reports generated across all forms in this account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ id: string, form_id?: string | null, title?: string | null, type?: string | null, url?: string | null, created_at?: string | null, updated_at?: string | null, fields?: string | null }[]"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.user.getSettingByKey",
+      "shortPath": "user.getSettingByKey",
+      "description": "Get a specific user setting by key name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string | number | boolean | Record<string, any> | any[] | null"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.user.getSettings",
+      "shortPath": "user.getSettings",
+      "description": "Get user account settings including company, timezone and industry",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.user.getSubmissions",
+      "shortPath": "user.getSubmissions",
+      "description": "Get list of submissions for all forms in this account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ id: string, form_id?: string | null, ip?: string | null, created_at?: string | null, updated_at?: string | null, status?: string | null, new?: string | number | null, flag?: string | number | null, answers?: Record<string, any> }[]"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "resultSet",
+            "optional": true,
+            "type": "{ offset?: number | string, limit?: number | string, count?: number | string, orderby?: string, filter?: Record<string, any> }"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.user.getSubusers",
+      "shortPath": "user.getSubusers",
+      "description": "Get sub-user accounts list and permissions for this account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ owner?: string | null, status?: string | null, email?: string | null, username?: string | null, created_at?: string | null, permissions?: Record<string, any>[] }[]"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.user.getUsage",
+      "shortPath": "user.getUsage",
+      "description": "Get monthly user usage statistics such as submissions, payments and views",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ submissions?: string | number, ssl_submissions?: string | number, payments?: string | number, uploads?: string | number, mobile_submissions?: string | number, views?: string | number, api?: string | number }"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jotform.api.user.updateSettings",
+      "shortPath": "user.updateSettings",
+      "description": "Update user account settings including name, email, website and timezone",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time_zone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "securityQuestion",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "securityAnswer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "industry",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit-left",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

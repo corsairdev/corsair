@@ -1,0 +1,78 @@
+displayName: FinerWorks
+description: Print-on-demand fulfilment - manage images, virtual inventory products, framing options, pricing, shipping rates and orders.
+domain: finerworks.com
+recommendedAuth: api_key
+overviewNote: >-
+  FinerWorks signs every request with two keys: the account's `web_api_key`
+  and an `app_key` for the calling app (create one under Account > API in
+  FinerWorks). Corsair stores the web API key as the tenant's API key and the
+  app key as the account's `app_key` field; you can also pass `appKey` to
+  `finerworks()` to use one app key for every tenant.
+examples:
+  read:
+    path: images.list
+    title: List images in the inventory library
+    args:
+      library:
+        name: inventory
+      per_page: 20
+  write:
+    path: inventory.update
+    title: Change a product's asking price
+    args:
+      virtual_inventory:
+        - sku: AP1556P79511
+          asking_price: 200
+dbExample:
+  entity: orders
+  note: >-
+    `orders.fetchStatus` stores each order by `order_id`. `images.list`,
+    `images.add` and `images.update` store images by `guid`, and
+    `inventory.list` and `inventory.update` store products by `sku`.
+  data:
+    order_status_label: In Production
+apiExamples:
+  account.updateAppDetails:
+    call: "{ app_details: { app_name: 'My storefront', app_live_mode: true } }"
+  account.updateUser:
+    call: "{ shipping_preferences: [0, 2, 1] }"
+  framing.getFrameDetails:
+    call: "{ id: 131 }"
+  galleries.addOrUpdateCollection:
+    call: "{ name: 'Seascapes', visible: true }"
+  images.add:
+    call: "{ library: { name: 'inventory' }, images: [{ title: 'Sunset', file_name: 'sunset.jpg', hires_file_name: 'sunset.jpg', private_hires_uri: 'https://example.com/sunset.jpg' }] }"
+  images.list:
+    call: "{ library: { name: 'inventory' }, page_number: 1, per_page: 20 }"
+  images.update:
+    call: "{ images: [{ guid: '<image-guid>', title: 'Sunset over the bay' }] }"
+  images.delete:
+    call: "{ guids: ['<image-guid>'] }"
+  images.listFileSelection:
+    call: "{ guid: '<selection-guid>' }"
+  images.updateFileSelection:
+    call: "{ guid: '<selection-guid>', guids: ['<image-guid>'] }"
+  inventory.list:
+    call: "{ per_page: 20 }"
+  inventory.update:
+    call: "{ virtual_inventory: [{ sku: 'AP1556P79511', asking_price: 200 }] }"
+  inventory.delete:
+    call: "{ skus: ['AP1556P79511'] }"
+  inventory.disconnect:
+    call: "{ platform: 'shopify' }"
+  orders.deletePending:
+    call: "{ ids: [12345] }"
+  orders.fetchStatus:
+    call: "{ order_ids: [12345] }"
+  orders.savePending:
+    call: "{ source: 'my-storefront', orders: [{ order_po: 'PO-1001', recipient: { first_name: 'Bob', last_name: 'Ross', address_1: '742 Evergreen Terrace', city: 'Springfield', state_code: 'OR', zip_postal_code: '97403', country_code: 'us' }, order_items: [{ product_sku: 'AP1556P79511', product_qty: 1 }] }] }"
+  orders.submit:
+    call: "{ orders: [{ order_po: 'PO-1001', test_mode: true, recipient: { first_name: 'Bob', last_name: 'Ross', address_1: '742 Evergreen Terrace', city: 'Springfield', state_code: 'OR', zip_postal_code: '97403', country_code: 'us' }, order_items: [{ product_sku: 'AP1556P79511', product_qty: 1 }] }] }"
+  orders.validateRecipientAddress:
+    call: "{ recipient: { first_name: 'Bob', last_name: 'Ross', address_1: '742 Evergreen Terrace', city: 'Springfield', state_code: 'OR', zip_postal_code: '97403', country_code: 'us' } }"
+  products.getPrices:
+    call: "{ products: [{ product_sku: 'AP1556P79511', product_qty: 1 }] }"
+  shipping.getOptionIds:
+    call: "{ type: 1 }"
+  shipping.listOptionsMultiple:
+    call: "{ orders: [{ order_po: 'PO-1001', recipient: { first_name: 'Bob', last_name: 'Ross', address_1: '742 Evergreen Terrace', city: 'Springfield', state_code: 'OR', zip_postal_code: '97403', country_code: 'us' }, order_items: [{ product_sku: 'AP1556P79511', product_qty: 1 }] }] }"

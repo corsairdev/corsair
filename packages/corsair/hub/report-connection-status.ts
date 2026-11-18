@@ -97,20 +97,79 @@ export async function registerHubWebhookTenantLink(
 	}).catch(() => {});
 }
 
+// Every endpoint call ends in a status report, so a busy connection re-sent
+// the same "ready, verified" many times a second. Hub needs a change, plus an
+// occasional refresh for its "reported X ago". So the per-call path sends a
+// report only when it differs from the last one this process sent for that
+// connection, or once REPORT_REFRESH_MS has passed. Explicit reports (connect,
+// key saved, webhook link) always go out, and count as the last one sent.
+export const REPORT_REFRESH_MS = 10 * 60 * 1000;
+const MAX_REMEMBERED = 5000;
+const lastSent = new Map<string, { fingerprint: string; at: number }>();
+
+function connectionKey(
+	hub: HubConfig,
+	tenantId: string,
+	plugin: string,
+): string {
+	return [
+		hub.apiUrl,
+		hub.projectApiKey,
+		hub.instanceKey ?? '',
+		tenantId,
+		plugin,
+	].join('\0');
+}
+
+function fingerprintOf(body: ReportConnectionStatusInput): string {
+	return JSON.stringify([
+		body.authType,
+		body.status,
+		body.connected,
+		body.verified,
+		body.missingFields ?? [],
+	]);
+}
+
+function remember(key: string, body: ReportConnectionStatusInput): void {
+	// Re-insert so the Map's order stays oldest-first for eviction.
+	lastSent.delete(key);
+	if (lastSent.size >= MAX_REMEMBERED) {
+		const oldest = lastSent.keys().next().value;
+		if (oldest !== undefined) lastSent.delete(oldest);
+	}
+	lastSent.set(key, {
+		fingerprint: fingerprintOf(body),
+		at: Date.now(),
+	});
+}
+
+function sendReport(hub: HubConfig, body: ReportConnectionStatusInput): void {
+	const key = connectionKey(hub, body.tenantId, body.plugin);
+	remember(key, body);
+	void hubApiPost({
+		hub,
+		path: '/connections/report',
+		body,
+		parseResponse: () => ({ ok: true as const }),
+	}).catch(() => {
+		// Push-only telemetry — never block app operations on hub availability.
+		// Forget it, so the next call reports again.
+		lastSent.delete(key);
+	});
+}
+
+/** Forgets every report this process has sent. For tests. */
+export function resetConnectionReportMemory(): void {
+	lastSent.clear();
+}
+
 function fireAndForgetReport(
 	corsair: unknown,
 	body: ReportConnectionStatusInput,
 ): void {
 	try {
-		const hub = getHubConfig(corsair);
-		void hubApiPost({
-			hub,
-			path: '/connections/report',
-			body,
-			parseResponse: () => ({ ok: true as const }),
-		}).catch(() => {
-			// Push-only telemetry — never block app operations on hub availability.
-		});
+		sendReport(getHubConfig(corsair), body);
 	} catch (error) {
 		if (error instanceof HubNotConfiguredError) {
 			return;
@@ -144,6 +203,10 @@ async function reportPluginConnectionStatusFromBindingAsync(input: {
 	}
 
 	const effectiveTenantId = input.tenantId?.trim() || 'default';
+	// Always read the stored status: a matching `verified` does not mean the
+	// connection is unchanged (e.g. a refused refresh, then a disconnect, both
+	// report verified: false while `connected` flips), and credentials can
+	// change in another process, so an in-memory invalidation would miss it.
 	const authStatus = await getPluginAuthStatus(
 		internal,
 		input.plugin,
@@ -153,18 +216,29 @@ async function reportPluginConnectionStatusFromBindingAsync(input: {
 		return;
 	}
 
-	reportConnectionStatusForHub(
-		input.hub,
-		buildConnectionStatusReport({
-			tenantId: effectiveTenantId,
-			plugin: input.plugin.id,
-			authType: authStatus.authType,
-			status: authStatus.status,
-			connected: authStatus.connected,
-			verified: input.verified ?? authStatus.connected,
-			missingFields: authStatus.missingRequiredFields,
-		}),
+	const body = buildConnectionStatusReport({
+		tenantId: effectiveTenantId,
+		plugin: input.plugin.id,
+		authType: authStatus.authType,
+		status: authStatus.status,
+		connected: authStatus.connected,
+		verified: input.verified ?? authStatus.connected,
+		missingFields: authStatus.missingRequiredFields,
+	});
+	// Read the last report only after the await, and decide and send without
+	// yielding: overlapping calls that finish together then see the report the
+	// first of them just sent, instead of each sending the same one.
+	const prior = lastSent.get(
+		connectionKey(input.hub, effectiveTenantId, input.plugin.id),
 	);
+	if (
+		prior !== undefined &&
+		Date.now() - prior.at < REPORT_REFRESH_MS &&
+		prior.fingerprint === fingerprintOf(body)
+	) {
+		return;
+	}
+	sendReport(input.hub, body);
 }
 
 export function reportConnectionStatus(
@@ -178,14 +252,7 @@ export function reportConnectionStatusForHub(
 	hub: HubConfig,
 	input: ReportConnectionStatusInput,
 ): void {
-	void hubApiPost({
-		hub,
-		path: '/connections/report',
-		body: input,
-		parseResponse: () => ({ ok: true as const }),
-	}).catch(() => {
-		// Push-only telemetry — never block app operations on hub availability.
-	});
+	sendReport(hub, input);
 }
 
 export function reportPluginConnectionStatusFromBinding(input: {

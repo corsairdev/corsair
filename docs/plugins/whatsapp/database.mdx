@@ -1,6 +1,7 @@
 ---
-title: Database
-description: "WhatsApp local sync: searchable entities, `.search()` filters, and operators."
+title: "WhatsApp database"
+sidebarTitle: "Database"
+description: "WhatsApp local sync in Corsair: the entities stored in your database, the `.search()` filters each one accepts, and the filter operators."
 ---
 
 The WhatsApp plugin syncs data locally. Use `corsair.whatsapp.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
@@ -89,6 +90,7 @@ const rows = await corsair.whatsapp.db.messages.search({
 | `type` | `string` | equals, contains, startsWith, endsWith, in |
 | `text` | `string` | equals, contains, startsWith, endsWith, in |
 | `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `direction` | `string` | equals, contains, startsWith, endsWith, in |
 | `timestamp` | `string` | equals, contains, startsWith, endsWith, in |
 | `phoneNumberId` | `string` | equals, contains, startsWith, endsWith, in |
 | `businessAccountId` | `string` | equals, contains, startsWith, endsWith, in |

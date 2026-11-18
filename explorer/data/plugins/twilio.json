@@ -83,13 +83,13 @@
           },
           {
             "key": "date_created",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "date_updated",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "account_sid",
@@ -119,7 +119,7 @@
           {
             "key": "phone_number_sid",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -129,27 +129,27 @@
           {
             "key": "start_time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "end_time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "duration",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "price",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "price_unit",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "direction",
@@ -169,7 +169,7 @@
           {
             "key": "subresource_uris",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       }
@@ -199,13 +199,13 @@
           },
           {
             "key": "date_created",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "date_updated",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "account_sid",
@@ -235,7 +235,7 @@
           {
             "key": "phone_number_sid",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -245,27 +245,27 @@
           {
             "key": "start_time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "end_time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "duration",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "price",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "price_unit",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "direction",
@@ -285,7 +285,7 @@
           {
             "key": "subresource_uris",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       }
@@ -336,7 +336,7 @@
           {
             "key": "calls",
             "optional": false,
-            "type": "{ sid: string, date_created?: string | null, date_updated?: string | null, account_sid: string, to: string, to_formatted?: string, from: string, from_formatted?: string, phone_number_sid?: string | null, status: string, start_time?: string | null, end_time?: string | null, duration?: string | null, price?: string | null, price_unit?: string | null, direction: string, api_version?: string, uri: string, subresource_uris?: {} }[]"
+            "type": "{ sid: string, date_created: string | null, date_updated: string | null, account_sid: string, to: string, to_formatted?: string, from: string, from_formatted?: string, phone_number_sid?: string | null, status: string, start_time?: string | null, end_time?: string | null, duration?: string | null, price: string | null, price_unit: string | null, direction: string, api_version?: string, uri: string, subresource_uris?: Record<string, string> }[]"
           },
           {
             "key": "first_page_uri",
@@ -346,12 +346,12 @@
           {
             "key": "next_page_uri",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous_page_uri",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "page",
@@ -396,18 +396,18 @@
           },
           {
             "key": "date_created",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "date_updated",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "date_sent",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "account_sid",
@@ -426,8 +426,8 @@
           },
           {
             "key": "body",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -437,12 +437,12 @@
           {
             "key": "num_segments",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "num_media",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "direction",
@@ -456,23 +456,23 @@
           },
           {
             "key": "price",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "price_unit",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "error_code",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "error_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "uri",
@@ -482,7 +482,7 @@
           {
             "key": "subresource_uris",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       }
@@ -523,7 +523,7 @@
           {
             "key": "messages",
             "optional": false,
-            "type": "{ sid: string, date_created?: string | null, date_updated?: string | null, date_sent?: string | null, account_sid: string, to: string, from: string, body?: string | null, status: string, num_segments?: string | null, num_media?: string | null, direction: string, api_version?: string, price?: string | null, price_unit?: string | null, error_code?: number | null, error_message?: string | null, uri: string, subresource_uris?: {} }[]"
+            "type": "{ sid: string, date_created: string | null, date_updated: string | null, date_sent: string | null, account_sid: string, to: string, from: string, body: string | null, status: string, num_segments?: string | null, num_media?: string | null, direction: string, api_version?: string, price: string | null, price_unit: string | null, error_code?: number | null, error_message?: string | null, uri: string, subresource_uris?: Record<string, string> }[]"
           },
           {
             "key": "first_page_uri",
@@ -533,12 +533,12 @@
           {
             "key": "next_page_uri",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous_page_uri",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "page",
@@ -608,18 +608,18 @@
           },
           {
             "key": "date_created",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "date_updated",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "date_sent",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "account_sid",
@@ -638,8 +638,8 @@
           },
           {
             "key": "body",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -649,12 +649,12 @@
           {
             "key": "num_segments",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "num_media",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "direction",
@@ -668,23 +668,23 @@
           },
           {
             "key": "price",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "price_unit",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "error_code",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "error_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "uri",
@@ -694,7 +694,7 @@
           {
             "key": "subresource_uris",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       }

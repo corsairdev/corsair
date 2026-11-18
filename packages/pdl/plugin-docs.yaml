@@ -1,0 +1,50 @@
+displayName: People Data Labs
+description: B2B person and company data - enrichment, dataset search, identity resolution, IP lookups and cleaners from People Data Labs.
+domain: peopledatalabs.com
+recommendedAuth: api_key
+examples:
+  read:
+    path: person.enrich
+    title: Enrich a person profile
+    args:
+      profile: linkedin.com/in/gracehopper
+      min_likelihood: 8
+  write:
+    path: person.search
+    title: Search the person dataset
+    args:
+      query:
+        term:
+          job_company_name: people data labs
+      size: 10
+dbExample:
+  entity: people
+  note: Matched people are stored by their PDL person id when a database is configured, so re-enriching the same profile refreshes the row instead of duplicating it.
+  data:
+    pdlId: person_abc
+    name: grace hopper
+apiExamples:
+  person.enrich:
+    call: "{ profile: 'linkedin.com/in/gracehopper', min_likelihood: 8 }"
+  person.search:
+    call: "{ query: { term: { location_country: 'mexico' } }, dataset: 'phone,-resume', size: 10 }"
+  person.identify:
+    call: "{ name: 'grace hopper', company: 'us navy', include_if_matched: true }"
+  person.bulk:
+    call: "{ requests: [{ params: { profile: 'linkedin.com/in/a' } }, { params: { email: 'b@example.com' }, metadata: { row: 2 } }] }"
+  company.enrich:
+    call: "{ website: 'peopledatalabs.com' }"
+  company.search:
+    call: "{ sql: \"SELECT * FROM company WHERE tags='mobile'\", size: 10 }"
+  company.clean:
+    call: "{ website: 'www.peopledatalabs.com' }"
+  school.clean:
+    call: "{ name: 'harverd' }"
+  location.clean:
+    call: "{ location: 'san fransisco' }"
+  ip.enrich:
+    call: "{ ip: '174.110.144.98', return_person: true, min_confidence: 'high' }"
+  job.search:
+    call: "{ title: 'software engineer', company_website: 'peopledatalabs.com', is_active: true, size: 10 }"
+  autocomplete.suggest:
+    call: "{ field: 'job_title', text: 'soft', size: 10 }"

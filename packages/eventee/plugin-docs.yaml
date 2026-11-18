@@ -1,0 +1,149 @@
+displayName: "Eventee"
+description: Manage an Eventee event program, partners, attendees, registrations, groups and session reviews through the public REST API.
+overviewNote: >-
+  Install with `pnpm add corsair @corsair-dev/eventee`. Before calling this
+  plugin, generate a per-event API token in the Eventee admin and configure it
+  as the plugin API key. The generated API-key prompt only stores a token you
+  already created; it does not provision Eventee credentials. API access is
+  available on selected Eventee plans. The token scopes all requests to one
+  event.
+recommendedAuth: api_key
+factory:
+  note: >-
+    First create an API token in the Eventee admin settings for the target
+    event, then enter it when Corsair prompts for the API key. Corsair cannot
+    create or regenerate this provider token.
+examples:
+  read:
+    path: attendees.get
+    args: {}
+  write:
+    path: session.post
+    args:
+      name: Opening Keynote
+      start: "2024-06-01 09:00:00"
+      end: "2024-06-01 10:00:00"
+      hall_id: 1
+apiNotes:
+  contentReset.delete: >-
+    Irreversibly removes every session, break, hall, speaker and label in the
+    event. This does not remove partners, attendees, registrations or groups.
+  content.get: >-
+    Output type note: Eventee's OpenAPI omits item schemas for session fields
+    `files`, `visible_in_groups` and `mandatory_for_groups`; these remain
+    `unknown[]` and render as `any[]` in compact type blocks.
+  hall.delete: Deleting a hall also deletes every session assigned to that hall.
+  hall.patch: >-
+    `name` is required and an omitted `order` is kept, but an omitted `stream`
+    removes the hall's live stream. Pass the current `stream` code to keep it.
+  session.patch: >-
+    Omitted speakers and tracks are removed and omitted type/capacity reset,
+    while hall and stream are kept. Output type note: Eventee's OpenAPI omits
+    item schemas for session fields `files`, `visible_in_groups` and
+    `mandatory_for_groups`; these remain `unknown[]` and render as `any[]` in
+    compact type blocks.
+  partner.patch: >-
+    This is a replacement update: omitted text fields are cleared, and omitted
+    logo_url/photo_url remove the sponsor/exhibitor listing.
+  partner.post: >-
+    At least one of logo_url or photo_url is required. logo_url lists the
+    partner as a sponsor; photo_url lists it as an exhibitor.
+  partnerSections.patch: >-
+    Replaces the full ordered section list; omitted sections are deleted.
+    Types 0-5 represent heading, HTML, links, images, files and social links.
+  session.post: >-
+    Output type note: Eventee's OpenAPI omits item schemas for session fields
+    `files`, `visible_in_groups` and `mandatory_for_groups`; these remain
+    `unknown[]` and render as `any[]` in compact type blocks.
+  attendeeInvite.put: >-
+    The first 25 users are processed immediately and the rest in the background.
+    Eventee skips event admins/moderators and entries it rejects. Every email
+    is validated locally first, so one malformed address fails the whole call
+    before anything is sent.
+    `send_email: true` makes Eventee email each person an invitation; leave it
+    unset or false for a silent import.
+  registrationInvite.put: >-
+    The first 25 registrations are processed immediately and the rest in the
+    background. Eventee skips entries it rejects; duplicate emails update
+    existing registrations. Every email is validated locally first, so one
+    malformed address fails the whole call before anything is sent.
+    `send_email: true` makes Eventee email each person; leave it unset or false
+    for a silent import.
+  attendees.get: >-
+    Eventee returns all participants in one response with no pagination.
+    Emails can be non-contactable placeholders for anonymous or deleted accounts.
+  registrations.get: >-
+    Eventee returns all registrations in one response with no pagination.
+    Status values are 0 pending, 1 confirmed, and 2 declined. Output type note:
+    `answer_histories` and `form_answers` remain `unknown[]` because the
+    OpenAPI omits their item schemas; compact type blocks render them as `any[]`.
+  partner.get: Eventee returns all partners in one response; no pagination is documented.
+  groups.get: Eventee returns all attendee groups in one response; no pagination is documented.
+  reviews.get: >-
+    Eventee returns all session reviews in one response; no pagination is
+    documented. Nested session fields `files`, `visible_in_groups` and
+    `mandatory_for_groups` remain `unknown[]` because their item schemas are
+    omitted by the OpenAPI and render as `any[]` in compact type blocks.
+apiExamples:
+  content.get:
+    call: "{ date: '2024-06-01', with_overlapping: false }"
+  contentReset.delete:
+    call: "{}"
+  hall.post:
+    call: "{ name: 'Main Stage', order: 0 }"
+  hall.patch:
+    call: "{ hall_id: 1, name: 'Main Stage', order: 0 }"
+  hall.delete:
+    call: "{ hall_id: 1 }"
+  session.post:
+    call: "{ name: 'Opening Keynote', start: '2024-06-01 09:00:00', end: '2024-06-01 10:00:00', hall_id: 1, type: 0 }"
+  session.patch:
+    call: "{ lecture_id: 1, name: 'Opening Keynote', start: '2024-06-01 09:00:00', end: '2024-06-01 10:00:00' }"
+  session.delete:
+    call: "{ lecture_id: 1 }"
+  pause.post:
+    call: "{ name: 'Coffee Break', start: '2024-06-01 10:00:00', end: '2024-06-01 10:30:00' }"
+  pause.patch:
+    call: "{ pause_id: 1, name: 'Coffee Break', start: '2024-06-01 10:00:00', end: '2024-06-01 10:30:00' }"
+  pause.delete:
+    call: "{ pause_id: 1 }"
+  speaker.post:
+    call: "{ name: 'Jane Doe', email: 'jane.doe@example.com' }"
+  speaker.patch:
+    call: "{ speakerTmp_id: 1, position: 'CTO' }"
+  speaker.delete:
+    call: "{ speakerTmp_id: 1 }"
+  label.post:
+    call: "{ name: 'Technology', color: '#3B82F6' }"
+  label.patch:
+    call: "{ track_id: 1, name: 'Technology', color: '#3B82F6' }"
+  label.delete:
+    call: "{ track_id: 1 }"
+  partner.post:
+    call: "{ company: 'Acme Corp', logo_url: 'https://acme.example.com/logo.png' }"
+  partner.patch:
+    call: "{ partner_id: 1, company: 'Acme Corp', logo_url: 'https://acme.example.com/logo.png' }"
+  partner.delete:
+    call: "{ partner_id: 1 }"
+  partnerSections.patch:
+    call: "{ partner_id: 1, sections: [{ type: 0, title: 'About Acme' }] }"
+  partner.get:
+    call: "{}"
+  attendeeInvite.put:
+    call: "{ users: [{ email: 'jane.doe@example.com', first_name: 'Jane', send_email: false }] }"
+  attendeeCheckIn.patch:
+    call: "{ attendee_id: 7, checkin: true }"
+  attendees.get:
+    call: "{}"
+  attendees.delete:
+    call: "{ email: 'jane.doe@example.com' }"
+  registrationInvite.put:
+    call: "{ registrations: [{ email: 'jane.doe@example.com', first_name: 'Jane' }] }"
+  registrations.get:
+    call: "{}"
+  registrations.delete:
+    call: "{ email: 'jane.doe@example.com' }"
+  groups.get:
+    call: "{}"
+  reviews.get:
+    call: "{}"

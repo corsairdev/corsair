@@ -1,0 +1,1370 @@
+{
+  "id": "ngrok",
+  "displayName": "ngrok",
+  "description": "Manage ngrok cloud endpoints and their traffic policies, reserve custom domains, list agent tunnels and API keys, and manage event subscriptions that deliver ngrok events to your destinations.",
+  "npmPackageName": "@corsair-dev/ngrok",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 18,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "ngrok.api.apiKeys.create",
+      "shortPath": "apiKeys.create",
+      "description": "Mint an API key; the token is returned once in this response and never again, so it must be stored now",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "owner_id",
+            "optional": true,
+            "type": "string",
+            "description": "Create the key for this user instead of the caller."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "uri",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "owner_id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ngrok.api.apiKeys.delete",
+      "shortPath": "apiKeys.delete",
+      "description": "Revoke an API key permanently; anything still using it stops authenticating",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The resource id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ngrok.api.apiKeys.list",
+      "shortPath": "apiKeys.list",
+      "description": "List the account’s API keys without their tokens, with owner and creation time",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "before_id",
+            "optional": true,
+            "type": "string",
+            "description": "The page cursor: the before_id from the last next_page_uri, or that whole URL."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Most results to return."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keys",
+            "optional": false,
+            "type": "{ id?: string | null, uri?: string | null, description?: string | null, metadata?: string | null, created_at?: string | null, token?: string | null, owner_id?: string | null }[]"
+          },
+          {
+            "key": "uri",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_page_uri",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ngrok.api.domains.create",
+      "shortPath": "domains.create",
+      "description": "Reserve a hostname and return the CNAME target to point DNS at; certificate issuance starts once it resolves",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "The hostname to reserve, e.g. app.example.com."
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "certificate_id",
+            "optional": true,
+            "type": "string",
+            "description": "Attach an uploaded certificate instead of an automatic one."
+          },
+          {
+            "key": "certificate_management_policy",
+            "optional": true,
+            "type": "{ authority?: string, private_key_type?: string }",
+            "description": "Automatic certificate issuance and renewal; an empty object takes the defaults."
+          },
+          {
+            "key": "resolves_to",
+            "optional": true,
+            "type": "{ value: string }[]",
+            "description": "Only serve the domain from these points of presence, e.g. [{ value: 'us-cal-1' }, { value: 'eu' }]."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "uri",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cname_target",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "certificate",
+            "optional": true,
+            "type": "{ id?: string | null, uri?: string | null } | null"
+          },
+          {
+            "key": "certificate_management_policy",
+            "optional": true,
+            "type": "{ authority?: string | null, private_key_type?: string | null } | null"
+          },
+          {
+            "key": "resolves_to",
+            "optional": true,
+            "type": "{ value?: string | null }[] | null"
+          },
+          {
+            "key": "is_dev",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "certificate_management_status",
+            "optional": true,
+            "type": "{ renews_at?: string | null, provisioning_job?: { error_code?: string | null, started_at?: string | null, finished_at?: string | null } | null } | null"
+          },
+          {
+            "key": "acme_challenge_cname_target",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ngrok.api.domains.delete",
+      "shortPath": "domains.delete",
+      "description": "Release a reserved domain, which stops it resolving through ngrok; another account can then claim it",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The resource id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ngrok.api.domains.get",
+      "shortPath": "domains.get",
+      "description": "Read one reserved domain, including its certificate provisioning status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The resource id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "uri",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cname_target",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "certificate",
+            "optional": true,
+            "type": "{ id?: string | null, uri?: string | null } | null"
+          },
+          {
+            "key": "certificate_management_policy",
+            "optional": true,
+            "type": "{ authority?: string | null, private_key_type?: string | null } | null"
+          },
+          {
+            "key": "resolves_to",
+            "optional": true,
+            "type": "{ value?: string | null }[] | null"
+          },
+          {
+            "key": "is_dev",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "certificate_management_status",
+            "optional": true,
+            "type": "{ renews_at?: string | null, provisioning_job?: { error_code?: string | null, started_at?: string | null, finished_at?: string | null } | null } | null"
+          },
+          {
+            "key": "acme_challenge_cname_target",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ngrok.api.domains.list",
+      "shortPath": "domains.list",
+      "description": "List reserved domains with their CNAME target and certificate state",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "before_id",
+            "optional": true,
+            "type": "string",
+            "description": "The page cursor: the before_id from the last next_page_uri, or that whole URL."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Most results to return."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reserved_domains",
+            "optional": false,
+            "type": "{ id?: string | null, uri?: string | null, created_at?: string | null, description?: string | null, metadata?: string | null, domain?: string | null, region?: string | null, cname_target?: string | null, certificate?: { id?: string | null, uri?: string | null } | null, certificate_management_policy?: { authority?: string | null, private_key_type?: string | null } | null, resolves_to?: { value?: string | null }[] | null, is_dev?: boolean | null, certificate_management_status?: { renews_at?: string | null, provisioning_job?: { error_code?: string | null, started_at?: string | null, finished_at?: string | null } | null } | null, acme_challenge_cname_target?: string | null }[]"
+          },
+          {
+            "key": "uri",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_page_uri",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ngrok.api.domains.update",
+      "shortPath": "domains.update",
+      "description": "Change a reserved domain’s description, certificate, management policy or allowed IPs",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The resource id."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "certificate_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "certificate_management_policy",
+            "optional": true,
+            "type": "{ authority?: string, private_key_type?: string }",
+            "description": "Automatic certificate issuance and renewal; an empty object takes the defaults."
+          },
+          {
+            "key": "resolves_to",
+            "optional": true,
+            "type": "{ value: string }[]",
+            "description": "Only serve the domain from these points of presence, e.g. [{ value: 'us-cal-1' }, { value: 'eu' }]."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "uri",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cname_target",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "certificate",
+            "optional": true,
+            "type": "{ id?: string | null, uri?: string | null } | null"
+          },
+          {
+            "key": "certificate_management_policy",
+            "optional": true,
+            "type": "{ authority?: string | null, private_key_type?: string | null } | null"
+          },
+          {
+            "key": "resolves_to",
+            "optional": true,
+            "type": "{ value?: string | null }[] | null"
+          },
+          {
+            "key": "is_dev",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "certificate_management_status",
+            "optional": true,
+            "type": "{ renews_at?: string | null, provisioning_job?: { error_code?: string | null, started_at?: string | null, finished_at?: string | null } | null } | null"
+          },
+          {
+            "key": "acme_challenge_cname_target",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ngrok.api.endpoints.create",
+      "shortPath": "endpoints.create",
+      "description": "Create a cloud endpoint at a URL you own (e.g. your ngrok dev domain); its required Traffic Policy decides what happens to requests, and it serves immediately",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The endpoint's own address, the URL clients connect to, e.g. https://your-domain.ngrok-free.dev. Where traffic goes is set in traffic_policy."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string",
+            "description": "The endpoint type. Only 'cloud' is supported; defaults to it."
+          },
+          {
+            "key": "traffic_policy",
+            "optional": false,
+            "type": "string",
+            "description": "The Traffic Policy, as YAML or JSON text. Required for a cloud endpoint, and it must end in a terminal action such as forward-internal, redirect or custom-response."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bindings",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "public_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "proto",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "scheme",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hostport",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "host",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "port",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "{ id?: string | null, uri?: string | null } | null"
+          },
+          {
+            "key": "tcp_addr",
+            "optional": true,
+            "type": "{ id?: string | null, uri?: string | null } | null"
+          },
+          {
+            "key": "tunnel",
+            "optional": true,
+            "type": "{ id?: string | null, uri?: string | null } | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "upstream_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "upstream_protocol",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "traffic_policy",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "bindings",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "principal",
+            "optional": true,
+            "type": "{ id?: string | null, uri?: string | null } | null"
+          },
+          {
+            "key": "tunnel_session",
+            "optional": true,
+            "type": "{ id?: string | null, uri?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ngrok.api.endpoints.delete",
+      "shortPath": "endpoints.delete",
+      "description": "Delete a cloud endpoint; its public URL stops resolving and ngrok has no restore call",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The resource id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ngrok.api.endpoints.get",
+      "shortPath": "endpoints.get",
+      "description": "Read one cloud endpoint by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The resource id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "public_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "proto",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "scheme",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hostport",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "host",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "port",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "{ id?: string | null, uri?: string | null } | null"
+          },
+          {
+            "key": "tcp_addr",
+            "optional": true,
+            "type": "{ id?: string | null, uri?: string | null } | null"
+          },
+          {
+            "key": "tunnel",
+            "optional": true,
+            "type": "{ id?: string | null, uri?: string | null } | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "upstream_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "upstream_protocol",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "traffic_policy",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "bindings",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "principal",
+            "optional": true,
+            "type": "{ id?: string | null, uri?: string | null } | null"
+          },
+          {
+            "key": "tunnel_session",
+            "optional": true,
+            "type": "{ id?: string | null, uri?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ngrok.api.endpoints.list",
+      "shortPath": "endpoints.list",
+      "description": "List cloud endpoints with their public URL, upstream and traffic policy, newest first",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "before_id",
+            "optional": true,
+            "type": "string",
+            "description": "The page cursor: the before_id from the last next_page_uri, or that whole URL."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Most results to return."
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string",
+            "description": "A CEL expression over each item as `obj`, e.g. obj.description == \"my app\" or obj.proto == \"https\"."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "endpoints",
+            "optional": false,
+            "type": "{ id?: string | null, region?: string | null, created_at?: string | null, updated_at?: string | null, public_url?: string | null, proto?: string | null, scheme?: string | null, hostport?: string | null, host?: string | null, port?: number | null, type?: string | null, metadata?: string | null, description?: string | null, domain?: { id?: string | null, uri?: string | null } | null, tcp_addr?: { id?: string | null, uri?: string | null } | null, tunnel?: { id?: string | null, uri?: string | null } | null, url?: string | null, upstream_url?: string | null, upstream_protocol?: string | null, traffic_policy?: string | null, bindings?: string[] | null, principal?: { id?: string | null, uri?: string | null } | null, tunnel_session?: { id?: string | null, uri?: string | null } | null }[]"
+          },
+          {
+            "key": "uri",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_page_uri",
+            "optional": true,
+            "type": "string | null",
+            "description": "The next page URL, null on the last page; pass it (or its before_id) as before_id."
+          }
+        ]
+      }
+    },
+    {
+      "path": "ngrok.api.endpoints.update",
+      "shortPath": "endpoints.update",
+      "description": "Change an endpoint’s description, metadata, traffic policy or bindings, leaving fields that are omitted alone",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The resource id."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "A new description. An empty string clears it."
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "traffic_policy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bindings",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "public_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "proto",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "scheme",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hostport",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "host",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "port",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "{ id?: string | null, uri?: string | null } | null"
+          },
+          {
+            "key": "tcp_addr",
+            "optional": true,
+            "type": "{ id?: string | null, uri?: string | null } | null"
+          },
+          {
+            "key": "tunnel",
+            "optional": true,
+            "type": "{ id?: string | null, uri?: string | null } | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "upstream_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "upstream_protocol",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "traffic_policy",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "bindings",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "principal",
+            "optional": true,
+            "type": "{ id?: string | null, uri?: string | null } | null"
+          },
+          {
+            "key": "tunnel_session",
+            "optional": true,
+            "type": "{ id?: string | null, uri?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ngrok.api.events.create",
+      "shortPath": "events.create",
+      "description": "Subscribe to event types and deliver them to existing destination ids, which are created through a separate API",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sources",
+            "optional": false,
+            "type": "{ type: string }[]",
+            "description": "Event types that trigger the subscription, e.g. [{ type: \"endpoint.created\" }]."
+          },
+          {
+            "key": "destination_ids",
+            "optional": false,
+            "type": "string[]",
+            "description": "Where to deliver the events. A destination is created separately and is not wrapped here."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "uri",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sources",
+            "optional": true,
+            "type": "{ type?: string | null, uri?: string | null }[] | null"
+          },
+          {
+            "key": "destinations",
+            "optional": true,
+            "type": "{ id?: string | null, uri?: string | null, description?: string | null, metadata?: string | null, created_at?: string | null, target?: { id?: string | null, uri?: string | null } | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ngrok.api.events.delete",
+      "shortPath": "events.delete",
+      "description": "Delete an event subscription, which stops those events being delivered",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The resource id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ngrok.api.events.get",
+      "shortPath": "events.get",
+      "description": "Read one event subscription by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The resource id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "uri",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sources",
+            "optional": true,
+            "type": "{ type?: string | null, uri?: string | null }[] | null"
+          },
+          {
+            "key": "destinations",
+            "optional": true,
+            "type": "{ id?: string | null, uri?: string | null, description?: string | null, metadata?: string | null, created_at?: string | null, target?: { id?: string | null, uri?: string | null } | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ngrok.api.events.list",
+      "shortPath": "events.list",
+      "description": "List event subscriptions with their sources and destinations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "before_id",
+            "optional": true,
+            "type": "string",
+            "description": "The page cursor: the before_id from the last next_page_uri, or that whole URL."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Most results to return."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_subscriptions",
+            "optional": false,
+            "type": "{ id?: string | null, uri?: string | null, created_at?: string | null, metadata?: string | null, description?: string | null, sources?: { type?: string | null, uri?: string | null }[] | null, destinations?: { id?: string | null, uri?: string | null, description?: string | null, metadata?: string | null, created_at?: string | null, target?: { id?: string | null, uri?: string | null } | null }[] | null }[]"
+          },
+          {
+            "key": "uri",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_page_uri",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ngrok.api.tunnels.list",
+      "shortPath": "tunnels.list",
+      "description": "List the tunnels open agent sessions and their public URLs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "before_id",
+            "optional": true,
+            "type": "string",
+            "description": "The page cursor: the before_id from the last next_page_uri, or that whole URL."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Most results to return."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tunnels",
+            "optional": false,
+            "type": "{ id?: string | null, public_url?: string | null, started_at?: string | null, metadata?: string | null, proto?: string | null, region?: string | null, tunnel_session?: { id?: string | null, uri?: string | null } | null, endpoint?: { id?: string | null, uri?: string | null } | null, labels?: Record<string, string> | null, backends?: { id?: string | null, uri?: string | null }[] | null, forwards_to?: string | null }[]"
+          },
+          {
+            "key": "uri",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_page_uri",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

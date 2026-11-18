@@ -1,0 +1,902 @@
+{
+  "account.getAccountInfo": {
+    "path": "/api/v1/account/info",
+    "options": {}
+  },
+  "account.getBalance": {
+    "path": "/api/v1/balance",
+    "options": {}
+  },
+  "account.getOrganisationBalanceHistory": {
+    "path": "/api/v1/balance/history",
+    "options": {
+      "query": {
+        "dateFrom": "2026-01-01",
+        "dateTo": "2026-01-31"
+      }
+    }
+  },
+  "account.generateApiToken": {
+    "path": "/api/v1/auth/token",
+    "options": {
+      "method": "POST"
+    }
+  },
+  "contacts.addContact": {
+    "path": "/api/v1/contact",
+    "options": {
+      "method": "POST",
+      "body": {
+        "channels": [
+          {
+            "type": "email",
+            "value": "person@example.com"
+          }
+        ],
+        "fields": [
+          {
+            "id": 79814,
+            "value": "gold"
+          }
+        ],
+        "address": {
+          "town": "Toulouse"
+        }
+      }
+    }
+  },
+  "contacts.getContact": {
+    "path": "/api/v1/contact/1",
+    "options": {}
+  },
+  "contacts.updateContact": {
+    "path": "/api/v1/contact/1",
+    "options": {
+      "method": "PUT",
+      "body": {
+        "firstName": "Ada",
+        "channels": [
+          {
+            "type": "email",
+            "value": "person@example.com"
+          }
+        ]
+      }
+    }
+  },
+  "contacts.deleteContactById": {
+    "path": "/api/v1/contact/1",
+    "options": {
+      "method": "DELETE",
+      "query": {
+        "erase": true
+      }
+    }
+  },
+  "contacts.deleteContactByExternalCustomerId": {
+    "path": "/api/v1/contact",
+    "options": {
+      "method": "DELETE",
+      "query": {
+        "externalCustomerId": "AB12770"
+      }
+    }
+  },
+  "contacts.searchContacts": {
+    "path": "/api/v1/contacts",
+    "options": {
+      "query": {
+        "email": "person@example.com",
+        "maxrows": 100
+      }
+    }
+  },
+  "contacts.subscribeContact": {
+    "path": "/api/v1/contact/subscribe",
+    "options": {
+      "method": "POST",
+      "body": {
+        "contact": {
+          "channels": [
+            {
+              "type": "email",
+              "value": "person@example.com"
+            }
+          ]
+        },
+        "groups": ["Newsletter"]
+      }
+    }
+  },
+  "contacts.contactsBulkUpdate": {
+    "path": "/api/v1/contacts",
+    "options": {
+      "method": "POST",
+      "body": {
+        "contacts": [],
+        "dedupeOn": "email"
+      }
+    }
+  },
+  "contacts.fileContactsBulkUpdate": {
+    "path": "/api/v1/contacts/upload",
+    "options": {
+      "method": "POST",
+      "body": {
+        "dedupeOn": "email",
+        "link": "https://example.com/contacts.csv"
+      }
+    }
+  },
+  "contacts.getImportSessionStatus": {
+    "path": "/api/v1/importstatus/session%2F1",
+    "options": {}
+  },
+  "contacts.getContactEmails": {
+    "path": "/api/v1/contacts/email",
+    "options": {
+      "query": {
+        "ids": "1,2"
+      }
+    }
+  },
+  "contacts.addToUnsubscribed": {
+    "path": "/api/v1/emails/unsubscribed/add",
+    "options": {
+      "method": "POST",
+      "body": {
+        "emails": ["person@example.com"]
+      }
+    }
+  },
+  "contacts.deleteFromUnsubscribed": {
+    "path": "/api/v1/emails/unsubscribed/delete",
+    "options": {
+      "method": "POST",
+      "body": {
+        "emails": ["person@example.com"]
+      }
+    }
+  },
+  "contacts.getGroupContacts": {
+    "path": "/api/v1/group/1/contacts",
+    "options": {
+      "query": {
+        "maxrows": 50
+      }
+    }
+  },
+  "contacts.detachContactsFromGroup": {
+    "path": "/api/v1/group/1/contacts/detach",
+    "options": {
+      "method": "POST",
+      "body": {
+        "contactIds": [2]
+      }
+    }
+  },
+  "contacts.attachContactsToGroup": {
+    "path": "/api/v1/group/1/contacts/attach",
+    "options": {
+      "method": "POST",
+      "body": {
+        "externalCustomerIds": ["AB12770"]
+      }
+    }
+  },
+  "contacts.searchGroups": {
+    "path": "/api/v1/groups",
+    "options": {
+      "query": {
+        "name": "VIP"
+      }
+    }
+  },
+  "contacts.searchWorkflows": {
+    "path": "/api/v1/workflows",
+    "options": {
+      "query": {
+        "name": "Welcome"
+      }
+    }
+  },
+  "contacts.getContactIdByToken": {
+    "path": "/api/v1/contact/token/app%2Fid/token%3Fx/contactId",
+    "options": {}
+  },
+  "contacts.getContactSubscriptionCategories": {
+    "path": "/api/v1/contact/1/subscriptions",
+    "options": {}
+  },
+  "contacts.changeContactSubscriptionCategories": {
+    "path": "/api/v1/contact/1/subscriptions",
+    "options": {
+      "method": "PUT",
+      "body": {
+        "subscriptions": ["news"]
+      }
+    }
+  },
+  "contacts.contactRecoms": {
+    "path": "/api/v2/contacts/recoms/3",
+    "options": {
+      "query": {
+        "contactId": 1
+      }
+    }
+  },
+  "contacts.getAdditionalFields": {
+    "path": "/api/v1/additionalfields",
+    "options": {}
+  },
+  "contacts.getSubscriptionCategories": {
+    "path": "/api/v1/subscriptions",
+    "options": {}
+  },
+  "contacts.contactActivity": {
+    "path": "/api/v2/contacts/activity",
+    "options": {
+      "query": {
+        "dateFrom": "2026-01-01",
+        "dateTo": "2026-01-31",
+        "email": "person@example.com"
+      }
+    }
+  },
+  "contacts.contactMessages": {
+    "path": "/api/v2/contacts/messages",
+    "options": {
+      "query": {
+        "dateFrom": "2026-01-01",
+        "dateTo": "2026-01-31",
+        "contactId": 1
+      }
+    }
+  },
+  "contacts.getTokenActivated": {
+    "path": "/api/v1/contact/token/activated/app/token",
+    "options": {}
+  },
+  "contacts.changeTokenActivated": {
+    "path": "/api/v1/contact/token/activated/app/token",
+    "options": {
+      "method": "PUT",
+      "body": {
+        "active": false
+      }
+    }
+  },
+  "orders.ordersBulkInsert": {
+    "path": "/api/v1/orders",
+    "options": {
+      "method": "POST",
+      "body": {
+        "orders": []
+      }
+    }
+  },
+  "events.registerEvent": {
+    "path": "/api/v3/event",
+    "options": {
+      "method": "POST",
+      "body": {
+        "eventTypeKey": "cart_abandoned",
+        "params": {}
+      }
+    }
+  },
+  "events.sendHistoryEvents": {
+    "path": "/api/v3/past_events",
+    "options": {
+      "method": "POST",
+      "body": {
+        "events": []
+      }
+    }
+  },
+  "events.removeHistoryEvents": {
+    "path": "/api/v1/past_events",
+    "options": {
+      "method": "DELETE",
+      "body": {
+        "from": "2026-01-01",
+        "to": "2026-01-02"
+      }
+    }
+  },
+  "emails.searchEmails": {
+    "path": "/api/v1/messages/email",
+    "options": {
+      "query": {
+        "search": "welcome"
+      }
+    }
+  },
+  "emails.getEmailMessageViewLink": {
+    "path": "/api/v1/messages/email/1/viewLink",
+    "options": {}
+  },
+  "emails.addEmail": {
+    "path": "/api/v1/messages/email",
+    "options": {
+      "method": "POST",
+      "body": {
+        "name": "Welcome",
+        "from": "sender@example.com",
+        "subject": "Hi",
+        "htmlText": "<p>Hi</p>"
+      }
+    }
+  },
+  "emails.getEmail": {
+    "path": "/api/v1/messages/email/1",
+    "options": {}
+  },
+  "emails.updateMessage": {
+    "path": "/api/v1/messages/email/1",
+    "options": {
+      "method": "PUT",
+      "body": {
+        "name": "Welcome",
+        "from": "sender@example.com",
+        "subject": "Hi",
+        "htmlText": "<p>Hi</p>"
+      }
+    }
+  },
+  "emails.deleteEmail": {
+    "path": "/api/v1/messages/email/1",
+    "options": {
+      "method": "DELETE"
+    }
+  },
+  "emails.updateTranslatedMessage": {
+    "path": "/api/v1/messages/email/1/en",
+    "options": {
+      "method": "PUT",
+      "body": {
+        "name": "Welcome",
+        "from": "sender@example.com",
+        "subject": "Hi",
+        "htmlText": "<p>Hi</p>"
+      }
+    }
+  },
+  "emails.deleteTranslatedEmail": {
+    "path": "/api/v1/messages/email/1/en",
+    "options": {
+      "method": "DELETE"
+    }
+  },
+  "emails.sendEmail": {
+    "path": "/api/v1/message/email",
+    "options": {
+      "method": "POST",
+      "body": {
+        "from": "sender@example.com",
+        "subject": "Hi",
+        "htmlText": "<p>Hi</p>",
+        "emails": ["person@example.com"]
+      }
+    }
+  },
+  "mobilePush.searchMobilePushMessages": {
+    "path": "/api/v1/messages/mobilepush",
+    "options": {
+      "query": {
+        "search": "welcome"
+      }
+    }
+  },
+  "mobilePush.addMobilePushMessage": {
+    "path": "/api/v1/messages/mobilepush",
+    "options": {
+      "method": "POST",
+      "body": {
+        "name": "Push",
+        "title": "Title",
+        "text": "Text"
+      }
+    }
+  },
+  "mobilePush.getMobilePushMessage": {
+    "path": "/api/v1/messages/mobilepush/1",
+    "options": {}
+  },
+  "mobilePush.updateBaseMobilePushMessage": {
+    "path": "/api/v1/messages/mobilepush/1",
+    "options": {
+      "method": "PUT",
+      "body": {
+        "name": "Push",
+        "title": "Title",
+        "text": "Text"
+      }
+    }
+  },
+  "mobilePush.deleteMobilePushMessage": {
+    "path": "/api/v1/messages/mobilepush/1",
+    "options": {
+      "method": "DELETE"
+    }
+  },
+  "mobilePush.updateTranslatedMobilePushMessage": {
+    "path": "/api/v1/messages/mobilepush/1/en",
+    "options": {
+      "method": "PUT",
+      "body": {
+        "name": "Push",
+        "title": "Title",
+        "text": "Text"
+      }
+    }
+  },
+  "mobilePush.deleteTranslatedMobilePushMessage": {
+    "path": "/api/v1/messages/mobilepush/1/en",
+    "options": {
+      "method": "DELETE"
+    }
+  },
+  "viber.searchViberMessages": {
+    "path": "/api/v1/messages/viber",
+    "options": {
+      "query": {
+        "search": "welcome"
+      }
+    }
+  },
+  "viber.addViberMessage": {
+    "path": "/api/v1/messages/viber",
+    "options": {
+      "method": "POST",
+      "body": {
+        "name": "Promo",
+        "from": "Shop",
+        "text": "Hi"
+      }
+    }
+  },
+  "viber.getViberMessage": {
+    "path": "/api/v1/messages/viber/1",
+    "options": {}
+  },
+  "viber.updateBaseViberMessage": {
+    "path": "/api/v1/messages/viber/1",
+    "options": {
+      "method": "PUT",
+      "body": {
+        "name": "Promo",
+        "from": "Shop",
+        "text": "Hi"
+      }
+    }
+  },
+  "viber.deleteViberMessage": {
+    "path": "/api/v1/messages/viber/1",
+    "options": {
+      "method": "DELETE"
+    }
+  },
+  "viber.updateTranslatedViberMessage": {
+    "path": "/api/v1/messages/viber/1/en",
+    "options": {
+      "method": "PUT",
+      "body": {
+        "name": "Promo",
+        "from": "Shop",
+        "text": "Hi"
+      }
+    }
+  },
+  "viber.deleteTranslatedViberMessage": {
+    "path": "/api/v1/messages/viber/1/en",
+    "options": {
+      "method": "DELETE"
+    }
+  },
+  "viber.sendViber": {
+    "path": "/api/v1/message/viber",
+    "options": {
+      "method": "POST",
+      "body": {
+        "text": "Hi",
+        "phoneNumbers": ["380501234567"]
+      }
+    }
+  },
+  "appInbox.searchAppInboxMessages": {
+    "path": "/api/v1/messages/appinbox",
+    "options": {
+      "query": {
+        "search": "welcome"
+      }
+    }
+  },
+  "appInbox.addAppInboxMessage": {
+    "path": "/api/v1/messages/appinbox",
+    "options": {
+      "method": "POST",
+      "body": {
+        "name": "Inbox",
+        "title": "Title",
+        "text": "Text"
+      }
+    }
+  },
+  "appInbox.getAppInboxMessage": {
+    "path": "/api/v1/messages/appinbox/1",
+    "options": {}
+  },
+  "appInbox.updateBaseAppInboxMessage": {
+    "path": "/api/v1/messages/appinbox/1",
+    "options": {
+      "method": "PUT",
+      "body": {
+        "name": "Inbox",
+        "title": "Title",
+        "text": "Text"
+      }
+    }
+  },
+  "appInbox.deleteAppInboxMessage": {
+    "path": "/api/v1/messages/appinbox/1",
+    "options": {
+      "method": "DELETE"
+    }
+  },
+  "appInbox.updateTranslatedAppInboxMessage": {
+    "path": "/api/v1/messages/appinbox/1/en",
+    "options": {
+      "method": "PUT",
+      "body": {
+        "name": "Inbox",
+        "title": "Title",
+        "text": "Text"
+      }
+    }
+  },
+  "appInbox.deleteTranslatedAppInboxMessage": {
+    "path": "/api/v1/messages/appinbox/1/en",
+    "options": {
+      "method": "DELETE"
+    }
+  },
+  "telegramBot.searchTelegramBotMessages": {
+    "path": "/api/v1/messages/telegram",
+    "options": {
+      "query": {
+        "search": "welcome"
+      }
+    }
+  },
+  "telegramBot.addTelegramBotMessage": {
+    "path": "/api/v1/messages/telegram",
+    "options": {
+      "method": "POST",
+      "body": {
+        "name": "Bot",
+        "text": "Hi"
+      }
+    }
+  },
+  "telegramBot.getTelegramBotMessage": {
+    "path": "/api/v1/messages/telegram/1",
+    "options": {}
+  },
+  "telegramBot.updateBaseTelegramBotMessage": {
+    "path": "/api/v1/messages/telegram/1",
+    "options": {
+      "method": "PUT",
+      "body": {
+        "name": "Bot",
+        "text": "Hi"
+      }
+    }
+  },
+  "telegramBot.deleteTelegramBotMessage": {
+    "path": "/api/v1/messages/telegram/1",
+    "options": {
+      "method": "DELETE"
+    }
+  },
+  "telegramBot.updateTranslatedTelegramMessage": {
+    "path": "/api/v1/messages/telegram/1/en",
+    "options": {
+      "method": "PUT",
+      "body": {
+        "name": "Bot",
+        "text": "Hi"
+      }
+    }
+  },
+  "telegramBot.deleteTranslatedTelegramMessage": {
+    "path": "/api/v1/messages/telegram/1/en",
+    "options": {
+      "method": "DELETE"
+    }
+  },
+  "sms.searchSmsMessages": {
+    "path": "/api/v1/messages/sms",
+    "options": {
+      "query": {
+        "search": "welcome"
+      }
+    }
+  },
+  "sms.addSmsMessage": {
+    "path": "/api/v1/messages/sms",
+    "options": {
+      "method": "POST",
+      "body": {
+        "name": "Sms",
+        "from": "Shop",
+        "text": "Hi"
+      }
+    }
+  },
+  "sms.getSms": {
+    "path": "/api/v1/messages/sms/1",
+    "options": {}
+  },
+  "sms.updateBaseSmsMessage": {
+    "path": "/api/v1/messages/sms/1",
+    "options": {
+      "method": "PUT",
+      "body": {
+        "name": "Sms",
+        "from": "Shop",
+        "text": "Hi"
+      }
+    }
+  },
+  "sms.deleteSmsMessage": {
+    "path": "/api/v1/messages/sms/1",
+    "options": {
+      "method": "DELETE"
+    }
+  },
+  "sms.updateTranslatedSmsMessage": {
+    "path": "/api/v1/messages/sms/1/en",
+    "options": {
+      "method": "PUT",
+      "body": {
+        "name": "Sms",
+        "from": "Shop",
+        "text": "Hi"
+      }
+    }
+  },
+  "sms.deleteTranslatedSmsMessage": {
+    "path": "/api/v1/messages/sms/1/en",
+    "options": {
+      "method": "DELETE"
+    }
+  },
+  "sms.sendSms": {
+    "path": "/api/v1/message/sms",
+    "options": {
+      "method": "POST",
+      "body": {
+        "from": "Shop",
+        "text": "Hi",
+        "phoneNumbers": ["380501234567"]
+      }
+    }
+  },
+  "broadcasts.getBroadcasts": {
+    "path": "/api/v1/broadcasts",
+    "options": {
+      "query": {
+        "maxrows": 10
+      }
+    }
+  },
+  "broadcasts.createBroadcast": {
+    "path": "/api/v1/broadcast",
+    "options": {
+      "method": "POST",
+      "body": {
+        "messageId": "123",
+        "groups": [5]
+      }
+    }
+  },
+  "broadcasts.getBroadcast": {
+    "path": "/api/v1/broadcast/b-1",
+    "options": {}
+  },
+  "broadcasts.cancelBroadcast": {
+    "path": "/api/v1/broadcast/b-1",
+    "options": {
+      "method": "DELETE"
+    }
+  },
+  "interfaces.getSmsInterfaces": {
+    "path": "/api/v1/interfaces/sms",
+    "options": {}
+  },
+  "interfaces.getEmailInterfaces": {
+    "path": "/api/v1/interfaces/email",
+    "options": {}
+  },
+  "messages.sendPreparedMessage": {
+    "path": "/api/v1/message/7/smartsend",
+    "options": {
+      "method": "POST",
+      "body": {
+        "recipients": [
+          {
+            "locator": "person@example.com",
+            "jsonParam": "{\"name\":\"Ada\"}"
+          }
+        ],
+        "email": true
+      }
+    }
+  },
+  "messages.updateInteractionStatus": {
+    "path": "/api/v1/interactions/2E2E831C-486C/status",
+    "options": {
+      "method": "PUT",
+      "body": {
+        "status": "DELIVERED",
+        "time": "2026-01-01T10:00:00Z"
+      }
+    }
+  },
+  "site.getDomains": {
+    "path": "/api/v1/site/domains",
+    "options": {}
+  },
+  "site.createDomain": {
+    "path": "/api/v1/site/domains",
+    "options": {
+      "method": "POST",
+      "body": {
+        "domain": "example.com"
+      }
+    }
+  },
+  "site.getScript": {
+    "path": "/api/v1/site/script",
+    "options": {
+      "accept": "text/plain"
+    }
+  },
+  "site.getWebPushDomains": {
+    "path": "/api/v1/site/webpush/domains",
+    "options": {}
+  },
+  "site.addWebPushDomain": {
+    "path": "/api/v1/site/webpush/domain",
+    "options": {
+      "method": "POST",
+      "body": {
+        "domain": "example.com",
+        "serviceWorkerName": "sw.js",
+        "serviceWorkerPath": "/",
+        "serviceWorkerScope": "/"
+      }
+    }
+  },
+  "site.deleteWebPushDomain": {
+    "path": "/api/v1/site/webpush/domains",
+    "options": {
+      "method": "DELETE",
+      "query": {
+        "domain": "example.com"
+      }
+    }
+  },
+  "site.getWebPushScript": {
+    "path": "/api/v1/site/webpush/script",
+    "options": {
+      "query": {
+        "domain": "example.com"
+      }
+    }
+  },
+  "productFeeds.getProductFeedsConfiguration": {
+    "path": "/api/v1/products/config",
+    "options": {}
+  },
+  "productFeeds.configureProductFeeds": {
+    "path": "/api/v1/products/config",
+    "options": {
+      "method": "POST",
+      "body": {
+        "feeds": [
+          {
+            "url": "https://example.com/feed.xml",
+            "language": "en",
+            "default": true
+          }
+        ]
+      }
+    }
+  },
+  "apps.addAppTokens": {
+    "path": "/api/v1/apps/app-1/tokens",
+    "options": {
+      "method": "POST",
+      "body": {
+        "tokens": [
+          {
+            "token": "t1",
+            "contactId": 1
+          }
+        ]
+      }
+    }
+  },
+  "apps.muteAppToken": {
+    "path": "/api/v1/apps/app-1/token/mute",
+    "options": {
+      "method": "POST",
+      "body": {
+        "token": "t1",
+        "duration": 60
+      }
+    }
+  },
+  "apps.unmuteAppToken": {
+    "path": "/api/v1/apps/app-1/token/unmute",
+    "options": {
+      "method": "POST",
+      "body": {
+        "token": "t1"
+      }
+    }
+  },
+  "promocodes.getPromocodes": {
+    "path": "/api/v1/promocodes",
+    "options": {
+      "query": {
+        "type": "SUMMER",
+        "inUse": false
+      }
+    }
+  },
+  "promocodes.getPromocodesCount": {
+    "path": "/api/v1/promocodes/count",
+    "options": {
+      "query": {
+        "type": "SUMMER"
+      }
+    }
+  },
+  "promocodes.insertPromocodes": {
+    "path": "/api/v1/promocodes",
+    "options": {
+      "method": "POST",
+      "body": {
+        "promocodes": ["A1"],
+        "expirationDate": "2026-12-31",
+        "discount": 10
+      }
+    }
+  },
+  "preprocessor.getPreprocessorFileStatus": {
+    "path": "/api/v1/preprocessor/file/s-1/status",
+    "options": {}
+  },
+  "preprocessor.updatePreprocessorFile": {
+    "path": "/api/v1/preprocessor/file/f-1",
+    "options": {
+      "method": "POST",
+      "body": {
+        "link": "https://example.com/data.csv"
+      }
+    }
+  },
+  "preprocessor.uploadPreprocessorFile": {
+    "path": "/api/v1/preprocessor/file/upload",
+    "options": {
+      "method": "POST",
+      "body": {
+        "link": "https://example.com/data.csv",
+        "preprocessorType": "Key"
+      }
+    }
+  }
+}

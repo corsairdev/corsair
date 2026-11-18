@@ -1,0 +1,12 @@
+displayName: Zenserp
+description: Search results API for Google, Bing, and Yandex SERP data, reverse image search, Google Shopping products, and Google Trends.
+domain: zenserp.com
+examples:
+  read:
+    path: account.getStatus
+    title: Check account status
+  write:
+    path: search.google
+    title: Search Google
+    args:
+      q: open source integrations

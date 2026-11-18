@@ -1,0 +1,22 @@
+displayName: Everhour
+description: Time tracking tool for managing projects, tasks, sections, clients, timers, time records, timecards, expenses, and invoices.
+domain: everhour.com
+examples:
+  read:
+    path: projects.listProjects
+    title: List projects
+  write:
+    path: tasks.createTask
+    title: Create a task
+    args:
+      projectId: ev:1234567890
+      name: Write the release notes
+dbExample:
+  entity: projects
+  note: These tables exist, but Everhour calls don't fill them yet. This returns only rows you have written yourself.
+  limit: 50
+exampleWebhook:
+  path: task.created
+  note: Fires when a task is created.
+  after: |
+    console.log('Everhour task created:', result.data);

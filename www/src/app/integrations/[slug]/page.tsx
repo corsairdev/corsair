@@ -2,6 +2,10 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import { IntegrationDetailPage } from '@/components/integrations/detail/integration-detail-page';
+import {
+	integrationMetaDescription,
+	integrationMetaTitle,
+} from '@/lib/integration-seo';
 import { getCatalogIntegrationById } from '@/server/catalog-integration-cache';
 
 type PageProps = {
@@ -18,16 +22,29 @@ export async function generateMetadata({
 		return { title: 'Integration not found' };
 	}
 
+	const title = integrationMetaTitle(integration.displayName);
+	const description = integrationMetaDescription(
+		integration.displayName,
+		integration.counts.api,
+	);
+
 	return {
-		title: `${integration.displayName} Integration`,
-		description: integration.blurb,
+		title,
+		description,
 		alternates: {
 			canonical: `/integrations/${slug}`,
 		},
 		openGraph: {
-			title: `${integration.displayName} Integration | Corsair`,
-			description: integration.blurb,
+			title: `${title} | Corsair`,
+			description,
 			url: `https://corsair.dev/integrations/${slug}`,
+			images: [{ url: '/og-image.png', width: 1200, height: 630 }],
+		},
+		twitter: {
+			card: 'summary_large_image',
+			title: `${title} | Corsair`,
+			description,
+			images: ['/og-image.png'],
 		},
 	};
 }

@@ -1,0 +1,15 @@
+displayName: Whautomate
+description: Customer engagement and booking platform for managing contacts, broadcasts, segments, services, service categories, staff availability, and webhooks.
+domain: whautomate.com
+examples:
+  read:
+    path: contacts.getContacts
+    title: List contacts
+  write:
+    path: contacts.addContact
+    title: Add a contact
+    args:
+      name: Jane Doe
+      phoneNumber: "+14155552671"
+      location:
+        id: loc_01234567

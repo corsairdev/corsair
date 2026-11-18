@@ -1,0 +1,14 @@
+displayName: Token Metrics
+description: Crypto analytics API for token prices, market cap rankings, technical indicators, and AI-generated trading signals.
+domain: tokenmetrics.com
+examples:
+  read:
+    path: market.getTopMarketCap
+    title: List top tokens by market cap
+    args:
+      top_k: 10
+  write:
+    path: trading.getSignals
+    title: Get trading signals
+    args:
+      symbol: BTC

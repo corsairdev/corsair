@@ -1,0 +1,69 @@
+displayName: Retently
+description: NPS, CSAT and CES surveys with Retently - list and upsert customers, send transactional surveys, import historical feedback, read campaign reports, and manage tags, topics and suppressions.
+domain: retently.com
+recommendedAuth: api_key
+overviewNote: |
+  Create a key in Retently under Settings, API. The key decides what the plugin can do:
+
+  - **Read permission** allows GET only. **Write permission** adds POST and DELETE. A read-only key on a write route returns a `403` that the plugin reports as `isPermissionError`, which is a different problem from a `401` (a wrong or deleted key) and needs a new key rather than a retry.
+
+  Things to know before you send:
+
+  - **`survey.send` sends real email.** It queues a survey through a *transactional* campaign and returns only `status: 'queued'`; there is no survey ID to cancel. A non-transactional campaign is a `400`, an inactive one a `403`, and an unknown one a `404`. `delay` overrides the campaign's own scheduling, so omit it to respect the campaign's sending time frame.
+  - **`feedback.import` changes your scores.** Imported responses count toward NPS and trends, bucketed by `response_date`, so set it on a historical import or every response lands on the import day. They do not consume send quota and never fire webhooks. Only 200 responses go in one call, and a bad item fails alone: read `details.failed` for the reason instead of treating a `200` as all-or-nothing.
+  - **The main comment and additional questions collide.** A top-level `comment` fills the template's `isMain` question, so also answering that question in `additional_questions` fails the item as ambiguous. Get question UUIDs from `templates.get`.
+  - **RATING answers need their metric.** An `additional_questions` entry of type `RATING` is scored on a metric (`nps`, `csat`, `ces`, `star`, `thumbs`, `xsat` or `pmf`); the plugin rejects one that omits it before the request is sent.
+  - **Dates are not uniform.** `customers.list`, `feedback.list` and `outbox.list` accept `YYYY-MM-DD`, an ISO 8601 date-time, or **UNIX seconds** - milliseconds silently resolve to a far-future date. `reports.get` is the exception: it takes `YYYY-MM-DD` only and rejects a full timestamp. `feedback.import` dates are ISO 8601 only.
+  - **Paging stops at 1,000.** `limit` is capped there, and `data.pages` tells you how many pages exist, so walk them rather than asking for everything at once.
+  - **Unsubscribing and resubscribing are not symmetric.** `customers.resubscribe` is idempotent and reports a status per contact: only `resubscribed` means a change, `skipped` means Retently refused for compliance (self-unsubscribed or hard-bounced), and `suppressed: true` warns that an account-level suppression still blocks delivery.
+  - **Rate limit.** 150 requests a minute. No `Retry-After` is documented, so the plugin backs off exponentially on a `429`.
+examples:
+  read:
+    path: feedback.list
+    title: Read the latest NPS responses
+    args:
+      limit: 25
+      sort: '-createdDate'
+  write:
+    path: survey.send
+    title: Send a transactional survey
+    args:
+      campaign: 5a9d595701c85b37224ab2d0
+      subscribers:
+        - email: john.smith@example.com
+          first_name: John
+          company: ACME
+apiExamples:
+  account.ping: {}
+  customers.list:
+    call: "{ limit: 50, sort: '-createdDate', attributes: [{ name: 'country', op: 'equal', value: 'US' }] }"
+  customers.get:
+    call: "{ customerId: '6827fb27bf618a02f1234567' }"
+  customers.upsert:
+    call: "{ subscribers: [{ email: 'john.smith@example.com', first_name: 'John', tags: ['beta'], properties: [{ label: 'Plan', type: 'string', value: 'Pro' }] }] }"
+  customers.unsubscribe:
+    call: "{ subscribers: [{ email: 'john.smith@example.com' }], message: 'Unsubscribed by owner.' }"
+  customers.resubscribe:
+    call: "{ subscribers: [{ email: 'john.smith@example.com' }] }"
+  customers.delete:
+    call: "{ subscribers: [{ email: 'john.smith@example.com' }] }"
+  companies.list:
+    call: "{ limit: 20, sort: '-createdDate' }"
+  companies.get:
+    call: "{ companyId: 'acme.com' }"
+  feedback.list:
+    call: "{ email: 'john@example.com', limit: 20, sort: '-createdDate' }"
+  feedback.get:
+    call: "{ feedbackId: '5f1faaa4b4e2e4963e41893b' }"
+  feedback.import:
+    call: "{ campaign_id: '5a9d595701c85b37224ab2d0', feedback: [{ email: 'john.smith@example.com', score: 9, comment: 'Loved the onboarding', response_date: '2024-01-15T10:30:00Z' }] }"
+  campaigns.list: {}
+  reports.get:
+    call: "{ campaignId: '5f1ec45y27b8313876299999', startDate: '2024-01-01', endDate: '2024-12-31' }"
+  outbox.list:
+    call: "{ channel: 'email', limit: 20 }"
+  templates.list: {}
+  templates.get:
+    call: "{ templateId: '628765bf87439560a1b2c3d4' }"
+  survey.send:
+    call: "{ campaign: '5a9d595701c85b37224ab2d0', delay: 7, subscribers: [{ email: 'john.smith@example.com' }] }"

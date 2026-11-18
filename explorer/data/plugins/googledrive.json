@@ -107,12 +107,12 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "appProperties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "spaces",
@@ -348,12 +348,12 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "appProperties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "spaces",
@@ -542,7 +542,7 @@
     {
       "path": "googledrive.api.files.download",
       "shortPath": "files.download",
-      "description": "Download the content of a file",
+      "description": "Download a file. A text file comes back as text, any other file as base64, up to about 700 KB; size and type are always returned. Google Docs, Sheets and Slides cannot be downloaded this way.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -560,8 +560,45 @@
         ]
       },
       "output": {
-        "kind": "inline",
-        "type": "any"
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentBase64",
+            "optional": true,
+            "type": "string",
+            "description": "The file, base64-encoded. Missing when the file came back as text or contentOmitted is set."
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string",
+            "description": "The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "Media type of the file, for example application/pdf."
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the file in bytes."
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string",
+            "description": "The file name, when known."
+          },
+          {
+            "key": "contentOmitted",
+            "optional": true,
+            "type": "not_requested | over_limit",
+            "description": "Set when the content was left out: the caller did not ask for it, or the file was over the limit."
+          }
+        ]
       }
     },
     {
@@ -645,12 +682,12 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "appProperties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "spaces",
@@ -896,7 +933,7 @@
           {
             "key": "files",
             "optional": true,
-            "type": "{ id?: string, name?: string, mimeType?: string, description?: string, starred?: boolean, trashed?: boolean, explicitlyTrashed?: boolean, parents?: string[], properties?: {}, appProperties?: {}, spaces?: string[], version?: string, webViewLink?: string, webContentLink?: string, iconLink?: string, hasThumbnail?: boolean, thumbnailLink?: string, thumbnailVersion?: string, viewedByMe?: boolean, viewedByMeTime?: string, createdTime?: string, modifiedTime?: string, modifiedByMeTime?: string, modifiedByMe?: boolean, shared?: boolean, ownedByMe?: boolean, permissionIds?: string[], hasAugmentedPermissions?: boolean, folderColorRgb?: string, originalFilename?: string, fullFileExtension?: string, fileExtension?: string, md5Checksum?: string, size?: string, quotaBytesUsed?: string, headRevisionId?: string, isAppAuthorized?: boolean, resourceKey?: string, sha1Checksum?: string, sha256Checksum?: string }[]"
+            "type": "{ id?: string, name?: string, mimeType?: string, description?: string, starred?: boolean, trashed?: boolean, explicitlyTrashed?: boolean, parents?: string[], properties?: Record<string, string>, appProperties?: Record<string, string>, spaces?: string[], version?: string, webViewLink?: string, webContentLink?: string, iconLink?: string, hasThumbnail?: boolean, thumbnailLink?: string, thumbnailVersion?: string, viewedByMe?: boolean, viewedByMeTime?: string, createdTime?: string, modifiedTime?: string, modifiedByMeTime?: string, modifiedByMe?: boolean, shared?: boolean, ownedByMe?: boolean, permissionIds?: string[], hasAugmentedPermissions?: boolean, folderColorRgb?: string, originalFilename?: string, fullFileExtension?: string, fileExtension?: string, md5Checksum?: string, size?: string, quotaBytesUsed?: string, headRevisionId?: string, isAppAuthorized?: boolean, resourceKey?: string, sha1Checksum?: string, sha256Checksum?: string }[]"
           }
         ]
       }
@@ -982,12 +1019,12 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "appProperties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "spaces",
@@ -1334,12 +1371,12 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "appProperties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "supportsAllDrives",
@@ -1399,12 +1436,12 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "appProperties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "spaces",
@@ -1635,12 +1672,12 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "appProperties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "spaces",
@@ -1866,12 +1903,12 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "appProperties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "spaces",
@@ -2133,12 +2170,12 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "appProperties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "spaces",
@@ -2384,7 +2421,7 @@
           {
             "key": "files",
             "optional": true,
-            "type": "{ id?: string, name?: string, mimeType?: string, description?: string, starred?: boolean, trashed?: boolean, explicitlyTrashed?: boolean, parents?: string[], properties?: {}, appProperties?: {}, spaces?: string[], version?: string, webViewLink?: string, webContentLink?: string, iconLink?: string, hasThumbnail?: boolean, thumbnailLink?: string, thumbnailVersion?: string, viewedByMe?: boolean, viewedByMeTime?: string, createdTime?: string, modifiedTime?: string, modifiedByMeTime?: string, modifiedByMe?: boolean, shared?: boolean, ownedByMe?: boolean, permissionIds?: string[], hasAugmentedPermissions?: boolean, folderColorRgb?: string, originalFilename?: string, fullFileExtension?: string, fileExtension?: string, md5Checksum?: string, size?: string, quotaBytesUsed?: string, headRevisionId?: string, isAppAuthorized?: boolean, resourceKey?: string, sha1Checksum?: string, sha256Checksum?: string }[]"
+            "type": "{ id?: string, name?: string, mimeType?: string, description?: string, starred?: boolean, trashed?: boolean, explicitlyTrashed?: boolean, parents?: string[], properties?: Record<string, string>, appProperties?: Record<string, string>, spaces?: string[], version?: string, webViewLink?: string, webContentLink?: string, iconLink?: string, hasThumbnail?: boolean, thumbnailLink?: string, thumbnailVersion?: string, viewedByMe?: boolean, viewedByMeTime?: string, createdTime?: string, modifiedTime?: string, modifiedByMeTime?: string, modifiedByMe?: boolean, shared?: boolean, ownedByMe?: boolean, permissionIds?: string[], hasAugmentedPermissions?: boolean, folderColorRgb?: string, originalFilename?: string, fullFileExtension?: string, fileExtension?: string, md5Checksum?: string, size?: string, quotaBytesUsed?: string, headRevisionId?: string, isAppAuthorized?: boolean, resourceKey?: string, sha1Checksum?: string, sha256Checksum?: string }[]"
           }
         ]
       }
@@ -2621,7 +2658,7 @@
           {
             "key": "files",
             "optional": true,
-            "type": "{ id?: string, name?: string, mimeType?: string, description?: string, starred?: boolean, trashed?: boolean, explicitlyTrashed?: boolean, parents?: string[], properties?: {}, appProperties?: {}, spaces?: string[], version?: string, webViewLink?: string, webContentLink?: string, iconLink?: string, hasThumbnail?: boolean, thumbnailLink?: string, thumbnailVersion?: string, viewedByMe?: boolean, viewedByMeTime?: string, createdTime?: string, modifiedTime?: string, modifiedByMeTime?: string, modifiedByMe?: boolean, shared?: boolean, ownedByMe?: boolean, permissionIds?: string[], hasAugmentedPermissions?: boolean, folderColorRgb?: string, originalFilename?: string, fullFileExtension?: string, fileExtension?: string, md5Checksum?: string, size?: string, quotaBytesUsed?: string, headRevisionId?: string, isAppAuthorized?: boolean, resourceKey?: string, sha1Checksum?: string, sha256Checksum?: string }[]"
+            "type": "{ id?: string, name?: string, mimeType?: string, description?: string, starred?: boolean, trashed?: boolean, explicitlyTrashed?: boolean, parents?: string[], properties?: Record<string, string>, appProperties?: Record<string, string>, spaces?: string[], version?: string, webViewLink?: string, webContentLink?: string, iconLink?: string, hasThumbnail?: boolean, thumbnailLink?: string, thumbnailVersion?: string, viewedByMe?: boolean, viewedByMeTime?: string, createdTime?: string, modifiedTime?: string, modifiedByMeTime?: string, modifiedByMe?: boolean, shared?: boolean, ownedByMe?: boolean, permissionIds?: string[], hasAugmentedPermissions?: boolean, folderColorRgb?: string, originalFilename?: string, fullFileExtension?: string, fileExtension?: string, md5Checksum?: string, size?: string, quotaBytesUsed?: string, headRevisionId?: string, isAppAuthorized?: boolean, resourceKey?: string, sha1Checksum?: string, sha256Checksum?: string }[]"
           }
         ]
       }
@@ -2963,7 +3000,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "{ data?: string, attributes?: {}, messageId?: string, publishTime?: string }"
+            "type": "{ data?: string, attributes?: Record<string, string>, messageId?: string, publishTime?: string }"
           },
           {
             "key": "subscription",

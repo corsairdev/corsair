@@ -43,7 +43,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
@@ -53,7 +53,7 @@
           {
             "key": "expires_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "user",
@@ -273,6 +273,11 @@
         },
         {
           "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "connection_state",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
