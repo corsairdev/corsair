@@ -127,6 +127,18 @@ export async function makePipedriveRequest<T>(
 }
 
 const MAX_BINARY_RESPONSE_BYTES = 20 * 1024 * 1024;
+const MAX_FILE_REDIRECTS = 5;
+
+function isTrustedPipedriveRedirect(url: URL): boolean {
+	return (
+		url.protocol === 'https:' &&
+		url.port === '' &&
+		url.username === '' &&
+		url.password === '' &&
+		(url.hostname === 'pipedrive.com' ||
+			url.hostname.endsWith('.pipedrive.com'))
+	);
+}
 
 export async function makePipedriveBinaryRequest(
 	endpoint: string,
@@ -155,6 +167,7 @@ export async function makePipedriveBinaryRequest(
 		}
 	}
 	const url = `${base}${endpoint}${query.size ? `?${query.toString()}` : ''}`;
+	const safeUrl = `${base}${endpoint}`;
 	const headers = new Headers({
 		Accept: 'application/octet-stream',
 		...(authType === 'api_key' ? { 'x-api-token': apiKey } : {}),
@@ -162,11 +175,63 @@ export async function makePipedriveBinaryRequest(
 	});
 	if (authType === 'oauth_2') headers.set('Authorization', `Bearer ${apiKey}`);
 	try {
-		const response = await fetch(url, {
-			method: options.method,
-			headers,
-			signal: AbortSignal.timeout(20_000),
-		});
+		const timeoutSignal = AbortSignal.timeout(20_000);
+		const visitedUrls = new Set([url]);
+		let currentUrl = url;
+		let redirectCount = 0;
+		let response: Response | undefined;
+		while (!response) {
+			const nextResponse = await fetch(currentUrl, {
+				method: options.method,
+				headers,
+				signal: timeoutSignal,
+				redirect: 'manual',
+			});
+			const redirectStatus = [301, 302, 303, 307, 308].includes(
+				nextResponse.status,
+			);
+			const location = redirectStatus
+				? nextResponse.headers.get('location')
+				: null;
+			if (location === null) {
+				response = nextResponse;
+				continue;
+			}
+			const nextUrl = new URL(location, currentUrl);
+			await nextResponse.body?.cancel().catch(() => undefined);
+			if (!isTrustedPipedriveRedirect(nextUrl)) {
+				throw new ApiError(
+					{ method: options.method, url: endpoint },
+					{
+						url: safeUrl,
+						ok: false,
+						status: nextResponse.status,
+						statusText: nextResponse.statusText,
+						body: { error: 'Pipedrive file download redirect was rejected' },
+					},
+					'Pipedrive file download redirected outside a trusted Pipedrive origin',
+				);
+			}
+			if (
+				redirectCount >= MAX_FILE_REDIRECTS ||
+				visitedUrls.has(nextUrl.href)
+			) {
+				throw new ApiError(
+					{ method: options.method, url: endpoint },
+					{
+						url: safeUrl,
+						ok: false,
+						status: nextResponse.status,
+						statusText: nextResponse.statusText,
+						body: { error: 'Pipedrive file download redirect limit reached' },
+					},
+					'Pipedrive file download exceeded its redirect limit',
+				);
+			}
+			redirectCount += 1;
+			visitedUrls.add(nextUrl.href);
+			currentUrl = nextUrl.href;
+		}
 		if (!response.ok) {
 			const reset = Number(response.headers.get('x-ratelimit-reset'));
 			const retryAfter =
@@ -177,7 +242,7 @@ export async function makePipedriveBinaryRequest(
 			throw new ApiError(
 				{ method: options.method, url: endpoint },
 				{
-					url,
+					url: safeUrl,
 					ok: false,
 					status: response.status,
 					statusText: response.statusText,

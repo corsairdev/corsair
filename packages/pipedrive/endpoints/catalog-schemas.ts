@@ -3390,7 +3390,7 @@ export const PipedriveCatalog = {
 			body: z
 				.strictObject({
 					name: z.string(),
-					options: z.array(z.strictObject({})).optional(),
+					options: z.array(z.strictObject({ label: z.string() })).optional(),
 					add_visible_flag: z.boolean().optional(),
 					field_type: z.union([
 						z.literal('address'),
@@ -3660,7 +3660,14 @@ export const PipedriveCatalog = {
 			body: z
 				.strictObject({
 					name: z.string().optional(),
-					options: z.array(z.strictObject({})).optional(),
+					options: z
+						.array(
+							z.strictObject({
+								id: z.number().int().optional(),
+								label: z.string(),
+							}),
+						)
+						.optional(),
 					add_visible_flag: z.boolean().optional(),
 				})
 				.optional(),
@@ -4385,7 +4392,49 @@ export const PipedriveCatalog = {
 			body: z
 				.strictObject({
 					name: z.string(),
-					conditions: z.strictObject({}),
+					conditions: z.strictObject({
+						glue: z.literal('and'),
+						conditions: z
+							.array(
+								z.strictObject({
+									glue: z.enum(['and', 'or']),
+									conditions: z.array(
+										z.strictObject({
+											object: z.enum([
+												'person',
+												'deal',
+												'organization',
+												'product',
+												'activity',
+											]),
+											field_id: z.string(),
+											operator: z.enum([
+												'IS NOT NULL',
+												'IS NULL',
+												'<=',
+												'>=',
+												'<',
+												'>',
+												'!=',
+												'=',
+												"LIKE '$%'",
+												"LIKE '%$%'",
+												"NOT LIKE '$%'",
+											]),
+											value: z.string(),
+											extra_value: z.string(),
+										}),
+									),
+								}),
+							)
+							.refine(
+								(groups) =>
+									groups.reduce(
+										(count, group) => count + group.conditions.length,
+										0,
+									) <= 16,
+							),
+					}),
 					type: z.union([
 						z.literal('deals'),
 						z.literal('leads'),
@@ -4660,7 +4709,49 @@ export const PipedriveCatalog = {
 			body: z
 				.strictObject({
 					name: z.string().optional(),
-					conditions: z.strictObject({}),
+					conditions: z.strictObject({
+						glue: z.literal('and'),
+						conditions: z
+							.array(
+								z.strictObject({
+									glue: z.enum(['and', 'or']),
+									conditions: z.array(
+										z.strictObject({
+											object: z.enum([
+												'person',
+												'deal',
+												'organization',
+												'product',
+												'activity',
+											]),
+											field_id: z.string(),
+											operator: z.enum([
+												'IS NOT NULL',
+												'IS NULL',
+												'<=',
+												'>=',
+												'<',
+												'>',
+												'!=',
+												'=',
+												"LIKE '$%'",
+												"LIKE '%$%'",
+												"NOT LIKE '$%'",
+											]),
+											value: z.string(),
+											extra_value: z.string(),
+										}),
+									),
+								}),
+							)
+							.refine(
+								(groups) =>
+									groups.reduce(
+										(count, group) => count + group.conditions.length,
+										0,
+									) <= 16,
+							),
+					}),
 				})
 				.optional(),
 		}),
@@ -4756,10 +4847,39 @@ export const PipedriveCatalog = {
 			body: z
 				.strictObject({
 					title: z.string().optional(),
-					assignee: z.strictObject({}),
-					type: z.strictObject({}),
-					expected_outcome: z.strictObject({}),
-					duration: z.strictObject({}),
+					assignee: z.strictObject({
+						id: z.number().int(),
+						type: z.enum(['person', 'company', 'team']),
+					}),
+					type: z.strictObject({
+						name: z.enum([
+							'deals_won',
+							'deals_progressed',
+							'activities_completed',
+							'activities_added',
+							'deals_started',
+							'revenue_forecast',
+						]),
+						params: z
+							.strictObject({
+								pipeline_id: z.array(z.number().int()).nullable().optional(),
+								stage_id: z.number().int().optional(),
+								activity_type_id: z
+									.array(z.number().int())
+									.nullable()
+									.optional(),
+							})
+							.optional(),
+					}),
+					expected_outcome: z.strictObject({
+						target: z.number(),
+						tracking_metric: z.enum(['quantity', 'sum']),
+						currency_id: z.number().int().optional(),
+					}),
+					duration: z.strictObject({
+						start: z.string(),
+						end: z.string().nullable(),
+					}),
 					interval: z.union([
 						z.literal('weekly'),
 						z.literal('monthly'),
@@ -5000,10 +5120,44 @@ export const PipedriveCatalog = {
 			body: z
 				.strictObject({
 					title: z.string().optional(),
-					assignee: z.strictObject({}).optional(),
-					type: z.strictObject({}).optional(),
-					expected_outcome: z.strictObject({}).optional(),
-					duration: z.strictObject({}).optional(),
+					assignee: z
+						.strictObject({
+							id: z.number().int(),
+							type: z.enum(['person', 'company', 'team']),
+						})
+						.optional(),
+					type: z
+						.strictObject({
+							name: z.enum([
+								'deals_won',
+								'deals_progressed',
+								'activities_completed',
+								'activities_added',
+								'deals_started',
+								'revenue_forecast',
+							]),
+							params: z
+								.strictObject({
+									pipeline_id: z.array(z.number().int()).nullable().optional(),
+									stage_id: z.number().int().optional(),
+									activity_type_id: z
+										.array(z.number().int())
+										.nullable()
+										.optional(),
+								})
+								.optional(),
+						})
+						.optional(),
+					expected_outcome: z
+						.strictObject({
+							target: z.number(),
+							tracking_metric: z.enum(['quantity', 'sum']),
+							currency_id: z.number().int().optional(),
+						})
+						.optional(),
+					duration: z
+						.strictObject({ start: z.string(), end: z.string().nullable() })
+						.optional(),
 					interval: z
 						.union([
 							z.literal('weekly'),
@@ -8824,7 +8978,7 @@ export const PipedriveCatalog = {
 			body: z
 				.strictObject({
 					name: z.string(),
-					options: z.array(z.strictObject({})).optional(),
+					options: z.array(z.strictObject({ label: z.string() })).optional(),
 					add_visible_flag: z.boolean().optional(),
 					field_type: z.union([
 						z.literal('address'),
@@ -9099,7 +9253,14 @@ export const PipedriveCatalog = {
 			body: z
 				.strictObject({
 					name: z.string().optional(),
-					options: z.array(z.strictObject({})).optional(),
+					options: z
+						.array(
+							z.strictObject({
+								id: z.number().int().optional(),
+								label: z.string(),
+							}),
+						)
+						.optional(),
 					add_visible_flag: z.boolean().optional(),
 				})
 				.optional(),
@@ -10804,7 +10965,7 @@ export const PipedriveCatalog = {
 			body: z
 				.strictObject({
 					name: z.string(),
-					options: z.array(z.strictObject({})).optional(),
+					options: z.array(z.strictObject({ label: z.string() })).optional(),
 					add_visible_flag: z.boolean().optional(),
 					field_type: z.union([
 						z.literal('address'),
@@ -11079,7 +11240,14 @@ export const PipedriveCatalog = {
 			body: z
 				.strictObject({
 					name: z.string().optional(),
-					options: z.array(z.strictObject({})).optional(),
+					options: z
+						.array(
+							z.strictObject({
+								id: z.number().int().optional(),
+								label: z.string(),
+							}),
+						)
+						.optional(),
 					add_visible_flag: z.boolean().optional(),
 				})
 				.optional(),
@@ -12119,7 +12287,7 @@ export const PipedriveCatalog = {
 			body: z
 				.strictObject({
 					name: z.string(),
-					options: z.array(z.strictObject({})).optional(),
+					options: z.array(z.strictObject({ label: z.string() })).optional(),
 					field_type: z.union([
 						z.literal('varchar'),
 						z.literal('varchar_auto'),
@@ -12297,7 +12465,9 @@ export const PipedriveCatalog = {
 			body: z
 				.strictObject({
 					name: z.string().optional(),
-					options: z.array(z.strictObject({})).optional(),
+					options: z
+						.array(z.strictObject({ id: z.number().int(), label: z.string() }))
+						.optional(),
 				})
 				.optional(),
 		}),
@@ -14403,7 +14573,12 @@ export const PipedriveCatalog = {
 		input: z.strictObject({
 			path: z.strictObject({ id: z.number().int() }),
 			body: z
-				.strictObject({ visible_pipeline_ids: z.strictObject({}) })
+				.strictObject({
+					visible_pipeline_ids: z.strictObject({
+						add: z.string(),
+						remove: z.string(),
+					}),
+				})
 				.optional(),
 		}),
 		output: z

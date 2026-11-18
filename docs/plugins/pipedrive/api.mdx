@@ -1599,7 +1599,7 @@ Add a new deal field (POST /dealFields; 10 API tokens; OAuth scopes: deal-fields
 **Risk:** `write`
 
 ```ts
-await corsair.pipedrive.api.apiV1.dealFields.addDealField({ body: { "name": "x", "field_type": "address" } });
+await corsair.pipedrive.api.apiV1.dealFields.addDealField({ body: { "name": "x", "field_type": "enum", "options": [{ "label": "New option" }] } });
 ```
 
 **Input**
@@ -1608,7 +1608,7 @@ await corsair.pipedrive.api.apiV1.dealFields.addDealField({ body: { "name": "x",
 |------|------|----------|-------------|
 | `body` | `object` | No | — |
 
-POST https://api.pipedrive.com/v1/dealFields. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): deal-fields:full, admin. See https://developers.pipedrive.com/docs/api/v1/DealFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization.
+POST https://api.pipedrive.com/v1/dealFields. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): deal-fields:full, admin. See https://developers.pipedrive.com/docs/api/v1/DealFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization. Field options are strict objects containing a label.
 
 <AccordionGroup>
 <Accordion title="body full type">
@@ -1617,6 +1617,7 @@ POST https://api.pipedrive.com/v1/dealFields. The official OpenAPI x-token-cost 
 {
   name: string,
   options?: {
+    label: string
   }[],
   add_visible_flag?: boolean,
   field_type: address | date | daterange | double | enum | monetary | org | people | phone | set | text | time | timerange | user | varchar | varchar_auto | visible_to
@@ -1969,7 +1970,7 @@ Update a deal field (PUT /dealFields/&#123;id&#125;; 10 API tokens; OAuth scopes
 **Risk:** `write`
 
 ```ts
-await corsair.pipedrive.api.apiV1.dealFields.updateDealField({ path: { "id": 1 }, body: {  } });
+await corsair.pipedrive.api.apiV1.dealFields.updateDealField({ path: { "id": 1 }, body: { "options": [{ "id": 1, "label": "Existing option" }, { "label": "New option" }] } });
 ```
 
 **Input**
@@ -1979,7 +1980,7 @@ await corsair.pipedrive.api.apiV1.dealFields.updateDealField({ path: { "id": 1 }
 | `path` | `object` | Yes | — |
 | `body` | `object` | No | — |
 
-PUT https://api.pipedrive.com/v1/dealFields/&#123;id&#125;. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): deal-fields:full, admin. See https://developers.pipedrive.com/docs/api/v1/DealFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization.
+PUT https://api.pipedrive.com/v1/dealFields/&#123;id&#125;. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): deal-fields:full, admin. See https://developers.pipedrive.com/docs/api/v1/DealFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization. Each existing field option on update requires id and label; a new option requires only label.
 
 <AccordionGroup>
 <Accordion title="path full type">
@@ -1997,6 +1998,8 @@ PUT https://api.pipedrive.com/v1/dealFields/&#123;id&#125;. The official OpenAPI
 {
   name?: string,
   options?: {
+    id?: number,
+    label: string
   }[],
   add_visible_flag?: boolean
 }
@@ -4591,7 +4594,7 @@ await corsair.pipedrive.api.apiV1.files.downloadFile({ path: { "id": 1 } });
 |------|------|----------|-------------|
 | `path` | `object` | Yes | — |
 
-GET https://api.pipedrive.com/v1/files/&#123;id&#125;/download. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): deals:read, deals:full, activities:read, activities:full, contacts:read, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Files. API tokens use x-api-token; OAuth access tokens use Bearer authorization.
+GET https://api.pipedrive.com/v1/files/&#123;id&#125;/download. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): deals:read, deals:full, activities:read, activities:full, contacts:read, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Files. API tokens use x-api-token; OAuth access tokens use Bearer authorization. The binary adapter returns content_type, base64, and byte_length (maximum 20 MiB) and follows HTTPS redirects only to *.pipedrive.com; cross-origin redirects are rejected without forwarding credentials.
 
 <AccordionGroup>
 <Accordion title="path full type">
@@ -4994,7 +4997,7 @@ Add a new filter (POST /filters; 10 API tokens; OAuth scopes: deals:full, activi
 **Risk:** `write`
 
 ```ts
-await corsair.pipedrive.api.apiV1.filters.addFilter({ query: { "include_field_code": false }, body: { "name": "x", "conditions": {  }, "type": "deals" } });
+await corsair.pipedrive.api.apiV1.filters.addFilter({ query: { "include_field_code": false }, body: { "name": "Active deals", "type": "deals", "conditions": { "glue": "and", "conditions": [{ "glue": "and", "conditions": [{ "object": "deal", "field_id": "stage_id", "operator": "=", "value": "1", "extra_value": "" }] }] } } });
 ```
 
 **Input**
@@ -5004,7 +5007,7 @@ await corsair.pipedrive.api.apiV1.filters.addFilter({ query: { "include_field_co
 | `query` | `object` | No | — |
 | `body` | `object` | No | — |
 
-POST https://api.pipedrive.com/v1/filters. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): deals:full, activities:full, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Filters. API tokens use x-api-token; OAuth access tokens use Bearer authorization.
+POST https://api.pipedrive.com/v1/filters. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): deals:full, activities:full, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Filters. API tokens use x-api-token; OAuth access tokens use Bearer authorization. conditions uses the documented top-level and/or group structure with strict condition fields. At most 16 individual conditions are accepted.
 
 <AccordionGroup>
 <Accordion title="query full type">
@@ -5022,6 +5025,17 @@ POST https://api.pipedrive.com/v1/filters. The official OpenAPI x-token-cost is 
 {
   name: string,
   conditions: {
+    glue: and,
+    conditions: {
+      glue: and | or,
+      conditions: {
+        object: person | deal | organization | product | activity,
+        field_id: string,
+        operator: IS NOT NULL | IS NULL | <= |>= | < |> | != | = | LIKE '$%' | LIKE '%$%' | NOT LIKE '$%',
+        value: string,
+        extra_value: string
+      }[]
+    }[]
   },
   type: deals | leads | org | people | products | activity | projects
 }
@@ -5380,7 +5394,7 @@ Update filter (PUT /filters/&#123;id&#125;; 10 API tokens; OAuth scopes: deals:f
 **Risk:** `write`
 
 ```ts
-await corsair.pipedrive.api.apiV1.filters.updateFilter({ path: { "id": 1 }, query: { "include_field_code": false }, body: { "conditions": {  } } });
+await corsair.pipedrive.api.apiV1.filters.updateFilter({ path: { "id": 1 }, query: { "include_field_code": false }, body: { "conditions": { "glue": "and", "conditions": [{ "glue": "and", "conditions": [{ "object": "deal", "field_id": "stage_id", "operator": "=", "value": "1", "extra_value": "" }] }] } } });
 ```
 
 **Input**
@@ -5391,7 +5405,7 @@ await corsair.pipedrive.api.apiV1.filters.updateFilter({ path: { "id": 1 }, quer
 | `query` | `object` | No | — |
 | `body` | `object` | No | — |
 
-PUT https://api.pipedrive.com/v1/filters/&#123;id&#125;. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): deals:full, activities:full, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Filters. API tokens use x-api-token; OAuth access tokens use Bearer authorization.
+PUT https://api.pipedrive.com/v1/filters/&#123;id&#125;. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): deals:full, activities:full, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Filters. API tokens use x-api-token; OAuth access tokens use Bearer authorization. conditions uses the documented top-level and/or group structure with strict condition fields. At most 16 individual conditions are accepted.
 
 <AccordionGroup>
 <Accordion title="path full type">
@@ -5418,6 +5432,17 @@ PUT https://api.pipedrive.com/v1/filters/&#123;id&#125;. The official OpenAPI x-
 {
   name?: string,
   conditions: {
+    glue: and,
+    conditions: {
+      glue: and | or,
+      conditions: {
+        object: person | deal | organization | product | activity,
+        field_id: string,
+        operator: IS NOT NULL | IS NULL | <= |>= | < |> | != | = | LIKE '$%' | LIKE '%$%' | NOT LIKE '$%',
+        value: string,
+        extra_value: string
+      }[]
+    }[]
   }
 }
 ```
@@ -5484,7 +5509,7 @@ Add a new goal (POST /goals; 10 API tokens; OAuth scopes: goals:full)
 **Risk:** `write`
 
 ```ts
-await corsair.pipedrive.api.apiV1.goals.addGoal({ body: { "type": {  }, "assignee": {  }, "expected_outcome": {  }, "duration": {  }, "interval": "weekly" } });
+await corsair.pipedrive.api.apiV1.goals.addGoal({ body: { "title": "Quarterly target", "assignee": { "id": 1, "type": "person" }, "type": { "name": "deals_won", "params": { "pipeline_id": [1] } }, "expected_outcome": { "target": 10, "tracking_metric": "quantity" }, "duration": { "start": "2026-01-01", "end": "2026-03-31" }, "interval": "quarterly" } });
 ```
 
 **Input**
@@ -5493,7 +5518,7 @@ await corsair.pipedrive.api.apiV1.goals.addGoal({ body: { "type": {  }, "assigne
 |------|------|----------|-------------|
 | `body` | `object` | No | — |
 
-POST https://api.pipedrive.com/v1/goals. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): goals:full. See https://developers.pipedrive.com/docs/api/v1/Goals. API tokens use x-api-token; OAuth access tokens use Bearer authorization.
+POST https://api.pipedrive.com/v1/goals. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): goals:full. See https://developers.pipedrive.com/docs/api/v1/Goals. API tokens use x-api-token; OAuth access tokens use Bearer authorization. The strict nested body follows the official examples: assignee has numeric id and person/company/team type; type.name is a documented goal type and params accepts pipeline_id/activity_type_id arrays or null and stage_id; expected_outcome has numeric target, quantity/sum metric, and optional currency_id; duration has start and nullable end.
 
 <AccordionGroup>
 <Accordion title="body full type">
@@ -5502,12 +5527,25 @@ POST https://api.pipedrive.com/v1/goals. The official OpenAPI x-token-cost is 10
 {
   title?: string,
   assignee: {
+    id: number,
+    type: person | company | team
   },
   type: {
+    name: deals_won | deals_progressed | activities_completed | activities_added | deals_started | revenue_forecast,
+    params?: {
+      pipeline_id?: number[] | null,
+      stage_id?: number,
+      activity_type_id?: number[] | null
+    }
   },
   expected_outcome: {
+    target: number,
+    tracking_metric: quantity | sum,
+    currency_id?: number
   },
   duration: {
+    start: string,
+    end: string | null
   },
   interval: weekly | monthly | quarterly | yearly
 }
@@ -5804,7 +5842,7 @@ Update existing goal (PUT /goals/&#123;id&#125;; 10 API tokens; OAuth scopes: go
 **Risk:** `write`
 
 ```ts
-await corsair.pipedrive.api.apiV1.goals.updateGoal({ path: { "id": "x" }, body: {  } });
+await corsair.pipedrive.api.apiV1.goals.updateGoal({ path: { "id": "x" }, body: { "assignee": { "id": 1, "type": "person" }, "type": { "name": "deals_won", "params": { "pipeline_id": [1] } }, "expected_outcome": { "target": 10, "tracking_metric": "quantity" }, "duration": { "start": "2026-01-01", "end": null }, "interval": "quarterly" } });
 ```
 
 **Input**
@@ -5814,7 +5852,7 @@ await corsair.pipedrive.api.apiV1.goals.updateGoal({ path: { "id": "x" }, body: 
 | `path` | `object` | Yes | — |
 | `body` | `object` | No | — |
 
-PUT https://api.pipedrive.com/v1/goals/&#123;id&#125;. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): goals:full. See https://developers.pipedrive.com/docs/api/v1/Goals. API tokens use x-api-token; OAuth access tokens use Bearer authorization.
+PUT https://api.pipedrive.com/v1/goals/&#123;id&#125;. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): goals:full. See https://developers.pipedrive.com/docs/api/v1/Goals. API tokens use x-api-token; OAuth access tokens use Bearer authorization. Nested goal fields use the same documented shapes as goal creation; nested objects are strict and reject unlisted keys.
 
 <AccordionGroup>
 <Accordion title="path full type">
@@ -5832,12 +5870,25 @@ PUT https://api.pipedrive.com/v1/goals/&#123;id&#125;. The official OpenAPI x-to
 {
   title?: string,
   assignee?: {
+    id: number,
+    type: person | company | team
   },
   type?: {
+    name: deals_won | deals_progressed | activities_completed | activities_added | deals_started | revenue_forecast,
+    params?: {
+      pipeline_id?: number[] | null,
+      stage_id?: number,
+      activity_type_id?: number[] | null
+    }
   },
   expected_outcome?: {
+    target: number,
+    tracking_metric: quantity | sum,
+    currency_id?: number
   },
   duration?: {
+    start: string,
+    end: string | null
   },
   interval?: weekly | monthly | quarterly | yearly
 }
@@ -7992,7 +8043,7 @@ await corsair.pipedrive.api.apiV1.mailbox.updateMailThreadDetails({ path: { "id"
 | `path` | `object` | Yes | — |
 | `body` | `object` | No | — |
 
-PUT https://api.pipedrive.com/v1/mailbox/mailThreads/&#123;id&#125;. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): mail:full. See https://developers.pipedrive.com/docs/api/v1/Mailbox. API tokens use x-api-token; OAuth access tokens use Bearer authorization.
+PUT https://api.pipedrive.com/v1/mailbox/mailThreads/&#123;id&#125;. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): mail:full. See https://developers.pipedrive.com/docs/api/v1/Mailbox. API tokens use x-api-token; OAuth access tokens use Bearer authorization. Nullable deal_id and lead_id values are preserved as empty fields in the documented application/x-www-form-urlencoded encoding; omitted fields stay omitted.
 
 <AccordionGroup>
 <Accordion title="path full type">
@@ -9122,7 +9173,7 @@ Add a new organization field (POST /organizationFields; 10 API tokens; OAuth sco
 **Risk:** `write`
 
 ```ts
-await corsair.pipedrive.api.apiV1.organizationFields.addOrganizationField({ body: { "name": "x", "field_type": "address" } });
+await corsair.pipedrive.api.apiV1.organizationFields.addOrganizationField({ body: { "name": "x", "field_type": "enum", "options": [{ "label": "New option" }] } });
 ```
 
 **Input**
@@ -9131,7 +9182,7 @@ await corsair.pipedrive.api.apiV1.organizationFields.addOrganizationField({ body
 |------|------|----------|-------------|
 | `body` | `object` | No | — |
 
-POST https://api.pipedrive.com/v1/organizationFields. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): contact-fields:full, admin. See https://developers.pipedrive.com/docs/api/v1/OrganizationFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization.
+POST https://api.pipedrive.com/v1/organizationFields. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): contact-fields:full, admin. See https://developers.pipedrive.com/docs/api/v1/OrganizationFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization. Field options are strict objects containing a label.
 
 <AccordionGroup>
 <Accordion title="body full type">
@@ -9140,6 +9191,7 @@ POST https://api.pipedrive.com/v1/organizationFields. The official OpenAPI x-tok
 {
   name: string,
   options?: {
+    label: string
   }[],
   add_visible_flag?: boolean,
   field_type: address | date | daterange | double | enum | monetary | org | people | phone | set | text | time | timerange | user | varchar | varchar_auto | visible_to
@@ -9492,7 +9544,7 @@ Update an organization field (PUT /organizationFields/&#123;id&#125;; 10 API tok
 **Risk:** `write`
 
 ```ts
-await corsair.pipedrive.api.apiV1.organizationFields.updateOrganizationField({ path: { "id": 1 }, body: {  } });
+await corsair.pipedrive.api.apiV1.organizationFields.updateOrganizationField({ path: { "id": 1 }, body: { "options": [{ "id": 1, "label": "Existing option" }, { "label": "New option" }] } });
 ```
 
 **Input**
@@ -9502,7 +9554,7 @@ await corsair.pipedrive.api.apiV1.organizationFields.updateOrganizationField({ p
 | `path` | `object` | Yes | — |
 | `body` | `object` | No | — |
 
-PUT https://api.pipedrive.com/v1/organizationFields/&#123;id&#125;. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): contact-fields:full, admin. See https://developers.pipedrive.com/docs/api/v1/OrganizationFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization.
+PUT https://api.pipedrive.com/v1/organizationFields/&#123;id&#125;. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): contact-fields:full, admin. See https://developers.pipedrive.com/docs/api/v1/OrganizationFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization. Each existing field option on update requires id and label; a new option requires only label.
 
 <AccordionGroup>
 <Accordion title="path full type">
@@ -9520,6 +9572,8 @@ PUT https://api.pipedrive.com/v1/organizationFields/&#123;id&#125;. The official
 {
   name?: string,
   options?: {
+    id?: number,
+    label: string
   }[],
   add_visible_flag?: boolean
 }
@@ -10992,7 +11046,7 @@ Add a new person field (POST /personFields; 10 API tokens; OAuth scopes: contact
 **Risk:** `write`
 
 ```ts
-await corsair.pipedrive.api.apiV1.personFields.addPersonField({ body: { "name": "x", "field_type": "address" } });
+await corsair.pipedrive.api.apiV1.personFields.addPersonField({ body: { "name": "x", "field_type": "enum", "options": [{ "label": "New option" }] } });
 ```
 
 **Input**
@@ -11001,7 +11055,7 @@ await corsair.pipedrive.api.apiV1.personFields.addPersonField({ body: { "name": 
 |------|------|----------|-------------|
 | `body` | `object` | No | — |
 
-POST https://api.pipedrive.com/v1/personFields. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): contact-fields:full, admin. See https://developers.pipedrive.com/docs/api/v1/PersonFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization.
+POST https://api.pipedrive.com/v1/personFields. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): contact-fields:full, admin. See https://developers.pipedrive.com/docs/api/v1/PersonFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization. Field options are strict objects containing a label.
 
 <AccordionGroup>
 <Accordion title="body full type">
@@ -11010,6 +11064,7 @@ POST https://api.pipedrive.com/v1/personFields. The official OpenAPI x-token-cos
 {
   name: string,
   options?: {
+    label: string
   }[],
   add_visible_flag?: boolean,
   field_type: address | date | daterange | double | enum | monetary | org | people | phone | set | text | time | timerange | user | varchar | varchar_auto | visible_to
@@ -11362,7 +11417,7 @@ Update a person field (PUT /personFields/&#123;id&#125;; 10 API tokens; OAuth sc
 **Risk:** `write`
 
 ```ts
-await corsair.pipedrive.api.apiV1.personFields.updatePersonField({ path: { "id": 1 }, body: {  } });
+await corsair.pipedrive.api.apiV1.personFields.updatePersonField({ path: { "id": 1 }, body: { "options": [{ "id": 1, "label": "Existing option" }, { "label": "New option" }] } });
 ```
 
 **Input**
@@ -11372,7 +11427,7 @@ await corsair.pipedrive.api.apiV1.personFields.updatePersonField({ path: { "id":
 | `path` | `object` | Yes | — |
 | `body` | `object` | No | — |
 
-PUT https://api.pipedrive.com/v1/personFields/&#123;id&#125;. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): contact-fields:full, admin. See https://developers.pipedrive.com/docs/api/v1/PersonFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization.
+PUT https://api.pipedrive.com/v1/personFields/&#123;id&#125;. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): contact-fields:full, admin. See https://developers.pipedrive.com/docs/api/v1/PersonFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization. Each existing field option on update requires id and label; a new option requires only label.
 
 <AccordionGroup>
 <Accordion title="path full type">
@@ -11390,6 +11445,8 @@ PUT https://api.pipedrive.com/v1/personFields/&#123;id&#125;. The official OpenA
 {
   name?: string,
   options?: {
+    id?: number,
+    label: string
   }[],
   add_visible_flag?: boolean
 }
@@ -12923,7 +12980,7 @@ Add a new product field (POST /productFields; 10 API tokens; OAuth scopes: produ
 **Risk:** `write`
 
 ```ts
-await corsair.pipedrive.api.apiV1.productFields.addProductField({ body: { "name": "x", "field_type": "varchar" } });
+await corsair.pipedrive.api.apiV1.productFields.addProductField({ body: { "name": "x", "field_type": "enum", "options": [{ "label": "New option" }] } });
 ```
 
 **Input**
@@ -12932,7 +12989,7 @@ await corsair.pipedrive.api.apiV1.productFields.addProductField({ body: { "name"
 |------|------|----------|-------------|
 | `body` | `object` | No | — |
 
-POST https://api.pipedrive.com/v1/productFields. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): product-fields:full, products:full. See https://developers.pipedrive.com/docs/api/v1/ProductFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization.
+POST https://api.pipedrive.com/v1/productFields. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): product-fields:full, products:full. See https://developers.pipedrive.com/docs/api/v1/ProductFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization. Field options are strict objects containing a label.
 
 <AccordionGroup>
 <Accordion title="body full type">
@@ -12941,6 +12998,7 @@ POST https://api.pipedrive.com/v1/productFields. The official OpenAPI x-token-co
 {
   name: string,
   options?: {
+    label: string
   }[],
   field_type: varchar | varchar_auto | text | double | monetary | date | set | enum | user | org | people | phone | time | timerange | daterange | address
 }
@@ -13268,7 +13326,7 @@ Update a product field (PUT /productFields/&#123;id&#125;; 10 API tokens; OAuth 
 **Risk:** `write`
 
 ```ts
-await corsair.pipedrive.api.apiV1.productFields.updateProductField({ path: { "id": 1 }, body: {  } });
+await corsair.pipedrive.api.apiV1.productFields.updateProductField({ path: { "id": 1 }, body: { "options": [{ "id": 1, "label": "Existing option" }] } });
 ```
 
 **Input**
@@ -13278,7 +13336,7 @@ await corsair.pipedrive.api.apiV1.productFields.updateProductField({ path: { "id
 | `path` | `object` | Yes | — |
 | `body` | `object` | No | — |
 
-PUT https://api.pipedrive.com/v1/productFields/&#123;id&#125;. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): product-fields:full, products:full. See https://developers.pipedrive.com/docs/api/v1/ProductFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization.
+PUT https://api.pipedrive.com/v1/productFields/&#123;id&#125;. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): product-fields:full, products:full. See https://developers.pipedrive.com/docs/api/v1/ProductFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization. Each product field option on update requires id and label.
 
 <AccordionGroup>
 <Accordion title="path full type">
@@ -13296,6 +13354,8 @@ PUT https://api.pipedrive.com/v1/productFields/&#123;id&#125;. The official Open
 {
   name?: string,
   options?: {
+    id: number,
+    label: string
   }[]
 }
 ```
@@ -16627,7 +16687,7 @@ Update pipeline visibility for a role (PUT /roles/&#123;id&#125;/pipelines; 10 A
 **Risk:** `destructive`
 
 ```ts
-await corsair.pipedrive.api.apiV1.roles.updateRolePipelines({ path: { "id": 1 }, body: { "visible_pipeline_ids": {  } } });
+await corsair.pipedrive.api.apiV1.roles.updateRolePipelines({ path: { "id": 1 }, body: { "visible_pipeline_ids": { "add": "[1]", "remove": "[3]" } } });
 ```
 
 **Input**
@@ -16637,7 +16697,7 @@ await corsair.pipedrive.api.apiV1.roles.updateRolePipelines({ path: { "id": 1 },
 | `path` | `object` | Yes | — |
 | `body` | `object` | No | — |
 
-PUT https://api.pipedrive.com/v1/roles/&#123;id&#125;/pipelines. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): admin. See https://developers.pipedrive.com/docs/api/v1/Roles. API tokens use x-api-token; OAuth access tokens use Bearer authorization.
+PUT https://api.pipedrive.com/v1/roles/&#123;id&#125;/pipelines. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): admin. See https://developers.pipedrive.com/docs/api/v1/Roles. API tokens use x-api-token; OAuth access tokens use Bearer authorization. visible_pipeline_ids uses the documented nested add/remove string fields, which contain JSON-encoded pipeline ID arrays.
 
 <AccordionGroup>
 <Accordion title="path full type">
@@ -16654,6 +16714,8 @@ PUT https://api.pipedrive.com/v1/roles/&#123;id&#125;/pipelines. The official Op
 ```ts
 {
   visible_pipeline_ids: {
+    add: string,
+    remove: string
   }
 }
 ```

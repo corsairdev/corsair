@@ -151,6 +151,71 @@ describe('Pipedrive endpoint schemas', () => {
 		}
 	});
 
+	it('accepts documented nested goal, filter, field-option, and role payloads strictly', () => {
+		const goal = PipedriveCatalogTestCases['apiV1.goals.addGoal'].input;
+		expect(
+			PipedriveCatalog['apiV1.goals.addGoal'].input.safeParse(goal).success,
+		).toBe(true);
+		expect(
+			PipedriveCatalog['apiV1.goals.addGoal'].input.safeParse({
+				...goal,
+				body: {
+					...goal.body,
+					assignee: { ...goal.body.assignee, callback: 'not documented' },
+				},
+			}).success,
+		).toBe(false);
+
+		const filter = PipedriveCatalogTestCases['apiV1.filters.addFilter'].input;
+		expect(
+			PipedriveCatalog['apiV1.filters.addFilter'].input.safeParse(filter)
+				.success,
+		).toBe(true);
+		expect(
+			PipedriveCatalog['apiV1.filters.addFilter'].input.safeParse({
+				...filter,
+				body: {
+					...filter.body,
+					conditions: { ...filter.body.conditions, callback: 'not documented' },
+				},
+			}).success,
+		).toBe(false);
+
+		const field =
+			PipedriveCatalogTestCases['apiV1.dealFields.addDealField'].input;
+		expect(
+			PipedriveCatalog['apiV1.dealFields.addDealField'].input.safeParse(field)
+				.success,
+		).toBe(true);
+		expect(
+			PipedriveCatalog['apiV1.dealFields.addDealField'].input.safeParse({
+				...field,
+				body: {
+					...field.body,
+					options: [{ label: 'New option', callback: 'not documented' }],
+				},
+			}).success,
+		).toBe(false);
+
+		const role =
+			PipedriveCatalogTestCases['apiV1.roles.updateRolePipelines'].input;
+		expect(
+			PipedriveCatalog['apiV1.roles.updateRolePipelines'].input.safeParse(role)
+				.success,
+		).toBe(true);
+		expect(
+			PipedriveCatalog['apiV1.roles.updateRolePipelines'].input.safeParse({
+				...role,
+				body: {
+					visible_pipeline_ids: {
+						...role.body.visible_pipeline_ids,
+						callback: 'not documented',
+					},
+				},
+			}).success,
+		).toBe(false);
+	});
+
 	it('accepts and bounds documented deal-list filters and pagination', () => {
 		expect(
 			PipedriveEndpointInputSchemas.dealList.parse({

@@ -125,6 +125,7 @@ describe('Pipedrive HTTP client', () => {
 				`${PIPEDRIVE_API_V1_BASE}/files/7/download`,
 				expect.objectContaining({
 					method: 'GET',
+					redirect: 'manual',
 					headers: expect.any(Headers),
 				}),
 			);
@@ -132,6 +133,86 @@ describe('Pipedrive HTTP client', () => {
 			expect(new Headers(request?.headers).get('x-api-token')).toBe(
 				'test-token',
 			);
+		} finally {
+			globalThis.fetch = originalFetch;
+		}
+	});
+
+	it('rejects cross-origin file redirects before forwarding the API token', async () => {
+		const originalFetch = globalThis.fetch;
+		const fetchMock = jest.fn().mockResolvedValue(
+			new Response(null, {
+				status: 302,
+				headers: { Location: 'https://attacker.example.invalid/collect' },
+			}),
+		);
+		globalThis.fetch = fetchMock;
+		try {
+			const rejection = await makePipedriveBinaryRequest(
+				'/files/7/download',
+				'test-token',
+				'api_key',
+				{ method: 'GET', apiVersion: 'v1' },
+			).catch(
+				// `unknown` because a rejected fetch promise may contain any JavaScript value.
+				(error: unknown) => error,
+			);
+			expect(rejection).toBeInstanceOf(ApiError);
+			if (!(rejection instanceof ApiError))
+				throw new Error('Expected ApiError');
+			expect(rejection.status).toBe(302);
+			expect(JSON.stringify(rejection)).not.toContain(
+				'attacker.example.invalid',
+			);
+			expect(JSON.stringify(rejection)).not.toContain('test-token');
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+			expect(fetchMock).toHaveBeenCalledWith(
+				expect.stringContaining('/files/7/download'),
+				expect.objectContaining({ redirect: 'manual' }),
+			);
+		} finally {
+			globalThis.fetch = originalFetch;
+		}
+	});
+
+	it('follows same-provider redirects without leaving Pipedrive origins', async () => {
+		const originalFetch = globalThis.fetch;
+		const fetchMock = jest
+			.fn()
+			.mockResolvedValueOnce(
+				new Response(null, {
+					status: 302,
+					headers: {
+						Location: 'https://app.pipedrive.com/api/v1/files/7/download',
+					},
+				}),
+			)
+			.mockResolvedValueOnce(
+				new Response(new Uint8Array([80, 68]), {
+					status: 200,
+					headers: { 'Content-Type': 'application/pdf' },
+				}),
+			);
+		globalThis.fetch = fetchMock;
+		try {
+			await expect(
+				makePipedriveBinaryRequest(
+					'/files/7/download',
+					'test-token',
+					'api_key',
+					{
+						method: 'GET',
+						apiVersion: 'v1',
+					},
+				),
+			).resolves.toMatchObject({ base64: 'UEQ=', byte_length: 2 });
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+			for (const [, requestOptions] of fetchMock.mock.calls) {
+				expect(requestOptions?.redirect).toBe('manual');
+				expect(new Headers(requestOptions?.headers).get('x-api-token')).toBe(
+					'test-token',
+				);
+			}
 		} finally {
 			globalThis.fetch = originalFetch;
 		}

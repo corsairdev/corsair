@@ -655,7 +655,13 @@ export const PipedriveCatalogTestCases = {
 		},
 	},
 	'apiV1.dealFields.addDealField': {
-		input: { body: { name: 'x', field_type: 'address' } },
+		input: {
+			body: {
+				name: 'x',
+				field_type: 'enum',
+				options: [{ label: 'New option' }],
+			},
+		},
 		response: { success: true, data: { id: 1 } },
 		expected: {
 			method: 'POST',
@@ -663,7 +669,11 @@ export const PipedriveCatalogTestCases = {
 			apiVersion: 'v1',
 			query: {},
 			requestContentType: 'application/json',
-			body: { name: 'x', field_type: 'address' },
+			body: {
+				name: 'x',
+				field_type: 'enum',
+				options: [{ label: 'New option' }],
+			},
 		},
 	},
 	'apiV1.dealFields.deleteDealFields': {
@@ -703,7 +713,12 @@ export const PipedriveCatalogTestCases = {
 		},
 	},
 	'apiV1.dealFields.updateDealField': {
-		input: { path: { id: 1 }, body: {} },
+		input: {
+			path: { id: 1 },
+			body: {
+				options: [{ id: 1, label: 'Existing option' }, { label: 'New option' }],
+			},
+		},
 		response: { success: true, data: { id: 1 } },
 		expected: {
 			method: 'PUT',
@@ -711,7 +726,9 @@ export const PipedriveCatalogTestCases = {
 			apiVersion: 'v1',
 			query: {},
 			requestContentType: 'application/json',
-			body: {},
+			body: {
+				options: [{ id: 1, label: 'Existing option' }, { label: 'New option' }],
+			},
 		},
 	},
 	'apiV1.files.getFiles': {
@@ -870,7 +887,27 @@ export const PipedriveCatalogTestCases = {
 	'apiV1.filters.addFilter': {
 		input: {
 			query: { include_field_code: false },
-			body: { name: 'x', conditions: {}, type: 'deals' },
+			body: {
+				name: 'Active deals',
+				type: 'deals',
+				conditions: {
+					glue: 'and',
+					conditions: [
+						{
+							glue: 'and',
+							conditions: [
+								{
+									object: 'deal',
+									field_id: 'stage_id',
+									operator: '=',
+									value: '1',
+									extra_value: '',
+								},
+							],
+						},
+					],
+				},
+			},
 		},
 		response: { success: true, data: { id: 1 } },
 		expected: {
@@ -879,7 +916,27 @@ export const PipedriveCatalogTestCases = {
 			apiVersion: 'v1',
 			query: { include_field_code: false },
 			requestContentType: 'application/json',
-			body: { name: 'x', conditions: {}, type: 'deals' },
+			body: {
+				name: 'Active deals',
+				type: 'deals',
+				conditions: {
+					glue: 'and',
+					conditions: [
+						{
+							glue: 'and',
+							conditions: [
+								{
+									object: 'deal',
+									field_id: 'stage_id',
+									operator: '=',
+									value: '1',
+									extra_value: '',
+								},
+							],
+						},
+					],
+				},
+			},
 		},
 	},
 	'apiV1.filters.getFilterHelpers': {
@@ -922,7 +979,25 @@ export const PipedriveCatalogTestCases = {
 		input: {
 			path: { id: 1 },
 			query: { include_field_code: false },
-			body: { conditions: {} },
+			body: {
+				conditions: {
+					glue: 'and',
+					conditions: [
+						{
+							glue: 'and',
+							conditions: [
+								{
+									object: 'deal',
+									field_id: 'stage_id',
+									operator: '=',
+									value: '1',
+									extra_value: '',
+								},
+							],
+						},
+					],
+				},
+			},
 		},
 		response: { success: true, data: { id: 1 } },
 		expected: {
@@ -931,17 +1006,36 @@ export const PipedriveCatalogTestCases = {
 			apiVersion: 'v1',
 			query: { include_field_code: false },
 			requestContentType: 'application/json',
-			body: { conditions: {} },
+			body: {
+				conditions: {
+					glue: 'and',
+					conditions: [
+						{
+							glue: 'and',
+							conditions: [
+								{
+									object: 'deal',
+									field_id: 'stage_id',
+									operator: '=',
+									value: '1',
+									extra_value: '',
+								},
+							],
+						},
+					],
+				},
+			},
 		},
 	},
 	'apiV1.goals.addGoal': {
 		input: {
 			body: {
-				type: {},
-				assignee: {},
-				expected_outcome: {},
-				duration: {},
-				interval: 'weekly',
+				title: 'Quarterly target',
+				assignee: { id: 1, type: 'person' },
+				type: { name: 'deals_won', params: { pipeline_id: [1] } },
+				expected_outcome: { target: 10, tracking_metric: 'quantity' },
+				duration: { start: '2026-01-01', end: '2026-03-31' },
+				interval: 'quarterly',
 			},
 		},
 		response: { success: true, data: { goal: { id: 'x' } } },
@@ -952,11 +1046,12 @@ export const PipedriveCatalogTestCases = {
 			query: {},
 			requestContentType: 'application/json',
 			body: {
-				type: {},
-				assignee: {},
-				expected_outcome: {},
-				duration: {},
-				interval: 'weekly',
+				title: 'Quarterly target',
+				assignee: { id: 1, type: 'person' },
+				type: { name: 'deals_won', params: { pipeline_id: [1] } },
+				expected_outcome: { target: 10, tracking_metric: 'quantity' },
+				duration: { start: '2026-01-01', end: '2026-03-31' },
+				interval: 'quarterly',
 			},
 		},
 	},
@@ -1003,7 +1098,16 @@ export const PipedriveCatalogTestCases = {
 		},
 	},
 	'apiV1.goals.updateGoal': {
-		input: { path: { id: 'x' }, body: {} },
+		input: {
+			path: { id: 'x' },
+			body: {
+				assignee: { id: 1, type: 'person' },
+				type: { name: 'deals_won', params: { pipeline_id: [1] } },
+				expected_outcome: { target: 10, tracking_metric: 'quantity' },
+				duration: { start: '2026-01-01', end: null },
+				interval: 'quarterly',
+			},
+		},
 		response: { success: true, data: { goal: { id: 'x' } } },
 		expected: {
 			method: 'PUT',
@@ -1011,7 +1115,13 @@ export const PipedriveCatalogTestCases = {
 			apiVersion: 'v1',
 			query: {},
 			requestContentType: 'application/json',
-			body: {},
+			body: {
+				assignee: { id: 1, type: 'person' },
+				type: { name: 'deals_won', params: { pipeline_id: [1] } },
+				expected_outcome: { target: 10, tracking_metric: 'quantity' },
+				duration: { start: '2026-01-01', end: null },
+				interval: 'quarterly',
+			},
 		},
 	},
 	'apiV1.goals.deleteGoal': {
@@ -1829,7 +1939,13 @@ export const PipedriveCatalogTestCases = {
 		},
 	},
 	'apiV1.organizationFields.addOrganizationField': {
-		input: { body: { name: 'x', field_type: 'address' } },
+		input: {
+			body: {
+				name: 'x',
+				field_type: 'enum',
+				options: [{ label: 'New option' }],
+			},
+		},
 		response: { success: true, data: { id: 1 } },
 		expected: {
 			method: 'POST',
@@ -1837,7 +1953,11 @@ export const PipedriveCatalogTestCases = {
 			apiVersion: 'v1',
 			query: {},
 			requestContentType: 'application/json',
-			body: { name: 'x', field_type: 'address' },
+			body: {
+				name: 'x',
+				field_type: 'enum',
+				options: [{ label: 'New option' }],
+			},
 		},
 	},
 	'apiV1.organizationFields.deleteOrganizationFields': {
@@ -1877,7 +1997,12 @@ export const PipedriveCatalogTestCases = {
 		},
 	},
 	'apiV1.organizationFields.updateOrganizationField': {
-		input: { path: { id: 1 }, body: {} },
+		input: {
+			path: { id: 1 },
+			body: {
+				options: [{ id: 1, label: 'Existing option' }, { label: 'New option' }],
+			},
+		},
 		response: { success: true, data: { id: 1 } },
 		expected: {
 			method: 'PUT',
@@ -1885,7 +2010,9 @@ export const PipedriveCatalogTestCases = {
 			apiVersion: 'v1',
 			query: {},
 			requestContentType: 'application/json',
-			body: {},
+			body: {
+				options: [{ id: 1, label: 'Existing option' }, { label: 'New option' }],
+			},
 		},
 	},
 	'apiV1.organizationRelationships.getOrganizationRelationships': {
@@ -2189,7 +2316,13 @@ export const PipedriveCatalogTestCases = {
 		},
 	},
 	'apiV1.personFields.addPersonField': {
-		input: { body: { name: 'x', field_type: 'address' } },
+		input: {
+			body: {
+				name: 'x',
+				field_type: 'enum',
+				options: [{ label: 'New option' }],
+			},
+		},
 		response: { success: true, data: { id: 1 } },
 		expected: {
 			method: 'POST',
@@ -2197,7 +2330,11 @@ export const PipedriveCatalogTestCases = {
 			apiVersion: 'v1',
 			query: {},
 			requestContentType: 'application/json',
-			body: { name: 'x', field_type: 'address' },
+			body: {
+				name: 'x',
+				field_type: 'enum',
+				options: [{ label: 'New option' }],
+			},
 		},
 	},
 	'apiV1.personFields.deletePersonFields': {
@@ -2237,7 +2374,12 @@ export const PipedriveCatalogTestCases = {
 		},
 	},
 	'apiV1.personFields.updatePersonField': {
-		input: { path: { id: 1 }, body: {} },
+		input: {
+			path: { id: 1 },
+			body: {
+				options: [{ id: 1, label: 'Existing option' }, { label: 'New option' }],
+			},
+		},
 		response: { success: true, data: { id: 1 } },
 		expected: {
 			method: 'PUT',
@@ -2245,7 +2387,9 @@ export const PipedriveCatalogTestCases = {
 			apiVersion: 'v1',
 			query: {},
 			requestContentType: 'application/json',
-			body: {},
+			body: {
+				options: [{ id: 1, label: 'Existing option' }, { label: 'New option' }],
+			},
 		},
 	},
 	'apiV1.pipelines.getPipelineConversionStatistics': {
@@ -2434,7 +2578,13 @@ export const PipedriveCatalogTestCases = {
 		},
 	},
 	'apiV1.productFields.addProductField': {
-		input: { body: { name: 'x', field_type: 'varchar' } },
+		input: {
+			body: {
+				name: 'x',
+				field_type: 'enum',
+				options: [{ label: 'New option' }],
+			},
+		},
 		response: { success: true, data: { name: 'x', field_type: 'varchar' } },
 		expected: {
 			method: 'POST',
@@ -2442,7 +2592,11 @@ export const PipedriveCatalogTestCases = {
 			apiVersion: 'v1',
 			query: {},
 			requestContentType: 'application/json',
-			body: { name: 'x', field_type: 'varchar' },
+			body: {
+				name: 'x',
+				field_type: 'enum',
+				options: [{ label: 'New option' }],
+			},
 		},
 	},
 	'apiV1.productFields.deleteProductField': {
@@ -2470,7 +2624,10 @@ export const PipedriveCatalogTestCases = {
 		},
 	},
 	'apiV1.productFields.updateProductField': {
-		input: { path: { id: 1 }, body: {} },
+		input: {
+			path: { id: 1 },
+			body: { options: [{ id: 1, label: 'Existing option' }] },
+		},
 		response: { success: true, data: { name: 'x', field_type: 'varchar' } },
 		expected: {
 			method: 'PUT',
@@ -2478,7 +2635,7 @@ export const PipedriveCatalogTestCases = {
 			apiVersion: 'v1',
 			query: {},
 			requestContentType: 'application/json',
-			body: {},
+			body: { options: [{ id: 1, label: 'Existing option' }] },
 		},
 	},
 	'apiV1.projects.getProjects': {
@@ -2899,7 +3056,10 @@ export const PipedriveCatalogTestCases = {
 		},
 	},
 	'apiV1.roles.updateRolePipelines': {
-		input: { path: { id: 1 }, body: { visible_pipeline_ids: {} } },
+		input: {
+			path: { id: 1 },
+			body: { visible_pipeline_ids: { add: '[1]', remove: '[3]' } },
+		},
 		response: { success: true, data: { pipeline_ids: [1] } },
 		expected: {
 			method: 'PUT',
@@ -2907,7 +3067,7 @@ export const PipedriveCatalogTestCases = {
 			apiVersion: 'v1',
 			query: {},
 			requestContentType: 'application/json',
-			body: { visible_pipeline_ids: {} },
+			body: { visible_pipeline_ids: { add: '[1]', remove: '[3]' } },
 		},
 	},
 	'apiV1.stages.getStageDeals': {

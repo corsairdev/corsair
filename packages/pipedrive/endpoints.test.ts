@@ -1110,6 +1110,27 @@ function catalogRecord(value: unknown): Record<string, unknown> {
 }
 
 describe('Pipedrive official OpenAPI catalog routes', () => {
+	it('distinguishes omitted mail-thread fields from explicit nullable values', async () => {
+		const route =
+			pipedriveCatalogEndpointFunctions[
+				'apiV1.mailbox.updateMailThreadDetails'
+			];
+		const response =
+			PipedriveCatalogTestCases['apiV1.mailbox.updateMailThreadDetails']
+				.response;
+		mockedRequest.mockResolvedValue(response);
+		await Reflect.apply(route, undefined, [ctx, { path: { id: 8 }, body: {} }]);
+		await Reflect.apply(route, undefined, [
+			ctx,
+			{ path: { id: 8 }, body: { deal_id: null, lead_id: null } },
+		]);
+		expect(mockedRequest.mock.calls[0]?.[3]?.body).toBe('');
+		expect(mockedRequest.mock.calls[1]?.[3]?.body).toBe('deal_id=&lead_id=');
+		expect(mockedRequest.mock.calls[1]?.[3]?.contentType).toBe(
+			'application/x-www-form-urlencoded',
+		);
+	});
+
 	it.each(PipedriveCatalogOperationKeys)(
 		'%s sends the documented version, method, path, query, and body',
 		async (key) => {

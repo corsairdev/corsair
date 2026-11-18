@@ -113,7 +113,11 @@ function formDataFrom(value: unknown): FormData {
 	const formData = new FormData();
 	const append = (key: string, entry: unknown) => {
 		// `unknown` is necessary because OpenAPI permits scalar, array, object, and Blob form fields.
-		if (entry === undefined || entry === null) return;
+		if (entry === undefined) return;
+		if (entry === null) {
+			formData.append(key, '');
+			return;
+		}
 		if (Array.isArray(entry)) {
 			for (const item of entry) append(key, item);
 			return;
@@ -142,7 +146,11 @@ function urlEncodedBody(value: unknown): string {
 	const search = new URLSearchParams();
 	const append = (key: string, entry: unknown) => {
 		// `unknown` is necessary because form-encoded values may be scalars, arrays, or objects.
-		if (entry === undefined || entry === null) return;
+		if (entry === undefined) return;
+		if (entry === null) {
+			search.append(key, '');
+			return;
+		}
 		if (Array.isArray(entry)) {
 			for (const item of entry) append(key, item);
 			return;

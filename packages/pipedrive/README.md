@@ -66,6 +66,8 @@ Deal, person, organization, activity, task, product, product variation, and prod
 
 Pipedrive also applies daily token budgets and per-token burst limits. The client captures `x-ratelimit-reset`; only a 429 with that documented burst reset is retried once. A 429 without a reset is not retried because daily token-budget exhaustion remains blocked until reset. See [Pipedrive rate limiting](https://pipedrive.readme.io/docs/core-api-concepts-rate-limiting).
 
+For `apiV1.mailbox.updateMailThreadDetails`, explicit `null` values for the nullable `deal_id` and `lead_id` form fields are sent as empty fields (`deal_id=` / `lead_id=`); omitted properties remain omitted. File downloads use manual redirect handling, forward credentials only to HTTPS `*.pipedrive.com` origins, and reject cross-origin redirects.
+
 ## Official v1 and v2 route catalog
 
 The following inventory covers the additional 321 operations, one row per versioned method/path. Together with the 44 convenience operations above, the plugin implements 365 of the 371 operations in Pipedrive's published OpenAPI contracts. The `apiV1` and `apiV2` namespaces preserve the provider's version-specific path, method, parameters, request media type, and response contract; optional groups are nested under `query`, path identifiers under `path`, and request bodies under `body`.
@@ -399,7 +401,7 @@ The following inventory covers the additional 321 operations, one row per versio
 
 ## Scope and limitations
 
-The current official contracts contain 213 v1 and 158 v2 operations (371 versioned operations total). The plugin exposes 365: all documented business operations compatible with Corsair's request/response model. The three webhook routes are intentionally excluded because webhook receiving was not requested. The three v1 OAuth authorization, token-exchange, and refresh routes are handled by Corsair's OAuth lifecycle rather than exposed as business endpoints. No other OpenAPI operation is pending or unverified against the two published spec files. Pipedrive's file-download route is exposed as `{ content_type, base64, byte_length }`; the plugin caps a single downloaded file at 20 MiB to bound memory use.
+The current official contracts contain 213 v1 and 158 v2 operations (371 versioned operations total). The plugin exposes 365: all documented business operations compatible with Corsair's request/response model. The three webhook routes are intentionally excluded because webhook receiving was not requested. The three v1 OAuth authorization, token-exchange, and refresh routes are handled by Corsair's OAuth lifecycle rather than exposed as business endpoints. No other OpenAPI operation is pending or unverified against the two published spec files. Pipedrive's file-download route is exposed as `{ content_type, base64, byte_length }`; the plugin caps a single downloaded file at 20 MiB and follows only HTTPS redirects to `*.pipedrive.com`, rejecting other destinations to prevent credential forwarding.
 
 Official references: [Pipedrive API v1](https://developers.pipedrive.com/docs/api/v1/openapi.yaml), [Pipedrive API v2](https://developers.pipedrive.com/docs/api/v1/openapi-v2.yaml), [API reference](https://developers.pipedrive.com/docs/api/v1).
 
