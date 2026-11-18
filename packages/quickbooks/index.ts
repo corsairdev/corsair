@@ -60,7 +60,10 @@ export type QuickBooksContext = CorsairPluginContext<
 
 type QuickBooksEndpoint<K extends keyof QuickBooksEndpointInputs> =
 	CorsairEndpoint<
-		CorsairContext & Pick<QuickBooksContext, 'key' | 'options'>,
+		CorsairContext &
+			Pick<QuickBooksContext, 'key' | 'options'> & {
+				_refreshAuth?: () => Promise<string>;
+			},
 		QuickBooksEndpointInputs[K],
 		QuickBooksEndpointOutputs[K]
 	>;

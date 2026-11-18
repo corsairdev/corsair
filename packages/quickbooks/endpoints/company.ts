@@ -1,6 +1,6 @@
 import type { CorsairContext } from 'corsair/core';
 import type { QuickBooksContext } from '..';
-import { makeQuickBooksRequest } from '../client';
+import { makeAuthenticatedQuickBooksRequest } from '../client';
 import type {
 	QuickBooksEndpointInputs,
 	QuickBooksEndpointOutputs,
@@ -12,6 +12,7 @@ import {
 
 type EndpointContext = CorsairContext & {
 	key: string;
+	_refreshAuth?: () => Promise<string>;
 	options: Pick<QuickBooksContext['options'], 'environment'>;
 };
 
@@ -22,9 +23,9 @@ export async function get(
 	const parsedInput = QuickBooksEndpointInputSchemas.companyGet.parse(input);
 	const realmId = encodeURIComponent(parsedInput.realmId);
 	// unknown because the shared transport returns untrusted provider JSON before validation.
-	const response = await makeQuickBooksRequest<unknown>(
+	const response = await makeAuthenticatedQuickBooksRequest<unknown>(
+		ctx,
 		`company/${realmId}/companyinfo/${realmId}`,
-		ctx.key,
 		{},
 		ctx.options.environment,
 	);
@@ -37,9 +38,9 @@ export async function list(
 ): Promise<QuickBooksEndpointOutputs['companyList']> {
 	const parsedInput = QuickBooksEndpointInputSchemas.companyList.parse(input);
 	// unknown because the shared transport returns untrusted provider JSON before validation.
-	const response = await makeQuickBooksRequest<unknown>(
+	const response = await makeAuthenticatedQuickBooksRequest<unknown>(
+		ctx,
 		`company/${encodeURIComponent(parsedInput.realmId)}/query`,
-		ctx.key,
 		{ query: { query: 'SELECT * FROM CompanyInfo' } },
 		ctx.options.environment,
 	);

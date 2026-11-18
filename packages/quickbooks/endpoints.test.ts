@@ -67,6 +67,40 @@ describe('QuickBooks verified endpoint requests', () => {
 		});
 	});
 
+	it('refreshes OAuth once and retries an Account write after a 401', async () => {
+		const refreshAuth = jest.fn(async () => 'fresh-access-token');
+		const authenticatedContext = { ...context, _refreshAuth: refreshAuth };
+		fetchMock
+			.mockResolvedValueOnce(
+				new Response(
+					JSON.stringify({ Fault: { Error: [{ Message: 'expired' }] } }),
+					{
+						status: 401,
+						statusText: 'Unauthorized',
+						headers: { 'Content-Type': 'application/json' },
+					},
+				),
+			)
+			.mockResolvedValueOnce(
+				mockJsonResponse({ Account: account, time: '2026-11-18T12:00:00Z' }),
+			);
+
+		await AccountsEndpoints.create(authenticatedContext, {
+			realmId: '12345678',
+			name: 'Operating Checking',
+			accountType: 'Bank',
+		});
+
+		expect(refreshAuth).toHaveBeenCalledTimes(1);
+		expect(fetchMock).toHaveBeenCalledTimes(2);
+		const retryCall = fetchMock.mock.calls.at(1);
+		expect(retryCall).toBeDefined();
+		if (!retryCall) throw new Error('Expected the refreshed provider request');
+		expect(new Headers(retryCall[1]?.headers).get('authorization')).toBe(
+			'Bearer fresh-access-token',
+		);
+	});
+
 	it('reads an Account with the account ID in the path', async () => {
 		fetchMock.mockResolvedValue(
 			mockJsonResponse({ Account: account, time: '2026-11-18T12:00:00Z' }),

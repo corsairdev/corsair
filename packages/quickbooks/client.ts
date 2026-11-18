@@ -3,7 +3,7 @@ import type {
 	OpenAPIConfig,
 	RateLimitConfig,
 } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export type QuickBooksEnvironment = 'production' | 'sandbox';
 
@@ -25,6 +25,11 @@ export type QuickBooksRequestOptions = {
 	// unknown values let the request's Zod-validated endpoint body retain its exact fields.
 	body?: Record<string, unknown>;
 	query?: Record<string, string | number | boolean | undefined>;
+};
+
+export type QuickBooksAuthenticatedContext = {
+	key: string;
+	_refreshAuth?: () => Promise<string>;
 };
 
 export function quickBooksApiBase(
@@ -63,4 +68,31 @@ export async function makeQuickBooksRequest<T>(
 	return request<T>(config, requestOptions, {
 		rateLimitConfig: QUICKBOOKS_RATE_LIMIT_CONFIG,
 	});
+}
+
+/**
+ * Refreshes and retries this one request once after a 401. Core automatically
+ * retries reads, but a write must refresh at this request boundary so a failed
+ * auth response cannot suppress a safe retry or repeat earlier side effects.
+ */
+export async function makeAuthenticatedQuickBooksRequest<T>(
+	ctx: QuickBooksAuthenticatedContext,
+	path: string,
+	options: QuickBooksRequestOptions,
+	environment?: QuickBooksEnvironment,
+): Promise<T> {
+	try {
+		return await makeQuickBooksRequest<T>(path, ctx.key, options, environment);
+	} catch (error: unknown) {
+		// unknown because transport rejection values are untrusted; ApiError narrows the retryable case.
+		if (
+			!(error instanceof ApiError) ||
+			error.status !== 401 ||
+			!ctx._refreshAuth
+		) {
+			throw error;
+		}
+		const freshToken = await ctx._refreshAuth();
+		return makeQuickBooksRequest<T>(path, freshToken, options, environment);
+	}
 }
