@@ -23,7 +23,6 @@ examples:
     title: Search the latest tweets from an account
     args:
       searchItem: 'from:XDevelopers'
-      category: Latest
       count: 20
   write:
     path: monitors.addAccounts
