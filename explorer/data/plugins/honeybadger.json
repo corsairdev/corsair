@@ -1,0 +1,3418 @@
+{
+  "id": "honeybadger",
+  "displayName": "Honeybadger",
+  "description": "Error tracking, uptime monitoring, check-ins, deploys and Insights queries from Honeybadger's v3 API.",
+  "npmPackageName": "@corsair-dev/honeybadger",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 62,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "region"]
+    }
+  ],
+  "api": [
+    {
+      "path": "honeybadger.api.account.get",
+      "shortPath": "account.get",
+      "description": "Read the account the token belongs to, with its name and primary email",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, email?: string | null, active?: boolean | null, parked?: boolean | null, created_at?: string | null, links?: { web: string } | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.account.usage",
+      "shortPath": "account.usage",
+      "description": "Read the account quota and how much of it is used, for errors, uptime and check-ins",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, quota: { errors_limit: number, errors_consumed: number, uptime_limit?: number | null, uptime_consumed: number, check_ins_limit?: number | null, check_ins_consumed: number } }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.checkIns.create",
+      "shortPath": "checkIns.create",
+      "description": "Create a check-in on a simple period or a cron schedule; a simple schedule needs `report_period` and a cron schedule needs `cron_schedule`",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Display name. Null clears it; an unnamed check-in shows its ID."
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string | null",
+            "description": "Short identifier used in the check-in's reporting URL. Renaming it breaks jobs reporting to `…/check_in/<ingestion key>/<slug>`."
+          },
+          {
+            "key": "schedule_type",
+            "optional": true,
+            "type": "simple | cron",
+            "description": "`simple` expects a report every `report_period`; `cron` expects reports on a cron schedule and requires `cron_schedule`. Switching to `simple` clears `cron_schedule`; switching to `cron` clears `report_period`. Defaults to `simple` on create."
+          },
+          {
+            "key": "report_period",
+            "optional": true,
+            "type": "string | null",
+            "description": "How often a report is expected, for `simple` schedules. Required unless `schedule_type` is `cron`, and may not be zero. Returned in long form."
+          },
+          {
+            "key": "grace_period",
+            "optional": true,
+            "type": "string | null",
+            "description": "How long after the expected time before the check-in counts as missing. Null resets it to zero."
+          },
+          {
+            "key": "cron_schedule",
+            "optional": true,
+            "type": "string | null",
+            "description": "Cron expression, required when `schedule_type` is `cron`."
+          },
+          {
+            "key": "cron_timezone",
+            "optional": true,
+            "type": "string | null",
+            "description": "Timezone the cron schedule is evaluated in, as the web app lists it (`Central Time (US & Canada)`), not an IANA identifier. Null resets it to `UTC`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, project_id: string, name?: string | null, slug?: string | null, schedule_type?: string | null, state?: string | null, reported_at?: string | null, expected_at?: string | null, missed_count?: number | null, grace_period?: string | null, report_url?: string | null, cron_schedule?: string | null, cron_timezone?: string | null, report_period?: string | null, created_at?: string | null, links?: { web: string } | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.checkIns.delete",
+      "shortPath": "checkIns.delete",
+      "description": "Delete a check-in, which stops monitoring that scheduled job",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "check_in_id",
+            "optional": false,
+            "type": "string",
+            "description": "The check-in ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "check_in_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.checkIns.events",
+      "shortPath": "checkIns.events",
+      "description": "List a check-in's state changes newest first, paging backwards on a timestamp",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "check_in_id",
+            "optional": false,
+            "type": "string",
+            "description": "The check-in ID."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum items to return, 1 to 100. Defaults to 25."
+          },
+          {
+            "key": "created_before",
+            "optional": true,
+            "type": "number",
+            "description": "Only items created before this Unix timestamp. Take it from `links.older`; fractional seconds count."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ check_in_id: string, state: string, created_at?: string | null, payload?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ limit?: number, has_older?: boolean, has_newer?: boolean, oldest_cursor?: string | null, newest_cursor?: string | null } | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string, older?: string | null, newer?: string | null } | null"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.checkIns.get",
+      "shortPath": "checkIns.get",
+      "description": "Read one check-in with its schedule, last report and next expected report",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "check_in_id",
+            "optional": false,
+            "type": "string",
+            "description": "The check-in ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, project_id: string, name?: string | null, slug?: string | null, schedule_type?: string | null, state?: string | null, reported_at?: string | null, expected_at?: string | null, missed_count?: number | null, grace_period?: string | null, report_url?: string | null, cron_schedule?: string | null, cron_timezone?: string | null, report_period?: string | null, created_at?: string | null, links?: { web: string } | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.checkIns.list",
+      "shortPath": "checkIns.list",
+      "description": "List a project's check-ins with their state and next expected report",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, 1-indexed. Defaults to 1."
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, 1 to 100. Defaults to 25."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, project_id: string, name?: string | null, slug?: string | null, schedule_type?: string | null, state?: string | null, reported_at?: string | null, expected_at?: string | null, missed_count?: number | null, grace_period?: string | null, report_url?: string | null, cron_schedule?: string | null, cron_timezone?: string | null, report_period?: string | null, created_at?: string | null, links?: { web: string } | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ page?: number, per_page?: number } | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string, first?: string | null, prev?: string | null, next?: string | null } | null",
+            "description": "Root-relative paths, to be resolved against the API host."
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.checkIns.replace",
+      "shortPath": "checkIns.replace",
+      "description": "Replace the project's whole set of check-ins by slug; every check-in the list does not name is deleted",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "check_ins",
+            "optional": false,
+            "type": "{ name?: string | null, slug: string, schedule_type?: simple | cron, report_period?: string | null, grace_period?: string | null, cron_schedule?: string | null, cron_timezone?: string | null }[]",
+            "description": "The project's complete set of check-ins. Any check-in this list does not name is deleted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ operation: create | update | delete, slug: string, success: true }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.checkIns.update",
+      "shortPath": "checkIns.update",
+      "description": "Change a check-in's name, slug, schedule or grace period; switching schedule type clears the other one's fields",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "check_in_id",
+            "optional": false,
+            "type": "string",
+            "description": "The check-in ID."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Display name. Null clears it; an unnamed check-in shows its ID."
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string | null",
+            "description": "Short identifier used in the check-in's reporting URL. Renaming it breaks jobs reporting to `…/check_in/<ingestion key>/<slug>`."
+          },
+          {
+            "key": "schedule_type",
+            "optional": true,
+            "type": "simple | cron",
+            "description": "`simple` expects a report every `report_period`; `cron` expects reports on a cron schedule and requires `cron_schedule`. Switching to `simple` clears `cron_schedule`; switching to `cron` clears `report_period`. Defaults to `simple` on create."
+          },
+          {
+            "key": "report_period",
+            "optional": true,
+            "type": "string | null",
+            "description": "How often a report is expected, for `simple` schedules. Required unless `schedule_type` is `cron`, and may not be zero. Returned in long form."
+          },
+          {
+            "key": "grace_period",
+            "optional": true,
+            "type": "string | null",
+            "description": "How long after the expected time before the check-in counts as missing. Null resets it to zero."
+          },
+          {
+            "key": "cron_schedule",
+            "optional": true,
+            "type": "string | null",
+            "description": "Cron expression, required when `schedule_type` is `cron`."
+          },
+          {
+            "key": "cron_timezone",
+            "optional": true,
+            "type": "string | null",
+            "description": "Timezone the cron schedule is evaluated in, as the web app lists it (`Central Time (US & Canada)`), not an IANA identifier. Null resets it to `UTC`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, project_id: string, name?: string | null, slug?: string | null, schedule_type?: string | null, state?: string | null, reported_at?: string | null, expected_at?: string | null, missed_count?: number | null, grace_period?: string | null, report_url?: string | null, cron_schedule?: string | null, cron_timezone?: string | null, report_period?: string | null, created_at?: string | null, links?: { web: string } | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.comments.create",
+      "shortPath": "comments.create",
+      "description": "Comment on a fault; `@mentions` notify the named project members",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "fault_id",
+            "optional": false,
+            "type": "string",
+            "description": "The fault ID."
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string",
+            "description": "The comment text. `@mentions` notify the named project members."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, fault_id: string, author?: { id?: string | null, name?: string | null, email?: string | null } | null, body?: string | null, source?: string | null, event?: string | null, created_at?: string | null, links?: { web: string } | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.comments.delete",
+      "shortPath": "comments.delete",
+      "description": "Permanently delete a comment from a fault",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "fault_id",
+            "optional": false,
+            "type": "string",
+            "description": "The fault ID."
+          },
+          {
+            "key": "comment_id",
+            "optional": false,
+            "type": "string",
+            "description": "The comment ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fault_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.comments.get",
+      "shortPath": "comments.get",
+      "description": "Read one comment on a fault, with its author and body",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "fault_id",
+            "optional": false,
+            "type": "string",
+            "description": "The fault ID."
+          },
+          {
+            "key": "comment_id",
+            "optional": false,
+            "type": "string",
+            "description": "The comment ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, fault_id: string, author?: { id?: string | null, name?: string | null, email?: string | null } | null, body?: string | null, source?: string | null, event?: string | null, created_at?: string | null, links?: { web: string } | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.comments.list",
+      "shortPath": "comments.list",
+      "description": "List a fault's comments newest first, paging backwards with a cursor",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "fault_id",
+            "optional": false,
+            "type": "string",
+            "description": "The fault ID."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum items to return, 1 to 100. Defaults to 25."
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor for older comments."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor for newer comments."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, fault_id: string, author?: { id?: string | null, name?: string | null, email?: string | null } | null, body?: string | null, source?: string | null, event?: string | null, created_at?: string | null, links?: { web: string } | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ limit?: number, has_older?: boolean, has_newer?: boolean, oldest_cursor?: string | null, newest_cursor?: string | null } | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string, older?: string | null, newer?: string | null } | null"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.comments.update",
+      "shortPath": "comments.update",
+      "description": "Replace the text of a comment on a fault; other comment fields cannot be changed",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "fault_id",
+            "optional": false,
+            "type": "string",
+            "description": "The fault ID."
+          },
+          {
+            "key": "comment_id",
+            "optional": false,
+            "type": "string",
+            "description": "The comment ID."
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string",
+            "description": "The new comment text."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, fault_id: string, author?: { id?: string | null, name?: string | null, email?: string | null } | null, body?: string | null, source?: string | null, event?: string | null, created_at?: string | null, links?: { web: string } | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.deploys.delete",
+      "shortPath": "deploys.delete",
+      "description": "Delete a deploy record; the deploy is not re-read anywhere",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "deploy_id",
+            "optional": false,
+            "type": "string",
+            "description": "The deploy ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deploy_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.deploys.get",
+      "shortPath": "deploys.get",
+      "description": "Read one deploy record, with its environment, revision and author",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "deploy_id",
+            "optional": false,
+            "type": "string",
+            "description": "The deploy ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, project_id: string, environment?: string | null, revision?: string | null, repository?: string | null, local_username?: string | null, created_at?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.deploys.list",
+      "shortPath": "deploys.list",
+      "description": "List deploys oldest-page-first with cursors, optionally by exact environment or deploy username",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum items to return, 1 to 100. Defaults to 25."
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor for older deploys."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor for newer deploys."
+          },
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Exact environment name to match. Ignored when blank."
+          },
+          {
+            "key": "local_username",
+            "optional": true,
+            "type": "string",
+            "description": "Exact deploy username to match. Ignored when blank; combines with `environment`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, project_id: string, environment?: string | null, revision?: string | null, repository?: string | null, local_username?: string | null, created_at?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ limit?: number, has_older?: boolean, has_newer?: boolean, oldest_cursor?: string | null, newest_cursor?: string | null } | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string, older?: string | null, newer?: string | null } | null"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.environments.bulkDelete",
+      "shortPath": "environments.bulkDelete",
+      "description": "Delete several environments at once; if any ID is not one of the project's, nothing is deleted",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "environment_ids",
+            "optional": false,
+            "type": "string[]",
+            "description": "IDs of the environments to change. If any ID is not one of the project's environments, nothing changes."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ count: number }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.environments.bulkUpdate",
+      "shortPath": "environments.bulkUpdate",
+      "description": "Turn notifications on or off for several environments at once; if any ID is not one of the project's, nothing changes",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "environment_ids",
+            "optional": false,
+            "type": "string[]",
+            "description": "IDs of the environments to change. If any ID is not one of the project's environments, nothing changes."
+          },
+          {
+            "key": "notifications",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether notifications should fire for these environments."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ count: number }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.environments.create",
+      "shortPath": "environments.create",
+      "description": "Create an environment; names are unique per project and case-sensitive",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Environment name. Unique per project, and case-sensitive."
+          },
+          {
+            "key": "notifications",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether errors in this environment notify. Null means the default, true."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, project_id: string, name: string, notifications?: boolean | null, created_at?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.environments.delete",
+      "shortPath": "environments.delete",
+      "description": "Delete an environment; its faults and notices stay, and the next notice under that name recreates it with notifications on",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "environment_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "environment_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.environments.get",
+      "shortPath": "environments.get",
+      "description": "Read one environment and whether its errors send notifications",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "environment_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, project_id: string, name: string, notifications?: boolean | null, created_at?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.environments.list",
+      "shortPath": "environments.list",
+      "description": "List a project's environments and whether each sends notifications",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, 1-indexed. Defaults to 1."
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, 1 to 100. Defaults to 25."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, project_id: string, name: string, notifications?: boolean | null, created_at?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ page?: number, per_page?: number } | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string, first?: string | null, prev?: string | null, next?: string | null } | null",
+            "description": "Root-relative paths, to be resolved against the API host."
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.environments.update",
+      "shortPath": "environments.update",
+      "description": "Change whether an environment notifies; an environment cannot be renamed",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "environment_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "notifications",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether errors in this environment notify. Null resets it to true."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, project_id: string, name: string, notifications?: boolean | null, created_at?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.faults.affectedUsers",
+      "shortPath": "faults.affectedUsers",
+      "description": "Read the 500 users a fault affected most, ranked by notice count",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "fault_id",
+            "optional": false,
+            "type": "string",
+            "description": "The fault ID."
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ user: string, count: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.faults.assign",
+      "shortPath": "faults.assign",
+      "description": "Assign a fault to a project member, who is notified of it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "fault_id",
+            "optional": false,
+            "type": "string",
+            "description": "The fault ID."
+          },
+          {
+            "key": "assignee_id",
+            "optional": false,
+            "type": "string",
+            "description": "ID of a user on the project."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, project_id: string, message: string, klass?: string | null, component?: string | null, action?: string | null, environment?: string | null, resolved?: boolean | null, ignored?: boolean | null, created_at?: string | null, last_notice_at?: string | null, notices_count?: number | null, comments_count?: number | null, tags?: string[] | null, assignee_id?: string | null, snoozed?: boolean | null, assignee?: { id: string, name?: string | null, email?: string | null } | null, last_notice_deploy?: Record<string, JsonValue> | null, tickets?: { url: string, integration_id: string }[] | null, resolve_on_deploy?: boolean | null, recording_paused_until?: string | null, notices_count_in_range?: number | null, links?: { web: string } | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.faults.delete",
+      "shortPath": "faults.delete",
+      "description": "Permanently delete a fault; its notices stay readable by ID until retention removes them",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "fault_id",
+            "optional": false,
+            "type": "string",
+            "description": "The fault ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fault_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.faults.get",
+      "shortPath": "faults.get",
+      "description": "Read one fault by ID; a merged fault redirects to the fault it was merged into",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "fault_id",
+            "optional": false,
+            "type": "string",
+            "description": "The fault ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, project_id: string, message: string, klass?: string | null, component?: string | null, action?: string | null, environment?: string | null, resolved?: boolean | null, ignored?: boolean | null, created_at?: string | null, last_notice_at?: string | null, notices_count?: number | null, comments_count?: number | null, tags?: string[] | null, assignee_id?: string | null, snoozed?: boolean | null, assignee?: { id: string, name?: string | null, email?: string | null } | null, last_notice_deploy?: Record<string, JsonValue> | null, tickets?: { url: string, integration_id: string }[] | null, resolve_on_deploy?: boolean | null, recording_paused_until?: string | null, notices_count_in_range?: number | null, links?: { web: string } | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.faults.ignore",
+      "shortPath": "faults.ignore",
+      "description": "Ignore faults, which stops data collection for them, by ID or by query with `all: true`",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "fault_ids",
+            "optional": true,
+            "type": "string[]",
+            "description": "IDs of the faults to change. If any ID is not a fault in this project, nothing changes."
+          },
+          {
+            "key": "all",
+            "optional": true,
+            "type": "boolean",
+            "description": "Apply to every fault the other filters match. Required to make an unbounded change explicit; ignored when `fault_ids` is set."
+          },
+          {
+            "key": "dry_run",
+            "optional": true,
+            "type": "boolean",
+            "description": "Report what the request would change without changing it. The response has the same shape, with `dry_run` echoed back."
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Search query applied when `fault_ids` is left out."
+          },
+          {
+            "key": "created_after",
+            "optional": true,
+            "type": "number",
+            "description": "Applied when `fault_ids` is left out, alongside `q`."
+          },
+          {
+            "key": "occurred_after",
+            "optional": true,
+            "type": "number",
+            "description": "Applied when `fault_ids` is left out, alongside `q`."
+          },
+          {
+            "key": "occurred_before",
+            "optional": true,
+            "type": "number",
+            "description": "Applied when `fault_ids` is left out, alongside `q`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ count: number, dry_run: boolean, fault_ids: string[], fault_ids_truncated?: boolean | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.faults.list",
+      "shortPath": "faults.list",
+      "description": "List faults with error search, sorting and time filters; occurrence counts cover the requested window",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Search query in the web UI's error search syntax, such as `environment:production`, `is:resolved` or `class:ArgumentError`. Prefix a filter with `-` to negate it."
+          },
+          {
+            "key": "created_after",
+            "optional": true,
+            "type": "number",
+            "description": "Only faults first seen after this Unix timestamp."
+          },
+          {
+            "key": "occurred_after",
+            "optional": true,
+            "type": "number",
+            "description": "Only occurrences after this Unix timestamp. A value before the project's retention window is moved up to it."
+          },
+          {
+            "key": "occurred_before",
+            "optional": true,
+            "type": "number",
+            "description": "Only occurrences before this Unix timestamp."
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "recent | frequent",
+            "description": "`recent` sorts by last occurrence, `frequent` by occurrence count. Omitted sorts by creation time."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "Direction for `order`. Defaults to `desc` for `recent` and `frequent`, `asc` for creation time."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, 1-indexed. Defaults to 1."
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, 1 to 100. Defaults to 25."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, project_id: string, message: string, klass?: string | null, component?: string | null, action?: string | null, environment?: string | null, resolved?: boolean | null, ignored?: boolean | null, created_at?: string | null, last_notice_at?: string | null, notices_count?: number | null, comments_count?: number | null, tags?: string[] | null, assignee_id?: string | null, snoozed?: boolean | null, assignee?: { id: string, name?: string | null, email?: string | null } | null, last_notice_deploy?: Record<string, JsonValue> | null, tickets?: { url: string, integration_id: string }[] | null, resolve_on_deploy?: boolean | null, recording_paused_until?: string | null, notices_count_in_range?: number | null, links?: { web: string } | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ page?: number, per_page?: number } | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string, first?: string | null, prev?: string | null, next?: string | null } | null",
+            "description": "Root-relative paths, to be resolved against the API host."
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.faults.merge",
+      "shortPath": "faults.merge",
+      "description": "Merge one fault into another in the background; the merged fault keeps its tags, assignee and state on neither side, and its ID redirects for the retention period",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "fault_id",
+            "optional": false,
+            "type": "string",
+            "description": "The fault that is merged away into `target_fault_id`."
+          },
+          {
+            "key": "target_fault_id",
+            "optional": false,
+            "type": "string",
+            "description": "The fault to keep. The fault in the path is merged into it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ batch_id: string, source_id: string, target_id: string }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.faults.occurrences",
+      "shortPath": "faults.occurrences",
+      "description": "Read occurrence counts for one fault over a window, one bucket per interval including empty ones",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "fault_id",
+            "optional": false,
+            "type": "string",
+            "description": "The fault ID."
+          },
+          {
+            "key": "occurred_after",
+            "optional": true,
+            "type": "number",
+            "description": "Start of the window. With neither bound the window is the last hour; with only `occurred_before`, the hour before it."
+          },
+          {
+            "key": "occurred_before",
+            "optional": true,
+            "type": "number",
+            "description": "End of the window."
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Search query to narrow the counts."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ timestamp: number, count: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string, window?: { occurred_after: number, occurred_before: number } | null, interval_seconds?: number | null, retention_truncated?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.faults.pauseRecording",
+      "shortPath": "faults.pauseRecording",
+      "description": "Stop recording a fault for an hour, a day or a week, discarding notices during the pause",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "fault_id",
+            "optional": false,
+            "type": "string",
+            "description": "The fault ID."
+          },
+          {
+            "key": "time",
+            "optional": false,
+            "type": "hour | day | week",
+            "description": "How long notices are discarded. Pausing again replaces the end time."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, project_id: string, message: string, klass?: string | null, component?: string | null, action?: string | null, environment?: string | null, resolved?: boolean | null, ignored?: boolean | null, created_at?: string | null, last_notice_at?: string | null, notices_count?: number | null, comments_count?: number | null, tags?: string[] | null, assignee_id?: string | null, snoozed?: boolean | null, assignee?: { id: string, name?: string | null, email?: string | null } | null, last_notice_deploy?: Record<string, JsonValue> | null, tickets?: { url: string, integration_id: string }[] | null, resolve_on_deploy?: boolean | null, recording_paused_until?: string | null, notices_count_in_range?: number | null, links?: { web: string } | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.faults.resolve",
+      "shortPath": "faults.resolve",
+      "description": "Resolve named faults, or every fault a query and time filter match with `all: true`; `dry_run` reports what would change",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "fault_ids",
+            "optional": true,
+            "type": "string[]",
+            "description": "IDs of the faults to change. If any ID is not a fault in this project, nothing changes."
+          },
+          {
+            "key": "all",
+            "optional": true,
+            "type": "boolean",
+            "description": "Apply to every fault the other filters match. Required to make an unbounded change explicit; ignored when `fault_ids` is set."
+          },
+          {
+            "key": "dry_run",
+            "optional": true,
+            "type": "boolean",
+            "description": "Report what the request would change without changing it. The response has the same shape, with `dry_run` echoed back."
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Search query applied when `fault_ids` is left out."
+          },
+          {
+            "key": "created_after",
+            "optional": true,
+            "type": "number",
+            "description": "Applied when `fault_ids` is left out, alongside `q`."
+          },
+          {
+            "key": "occurred_after",
+            "optional": true,
+            "type": "number",
+            "description": "Applied when `fault_ids` is left out, alongside `q`."
+          },
+          {
+            "key": "occurred_before",
+            "optional": true,
+            "type": "number",
+            "description": "Applied when `fault_ids` is left out, alongside `q`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ count: number, dry_run: boolean, fault_ids: string[], fault_ids_truncated?: boolean | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.faults.resumeRecording",
+      "shortPath": "faults.resumeRecording",
+      "description": "Resume recording a fault; a fault that is not paused is unchanged",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "fault_id",
+            "optional": false,
+            "type": "string",
+            "description": "The fault ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, project_id: string, message: string, klass?: string | null, component?: string | null, action?: string | null, environment?: string | null, resolved?: boolean | null, ignored?: boolean | null, created_at?: string | null, last_notice_at?: string | null, notices_count?: number | null, comments_count?: number | null, tags?: string[] | null, assignee_id?: string | null, snoozed?: boolean | null, assignee?: { id: string, name?: string | null, email?: string | null } | null, last_notice_deploy?: Record<string, JsonValue> | null, tickets?: { url: string, integration_id: string }[] | null, resolve_on_deploy?: boolean | null, recording_paused_until?: string | null, notices_count_in_range?: number | null, links?: { web: string } | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.faults.snooze",
+      "shortPath": "faults.snooze",
+      "description": "Snooze notifications for a duration or an occurrence count, replacing any existing snooze",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "fault_id",
+            "optional": false,
+            "type": "string",
+            "description": "The fault ID."
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "hour | day | week",
+            "description": "Snooze for this long. Send one of `time` or `count`."
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "10 | 100 | 1000",
+            "description": "Snooze until this many further occurrences have arrived. Send one of `time` or `count`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, project_id: string, message: string, klass?: string | null, component?: string | null, action?: string | null, environment?: string | null, resolved?: boolean | null, ignored?: boolean | null, created_at?: string | null, last_notice_at?: string | null, notices_count?: number | null, comments_count?: number | null, tags?: string[] | null, assignee_id?: string | null, snoozed?: boolean | null, assignee?: { id: string, name?: string | null, email?: string | null } | null, last_notice_deploy?: Record<string, JsonValue> | null, tickets?: { url: string, integration_id: string }[] | null, resolve_on_deploy?: boolean | null, recording_paused_until?: string | null, notices_count_in_range?: number | null, links?: { web: string } | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.faults.summary",
+      "shortPath": "faults.summary",
+      "description": "Read fault counts grouped by environment and resolved or ignored state, with the same filters as the fault list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Search query in the web UI's error search syntax, such as `environment:production`, `is:resolved` or `class:ArgumentError`. Prefix a filter with `-` to negate it."
+          },
+          {
+            "key": "created_after",
+            "optional": true,
+            "type": "number",
+            "description": "Only faults first seen after this Unix timestamp."
+          },
+          {
+            "key": "occurred_after",
+            "optional": true,
+            "type": "number",
+            "description": "Only occurrences after this Unix timestamp. A value before the project's retention window is moved up to it."
+          },
+          {
+            "key": "occurred_before",
+            "optional": true,
+            "type": "number",
+            "description": "Only occurrences before this Unix timestamp."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ total: number, environments: { environment?: string | null, resolved: boolean, ignored: boolean, count: number }[] }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.faults.unassign",
+      "shortPath": "faults.unassign",
+      "description": "Remove the assignment from a fault, leaving it unowned",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "fault_id",
+            "optional": false,
+            "type": "string",
+            "description": "The fault ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, project_id: string, message: string, klass?: string | null, component?: string | null, action?: string | null, environment?: string | null, resolved?: boolean | null, ignored?: boolean | null, created_at?: string | null, last_notice_at?: string | null, notices_count?: number | null, comments_count?: number | null, tags?: string[] | null, assignee_id?: string | null, snoozed?: boolean | null, assignee?: { id: string, name?: string | null, email?: string | null } | null, last_notice_deploy?: Record<string, JsonValue> | null, tickets?: { url: string, integration_id: string }[] | null, resolve_on_deploy?: boolean | null, recording_paused_until?: string | null, notices_count_in_range?: number | null, links?: { web: string } | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.faults.unignore",
+      "shortPath": "faults.unignore",
+      "description": "Stop ignoring faults, so collection resumes, by ID or by query with `all: true`",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "fault_ids",
+            "optional": true,
+            "type": "string[]",
+            "description": "IDs of the faults to change. If any ID is not a fault in this project, nothing changes."
+          },
+          {
+            "key": "all",
+            "optional": true,
+            "type": "boolean",
+            "description": "Apply to every fault the other filters match. Required to make an unbounded change explicit; ignored when `fault_ids` is set."
+          },
+          {
+            "key": "dry_run",
+            "optional": true,
+            "type": "boolean",
+            "description": "Report what the request would change without changing it. The response has the same shape, with `dry_run` echoed back."
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Search query applied when `fault_ids` is left out."
+          },
+          {
+            "key": "created_after",
+            "optional": true,
+            "type": "number",
+            "description": "Applied when `fault_ids` is left out, alongside `q`."
+          },
+          {
+            "key": "occurred_after",
+            "optional": true,
+            "type": "number",
+            "description": "Applied when `fault_ids` is left out, alongside `q`."
+          },
+          {
+            "key": "occurred_before",
+            "optional": true,
+            "type": "number",
+            "description": "Applied when `fault_ids` is left out, alongside `q`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ count: number, dry_run: boolean, fault_ids: string[], fault_ids_truncated?: boolean | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.faults.unresolve",
+      "shortPath": "faults.unresolve",
+      "description": "Mark faults unresolved, by ID or by query with `all: true`; `dry_run` reports what would change",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "fault_ids",
+            "optional": true,
+            "type": "string[]",
+            "description": "IDs of the faults to change. If any ID is not a fault in this project, nothing changes."
+          },
+          {
+            "key": "all",
+            "optional": true,
+            "type": "boolean",
+            "description": "Apply to every fault the other filters match. Required to make an unbounded change explicit; ignored when `fault_ids` is set."
+          },
+          {
+            "key": "dry_run",
+            "optional": true,
+            "type": "boolean",
+            "description": "Report what the request would change without changing it. The response has the same shape, with `dry_run` echoed back."
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Search query applied when `fault_ids` is left out."
+          },
+          {
+            "key": "created_after",
+            "optional": true,
+            "type": "number",
+            "description": "Applied when `fault_ids` is left out, alongside `q`."
+          },
+          {
+            "key": "occurred_after",
+            "optional": true,
+            "type": "number",
+            "description": "Applied when `fault_ids` is left out, alongside `q`."
+          },
+          {
+            "key": "occurred_before",
+            "optional": true,
+            "type": "number",
+            "description": "Applied when `fault_ids` is left out, alongside `q`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ count: number, dry_run: boolean, fault_ids: string[], fault_ids_truncated?: boolean | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.faults.unsnooze",
+      "shortPath": "faults.unsnooze",
+      "description": "Remove a fault's snooze, so notifications resume from the next occurrence",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "fault_id",
+            "optional": false,
+            "type": "string",
+            "description": "The fault ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, project_id: string, message: string, klass?: string | null, component?: string | null, action?: string | null, environment?: string | null, resolved?: boolean | null, ignored?: boolean | null, created_at?: string | null, last_notice_at?: string | null, notices_count?: number | null, comments_count?: number | null, tags?: string[] | null, assignee_id?: string | null, snoozed?: boolean | null, assignee?: { id: string, name?: string | null, email?: string | null } | null, last_notice_deploy?: Record<string, JsonValue> | null, tickets?: { url: string, integration_id: string }[] | null, resolve_on_deploy?: boolean | null, recording_paused_until?: string | null, notices_count_in_range?: number | null, links?: { web: string } | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.faults.update",
+      "shortPath": "faults.update",
+      "description": "Change a fault resolved or ignored state, assignee, tags, or whether it resolves on the next deploy",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "fault_id",
+            "optional": false,
+            "type": "string",
+            "description": "The fault ID."
+          },
+          {
+            "key": "resolved",
+            "optional": true,
+            "type": "boolean",
+            "description": "Mark the fault resolved."
+          },
+          {
+            "key": "ignored",
+            "optional": true,
+            "type": "boolean",
+            "description": "Ignore the fault, which stops data collection for it."
+          },
+          {
+            "key": "assignee_id",
+            "optional": true,
+            "type": "string | null",
+            "description": "ID of a user on the project. Null unassigns."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Tags for the fault. Null clears them."
+          },
+          {
+            "key": "resolve_on_deploy",
+            "optional": true,
+            "type": "boolean",
+            "description": "Resolve the fault when the project's next deploy is recorded, in any environment. Cancelled by resolving or ignoring the fault first."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, project_id: string, message: string, klass?: string | null, component?: string | null, action?: string | null, environment?: string | null, resolved?: boolean | null, ignored?: boolean | null, created_at?: string | null, last_notice_at?: string | null, notices_count?: number | null, comments_count?: number | null, tags?: string[] | null, assignee_id?: string | null, snoozed?: boolean | null, assignee?: { id: string, name?: string | null, email?: string | null } | null, last_notice_deploy?: Record<string, JsonValue> | null, tickets?: { url: string, integration_id: string }[] | null, resolve_on_deploy?: boolean | null, recording_paused_until?: string | null, notices_count_in_range?: number | null, links?: { web: string } | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.insights.query",
+      "shortPath": "insights.query",
+      "description": "Run a BadgerQL query over the project event streams and return its rows; a POST that changes nothing",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "BadgerQL query."
+          },
+          {
+            "key": "stream_ids",
+            "optional": true,
+            "type": "string[]",
+            "description": "Streams to search. Omitted or empty searches every stream on the project."
+          },
+          {
+            "key": "ts",
+            "optional": true,
+            "type": "string",
+            "description": "Time range for the query, such as `1h`."
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string",
+            "description": "Timezone for time bucketing and display, such as `UTC`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ web: string } | null",
+            "description": "Links into the Honeybadger web UI."
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.notices.get",
+      "shortPath": "notices.get",
+      "description": "Read one notice by its UUID, without naming its project or fault",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string",
+            "description": "The notice UUID, which addresses it without its project or fault."
+          },
+          {
+            "key": "unmapped",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the backtrace as the client reported it instead of source-mapped. Defaults to false."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, fault_id: string, project_id: string, environment?: string | null, message?: string | null, created_at?: string | null, request?: { url?: string | null, component?: string | null, action?: string | null, params?: Record<string, JsonValue> | null, session?: Record<string, JsonValue> | null } | null, context?: Record<string, JsonValue> | null, backtrace?: { file?: string | null, line?: number | null, column?: number | null, method?: string | null, in_app?: boolean | null, mapping?: string | null, source?: { first_line: number, lines: string[] }[] | null }[] | null, backtrace_mode?: string | null, backtrace_total_frames?: number | null, backtrace_truncated?: boolean | null, request_fields_removed?: string[] | null, links?: { web: string } | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.notices.list",
+      "shortPath": "notices.list",
+      "description": "List a fault's notices newest first, with source-mapped backtraces unless `unmapped` is set",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "fault_id",
+            "optional": false,
+            "type": "string",
+            "description": "The fault ID."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum items to return, 1 to 100. Defaults to 25."
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor for older notices, taken from `links.older` or `pagination.oldest_cursor`."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor for newer notices, taken from `pagination.newest_cursor`."
+          },
+          {
+            "key": "unmapped",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the backtrace as the client reported it instead of source-mapped. Defaults to false."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, fault_id: string, project_id: string, environment?: string | null, message?: string | null, created_at?: string | null, request?: { url?: string | null, component?: string | null, action?: string | null, params?: Record<string, JsonValue> | null, session?: Record<string, JsonValue> | null } | null, context?: Record<string, JsonValue> | null, backtrace?: { file?: string | null, line?: number | null, column?: number | null, method?: string | null, in_app?: boolean | null, mapping?: string | null, source?: { first_line: number, lines: string[] }[] | null }[] | null, backtrace_mode?: string | null, backtrace_total_frames?: number | null, backtrace_truncated?: boolean | null, request_fields_removed?: string[] | null, links?: { web: string } | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ limit?: number, has_older?: boolean, has_newer?: boolean, oldest_cursor?: string | null, newest_cursor?: string | null } | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string, older?: string | null, newer?: string | null } | null"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.occurrences.list",
+      "shortPath": "occurrences.list",
+      "description": "Read notice counts for every project the token can see, ordered by project name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "period",
+            "optional": true,
+            "type": "hour | day | week | month",
+            "description": "Window to report over. `hour` gives 61 one-minute buckets, `day` 25 hourly, `week` 8 daily, `month` 31 daily. Defaults to `hour`."
+          },
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Only count notices from faults in this environment."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, 1-indexed. Defaults to 1."
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, 1 to 100. Defaults to 25."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ project_id: string, buckets: { timestamp: number, count: number }[] }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ page?: number, per_page?: number } | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string, first?: string | null, prev?: string | null, next?: string | null } | null",
+            "description": "Root-relative paths, to be resolved against the API host."
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Create a project, optionally in a team; `team_id` requires `team:write` and rejects the whole request without it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Project name."
+          },
+          {
+            "key": "resolve_errors_on_deploy",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Resolve every open fault when a deploy is recorded. Null resets it to true."
+          },
+          {
+            "key": "disable_public_links",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Disallow shareable public fault links. Null resets it to false."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null",
+            "description": "Primary language, used to format backtraces. Null clears it."
+          },
+          {
+            "key": "user_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Template linking an affected user into your own system. `[user_id]` and `[user_email]` are substituted. Null clears it."
+          },
+          {
+            "key": "source_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Template linking a backtrace line to your source host. `[file]` and `[line]` are substituted. Null clears it."
+          },
+          {
+            "key": "user_search_field",
+            "optional": true,
+            "type": "string | null",
+            "description": "Context key identifying the affected user when it is not `context.user_email` or `context.user_id`. Null clears it."
+          },
+          {
+            "key": "asana_workspace_id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Asana workspace used by the project's Asana integration. Null clears it."
+          },
+          {
+            "key": "customer_throttle",
+            "optional": true,
+            "type": "number | null",
+            "description": "Notices accepted per minute before throttling. Null clears it."
+          },
+          {
+            "key": "purge_days",
+            "optional": true,
+            "type": "number | null",
+            "description": "Days to retain notices. Changing it requires custom retention on the account; without it only the current value is accepted. Null clears it."
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string",
+            "description": "Puts the new project in this team. Create-only, and needs `team:write` in addition to `projects:create`."
+          },
+          {
+            "key": "disable_email_notifications",
+            "optional": true,
+            "type": "boolean",
+            "description": "Create-only. Members added with the project get email notifications switched off. Not stored or returned."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, account_id: string, name: string, active?: boolean | null, disable_public_links?: boolean | null, environments?: string[] | null, resolve_errors_on_deploy?: boolean | null, user_url?: string | null, source_url?: string | null, user_search_field?: string | null, asana_workspace_id?: string | null, customer_throttle?: number | null, language?: string | null, fault_count?: number | null, unresolved_fault_count?: number | null, last_notice_at?: string | null, earliest_notice_at?: string | null, purge_days?: number | null, created_at?: string | null, links?: { web: string } | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.projects.delete",
+      "shortPath": "projects.delete",
+      "description": "Permanently delete a project and all its data",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Read one project by ID, including its fault counts and environment names",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, account_id: string, name: string, active?: boolean | null, disable_public_links?: boolean | null, environments?: string[] | null, resolve_errors_on_deploy?: boolean | null, user_url?: string | null, source_url?: string | null, user_search_field?: string | null, asana_workspace_id?: string | null, customer_throttle?: number | null, language?: string | null, fault_count?: number | null, unresolved_fault_count?: number | null, last_notice_at?: string | null, earliest_notice_at?: string | null, purge_days?: number | null, created_at?: string | null, links?: { web: string } | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List projects the token can reach, optionally filtered by exact name, with paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Exact project name to match. Omitted lists every project."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, 1-indexed. Defaults to 1."
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, 1 to 100. Defaults to 25."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, account_id: string, name: string, active?: boolean | null, disable_public_links?: boolean | null, environments?: string[] | null, resolve_errors_on_deploy?: boolean | null, user_url?: string | null, source_url?: string | null, user_search_field?: string | null, asana_workspace_id?: string | null, customer_throttle?: number | null, language?: string | null, fault_count?: number | null, unresolved_fault_count?: number | null, last_notice_at?: string | null, earliest_notice_at?: string | null, purge_days?: number | null, created_at?: string | null, links?: { web: string } | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ page?: number, per_page?: number } | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string, first?: string | null, prev?: string | null, next?: string | null } | null",
+            "description": "Root-relative paths, to be resolved against the API host."
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.projects.occurrences",
+      "shortPath": "projects.occurrences",
+      "description": "Read notice counts for one project over an hour, day, week or month, one count per interval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "period",
+            "optional": true,
+            "type": "hour | day | week | month",
+            "description": "Window to report over. `hour` gives 61 one-minute buckets, `day` 25 hourly, `week` 8 daily, `month` 31 daily. Defaults to `hour`."
+          },
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Only count notices from faults in this environment."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ project_id: string, buckets: { timestamp: number, count: number }[] }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string, period?: string | null, interval?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.projects.stats",
+      "shortPath": "projects.stats",
+      "description": "Read a project fault and notice counts for the last day, week and month",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, fault_count: number, unresolved_fault_count: number, notice_count_today: number, notice_count_week: number, notice_count_month: number }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.projects.update",
+      "shortPath": "projects.update",
+      "description": "Change a project's settings; a null clears a nullable field and a field left out keeps its value",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Project name."
+          },
+          {
+            "key": "resolve_errors_on_deploy",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Resolve every open fault when a deploy is recorded. Null resets it to true."
+          },
+          {
+            "key": "disable_public_links",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Disallow shareable public fault links. Null resets it to false."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null",
+            "description": "Primary language, used to format backtraces. Null clears it."
+          },
+          {
+            "key": "user_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Template linking an affected user into your own system. `[user_id]` and `[user_email]` are substituted. Null clears it."
+          },
+          {
+            "key": "source_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Template linking a backtrace line to your source host. `[file]` and `[line]` are substituted. Null clears it."
+          },
+          {
+            "key": "user_search_field",
+            "optional": true,
+            "type": "string | null",
+            "description": "Context key identifying the affected user when it is not `context.user_email` or `context.user_id`. Null clears it."
+          },
+          {
+            "key": "asana_workspace_id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Asana workspace used by the project's Asana integration. Null clears it."
+          },
+          {
+            "key": "customer_throttle",
+            "optional": true,
+            "type": "number | null",
+            "description": "Notices accepted per minute before throttling. Null clears it."
+          },
+          {
+            "key": "purge_days",
+            "optional": true,
+            "type": "number | null",
+            "description": "Days to retain notices. Changing it requires custom retention on the account; without it only the current value is accepted. Null clears it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, account_id: string, name: string, active?: boolean | null, disable_public_links?: boolean | null, environments?: string[] | null, resolve_errors_on_deploy?: boolean | null, user_url?: string | null, source_url?: string | null, user_search_field?: string | null, asana_workspace_id?: string | null, customer_throttle?: number | null, language?: string | null, fault_count?: number | null, unresolved_fault_count?: number | null, last_notice_at?: string | null, earliest_notice_at?: string | null, purge_days?: number | null, created_at?: string | null, links?: { web: string } | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.sites.checks",
+      "shortPath": "sites.checks",
+      "description": "List a site's individual uptime check results, newest page first",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string",
+            "description": "The uptime site ID, a UUID."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum items to return, 1 to 100. Defaults to 25."
+          },
+          {
+            "key": "created_after",
+            "optional": true,
+            "type": "number",
+            "description": "A Unix timestamp in seconds, not an ISO 8601 string."
+          },
+          {
+            "key": "created_before",
+            "optional": true,
+            "type": "number",
+            "description": "A Unix timestamp in seconds, not an ISO 8601 string."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ created_at?: string | null, duration?: number | null, location?: string | null, up?: boolean | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ limit?: number, has_older?: boolean, has_newer?: boolean, oldest_cursor?: string | null, newest_cursor?: string | null } | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string, older?: string | null, newer?: string | null } | null"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.sites.create",
+      "shortPath": "sites.create",
+      "description": "Create an uptime site; `match` is required for every match type except `success`, which refuses it, and `timeout` must be shorter than the check interval",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "URL to monitor."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Name shown for the site in Honeybadger and on status pages."
+          },
+          {
+            "key": "match_type",
+            "optional": true,
+            "type": "success | exact | include | exclude | jmespath | null",
+            "description": "How a check decides the site is up. Null resets it to `success`."
+          },
+          {
+            "key": "match",
+            "optional": true,
+            "type": "string | null",
+            "description": "What `match_type` compares against. Required unless `match_type` is `success`, and refused with `success`. Null clears it."
+          },
+          {
+            "key": "request_method",
+            "optional": true,
+            "type": "GET | POST | PUT | PATCH | DELETE | null",
+            "description": "HTTP method each check sends. Null resets it to `GET`."
+          },
+          {
+            "key": "validate_ssl",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Fail the check when the TLS certificate does not validate. Null resets it to true."
+          },
+          {
+            "key": "request_body",
+            "optional": true,
+            "type": "string | null",
+            "description": "Body to send with the request, up to 32 KB. Null clears it."
+          },
+          {
+            "key": "request_headers",
+            "optional": true,
+            "type": "Record<string, string> | null",
+            "description": "Headers to send with the request. Replaces the stored headers; null or `{}` clears them."
+          },
+          {
+            "key": "frequency",
+            "optional": true,
+            "type": "1 | 2 | 5 | 15 | null",
+            "description": "Minutes between checks. The plan sets the most frequent allowed. Null resets it to 5."
+          },
+          {
+            "key": "locations",
+            "optional": true,
+            "type": "(Virginia | Frankfurt | Singapore | London | Oregon)[] | null",
+            "description": "Locations checks run from. Null or empty means every location."
+          },
+          {
+            "key": "outage_threshold",
+            "optional": true,
+            "type": "number | null",
+            "description": "Consecutive failures before an outage is declared. Null means down once failures reach half the locations."
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether monitoring is active. Null resets it to true."
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number | null",
+            "description": "Request timeout in seconds, 1 to 120, and less than the frequency in seconds. Requires the uptime timeout feature on the account."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, project_id: string, name?: string | null, url?: string | null, active?: boolean | null, state?: string | null, last_checked_at?: string | null, match_type?: string | null, match?: string | null, request_method?: string | null, frequency?: number | null, locations?: string[] | null, validate_ssl?: boolean | null, request_headers?: Record<string, string> | null, request_body?: string | null, outage_threshold?: number | null, timeout?: number | null, created_at?: string | null, links?: { web: string } | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.sites.delete",
+      "shortPath": "sites.delete",
+      "description": "Delete an uptime site and stop monitoring it",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string",
+            "description": "The uptime site ID, a UUID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.sites.get",
+      "shortPath": "sites.get",
+      "description": "Read one uptime site with its URL, match rule and current state",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string",
+            "description": "The uptime site ID, a UUID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, project_id: string, name?: string | null, url?: string | null, active?: boolean | null, state?: string | null, last_checked_at?: string | null, match_type?: string | null, match?: string | null, request_method?: string | null, frequency?: number | null, locations?: string[] | null, validate_ssl?: boolean | null, request_headers?: Record<string, string> | null, request_body?: string | null, outage_threshold?: number | null, timeout?: number | null, created_at?: string | null, links?: { web: string } | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.sites.list",
+      "shortPath": "sites.list",
+      "description": "List a project's uptime monitoring sites with their URLs and current state",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, 1-indexed. Defaults to 1."
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, 1 to 100. Defaults to 25."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, project_id: string, name?: string | null, url?: string | null, active?: boolean | null, state?: string | null, last_checked_at?: string | null, match_type?: string | null, match?: string | null, request_method?: string | null, frequency?: number | null, locations?: string[] | null, validate_ssl?: boolean | null, request_headers?: Record<string, string> | null, request_body?: string | null, outage_threshold?: number | null, timeout?: number | null, created_at?: string | null, links?: { web: string } | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ page?: number, per_page?: number } | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string, first?: string | null, prev?: string | null, next?: string | null } | null",
+            "description": "Root-relative paths, to be resolved against the API host."
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.sites.outages",
+      "shortPath": "sites.outages",
+      "description": "List a site's outage periods, with the status and reason each failed",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string",
+            "description": "The uptime site ID, a UUID."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum items to return, 1 to 100. Defaults to 25."
+          },
+          {
+            "key": "created_after",
+            "optional": true,
+            "type": "number",
+            "description": "A Unix timestamp in seconds, not an ISO 8601 string."
+          },
+          {
+            "key": "created_before",
+            "optional": true,
+            "type": "number",
+            "description": "A Unix timestamp in seconds, not an ISO 8601 string."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, site_id: string, down_at?: string | null, up_at?: string | null, status?: number | null, reason?: string | null, headers?: Record<string, string> | null, duration_seconds?: number | null, created_at?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ limit?: number, has_older?: boolean, has_newer?: boolean, oldest_cursor?: string | null, newest_cursor?: string | null } | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string, older?: string | null, newer?: string | null } | null"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.sites.update",
+      "shortPath": "sites.update",
+      "description": "Change an uptime site's URL, matching, headers, locations, frequency or active state",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string",
+            "description": "The uptime site ID, a UUID."
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "URL to monitor."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Name shown for the site in Honeybadger and on status pages."
+          },
+          {
+            "key": "match_type",
+            "optional": true,
+            "type": "success | exact | include | exclude | jmespath | null",
+            "description": "How a check decides the site is up. Null resets it to `success`."
+          },
+          {
+            "key": "match",
+            "optional": true,
+            "type": "string | null",
+            "description": "What `match_type` compares against. Required unless `match_type` is `success`, and refused with `success`. Null clears it."
+          },
+          {
+            "key": "request_method",
+            "optional": true,
+            "type": "GET | POST | PUT | PATCH | DELETE | null",
+            "description": "HTTP method each check sends. Null resets it to `GET`."
+          },
+          {
+            "key": "validate_ssl",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Fail the check when the TLS certificate does not validate. Null resets it to true."
+          },
+          {
+            "key": "request_body",
+            "optional": true,
+            "type": "string | null",
+            "description": "Body to send with the request, up to 32 KB. Null clears it."
+          },
+          {
+            "key": "request_headers",
+            "optional": true,
+            "type": "Record<string, string> | null",
+            "description": "Headers to send with the request. Replaces the stored headers; null or `{}` clears them."
+          },
+          {
+            "key": "frequency",
+            "optional": true,
+            "type": "1 | 2 | 5 | 15 | null",
+            "description": "Minutes between checks. The plan sets the most frequent allowed. Null resets it to 5."
+          },
+          {
+            "key": "locations",
+            "optional": true,
+            "type": "(Virginia | Frankfurt | Singapore | London | Oregon)[] | null",
+            "description": "Locations checks run from. Null or empty means every location."
+          },
+          {
+            "key": "outage_threshold",
+            "optional": true,
+            "type": "number | null",
+            "description": "Consecutive failures before an outage is declared. Null means down once failures reach half the locations."
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether monitoring is active. Null resets it to true."
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number | null",
+            "description": "Request timeout in seconds, 1 to 120, and less than the frequency in seconds. Requires the uptime timeout feature on the account."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, project_id: string, name?: string | null, url?: string | null, active?: boolean | null, state?: string | null, last_checked_at?: string | null, match_type?: string | null, match?: string | null, request_method?: string | null, frequency?: number | null, locations?: string[] | null, validate_ssl?: boolean | null, request_headers?: Record<string, string> | null, request_body?: string | null, outage_threshold?: number | null, timeout?: number | null, created_at?: string | null, links?: { web: string } | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.streams.list",
+      "shortPath": "streams.list",
+      "description": "List event streams; the ID is what `insights.query` takes in `stream_ids`",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project ID."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, 1-indexed. Defaults to 1."
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, 1 to 100. Defaults to 25."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, slug?: string | null, internal?: boolean | null, project_id?: string | null, created_at?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ page?: number, per_page?: number } | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string, first?: string | null, prev?: string | null, next?: string | null } | null",
+            "description": "Root-relative paths, to be resolved against the API host."
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeybadger.api.token.get",
+      "shortPath": "token.get",
+      "description": "Report what the current token is: its kind, scopes, account and the projects it can reach. Needs no scope",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ kind?: string | null, name?: string | null, scopes?: string[] | null, account_id?: string | null, project_ids?: string[] | null, expires_at?: string | null, last_used_at?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ request_id?: string } | null",
+            "description": "Request metadata. Quote `request_id` when contacting support."
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

@@ -1,0 +1,1396 @@
+{
+  "id": "zohoinvoice",
+  "displayName": "Zoho Invoice",
+  "description": "Create and send invoices and quotes, record payments, and manage customers and items in Zoho Invoice.",
+  "npmPackageName": "@corsair-dev/zohoinvoice",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 34,
+    "webhooks": 0,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "organization_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "zohoinvoice.api.customers.create",
+      "shortPath": "customers.create",
+      "description": "Create a Zoho Invoice customer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them."
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "{ contact_id: string | number, contact_name: string, company_name?: string, contact_type?: string, status?: string, email?: string, phone?: string, currency_code?: string, payment_terms?: number, billing_address?: { attention?: string, address?: string, street2?: string, city?: string, state?: string, zip?: string | number, country?: string, fax?: string | number, phone?: string }, shipping_address?: { attention?: string, address?: string, street2?: string, city?: string, state?: string, zip?: string | number, country?: string, fax?: string | number, phone?: string }, contact_persons?: { first_name?: string, last_name?: string, email?: string, phone?: string, mobile?: string }[], custom_fields?: { customfield_id?: string | number, label?: string, value?: any }[], created_time?: string, last_modified_time?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinvoice.api.customers.delete",
+      "shortPath": "customers.delete",
+      "description": "Delete a customer. Cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them."
+          },
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinvoice.api.customers.get",
+      "shortPath": "customers.get",
+      "description": "Get a Zoho Invoice customer",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them."
+          },
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "{ contact_id: string | number, contact_name: string, company_name?: string, contact_type?: string, status?: string, email?: string, phone?: string, currency_code?: string, payment_terms?: number, billing_address?: { attention?: string, address?: string, street2?: string, city?: string, state?: string, zip?: string | number, country?: string, fax?: string | number, phone?: string }, shipping_address?: { attention?: string, address?: string, street2?: string, city?: string, state?: string, zip?: string | number, country?: string, fax?: string | number, phone?: string }, contact_persons?: { first_name?: string, last_name?: string, email?: string, phone?: string, mobile?: string }[], custom_fields?: { customfield_id?: string | number, label?: string, value?: any }[], created_time?: string, last_modified_time?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinvoice.api.customers.list",
+      "shortPath": "customers.list",
+      "description": "List Zoho Invoice customers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ contact_id: string | number, contact_name: string, company_name?: string, contact_type?: string, status?: string, email?: string, phone?: string, currency_code?: string, payment_terms?: number, billing_address?: { attention?: string, address?: string, street2?: string, city?: string, state?: string, zip?: string | number, country?: string, fax?: string | number, phone?: string }, shipping_address?: { attention?: string, address?: string, street2?: string, city?: string, state?: string, zip?: string | number, country?: string, fax?: string | number, phone?: string }, contact_persons?: { first_name?: string, last_name?: string, email?: string, phone?: string, mobile?: string }[], custom_fields?: { customfield_id?: string | number, label?: string, value?: any }[], created_time?: string, last_modified_time?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinvoice.api.customers.update",
+      "shortPath": "customers.update",
+      "description": "Update a Zoho Invoice customer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them."
+          },
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "{ contact_id: string | number, contact_name: string, company_name?: string, contact_type?: string, status?: string, email?: string, phone?: string, currency_code?: string, payment_terms?: number, billing_address?: { attention?: string, address?: string, street2?: string, city?: string, state?: string, zip?: string | number, country?: string, fax?: string | number, phone?: string }, shipping_address?: { attention?: string, address?: string, street2?: string, city?: string, state?: string, zip?: string | number, country?: string, fax?: string | number, phone?: string }, contact_persons?: { first_name?: string, last_name?: string, email?: string, phone?: string, mobile?: string }[], custom_fields?: { customfield_id?: string | number, label?: string, value?: any }[], created_time?: string, last_modified_time?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinvoice.api.estimates.create",
+      "shortPath": "estimates.create",
+      "description": "Create a Zoho Invoice estimate",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them."
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "estimate",
+            "optional": false,
+            "type": "{ estimate_id: string | number, estimate_number?: string, customer_id?: string | number, customer_name?: string, status?: string, date?: string, expiry_date?: string, total?: string | number, line_items?: { item_id?: string | number, name?: string, description?: string, rate?: number, quantity?: number, unit?: string, tax_id?: string | number, discount?: string | number }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinvoice.api.estimates.delete",
+      "shortPath": "estimates.delete",
+      "description": "Delete an estimate. Cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them."
+          },
+          {
+            "key": "estimateId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinvoice.api.estimates.email",
+      "shortPath": "estimates.email",
+      "description": "Email an estimate to the customer",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them."
+          },
+          {
+            "key": "estimateId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Optional: to_mail_ids, cc_mail_ids, subject, body. Without it Zoho emails the customer contacts with the default template."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinvoice.api.estimates.get",
+      "shortPath": "estimates.get",
+      "description": "Get a Zoho Invoice estimate",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them."
+          },
+          {
+            "key": "estimateId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "estimate",
+            "optional": false,
+            "type": "{ estimate_id: string | number, estimate_number?: string, customer_id?: string | number, customer_name?: string, status?: string, date?: string, expiry_date?: string, total?: string | number, line_items?: { item_id?: string | number, name?: string, description?: string, rate?: number, quantity?: number, unit?: string, tax_id?: string | number, discount?: string | number }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinvoice.api.estimates.list",
+      "shortPath": "estimates.list",
+      "description": "List Zoho Invoice estimates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "estimates",
+            "optional": false,
+            "type": "{ estimate_id: string | number, estimate_number?: string, customer_id?: string | number, customer_name?: string, status?: string, date?: string, expiry_date?: string, total?: string | number, line_items?: { item_id?: string | number, name?: string, description?: string, rate?: number, quantity?: number, unit?: string, tax_id?: string | number, discount?: string | number }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinvoice.api.estimates.markAccepted",
+      "shortPath": "estimates.markAccepted",
+      "description": "Mark an estimate as accepted by the customer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them."
+          },
+          {
+            "key": "estimateId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinvoice.api.estimates.markDeclined",
+      "shortPath": "estimates.markDeclined",
+      "description": "Mark an estimate as declined by the customer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them."
+          },
+          {
+            "key": "estimateId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinvoice.api.estimates.markSent",
+      "shortPath": "estimates.markSent",
+      "description": "Mark a draft estimate as sent without emailing it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them."
+          },
+          {
+            "key": "estimateId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinvoice.api.estimates.update",
+      "shortPath": "estimates.update",
+      "description": "Update a Zoho Invoice estimate",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them."
+          },
+          {
+            "key": "estimateId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "estimate",
+            "optional": false,
+            "type": "{ estimate_id: string | number, estimate_number?: string, customer_id?: string | number, customer_name?: string, status?: string, date?: string, expiry_date?: string, total?: string | number, line_items?: { item_id?: string | number, name?: string, description?: string, rate?: number, quantity?: number, unit?: string, tax_id?: string | number, discount?: string | number }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinvoice.api.invoices.create",
+      "shortPath": "invoices.create",
+      "description": "Create a Zoho Invoice invoice",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them."
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoice",
+            "optional": false,
+            "type": "{ invoice_id: string | number, invoice_number?: string, customer_id?: string | number, customer_name?: string, status?: string, date?: string, due_date?: string, total?: string | number, balance?: string | number, line_items?: { item_id?: string | number, name?: string, description?: string, rate?: number, quantity?: number, unit?: string, tax_id?: string | number, discount?: string | number }[], billing_address?: { attention?: string, address?: string, street2?: string, city?: string, state?: string, zip?: string | number, country?: string, fax?: string | number, phone?: string }, shipping_address?: { attention?: string, address?: string, street2?: string, city?: string, state?: string, zip?: string | number, country?: string, fax?: string | number, phone?: string }, custom_fields?: { customfield_id?: string | number, label?: string, value?: any }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinvoice.api.invoices.delete",
+      "shortPath": "invoices.delete",
+      "description": "Delete a Zoho Invoice invoice. Cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them."
+          },
+          {
+            "key": "invoiceId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinvoice.api.invoices.email",
+      "shortPath": "invoices.email",
+      "description": "Email an invoice to the customer",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them."
+          },
+          {
+            "key": "invoiceId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Optional: to_mail_ids, cc_mail_ids, subject, body. Without it Zoho emails the customer contacts with the default template."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinvoice.api.invoices.get",
+      "shortPath": "invoices.get",
+      "description": "Get a Zoho Invoice invoice",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them."
+          },
+          {
+            "key": "invoiceId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoice",
+            "optional": false,
+            "type": "{ invoice_id: string | number, invoice_number?: string, customer_id?: string | number, customer_name?: string, status?: string, date?: string, due_date?: string, total?: string | number, balance?: string | number, line_items?: { item_id?: string | number, name?: string, description?: string, rate?: number, quantity?: number, unit?: string, tax_id?: string | number, discount?: string | number }[], billing_address?: { attention?: string, address?: string, street2?: string, city?: string, state?: string, zip?: string | number, country?: string, fax?: string | number, phone?: string }, shipping_address?: { attention?: string, address?: string, street2?: string, city?: string, state?: string, zip?: string | number, country?: string, fax?: string | number, phone?: string }, custom_fields?: { customfield_id?: string | number, label?: string, value?: any }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinvoice.api.invoices.list",
+      "shortPath": "invoices.list",
+      "description": "List Zoho Invoice invoices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoices",
+            "optional": false,
+            "type": "{ invoice_id: string | number, invoice_number?: string, customer_id?: string | number, customer_name?: string, status?: string, date?: string, due_date?: string, total?: string | number, balance?: string | number, line_items?: { item_id?: string | number, name?: string, description?: string, rate?: number, quantity?: number, unit?: string, tax_id?: string | number, discount?: string | number }[], billing_address?: { attention?: string, address?: string, street2?: string, city?: string, state?: string, zip?: string | number, country?: string, fax?: string | number, phone?: string }, shipping_address?: { attention?: string, address?: string, street2?: string, city?: string, state?: string, zip?: string | number, country?: string, fax?: string | number, phone?: string }, custom_fields?: { customfield_id?: string | number, label?: string, value?: any }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinvoice.api.invoices.listPayments",
+      "shortPath": "invoices.listPayments",
+      "description": "List the payments recorded against an invoice",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them."
+          },
+          {
+            "key": "invoiceId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "payments",
+            "optional": false,
+            "type": "{ payment_id: string | number, payment_mode?: string, amount?: string | number, date?: string, status?: string, customer_id?: string | number, customer_name?: string, reference_number?: string, invoices?: Record<string, any>[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinvoice.api.invoices.markSent",
+      "shortPath": "invoices.markSent",
+      "description": "Mark a draft invoice as sent without emailing it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them."
+          },
+          {
+            "key": "invoiceId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinvoice.api.invoices.remind",
+      "shortPath": "invoices.remind",
+      "description": "Email the customer a payment reminder for an invoice",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them."
+          },
+          {
+            "key": "invoiceId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Optional: to_mail_ids, cc_mail_ids, subject, body. Without it Zoho emails the customer contacts with the default template."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinvoice.api.invoices.update",
+      "shortPath": "invoices.update",
+      "description": "Update a Zoho Invoice invoice",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them."
+          },
+          {
+            "key": "invoiceId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoice",
+            "optional": false,
+            "type": "{ invoice_id: string | number, invoice_number?: string, customer_id?: string | number, customer_name?: string, status?: string, date?: string, due_date?: string, total?: string | number, balance?: string | number, line_items?: { item_id?: string | number, name?: string, description?: string, rate?: number, quantity?: number, unit?: string, tax_id?: string | number, discount?: string | number }[], billing_address?: { attention?: string, address?: string, street2?: string, city?: string, state?: string, zip?: string | number, country?: string, fax?: string | number, phone?: string }, shipping_address?: { attention?: string, address?: string, street2?: string, city?: string, state?: string, zip?: string | number, country?: string, fax?: string | number, phone?: string }, custom_fields?: { customfield_id?: string | number, label?: string, value?: any }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinvoice.api.invoices.void",
+      "shortPath": "invoices.void",
+      "description": "Void an invoice; it stops counting toward the balance",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them."
+          },
+          {
+            "key": "invoiceId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinvoice.api.items.create",
+      "shortPath": "items.create",
+      "description": "Create a Zoho Invoice item",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them."
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ item_id: string | number, name: string, status?: string, description?: string, rate?: string | number, unit?: string, sku?: string, product_type?: string, tax_id?: string | number, custom_fields?: { customfield_id?: string | number, label?: string, value?: any }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinvoice.api.items.delete",
+      "shortPath": "items.delete",
+      "description": "Delete an item. Cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them."
+          },
+          {
+            "key": "itemId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinvoice.api.items.get",
+      "shortPath": "items.get",
+      "description": "Get a Zoho Invoice item",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them."
+          },
+          {
+            "key": "itemId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ item_id: string | number, name: string, status?: string, description?: string, rate?: string | number, unit?: string, sku?: string, product_type?: string, tax_id?: string | number, custom_fields?: { customfield_id?: string | number, label?: string, value?: any }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinvoice.api.items.list",
+      "shortPath": "items.list",
+      "description": "List Zoho Invoice items",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ item_id: string | number, name: string, status?: string, description?: string, rate?: string | number, unit?: string, sku?: string, product_type?: string, tax_id?: string | number, custom_fields?: { customfield_id?: string | number, label?: string, value?: any }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinvoice.api.items.update",
+      "shortPath": "items.update",
+      "description": "Update a Zoho Invoice item",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them."
+          },
+          {
+            "key": "itemId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ item_id: string | number, name: string, status?: string, description?: string, rate?: string | number, unit?: string, sku?: string, product_type?: string, tax_id?: string | number, custom_fields?: { customfield_id?: string | number, label?: string, value?: any }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinvoice.api.organizations.list",
+      "shortPath": "organizations.list",
+      "description": "List the Zoho Invoice organizations the account can use, with their ids",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizations",
+            "optional": false,
+            "type": "{ organization_id: string | number, name?: string, is_default_org?: boolean, currency_code?: string, country?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinvoice.api.payments.create",
+      "shortPath": "payments.create",
+      "description": "Record a customer payment, optionally applied to invoices",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them."
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "payment",
+            "optional": false,
+            "type": "{ payment_id: string | number, payment_mode?: string, amount?: string | number, date?: string, status?: string, customer_id?: string | number, customer_name?: string, reference_number?: string, invoices?: Record<string, any>[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinvoice.api.payments.delete",
+      "shortPath": "payments.delete",
+      "description": "Delete a recorded customer payment. Cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them."
+          },
+          {
+            "key": "paymentId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinvoice.api.payments.get",
+      "shortPath": "payments.get",
+      "description": "Get a Zoho Invoice customer payment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them."
+          },
+          {
+            "key": "paymentId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "payment",
+            "optional": false,
+            "type": "{ payment_id: string | number, payment_mode?: string, amount?: string | number, date?: string, status?: string, customer_id?: string | number, customer_name?: string, reference_number?: string, invoices?: Record<string, any>[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinvoice.api.payments.list",
+      "shortPath": "payments.list",
+      "description": "List Zoho Invoice customer payments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerpayments",
+            "optional": false,
+            "type": "{ payment_id: string | number, payment_mode?: string, amount?: string | number, date?: string, status?: string, customer_id?: string | number, customer_name?: string, reference_number?: string, invoices?: Record<string, any>[] }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "zohoinvoice.db.customers.search",
+      "entityName": "customers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updated_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "zohoinvoice.db.estimates.search",
+      "entityName": "estimates",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updated_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "zohoinvoice.db.invoices.search",
+      "entityName": "invoices",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updated_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "zohoinvoice.db.items.search",
+      "entityName": "items",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updated_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "zohoinvoice.db.payments.search",
+      "entityName": "payments",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updated_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

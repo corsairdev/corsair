@@ -1,0 +1,1898 @@
+{
+  "id": "bugherd",
+  "displayName": "BugHerd",
+  "description": "Work with BugHerd website feedback and bug reports. List and triage tasks, move them across the board, comment, attach files, and manage projects, columns and webhooks.",
+  "npmPackageName": "@corsair-dev/bugherd",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 39,
+    "webhooks": 0,
+    "db": 8
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "bugherd.api.columns.create",
+      "shortPath": "columns.create",
+      "description": "Add a custom column at the end of a project board.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number",
+            "description": "BugHerd project id."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Column name. It is added at the end of the board."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "column",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, project_id?: number | null, position?: number | null, tasks_count?: number | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.columns.delete",
+      "shortPath": "columns.delete",
+      "description": "Delete an empty column. Cannot be undone.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number",
+            "description": "BugHerd project id."
+          },
+          {
+            "key": "column_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.columns.list",
+      "shortPath": "columns.list",
+      "description": "List the columns on a project board, built-in and custom.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number",
+            "description": "BugHerd project id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "columns",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, project_id?: number | null, position?: number | null, tasks_count?: number | null, created_at?: string | null, updated_at?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.columns.show",
+      "shortPath": "columns.show",
+      "description": "Get one column.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number",
+            "description": "BugHerd project id."
+          },
+          {
+            "key": "column_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "column",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, project_id?: number | null, position?: number | null, tasks_count?: number | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.columns.update",
+      "shortPath": "columns.update",
+      "description": "Rename a custom column.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number",
+            "description": "BugHerd project id."
+          },
+          {
+            "key": "column_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "column",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, project_id?: number | null, position?: number | null, tasks_count?: number | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.organization.show",
+      "shortPath": "organization.show",
+      "description": "Get the organization name and id.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization",
+            "optional": false,
+            "type": "{ id: number, name?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.projects.addGuest",
+      "shortPath": "projects.addGuest",
+      "description": "Add a guest (client) to a project by user id, or invite one by email. An email invite sends the person a message.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number",
+            "description": "BugHerd project id."
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number",
+            "description": "Id of an existing user."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Invite a new guest by email. BugHerd emails them an invitation."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, created_at?: string | null, tasks?: boolean | null, devurl?: string | null, is_active?: boolean | null, is_public?: boolean | null, has_custom_columns?: boolean | null, guests_see_guests?: boolean | null, owner_name?: string | null, sites?: string[] | null, allow_guests_change_task_status?: boolean | null, assign_guests?: boolean | null, allow_project_summary_email?: boolean | null, allow_task_done_email?: boolean | null, allow_project_owner_notifications?: boolean | null, change_guest_default_column?: boolean | null, members?: { id: number, email?: string | null, display_name?: string | null, avatar_url?: string | null }[] | null, guests?: { id: number, email?: string | null, display_name?: string | null, avatar_url?: string | null }[] | null, columns?: { id: number, name?: string | null, project_id?: number | null, position?: number | null, tasks_count?: number | null, created_at?: string | null, updated_at?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.projects.addMember",
+      "shortPath": "projects.addMember",
+      "description": "Add one or more organization members to a project.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number",
+            "description": "BugHerd project id."
+          },
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number | number[]",
+            "description": "Id of an organization member, or a list of ids."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, created_at?: string | null, tasks?: boolean | null, devurl?: string | null, is_active?: boolean | null, is_public?: boolean | null, has_custom_columns?: boolean | null, guests_see_guests?: boolean | null, owner_name?: string | null, sites?: string[] | null, allow_guests_change_task_status?: boolean | null, assign_guests?: boolean | null, allow_project_summary_email?: boolean | null, allow_task_done_email?: boolean | null, allow_project_owner_notifications?: boolean | null, change_guest_default_column?: boolean | null, members?: { id: number, email?: string | null, display_name?: string | null, avatar_url?: string | null }[] | null, guests?: { id: number, email?: string | null, display_name?: string | null, avatar_url?: string | null }[] | null, columns?: { id: number, name?: string | null, project_id?: number | null, position?: number | null, tasks_count?: number | null, created_at?: string | null, updated_at?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Create a project for a website. Members and guests are added separately.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Project name."
+          },
+          {
+            "key": "devurl",
+            "optional": false,
+            "type": "string",
+            "description": "The website the project gives feedback on."
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_public",
+            "optional": true,
+            "type": "boolean",
+            "description": "Let anyone leave feedback without a login."
+          },
+          {
+            "key": "guests_see_guests",
+            "optional": true,
+            "type": "boolean",
+            "description": "Let guests see other guests' feedback."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, created_at?: string | null, tasks?: boolean | null, devurl?: string | null, is_active?: boolean | null, is_public?: boolean | null, has_custom_columns?: boolean | null, guests_see_guests?: boolean | null, owner_name?: string | null, sites?: string[] | null, allow_guests_change_task_status?: boolean | null, assign_guests?: boolean | null, allow_project_summary_email?: boolean | null, allow_task_done_email?: boolean | null, allow_project_owner_notifications?: boolean | null, change_guest_default_column?: boolean | null, members?: { id: number, email?: string | null, display_name?: string | null, avatar_url?: string | null }[] | null, guests?: { id: number, email?: string | null, display_name?: string | null, avatar_url?: string | null }[] | null, columns?: { id: number, name?: string | null, project_id?: number | null, position?: number | null, tasks_count?: number | null, created_at?: string | null, updated_at?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.projects.delete",
+      "shortPath": "projects.delete",
+      "description": "Delete a project and all its tasks. Cannot be undone.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number",
+            "description": "BugHerd project id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List every project in the organization, active and inactive. 100 per page.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1. Pages hold up to 100 records."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projects",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, created_at?: string | null, tasks?: boolean | null, devurl?: string | null, is_active?: boolean | null, is_public?: boolean | null, has_custom_columns?: boolean | null, guests_see_guests?: boolean | null, owner_name?: string | null, sites?: string[] | null, allow_guests_change_task_status?: boolean | null, assign_guests?: boolean | null, allow_project_summary_email?: boolean | null, allow_task_done_email?: boolean | null, allow_project_owner_notifications?: boolean | null, change_guest_default_column?: boolean | null, members?: { id: number, email?: string | null, display_name?: string | null, avatar_url?: string | null }[] | null, guests?: { id: number, email?: string | null, display_name?: string | null, avatar_url?: string | null }[] | null, columns?: { id: number, name?: string | null, project_id?: number | null, position?: number | null, tasks_count?: number | null, created_at?: string | null, updated_at?: string | null }[] | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ count?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.projects.listActive",
+      "shortPath": "projects.listActive",
+      "description": "List active projects only. 100 per page.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1. Pages hold up to 100 records."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projects",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, created_at?: string | null, tasks?: boolean | null, devurl?: string | null, is_active?: boolean | null, is_public?: boolean | null, has_custom_columns?: boolean | null, guests_see_guests?: boolean | null, owner_name?: string | null, sites?: string[] | null, allow_guests_change_task_status?: boolean | null, assign_guests?: boolean | null, allow_project_summary_email?: boolean | null, allow_task_done_email?: boolean | null, allow_project_owner_notifications?: boolean | null, change_guest_default_column?: boolean | null, members?: { id: number, email?: string | null, display_name?: string | null, avatar_url?: string | null }[] | null, guests?: { id: number, email?: string | null, display_name?: string | null, avatar_url?: string | null }[] | null, columns?: { id: number, name?: string | null, project_id?: number | null, position?: number | null, tasks_count?: number | null, created_at?: string | null, updated_at?: string | null }[] | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ count?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.projects.show",
+      "shortPath": "projects.show",
+      "description": "Get one project with its members, guests and columns.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number",
+            "description": "BugHerd project id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, created_at?: string | null, tasks?: boolean | null, devurl?: string | null, is_active?: boolean | null, is_public?: boolean | null, has_custom_columns?: boolean | null, guests_see_guests?: boolean | null, owner_name?: string | null, sites?: string[] | null, allow_guests_change_task_status?: boolean | null, assign_guests?: boolean | null, allow_project_summary_email?: boolean | null, allow_task_done_email?: boolean | null, allow_project_owner_notifications?: boolean | null, change_guest_default_column?: boolean | null, members?: { id: number, email?: string | null, display_name?: string | null, avatar_url?: string | null }[] | null, guests?: { id: number, email?: string | null, display_name?: string | null, avatar_url?: string | null }[] | null, columns?: { id: number, name?: string | null, project_id?: number | null, position?: number | null, tasks_count?: number | null, created_at?: string | null, updated_at?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.projects.update",
+      "shortPath": "projects.update",
+      "description": "Change a project's name, URL or settings. Only the fields given change.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number",
+            "description": "BugHerd project id."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "devurl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_public",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "has_custom_columns",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "guests_see_guests",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, created_at?: string | null, tasks?: boolean | null, devurl?: string | null, is_active?: boolean | null, is_public?: boolean | null, has_custom_columns?: boolean | null, guests_see_guests?: boolean | null, owner_name?: string | null, sites?: string[] | null, allow_guests_change_task_status?: boolean | null, assign_guests?: boolean | null, allow_project_summary_email?: boolean | null, allow_task_done_email?: boolean | null, allow_project_owner_notifications?: boolean | null, change_guest_default_column?: boolean | null, members?: { id: number, email?: string | null, display_name?: string | null, avatar_url?: string | null }[] | null, guests?: { id: number, email?: string | null, display_name?: string | null, avatar_url?: string | null }[] | null, columns?: { id: number, name?: string | null, project_id?: number | null, position?: number | null, tasks_count?: number | null, created_at?: string | null, updated_at?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.tasks.create",
+      "shortPath": "tasks.create",
+      "description": "Create a task in a project. Without a status it lands in the Feedback panel.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number",
+            "description": "BugHerd project id."
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string",
+            "description": "What the task is about."
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "not set | critical | important | normal | minor",
+            "description": "Task priority."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string",
+            "description": "Column name. Leave it out to put the task in the Feedback panel."
+          },
+          {
+            "key": "requester_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "requester_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assigned_to_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "assigned_to_email",
+            "optional": true,
+            "type": "string",
+            "description": "Must be a member of the project."
+          },
+          {
+            "key": "tag_names",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string",
+            "description": "Your own reference for the task."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task",
+            "optional": false,
+            "type": "{ id: number, local_task_id?: number | null, project_id?: number | null, created_at?: string | null, updated_at?: string | null, closed_at?: string | null, deleted_at?: string | null, title?: string | null, description?: string | null, status?: string | null, status_id?: number | null, priority?: string | null, priority_id?: number | null, site?: string | null, url?: string | null, tag_names?: string[] | null, external_id?: string | null, requester_email?: string | null, attachments?: { id: number, file_name?: string | null, url?: string | null, created_at?: string | null }[] | null, screenshot_url?: string | null, secret_link?: string | null, admin_link?: string | null, assigned_to?: { id?: number | null, email?: string | null, display_name?: string | null } | null, requester?: { id?: number | null, email?: string | null, display_name?: string | null } | null, project_name?: string | null, due_at?: string | null, assignee_ids?: number[] | null, assignees?: { id?: number | null, email?: string | null, display_name?: string | null }[] | null, assigned_to_id?: number | null, requester_id?: number | null, column_id?: number | null, metadata?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.tasks.createAttachment",
+      "shortPath": "tasks.createAttachment",
+      "description": "Attach a file to a task from a public URL. BugHerd keeps a copy.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number",
+            "description": "BugHerd project id."
+          },
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "number",
+            "description": "Global task id (the `id` field, not the #number shown in the UI)."
+          },
+          {
+            "key": "file_name",
+            "optional": false,
+            "type": "string",
+            "description": "Name to show for the file."
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public URL of the file. BugHerd downloads and keeps a copy."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attachment",
+            "optional": false,
+            "type": "{ id: number, file_name?: string | null, url?: string | null, created_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.tasks.createComment",
+      "shortPath": "tasks.createComment",
+      "description": "Comment on a task, optionally visible to team members only.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number",
+            "description": "BugHerd project id."
+          },
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "number",
+            "description": "Global task id (the `id` field, not the #number shown in the UI)."
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string",
+            "description": "Comment text."
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number",
+            "description": "Who the comment is from."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Who the comment is from, by email, instead of user_id."
+          },
+          {
+            "key": "is_private",
+            "optional": true,
+            "type": "boolean",
+            "description": "Visible to team members only, not guests."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comment",
+            "optional": false,
+            "type": "{ id: number, text?: string | null, created_at?: string | null, user_id?: number | null, is_private?: boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.tasks.delete",
+      "shortPath": "tasks.delete",
+      "description": "Delete a task. Cannot be undone.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number",
+            "description": "BugHerd project id."
+          },
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "number",
+            "description": "Global task id (the `id` field, not the #number shown in the UI)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.tasks.deleteAttachment",
+      "shortPath": "tasks.deleteAttachment",
+      "description": "Remove an attachment from a task. Cannot be undone.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number",
+            "description": "BugHerd project id."
+          },
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "number",
+            "description": "Global task id (the `id` field, not the #number shown in the UI)."
+          },
+          {
+            "key": "attachment_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.tasks.list",
+      "shortPath": "tasks.list",
+      "description": "List tasks in a project, filtered by status, priority, tag, assignee, external id or date. 100 per page.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number",
+            "description": "BugHerd project id."
+          },
+          {
+            "key": "updated_since",
+            "optional": true,
+            "type": "string",
+            "description": "Only records updated after this ISO 8601 timestamp."
+          },
+          {
+            "key": "created_since",
+            "optional": true,
+            "type": "string",
+            "description": "Only records created after this ISO 8601 timestamp."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string",
+            "description": "Column name: backlog, todo, doing, done, closed or a custom column."
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "not set | critical | important | normal | minor",
+            "description": "Task priority."
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string",
+            "description": "Only tasks with this tag."
+          },
+          {
+            "key": "assigned_to_id",
+            "optional": true,
+            "type": "number",
+            "description": "Only tasks assigned to this user."
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1. Pages hold up to 100 records."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tasks",
+            "optional": false,
+            "type": "{ id: number, local_task_id?: number | null, project_id?: number | null, created_at?: string | null, updated_at?: string | null, closed_at?: string | null, deleted_at?: string | null, title?: string | null, description?: string | null, status?: string | null, status_id?: number | null, priority?: string | null, priority_id?: number | null, site?: string | null, url?: string | null, tag_names?: string[] | null, external_id?: string | null, requester_email?: string | null, attachments?: { id: number, file_name?: string | null, url?: string | null, created_at?: string | null }[] | null, screenshot_url?: string | null, secret_link?: string | null, admin_link?: string | null, assigned_to?: { id?: number | null, email?: string | null, display_name?: string | null } | null, requester?: { id?: number | null, email?: string | null, display_name?: string | null } | null, project_name?: string | null, due_at?: string | null, assignee_ids?: number[] | null, assignees?: { id?: number | null, email?: string | null, display_name?: string | null }[] | null, assigned_to_id?: number | null, requester_id?: number | null, column_id?: number | null, metadata?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ count?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.tasks.listArchived",
+      "shortPath": "tasks.listArchived",
+      "description": "List closed and archived tasks in a project.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number",
+            "description": "BugHerd project id."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1. Pages hold up to 100 records."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tasks",
+            "optional": false,
+            "type": "{ id: number, local_task_id?: number | null, project_id?: number | null, created_at?: string | null, updated_at?: string | null, closed_at?: string | null, deleted_at?: string | null, title?: string | null, description?: string | null, status?: string | null, status_id?: number | null, priority?: string | null, priority_id?: number | null, site?: string | null, url?: string | null, tag_names?: string[] | null, external_id?: string | null, requester_email?: string | null, attachments?: { id: number, file_name?: string | null, url?: string | null, created_at?: string | null }[] | null, screenshot_url?: string | null, secret_link?: string | null, admin_link?: string | null, assigned_to?: { id?: number | null, email?: string | null, display_name?: string | null } | null, requester?: { id?: number | null, email?: string | null, display_name?: string | null } | null, project_name?: string | null, due_at?: string | null, assignee_ids?: number[] | null, assignees?: { id?: number | null, email?: string | null, display_name?: string | null }[] | null, assigned_to_id?: number | null, requester_id?: number | null, column_id?: number | null, metadata?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ count?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.tasks.listAttachments",
+      "shortPath": "tasks.listAttachments",
+      "description": "List the files attached to a task.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number",
+            "description": "BugHerd project id."
+          },
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "number",
+            "description": "Global task id (the `id` field, not the #number shown in the UI)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attachments",
+            "optional": false,
+            "type": "{ id: number, file_name?: string | null, url?: string | null, created_at?: string | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ count?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.tasks.listComments",
+      "shortPath": "tasks.listComments",
+      "description": "List the comments on a task.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number",
+            "description": "BugHerd project id."
+          },
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "number",
+            "description": "Global task id (the `id` field, not the #number shown in the UI)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comments",
+            "optional": false,
+            "type": "{ id: number, text?: string | null, created_at?: string | null, user_id?: number | null, is_private?: boolean | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ count?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.tasks.listFeedback",
+      "shortPath": "tasks.listFeedback",
+      "description": "List tasks in the Feedback panel (new, not yet triaged).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number",
+            "description": "BugHerd project id."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1. Pages hold up to 100 records."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tasks",
+            "optional": false,
+            "type": "{ id: number, local_task_id?: number | null, project_id?: number | null, created_at?: string | null, updated_at?: string | null, closed_at?: string | null, deleted_at?: string | null, title?: string | null, description?: string | null, status?: string | null, status_id?: number | null, priority?: string | null, priority_id?: number | null, site?: string | null, url?: string | null, tag_names?: string[] | null, external_id?: string | null, requester_email?: string | null, attachments?: { id: number, file_name?: string | null, url?: string | null, created_at?: string | null }[] | null, screenshot_url?: string | null, secret_link?: string | null, admin_link?: string | null, assigned_to?: { id?: number | null, email?: string | null, display_name?: string | null } | null, requester?: { id?: number | null, email?: string | null, display_name?: string | null } | null, project_name?: string | null, due_at?: string | null, assignee_ids?: number[] | null, assignees?: { id?: number | null, email?: string | null, display_name?: string | null }[] | null, assigned_to_id?: number | null, requester_id?: number | null, column_id?: number | null, metadata?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ count?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.tasks.listForUser",
+      "shortPath": "tasks.listForUser",
+      "description": "List tasks assigned to a user across all projects.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number",
+            "description": "BugHerd user id."
+          },
+          {
+            "key": "updated_since",
+            "optional": true,
+            "type": "string",
+            "description": "Only records updated after this ISO 8601 timestamp."
+          },
+          {
+            "key": "created_since",
+            "optional": true,
+            "type": "string",
+            "description": "Only records created after this ISO 8601 timestamp."
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "not set | critical | important | normal | minor",
+            "description": "Task priority."
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string",
+            "description": "Only tasks with this tag."
+          },
+          {
+            "key": "assigned_to_id",
+            "optional": true,
+            "type": "number",
+            "description": "Only tasks assigned to this user."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1. Pages hold up to 100 records."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tasks",
+            "optional": false,
+            "type": "{ id: number, local_task_id?: number | null, project_id?: number | null, created_at?: string | null, updated_at?: string | null, closed_at?: string | null, deleted_at?: string | null, title?: string | null, description?: string | null, status?: string | null, status_id?: number | null, priority?: string | null, priority_id?: number | null, site?: string | null, url?: string | null, tag_names?: string[] | null, external_id?: string | null, requester_email?: string | null, attachments?: { id: number, file_name?: string | null, url?: string | null, created_at?: string | null }[] | null, screenshot_url?: string | null, secret_link?: string | null, admin_link?: string | null, assigned_to?: { id?: number | null, email?: string | null, display_name?: string | null } | null, requester?: { id?: number | null, email?: string | null, display_name?: string | null } | null, project_name?: string | null, due_at?: string | null, assignee_ids?: number[] | null, assignees?: { id?: number | null, email?: string | null, display_name?: string | null }[] | null, assigned_to_id?: number | null, requester_id?: number | null, column_id?: number | null, metadata?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ count?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.tasks.listTaskboard",
+      "shortPath": "tasks.listTaskboard",
+      "description": "List the active tasks on the project taskboard.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number",
+            "description": "BugHerd project id."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1. Pages hold up to 100 records."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tasks",
+            "optional": false,
+            "type": "{ id: number, local_task_id?: number | null, project_id?: number | null, created_at?: string | null, updated_at?: string | null, closed_at?: string | null, deleted_at?: string | null, title?: string | null, description?: string | null, status?: string | null, status_id?: number | null, priority?: string | null, priority_id?: number | null, site?: string | null, url?: string | null, tag_names?: string[] | null, external_id?: string | null, requester_email?: string | null, attachments?: { id: number, file_name?: string | null, url?: string | null, created_at?: string | null }[] | null, screenshot_url?: string | null, secret_link?: string | null, admin_link?: string | null, assigned_to?: { id?: number | null, email?: string | null, display_name?: string | null } | null, requester?: { id?: number | null, email?: string | null, display_name?: string | null } | null, project_name?: string | null, due_at?: string | null, assignee_ids?: number[] | null, assignees?: { id?: number | null, email?: string | null, display_name?: string | null }[] | null, assigned_to_id?: number | null, requester_id?: number | null, column_id?: number | null, metadata?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ count?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.tasks.move",
+      "shortPath": "tasks.move",
+      "description": "Move tasks to another project, by their #numbers.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number",
+            "description": "The project the tasks are in now."
+          },
+          {
+            "key": "destination_project_id",
+            "optional": false,
+            "type": "number",
+            "description": "The project to move them to."
+          },
+          {
+            "key": "task_ids",
+            "optional": false,
+            "type": "number[]",
+            "description": "The tasks' #numbers (local_task_id), not their global ids."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bugherd.api.tasks.show",
+      "shortPath": "tasks.show",
+      "description": "Get one task by its global id, with or without the project id.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "number",
+            "description": "Global task id (the `id` field, not the #number shown in the UI)."
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number",
+            "description": "Project id. Without it the task is looked up by its global id alone."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task",
+            "optional": false,
+            "type": "{ id: number, local_task_id?: number | null, project_id?: number | null, created_at?: string | null, updated_at?: string | null, closed_at?: string | null, deleted_at?: string | null, title?: string | null, description?: string | null, status?: string | null, status_id?: number | null, priority?: string | null, priority_id?: number | null, site?: string | null, url?: string | null, tag_names?: string[] | null, external_id?: string | null, requester_email?: string | null, attachments?: { id: number, file_name?: string | null, url?: string | null, created_at?: string | null }[] | null, screenshot_url?: string | null, secret_link?: string | null, admin_link?: string | null, assigned_to?: { id?: number | null, email?: string | null, display_name?: string | null } | null, requester?: { id?: number | null, email?: string | null, display_name?: string | null } | null, project_name?: string | null, due_at?: string | null, assignee_ids?: number[] | null, assignees?: { id?: number | null, email?: string | null, display_name?: string | null }[] | null, assigned_to_id?: number | null, requester_id?: number | null, column_id?: number | null, metadata?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.tasks.showAttachment",
+      "shortPath": "tasks.showAttachment",
+      "description": "Get one attachment on a task.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number",
+            "description": "BugHerd project id."
+          },
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "number",
+            "description": "Global task id (the `id` field, not the #number shown in the UI)."
+          },
+          {
+            "key": "attachment_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attachment",
+            "optional": false,
+            "type": "{ id: number, file_name?: string | null, url?: string | null, created_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.tasks.showByLocalId",
+      "shortPath": "tasks.showByLocalId",
+      "description": "Get a task by the #number shown in the BugHerd UI.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number",
+            "description": "BugHerd project id."
+          },
+          {
+            "key": "local_task_id",
+            "optional": false,
+            "type": "number",
+            "description": "The #number shown in the BugHerd UI."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task",
+            "optional": false,
+            "type": "{ id: number, local_task_id?: number | null, project_id?: number | null, created_at?: string | null, updated_at?: string | null, closed_at?: string | null, deleted_at?: string | null, title?: string | null, description?: string | null, status?: string | null, status_id?: number | null, priority?: string | null, priority_id?: number | null, site?: string | null, url?: string | null, tag_names?: string[] | null, external_id?: string | null, requester_email?: string | null, attachments?: { id: number, file_name?: string | null, url?: string | null, created_at?: string | null }[] | null, screenshot_url?: string | null, secret_link?: string | null, admin_link?: string | null, assigned_to?: { id?: number | null, email?: string | null, display_name?: string | null } | null, requester?: { id?: number | null, email?: string | null, display_name?: string | null } | null, project_name?: string | null, due_at?: string | null, assignee_ids?: number[] | null, assignees?: { id?: number | null, email?: string | null, display_name?: string | null }[] | null, assigned_to_id?: number | null, requester_id?: number | null, column_id?: number | null, metadata?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.tasks.update",
+      "shortPath": "tasks.update",
+      "description": "Change a task: status (column), priority, assignees, tags, description.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number",
+            "description": "BugHerd project id."
+          },
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "number",
+            "description": "Global task id (the `id` field, not the #number shown in the UI)."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "not set | critical | important | normal | minor",
+            "description": "Task priority."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string",
+            "description": "Column name, or `feedback` to move it back to the Feedback panel."
+          },
+          {
+            "key": "assigned_to_id",
+            "optional": true,
+            "type": "number",
+            "description": "Assign this project member. Use unassign_user to remove one."
+          },
+          {
+            "key": "assigned_to_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "unassign_user",
+            "optional": true,
+            "type": "number",
+            "description": "Remove this assignee from the task."
+          },
+          {
+            "key": "tag_names",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "site",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updater_email",
+            "optional": true,
+            "type": "string",
+            "description": "Who to credit the change to in the task history."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task",
+            "optional": false,
+            "type": "{ id: number, local_task_id?: number | null, project_id?: number | null, created_at?: string | null, updated_at?: string | null, closed_at?: string | null, deleted_at?: string | null, title?: string | null, description?: string | null, status?: string | null, status_id?: number | null, priority?: string | null, priority_id?: number | null, site?: string | null, url?: string | null, tag_names?: string[] | null, external_id?: string | null, requester_email?: string | null, attachments?: { id: number, file_name?: string | null, url?: string | null, created_at?: string | null }[] | null, screenshot_url?: string | null, secret_link?: string | null, admin_link?: string | null, assigned_to?: { id?: number | null, email?: string | null, display_name?: string | null } | null, requester?: { id?: number | null, email?: string | null, display_name?: string | null } | null, project_name?: string | null, due_at?: string | null, assignee_ids?: number[] | null, assignees?: { id?: number | null, email?: string | null, display_name?: string | null }[] | null, assigned_to_id?: number | null, requester_id?: number | null, column_id?: number | null, metadata?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.tasks.uploadAttachment",
+      "shortPath": "tasks.uploadAttachment",
+      "description": "Upload a file to a task (a URL, or base64 for a small file).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number",
+            "description": "BugHerd project id."
+          },
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "number",
+            "description": "Global task id (the `id` field, not the #number shown in the UI)."
+          },
+          {
+            "key": "file",
+            "optional": false,
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string }",
+            "description": "A file: a public URL to it, or {url, filename?, contentType?}, or {base64, filename?, contentType?} for a small one."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attachment",
+            "optional": false,
+            "type": "{ id: number, file_name?: string | null, url?: string | null, created_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.users.list",
+      "shortPath": "users.list",
+      "description": "List everyone in the organization, members and guests.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "updated_since",
+            "optional": true,
+            "type": "string",
+            "description": "Only records updated after this ISO 8601 timestamp."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1. Pages hold up to 100 records."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ id: number, email?: string | null, display_name?: string | null, avatar_url?: string | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ count?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.users.listGuests",
+      "shortPath": "users.listGuests",
+      "description": "List guests (clients) across all projects.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1. Pages hold up to 100 records."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ id: number, email?: string | null, display_name?: string | null, avatar_url?: string | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ count?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.users.listMembers",
+      "shortPath": "users.listMembers",
+      "description": "List team members (not guests).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1. Pages hold up to 100 records."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ id: number, email?: string | null, display_name?: string | null, avatar_url?: string | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ count?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.users.listProjects",
+      "shortPath": "users.listProjects",
+      "description": "List the projects a user belongs to.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number",
+            "description": "BugHerd user id."
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean",
+            "description": "Only active or inactive projects."
+          },
+          {
+            "key": "created_since",
+            "optional": true,
+            "type": "string",
+            "description": "Only records created after this ISO 8601 timestamp."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1. Pages hold up to 100 records."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projects",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, created_at?: string | null, tasks?: boolean | null, devurl?: string | null, is_active?: boolean | null, is_public?: boolean | null, has_custom_columns?: boolean | null, guests_see_guests?: boolean | null, owner_name?: string | null, sites?: string[] | null, allow_guests_change_task_status?: boolean | null, assign_guests?: boolean | null, allow_project_summary_email?: boolean | null, allow_task_done_email?: boolean | null, allow_project_owner_notifications?: boolean | null, change_guest_default_column?: boolean | null, members?: { id: number, email?: string | null, display_name?: string | null, avatar_url?: string | null }[] | null, guests?: { id: number, email?: string | null, display_name?: string | null, avatar_url?: string | null }[] | null, columns?: { id: number, name?: string | null, project_id?: number | null, position?: number | null, tasks_count?: number | null, created_at?: string | null, updated_at?: string | null }[] | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ count?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Subscribe a URL to one BugHerd event, for one project or all of them.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "target_url",
+            "optional": false,
+            "type": "string",
+            "description": "Where BugHerd POSTs the event."
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "project_create | task_create | task_update | comment | task_destroy"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number",
+            "description": "Leave out for every project."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ id: number, target_url?: string | null, event?: string | null, project_id?: number | null, project_name?: string | null, success_count?: number | null, error_count?: number | null, last_error_code?: number | null, last_error_at?: string | null, first_error_at?: string | null, first_success_at?: string | null, last_success_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Remove a webhook subscription. Cannot be undone.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugherd.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List the organization webhooks with their delivery counts.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhooks",
+            "optional": false,
+            "type": "{ id: number, target_url?: string | null, event?: string | null, project_id?: number | null, project_name?: string | null, success_count?: number | null, error_count?: number | null, last_error_code?: number | null, last_error_at?: string | null, first_error_at?: string | null, first_success_at?: string | null, last_success_at?: string | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "bugherd.db.attachments.search",
+      "entityName": "attachments",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "task_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "file_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bugherd.db.columns.search",
+      "entityName": "columns",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "project_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "position",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bugherd.db.comments.search",
+      "entityName": "comments",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "task_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "user_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_private",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bugherd.db.organization.search",
+      "entityName": "organization",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bugherd.db.projects.search",
+      "entityName": "projects",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "devurl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_active",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "is_public",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "owner_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bugherd.db.tasks.search",
+      "entityName": "tasks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "project_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "local_task_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "priority",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "assigned_to_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "external_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "closed_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bugherd.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "display_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bugherd.db.webhooks.search",
+      "entityName": "webhooks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "target_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "event",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "project_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    }
+  ]
+}
