@@ -125,6 +125,18 @@ describe('videoOperationState', () => {
 		).toBe('FAILED');
 	});
 
+	it('is FAILED when done with a sample that has no video file to download', () => {
+		for (const sample of [{}, { video: {} }]) {
+			expect(
+				videoOperationState({
+					name: NAME,
+					done: true,
+					response: { generateVideoResponse: { generatedSamples: [sample] } },
+				}),
+			).toBe('FAILED');
+		}
+	});
+
 	it('answers a value the read schema accepts', () => {
 		const parsed = GeminiEndpointOutputSchemas.getVideosOperation.safeParse({
 			name: NAME,

@@ -4,13 +4,18 @@ import { GEMINI_API_BASE, makeGeminiRequest } from '../client';
 import type { VideoFile, VideoOperation } from '../schema/videos';
 import type { GetVideosOperationResponse, WaitForVideoResponse } from './types';
 
-/** Where a Veo operation stands, as one value a job can be followed by. */
+/**
+ * Where a Veo operation stands, as one value a job can be followed by. Done
+ * counts as SUCCEEDED only with the video file waitForVideo downloads (the
+ * first sample's video.uri), so a job never succeeds without one.
+ */
 export function videoOperationState(
 	operation: VideoOperation,
 ): GetVideosOperationResponse['state'] {
 	if (operation.error) return 'FAILED';
 	if (!operation.done) return 'RUNNING';
-	return operation.response?.generateVideoResponse?.generatedSamples?.length
+	return operation.response?.generateVideoResponse?.generatedSamples?.[0]?.video
+		?.uri
 		? 'SUCCEEDED'
 		: 'FAILED';
 }
