@@ -1,0 +1,1862 @@
+---
+title: "Nango API reference"
+sidebarTitle: "API"
+description: "API reference for the Nango plugin in Corsair: every `nango.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Actions
+
+### trigger
+
+`actions.trigger`
+
+Run a legacy action for a connection synchronously. Actions can write to the end customer's account.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.nango.api.actions.trigger({
+	connection_id: 'user-123',
+	provider_config_key: 'github',
+	action_name: 'create-issue',
+	input: { title: 'Bug' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connection_id` | `string` | Yes | The connection ID. |
+| `provider_config_key` | `string` | Yes | The integration ID (unique key) the connection belongs to. |
+| `action_name` | `string` | Yes | — |
+| `input` | `Record<string, any>` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Connections
+
+### delete
+
+`connections.delete`
+
+Delete a connection and its stored credentials.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.nango.api.connections.delete({ connectionId: 'user-123', provider_config_key: 'github' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connectionId` | `string` | Yes | The connection ID. |
+| `provider_config_key` | `string` | Yes | The integration ID (unique key) the connection belongs to. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`connections.get`
+
+Get one connection. Pass include_credentials: true to also return its live third-party credentials (access token, API key, password); they are dropped otherwise.
+
+**Risk:** `read`
+
+```ts
+await corsair.nango.api.connections.get({ connectionId: 'user-123', provider_config_key: 'github' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connectionId` | `string` | Yes | The connection ID. |
+| `provider_config_key` | `string` | Yes | The integration ID (unique key) the connection belongs to. |
+| `include_credentials` | `boolean` | No | Return the connection credentials (access tokens, API keys, passwords). Off by default; the plugin drops them from the result unless this is true. |
+| `force_refresh` | `boolean` | No | Refresh the access token even if it has not expired. |
+| `refresh_token` | `boolean` | No | Also return the refresh token (needs include_credentials). |
+| `refresh_github_app_jwt_token` | `boolean` | No | — |
+
+Credentials are dropped unless `include_credentials` is true. Pass `refresh_token: true` as well to also get the refresh token.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `connection_id` | `string` | Yes | — |
+| `provider_config_key` | `string` | Yes | — |
+| `provider` | `string` | Yes | — |
+| `errors` | `object[]` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `connection_config` | `Record<string, any> \| null` | No | — |
+| `tags` | `Record<string, string> \| null` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `last_fetched_at` | `string \| null` | No | — |
+| `webhook_url_override` | `string \| null` | No | — |
+| `end_user` | `object \| null` | No | — |
+| `credentials` | `object` | No | Only present when include_credentials is true. Holds live third-party secrets. |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  type: string,
+  log_id?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="end_user full type">
+
+```ts
+{
+  id: string,
+  email?: string | null,
+  display_name?: string | null,
+  tags?: Record<string, any> | null,
+  organization?: {
+    id: string,
+    display_name?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="credentials full type">
+
+```ts
+{
+  type?: string,
+  access_token?: string,
+  refresh_token?: string,
+  apiKey?: string,
+  username?: string,
+  password?: string,
+  token?: string,
+  expires_at?: string | null,
+  raw?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### import
+
+`connections.import`
+
+Create a connection from credentials you already hold, or overwrite an existing connection's credentials when connection_id matches. The credentials are not returned.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.nango.api.connections.import({
+	provider_config_key: 'my-api',
+	connection_id: 'user-123',
+	credentials: { type: 'API_KEY', apiKey: 'placeholder' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider_config_key` | `string` | Yes | The integration ID (unique key) the connection belongs to. |
+| `credentials` | `object` | Yes | — |
+| `connection_id` | `string` | No | Connection ID to create or overwrite. Nango generates one when omitted. |
+| `metadata` | `Record<string, any>` | No | — |
+| `connection_config` | `Record<string, any>` | No | — |
+| `webhook_url_override` | `string` | No | — |
+| `tags` | `Record<string, string>` | No | Connection tags (key/value strings, at most 10). Keys are lowercased by Nango. |
+| `end_user` | `object` | No | Deprecated by Nango; use tags instead. |
+
+<AccordionGroup>
+<Accordion title="credentials full type">
+
+```ts
+{
+  type: OAUTH1,
+  oauth_token: string,
+  oauth_token_secret: string
+} | {
+  type: OAUTH2,
+  access_token: string,
+  config_override?: {
+    client_id?: string,
+    client_secret?: string
+  },
+  expires_at?: string,
+  refresh_token?: string
+} | {
+  type: BASIC,
+  username: string,
+  password: string
+} | {
+  type: API_KEY,
+  apiKey: string
+} | {
+  type: OAUTH2_CC,
+  client_id: string,
+  client_secret: string,
+  token: string,
+  expires_at?: string
+} | {
+  type: NONE
+} | {
+  type: TBA,
+  token_id: string,
+  token_secret: string,
+  config_override: {
+    client_id?: string,
+    client_secret?: string
+  }
+} | {
+  type: APP,
+  app_id: string,
+  installation_id: string
+}
+```
+</Accordion>
+
+<Accordion title="end_user full type">
+
+```ts
+{
+  id: string,
+  email?: string,
+  display_name?: string,
+  tags?: Record<string, string>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `connection_id` | `string` | Yes | — |
+| `provider_config_key` | `string` | Yes | — |
+| `provider` | `string` | Yes | — |
+| `errors` | `object[]` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `connection_config` | `Record<string, any> \| null` | No | — |
+| `tags` | `Record<string, string> \| null` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `last_fetched_at` | `string \| null` | No | — |
+| `webhook_url_override` | `string \| null` | No | — |
+| `end_user` | `object \| null` | No | — |
+| `credentials` | `object` | No | Only present when include_credentials is true. Holds live third-party secrets. |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  type: string,
+  log_id?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="end_user full type">
+
+```ts
+{
+  id: string,
+  email?: string | null,
+  display_name?: string | null,
+  tags?: Record<string, any> | null,
+  organization?: {
+    id: string,
+    display_name?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="credentials full type">
+
+```ts
+{
+  type?: string,
+  access_token?: string,
+  refresh_token?: string,
+  apiKey?: string,
+  username?: string,
+  password?: string,
+  token?: string,
+  expires_at?: string | null,
+  raw?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`connections.list`
+
+List connections (no credentials), filtered by connection ID or tags, with page and limit.
+
+**Risk:** `read`
+
+```ts
+await corsair.nango.api.connections.list({
+	tags: { end_user_id: 'user-123' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connectionId` | `string` | No | Exact connection ID; can match one connection per integration. |
+| `tags` | `Record<string, string>` | No | Only connections carrying all of these tags. |
+| `search` | `string` | No | Deprecated by Nango; prefer tags. |
+| `endUserId` | `string` | No | Deprecated by Nango; prefer tags. |
+| `endUserOrganizationId` | `string` | No | Deprecated by Nango; prefer tags. |
+| `limit` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connections` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="connections full type">
+
+```ts
+{
+  id: number,
+  connection_id: string,
+  provider: string,
+  provider_config_key: string,
+  created?: string,
+  metadata?: Record<string, any> | null,
+  tags?: Record<string, string> | null,
+  errors?: {
+    type: string,
+    log_id?: string
+  }[],
+  end_user?: {
+    id: string,
+    email?: string | null,
+    display_name?: string | null,
+    tags?: Record<string, any> | null,
+    organization?: {
+      id: string,
+      display_name?: string | null
+    } | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### patch
+
+`connections.patch`
+
+Edit a connection: replace its tags or set a webhook URL override.
+
+**Risk:** `write`
+
+```ts
+await corsair.nango.api.connections.patch({
+	connectionId: 'user-123',
+	provider_config_key: 'github',
+	body: {
+		tags: { plan: 'pro' },
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connectionId` | `string` | Yes | The connection ID. |
+| `provider_config_key` | `string` | Yes | The integration ID (unique key) the connection belongs to. |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  tags?: Record<string, string>,
+  webhook_url_override?: string,
+  end_user?: {
+    id: string,
+    email?: string,
+    display_name?: string,
+    tags?: Record<string, string>
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### setMetadata
+
+`connections.setMetadata`
+
+Replace the whole metadata object of one or more connections; keys not passed are removed.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.nango.api.connections.setMetadata({
+	connection_id: 'user-123',
+	provider_config_key: 'github',
+	metadata: { team: 'core' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connection_id` | `string \| string[]` | Yes | One connection ID or a list; a bad ID aborts the whole call. |
+| `provider_config_key` | `string` | Yes | The integration ID (unique key) the connection belongs to. |
+| `metadata` | `Record<string, any>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connection_id` | `string \| string[]` | No | — |
+| `provider_config_key` | `string` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+
+
+
+---
+
+### updateMetadata
+
+`connections.updateMetadata`
+
+Merge keys into the metadata of one or more connections.
+
+**Risk:** `write`
+
+```ts
+await corsair.nango.api.connections.updateMetadata({
+	connection_id: 'user-123',
+	provider_config_key: 'github',
+	metadata: { team: 'core' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connection_id` | `string \| string[]` | Yes | One connection ID or a list; a bad ID aborts the whole call. |
+| `provider_config_key` | `string` | Yes | The integration ID (unique key) the connection belongs to. |
+| `metadata` | `Record<string, any>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connection_id` | `string \| string[]` | No | — |
+| `provider_config_key` | `string` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+
+
+
+---
+
+## Environment
+
+### getVariables
+
+`environment.getVariables`
+
+Get the environment variables set in the Nango dashboard, values in plain text (they often hold secrets).
+
+**Risk:** `read`
+
+```ts
+await corsair.nango.api.environment.getVariables({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name: string,
+  value?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Functions
+
+### delete
+
+`functions.delete`
+
+Delete a deployed function, e.g. a catalog sync enabled in the dashboard; functions deployed from a repo with the nango CLI cannot be deleted here.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.nango.api.functions.delete({ uniqueKey: 'github', name: 'issues' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uniqueKey` | `string` | Yes | The integration ID (unique_key). |
+| `name` | `string` | Yes | The function name. |
+| `type` | `action \| sync \| tool \| function` | Yes | — |
+
+Also pass the required `type`: `action`, `sync`, `tool` or `function` (e.g. `type: "sync"`).
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`functions.get`
+
+Get one function of an integration, with its schema and deployment state.
+
+**Risk:** `read`
+
+```ts
+await corsair.nango.api.functions.get({ uniqueKey: 'github', name: 'issues' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uniqueKey` | `string` | Yes | The integration ID (unique_key). |
+| `name` | `string` | Yes | The function name. |
+| `type` | `sync \| on-event \| tool` | No | Pick one function when several share the name. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name: string,
+  type: string,
+  description?: string,
+  id?: number | null,
+  enabled?: boolean,
+  last_deployed?: string | null,
+  source?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCode
+
+`functions.getCode`
+
+Get a function's TypeScript source code.
+
+**Risk:** `read`
+
+```ts
+await corsair.nango.api.functions.getCode({ uniqueKey: 'github', name: 'create-issue' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uniqueKey` | `string` | Yes | The integration ID (unique_key). |
+| `name` | `string` | Yes | The function name. |
+| `type` | `sync \| on-event \| tool` | No | Pick one function when several share the name. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `code` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`functions.list`
+
+List an integration's functions (syncs, tools, on-event functions), including Nango catalog tools.
+
+**Risk:** `read`
+
+```ts
+await corsair.nango.api.functions.list({ uniqueKey: 'github', search: 'issue', limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uniqueKey` | `string` | Yes | The integration ID (unique_key). |
+| `type` | `sync \| on-event \| tool` | No | — |
+| `search` | `string` | No | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name: string,
+  type: string,
+  description?: string,
+  id?: number | null,
+  enabled?: boolean,
+  last_deployed?: string | null,
+  source?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Integrations
+
+### create
+
+`integrations.create`
+
+Create an integration for a provider, optionally with developer app credentials or integration_config.
+
+**Risk:** `write`
+
+```ts
+await corsair.nango.api.integrations.create({
+	unique_key: 'github',
+	provider: 'github',
+	credentials: {
+		type: 'OAUTH2',
+		client_id: 'placeholder',
+		client_secret: 'placeholder',
+		scopes: 'repo,read:user',
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `unique_key` | `string` | Yes | A unique integration ID you choose. |
+| `provider` | `string` | Yes | The provider name, as returned by providers.list. |
+| `display_name` | `string` | No | — |
+| `forward_webhooks` | `boolean` | No | — |
+| `credentials` | `object` | No | Developer app credentials. Omit to add them later. |
+| `integration_config` | `Record<string, string>` | No | Config for providers that declare an integration_config schema (e.g. private-api-generic baseUrl). |
+| `custom` | `Record<string, string>` | No | Free-form settings for providers without an integration_config schema. |
+
+<AccordionGroup>
+<Accordion title="credentials full type">
+
+```ts
+{
+  type: string,
+  client_id?: string,
+  client_secret?: string,
+  scopes?: string,
+  webhook_secret?: string,
+  app_id?: string,
+  app_link?: string,
+  private_key?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  unique_key: string,
+  display_name?: string,
+  provider: string,
+  logo?: string,
+  created_at?: string,
+  updated_at?: string,
+  forward_webhooks?: boolean,
+  missing_fields?: string[],
+  webhook_url?: string | null,
+  credentials?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`integrations.delete`
+
+Delete an integration and every connection that uses it.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.nango.api.integrations.delete({ uniqueKey: 'github' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uniqueKey` | `string` | Yes | The integration ID (unique_key). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`integrations.get`
+
+Get an integration. include: ["credentials"] also returns the developer app client secret and private key.
+
+**Risk:** `read`
+
+```ts
+await corsair.nango.api.integrations.get({ uniqueKey: 'github' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uniqueKey` | `string` | Yes | The integration ID (unique_key). |
+| `include` | `(webhook \| credentials)[]` | No | Extra data to return. "credentials" returns the developer app client secret and private key. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  unique_key: string,
+  display_name?: string,
+  provider: string,
+  logo?: string,
+  created_at?: string,
+  updated_at?: string,
+  forward_webhooks?: boolean,
+  missing_fields?: string[],
+  webhook_url?: string | null,
+  credentials?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`integrations.list`
+
+List the integrations configured in this environment.
+
+**Risk:** `read`
+
+```ts
+await corsair.nango.api.integrations.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  unique_key: string,
+  display_name?: string,
+  provider: string,
+  logo?: string,
+  created_at?: string,
+  updated_at?: string,
+  forward_webhooks?: boolean,
+  missing_fields?: string[],
+  webhook_url?: string | null,
+  credentials?: Record<string, any> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`integrations.update`
+
+Edit an integration; fields left out keep their value.
+
+**Risk:** `write`
+
+```ts
+await corsair.nango.api.integrations.update({ uniqueKey: 'github', display_name: 'GitHub' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uniqueKey` | `string` | Yes | The integration ID (unique_key). |
+| `unique_key` | `string` | No | Rename the integration ID. |
+| `display_name` | `string` | No | — |
+| `forward_webhooks` | `boolean` | No | — |
+| `credentials` | `object` | No | Developer app credentials. Omit to add them later. |
+| `integration_config` | `Record<string, string>` | No | Config for providers that declare an integration_config schema (e.g. private-api-generic baseUrl). |
+| `custom` | `Record<string, string>` | No | Free-form settings for providers without an integration_config schema. |
+
+<AccordionGroup>
+<Accordion title="credentials full type">
+
+```ts
+{
+  type: string,
+  client_id?: string,
+  client_secret?: string,
+  scopes?: string,
+  webhook_secret?: string,
+  app_id?: string,
+  app_link?: string,
+  private_key?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  unique_key: string,
+  display_name?: string,
+  provider: string,
+  logo?: string,
+  created_at?: string,
+  updated_at?: string,
+  forward_webhooks?: boolean,
+  missing_fields?: string[],
+  webhook_url?: string | null,
+  credentials?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Providers
+
+### get
+
+`providers.get`
+
+Get one provider's auth mode, proxy settings and required connection fields.
+
+**Risk:** `read`
+
+```ts
+await corsair.nango.api.providers.get({ provider: 'github' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider` | `string` | Yes | The provider name, e.g. github. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name?: string,
+  display_name: string,
+  auth_mode: string,
+  categories?: string[],
+  docs?: string,
+  logo_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`providers.list`
+
+List the APIs Nango supports; filter with search (the full list has over 1,000).
+
+**Risk:** `read`
+
+```ts
+await corsair.nango.api.providers.list({ search: 'github' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | Filter by name. Without it the list has over 1,000 providers. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name?: string,
+  display_name: string,
+  auth_mode: string,
+  categories?: string[],
+  docs?: string,
+  logo_url?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Proxy
+
+### delete
+
+`proxy.delete`
+
+Send a DELETE through Nango's proxy to the end customer's API with the connection's credentials.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.nango.api.proxy.delete({ connection_id: 'user-123', provider_config_key: 'github', path: '/user/starred/acme/app' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connection_id` | `string` | Yes | The connection ID. |
+| `provider_config_key` | `string` | Yes | The integration ID (unique key) the connection belongs to. |
+| `path` | `string` | Yes | Path on the end customer's API, relative to the provider's base URL, e.g. /v1/users. |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `headers` | `Record<string, string>` | No | Headers passed on to the external API (sent as Nango-Proxy-&lt;name&gt;). |
+| `body` | `any` | No | JSON body sent to the external API. |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`proxy.get`
+
+Send a GET through Nango's proxy to the end customer's API with the connection's credentials.
+
+**Risk:** `read`
+
+```ts
+await corsair.nango.api.proxy.get({
+	connection_id: 'user-123',
+	provider_config_key: 'github',
+	path: '/user/repos',
+	query: { per_page: 10 },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connection_id` | `string` | Yes | The connection ID. |
+| `provider_config_key` | `string` | Yes | The integration ID (unique key) the connection belongs to. |
+| `path` | `string` | Yes | Path on the end customer's API, relative to the provider's base URL, e.g. /v1/users. |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `headers` | `Record<string, string>` | No | Headers passed on to the external API (sent as Nango-Proxy-&lt;name&gt;). |
+| `retries` | `number` | No | Retries Nango makes on a 5xx or network error, with back-off (GET only). |
+
+`path` is relative to the provider's base URL. Headers in `headers` are sent on as `Nango-Proxy-<name>`.
+
+
+
+**Output:** `any`
+
+
+---
+
+### patch
+
+`proxy.patch`
+
+Send a PATCH through Nango's proxy to the end customer's API with the connection's credentials.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.nango.api.proxy.patch({
+	connection_id: 'user-123',
+	provider_config_key: 'github',
+	path: '/repos/acme/app/issues/1',
+	body: { state: 'closed' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connection_id` | `string` | Yes | The connection ID. |
+| `provider_config_key` | `string` | Yes | The integration ID (unique key) the connection belongs to. |
+| `path` | `string` | Yes | Path on the end customer's API, relative to the provider's base URL, e.g. /v1/users. |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `headers` | `Record<string, string>` | No | Headers passed on to the external API (sent as Nango-Proxy-&lt;name&gt;). |
+| `body` | `any` | No | JSON body sent to the external API. |
+
+
+
+**Output:** `any`
+
+
+---
+
+### post
+
+`proxy.post`
+
+Send a POST through Nango's proxy to the end customer's API with the connection's credentials.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.nango.api.proxy.post({
+	connection_id: 'user-123',
+	provider_config_key: 'github',
+	path: '/repos/acme/app/issues',
+	body: { title: 'Bug' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connection_id` | `string` | Yes | The connection ID. |
+| `provider_config_key` | `string` | Yes | The integration ID (unique key) the connection belongs to. |
+| `path` | `string` | Yes | Path on the end customer's API, relative to the provider's base URL, e.g. /v1/users. |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `headers` | `Record<string, string>` | No | Headers passed on to the external API (sent as Nango-Proxy-&lt;name&gt;). |
+| `body` | `any` | No | JSON body sent to the external API. |
+
+
+
+**Output:** `any`
+
+
+---
+
+### put
+
+`proxy.put`
+
+Send a PUT through Nango's proxy to the end customer's API with the connection's credentials.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.nango.api.proxy.put({ connection_id: 'user-123', provider_config_key: 'github', path: '/user/starred/acme/app' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connection_id` | `string` | Yes | The connection ID. |
+| `provider_config_key` | `string` | Yes | The integration ID (unique key) the connection belongs to. |
+| `path` | `string` | Yes | Path on the end customer's API, relative to the provider's base URL, e.g. /v1/users. |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `headers` | `Record<string, string>` | No | Headers passed on to the external API (sent as Nango-Proxy-&lt;name&gt;). |
+| `body` | `any` | No | JSON body sent to the external API. |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Records
+
+### list
+
+`records.list`
+
+List the records a sync stored for a connection and model, paginated with next_cursor.
+
+**Risk:** `read`
+
+```ts
+await corsair.nango.api.records.list({
+	provider_config_key: 'github',
+	connection_id: 'user-123',
+	model: 'GithubIssue',
+	limit: 100,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider_config_key` | `string` | Yes | The integration ID (unique key) the connection belongs to. |
+| `connection_id` | `string` | Yes | The connection ID. |
+| `model` | `string` | Yes | The data model the sync writes. |
+| `cursor` | `string` | No | next_cursor from the previous page, or a record’s _nango_metadata.cursor. |
+| `limit` | `number` | No | Default 100. |
+| `filter` | `added \| updated \| deleted` | No | — |
+| `modified_after` | `string` | No | ISO 8601 timestamp. |
+| `ids` | `string[]` | No | — |
+| `variant` | `string` | No | — |
+
+Page with `next_cursor` until it is null; a page can hold fewer than `limit` records.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `Record<string, any>[]` | Yes | — |
+| `next_cursor` | `string \| null` | No | — |
+
+
+
+---
+
+## Scripts
+
+### getConfig
+
+`scripts.getConfig`
+
+Get the configuration of every deployed function in the environment, in Nango or OpenAI tool format.
+
+**Risk:** `read`
+
+```ts
+await corsair.nango.api.scripts.getConfig({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `format` | `nango \| openai` | No | "openai" returns tool definitions in OpenAI function format. |
+
+`format: "openai"` returns the functions as OpenAI tool definitions.
+
+
+
+**Output:** `Record<string, any>[] \| Record<string, any>`
+
+
+---
+
+## Sessions
+
+### create
+
+`sessions.create`
+
+Create a Connect session; returns a short-lived token and a connect link an end user opens to authorize an integration.
+
+**Risk:** `write`
+
+```ts
+await corsair.nango.api.sessions.create({
+	tags: { end_user_id: 'user-123' },
+	allowed_integrations: ['github'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tags` | `Record<string, string>` | No | Connection tags (key/value strings, at most 10). Keys are lowercased by Nango. |
+| `end_user` | `object` | No | Deprecated by Nango; use tags instead. |
+| `organization` | `object` | No | Deprecated by Nango; use tags instead. |
+| `integrations_config_defaults` | `object` | No | Per-integration defaults for the Connect UI, keyed by integration ID. |
+| `overrides` | `object` | No | — |
+| `webhook_url_override` | `string` | No | — |
+| `allowed_integrations` | `string[]` | No | Integration IDs the end user may connect. |
+
+Either `tags` or `end_user` is required; Nango recommends tags. Give the returned `connect_link` to the end user.
+
+<AccordionGroup>
+<Accordion title="end_user full type">
+
+```ts
+{
+  id: string,
+  email?: string,
+  display_name?: string,
+  tags?: Record<string, string>
+}
+```
+</Accordion>
+
+<Accordion title="organization full type">
+
+```ts
+{
+  id: string,
+  display_name?: string
+}
+```
+</Accordion>
+
+<Accordion title="integrations_config_defaults full type">
+
+```ts
+Record<string, {
+  user_scopes?: string,
+  authorization_params?: Record<string, string>,
+  connection_config?: {
+    oauth_scopes_override?: string,
+    oauth_client_id_override?: string,
+    oauth_client_secret_override?: string
+  }
+}>
+```
+</Accordion>
+
+<Accordion title="overrides full type">
+
+```ts
+Record<string, {
+  docs_connect?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  token: string,
+  expires_at: string,
+  connect_link?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reconnect
+
+`sessions.reconnect`
+
+Create a Connect session that re-authorizes an existing connection, keeping its connection ID.
+
+**Risk:** `write`
+
+```ts
+await corsair.nango.api.sessions.reconnect({ connection_id: 'user-123', integration_id: 'github' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tags` | `Record<string, string>` | No | Connection tags (key/value strings, at most 10). Keys are lowercased by Nango. |
+| `end_user` | `object` | No | Deprecated by Nango; use tags instead. |
+| `organization` | `object` | No | Deprecated by Nango; use tags instead. |
+| `integrations_config_defaults` | `object` | No | Per-integration defaults for the Connect UI, keyed by integration ID. |
+| `overrides` | `object` | No | — |
+| `webhook_url_override` | `string` | No | — |
+| `connection_id` | `string` | Yes | The connection ID. |
+| `integration_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="end_user full type">
+
+```ts
+{
+  id: string,
+  email?: string,
+  display_name?: string,
+  tags?: Record<string, string>
+}
+```
+</Accordion>
+
+<Accordion title="organization full type">
+
+```ts
+{
+  id: string,
+  display_name?: string
+}
+```
+</Accordion>
+
+<Accordion title="integrations_config_defaults full type">
+
+```ts
+Record<string, {
+  user_scopes?: string,
+  authorization_params?: Record<string, string>,
+  connection_config?: {
+    oauth_scopes_override?: string,
+    oauth_client_id_override?: string,
+    oauth_client_secret_override?: string
+  }
+}>
+```
+</Accordion>
+
+<Accordion title="overrides full type">
+
+```ts
+Record<string, {
+  docs_connect?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  token: string,
+  expires_at: string,
+  connect_link?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Syncs
+
+### pause
+
+`syncs.pause`
+
+Pause the schedule of syncs for one connection or all.
+
+**Risk:** `write`
+
+```ts
+await corsair.nango.api.syncs.pause({
+	provider_config_key: 'github',
+	connection_id: 'user-123',
+	syncs: ['issues'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider_config_key` | `string` | Yes | The integration ID (unique key) the connection belongs to. |
+| `connection_id` | `string` | No | Limit to one connection; omit for every connection. |
+| `syncs` | `string[] \| object[]` | Yes | Sync names, or &#123; name, variant &#125; objects (variant is required; the default is "base"). |
+
+<AccordionGroup>
+<Accordion title="syncs full type">
+
+```ts
+string[] | {
+  name: string,
+  variant: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### start
+
+`syncs.start`
+
+Start the schedule of syncs for one connection or all; they run now and then on their frequency.
+
+**Risk:** `write`
+
+```ts
+await corsair.nango.api.syncs.start({
+	provider_config_key: 'github',
+	connection_id: 'user-123',
+	syncs: ['issues'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider_config_key` | `string` | Yes | The integration ID (unique key) the connection belongs to. |
+| `connection_id` | `string` | No | Limit to one connection; omit for every connection. |
+| `syncs` | `string[] \| object[]` | Yes | Sync names, or &#123; name, variant &#125; objects (variant is required; the default is "base"). |
+
+<AccordionGroup>
+<Accordion title="syncs full type">
+
+```ts
+string[] | {
+  name: string,
+  variant: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### status
+
+`syncs.status`
+
+Get the status, schedule, last result and record counts of syncs.
+
+**Risk:** `read`
+
+```ts
+await corsair.nango.api.syncs.status({ provider_config_key: 'github', connection_id: 'user-123', syncs: '*' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider_config_key` | `string` | Yes | The integration ID (unique key) the connection belongs to. |
+| `syncs` | `string` | Yes | Comma-separated sync names, "*" for all, name::variant for variants. |
+| `connection_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `syncs` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="syncs full type">
+
+```ts
+{
+  id?: string,
+  connection_id?: string,
+  name?: string,
+  variant?: string,
+  status?: string,
+  finishedAt?: string | null,
+  nextScheduledSyncAt?: string | null,
+  frequency?: string | null,
+  latestResult?: Record<string, any> | null,
+  recordCount?: Record<string, any> | null,
+  checkpoint?: Record<string, any> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### trigger
+
+`syncs.trigger`
+
+Run syncs once now, for one connection or all; reset starts from scratch.
+
+**Risk:** `write`
+
+```ts
+await corsair.nango.api.syncs.trigger({
+	provider_config_key: 'github',
+	connection_id: 'user-123',
+	syncs: ['issues'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider_config_key` | `string` | Yes | The integration ID (unique key) the connection belongs to. |
+| `connection_id` | `string` | No | Limit to one connection; omit for every connection. |
+| `syncs` | `string[] \| object[]` | Yes | Sync names, or &#123; name, variant &#125; objects (variant is required; the default is "base"). |
+| `opts` | `object` | No | — |
+
+`syncs` takes names, or `{ name, variant }` objects where `variant` is required (the default variant is `base`).
+
+<AccordionGroup>
+<Accordion title="syncs full type">
+
+```ts
+string[] | {
+  name: string,
+  variant: string
+}[]
+```
+</Accordion>
+
+<Accordion title="opts full type">
+
+```ts
+{
+  reset?: boolean,
+  emptyCache?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### updateFrequency
+
+`syncs.updateFrequency`
+
+Override a sync's frequency for one connection, or restore the default with null.
+
+**Risk:** `write`
+
+```ts
+await corsair.nango.api.syncs.updateFrequency({
+	provider_config_key: 'github',
+	connection_id: 'user-123',
+	sync_name: 'issues',
+	frequency: 'every 2 hours',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider_config_key` | `string` | Yes | The integration ID (unique key) the connection belongs to. |
+| `connection_id` | `string` | Yes | The connection ID. |
+| `sync_name` | `string` | Yes | — |
+| `sync_variant` | `string` | No | — |
+| `frequency` | `string \| null` | Yes | e.g. "every hour" (min 30 seconds); null restores the default. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `frequency` | `string \| null` | No | — |
+
+
+
+---
+
+## Tools
+
+### call
+
+`tools.call`
+
+Call a deployed tool for a connection and return its output. Tools can write to the end customer's account.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.nango.api.tools.call({
+	connectionId: 'user-123',
+	name: 'list-repos',
+	provider_config_key: 'github',
+	input: {},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connectionId` | `string` | Yes | The connection ID. |
+| `name` | `string` | Yes | The tool name on the integration. |
+| `provider_config_key` | `string` | No | Needed when several integrations share the connection ID. |
+| `input` | `any` | No | Input matching the tool's schema. |
+
+
+
+**Output:** `any`
+
+
+---
+

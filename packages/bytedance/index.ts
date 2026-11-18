@@ -97,11 +97,28 @@ export const bytedanceEndpointSchemas = {
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
+// A Seedance task renders after video.create returns. Status values are the
+// output schema's (endpoints/types.ts TaskStatus); jobs.test.ts keeps them in
+// step. queued and running are still going. tasks.delete is not the cancel:
+// it cancels only a queued task, refuses a running one and deletes the record
+// of a finished one, so a late cancel would erase the result.
+const VIDEO_JOB = {
+	idPath: 'id',
+	status: {
+		op: 'tasks.get',
+		idArg: 'id',
+		statusPath: 'status',
+		done: ['succeeded'],
+		failed: ['failed', 'cancelled', 'expired'],
+	},
+} as const;
+
 const bytedanceEndpointMeta = {
 	'video.create': {
 		riskLevel: 'write',
 		description:
 			'Start a Seedance video generation task from text, frames, or reference media; returns a task id',
+		job: VIDEO_JOB,
 	},
 	'tasks.get': {
 		riskLevel: 'read',

@@ -146,6 +146,13 @@ async function clearEdgeWhite(bytes: Buffer): Promise<Buffer> {
  * `pnpm import:plugin-icon`, reviewed, and served from there.
  */
 const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
+	// Google's own Contacts product mark (the 192px branding PNG).
+	googlecontacts:
+		'https://www.gstatic.com/images/branding/product/2x/contacts_2022_96dp.png',
+	// plugin-docs.yaml names zoho.com, whose icon is the generic Zoho mark;
+	// App Store icon is Zoho Invoice's own.
+	zohoinvoice:
+		'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/6b/9d/8a/6b9d8a63-d208-8234-859f-1e4799464bd2/AppIcon-0-0-1x_U007epad-0-0-0-1-0-0-sRGB-0-85-220.png/256x256bb.png',
 	googledocs:
 		'https://www.gstatic.com/images/branding/product/2x/docs_2020q4_96dp.png',
 	filevine:
@@ -169,6 +176,11 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 		'https://cdn.prod.website-files.com/65d658559223871198e78bca/6995e1929b75bc0cd4eecdfa_griptape%20favicon2.png',
 	postman:
 		'https://www.postman.com/_mk-www-next/icons/android-chrome-512x512.png',
+	// The site's apple touch icon (black cubes on a white tile, same as its
+	// light-mode favicon); twenty-icons served the dark-mode one, white on
+	// transparent, which disappears on a light background.
+	stackai:
+		'https://framerusercontent.com/images/V6q3uNO6whySwl1EXE4Yv0Krf8.png',
 	recallai:
 		'https://cdn.prod.website-files.com/620d732b1f1f7b244ac89f0e/620d732c1f1f7ba1edc89f35_Favicon%20256.png',
 	// The site only has a 32px favicon; the context.dev Brand API has the same
@@ -190,6 +202,16 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	ramp: 'https://ramp.com/apple-touch-icon.png',
 	// The site's own 256px touch icon (the tag gun); its favicon is 32px.
 	taggun: 'https://www.taggun.io/apple-touch-icon.png',
+	// godial.cc serves its icon from a WordPress upload path, so the favicon
+	// lookups find nothing; this is the site's own 512px web-app icon.
+	godial:
+		'https://godial.cc/wp-content/uploads/2023/09/cropped-android-chrome-512x512-1.png',
+	// CurrencyScoop is now CurrencyBeacon; its site's favicon link 404s and the
+	// Brand API only has the wide wordmark. The GitHub org avatar is the same mark.
+	currencyscoop: 'https://github.com/currencybeacon.png?size=200',
+	// postonce.to's icon.svg is a potrace trace (refused) and rendered as a blank
+	// blue square; the site's own 500px icon.png is the mark.
+	postonce: 'https://postonce.to/icon.png',
 	zoom: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/fc/d0/96/fcd09664-56c3-f856-4311-da9dcbae1fd2/AppIcon-0-0-1x_U007epad-0-1-0-0-85-220.png/512x512bb.png',
 	// twenty-icons has an old blue and green mark; typesafe.ai's apple touch icon
 	// is the current black knot on pink.

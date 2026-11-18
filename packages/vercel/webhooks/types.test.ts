@@ -102,3 +102,23 @@ describe('verifyVercelWebhookSignature', () => {
 		expect(result).toBe(true);
 	});
 });
+
+describe('Hub-verified deliveries', () => {
+	it('accepts a delivery Hub already verified, with no local secret', () => {
+		expect(
+			verifyVercelWebhookSignature(
+				{ hubVerified: true, rawBody: '{}', headers: {} },
+				undefined as unknown as string,
+			),
+		).toBe(true);
+	});
+
+	it('still checks the signature when Hub did not verify it', () => {
+		expect(
+			verifyVercelWebhookSignature(
+				{ rawBody: '{}', headers: { 'x-vercel-signature': 'nope' } },
+				'secret',
+			),
+		).toBe(false);
+	});
+});

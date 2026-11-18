@@ -318,7 +318,7 @@
           {
             "key": "customersNotSent",
             "optional": true,
-            "type": "string | null"
+            "type": "number | string | null"
           },
           {
             "key": "legalBusinessName",
@@ -849,7 +849,7 @@
           {
             "key": "parentId",
             "optional": true,
-            "type": "string | null"
+            "type": "number | string | null"
           },
           {
             "key": "rating",
@@ -874,7 +874,7 @@
           {
             "key": "unsubscribed",
             "optional": true,
-            "type": "string | null"
+            "type": "number | string | null"
           },
           {
             "key": "createdAt",
@@ -949,7 +949,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id?: string | number | null, businessId?: string | number | null, firstName?: string | null, lastName?: string | null, phone?: string | null, email?: string | null, jobId?: string | null, customId?: string | null, parentId?: string | null, rating?: string | null, review?: string | null, statusInfo?: string | null, subscription?: number | null, unsubscribed?: string | null, createdAt?: string | null }[]"
+            "type": "{ id?: string | number | null, businessId?: string | number | null, firstName?: string | null, lastName?: string | null, phone?: string | null, email?: string | null, jobId?: string | null, customId?: string | null, parentId?: number | string | null, rating?: string | null, review?: string | null, statusInfo?: string | null, subscription?: number | null, unsubscribed?: number | string | null, createdAt?: string | null }[]"
           },
           {
             "key": "errorCode",
@@ -1124,7 +1124,7 @@
           {
             "key": "parentId",
             "optional": true,
-            "type": "string | null"
+            "type": "number | string | null"
           },
           {
             "key": "rating",
@@ -1149,7 +1149,7 @@
           {
             "key": "unsubscribed",
             "optional": true,
-            "type": "string | null"
+            "type": "number | string | null"
           },
           {
             "key": "createdAt",

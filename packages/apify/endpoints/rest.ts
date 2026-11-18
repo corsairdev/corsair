@@ -132,6 +132,7 @@ export function buildApifyEndpointMeta<T extends ApifyOperationTree>(
 				riskLevel: value.riskLevel,
 				irreversible: value.irreversible,
 				description: value.description,
+				...(value.job ? { job: value.job } : {}),
 			};
 		} else {
 			Object.assign(meta, buildApifyEndpointMeta(value, [...segments, key]));

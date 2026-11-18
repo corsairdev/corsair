@@ -2,3 +2,4 @@
 # `pnpm validate:plugins` fails until the TODO is replaced.
 displayName: "Motion"
 description: Manage Motion tasks, projects, workspaces, comments, recurring tasks, and custom fields.
+domain: usemotion.com

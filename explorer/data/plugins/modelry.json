@@ -1,0 +1,861 @@
+{
+  "id": "modelry",
+  "displayName": "Modelry",
+  "description": "Manage 3D modeling requests, products, assets, and embeds with Modelry.",
+  "npmPackageName": "@corsair-dev/modelry",
+  "authTypes": ["api_key"],
+  "counts": {
+    "api": 21,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "modelry.api.embeds.delete",
+      "shortPath": "embeds.delete",
+      "description": "Delete an embed. This cannot be undone.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "modelry.api.embeds.get",
+      "shortPath": "embeds.get",
+      "description": "Get one embed, with its public viewer URL and loader script configuration.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: string, attributes?: { uid?: string | null, sku?: string | null, title?: string | null, name?: string | null, createdAt?: string | null, batchID?: string | null, batchId?: string | null, batchUid?: string | null, deliveredAt?: string | null, status?: string | null, pipeline?: string | null, price?: string | null, previewImageUrl?: string | null, dimensions?: string | null, productUrl?: string | null, productId?: number | null, requestType?: string | null, inCustomerQa?: boolean | null, customerQaUrl?: string | null, currentRoundNumber?: number | null, currentRoundSaved?: boolean | null, referenceFileUrls?: string[] | null, reviewCategories?: { id: string, title: string }[] | null, description?: string | null, tags?: string[] | null, sourceLabel?: string | null, toolKinds?: string[] | null, contentLabels?: string[] | null, byteSize?: number | string | null, labels?: string[] | null, url?: string | null, fileName?: string | null, kinds?: string[] | null, published?: boolean | null, loaderScriptConfiguration?: Record<string, any>[] | null, adminIssueId?: string | null, annotation?: Record<string, any> | null, authorId?: string | null, authorRole?: string | null, authorUsername?: string | null, category?: string | null, comment?: string | null, data?: Record<string, any> | null, deletedAt?: string | null, destroyed?: boolean | null, displayAuthorUsername?: boolean | null, displayIssueChanges?: boolean | null, displaySeverity?: boolean | null, disputeComment?: string | null, disputeReason?: string | null, disputeRejectionReason?: string | null, disputeStatus?: string | null, draft?: boolean | null, editorUsername?: string | null, isReviewed?: boolean | null, issueLogs?: string[] | null, order?: number | null, origin?: string | null, reviewableAttachmentId?: string | null, reviewed?: boolean | null, severity?: number | null, solved?: boolean | null, state?: string | null, updatedAt?: string | null, x?: string | null, y?: string | null }, relationships?: Record<string, any> }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: { uid?: string | null, sku?: string | null, title?: string | null, name?: string | null, createdAt?: string | null, batchID?: string | null, batchId?: string | null, batchUid?: string | null, deliveredAt?: string | null, status?: string | null, pipeline?: string | null, price?: string | null, previewImageUrl?: string | null, dimensions?: string | null, productUrl?: string | null, productId?: number | null, requestType?: string | null, inCustomerQa?: boolean | null, customerQaUrl?: string | null, currentRoundNumber?: number | null, currentRoundSaved?: boolean | null, referenceFileUrls?: string[] | null, reviewCategories?: { id: string, title: string }[] | null, description?: string | null, tags?: string[] | null, sourceLabel?: string | null, toolKinds?: string[] | null, contentLabels?: string[] | null, byteSize?: number | string | null, labels?: string[] | null, url?: string | null, fileName?: string | null, kinds?: string[] | null, published?: boolean | null, loaderScriptConfiguration?: Record<string, any>[] | null, adminIssueId?: string | null, annotation?: Record<string, any> | null, authorId?: string | null, authorRole?: string | null, authorUsername?: string | null, category?: string | null, comment?: string | null, data?: Record<string, any> | null, deletedAt?: string | null, destroyed?: boolean | null, displayAuthorUsername?: boolean | null, displayIssueChanges?: boolean | null, displaySeverity?: boolean | null, disputeComment?: string | null, disputeReason?: string | null, disputeRejectionReason?: string | null, disputeStatus?: string | null, draft?: boolean | null, editorUsername?: string | null, isReviewed?: boolean | null, issueLogs?: string[] | null, order?: number | null, origin?: string | null, reviewableAttachmentId?: string | null, reviewed?: boolean | null, severity?: number | null, solved?: boolean | null, state?: string | null, updatedAt?: string | null, x?: string | null, y?: string | null }, relationships?: Record<string, any> }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ page?: number | null, per_page?: number | null, total_pages?: number | null, total_records?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modelry.api.embeds.list",
+      "shortPath": "embeds.list",
+      "description": "List a product's 3D/AR web viewers (embeds). An empty result is returned as an empty list.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: string, attributes?: { uid?: string | null, sku?: string | null, title?: string | null, name?: string | null, createdAt?: string | null, batchID?: string | null, batchId?: string | null, batchUid?: string | null, deliveredAt?: string | null, status?: string | null, pipeline?: string | null, price?: string | null, previewImageUrl?: string | null, dimensions?: string | null, productUrl?: string | null, productId?: number | null, requestType?: string | null, inCustomerQa?: boolean | null, customerQaUrl?: string | null, currentRoundNumber?: number | null, currentRoundSaved?: boolean | null, referenceFileUrls?: string[] | null, reviewCategories?: { id: string, title: string }[] | null, description?: string | null, tags?: string[] | null, sourceLabel?: string | null, toolKinds?: string[] | null, contentLabels?: string[] | null, byteSize?: number | string | null, labels?: string[] | null, url?: string | null, fileName?: string | null, kinds?: string[] | null, published?: boolean | null, loaderScriptConfiguration?: Record<string, any>[] | null, adminIssueId?: string | null, annotation?: Record<string, any> | null, authorId?: string | null, authorRole?: string | null, authorUsername?: string | null, category?: string | null, comment?: string | null, data?: Record<string, any> | null, deletedAt?: string | null, destroyed?: boolean | null, displayAuthorUsername?: boolean | null, displayIssueChanges?: boolean | null, displaySeverity?: boolean | null, disputeComment?: string | null, disputeReason?: string | null, disputeRejectionReason?: string | null, disputeStatus?: string | null, draft?: boolean | null, editorUsername?: string | null, isReviewed?: boolean | null, issueLogs?: string[] | null, order?: number | null, origin?: string | null, reviewableAttachmentId?: string | null, reviewed?: boolean | null, severity?: number | null, solved?: boolean | null, state?: string | null, updatedAt?: string | null, x?: string | null, y?: string | null }, relationships?: Record<string, any> }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ page?: number | null, per_page?: number | null, total_pages?: number | null, total_records?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modelry.api.embeds.publish",
+      "shortPath": "embeds.publish",
+      "description": "Publish an embed so its viewer URL is publicly reachable.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: string, attributes?: { uid?: string | null, sku?: string | null, title?: string | null, name?: string | null, createdAt?: string | null, batchID?: string | null, batchId?: string | null, batchUid?: string | null, deliveredAt?: string | null, status?: string | null, pipeline?: string | null, price?: string | null, previewImageUrl?: string | null, dimensions?: string | null, productUrl?: string | null, productId?: number | null, requestType?: string | null, inCustomerQa?: boolean | null, customerQaUrl?: string | null, currentRoundNumber?: number | null, currentRoundSaved?: boolean | null, referenceFileUrls?: string[] | null, reviewCategories?: { id: string, title: string }[] | null, description?: string | null, tags?: string[] | null, sourceLabel?: string | null, toolKinds?: string[] | null, contentLabels?: string[] | null, byteSize?: number | string | null, labels?: string[] | null, url?: string | null, fileName?: string | null, kinds?: string[] | null, published?: boolean | null, loaderScriptConfiguration?: Record<string, any>[] | null, adminIssueId?: string | null, annotation?: Record<string, any> | null, authorId?: string | null, authorRole?: string | null, authorUsername?: string | null, category?: string | null, comment?: string | null, data?: Record<string, any> | null, deletedAt?: string | null, destroyed?: boolean | null, displayAuthorUsername?: boolean | null, displayIssueChanges?: boolean | null, displaySeverity?: boolean | null, disputeComment?: string | null, disputeReason?: string | null, disputeRejectionReason?: string | null, disputeStatus?: string | null, draft?: boolean | null, editorUsername?: string | null, isReviewed?: boolean | null, issueLogs?: string[] | null, order?: number | null, origin?: string | null, reviewableAttachmentId?: string | null, reviewed?: boolean | null, severity?: number | null, solved?: boolean | null, state?: string | null, updatedAt?: string | null, x?: string | null, y?: string | null }, relationships?: Record<string, any> }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: { uid?: string | null, sku?: string | null, title?: string | null, name?: string | null, createdAt?: string | null, batchID?: string | null, batchId?: string | null, batchUid?: string | null, deliveredAt?: string | null, status?: string | null, pipeline?: string | null, price?: string | null, previewImageUrl?: string | null, dimensions?: string | null, productUrl?: string | null, productId?: number | null, requestType?: string | null, inCustomerQa?: boolean | null, customerQaUrl?: string | null, currentRoundNumber?: number | null, currentRoundSaved?: boolean | null, referenceFileUrls?: string[] | null, reviewCategories?: { id: string, title: string }[] | null, description?: string | null, tags?: string[] | null, sourceLabel?: string | null, toolKinds?: string[] | null, contentLabels?: string[] | null, byteSize?: number | string | null, labels?: string[] | null, url?: string | null, fileName?: string | null, kinds?: string[] | null, published?: boolean | null, loaderScriptConfiguration?: Record<string, any>[] | null, adminIssueId?: string | null, annotation?: Record<string, any> | null, authorId?: string | null, authorRole?: string | null, authorUsername?: string | null, category?: string | null, comment?: string | null, data?: Record<string, any> | null, deletedAt?: string | null, destroyed?: boolean | null, displayAuthorUsername?: boolean | null, displayIssueChanges?: boolean | null, displaySeverity?: boolean | null, disputeComment?: string | null, disputeReason?: string | null, disputeRejectionReason?: string | null, disputeStatus?: string | null, draft?: boolean | null, editorUsername?: string | null, isReviewed?: boolean | null, issueLogs?: string[] | null, order?: number | null, origin?: string | null, reviewableAttachmentId?: string | null, reviewed?: boolean | null, severity?: number | null, solved?: boolean | null, state?: string | null, updatedAt?: string | null, x?: string | null, y?: string | null }, relationships?: Record<string, any> }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ page?: number | null, per_page?: number | null, total_pages?: number | null, total_records?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modelry.api.modelingRequests.approve",
+      "shortPath": "modelingRequests.approve",
+      "description": "Accept a delivered model and finish customer QA. The API cannot undo an approval.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id_or_sku",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: string, attributes?: { uid?: string | null, sku?: string | null, title?: string | null, name?: string | null, createdAt?: string | null, batchID?: string | null, batchId?: string | null, batchUid?: string | null, deliveredAt?: string | null, status?: string | null, pipeline?: string | null, price?: string | null, previewImageUrl?: string | null, dimensions?: string | null, productUrl?: string | null, productId?: number | null, requestType?: string | null, inCustomerQa?: boolean | null, customerQaUrl?: string | null, currentRoundNumber?: number | null, currentRoundSaved?: boolean | null, referenceFileUrls?: string[] | null, reviewCategories?: { id: string, title: string }[] | null, description?: string | null, tags?: string[] | null, sourceLabel?: string | null, toolKinds?: string[] | null, contentLabels?: string[] | null, byteSize?: number | string | null, labels?: string[] | null, url?: string | null, fileName?: string | null, kinds?: string[] | null, published?: boolean | null, loaderScriptConfiguration?: Record<string, any>[] | null, adminIssueId?: string | null, annotation?: Record<string, any> | null, authorId?: string | null, authorRole?: string | null, authorUsername?: string | null, category?: string | null, comment?: string | null, data?: Record<string, any> | null, deletedAt?: string | null, destroyed?: boolean | null, displayAuthorUsername?: boolean | null, displayIssueChanges?: boolean | null, displaySeverity?: boolean | null, disputeComment?: string | null, disputeReason?: string | null, disputeRejectionReason?: string | null, disputeStatus?: string | null, draft?: boolean | null, editorUsername?: string | null, isReviewed?: boolean | null, issueLogs?: string[] | null, order?: number | null, origin?: string | null, reviewableAttachmentId?: string | null, reviewed?: boolean | null, severity?: number | null, solved?: boolean | null, state?: string | null, updatedAt?: string | null, x?: string | null, y?: string | null }, relationships?: Record<string, any> }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: { uid?: string | null, sku?: string | null, title?: string | null, name?: string | null, createdAt?: string | null, batchID?: string | null, batchId?: string | null, batchUid?: string | null, deliveredAt?: string | null, status?: string | null, pipeline?: string | null, price?: string | null, previewImageUrl?: string | null, dimensions?: string | null, productUrl?: string | null, productId?: number | null, requestType?: string | null, inCustomerQa?: boolean | null, customerQaUrl?: string | null, currentRoundNumber?: number | null, currentRoundSaved?: boolean | null, referenceFileUrls?: string[] | null, reviewCategories?: { id: string, title: string }[] | null, description?: string | null, tags?: string[] | null, sourceLabel?: string | null, toolKinds?: string[] | null, contentLabels?: string[] | null, byteSize?: number | string | null, labels?: string[] | null, url?: string | null, fileName?: string | null, kinds?: string[] | null, published?: boolean | null, loaderScriptConfiguration?: Record<string, any>[] | null, adminIssueId?: string | null, annotation?: Record<string, any> | null, authorId?: string | null, authorRole?: string | null, authorUsername?: string | null, category?: string | null, comment?: string | null, data?: Record<string, any> | null, deletedAt?: string | null, destroyed?: boolean | null, displayAuthorUsername?: boolean | null, displayIssueChanges?: boolean | null, displaySeverity?: boolean | null, disputeComment?: string | null, disputeReason?: string | null, disputeRejectionReason?: string | null, disputeStatus?: string | null, draft?: boolean | null, editorUsername?: string | null, isReviewed?: boolean | null, issueLogs?: string[] | null, order?: number | null, origin?: string | null, reviewableAttachmentId?: string | null, reviewed?: boolean | null, severity?: number | null, solved?: boolean | null, state?: string | null, updatedAt?: string | null, x?: string | null, y?: string | null }, relationships?: Record<string, any> }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ page?: number | null, per_page?: number | null, total_pages?: number | null, total_records?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modelry.api.modelingRequests.assets",
+      "shortPath": "modelingRequests.assets",
+      "description": "List the files delivered for a modeling request (models, renders, textures) with download URLs.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "modeling_request_id_or_sku",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: string, attributes?: { uid?: string | null, sku?: string | null, title?: string | null, name?: string | null, createdAt?: string | null, batchID?: string | null, batchId?: string | null, batchUid?: string | null, deliveredAt?: string | null, status?: string | null, pipeline?: string | null, price?: string | null, previewImageUrl?: string | null, dimensions?: string | null, productUrl?: string | null, productId?: number | null, requestType?: string | null, inCustomerQa?: boolean | null, customerQaUrl?: string | null, currentRoundNumber?: number | null, currentRoundSaved?: boolean | null, referenceFileUrls?: string[] | null, reviewCategories?: { id: string, title: string }[] | null, description?: string | null, tags?: string[] | null, sourceLabel?: string | null, toolKinds?: string[] | null, contentLabels?: string[] | null, byteSize?: number | string | null, labels?: string[] | null, url?: string | null, fileName?: string | null, kinds?: string[] | null, published?: boolean | null, loaderScriptConfiguration?: Record<string, any>[] | null, adminIssueId?: string | null, annotation?: Record<string, any> | null, authorId?: string | null, authorRole?: string | null, authorUsername?: string | null, category?: string | null, comment?: string | null, data?: Record<string, any> | null, deletedAt?: string | null, destroyed?: boolean | null, displayAuthorUsername?: boolean | null, displayIssueChanges?: boolean | null, displaySeverity?: boolean | null, disputeComment?: string | null, disputeReason?: string | null, disputeRejectionReason?: string | null, disputeStatus?: string | null, draft?: boolean | null, editorUsername?: string | null, isReviewed?: boolean | null, issueLogs?: string[] | null, order?: number | null, origin?: string | null, reviewableAttachmentId?: string | null, reviewed?: boolean | null, severity?: number | null, solved?: boolean | null, state?: string | null, updatedAt?: string | null, x?: string | null, y?: string | null }, relationships?: Record<string, any> }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ page?: number | null, per_page?: number | null, total_pages?: number | null, total_records?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modelry.api.modelingRequests.create",
+      "shortPath": "modelingRequests.create",
+      "description": "Order a custom 3D model from Modelry. Modelry quotes and bills per model, and the API has no cancel.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "modeling_request",
+            "optional": false,
+            "type": "{ title: string, sku: string, product_id?: number, dimensions?: string, pipeline: high_poly | low_poly, specific_requirements?: string, external_url?: string, reference_file_blob_ids?: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: string, attributes?: { uid?: string | null, sku?: string | null, title?: string | null, name?: string | null, createdAt?: string | null, batchID?: string | null, batchId?: string | null, batchUid?: string | null, deliveredAt?: string | null, status?: string | null, pipeline?: string | null, price?: string | null, previewImageUrl?: string | null, dimensions?: string | null, productUrl?: string | null, productId?: number | null, requestType?: string | null, inCustomerQa?: boolean | null, customerQaUrl?: string | null, currentRoundNumber?: number | null, currentRoundSaved?: boolean | null, referenceFileUrls?: string[] | null, reviewCategories?: { id: string, title: string }[] | null, description?: string | null, tags?: string[] | null, sourceLabel?: string | null, toolKinds?: string[] | null, contentLabels?: string[] | null, byteSize?: number | string | null, labels?: string[] | null, url?: string | null, fileName?: string | null, kinds?: string[] | null, published?: boolean | null, loaderScriptConfiguration?: Record<string, any>[] | null, adminIssueId?: string | null, annotation?: Record<string, any> | null, authorId?: string | null, authorRole?: string | null, authorUsername?: string | null, category?: string | null, comment?: string | null, data?: Record<string, any> | null, deletedAt?: string | null, destroyed?: boolean | null, displayAuthorUsername?: boolean | null, displayIssueChanges?: boolean | null, displaySeverity?: boolean | null, disputeComment?: string | null, disputeReason?: string | null, disputeRejectionReason?: string | null, disputeStatus?: string | null, draft?: boolean | null, editorUsername?: string | null, isReviewed?: boolean | null, issueLogs?: string[] | null, order?: number | null, origin?: string | null, reviewableAttachmentId?: string | null, reviewed?: boolean | null, severity?: number | null, solved?: boolean | null, state?: string | null, updatedAt?: string | null, x?: string | null, y?: string | null }, relationships?: Record<string, any> }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: { uid?: string | null, sku?: string | null, title?: string | null, name?: string | null, createdAt?: string | null, batchID?: string | null, batchId?: string | null, batchUid?: string | null, deliveredAt?: string | null, status?: string | null, pipeline?: string | null, price?: string | null, previewImageUrl?: string | null, dimensions?: string | null, productUrl?: string | null, productId?: number | null, requestType?: string | null, inCustomerQa?: boolean | null, customerQaUrl?: string | null, currentRoundNumber?: number | null, currentRoundSaved?: boolean | null, referenceFileUrls?: string[] | null, reviewCategories?: { id: string, title: string }[] | null, description?: string | null, tags?: string[] | null, sourceLabel?: string | null, toolKinds?: string[] | null, contentLabels?: string[] | null, byteSize?: number | string | null, labels?: string[] | null, url?: string | null, fileName?: string | null, kinds?: string[] | null, published?: boolean | null, loaderScriptConfiguration?: Record<string, any>[] | null, adminIssueId?: string | null, annotation?: Record<string, any> | null, authorId?: string | null, authorRole?: string | null, authorUsername?: string | null, category?: string | null, comment?: string | null, data?: Record<string, any> | null, deletedAt?: string | null, destroyed?: boolean | null, displayAuthorUsername?: boolean | null, displayIssueChanges?: boolean | null, displaySeverity?: boolean | null, disputeComment?: string | null, disputeReason?: string | null, disputeRejectionReason?: string | null, disputeStatus?: string | null, draft?: boolean | null, editorUsername?: string | null, isReviewed?: boolean | null, issueLogs?: string[] | null, order?: number | null, origin?: string | null, reviewableAttachmentId?: string | null, reviewed?: boolean | null, severity?: number | null, solved?: boolean | null, state?: string | null, updatedAt?: string | null, x?: string | null, y?: string | null }, relationships?: Record<string, any> }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ page?: number | null, per_page?: number | null, total_pages?: number | null, total_records?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modelry.api.modelingRequests.get",
+      "shortPath": "modelingRequests.get",
+      "description": "Get one modeling request by id or SKU: status, price, QA round and review categories.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id_or_sku",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: string, attributes?: { uid?: string | null, sku?: string | null, title?: string | null, name?: string | null, createdAt?: string | null, batchID?: string | null, batchId?: string | null, batchUid?: string | null, deliveredAt?: string | null, status?: string | null, pipeline?: string | null, price?: string | null, previewImageUrl?: string | null, dimensions?: string | null, productUrl?: string | null, productId?: number | null, requestType?: string | null, inCustomerQa?: boolean | null, customerQaUrl?: string | null, currentRoundNumber?: number | null, currentRoundSaved?: boolean | null, referenceFileUrls?: string[] | null, reviewCategories?: { id: string, title: string }[] | null, description?: string | null, tags?: string[] | null, sourceLabel?: string | null, toolKinds?: string[] | null, contentLabels?: string[] | null, byteSize?: number | string | null, labels?: string[] | null, url?: string | null, fileName?: string | null, kinds?: string[] | null, published?: boolean | null, loaderScriptConfiguration?: Record<string, any>[] | null, adminIssueId?: string | null, annotation?: Record<string, any> | null, authorId?: string | null, authorRole?: string | null, authorUsername?: string | null, category?: string | null, comment?: string | null, data?: Record<string, any> | null, deletedAt?: string | null, destroyed?: boolean | null, displayAuthorUsername?: boolean | null, displayIssueChanges?: boolean | null, displaySeverity?: boolean | null, disputeComment?: string | null, disputeReason?: string | null, disputeRejectionReason?: string | null, disputeStatus?: string | null, draft?: boolean | null, editorUsername?: string | null, isReviewed?: boolean | null, issueLogs?: string[] | null, order?: number | null, origin?: string | null, reviewableAttachmentId?: string | null, reviewed?: boolean | null, severity?: number | null, solved?: boolean | null, state?: string | null, updatedAt?: string | null, x?: string | null, y?: string | null }, relationships?: Record<string, any> }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: { uid?: string | null, sku?: string | null, title?: string | null, name?: string | null, createdAt?: string | null, batchID?: string | null, batchId?: string | null, batchUid?: string | null, deliveredAt?: string | null, status?: string | null, pipeline?: string | null, price?: string | null, previewImageUrl?: string | null, dimensions?: string | null, productUrl?: string | null, productId?: number | null, requestType?: string | null, inCustomerQa?: boolean | null, customerQaUrl?: string | null, currentRoundNumber?: number | null, currentRoundSaved?: boolean | null, referenceFileUrls?: string[] | null, reviewCategories?: { id: string, title: string }[] | null, description?: string | null, tags?: string[] | null, sourceLabel?: string | null, toolKinds?: string[] | null, contentLabels?: string[] | null, byteSize?: number | string | null, labels?: string[] | null, url?: string | null, fileName?: string | null, kinds?: string[] | null, published?: boolean | null, loaderScriptConfiguration?: Record<string, any>[] | null, adminIssueId?: string | null, annotation?: Record<string, any> | null, authorId?: string | null, authorRole?: string | null, authorUsername?: string | null, category?: string | null, comment?: string | null, data?: Record<string, any> | null, deletedAt?: string | null, destroyed?: boolean | null, displayAuthorUsername?: boolean | null, displayIssueChanges?: boolean | null, displaySeverity?: boolean | null, disputeComment?: string | null, disputeReason?: string | null, disputeRejectionReason?: string | null, disputeStatus?: string | null, draft?: boolean | null, editorUsername?: string | null, isReviewed?: boolean | null, issueLogs?: string[] | null, order?: number | null, origin?: string | null, reviewableAttachmentId?: string | null, reviewed?: boolean | null, severity?: number | null, solved?: boolean | null, state?: string | null, updatedAt?: string | null, x?: string | null, y?: string | null }, relationships?: Record<string, any> }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ page?: number | null, per_page?: number | null, total_pages?: number | null, total_records?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modelry.api.modelingRequests.list",
+      "shortPath": "modelingRequests.list",
+      "description": "List modeling requests (3D modelling orders), with workspace, SKU, batch and title filters.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "keywords",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sku",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "batch_uid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "in_quoting | in_progress | ready_for_review | adjustments_in_progress | dispute_review | preparing_for_delivery | finished"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: string, attributes?: { uid?: string | null, sku?: string | null, title?: string | null, name?: string | null, createdAt?: string | null, batchID?: string | null, batchId?: string | null, batchUid?: string | null, deliveredAt?: string | null, status?: string | null, pipeline?: string | null, price?: string | null, previewImageUrl?: string | null, dimensions?: string | null, productUrl?: string | null, productId?: number | null, requestType?: string | null, inCustomerQa?: boolean | null, customerQaUrl?: string | null, currentRoundNumber?: number | null, currentRoundSaved?: boolean | null, referenceFileUrls?: string[] | null, reviewCategories?: { id: string, title: string }[] | null, description?: string | null, tags?: string[] | null, sourceLabel?: string | null, toolKinds?: string[] | null, contentLabels?: string[] | null, byteSize?: number | string | null, labels?: string[] | null, url?: string | null, fileName?: string | null, kinds?: string[] | null, published?: boolean | null, loaderScriptConfiguration?: Record<string, any>[] | null, adminIssueId?: string | null, annotation?: Record<string, any> | null, authorId?: string | null, authorRole?: string | null, authorUsername?: string | null, category?: string | null, comment?: string | null, data?: Record<string, any> | null, deletedAt?: string | null, destroyed?: boolean | null, displayAuthorUsername?: boolean | null, displayIssueChanges?: boolean | null, displaySeverity?: boolean | null, disputeComment?: string | null, disputeReason?: string | null, disputeRejectionReason?: string | null, disputeStatus?: string | null, draft?: boolean | null, editorUsername?: string | null, isReviewed?: boolean | null, issueLogs?: string[] | null, order?: number | null, origin?: string | null, reviewableAttachmentId?: string | null, reviewed?: boolean | null, severity?: number | null, solved?: boolean | null, state?: string | null, updatedAt?: string | null, x?: string | null, y?: string | null }, relationships?: Record<string, any> }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ page?: number | null, per_page?: number | null, total_pages?: number | null, total_records?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modelry.api.modelingRequests.reject",
+      "shortPath": "modelingRequests.reject",
+      "description": "Reject a delivered model in customer QA and send it back to Modelry for adjustments. The API cannot undo a rejection.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id_or_sku",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: string, attributes?: { uid?: string | null, sku?: string | null, title?: string | null, name?: string | null, createdAt?: string | null, batchID?: string | null, batchId?: string | null, batchUid?: string | null, deliveredAt?: string | null, status?: string | null, pipeline?: string | null, price?: string | null, previewImageUrl?: string | null, dimensions?: string | null, productUrl?: string | null, productId?: number | null, requestType?: string | null, inCustomerQa?: boolean | null, customerQaUrl?: string | null, currentRoundNumber?: number | null, currentRoundSaved?: boolean | null, referenceFileUrls?: string[] | null, reviewCategories?: { id: string, title: string }[] | null, description?: string | null, tags?: string[] | null, sourceLabel?: string | null, toolKinds?: string[] | null, contentLabels?: string[] | null, byteSize?: number | string | null, labels?: string[] | null, url?: string | null, fileName?: string | null, kinds?: string[] | null, published?: boolean | null, loaderScriptConfiguration?: Record<string, any>[] | null, adminIssueId?: string | null, annotation?: Record<string, any> | null, authorId?: string | null, authorRole?: string | null, authorUsername?: string | null, category?: string | null, comment?: string | null, data?: Record<string, any> | null, deletedAt?: string | null, destroyed?: boolean | null, displayAuthorUsername?: boolean | null, displayIssueChanges?: boolean | null, displaySeverity?: boolean | null, disputeComment?: string | null, disputeReason?: string | null, disputeRejectionReason?: string | null, disputeStatus?: string | null, draft?: boolean | null, editorUsername?: string | null, isReviewed?: boolean | null, issueLogs?: string[] | null, order?: number | null, origin?: string | null, reviewableAttachmentId?: string | null, reviewed?: boolean | null, severity?: number | null, solved?: boolean | null, state?: string | null, updatedAt?: string | null, x?: string | null, y?: string | null }, relationships?: Record<string, any> }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: { uid?: string | null, sku?: string | null, title?: string | null, name?: string | null, createdAt?: string | null, batchID?: string | null, batchId?: string | null, batchUid?: string | null, deliveredAt?: string | null, status?: string | null, pipeline?: string | null, price?: string | null, previewImageUrl?: string | null, dimensions?: string | null, productUrl?: string | null, productId?: number | null, requestType?: string | null, inCustomerQa?: boolean | null, customerQaUrl?: string | null, currentRoundNumber?: number | null, currentRoundSaved?: boolean | null, referenceFileUrls?: string[] | null, reviewCategories?: { id: string, title: string }[] | null, description?: string | null, tags?: string[] | null, sourceLabel?: string | null, toolKinds?: string[] | null, contentLabels?: string[] | null, byteSize?: number | string | null, labels?: string[] | null, url?: string | null, fileName?: string | null, kinds?: string[] | null, published?: boolean | null, loaderScriptConfiguration?: Record<string, any>[] | null, adminIssueId?: string | null, annotation?: Record<string, any> | null, authorId?: string | null, authorRole?: string | null, authorUsername?: string | null, category?: string | null, comment?: string | null, data?: Record<string, any> | null, deletedAt?: string | null, destroyed?: boolean | null, displayAuthorUsername?: boolean | null, displayIssueChanges?: boolean | null, displaySeverity?: boolean | null, disputeComment?: string | null, disputeReason?: string | null, disputeRejectionReason?: string | null, disputeStatus?: string | null, draft?: boolean | null, editorUsername?: string | null, isReviewed?: boolean | null, issueLogs?: string[] | null, order?: number | null, origin?: string | null, reviewableAttachmentId?: string | null, reviewed?: boolean | null, severity?: number | null, solved?: boolean | null, state?: string | null, updatedAt?: string | null, x?: string | null, y?: string | null }, relationships?: Record<string, any> }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ page?: number | null, per_page?: number | null, total_pages?: number | null, total_records?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modelry.api.productAssets.create",
+      "shortPath": "productAssets.create",
+      "description": "Attach an uploaded file to a product, using the signed blob id from `uploads.file` or `uploads.blob`.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "blob_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: string, attributes?: { uid?: string | null, sku?: string | null, title?: string | null, name?: string | null, createdAt?: string | null, batchID?: string | null, batchId?: string | null, batchUid?: string | null, deliveredAt?: string | null, status?: string | null, pipeline?: string | null, price?: string | null, previewImageUrl?: string | null, dimensions?: string | null, productUrl?: string | null, productId?: number | null, requestType?: string | null, inCustomerQa?: boolean | null, customerQaUrl?: string | null, currentRoundNumber?: number | null, currentRoundSaved?: boolean | null, referenceFileUrls?: string[] | null, reviewCategories?: { id: string, title: string }[] | null, description?: string | null, tags?: string[] | null, sourceLabel?: string | null, toolKinds?: string[] | null, contentLabels?: string[] | null, byteSize?: number | string | null, labels?: string[] | null, url?: string | null, fileName?: string | null, kinds?: string[] | null, published?: boolean | null, loaderScriptConfiguration?: Record<string, any>[] | null, adminIssueId?: string | null, annotation?: Record<string, any> | null, authorId?: string | null, authorRole?: string | null, authorUsername?: string | null, category?: string | null, comment?: string | null, data?: Record<string, any> | null, deletedAt?: string | null, destroyed?: boolean | null, displayAuthorUsername?: boolean | null, displayIssueChanges?: boolean | null, displaySeverity?: boolean | null, disputeComment?: string | null, disputeReason?: string | null, disputeRejectionReason?: string | null, disputeStatus?: string | null, draft?: boolean | null, editorUsername?: string | null, isReviewed?: boolean | null, issueLogs?: string[] | null, order?: number | null, origin?: string | null, reviewableAttachmentId?: string | null, reviewed?: boolean | null, severity?: number | null, solved?: boolean | null, state?: string | null, updatedAt?: string | null, x?: string | null, y?: string | null }, relationships?: Record<string, any> }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: { uid?: string | null, sku?: string | null, title?: string | null, name?: string | null, createdAt?: string | null, batchID?: string | null, batchId?: string | null, batchUid?: string | null, deliveredAt?: string | null, status?: string | null, pipeline?: string | null, price?: string | null, previewImageUrl?: string | null, dimensions?: string | null, productUrl?: string | null, productId?: number | null, requestType?: string | null, inCustomerQa?: boolean | null, customerQaUrl?: string | null, currentRoundNumber?: number | null, currentRoundSaved?: boolean | null, referenceFileUrls?: string[] | null, reviewCategories?: { id: string, title: string }[] | null, description?: string | null, tags?: string[] | null, sourceLabel?: string | null, toolKinds?: string[] | null, contentLabels?: string[] | null, byteSize?: number | string | null, labels?: string[] | null, url?: string | null, fileName?: string | null, kinds?: string[] | null, published?: boolean | null, loaderScriptConfiguration?: Record<string, any>[] | null, adminIssueId?: string | null, annotation?: Record<string, any> | null, authorId?: string | null, authorRole?: string | null, authorUsername?: string | null, category?: string | null, comment?: string | null, data?: Record<string, any> | null, deletedAt?: string | null, destroyed?: boolean | null, displayAuthorUsername?: boolean | null, displayIssueChanges?: boolean | null, displaySeverity?: boolean | null, disputeComment?: string | null, disputeReason?: string | null, disputeRejectionReason?: string | null, disputeStatus?: string | null, draft?: boolean | null, editorUsername?: string | null, isReviewed?: boolean | null, issueLogs?: string[] | null, order?: number | null, origin?: string | null, reviewableAttachmentId?: string | null, reviewed?: boolean | null, severity?: number | null, solved?: boolean | null, state?: string | null, updatedAt?: string | null, x?: string | null, y?: string | null }, relationships?: Record<string, any> }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ page?: number | null, per_page?: number | null, total_pages?: number | null, total_records?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modelry.api.productAssets.delete",
+      "shortPath": "productAssets.delete",
+      "description": "Delete a product asset. This cannot be undone.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "modelry.api.products.create",
+      "shortPath": "products.create",
+      "description": "Create a product (title, SKU, tags, dimensions, links).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product",
+            "optional": false,
+            "type": "{ title?: string, sku?: string, description?: string | null, batch_id?: string | null, tags?: string[], dimensions?: string | null, external_url?: string | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: string, attributes?: { uid?: string | null, sku?: string | null, title?: string | null, name?: string | null, createdAt?: string | null, batchID?: string | null, batchId?: string | null, batchUid?: string | null, deliveredAt?: string | null, status?: string | null, pipeline?: string | null, price?: string | null, previewImageUrl?: string | null, dimensions?: string | null, productUrl?: string | null, productId?: number | null, requestType?: string | null, inCustomerQa?: boolean | null, customerQaUrl?: string | null, currentRoundNumber?: number | null, currentRoundSaved?: boolean | null, referenceFileUrls?: string[] | null, reviewCategories?: { id: string, title: string }[] | null, description?: string | null, tags?: string[] | null, sourceLabel?: string | null, toolKinds?: string[] | null, contentLabels?: string[] | null, byteSize?: number | string | null, labels?: string[] | null, url?: string | null, fileName?: string | null, kinds?: string[] | null, published?: boolean | null, loaderScriptConfiguration?: Record<string, any>[] | null, adminIssueId?: string | null, annotation?: Record<string, any> | null, authorId?: string | null, authorRole?: string | null, authorUsername?: string | null, category?: string | null, comment?: string | null, data?: Record<string, any> | null, deletedAt?: string | null, destroyed?: boolean | null, displayAuthorUsername?: boolean | null, displayIssueChanges?: boolean | null, displaySeverity?: boolean | null, disputeComment?: string | null, disputeReason?: string | null, disputeRejectionReason?: string | null, disputeStatus?: string | null, draft?: boolean | null, editorUsername?: string | null, isReviewed?: boolean | null, issueLogs?: string[] | null, order?: number | null, origin?: string | null, reviewableAttachmentId?: string | null, reviewed?: boolean | null, severity?: number | null, solved?: boolean | null, state?: string | null, updatedAt?: string | null, x?: string | null, y?: string | null }, relationships?: Record<string, any> }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: { uid?: string | null, sku?: string | null, title?: string | null, name?: string | null, createdAt?: string | null, batchID?: string | null, batchId?: string | null, batchUid?: string | null, deliveredAt?: string | null, status?: string | null, pipeline?: string | null, price?: string | null, previewImageUrl?: string | null, dimensions?: string | null, productUrl?: string | null, productId?: number | null, requestType?: string | null, inCustomerQa?: boolean | null, customerQaUrl?: string | null, currentRoundNumber?: number | null, currentRoundSaved?: boolean | null, referenceFileUrls?: string[] | null, reviewCategories?: { id: string, title: string }[] | null, description?: string | null, tags?: string[] | null, sourceLabel?: string | null, toolKinds?: string[] | null, contentLabels?: string[] | null, byteSize?: number | string | null, labels?: string[] | null, url?: string | null, fileName?: string | null, kinds?: string[] | null, published?: boolean | null, loaderScriptConfiguration?: Record<string, any>[] | null, adminIssueId?: string | null, annotation?: Record<string, any> | null, authorId?: string | null, authorRole?: string | null, authorUsername?: string | null, category?: string | null, comment?: string | null, data?: Record<string, any> | null, deletedAt?: string | null, destroyed?: boolean | null, displayAuthorUsername?: boolean | null, displayIssueChanges?: boolean | null, displaySeverity?: boolean | null, disputeComment?: string | null, disputeReason?: string | null, disputeRejectionReason?: string | null, disputeStatus?: string | null, draft?: boolean | null, editorUsername?: string | null, isReviewed?: boolean | null, issueLogs?: string[] | null, order?: number | null, origin?: string | null, reviewableAttachmentId?: string | null, reviewed?: boolean | null, severity?: number | null, solved?: boolean | null, state?: string | null, updatedAt?: string | null, x?: string | null, y?: string | null }, relationships?: Record<string, any> }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ page?: number | null, per_page?: number | null, total_pages?: number | null, total_records?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modelry.api.products.delete",
+      "shortPath": "products.delete",
+      "description": "Delete a product. This cannot be undone.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "modelry.api.products.get",
+      "shortPath": "products.get",
+      "description": "Get one product, with its assets and modeling requests under `included`.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: string, attributes?: { uid?: string | null, sku?: string | null, title?: string | null, name?: string | null, createdAt?: string | null, batchID?: string | null, batchId?: string | null, batchUid?: string | null, deliveredAt?: string | null, status?: string | null, pipeline?: string | null, price?: string | null, previewImageUrl?: string | null, dimensions?: string | null, productUrl?: string | null, productId?: number | null, requestType?: string | null, inCustomerQa?: boolean | null, customerQaUrl?: string | null, currentRoundNumber?: number | null, currentRoundSaved?: boolean | null, referenceFileUrls?: string[] | null, reviewCategories?: { id: string, title: string }[] | null, description?: string | null, tags?: string[] | null, sourceLabel?: string | null, toolKinds?: string[] | null, contentLabels?: string[] | null, byteSize?: number | string | null, labels?: string[] | null, url?: string | null, fileName?: string | null, kinds?: string[] | null, published?: boolean | null, loaderScriptConfiguration?: Record<string, any>[] | null, adminIssueId?: string | null, annotation?: Record<string, any> | null, authorId?: string | null, authorRole?: string | null, authorUsername?: string | null, category?: string | null, comment?: string | null, data?: Record<string, any> | null, deletedAt?: string | null, destroyed?: boolean | null, displayAuthorUsername?: boolean | null, displayIssueChanges?: boolean | null, displaySeverity?: boolean | null, disputeComment?: string | null, disputeReason?: string | null, disputeRejectionReason?: string | null, disputeStatus?: string | null, draft?: boolean | null, editorUsername?: string | null, isReviewed?: boolean | null, issueLogs?: string[] | null, order?: number | null, origin?: string | null, reviewableAttachmentId?: string | null, reviewed?: boolean | null, severity?: number | null, solved?: boolean | null, state?: string | null, updatedAt?: string | null, x?: string | null, y?: string | null }, relationships?: Record<string, any> }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: { uid?: string | null, sku?: string | null, title?: string | null, name?: string | null, createdAt?: string | null, batchID?: string | null, batchId?: string | null, batchUid?: string | null, deliveredAt?: string | null, status?: string | null, pipeline?: string | null, price?: string | null, previewImageUrl?: string | null, dimensions?: string | null, productUrl?: string | null, productId?: number | null, requestType?: string | null, inCustomerQa?: boolean | null, customerQaUrl?: string | null, currentRoundNumber?: number | null, currentRoundSaved?: boolean | null, referenceFileUrls?: string[] | null, reviewCategories?: { id: string, title: string }[] | null, description?: string | null, tags?: string[] | null, sourceLabel?: string | null, toolKinds?: string[] | null, contentLabels?: string[] | null, byteSize?: number | string | null, labels?: string[] | null, url?: string | null, fileName?: string | null, kinds?: string[] | null, published?: boolean | null, loaderScriptConfiguration?: Record<string, any>[] | null, adminIssueId?: string | null, annotation?: Record<string, any> | null, authorId?: string | null, authorRole?: string | null, authorUsername?: string | null, category?: string | null, comment?: string | null, data?: Record<string, any> | null, deletedAt?: string | null, destroyed?: boolean | null, displayAuthorUsername?: boolean | null, displayIssueChanges?: boolean | null, displaySeverity?: boolean | null, disputeComment?: string | null, disputeReason?: string | null, disputeRejectionReason?: string | null, disputeStatus?: string | null, draft?: boolean | null, editorUsername?: string | null, isReviewed?: boolean | null, issueLogs?: string[] | null, order?: number | null, origin?: string | null, reviewableAttachmentId?: string | null, reviewed?: boolean | null, severity?: number | null, solved?: boolean | null, state?: string | null, updatedAt?: string | null, x?: string | null, y?: string | null }, relationships?: Record<string, any> }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ page?: number | null, per_page?: number | null, total_pages?: number | null, total_records?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modelry.api.products.list",
+      "shortPath": "products.list",
+      "description": "List products in the workspace, with keyword, SKU, batch, tag and label filters. An empty result is returned as an empty list.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "keywords",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sku",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "batch_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "source_label",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "content_labels",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "tool_kinds",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: string, attributes?: { uid?: string | null, sku?: string | null, title?: string | null, name?: string | null, createdAt?: string | null, batchID?: string | null, batchId?: string | null, batchUid?: string | null, deliveredAt?: string | null, status?: string | null, pipeline?: string | null, price?: string | null, previewImageUrl?: string | null, dimensions?: string | null, productUrl?: string | null, productId?: number | null, requestType?: string | null, inCustomerQa?: boolean | null, customerQaUrl?: string | null, currentRoundNumber?: number | null, currentRoundSaved?: boolean | null, referenceFileUrls?: string[] | null, reviewCategories?: { id: string, title: string }[] | null, description?: string | null, tags?: string[] | null, sourceLabel?: string | null, toolKinds?: string[] | null, contentLabels?: string[] | null, byteSize?: number | string | null, labels?: string[] | null, url?: string | null, fileName?: string | null, kinds?: string[] | null, published?: boolean | null, loaderScriptConfiguration?: Record<string, any>[] | null, adminIssueId?: string | null, annotation?: Record<string, any> | null, authorId?: string | null, authorRole?: string | null, authorUsername?: string | null, category?: string | null, comment?: string | null, data?: Record<string, any> | null, deletedAt?: string | null, destroyed?: boolean | null, displayAuthorUsername?: boolean | null, displayIssueChanges?: boolean | null, displaySeverity?: boolean | null, disputeComment?: string | null, disputeReason?: string | null, disputeRejectionReason?: string | null, disputeStatus?: string | null, draft?: boolean | null, editorUsername?: string | null, isReviewed?: boolean | null, issueLogs?: string[] | null, order?: number | null, origin?: string | null, reviewableAttachmentId?: string | null, reviewed?: boolean | null, severity?: number | null, solved?: boolean | null, state?: string | null, updatedAt?: string | null, x?: string | null, y?: string | null }, relationships?: Record<string, any> }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ page?: number | null, per_page?: number | null, total_pages?: number | null, total_records?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modelry.api.products.update",
+      "shortPath": "products.update",
+      "description": "Update the fields of an existing product.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "product",
+            "optional": false,
+            "type": "{ title?: string, sku?: string, description?: string | null, batch_id?: string | null, tags?: string[], dimensions?: string | null, external_url?: string | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: string, attributes?: { uid?: string | null, sku?: string | null, title?: string | null, name?: string | null, createdAt?: string | null, batchID?: string | null, batchId?: string | null, batchUid?: string | null, deliveredAt?: string | null, status?: string | null, pipeline?: string | null, price?: string | null, previewImageUrl?: string | null, dimensions?: string | null, productUrl?: string | null, productId?: number | null, requestType?: string | null, inCustomerQa?: boolean | null, customerQaUrl?: string | null, currentRoundNumber?: number | null, currentRoundSaved?: boolean | null, referenceFileUrls?: string[] | null, reviewCategories?: { id: string, title: string }[] | null, description?: string | null, tags?: string[] | null, sourceLabel?: string | null, toolKinds?: string[] | null, contentLabels?: string[] | null, byteSize?: number | string | null, labels?: string[] | null, url?: string | null, fileName?: string | null, kinds?: string[] | null, published?: boolean | null, loaderScriptConfiguration?: Record<string, any>[] | null, adminIssueId?: string | null, annotation?: Record<string, any> | null, authorId?: string | null, authorRole?: string | null, authorUsername?: string | null, category?: string | null, comment?: string | null, data?: Record<string, any> | null, deletedAt?: string | null, destroyed?: boolean | null, displayAuthorUsername?: boolean | null, displayIssueChanges?: boolean | null, displaySeverity?: boolean | null, disputeComment?: string | null, disputeReason?: string | null, disputeRejectionReason?: string | null, disputeStatus?: string | null, draft?: boolean | null, editorUsername?: string | null, isReviewed?: boolean | null, issueLogs?: string[] | null, order?: number | null, origin?: string | null, reviewableAttachmentId?: string | null, reviewed?: boolean | null, severity?: number | null, solved?: boolean | null, state?: string | null, updatedAt?: string | null, x?: string | null, y?: string | null }, relationships?: Record<string, any> }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: { uid?: string | null, sku?: string | null, title?: string | null, name?: string | null, createdAt?: string | null, batchID?: string | null, batchId?: string | null, batchUid?: string | null, deliveredAt?: string | null, status?: string | null, pipeline?: string | null, price?: string | null, previewImageUrl?: string | null, dimensions?: string | null, productUrl?: string | null, productId?: number | null, requestType?: string | null, inCustomerQa?: boolean | null, customerQaUrl?: string | null, currentRoundNumber?: number | null, currentRoundSaved?: boolean | null, referenceFileUrls?: string[] | null, reviewCategories?: { id: string, title: string }[] | null, description?: string | null, tags?: string[] | null, sourceLabel?: string | null, toolKinds?: string[] | null, contentLabels?: string[] | null, byteSize?: number | string | null, labels?: string[] | null, url?: string | null, fileName?: string | null, kinds?: string[] | null, published?: boolean | null, loaderScriptConfiguration?: Record<string, any>[] | null, adminIssueId?: string | null, annotation?: Record<string, any> | null, authorId?: string | null, authorRole?: string | null, authorUsername?: string | null, category?: string | null, comment?: string | null, data?: Record<string, any> | null, deletedAt?: string | null, destroyed?: boolean | null, displayAuthorUsername?: boolean | null, displayIssueChanges?: boolean | null, displaySeverity?: boolean | null, disputeComment?: string | null, disputeReason?: string | null, disputeRejectionReason?: string | null, disputeStatus?: string | null, draft?: boolean | null, editorUsername?: string | null, isReviewed?: boolean | null, issueLogs?: string[] | null, order?: number | null, origin?: string | null, reviewableAttachmentId?: string | null, reviewed?: boolean | null, severity?: number | null, solved?: boolean | null, state?: string | null, updatedAt?: string | null, x?: string | null, y?: string | null }, relationships?: Record<string, any> }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ page?: number | null, per_page?: number | null, total_pages?: number | null, total_records?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modelry.api.reviews.create",
+      "shortPath": "reviews.create",
+      "description": "Add review issues (comments for Modelry's artists) to a modeling request's current QA round.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "modeling_request_id_or_sku",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "review_issues",
+            "optional": false,
+            "type": "{ filename: string, category: string, comment: string, severity?: number | string, order?: number | string, data?: Record<string, any>, annotation?: Record<string, any>, reviewed?: boolean, issue_image?: string, x?: string, y?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: string, attributes?: { uid?: string | null, sku?: string | null, title?: string | null, name?: string | null, createdAt?: string | null, batchID?: string | null, batchId?: string | null, batchUid?: string | null, deliveredAt?: string | null, status?: string | null, pipeline?: string | null, price?: string | null, previewImageUrl?: string | null, dimensions?: string | null, productUrl?: string | null, productId?: number | null, requestType?: string | null, inCustomerQa?: boolean | null, customerQaUrl?: string | null, currentRoundNumber?: number | null, currentRoundSaved?: boolean | null, referenceFileUrls?: string[] | null, reviewCategories?: { id: string, title: string }[] | null, description?: string | null, tags?: string[] | null, sourceLabel?: string | null, toolKinds?: string[] | null, contentLabels?: string[] | null, byteSize?: number | string | null, labels?: string[] | null, url?: string | null, fileName?: string | null, kinds?: string[] | null, published?: boolean | null, loaderScriptConfiguration?: Record<string, any>[] | null, adminIssueId?: string | null, annotation?: Record<string, any> | null, authorId?: string | null, authorRole?: string | null, authorUsername?: string | null, category?: string | null, comment?: string | null, data?: Record<string, any> | null, deletedAt?: string | null, destroyed?: boolean | null, displayAuthorUsername?: boolean | null, displayIssueChanges?: boolean | null, displaySeverity?: boolean | null, disputeComment?: string | null, disputeReason?: string | null, disputeRejectionReason?: string | null, disputeStatus?: string | null, draft?: boolean | null, editorUsername?: string | null, isReviewed?: boolean | null, issueLogs?: string[] | null, order?: number | null, origin?: string | null, reviewableAttachmentId?: string | null, reviewed?: boolean | null, severity?: number | null, solved?: boolean | null, state?: string | null, updatedAt?: string | null, x?: string | null, y?: string | null }, relationships?: Record<string, any> } | { id: string, type: string, attributes?: { uid?: string | null, sku?: string | null, title?: string | null, name?: string | null, createdAt?: string | null, batchID?: string | null, batchId?: string | null, batchUid?: string | null, deliveredAt?: string | null, status?: string | null, pipeline?: string | null, price?: string | null, previewImageUrl?: string | null, dimensions?: string | null, productUrl?: string | null, productId?: number | null, requestType?: string | null, inCustomerQa?: boolean | null, customerQaUrl?: string | null, currentRoundNumber?: number | null, currentRoundSaved?: boolean | null, referenceFileUrls?: string[] | null, reviewCategories?: { id: string, title: string }[] | null, description?: string | null, tags?: string[] | null, sourceLabel?: string | null, toolKinds?: string[] | null, contentLabels?: string[] | null, byteSize?: number | string | null, labels?: string[] | null, url?: string | null, fileName?: string | null, kinds?: string[] | null, published?: boolean | null, loaderScriptConfiguration?: Record<string, any>[] | null, adminIssueId?: string | null, annotation?: Record<string, any> | null, authorId?: string | null, authorRole?: string | null, authorUsername?: string | null, category?: string | null, comment?: string | null, data?: Record<string, any> | null, deletedAt?: string | null, destroyed?: boolean | null, displayAuthorUsername?: boolean | null, displayIssueChanges?: boolean | null, displaySeverity?: boolean | null, disputeComment?: string | null, disputeReason?: string | null, disputeRejectionReason?: string | null, disputeStatus?: string | null, draft?: boolean | null, editorUsername?: string | null, isReviewed?: boolean | null, issueLogs?: string[] | null, order?: number | null, origin?: string | null, reviewableAttachmentId?: string | null, reviewed?: boolean | null, severity?: number | null, solved?: boolean | null, state?: string | null, updatedAt?: string | null, x?: string | null, y?: string | null }, relationships?: Record<string, any> }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modelry.api.uploads.blob",
+      "shortPath": "uploads.blob",
+      "description": "Start a direct upload: returns a signed blob id and a presigned URL to PUT the file to.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "blob",
+            "optional": false,
+            "type": "{ filename: string, byte_size: number, checksum: string, content_type: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signed_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "service_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "headers",
+            "optional": false,
+            "type": "Record<string, string>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modelry.api.uploads.file",
+      "shortPath": "uploads.file",
+      "description": "Upload a small file as base64 and get back its signed blob id.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filename",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "base64_file",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content_type",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "blob_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "signed_blob_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modelry.api.workspaces.list",
+      "shortPath": "workspaces.list",
+      "description": "List the workspaces the API token can access.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: string, attributes?: { uid?: string | null, sku?: string | null, title?: string | null, name?: string | null, createdAt?: string | null, batchID?: string | null, batchId?: string | null, batchUid?: string | null, deliveredAt?: string | null, status?: string | null, pipeline?: string | null, price?: string | null, previewImageUrl?: string | null, dimensions?: string | null, productUrl?: string | null, productId?: number | null, requestType?: string | null, inCustomerQa?: boolean | null, customerQaUrl?: string | null, currentRoundNumber?: number | null, currentRoundSaved?: boolean | null, referenceFileUrls?: string[] | null, reviewCategories?: { id: string, title: string }[] | null, description?: string | null, tags?: string[] | null, sourceLabel?: string | null, toolKinds?: string[] | null, contentLabels?: string[] | null, byteSize?: number | string | null, labels?: string[] | null, url?: string | null, fileName?: string | null, kinds?: string[] | null, published?: boolean | null, loaderScriptConfiguration?: Record<string, any>[] | null, adminIssueId?: string | null, annotation?: Record<string, any> | null, authorId?: string | null, authorRole?: string | null, authorUsername?: string | null, category?: string | null, comment?: string | null, data?: Record<string, any> | null, deletedAt?: string | null, destroyed?: boolean | null, displayAuthorUsername?: boolean | null, displayIssueChanges?: boolean | null, displaySeverity?: boolean | null, disputeComment?: string | null, disputeReason?: string | null, disputeRejectionReason?: string | null, disputeStatus?: string | null, draft?: boolean | null, editorUsername?: string | null, isReviewed?: boolean | null, issueLogs?: string[] | null, order?: number | null, origin?: string | null, reviewableAttachmentId?: string | null, reviewed?: boolean | null, severity?: number | null, solved?: boolean | null, state?: string | null, updatedAt?: string | null, x?: string | null, y?: string | null }, relationships?: Record<string, any> }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ page?: number | null, per_page?: number | null, total_pages?: number | null, total_records?: number | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
