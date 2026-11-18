@@ -4,22 +4,13 @@ import { TwittrApiMonitorEvent } from '../schema/database';
 import { persistTweetWithAuthor } from '../utils';
 import { createTwittrApiMatch, verifyTwittrApiWebhookSignature } from './types';
 
-// TwittrAPI retries a delivery with the same X-TwittrAPI-Delivery id (== event
-// id) until the endpoint answers 2xx. Guard on the monitorEvents store so a
-// retry returns success without persisting or logging twice. Best-effort: if
-// the store is unavailable the event is processed normally.
-export async function alreadyDelivered(
-	db: TwittrApiContext['db'],
-	eventId: string,
-): Promise<boolean> {
-	try {
-		const existing = await db.monitorEvents?.findByEntityId(eventId);
-		return existing !== null && existing !== undefined;
-	} catch {
-		return false;
-	}
-}
-
+// TwittrAPI delivers at least once: a retry carries the same event ID, and the
+// docs say a delivery can rarely arrive twice. Every write below is an upsert
+// keyed by that ID, so a retry repeats no stored data. The handler does not
+// skip a repeat itself: a marker written here would be set before core runs
+// webhookHooks.after, so a hook that failed could never run again, and events
+// already read through monitors.getEvents would look delivered. Hooks that
+// must run once dedupe on the event's `id`.
 export async function recordDelivery(
 	db: TwittrApiContext['db'],
 	// unknown: deliveries arrive as raw provider JSON of varying shapes (full
@@ -70,13 +61,6 @@ export const tweet: TwittrApiWebhooks['tweet'] = {
 			return { success: true, data: undefined };
 		}
 
-		if (await alreadyDelivered(ctx.db, event.id)) {
-			// Already handled: ack without re-running webhookHooks.after.
-			// processWebhook answers 2xx regardless of this flag, so the
-			// provider stops retrying while downstream hooks fire only once.
-			return { success: false, statusCode: 200, data: event };
-		}
-
 		let corsairEntityId = '';
 
 		if (event.tweet && !('unavailable' in event.tweet)) {
@@ -123,11 +107,6 @@ export const test: TwittrApiWebhooks['test'] = {
 
 		if (event.event !== 'test') {
 			return { success: true, data: undefined };
-		}
-
-		if (await alreadyDelivered(ctx.db, event.id)) {
-			// Same duplicate-hook protection as the tweet handler above.
-			return { success: false, statusCode: 200, data: event };
 		}
 
 		await recordDelivery(ctx.db, event);

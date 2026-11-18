@@ -3,7 +3,6 @@ import { createHmac } from 'crypto';
 import { twittrapi } from './index';
 import { matchTwittrApiTenantWebhook } from './webhooks/tenant-matcher';
 import {
-	alreadyDelivered,
 	recordDelivery,
 	test as testHandler,
 	tweet as tweetHandler,
@@ -191,11 +190,11 @@ describe('TwittrAPI webhooks', () => {
 			return { db, store };
 		}
 
-		it('records minimal test events and detects replays', async () => {
-			const { db } = stubDb();
-			expect(await alreadyDelivered(db, 'evt-1')).toBe(false);
+		it('records minimal test events under their event id', async () => {
+			const { db, store } = stubDb();
 			await recordDelivery(db, { event: 'test', id: 'evt-1' });
-			expect(await alreadyDelivered(db, 'evt-1')).toBe(true);
+			await recordDelivery(db, { event: 'test', id: 'evt-1' });
+			expect([...store.keys()]).toEqual(['evt-1']);
 		});
 
 		it('records full tweet events', async () => {
@@ -229,37 +228,54 @@ describe('TwittrAPI webhooks', () => {
 			};
 		}
 
-		it('acks tweet retries without re-processing or re-hooking', async () => {
+		it('processes a redelivery again, so a hook that failed gets another run', async () => {
 			const persistTweet = jest.fn(async () => ({ id: 'x' }));
-			// Test-only: partial stub of the full Corsair context and request;
-			// the duplicate path only touches ctx.db and ctx.key.
+			const events = new Map<string, unknown>();
+			// Test-only: partial stub of the full Corsair context; the handler
+			// only touches ctx.db and ctx.key on this path.
 			const ctx = {
 				db: {
 					monitorEvents: {
-						findByEntityId: async () => ({ id: '1849203' }),
+						findByEntityId: async (id: string) =>
+							events.has(id) ? { id, data: events.get(id) } : null,
+						upsertByEntityId: async (id: string, data: unknown) => {
+							events.set(id, data);
+							return { id };
+						},
 					},
 					tweets: { upsertByEntityId: persistTweet },
 				},
 				key: SECRET,
 			} as never;
+			// The event was already stored, as monitors.getEvents would do.
+			events.set('1849203', JSON.parse(tweetBody));
+			const withTweet = JSON.stringify({
+				...JSON.parse(tweetBody),
+				tweet: undefined,
+			});
 
-			const result = await tweetHandler.handler(
+			const first = await tweetHandler.handler(
 				ctx,
-				signedRequest(tweetBody, 'tweet') as never,
+				signedRequest(withTweet, 'tweet') as never,
+			);
+			const second = await tweetHandler.handler(
+				ctx,
+				signedRequest(withTweet, 'tweet') as never,
 			);
 
-			// success:false skips webhookHooks.after; the transport still
-			// answers 2xx (see processWebhook), so the provider stops retrying.
-			expect(result.success).toBe(false);
-			expect(persistTweet).not.toHaveBeenCalled();
+			expect(first.success).toBe(true);
+			expect(second.success).toBe(true);
+			// Both upsert the same row: nothing is stored twice.
+			expect([...events.keys()]).toEqual(['1849203']);
 		});
 
-		it('acks test retries without logging again', async () => {
+		it('processes test redeliveries too', async () => {
 			// Test-only partial stub (see above).
 			const ctx = {
 				db: {
 					monitorEvents: {
 						findByEntityId: async () => ({ id: 'test-1' }),
+						upsertByEntityId: async () => ({ id: 'test-1' }),
 					},
 				},
 				key: SECRET,
@@ -271,7 +287,7 @@ describe('TwittrAPI webhooks', () => {
 				signedRequest(body, 'test') as never,
 			);
 
-			expect(result.success).toBe(false);
+			expect(result.success).toBe(true);
 		});
 	});
 
@@ -329,6 +345,23 @@ describe('TwittrAPI webhooks', () => {
 			expect(matcher(raw({}, JSON.stringify({ event: 'test', id: '1' })))).toBe(
 				false,
 			);
+		});
+	});
+
+	describe('array-valued headers', () => {
+		it('verifies a signature handed over as string[]', () => {
+			const t = String(Math.floor(Date.now() / 1000));
+			const request = requestWith(tweetBody, sign(t, tweetBody));
+			request.headers['x-twittrapi-signature'] = [sign(t, tweetBody)];
+			expect(verifyTwittrApiWebhookSignature(request, SECRET).valid).toBe(true);
+		});
+
+		it('reads the raw header spelling too', () => {
+			const t = String(Math.floor(Date.now() / 1000));
+			const request = requestWith(tweetBody, '');
+			delete request.headers['x-twittrapi-signature'];
+			request.headers['X-TwittrAPI-Signature'] = sign(t, tweetBody);
+			expect(verifyTwittrApiWebhookSignature(request, SECRET).valid).toBe(true);
 		});
 	});
 });
