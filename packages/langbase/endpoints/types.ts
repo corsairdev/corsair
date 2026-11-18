@@ -15,7 +15,7 @@ export const RunPipeInputSchema = z
 	.object({
 		messages: z.array(MessageSchema),
 		name: z.string().optional(),
-		stream: z.boolean().optional(),
+		stream: z.literal(false).optional(),
 		memory: z.array(PipeMemorySchema).optional(),
 		// `unknown` because variables accept dynamic prompt substitution parameters.
 		variables: z.record(z.string(), z.unknown()).optional(),

@@ -89,8 +89,7 @@ describe('makeLangbaseRequest', () => {
 		await expect(
 			errorHandlers.RATE_LIMIT_ERROR.handler(rateLimited),
 		).resolves.toEqual({
-			maxRetries: 5,
-			headersRetryAfterMs: 4000,
+			maxRetries: 0,
 		});
 	});
 });

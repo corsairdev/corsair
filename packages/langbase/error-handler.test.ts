@@ -2,7 +2,7 @@ import { ApiError } from 'corsair/http';
 import { errorHandlers } from './error-handlers';
 
 describe('Langbase error handlers', () => {
-	it('matches 429 status and extracts Retry-After duration', async () => {
+	it('matches 429 status for RATE_LIMIT_ERROR', async () => {
 		const apiError = new ApiError(
 			{
 				method: 'GET',
@@ -17,12 +17,10 @@ describe('Langbase error handlers', () => {
 			},
 			'Too Many Requests',
 		);
-		(apiError as { retryAfter?: number }).retryAfter = 3000;
 
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(apiError)).toBe(true);
-		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(apiError);
-		expect(result.maxRetries).toBe(5);
-		expect(result.headersRetryAfterMs).toBe(3000);
+		const result = await errorHandlers.RATE_LIMIT_ERROR.handler();
+		expect(result.maxRetries).toBe(0);
 	});
 
 	it('matches AUTH_ERROR for 401 and 403', async () => {

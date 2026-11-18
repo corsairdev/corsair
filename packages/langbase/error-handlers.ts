@@ -13,13 +13,7 @@ export const errorHandlers = {
 				msg.includes('429')
 			);
 		},
-		handler: async (error: Error) => {
-			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter !== undefined) {
-				retryAfterMs = error.retryAfter;
-			}
-			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
-		},
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
@@ -65,7 +59,7 @@ export const errorHandlers = {
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	DEFAULT: {
-		match: (_error?: unknown) => true,
+		match: () => true,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 } satisfies CorsairErrorHandler;

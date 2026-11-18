@@ -1,10 +1,16 @@
 import { memory, pipes, tools } from './endpoints';
+import type { LangbasePluginContext } from './index';
+
+// unknown because mock context only requires the key field for endpoint execution.
+const mockContext = {
+	key: 'test-key',
+} as unknown as LangbasePluginContext;
 
 describe('Langbase endpoints', () => {
 	const originalFetch = globalThis.fetch;
 	let capturedMethod = '';
 	let capturedUrl = '';
-	// `unknown` because payload is arbitrary json in mocked requests.
+	// unknown because payload is arbitrary json in mocked requests.
 	let capturedBody: unknown = null;
 
 	beforeEach(() => {
@@ -18,6 +24,7 @@ describe('Langbase endpoints', () => {
 		jest.restoreAllMocks();
 	});
 
+	// unknown because mock fetch accepts arbitrary response bodies.
 	function mockFetchResponse(body: unknown, status = 200) {
 		globalThis.fetch = jest.fn(
 			async (input: string | URL | Request, init?: RequestInit) => {
@@ -37,10 +44,9 @@ describe('Langbase endpoints', () => {
 	describe('pipes endpoints', () => {
 		it('pipes.run calls POST /pipes/run with messages', async () => {
 			mockFetchResponse({ completion: 'Answer from AI agent' });
-			const res = await pipes.run(
-				{ messages: [{ role: 'user', content: 'What is 2+2?' }] },
-				'test-key',
-			);
+			const res = await pipes.run(mockContext, {
+				messages: [{ role: 'user', content: 'What is 2+2?' }],
+			});
 			expect(capturedMethod).toBe('POST');
 			expect(capturedUrl).toContain('/v1/pipes/run');
 			expect(capturedBody).toEqual({
@@ -51,7 +57,7 @@ describe('Langbase endpoints', () => {
 
 		it('pipes.list calls GET /pipes', async () => {
 			mockFetchResponse({ pipes: [{ name: 'support-agent' }] });
-			const res = await pipes.list({}, 'test-key');
+			const res = await pipes.list(mockContext, {});
 			expect(capturedMethod).toBe('GET');
 			expect(capturedUrl).toContain('/v1/pipes');
 			expect(res.pipes.length).toBe(1);
@@ -61,7 +67,7 @@ describe('Langbase endpoints', () => {
 			mockFetchResponse({
 				pipe: { name: 'support-agent', model: 'openai:gpt-4o' },
 			});
-			const res = await pipes.get({ name: 'support-agent' }, 'test-key');
+			const res = await pipes.get(mockContext, { name: 'support-agent' });
 			expect(capturedMethod).toBe('GET');
 			expect(capturedUrl).toContain('/v1/pipes/support-agent');
 			expect(res.pipe.name).toBe('support-agent');
@@ -71,10 +77,10 @@ describe('Langbase endpoints', () => {
 			mockFetchResponse({
 				pipe: { name: 'sales-agent', model: 'openai:gpt-4o' },
 			});
-			const res = await pipes.create(
-				{ name: 'sales-agent', model: 'openai:gpt-4o' },
-				'test-key',
-			);
+			const res = await pipes.create(mockContext, {
+				name: 'sales-agent',
+				model: 'openai:gpt-4o',
+			});
 			expect(capturedMethod).toBe('POST');
 			expect(capturedUrl).toContain('/v1/pipes');
 			expect(capturedBody).toEqual({
@@ -88,10 +94,10 @@ describe('Langbase endpoints', () => {
 			mockFetchResponse({
 				pipe: { name: 'sales-agent', description: 'Updated' },
 			});
-			const res = await pipes.update(
-				{ name: 'sales-agent', description: 'Updated' },
-				'test-key',
-			);
+			const res = await pipes.update(mockContext, {
+				name: 'sales-agent',
+				description: 'Updated',
+			});
 			expect(capturedMethod).toBe('PATCH');
 			expect(capturedUrl).toContain('/v1/pipes/sales-agent');
 			expect(capturedBody).toEqual({ description: 'Updated' });
@@ -100,7 +106,7 @@ describe('Langbase endpoints', () => {
 
 		it('pipes.delete calls DELETE /pipes/:name', async () => {
 			mockFetchResponse({ success: true });
-			const res = await pipes.delete({ name: 'sales-agent' }, 'test-key');
+			const res = await pipes.delete(mockContext, { name: 'sales-agent' });
 			expect(capturedMethod).toBe('DELETE');
 			expect(capturedUrl).toContain('/v1/pipes/sales-agent');
 			expect(res.success).toBe(true);
@@ -110,7 +116,7 @@ describe('Langbase endpoints', () => {
 	describe('memory endpoints', () => {
 		it('memory.list calls GET /memory', async () => {
 			mockFetchResponse({ memories: [{ name: 'company-faq' }] });
-			const res = await memory.list({}, 'test-key');
+			const res = await memory.list(mockContext, {});
 			expect(capturedMethod).toBe('GET');
 			expect(capturedUrl).toContain('/v1/memory');
 			expect(res.memories.length).toBe(1);
@@ -118,7 +124,7 @@ describe('Langbase endpoints', () => {
 
 		it('memory.get calls GET /memory/:name', async () => {
 			mockFetchResponse({ memory: { name: 'company-faq', documents: 100 } });
-			const res = await memory.get({ name: 'company-faq' }, 'test-key');
+			const res = await memory.get(mockContext, { name: 'company-faq' });
 			expect(capturedMethod).toBe('GET');
 			expect(capturedUrl).toContain('/v1/memory/company-faq');
 			expect(res.memory.name).toBe('company-faq');
@@ -126,10 +132,10 @@ describe('Langbase endpoints', () => {
 
 		it('memory.create calls POST /memory with memory definition', async () => {
 			mockFetchResponse({ memory: { name: 'kb-docs' } });
-			const res = await memory.create(
-				{ name: 'kb-docs', description: 'Knowledge base' },
-				'test-key',
-			);
+			const res = await memory.create(mockContext, {
+				name: 'kb-docs',
+				description: 'Knowledge base',
+			});
 			expect(capturedMethod).toBe('POST');
 			expect(capturedUrl).toContain('/v1/memory');
 			expect(capturedBody).toEqual({
@@ -141,7 +147,7 @@ describe('Langbase endpoints', () => {
 
 		it('memory.delete calls DELETE /memory/:name', async () => {
 			mockFetchResponse({ success: true });
-			const res = await memory.delete({ name: 'kb-docs' }, 'test-key');
+			const res = await memory.delete(mockContext, { name: 'kb-docs' });
 			expect(capturedMethod).toBe('DELETE');
 			expect(capturedUrl).toContain('/v1/memory/kb-docs');
 			expect(res.success).toBe(true);
@@ -153,10 +159,10 @@ describe('Langbase endpoints', () => {
 			mockFetchResponse({
 				results: [{ title: 'Langbase Docs', url: 'https://langbase.com' }],
 			});
-			const res = await tools.webSearch(
-				{ query: 'Langbase AI', totalResults: 3 },
-				'test-key',
-			);
+			const res = await tools.webSearch(mockContext, {
+				query: 'Langbase AI',
+				totalResults: 3,
+			});
 			expect(capturedMethod).toBe('POST');
 			expect(capturedUrl).toContain('/v1/tools/web-search');
 			expect(capturedBody).toEqual({

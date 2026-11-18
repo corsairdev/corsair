@@ -46,6 +46,18 @@ describe('Langbase endpoint schemas', () => {
 		).toBe(true);
 		expect(
 			RunPipeInputSchema.safeParse({
+				messages: [{ role: 'user', content: 'Hello AI' }],
+				stream: false,
+			}).success,
+		).toBe(true);
+		expect(
+			RunPipeInputSchema.safeParse({
+				messages: [{ role: 'user', content: 'Hello AI' }],
+				stream: true,
+			}).success,
+		).toBe(false);
+		expect(
+			RunPipeInputSchema.safeParse({
 				messages: [{ role: 'invalid_role', content: 'Hello' }],
 			}).success,
 		).toBe(false);

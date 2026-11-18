@@ -38,6 +38,8 @@ export type LangbaseContext = CorsairPluginContext<
 	LangbasePluginOptions
 >;
 
+export type LangbasePluginContext = LangbaseContext;
+
 export type LangbaseKeyBuilderContext =
 	KeyBuilderContext<LangbasePluginOptions>;
 

@@ -1,4 +1,5 @@
 import { makeLangbaseRequest } from '../client';
+import type { LangbasePluginContext } from '../index';
 import type {
 	CreatePipeInput,
 	CreatePipeOutput,
@@ -17,60 +18,82 @@ import {
 	CreatePipeOutputSchema,
 	DeletePipeOutputSchema,
 	GetPipeOutputSchema,
+	LangbaseEndpointInputSchemas,
 	ListPipesOutputSchema,
 	RunPipeOutputSchema,
 	UpdatePipeOutputSchema,
 } from './types';
 
 export const pipes = {
-	run: async (input: RunPipeInput, apiKey?: string): Promise<RunPipeOutput> => {
-		const raw = await makeLangbaseRequest<unknown>('/pipes/run', apiKey, {
+	run: async (
+		ctx: LangbasePluginContext,
+		input: RunPipeInput,
+	): Promise<RunPipeOutput> => {
+		const parsedInput = LangbaseEndpointInputSchemas['pipes.run'].parse(input);
+		// unknown because response envelope varies between text completion and function call outputs.
+		const raw = await makeLangbaseRequest<unknown>('/pipes/run', ctx.key, {
 			method: 'POST',
-			body: input as Record<string, unknown>,
+			// unknown because request body is a dynamic JSON payload.
+			body: parsedInput as Record<string, unknown>,
 		});
 		return RunPipeOutputSchema.parse(raw);
 	},
 
 	list: async (
-		_input: ListPipesInput,
-		apiKey?: string,
+		ctx: LangbasePluginContext,
+		input: ListPipesInput,
 	): Promise<ListPipesOutput> => {
-		const raw = await makeLangbaseRequest<unknown>('/pipes', apiKey, {
+		LangbaseEndpointInputSchemas['pipes.list'].parse(input);
+		// unknown because pipe records contain model configs and metadata.
+		const raw = await makeLangbaseRequest<unknown>('/pipes', ctx.key, {
 			method: 'GET',
 		});
 		return ListPipesOutputSchema.parse(raw);
 	},
 
-	get: async (input: GetPipeInput, apiKey?: string): Promise<GetPipeOutput> => {
+	get: async (
+		ctx: LangbasePluginContext,
+		input: GetPipeInput,
+	): Promise<GetPipeOutput> => {
+		const parsedInput = LangbaseEndpointInputSchemas['pipes.get'].parse(input);
+		// unknown because pipe definition contains provider-specific model configs.
 		const raw = await makeLangbaseRequest<unknown>(
-			`/pipes/${encodeURIComponent(input.name)}`,
-			apiKey,
+			`/pipes/${encodeURIComponent(parsedInput.name)}`,
+			ctx.key,
 			{ method: 'GET' },
 		);
 		return GetPipeOutputSchema.parse(raw);
 	},
 
 	create: async (
+		ctx: LangbasePluginContext,
 		input: CreatePipeInput,
-		apiKey?: string,
 	): Promise<CreatePipeOutput> => {
-		const raw = await makeLangbaseRequest<unknown>('/pipes', apiKey, {
+		const parsedInput =
+			LangbaseEndpointInputSchemas['pipes.create'].parse(input);
+		// unknown because created pipe includes deployment endpoints and keys.
+		const raw = await makeLangbaseRequest<unknown>('/pipes', ctx.key, {
 			method: 'POST',
-			body: input as Record<string, unknown>,
+			// unknown because request body is a dynamic JSON payload.
+			body: parsedInput as Record<string, unknown>,
 		});
 		return CreatePipeOutputSchema.parse(raw);
 	},
 
 	update: async (
+		ctx: LangbasePluginContext,
 		input: UpdatePipeInput,
-		apiKey?: string,
 	): Promise<UpdatePipeOutput> => {
-		const { name, ...body } = input;
+		const parsedInput =
+			LangbaseEndpointInputSchemas['pipes.update'].parse(input);
+		const { name, ...body } = parsedInput;
+		// unknown because updated pipe includes updated configuration.
 		const raw = await makeLangbaseRequest<unknown>(
 			`/pipes/${encodeURIComponent(name)}`,
-			apiKey,
+			ctx.key,
 			{
 				method: 'PATCH',
+				// unknown because request body is a dynamic JSON payload.
 				body: body as Record<string, unknown>,
 			},
 		);
@@ -78,12 +101,15 @@ export const pipes = {
 	},
 
 	delete: async (
+		ctx: LangbasePluginContext,
 		input: DeletePipeInput,
-		apiKey?: string,
 	): Promise<DeletePipeOutput> => {
+		const parsedInput =
+			LangbaseEndpointInputSchemas['pipes.delete'].parse(input);
+		// unknown because delete response contains confirmation status.
 		const raw = await makeLangbaseRequest<unknown>(
-			`/pipes/${encodeURIComponent(input.name)}`,
-			apiKey,
+			`/pipes/${encodeURIComponent(parsedInput.name)}`,
+			ctx.key,
 			{ method: 'DELETE' },
 		);
 		return DeletePipeOutputSchema.parse(raw);
