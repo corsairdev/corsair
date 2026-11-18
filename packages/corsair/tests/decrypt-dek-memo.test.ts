@@ -1,3 +1,16 @@
+const scryptCalls = { n: 0 };
+jest.mock('crypto', () => {
+	const actual = jest.requireActual('crypto');
+	return {
+		...actual,
+		// unknown: a pass-through to crypto.scrypt, whose overloads take several argument shapes.
+		scrypt: (...args: unknown[]) => {
+			scryptCalls.n++;
+			return actual.scrypt(...args);
+		},
+	};
+});
+
 import { decryptDEK, encryptDEK, generateDEK } from '../core/auth/encryption';
 
 const KEK = 'test-kek-with-at-least-32-characters!!';
@@ -30,7 +43,9 @@ describe('decryptDEK memo', () => {
 	it('failures are not cached', async () => {
 		const wrapped = await encryptDEK(generateDEK(), KEK);
 		const bad = 'x' + wrapped;
+		scryptCalls.n = 0;
 		await expect(decryptDEK(bad, KEK)).rejects.toThrow();
 		await expect(decryptDEK(bad, KEK)).rejects.toThrow();
+		expect(scryptCalls.n).toBe(2);
 	});
 });

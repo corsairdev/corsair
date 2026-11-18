@@ -107,11 +107,6 @@ export const REPORT_REFRESH_MS = 10 * 60 * 1000;
 const MAX_REMEMBERED = 5000;
 const lastSent = new Map<string, { fingerprint: string; at: number }>();
 
-const statusReads = new WeakMap<
-	CorsairDatabase,
-	Map<string, ReturnType<typeof getPluginAuthStatus>>
->();
-
 function connectionKey(
 	hub: HubConfig,
 	tenantId: string,
@@ -212,25 +207,11 @@ async function reportPluginConnectionStatusFromBindingAsync(input: {
 	// connection is unchanged (e.g. a refused refresh, then a disconnect, both
 	// report verified: false while `connected` flips), and credentials can
 	// change in another process, so an in-memory invalidation would miss it.
-	// Overlapping calls share the read in flight (never a settled one).
-	const inflightKey = connectionKey(
-		input.hub,
+	const authStatus = await getPluginAuthStatus(
+		internal,
+		input.plugin,
 		effectiveTenantId,
-		input.plugin.id,
 	);
-	let reads = statusReads.get(input.database);
-	if (!reads) statusReads.set(input.database, (reads = new Map()));
-	let read = reads.get(inflightKey);
-	if (!read) {
-		read = getPluginAuthStatus(internal, input.plugin, effectiveTenantId);
-		const mine = read;
-		const done = () => {
-			if (reads.get(inflightKey) === mine) reads.delete(inflightKey);
-		};
-		mine.then(done, done);
-		reads.set(inflightKey, read);
-	}
-	const authStatus = await read;
 	if (!authStatus) {
 		return;
 	}

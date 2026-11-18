@@ -533,8 +533,9 @@ export function createAccountKeyManager<T extends AuthTypes>(
 		// same snapshot. Reading them via two separate getAccount() calls lets a DEK
 		// rotation land between them, so we'd re-encrypt with a DEK that no longer
 		// matches the row — the next read then fails to decrypt and the catch below
-		// discards the config. One read keeps DEK and config consistent.
-		const account = await ctx.getAccount();
+		// discards the config. One read keeps DEK and config consistent. A write
+		// reads fresh, never a shared read that may predate another writer's commit.
+		const account = await readAccount();
 		if (!account.dek) {
 			throw new Error(
 				`No DEK found for account (tenant: "${tenantId}", integration: "${integrationName}"). Initialize the account first.`,
@@ -574,7 +575,7 @@ export function createAccountKeyManager<T extends AuthTypes>(
 		get_dek: getDecryptedDek,
 
 		issue_new_dek: async () => {
-			const account = await ctx.getAccount();
+			const account = await readAccount();
 			const newDek = generateDEK();
 
 			// If there's an existing DEK, re-encrypt config and sealed rows; otherwise start fresh

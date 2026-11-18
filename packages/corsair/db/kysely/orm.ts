@@ -445,13 +445,12 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 		// unknown: this is the parsed output of a caller-supplied plugin schema.
 		// The schema is not in scope here, so the JSONB document cannot be named more tightly.
 		data: unknown,
-	): Promise<{ stored: Record<string, unknown>; dek?: string }> {
+	): Promise<Record<string, unknown>> {
 		if (!atRest) {
 			// unknown: same document. Zod's output is not a Record even though the column stores an object.
-			return { stored: data as Record<string, unknown> };
+			return data as Record<string, unknown>;
 		}
-		const dek = await accountDek(accountId);
-		return { stored: sealJson(data, dek), dek };
+		return sealJson(data, await accountDek(accountId));
 	}
 
 	return {
@@ -538,7 +537,7 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 		upsertByEntityId: async (entityId, data) => {
 			const accountId = await getAccountId();
 			const parsed = dataSchema.parse(data);
-			const { stored: dataToStore, dek } = await storedData(accountId, parsed);
+			const dataToStore = await storedData(accountId, parsed);
 			const now = new Date();
 
 			const existing = await baseQuery(db, accountId, entityTypeName)
@@ -557,7 +556,7 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 					.where('id', '=', existing.id)
 					.returningAll()
 					.executeTakeFirstOrThrow();
-				return parseRow(updated, dek);
+				return parseRow(updated);
 			}
 
 			const id = generateUUID();
@@ -575,7 +574,7 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 				})
 				.returningAll()
 				.executeTakeFirstOrThrow();
-			return parseRow(inserted, dek);
+			return parseRow(inserted);
 		},
 
 		deleteById: async (id) => {

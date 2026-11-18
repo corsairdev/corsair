@@ -34,7 +34,6 @@ const hub: HubConfig = {
 	signingSecret: '',
 	instanceKey: 'env_1',
 };
-const database = {} as CorsairDatabase;
 const github: CorsairPlugin = {
 	id: 'github',
 	options: { authType: 'oauth_2' },
@@ -49,7 +48,7 @@ function startCall(
 ) {
 	reportPluginConnectionStatusFromBinding({
 		hub: extra.hub ?? hub,
-		database,
+		database: {} as CorsairDatabase,
 		kek: 'kek',
 		plugins: [github],
 		plugin: github,
@@ -96,7 +95,7 @@ describe('per-call connection reports', () => {
 		startCall(true);
 		startCall(true);
 		await settle();
-		expect(readStatus).toHaveBeenCalledTimes(1);
+		expect(readStatus).toHaveBeenCalledTimes(3);
 		expect(post).toHaveBeenCalledTimes(1);
 	});
 
@@ -161,30 +160,5 @@ describe('per-call connection reports', () => {
 		await settle();
 		await afterCall(true);
 		expect(post).toHaveBeenCalledTimes(2);
-	});
-});
-
-describe('overlapping per-call reads', () => {
-	beforeEach(() => {
-		post.mockReset().mockResolvedValue({ ok: true });
-		readStatus.mockClear();
-		resetConnectionReportMemory();
-	});
-
-	it('share one status read, and a later call reads again', async () => {
-		startCall(true);
-		startCall(true);
-		startCall(true);
-		await settle();
-		expect(readStatus).toHaveBeenCalledTimes(1);
-		await afterCall(true);
-		expect(readStatus).toHaveBeenCalledTimes(2);
-	});
-
-	it('different tenants do not share a read', async () => {
-		startCall(true, { tenantId: 'a' });
-		startCall(true, { tenantId: 'b' });
-		await settle();
-		expect(readStatus).toHaveBeenCalledTimes(2);
 	});
 });

@@ -20,7 +20,6 @@ import {
 	createAccountKeyManager,
 	createIntegrationKeyManager,
 } from '../auth/key-manager';
-import { singleFlight } from '../auth/single-flight';
 import type {
 	AccountKeyManagerFor,
 	IntegrationKeyManagerFor,
@@ -307,7 +306,7 @@ function createAccountIdResolver(
 ): () => Promise<string> {
 	let cachedAccountId: string | null = null;
 
-	const resolve = async (): Promise<string> => {
+	return async () => {
 		if (!database) {
 			throw new Error('Database not configured');
 		}
@@ -349,11 +348,6 @@ function createAccountIdResolver(
 		cachedAccountId = accountId;
 		return cachedAccountId;
 	};
-
-	// Concurrent calls share the revalidation in flight; a settled answer is
-	// never reused, so a rebound row is caught on the next call.
-	const flights = {};
-	return () => singleFlight(flights, 'account', resolve);
 }
 
 /**

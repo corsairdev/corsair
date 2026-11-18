@@ -79,7 +79,7 @@ export async function decryptDEK(
 	const hit = dekMemo.get(encryptedDek);
 	if (hit && hit.kek === kek) return hit.dek;
 	const dek = await unwrapDEK(encryptedDek, kek);
-	if (dekMemo.size >= DEK_MEMO_MAX) {
+	if (!dekMemo.has(encryptedDek) && dekMemo.size >= DEK_MEMO_MAX) {
 		dekMemo.delete(dekMemo.keys().next().value as string);
 	}
 	dekMemo.set(encryptedDek, { kek, dek });
