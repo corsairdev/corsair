@@ -75,6 +75,19 @@ export const errorHandlers = {
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
+	// 408 and 5xx are refunded by TwittrAPI and on its side (the 11-18 live
+	// run hit a Cloudflare 502). Only a GET is replayed: a POST, PATCH or
+	// DELETE to /monitors may already have gone through.
+	SERVER_ERROR: {
+		match: (error: Error) =>
+			error instanceof ApiError &&
+			error.request?.method === 'GET' &&
+			(error.status === 408 || error.status >= 500),
+		handler: async () => ({
+			maxRetries: 2,
+			retryStrategy: 'exponential_backoff' as const,
+		}),
+	},
 	DEFAULT: {
 		match: () => true,
 		handler: async () => ({ maxRetries: 0 }),
