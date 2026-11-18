@@ -107,7 +107,7 @@ describe('Lexoffice error handlers', () => {
 			},
 		});
 
-		const keys = Object.keys(plugin.errorHandlers);
+		const keys = Object.keys(plugin.errorHandlers ?? {});
 		expect(keys[0]).toBe('CUSTOM_HANDLER');
 		expect(keys[keys.length - 1]).toBe('DEFAULT');
 	});

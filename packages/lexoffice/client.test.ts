@@ -204,6 +204,8 @@ describe('makeLexofficeRequest', () => {
 						BASE: 'https://api.lexoffice.io/v1',
 						VERSION: '1.0.0',
 						HEADERS: {},
+						WITH_CREDENTIALS: false,
+						CREDENTIALS: 'omit',
 					},
 					{ method: 'GET', url: '/profile' },
 					{ rateLimitConfig: LEXOFFICE_NO_TRANSPORT_RETRIES },
