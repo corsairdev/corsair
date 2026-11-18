@@ -55,6 +55,9 @@ const STYLE_OF: Record<string, keyof typeof STYLES> = {
 const schemasOf = (op: string) =>
 	klingEndpointSchemas[op as keyof typeof klingEndpointSchemas];
 
+// unknown: walks a dot path (like a job's idPath or statusPath) through any
+// operation's output, so no one output type fits; each step checks it holds an
+// object before indexing it.
 const at = (value: unknown, path: string): unknown =>
 	path
 		.split('.')

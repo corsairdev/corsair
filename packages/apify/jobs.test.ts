@@ -39,8 +39,12 @@ const STATUSES = [
 ];
 const RUNNING = ['READY', 'RUNNING', 'TIMING-OUT', 'ABORTING'];
 
+// unknown: one signature for every REST endpoint looked up by name below; each
+// has its own input and output types, which the lookup by string can't carry.
 type Endpoint = (ctx: ApifyMcpContext, input: unknown) => Promise<unknown>;
 
+// unknown: steps through ApifyRestEndpoints by the dotted op name, where each
+// level is a different object type until the endpoint function is reached.
 const endpointAt = (op: string): Endpoint =>
 	op
 		.split('.')
@@ -49,6 +53,9 @@ const endpointAt = (op: string): Endpoint =>
 			ApifyRestEndpoints,
 		) as Endpoint;
 
+// unknown: walks a dot path (like a job's idPath or statusPath) through any
+// operation's output, so no one output type fits; each step checks it holds an
+// object before indexing it.
 const at = (value: unknown, path: string): unknown =>
 	path
 		.split('.')
@@ -64,6 +71,8 @@ const inputOf = (op: string) =>
 	apifyEndpointSchemas[op as keyof typeof apifyEndpointSchemas]
 		.input as z.ZodObject;
 
+// unknown: the endpoints read only ctx.key, and a mocked request answers each
+// call, so the rest of ApifyMcpContext is never touched in these tests.
 const ctx = { key: 'test-token' } as unknown as ApifyMcpContext;
 
 const START_INPUT: Record<string, Record<string, string>> = {
