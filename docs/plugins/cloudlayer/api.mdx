@@ -1,0 +1,2181 @@
+---
+title: "Cloudlayer API reference"
+sidebarTitle: "API"
+description: "API reference for the Cloudlayer plugin in Corsair: every `cloudlayer.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### get
+
+`account.get`
+
+Read account usage, plan limits, storage use and (on usage plans) the credit balance. Docs: https://cloudlayer.io/docs/account/
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudlayer.api.account.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `uid` | `string` | Yes | — |
+| `subscription` | `string` | Yes | — |
+| `subType` | `limit \| usage \| string` | Yes | — |
+| `subActive` | `boolean` | Yes | — |
+| `calls` | `number` | Yes | — |
+| `callsLimit` | `number` | Yes | — |
+| `credit` | `number` | No | — |
+| `bytesTotal` | `number` | Yes | — |
+| `bytesLimit` | `number` | No | — |
+| `computeTimeTotal` | `number` | Yes | — |
+| `computeTimeLimit` | `number` | Yes | — |
+| `storageUsed` | `number` | Yes | — |
+| `storageLimit` | `number` | Yes | — |
+| `totalJobs` | `number` | No | — |
+| `successJobs` | `number` | No | — |
+| `errorJobs` | `number` | No | — |
+
+
+
+---
+
+## Assets
+
+### get
+
+`assets.get`
+
+Get one generated asset including its pre-authenticated download URL. Docs: https://cloudlayer.io/docs/assets/
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudlayer.api.assets.get({ id: 'asset-id' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `jobId` | `string` | No | — |
+| `ext` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+| `size` | `number` | Yes | — |
+| `url` | `string` | Yes | — |
+| `timestamp` | `number` | Yes | — |
+
+
+
+---
+
+### list
+
+`assets.list`
+
+List the most recent generated assets with cursor pagination. Docs: https://cloudlayer.io/docs/assets/
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudlayer.api.assets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `startAfterId` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  jobId?: string,
+  ext: string,
+  type: string,
+  size: number,
+  url: string,
+  timestamp: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Html
+
+### toImage
+
+`html.toImage`
+
+Render base64 HTML to a PNG, JPG, WebP or SVG image; v2 returns a job, including a completed job with async:false. Docs: https://cloudlayer.io/docs/html-to-image/
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudlayer.api.html.toImage({ html: 'PGgxPkhlbGxvPC9oMT4=' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `html` | `string` | Yes | — |
+| `autoScroll` | `boolean` | No | — |
+| `delay` | `number` | No | — |
+| `filename` | `string` | No | — |
+| `height` | `string` | No | — |
+| `width` | `string` | No | — |
+| `inline` | `boolean` | No | — |
+| `landscape` | `boolean` | No | — |
+| `preferCSSPageSize` | `boolean` | No | — |
+| `projectId` | `string` | No | — |
+| `scale` | `number` | No | — |
+| `timeout` | `number` | No | — |
+| `timeZone` | `string` | No | — |
+| `viewPort` | `object` | No | — |
+| `waitForSelector` | `object` | No | — |
+| `waitUntil` | `load \| domcontentloaded \| networkidle0 \| networkidle2` | No | — |
+| `imageType` | `png \| jpg \| jpeg \| webp \| svg` | No | — |
+| `quality` | `number` | No | — |
+| `transparent` | `boolean` | No | — |
+| `trim` | `boolean` | No | — |
+| `async` | `boolean` | No | — |
+| `storage` | `boolean` | No | — |
+
+V2 returns a JSON job; `async: false` waits for completion and returns the completed JSON job per the API overview. `html.toImageV1` exposes the v1 raw binary route as a base64-encoded `BinaryArtifact`. See https://cloudlayer.io/docs/html-to-image/.
+
+<AccordionGroup>
+<Accordion title="viewPort full type">
+
+```ts
+{
+  width?: number,
+  height?: number,
+  deviceScaleFactor?: number,
+  isMobile?: boolean,
+  hasTouch?: boolean,
+  isLandscape?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="waitForSelector full type">
+
+```ts
+{
+  selector: string,
+  options?: {
+    visible?: boolean,
+    hidden?: boolean,
+    timeout?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  status: pending | success | error | string,
+  type?: string,
+  assetUrl?: string,
+  previewUrl?: string,
+  error?: string,
+  processTime?: number,
+  size?: number,
+  timestamp?: number
+} | {
+  kind: binary,
+  contentType: string,
+  base64: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### toImageV1
+
+`html.toImageV1`
+
+Render base64 HTML to an image using the v1 route; returns a base64-encoded binary artifact. Docs: https://cloudlayer.io/docs/html-to-image/
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudlayer.api.html.toImageV1({ html: 'PGgxPkhlbGxvPC9oMT4=' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `html` | `string` | Yes | — |
+| `autoScroll` | `boolean` | No | — |
+| `delay` | `number` | No | — |
+| `filename` | `string` | No | — |
+| `height` | `string` | No | — |
+| `width` | `string` | No | — |
+| `inline` | `boolean` | No | — |
+| `landscape` | `boolean` | No | — |
+| `preferCSSPageSize` | `boolean` | No | — |
+| `projectId` | `string` | No | — |
+| `scale` | `number` | No | — |
+| `timeout` | `number` | No | — |
+| `timeZone` | `string` | No | — |
+| `viewPort` | `object` | No | — |
+| `waitForSelector` | `object` | No | — |
+| `waitUntil` | `load \| domcontentloaded \| networkidle0 \| networkidle2` | No | — |
+| `imageType` | `png \| jpg \| jpeg \| webp \| svg` | No | — |
+| `quality` | `number` | No | — |
+| `transparent` | `boolean` | No | — |
+| `trim` | `boolean` | No | — |
+
+The v1 response is binary and is returned as a base64-encoded `BinaryArtifact`. See https://cloudlayer.io/docs/html-to-image/.
+
+<AccordionGroup>
+<Accordion title="viewPort full type">
+
+```ts
+{
+  width?: number,
+  height?: number,
+  deviceScaleFactor?: number,
+  isMobile?: boolean,
+  hasTouch?: boolean,
+  isLandscape?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="waitForSelector full type">
+
+```ts
+{
+  selector: string,
+  options?: {
+    visible?: boolean,
+    hidden?: boolean,
+    timeout?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `binary` | Yes | — |
+| `contentType` | `string` | Yes | — |
+| `base64` | `string` | Yes | — |
+
+
+
+---
+
+### toPdf
+
+`html.toPdf`
+
+Render base64 HTML to a PDF; v2 returns a job, including a completed job with async:false. Docs: https://cloudlayer.io/docs/html-to-pdf/
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudlayer.api.html.toPdf({ html: 'PGgxPkhlbGxvPC9oMT4=' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `html` | `string` | Yes | — |
+| `autoScroll` | `boolean` | No | — |
+| `delay` | `number` | No | — |
+| `filename` | `string` | No | — |
+| `height` | `string` | No | — |
+| `width` | `string` | No | — |
+| `inline` | `boolean` | No | — |
+| `landscape` | `boolean` | No | — |
+| `preferCSSPageSize` | `boolean` | No | — |
+| `projectId` | `string` | No | — |
+| `scale` | `number` | No | — |
+| `timeout` | `number` | No | — |
+| `timeZone` | `string` | No | — |
+| `viewPort` | `object` | No | — |
+| `waitForSelector` | `object` | No | — |
+| `waitUntil` | `load \| domcontentloaded \| networkidle0 \| networkidle2` | No | — |
+| `pageRanges` | `string` | No | — |
+| `format` | `letter \| legal \| tabloid \| ledger \| a0 \| a1 \| a2 \| a3 \| a4 \| a5 \| a6` | No | — |
+| `margin` | `object` | No | — |
+| `printBackground` | `boolean` | No | — |
+| `headerTemplate` | `object` | No | — |
+| `footerTemplate` | `object` | No | — |
+| `generatePreview` | `object` | No | — |
+| `async` | `boolean` | No | — |
+| `storage` | `boolean` | No | — |
+
+V2 returns a JSON job; `async: false` waits for completion and returns the completed JSON job per the API overview. `html.toPdfV1` exposes the v1 raw binary route as a base64-encoded `BinaryArtifact`. See https://cloudlayer.io/docs/html-to-pdf/.
+
+<AccordionGroup>
+<Accordion title="viewPort full type">
+
+```ts
+{
+  width?: number,
+  height?: number,
+  deviceScaleFactor?: number,
+  isMobile?: boolean,
+  hasTouch?: boolean,
+  isLandscape?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="waitForSelector full type">
+
+```ts
+{
+  selector: string,
+  options?: {
+    visible?: boolean,
+    hidden?: boolean,
+    timeout?: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="margin full type">
+
+```ts
+{
+  top?: string,
+  bottom?: string,
+  left?: string,
+  right?: string
+}
+```
+</Accordion>
+
+<Accordion title="headerTemplate full type">
+
+```ts
+{
+  selector: string,
+  method?: template | extract,
+  margin?: {
+    top?: string,
+    bottom?: string,
+    left?: string,
+    right?: string
+  },
+  style?: string,
+  imageStyle?: string
+}
+```
+</Accordion>
+
+<Accordion title="footerTemplate full type">
+
+```ts
+{
+  selector: string,
+  method?: template | extract,
+  margin?: {
+    top?: string,
+    bottom?: string,
+    left?: string,
+    right?: string
+  },
+  style?: string,
+  imageStyle?: string
+}
+```
+</Accordion>
+
+<Accordion title="generatePreview full type">
+
+```ts
+{
+  width?: number,
+  height?: number,
+  type?: png | jpg | webp,
+  quality?: number,
+  maintainAspectRatio?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  status: pending | success | error | string,
+  type?: string,
+  assetUrl?: string,
+  previewUrl?: string,
+  error?: string,
+  processTime?: number,
+  size?: number,
+  timestamp?: number
+} | {
+  kind: binary,
+  contentType: string,
+  base64: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### toPdfV1
+
+`html.toPdfV1`
+
+Render base64 HTML to a PDF using the v1 route; returns a base64-encoded binary artifact. Docs: https://cloudlayer.io/docs/html-to-pdf/
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudlayer.api.html.toPdfV1({ html: 'PGgxPkhlbGxvPC9oMT4=' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `html` | `string` | Yes | — |
+| `autoScroll` | `boolean` | No | — |
+| `delay` | `number` | No | — |
+| `filename` | `string` | No | — |
+| `height` | `string` | No | — |
+| `width` | `string` | No | — |
+| `inline` | `boolean` | No | — |
+| `landscape` | `boolean` | No | — |
+| `preferCSSPageSize` | `boolean` | No | — |
+| `projectId` | `string` | No | — |
+| `scale` | `number` | No | — |
+| `timeout` | `number` | No | — |
+| `timeZone` | `string` | No | — |
+| `viewPort` | `object` | No | — |
+| `waitForSelector` | `object` | No | — |
+| `waitUntil` | `load \| domcontentloaded \| networkidle0 \| networkidle2` | No | — |
+| `pageRanges` | `string` | No | — |
+| `format` | `letter \| legal \| tabloid \| ledger \| a0 \| a1 \| a2 \| a3 \| a4 \| a5 \| a6` | No | — |
+| `margin` | `object` | No | — |
+| `printBackground` | `boolean` | No | — |
+| `headerTemplate` | `object` | No | — |
+| `footerTemplate` | `object` | No | — |
+| `generatePreview` | `object` | No | — |
+
+The v1 response is binary and is returned as a base64-encoded `BinaryArtifact`. See https://cloudlayer.io/docs/html-to-pdf/.
+
+<AccordionGroup>
+<Accordion title="viewPort full type">
+
+```ts
+{
+  width?: number,
+  height?: number,
+  deviceScaleFactor?: number,
+  isMobile?: boolean,
+  hasTouch?: boolean,
+  isLandscape?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="waitForSelector full type">
+
+```ts
+{
+  selector: string,
+  options?: {
+    visible?: boolean,
+    hidden?: boolean,
+    timeout?: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="margin full type">
+
+```ts
+{
+  top?: string,
+  bottom?: string,
+  left?: string,
+  right?: string
+}
+```
+</Accordion>
+
+<Accordion title="headerTemplate full type">
+
+```ts
+{
+  selector: string,
+  method?: template | extract,
+  margin?: {
+    top?: string,
+    bottom?: string,
+    left?: string,
+    right?: string
+  },
+  style?: string,
+  imageStyle?: string
+}
+```
+</Accordion>
+
+<Accordion title="footerTemplate full type">
+
+```ts
+{
+  selector: string,
+  method?: template | extract,
+  margin?: {
+    top?: string,
+    bottom?: string,
+    left?: string,
+    right?: string
+  },
+  style?: string,
+  imageStyle?: string
+}
+```
+</Accordion>
+
+<Accordion title="generatePreview full type">
+
+```ts
+{
+  width?: number,
+  height?: number,
+  type?: png | jpg | webp,
+  quality?: number,
+  maintainAspectRatio?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `binary` | Yes | — |
+| `contentType` | `string` | Yes | — |
+| `base64` | `string` | Yes | — |
+
+
+
+---
+
+## Jobs
+
+### get
+
+`jobs.get`
+
+Get one job to poll an async generation, including status, size and cost. Docs: https://cloudlayer.io/docs/jobs/
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudlayer.api.jobs.get({ id: 'job-id' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `uid` | `string` | No | — |
+| `apiKeyUsed` | `string` | No | — |
+| `type` | `string` | Yes | — |
+| `status` | `pending \| success \| error \| string` | Yes | — |
+| `params` | `Record<string, JsonValue>` | No | — |
+| `size` | `number` | Yes | — |
+| `processTime` | `number` | Yes | — |
+| `apiCreditCost` | `number` | Yes | — |
+| `workerName` | `string` | No | — |
+| `timestamp` | `number` | Yes | — |
+
+
+
+---
+
+### list
+
+`jobs.list`
+
+List recent jobs using the documented v1 jobs endpoint with optional cursor parameters. Docs: https://cloudlayer.io/docs/jobs/
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudlayer.api.jobs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `startAfterId` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  uid?: string,
+  apiKeyUsed?: string,
+  type: string,
+  status: pending | success | error | string,
+  params?: Record<string, JsonValue>,
+  size: number,
+  processTime: number,
+  apiCreditCost: number,
+  workerName?: string,
+  timestamp: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listV2
+
+`jobs.listV2`
+
+List recent jobs using the v2 jobs endpoint with optional cursor parameters. Docs: https://cloudlayer.io/docs/jobs/
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudlayer.api.jobs.listV2({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `startAfterId` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  uid?: string,
+  apiKeyUsed?: string,
+  type: string,
+  status: pending | success | error | string,
+  params?: Record<string, JsonValue>,
+  size: number,
+  processTime: number,
+  apiCreditCost: number,
+  workerName?: string,
+  timestamp: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Storage
+
+### create
+
+`storage.create`
+
+Create an S3-compatible storage configuration for direct file delivery. Docs: https://cloudlayer.io/docs/storage/
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudlayer.api.storage.create({
+	title: 'Example storage',
+	bucket: 'documents',
+	region: 'us-east-1',
+	accessKeyId: 'example-access-key',
+	secretAccessKey: 'example-secret-access-key',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `bucket` | `string` | Yes | — |
+| `region` | `string` | Yes | — |
+| `accessKeyId` | `string` | Yes | — |
+| `secretAccessKey` | `string` | Yes | — |
+| `endpoint` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`storage.get`
+
+Read one storage configuration by ID with secrets masked. Docs: https://cloudlayer.io/docs/storage/
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudlayer.api.storage.get({ id: 'storage-id' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `title` | `string` | Yes | — |
+| `bucket` | `string` | Yes | — |
+| `region` | `string` | Yes | — |
+| `accessKeyId` | `string` | Yes | — |
+| `secretAccessKey` | `string` | Yes | — |
+| `endpoint` | `string \| null` | No | — |
+
+
+
+---
+
+### getCurrent
+
+`storage.getCurrent`
+
+Read the current storage configuration with secrets masked. Docs: https://cloudlayer.io/docs/storage/
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudlayer.api.storage.getCurrent({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  title: string,
+  bucket: string,
+  region: string,
+  accessKeyId: string,
+  secretAccessKey: string,
+  endpoint?: string | null
+} | {
+  id?: string,
+  title: string,
+  bucket: string,
+  region: string,
+  accessKeyId: string,
+  secretAccessKey: string,
+  endpoint?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### remove
+
+`storage.remove`
+
+Delete a storage configuration and revert to cloudlayer.io cloud storage. Docs: https://cloudlayer.io/docs/storage/
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudlayer.api.storage.remove({ id: 'storage-id' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+## Template
+
+### toImage
+
+`template.toImage`
+
+Render a gallery or base64 Nunjucks template with caller data to an image using JSON or multipart upload; v2 async:false returns a completed JSON job. Docs: https://cloudlayer.io/docs/template-to-image/
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudlayer.api.template.toImage({
+	templateId: 'invoice-template',
+	data: { invoiceNumber: 'INV-100' },
+});
+```
+
+**Input:** `object`
+
+V2 returns a JSON job; `async: false` waits for completion and returns the completed JSON job per the API overview. `template.toImageV1` exposes the v1 route as a base64-encoded binary artifact. For multipart input, the generated type renderer labels the `z.instanceof(Blob)` field as `custom`; callers must pass an actual `Blob` in `{ template: Blob, data: object }`, where `data` is a JSON object. Multipart requests remain in v2 job mode; only the documented `template` and `data` parts are sent. See https://cloudlayer.io/docs/template-to-image/.
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  templateId?: string,
+  template?: string,
+  data?: Record<string, JsonValue>,
+  autoScroll?: boolean,
+  delay?: number,
+  filename?: string,
+  height?: string,
+  width?: string,
+  inline?: boolean,
+  landscape?: boolean,
+  preferCSSPageSize?: boolean,
+  projectId?: string,
+  scale?: number,
+  timeout?: number,
+  timeZone?: string,
+  viewPort?: {
+    width?: number,
+    height?: number,
+    deviceScaleFactor?: number,
+    isMobile?: boolean,
+    hasTouch?: boolean,
+    isLandscape?: boolean
+  },
+  waitForSelector?: {
+    selector: string,
+    options?: {
+      visible?: boolean,
+      hidden?: boolean,
+      timeout?: number
+    }
+  },
+  waitUntil?: load | domcontentloaded | networkidle0 | networkidle2,
+  imageType?: png | jpg | jpeg | webp | svg,
+  quality?: number,
+  transparent?: boolean,
+  trim?: boolean,
+  async?: boolean,
+  storage?: boolean
+} | {
+  template: custom,
+  data: Record<string, JsonValue>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  status: pending | success | error | string,
+  type?: string,
+  assetUrl?: string,
+  previewUrl?: string,
+  error?: string,
+  processTime?: number,
+  size?: number,
+  timestamp?: number
+} | {
+  kind: binary,
+  contentType: string,
+  base64: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### toImageV1
+
+`template.toImageV1`
+
+Render a gallery or base64 Nunjucks template to an image using the v1 route; returns a base64-encoded binary artifact. Docs: https://cloudlayer.io/docs/template-to-image/
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudlayer.api.template.toImageV1({
+	templateId: 'invoice-template',
+	data: { invoiceNumber: 'INV-100' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateId` | `string` | No | — |
+| `template` | `string` | No | — |
+| `data` | `Record<string, JsonValue>` | No | — |
+| `autoScroll` | `boolean` | No | — |
+| `delay` | `number` | No | — |
+| `filename` | `string` | No | — |
+| `height` | `string` | No | — |
+| `width` | `string` | No | — |
+| `inline` | `boolean` | No | — |
+| `landscape` | `boolean` | No | — |
+| `preferCSSPageSize` | `boolean` | No | — |
+| `projectId` | `string` | No | — |
+| `scale` | `number` | No | — |
+| `timeout` | `number` | No | — |
+| `timeZone` | `string` | No | — |
+| `viewPort` | `object` | No | — |
+| `waitForSelector` | `object` | No | — |
+| `waitUntil` | `load \| domcontentloaded \| networkidle0 \| networkidle2` | No | — |
+| `imageType` | `png \| jpg \| jpeg \| webp \| svg` | No | — |
+| `quality` | `number` | No | — |
+| `transparent` | `boolean` | No | — |
+| `trim` | `boolean` | No | — |
+
+The v1 response is binary and is returned as a base64-encoded `BinaryArtifact`. See https://cloudlayer.io/docs/template-to-image/.
+
+<AccordionGroup>
+<Accordion title="viewPort full type">
+
+```ts
+{
+  width?: number,
+  height?: number,
+  deviceScaleFactor?: number,
+  isMobile?: boolean,
+  hasTouch?: boolean,
+  isLandscape?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="waitForSelector full type">
+
+```ts
+{
+  selector: string,
+  options?: {
+    visible?: boolean,
+    hidden?: boolean,
+    timeout?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `binary` | Yes | — |
+| `contentType` | `string` | Yes | — |
+| `base64` | `string` | Yes | — |
+
+
+
+---
+
+### toPdf
+
+`template.toPdf`
+
+Render a gallery or base64 Nunjucks template with caller data to a PDF using JSON or multipart upload; v2 async:false returns a completed JSON job. Docs: https://cloudlayer.io/docs/template-to-pdf/
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudlayer.api.template.toPdf({
+	templateId: 'invoice-template',
+	data: { invoiceNumber: 'INV-100' },
+});
+```
+
+**Input:** `object`
+
+V2 returns a JSON job; `async: false` waits for completion and returns the completed JSON job per the API overview. `template.toPdfV1` exposes the v1 route as a base64-encoded binary artifact. For multipart input, the generated type renderer labels the `z.instanceof(Blob)` field as `custom`; callers must pass an actual `Blob` in `{ template: Blob, data: object }`, where `data` is a JSON object. Multipart requests remain in v2 job mode; only the documented `template` and `data` parts are sent. See https://cloudlayer.io/docs/template-to-pdf/.
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  templateId?: string,
+  template?: string,
+  data?: Record<string, JsonValue>,
+  autoScroll?: boolean,
+  delay?: number,
+  filename?: string,
+  height?: string,
+  width?: string,
+  inline?: boolean,
+  landscape?: boolean,
+  preferCSSPageSize?: boolean,
+  projectId?: string,
+  scale?: number,
+  timeout?: number,
+  timeZone?: string,
+  viewPort?: {
+    width?: number,
+    height?: number,
+    deviceScaleFactor?: number,
+    isMobile?: boolean,
+    hasTouch?: boolean,
+    isLandscape?: boolean
+  },
+  waitForSelector?: {
+    selector: string,
+    options?: {
+      visible?: boolean,
+      hidden?: boolean,
+      timeout?: number
+    }
+  },
+  waitUntil?: load | domcontentloaded | networkidle0 | networkidle2,
+  pageRanges?: string,
+  format?: letter | legal | tabloid | ledger | a0 | a1 | a2 | a3 | a4 | a5 | a6,
+  margin?: {
+    top?: string,
+    bottom?: string,
+    left?: string,
+    right?: string
+  },
+  printBackground?: boolean,
+  headerTemplate?: {
+    selector: string,
+    method?: template | extract,
+    margin?: {
+      top?: string,
+      bottom?: string,
+      left?: string,
+      right?: string
+    },
+    style?: string,
+    imageStyle?: string
+  },
+  footerTemplate?: {
+    selector: string,
+    method?: template | extract,
+    margin?: {
+      top?: string,
+      bottom?: string,
+      left?: string,
+      right?: string
+    },
+    style?: string,
+    imageStyle?: string
+  },
+  generatePreview?: {
+    width?: number,
+    height?: number,
+    type?: png | jpg | webp,
+    quality?: number,
+    maintainAspectRatio?: boolean
+  },
+  async?: boolean,
+  storage?: boolean
+} | {
+  template: custom,
+  data: Record<string, JsonValue>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  status: pending | success | error | string,
+  type?: string,
+  assetUrl?: string,
+  previewUrl?: string,
+  error?: string,
+  processTime?: number,
+  size?: number,
+  timestamp?: number
+} | {
+  kind: binary,
+  contentType: string,
+  base64: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### toPdfV1
+
+`template.toPdfV1`
+
+Render a gallery or base64 Nunjucks template to a PDF using the v1 route; returns a base64-encoded binary artifact. Docs: https://cloudlayer.io/docs/template-to-pdf/
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudlayer.api.template.toPdfV1({
+	templateId: 'invoice-template',
+	data: { invoiceNumber: 'INV-100' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateId` | `string` | No | — |
+| `template` | `string` | No | — |
+| `data` | `Record<string, JsonValue>` | No | — |
+| `autoScroll` | `boolean` | No | — |
+| `delay` | `number` | No | — |
+| `filename` | `string` | No | — |
+| `height` | `string` | No | — |
+| `width` | `string` | No | — |
+| `inline` | `boolean` | No | — |
+| `landscape` | `boolean` | No | — |
+| `preferCSSPageSize` | `boolean` | No | — |
+| `projectId` | `string` | No | — |
+| `scale` | `number` | No | — |
+| `timeout` | `number` | No | — |
+| `timeZone` | `string` | No | — |
+| `viewPort` | `object` | No | — |
+| `waitForSelector` | `object` | No | — |
+| `waitUntil` | `load \| domcontentloaded \| networkidle0 \| networkidle2` | No | — |
+| `pageRanges` | `string` | No | — |
+| `format` | `letter \| legal \| tabloid \| ledger \| a0 \| a1 \| a2 \| a3 \| a4 \| a5 \| a6` | No | — |
+| `margin` | `object` | No | — |
+| `printBackground` | `boolean` | No | — |
+| `headerTemplate` | `object` | No | — |
+| `footerTemplate` | `object` | No | — |
+| `generatePreview` | `object` | No | — |
+
+The v1 response is binary and is returned as a base64-encoded `BinaryArtifact`. See https://cloudlayer.io/docs/template-to-pdf/.
+
+<AccordionGroup>
+<Accordion title="viewPort full type">
+
+```ts
+{
+  width?: number,
+  height?: number,
+  deviceScaleFactor?: number,
+  isMobile?: boolean,
+  hasTouch?: boolean,
+  isLandscape?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="waitForSelector full type">
+
+```ts
+{
+  selector: string,
+  options?: {
+    visible?: boolean,
+    hidden?: boolean,
+    timeout?: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="margin full type">
+
+```ts
+{
+  top?: string,
+  bottom?: string,
+  left?: string,
+  right?: string
+}
+```
+</Accordion>
+
+<Accordion title="headerTemplate full type">
+
+```ts
+{
+  selector: string,
+  method?: template | extract,
+  margin?: {
+    top?: string,
+    bottom?: string,
+    left?: string,
+    right?: string
+  },
+  style?: string,
+  imageStyle?: string
+}
+```
+</Accordion>
+
+<Accordion title="footerTemplate full type">
+
+```ts
+{
+  selector: string,
+  method?: template | extract,
+  margin?: {
+    top?: string,
+    bottom?: string,
+    left?: string,
+    right?: string
+  },
+  style?: string,
+  imageStyle?: string
+}
+```
+</Accordion>
+
+<Accordion title="generatePreview full type">
+
+```ts
+{
+  width?: number,
+  height?: number,
+  type?: png | jpg | webp,
+  quality?: number,
+  maintainAspectRatio?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `binary` | Yes | — |
+| `contentType` | `string` | Yes | — |
+| `base64` | `string` | Yes | — |
+
+
+
+---
+
+## Url
+
+### toImage
+
+`url.toImage`
+
+Screenshot a live web page with full viewport, cookie and auth control; v2 returns a job, including a completed job with async:false. Docs: https://cloudlayer.io/docs/url-to-image/
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudlayer.api.url.toImage({ url: 'https://capture.invalid/report' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `authentication` | `object` | No | — |
+| `cookies` | `object[]` | No | — |
+| `autoScroll` | `boolean` | No | — |
+| `delay` | `number` | No | — |
+| `filename` | `string` | No | — |
+| `height` | `string` | No | — |
+| `width` | `string` | No | — |
+| `inline` | `boolean` | No | — |
+| `landscape` | `boolean` | No | — |
+| `preferCSSPageSize` | `boolean` | No | — |
+| `projectId` | `string` | No | — |
+| `scale` | `number` | No | — |
+| `timeout` | `number` | No | — |
+| `timeZone` | `string` | No | — |
+| `viewPort` | `object` | No | — |
+| `waitForSelector` | `object` | No | — |
+| `waitUntil` | `load \| domcontentloaded \| networkidle0 \| networkidle2` | No | — |
+| `imageType` | `png \| jpg \| jpeg \| webp \| svg` | No | — |
+| `quality` | `number` | No | — |
+| `transparent` | `boolean` | No | — |
+| `trim` | `boolean` | No | — |
+| `async` | `boolean` | No | — |
+| `storage` | `boolean` | No | — |
+
+V2 POST returns a JSON job; `async: false` waits for completion and returns the completed JSON job per the API overview. `url.toImageV1` exposes v1 POST, and `url.toImageQuickV1` exposes v1 GET as base64-encoded binary artifacts. See https://cloudlayer.io/docs/url-to-image/.
+
+<AccordionGroup>
+<Accordion title="authentication full type">
+
+```ts
+{
+  username: string,
+  password: string
+}
+```
+</Accordion>
+
+<Accordion title="cookies full type">
+
+```ts
+{
+  name: string,
+  value: string,
+  domain?: string,
+  path?: string,
+  expires?: number,
+  httpOnly?: boolean,
+  secure?: boolean,
+  sameSite?: Strict | Lax | None
+}[]
+```
+</Accordion>
+
+<Accordion title="viewPort full type">
+
+```ts
+{
+  width?: number,
+  height?: number,
+  deviceScaleFactor?: number,
+  isMobile?: boolean,
+  hasTouch?: boolean,
+  isLandscape?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="waitForSelector full type">
+
+```ts
+{
+  selector: string,
+  options?: {
+    visible?: boolean,
+    hidden?: boolean,
+    timeout?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  status: pending | success | error | string,
+  type?: string,
+  assetUrl?: string,
+  previewUrl?: string,
+  error?: string,
+  processTime?: number,
+  size?: number,
+  timestamp?: number
+} | {
+  kind: binary,
+  contentType: string,
+  base64: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### toImageQuick
+
+`url.toImageQuick`
+
+GET convenience route that creates a JSON job for one URL image with only url and timeout. Docs: https://cloudlayer.io/docs/url-to-image/
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudlayer.api.url.toImageQuick({ url: 'https://capture.invalid/report' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `timeout` | `number` | No | — |
+
+The v2 GET shortcut returns a JSON job. `url.toImageQuickV1` exposes the v1 GET route as a base64-encoded `BinaryArtifact`. See https://cloudlayer.io/docs/url-to-image/.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `pending \| success \| error \| string` | Yes | — |
+| `type` | `string` | No | — |
+| `assetUrl` | `string` | No | — |
+| `previewUrl` | `string` | No | — |
+| `error` | `string` | No | — |
+| `processTime` | `number` | No | — |
+| `size` | `number` | No | — |
+| `timestamp` | `number` | No | — |
+
+
+
+---
+
+### toImageQuickV1
+
+`url.toImageQuickV1`
+
+GET v1 shortcut that screenshots one URL and returns a base64-encoded binary artifact. Docs: https://cloudlayer.io/docs/url-to-image/
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudlayer.api.url.toImageQuickV1({ url: 'https://capture.invalid/report' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `timeout` | `number` | No | — |
+
+The v1 GET response is binary and is returned as a base64-encoded `BinaryArtifact`. See https://cloudlayer.io/docs/url-to-image/.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `binary` | Yes | — |
+| `contentType` | `string` | Yes | — |
+| `base64` | `string` | Yes | — |
+
+
+
+---
+
+### toImageV1
+
+`url.toImageV1`
+
+Screenshot a URL using the v1 POST route; returns a base64-encoded binary artifact. Docs: https://cloudlayer.io/docs/url-to-image/
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudlayer.api.url.toImageV1({ url: 'https://capture.invalid/report' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `authentication` | `object` | No | — |
+| `cookies` | `object[]` | No | — |
+| `autoScroll` | `boolean` | No | — |
+| `delay` | `number` | No | — |
+| `filename` | `string` | No | — |
+| `height` | `string` | No | — |
+| `width` | `string` | No | — |
+| `inline` | `boolean` | No | — |
+| `landscape` | `boolean` | No | — |
+| `preferCSSPageSize` | `boolean` | No | — |
+| `projectId` | `string` | No | — |
+| `scale` | `number` | No | — |
+| `timeout` | `number` | No | — |
+| `timeZone` | `string` | No | — |
+| `viewPort` | `object` | No | — |
+| `waitForSelector` | `object` | No | — |
+| `waitUntil` | `load \| domcontentloaded \| networkidle0 \| networkidle2` | No | — |
+| `imageType` | `png \| jpg \| jpeg \| webp \| svg` | No | — |
+| `quality` | `number` | No | — |
+| `transparent` | `boolean` | No | — |
+| `trim` | `boolean` | No | — |
+
+The v1 POST response is binary and is returned as a base64-encoded `BinaryArtifact`. See https://cloudlayer.io/docs/url-to-image/.
+
+<AccordionGroup>
+<Accordion title="authentication full type">
+
+```ts
+{
+  username: string,
+  password: string
+}
+```
+</Accordion>
+
+<Accordion title="cookies full type">
+
+```ts
+{
+  name: string,
+  value: string,
+  domain?: string,
+  path?: string,
+  expires?: number,
+  httpOnly?: boolean,
+  secure?: boolean,
+  sameSite?: Strict | Lax | None
+}[]
+```
+</Accordion>
+
+<Accordion title="viewPort full type">
+
+```ts
+{
+  width?: number,
+  height?: number,
+  deviceScaleFactor?: number,
+  isMobile?: boolean,
+  hasTouch?: boolean,
+  isLandscape?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="waitForSelector full type">
+
+```ts
+{
+  selector: string,
+  options?: {
+    visible?: boolean,
+    hidden?: boolean,
+    timeout?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `binary` | Yes | — |
+| `contentType` | `string` | Yes | — |
+| `base64` | `string` | Yes | — |
+
+
+
+---
+
+### toPdf
+
+`url.toPdf`
+
+Capture a live web page (or a batch of URLs) as a PDF; v2 returns a job, including a completed job with async:false. Docs: https://cloudlayer.io/docs/url-to-pdf/
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudlayer.api.url.toPdf({ url: 'https://capture.invalid/report' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | — |
+| `authentication` | `object` | No | — |
+| `cookies` | `object[]` | No | — |
+| `batch` | `object` | No | — |
+| `autoScroll` | `boolean` | No | — |
+| `delay` | `number` | No | — |
+| `filename` | `string` | No | — |
+| `height` | `string` | No | — |
+| `width` | `string` | No | — |
+| `inline` | `boolean` | No | — |
+| `landscape` | `boolean` | No | — |
+| `preferCSSPageSize` | `boolean` | No | — |
+| `projectId` | `string` | No | — |
+| `scale` | `number` | No | — |
+| `timeout` | `number` | No | — |
+| `timeZone` | `string` | No | — |
+| `viewPort` | `object` | No | — |
+| `waitForSelector` | `object` | No | — |
+| `waitUntil` | `load \| domcontentloaded \| networkidle0 \| networkidle2` | No | — |
+| `pageRanges` | `string` | No | — |
+| `format` | `letter \| legal \| tabloid \| ledger \| a0 \| a1 \| a2 \| a3 \| a4 \| a5 \| a6` | No | — |
+| `margin` | `object` | No | — |
+| `printBackground` | `boolean` | No | — |
+| `headerTemplate` | `object` | No | — |
+| `footerTemplate` | `object` | No | — |
+| `generatePreview` | `object` | No | — |
+| `async` | `boolean` | No | — |
+| `storage` | `boolean` | No | — |
+
+V2 POST returns a JSON job; `async: false` waits for completion and returns the completed JSON job per the API overview. `url.toPdfV1` exposes the v1 POST route as a base64-encoded `BinaryArtifact`. See https://cloudlayer.io/docs/url-to-pdf/.
+
+<AccordionGroup>
+<Accordion title="authentication full type">
+
+```ts
+{
+  username: string,
+  password: string
+}
+```
+</Accordion>
+
+<Accordion title="cookies full type">
+
+```ts
+{
+  name: string,
+  value: string,
+  domain?: string,
+  path?: string,
+  expires?: number,
+  httpOnly?: boolean,
+  secure?: boolean,
+  sameSite?: Strict | Lax | None
+}[]
+```
+</Accordion>
+
+<Accordion title="batch full type">
+
+```ts
+{
+  urls: string[]
+}
+```
+</Accordion>
+
+<Accordion title="viewPort full type">
+
+```ts
+{
+  width?: number,
+  height?: number,
+  deviceScaleFactor?: number,
+  isMobile?: boolean,
+  hasTouch?: boolean,
+  isLandscape?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="waitForSelector full type">
+
+```ts
+{
+  selector: string,
+  options?: {
+    visible?: boolean,
+    hidden?: boolean,
+    timeout?: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="margin full type">
+
+```ts
+{
+  top?: string,
+  bottom?: string,
+  left?: string,
+  right?: string
+}
+```
+</Accordion>
+
+<Accordion title="headerTemplate full type">
+
+```ts
+{
+  selector: string,
+  method?: template | extract,
+  margin?: {
+    top?: string,
+    bottom?: string,
+    left?: string,
+    right?: string
+  },
+  style?: string,
+  imageStyle?: string
+}
+```
+</Accordion>
+
+<Accordion title="footerTemplate full type">
+
+```ts
+{
+  selector: string,
+  method?: template | extract,
+  margin?: {
+    top?: string,
+    bottom?: string,
+    left?: string,
+    right?: string
+  },
+  style?: string,
+  imageStyle?: string
+}
+```
+</Accordion>
+
+<Accordion title="generatePreview full type">
+
+```ts
+{
+  width?: number,
+  height?: number,
+  type?: png | jpg | webp,
+  quality?: number,
+  maintainAspectRatio?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  status: pending | success | error | string,
+  type?: string,
+  assetUrl?: string,
+  previewUrl?: string,
+  error?: string,
+  processTime?: number,
+  size?: number,
+  timestamp?: number
+} | {
+  kind: binary,
+  contentType: string,
+  base64: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### toPdfQuick
+
+`url.toPdfQuick`
+
+GET convenience route that captures a single URL as a PDF with only url and timeout. Docs: https://cloudlayer.io/docs/url-to-pdf/
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudlayer.api.url.toPdfQuick({ url: 'https://capture.invalid/report' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `timeout` | `number` | No | — |
+
+The v2 GET shortcut returns a JSON job. `url.toPdfQuickV1` exposes the v1 GET route as a base64-encoded `BinaryArtifact`. See https://cloudlayer.io/docs/url-to-pdf/.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `pending \| success \| error \| string` | Yes | — |
+| `type` | `string` | No | — |
+| `assetUrl` | `string` | No | — |
+| `previewUrl` | `string` | No | — |
+| `error` | `string` | No | — |
+| `processTime` | `number` | No | — |
+| `size` | `number` | No | — |
+| `timestamp` | `number` | No | — |
+
+
+
+---
+
+### toPdfQuickV1
+
+`url.toPdfQuickV1`
+
+GET v1 shortcut that captures one URL as a PDF and returns a base64-encoded binary artifact. Docs: https://cloudlayer.io/docs/url-to-pdf/
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudlayer.api.url.toPdfQuickV1({ url: 'https://capture.invalid/report' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `timeout` | `number` | No | — |
+
+The v1 GET response is binary and is returned as a base64-encoded `BinaryArtifact`. See https://cloudlayer.io/docs/url-to-pdf/.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `binary` | Yes | — |
+| `contentType` | `string` | Yes | — |
+| `base64` | `string` | Yes | — |
+
+
+
+---
+
+### toPdfV1
+
+`url.toPdfV1`
+
+Capture a URL (or batch) as a PDF using the v1 route; returns a base64-encoded binary artifact. Docs: https://cloudlayer.io/docs/url-to-pdf/
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudlayer.api.url.toPdfV1({ url: 'https://capture.invalid/report' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | — |
+| `authentication` | `object` | No | — |
+| `cookies` | `object[]` | No | — |
+| `batch` | `object` | No | — |
+| `autoScroll` | `boolean` | No | — |
+| `delay` | `number` | No | — |
+| `filename` | `string` | No | — |
+| `height` | `string` | No | — |
+| `width` | `string` | No | — |
+| `inline` | `boolean` | No | — |
+| `landscape` | `boolean` | No | — |
+| `preferCSSPageSize` | `boolean` | No | — |
+| `projectId` | `string` | No | — |
+| `scale` | `number` | No | — |
+| `timeout` | `number` | No | — |
+| `timeZone` | `string` | No | — |
+| `viewPort` | `object` | No | — |
+| `waitForSelector` | `object` | No | — |
+| `waitUntil` | `load \| domcontentloaded \| networkidle0 \| networkidle2` | No | — |
+| `pageRanges` | `string` | No | — |
+| `format` | `letter \| legal \| tabloid \| ledger \| a0 \| a1 \| a2 \| a3 \| a4 \| a5 \| a6` | No | — |
+| `margin` | `object` | No | — |
+| `printBackground` | `boolean` | No | — |
+| `headerTemplate` | `object` | No | — |
+| `footerTemplate` | `object` | No | — |
+| `generatePreview` | `object` | No | — |
+
+The v1 POST response is binary and is returned as a base64-encoded `BinaryArtifact`. See https://cloudlayer.io/docs/url-to-pdf/.
+
+<AccordionGroup>
+<Accordion title="authentication full type">
+
+```ts
+{
+  username: string,
+  password: string
+}
+```
+</Accordion>
+
+<Accordion title="cookies full type">
+
+```ts
+{
+  name: string,
+  value: string,
+  domain?: string,
+  path?: string,
+  expires?: number,
+  httpOnly?: boolean,
+  secure?: boolean,
+  sameSite?: Strict | Lax | None
+}[]
+```
+</Accordion>
+
+<Accordion title="batch full type">
+
+```ts
+{
+  urls: string[]
+}
+```
+</Accordion>
+
+<Accordion title="viewPort full type">
+
+```ts
+{
+  width?: number,
+  height?: number,
+  deviceScaleFactor?: number,
+  isMobile?: boolean,
+  hasTouch?: boolean,
+  isLandscape?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="waitForSelector full type">
+
+```ts
+{
+  selector: string,
+  options?: {
+    visible?: boolean,
+    hidden?: boolean,
+    timeout?: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="margin full type">
+
+```ts
+{
+  top?: string,
+  bottom?: string,
+  left?: string,
+  right?: string
+}
+```
+</Accordion>
+
+<Accordion title="headerTemplate full type">
+
+```ts
+{
+  selector: string,
+  method?: template | extract,
+  margin?: {
+    top?: string,
+    bottom?: string,
+    left?: string,
+    right?: string
+  },
+  style?: string,
+  imageStyle?: string
+}
+```
+</Accordion>
+
+<Accordion title="footerTemplate full type">
+
+```ts
+{
+  selector: string,
+  method?: template | extract,
+  margin?: {
+    top?: string,
+    bottom?: string,
+    left?: string,
+    right?: string
+  },
+  style?: string,
+  imageStyle?: string
+}
+```
+</Accordion>
+
+<Accordion title="generatePreview full type">
+
+```ts
+{
+  width?: number,
+  height?: number,
+  type?: png | jpg | webp,
+  quality?: number,
+  maintainAspectRatio?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `binary` | Yes | — |
+| `contentType` | `string` | Yes | — |
+| `base64` | `string` | Yes | — |
+
+
+
+---
+

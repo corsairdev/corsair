@@ -79,7 +79,7 @@
           {
             "key": "value",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "@odata.count",

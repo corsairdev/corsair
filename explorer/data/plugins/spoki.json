@@ -1,7 +1,7 @@
 {
   "id": "spoki",
-  "displayName": "Spoki integration for Corsair",
-  "description": "Spoki integration for Corsair",
+  "displayName": "Spoki",
+  "description": "WhatsApp Business platform for contacts, message templates, campaigns, tickets and automations.",
   "npmPackageName": "@corsair-dev/spoki",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -35,7 +35,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -83,8 +83,8 @@
           },
           {
             "key": "phone",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "has_official_verification",
@@ -174,7 +174,7 @@
           {
             "key": "primary_channel_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "channels",
@@ -229,8 +229,8 @@
           },
           {
             "key": "phone",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "has_official_verification",
@@ -320,7 +320,7 @@
           {
             "key": "primary_channel_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "channels",
@@ -347,7 +347,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[] | {}"
+        "type": "Record<string, any>[] | Record<string, any>"
       }
     },
     {
@@ -382,7 +382,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: number, name: string, current_credit: number, status: string, default_language: string, phone?: string | null, has_official_verification: boolean, daily_limit: number, phone_status: string, quality_score: number, quality_reasons?: any, is_active: boolean, country_code: string, estimated_available_conversations: number, account_type: number, default_pricing_delta: number, low_credit_threshold: number, has_low_credit_alert: boolean, default_prefix: string, default_country_code: string, timezone: string, contacted_in_24h: number, contacted_in_7d: number, primary_channel_id?: number | null, channels?: { name: string, identifier: string, platform: string, status: string, phone_status: string, quality_score: string, is_primary: boolean }[] }[]"
+        "type": "{ id: number, name: string, current_credit: number, status: string, default_language: string, phone: string | null, has_official_verification: boolean, daily_limit: number, phone_status: string, quality_score: number, quality_reasons?: any, is_active: boolean, country_code: string, estimated_available_conversations: number, account_type: number, default_pricing_delta: number, low_credit_threshold: number, has_low_credit_alert: boolean, default_prefix: string, default_country_code: string, timezone: string, contacted_in_24h: number, contacted_in_7d: number, primary_channel_id?: number | null, channels?: { name: string, identifier: string, platform: string, status: string, phone_status: string, quality_score: string, is_primary: boolean }[] }[]"
       }
     },
     {
@@ -417,7 +417,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[] | {}"
+        "type": "Record<string, any>[] | Record<string, any>"
       }
     },
     {
@@ -466,12 +466,12 @@
           {
             "key": "custom_fields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -512,7 +512,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[] | {}"
+        "type": "Record<string, any>[] | Record<string, any>"
       }
     },
     {
@@ -532,7 +532,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -567,7 +567,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[] | {}"
+        "type": "Record<string, any>[] | Record<string, any>"
       }
     },
     {
@@ -602,7 +602,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -632,7 +632,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -672,7 +672,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -693,7 +693,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -728,7 +728,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[] | {}"
+        "type": "Record<string, any>[] | Record<string, any>"
       }
     },
     {
@@ -748,7 +748,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -768,7 +768,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -788,7 +788,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -808,7 +808,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -833,7 +833,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -854,7 +854,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -889,7 +889,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[] | {}"
+        "type": "Record<string, any>[] | Record<string, any>"
       }
     },
     {
@@ -909,7 +909,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -934,7 +934,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -954,7 +954,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -974,7 +974,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -994,7 +994,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1015,7 +1015,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1050,7 +1050,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[] | {}"
+        "type": "Record<string, any>[] | Record<string, any>"
       }
     },
     {
@@ -1070,7 +1070,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1095,7 +1095,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1115,7 +1115,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1140,7 +1140,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1154,7 +1154,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1175,7 +1175,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1210,7 +1210,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[] | {}"
+        "type": "Record<string, any>[] | Record<string, any>"
       }
     },
     {
@@ -1230,7 +1230,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1250,7 +1250,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1279,7 +1279,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1320,7 +1320,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[] | {}"
+        "type": "Record<string, any>[] | Record<string, any>"
       }
     },
     {
@@ -1355,7 +1355,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[] | {}"
+        "type": "Record<string, any>[] | Record<string, any>"
       }
     },
     {
@@ -1369,7 +1369,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1389,7 +1389,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1410,7 +1410,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1430,7 +1430,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1465,7 +1465,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[] | {}"
+        "type": "Record<string, any>[] | Record<string, any>"
       }
     },
     {
@@ -1485,7 +1485,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1505,7 +1505,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1540,7 +1540,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[] | {}"
+        "type": "Record<string, any>[] | Record<string, any>"
       }
     },
     {
@@ -1560,7 +1560,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1580,7 +1580,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1610,7 +1610,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1636,7 +1636,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1671,7 +1671,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[] | {}"
+        "type": "Record<string, any>[] | Record<string, any>"
       }
     },
     {
@@ -1691,7 +1691,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1711,7 +1711,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1731,7 +1731,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1745,7 +1745,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1766,7 +1766,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1801,7 +1801,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[] | {}"
+        "type": "Record<string, any>[] | Record<string, any>"
       }
     }
   ],

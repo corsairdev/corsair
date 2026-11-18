@@ -314,7 +314,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, message?: string, created_time?: string, from?: { id?: string, name?: string, email?: string }, to?: { data?: { id?: string, name?: string, email?: string }[] }, attachments?: { data?: {}[] } }[]"
+            "type": "{ id: string, message?: string, created_time?: string, from?: { id?: string, name?: string, email?: string }, to?: { data?: { id?: string, name?: string, email?: string }[] }, attachments?: { data?: Record<string, any>[] } }[]"
           },
           {
             "key": "paging",
@@ -438,7 +438,7 @@
           {
             "key": "attachments",
             "optional": true,
-            "type": "{ data?: {}[] }"
+            "type": "{ data?: Record<string, any>[] }"
           }
         ]
       }
@@ -801,7 +801,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ name: string, period?: string, values?: { value: number | string | {}, end_time?: string }[], title?: string, description?: string, id?: string }[]"
+            "type": "{ name: string, period?: string, values?: { value: number | string | Record<string, any>, end_time?: string }[], title?: string, description?: string, id?: string }[]"
           },
           {
             "key": "paging",
@@ -1377,7 +1377,7 @@
           {
             "key": "targeting",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1534,7 +1534,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ name: string, period?: string, values?: { value: number | string | {}, end_time?: string }[], title?: string, description?: string, id?: string }[]"
+            "type": "{ name: string, period?: string, values?: { value: number | string | Record<string, any>, end_time?: string }[], title?: string, description?: string, id?: string }[]"
           },
           {
             "key": "paging",

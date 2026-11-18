@@ -1,0 +1,1638 @@
+{
+  "id": "craftmypdf",
+  "displayName": "CraftMyPDF",
+  "description": "PDF generation API that renders PDFs and images from reusable drag-and-drop templates, and manages those templates, their versions and the account's usage.",
+  "npmPackageName": "@corsair-dev/craftmypdf",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 23,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "craftmypdf.api.account.getInfo",
+      "shortPath": "account.getInfo",
+      "description": "Read the account name, credit usage and template count against their limits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_team",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "quota_counter",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "quota_max",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "template_counter",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "template_max",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "craftmypdf.api.editor.createSession",
+      "shortPath": "editor.createSession",
+      "description": "Create a signed URL that lets its bearer edit a template in the embedded designer; the URL is a credential",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string",
+            "description": "Template the session edits."
+          },
+          {
+            "key": "expiration",
+            "optional": false,
+            "type": "number",
+            "description": "Minutes until the session expires, for example 1440 for a day."
+          },
+          {
+            "key": "canSave",
+            "optional": true,
+            "type": "boolean",
+            "description": "Allow saving changes."
+          },
+          {
+            "key": "canCreatePDF",
+            "optional": true,
+            "type": "boolean",
+            "description": "Allow generating a PDF."
+          },
+          {
+            "key": "canViewSettings",
+            "optional": true,
+            "type": "boolean",
+            "description": "Show the settings panel."
+          },
+          {
+            "key": "canPreview",
+            "optional": true,
+            "type": "boolean",
+            "description": "Allow the preview."
+          },
+          {
+            "key": "canEditJSON",
+            "optional": true,
+            "type": "boolean",
+            "description": "Allow editing the JSON data."
+          },
+          {
+            "key": "canShowHeader",
+            "optional": true,
+            "type": "boolean",
+            "description": "Show the CraftMyPDF header."
+          },
+          {
+            "key": "canShowLayers",
+            "optional": true,
+            "type": "boolean",
+            "description": "Show the layers panel."
+          },
+          {
+            "key": "canShowPropertyPanel",
+            "optional": true,
+            "type": "boolean",
+            "description": "Show the property panel."
+          },
+          {
+            "key": "canShowHelp",
+            "optional": true,
+            "type": "boolean",
+            "description": "Show the help tab."
+          },
+          {
+            "key": "canShowData",
+            "optional": true,
+            "type": "boolean",
+            "description": "Show the data tab."
+          },
+          {
+            "key": "canShowExpressionDoc",
+            "optional": true,
+            "type": "boolean",
+            "description": "Show the expression documentation tab."
+          },
+          {
+            "key": "canShowPropertyBinding",
+            "optional": true,
+            "type": "boolean",
+            "description": "Show property binding for elements."
+          },
+          {
+            "key": "canShowBackURL",
+            "optional": true,
+            "type": "boolean",
+            "description": "Show the back button."
+          },
+          {
+            "key": "jsonMode",
+            "optional": true,
+            "type": "1 | 2",
+            "description": "1 makes the JSON editor editable, 2 makes it read-only."
+          },
+          {
+            "key": "backURL",
+            "optional": true,
+            "type": "string",
+            "description": "Where the back button goes."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expire_after_unix_timestamp",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "expire_after",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "token_uuid",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "craftmypdf.api.editor.deactivateSession",
+      "shortPath": "editor.deactivateSession",
+      "description": "Revoke an editor session so its URL stops working",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "token_uuid",
+            "optional": false,
+            "type": "string",
+            "description": "The token_uuid that editor.createSession returned."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "craftmypdf.api.pdf.addText",
+      "shortPath": "pdf.addText",
+      "description": "Draw text such as page numbers or headers on chosen pages of a PDF and return a new file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "URL of the source PDF."
+          },
+          {
+            "key": "textSettings",
+            "optional": false,
+            "type": "{ page_selector: string, text: string, position: top-left | top-center | top-right | middle-left | center | middle-right | bottom-left | bottom-center | bottom-right, offset_x?: number, offset_y?: number, font_size?: number, hex_color?: string, font_family?: Courier | Courier-Bold | Courier-Oblique | Courier-BoldOblique | Helvetica | Helvetica-Bold | Helvetica-Oblique | Helvetica-BoldOblique | Times-Roman | Times-Bold | Times-Italic | Times-BoldItalic | Symbol | ZapfDingbats, opacity?: number, rotation?: number }[]",
+            "description": "Text to draw on the PDF. One entry can cover many pages; several entries stack."
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Minutes the generated file stays on the CDN. 1 to 10080; CraftMyPDF defaults to 5."
+          },
+          {
+            "key": "output_file",
+            "optional": true,
+            "type": "string",
+            "description": "Name of the generated file, for example output.pdf."
+          },
+          {
+            "key": "cloud_storage",
+            "optional": true,
+            "type": "number",
+            "description": "1 to keep the generated file on the CraftMyPDF CDN, 0 to skip it (for example when S3 post actions are configured). Defaults to 1."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "transaction_ref",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "anchors",
+            "optional": true,
+            "type": "{ page?: number | null, text?: string | null, level?: string | null, description?: string | null }[] | null"
+          },
+          {
+            "key": "total_pages",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "file_size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "craftmypdf.api.pdf.addWatermark",
+      "shortPath": "pdf.addWatermark",
+      "description": "Stamp a text watermark on every page of a PDF and return a new file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "URL of the source PDF."
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string",
+            "description": "Watermark text."
+          },
+          {
+            "key": "font_size",
+            "optional": true,
+            "type": "number",
+            "description": "Font size in points. CraftMyPDF defaults to 40."
+          },
+          {
+            "key": "opacity",
+            "optional": true,
+            "type": "number",
+            "description": "0 is transparent and 1 is opaque. Defaults to 0.5."
+          },
+          {
+            "key": "rotation",
+            "optional": true,
+            "type": "number",
+            "description": "Rotation in degrees. CraftMyPDF defaults to 45."
+          },
+          {
+            "key": "hex_color",
+            "optional": true,
+            "type": "string",
+            "description": "Hex colour, for example #FF0000."
+          },
+          {
+            "key": "font_family",
+            "optional": true,
+            "type": "Courier | Courier-Bold | Courier-Oblique | Courier-BoldOblique | Helvetica | Helvetica-Bold | Helvetica-Oblique | Helvetica-BoldOblique | Times-Roman | Times-Bold | Times-Italic | Times-BoldItalic | Symbol | ZapfDingbats",
+            "description": "Base-14 PDF font. Defaults to Helvetica."
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Minutes the generated file stays on the CDN. 1 to 10080; CraftMyPDF defaults to 5."
+          },
+          {
+            "key": "output_file",
+            "optional": true,
+            "type": "string",
+            "description": "Name of the generated file, for example output.pdf."
+          },
+          {
+            "key": "cloud_storage",
+            "optional": true,
+            "type": "number",
+            "description": "1 to keep the generated file on the CraftMyPDF CDN, 0 to skip it (for example when S3 post actions are configured). Defaults to 1."
+          },
+          {
+            "key": "postaction_s3_filekey",
+            "optional": true,
+            "type": "string",
+            "description": "File name for the S3 post action, without an extension. It must be unique, and / works as a folder separator."
+          },
+          {
+            "key": "postaction_s3_bucket",
+            "optional": true,
+            "type": "string",
+            "description": "Overrides the configured AWS bucket for the S3 post action."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "transaction_ref",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "anchors",
+            "optional": true,
+            "type": "{ page?: number | null, text?: string | null, level?: string | null, description?: string | null }[] | null"
+          },
+          {
+            "key": "total_pages",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "file_size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "craftmypdf.api.pdf.create",
+      "shortPath": "pdf.create",
+      "description": "Generate a PDF from a template and JSON data, synchronously; consumes one credit per PDF",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string",
+            "description": "Template to generate from. Several comma-separated IDs generate one PDF per template."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "string | Record<string, JsonValue>",
+            "description": "Template JSON data, either an object or a stringified JSON string."
+          },
+          {
+            "key": "load_data_from",
+            "optional": true,
+            "type": "string",
+            "description": "URL to fetch the template JSON from. CraftMyPDF overwrites data with this content, so data can be omitted."
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string | number",
+            "description": "Template version. Omit to use the latest version of the template."
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Minutes the generated file stays on the CDN. 1 to 10080; CraftMyPDF defaults to 5."
+          },
+          {
+            "key": "output_file",
+            "optional": true,
+            "type": "string",
+            "description": "Name of the generated file, for example output.pdf."
+          },
+          {
+            "key": "image_resample_res",
+            "optional": true,
+            "type": "number",
+            "description": "Downsamples images in the PDF to this resolution in DPI to shrink the file. Suggested values are 1200, 600, 300, 150 and 72."
+          },
+          {
+            "key": "cloud_storage",
+            "optional": true,
+            "type": "number",
+            "description": "1 to keep the generated file on the CraftMyPDF CDN, 0 to skip it (for example when S3 post actions are configured). Defaults to 1."
+          },
+          {
+            "key": "postaction_s3_filekey",
+            "optional": true,
+            "type": "string",
+            "description": "File name for the S3 post action, without an extension. It must be unique, and / works as a folder separator."
+          },
+          {
+            "key": "postaction_s3_bucket",
+            "optional": true,
+            "type": "string",
+            "description": "Overrides the configured AWS bucket for the S3 post action."
+          },
+          {
+            "key": "password_protected",
+            "optional": true,
+            "type": "boolean",
+            "description": "Encrypt the generated PDF with password."
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string",
+            "description": "Password for the generated PDF."
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "continuous | reset",
+            "description": "Page numbering when several templates are combined. continuous keeps counting across documents; reset restarts at 1 for each."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "transaction_ref",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "anchors",
+            "optional": true,
+            "type": "{ page?: number | null, text?: string | null, level?: string | null, description?: string | null }[] | null"
+          },
+          {
+            "key": "total_pages",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "file_size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "craftmypdf.api.pdf.createAsync",
+      "shortPath": "pdf.createAsync",
+      "description": "Queue a PDF generation and return at once with a transaction reference, delivering the file to a webhook URL; consumes one credit per PDF",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string",
+            "description": "Template to generate from."
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string | Record<string, JsonValue>",
+            "description": "Template JSON data, either an object or a stringified JSON string."
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string | number",
+            "description": "Template version. Omit to use the latest version of the template."
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Minutes the generated file stays on the CDN. 1 to 10080; CraftMyPDF defaults to 5."
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string",
+            "description": "CraftMyPDF calls this URL with a GET once the PDF is ready, adding file (the PDF URL), transaction_ref, status, message and details as query parameters. This is the only way to get the file URL: transactions.list records the job and its status, but no file URL."
+          },
+          {
+            "key": "image_resample_res",
+            "optional": true,
+            "type": "number",
+            "description": "Downsamples images in the PDF to this resolution in DPI to shrink the file. Suggested values are 1200, 600, 300, 150 and 72."
+          },
+          {
+            "key": "cloud_storage",
+            "optional": true,
+            "type": "number",
+            "description": "1 to keep the generated file on the CraftMyPDF CDN, 0 to skip it (for example when S3 post actions are configured). Defaults to 1."
+          },
+          {
+            "key": "postaction_s3_filekey",
+            "optional": true,
+            "type": "string",
+            "description": "File name for the S3 post action, without an extension. It must be unique, and / works as a folder separator."
+          },
+          {
+            "key": "postaction_s3_bucket",
+            "optional": true,
+            "type": "string",
+            "description": "Overrides the configured AWS bucket for the S3 post action."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "transaction_ref",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_async",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "craftmypdf.api.pdf.createImage",
+      "shortPath": "pdf.createImage",
+      "description": "Render a template to a JPEG or PNG image instead of a PDF; consumes one credit per image",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string",
+            "description": "Template to render."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "string | Record<string, JsonValue>",
+            "description": "Template JSON data, either an object or a stringified JSON string."
+          },
+          {
+            "key": "load_data_from",
+            "optional": true,
+            "type": "string",
+            "description": "URL to fetch the template JSON from."
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string | number",
+            "description": "Template version. Omit to use the latest version of the template."
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Minutes the generated file stays on the CDN. 1 to 10080; CraftMyPDF defaults to 5."
+          },
+          {
+            "key": "output_file",
+            "optional": true,
+            "type": "string",
+            "description": "Name of the generated image, for example output.jpg."
+          },
+          {
+            "key": "output_type",
+            "optional": true,
+            "type": "jpeg | png",
+            "description": "Image format. CraftMyPDF defaults to jpeg."
+          },
+          {
+            "key": "cloud_storage",
+            "optional": true,
+            "type": "number",
+            "description": "1 to keep the generated file on the CraftMyPDF CDN, 0 to skip it (for example when S3 post actions are configured). Defaults to 1."
+          },
+          {
+            "key": "postaction_s3_filekey",
+            "optional": true,
+            "type": "string",
+            "description": "File name for the S3 post action, without an extension. It must be unique, and / works as a folder separator."
+          },
+          {
+            "key": "postaction_s3_bucket",
+            "optional": true,
+            "type": "string",
+            "description": "Overrides the configured AWS bucket for the S3 post action."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "transaction_ref",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "anchors",
+            "optional": true,
+            "type": "{ page?: number | null, text?: string | null, level?: string | null, description?: string | null }[] | null"
+          },
+          {
+            "key": "total_pages",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "file_size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "craftmypdf.api.pdf.createMerge",
+      "shortPath": "pdf.createMerge",
+      "description": "Render several templates, each with its own data, into one combined PDF; consumes one credit per template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templates",
+            "optional": false,
+            "type": "{ template_id: string, data?: string | Record<string, JsonValue>, version?: string | number }[]",
+            "description": "Templates to render, in order, into one PDF."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "string | Record<string, JsonValue>",
+            "description": "Data used by every template that does not carry its own."
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Minutes the generated file stays on the CDN. 1 to 10080; CraftMyPDF defaults to 5."
+          },
+          {
+            "key": "output_file",
+            "optional": true,
+            "type": "string",
+            "description": "Name of the generated file, for example output.pdf."
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "continuous | reset",
+            "description": "Page numbering across the merged documents. CraftMyPDF defaults to reset here, unlike pdf.create."
+          },
+          {
+            "key": "cloud_storage",
+            "optional": true,
+            "type": "number",
+            "description": "1 to keep the generated file on the CraftMyPDF CDN, 0 to skip it (for example when S3 post actions are configured). Defaults to 1."
+          },
+          {
+            "key": "image_resample_res",
+            "optional": true,
+            "type": "number",
+            "description": "Downsamples images in the PDF to this resolution in DPI to shrink the file. Suggested values are 1200, 600, 300, 150 and 72."
+          },
+          {
+            "key": "postaction_s3_filekey",
+            "optional": true,
+            "type": "string",
+            "description": "File name for the S3 post action, without an extension. It must be unique, and / works as a folder separator."
+          },
+          {
+            "key": "postaction_s3_bucket",
+            "optional": true,
+            "type": "string",
+            "description": "Overrides the configured AWS bucket for the S3 post action."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "transaction_ref",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "anchors",
+            "optional": true,
+            "type": "{ page?: number | null, text?: string | null, level?: string | null, description?: string | null }[] | null"
+          },
+          {
+            "key": "total_pages",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "file_size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "craftmypdf.api.pdf.createParallel",
+      "shortPath": "pdf.createParallel",
+      "description": "Generate a batch of PDFs in one request, each from its own template data, optionally merging them into a single file; consumes one credit per PDF",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requests",
+            "optional": false,
+            "type": "{ template_id: string, data?: string | Record<string, JsonValue>, version?: string | number, output_file?: string, meta?: string }[]",
+            "description": "One generation request per PDF, run in parallel."
+          },
+          {
+            "key": "merge",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also merge every generated PDF into one file, returned as merge_result. Defaults to false."
+          },
+          {
+            "key": "merge_expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Minutes the merged file stays available. Only used when merge is true."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ file?: string | null, transaction_ref?: string | null, status?: string | null, total_pages?: number | null, file_size?: number | null, template_id?: string | null, index?: number | null, meta?: string | null, message?: string | null }[] | null"
+          },
+          {
+            "key": "merge_result",
+            "optional": true,
+            "type": "{ file?: string | null, transaction_ref?: string | null, status?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "craftmypdf.api.pdf.getInfo",
+      "shortPath": "pdf.getInfo",
+      "description": "Read the page count and document properties of a PDF at a URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "URL of the PDF to inspect."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "totalPages",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "keywords",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "producer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "creationDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modificationDate",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "craftmypdf.api.pdf.merge",
+      "shortPath": "pdf.merge",
+      "description": "Merge several PDFs fetched by URL into one file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "urls",
+            "optional": false,
+            "type": "string[]",
+            "description": "PDF URLs to merge, in order."
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Minutes the generated file stays on the CDN. 1 to 10080; CraftMyPDF defaults to 5."
+          },
+          {
+            "key": "output_file",
+            "optional": true,
+            "type": "string",
+            "description": "Name of the generated file, for example output.pdf."
+          },
+          {
+            "key": "cloud_storage",
+            "optional": true,
+            "type": "number",
+            "description": "1 to keep the generated file on the CraftMyPDF CDN, 0 to skip it (for example when S3 post actions are configured). Defaults to 1."
+          },
+          {
+            "key": "postaction_s3_filekey",
+            "optional": true,
+            "type": "string",
+            "description": "File name for the S3 post action, without an extension. It must be unique, and / works as a folder separator."
+          },
+          {
+            "key": "postaction_s3_bucket",
+            "optional": true,
+            "type": "string",
+            "description": "Overrides the configured AWS bucket for the S3 post action."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "transaction_ref",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "anchors",
+            "optional": true,
+            "type": "{ page?: number | null, text?: string | null, level?: string | null, description?: string | null }[] | null"
+          },
+          {
+            "key": "total_pages",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "file_size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "craftmypdf.api.pdf.updateFields",
+      "shortPath": "pdf.updateFields",
+      "description": "Fill the form fields of a PDF and optionally make them read-only, returning a new file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "URL of the PDF whose form fields to fill."
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "{ id: string, value?: string, readOnly?: boolean, fontSize?: number }[]",
+            "description": "Field values to apply."
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Minutes the generated file stays on the CDN. 1 to 10080; CraftMyPDF defaults to 5."
+          },
+          {
+            "key": "output_file",
+            "optional": true,
+            "type": "string",
+            "description": "Name of the generated file, for example output.pdf."
+          },
+          {
+            "key": "cloud_storage",
+            "optional": true,
+            "type": "number",
+            "description": "1 to keep the generated file on the CraftMyPDF CDN, 0 to skip it (for example when S3 post actions are configured). Defaults to 1."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "transaction_ref",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "field_statuses",
+            "optional": true,
+            "type": "{ id?: string | null, status?: string | null, message?: string | null }[] | null"
+          },
+          {
+            "key": "failed_fields",
+            "optional": true,
+            "type": "{ id?: string | null, status?: string | null, message?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "craftmypdf.api.templates.createFrom",
+      "shortPath": "templates.createFrom",
+      "description": "Create a new template by copying an existing one",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string",
+            "description": "Template to copy."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Name of the new template."
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string | number",
+            "description": "Template version. Omit to use the latest version of the template."
+          },
+          {
+            "key": "group_name",
+            "optional": true,
+            "type": "string",
+            "description": "Group for the new template, for example a customer name."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "from_template_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "from_template_version",
+            "optional": true,
+            "type": "string | number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "craftmypdf.api.templates.delete",
+      "shortPath": "templates.delete",
+      "description": "Permanently delete a template",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string",
+            "description": "Template to delete."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "craftmypdf.api.templates.get",
+      "shortPath": "templates.get",
+      "description": "Read one template, including its body and sample JSON data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string",
+            "description": "Template to read."
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string | number",
+            "description": "Template version. Omit to use the latest version of the template."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "json",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "craftmypdf.api.templates.list",
+      "shortPath": "templates.list",
+      "description": "List the templates on the account with the ids generation calls need",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "How many templates to return. CraftMyPDF defaults to 300."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "How many records to skip. Defaults to 0."
+          },
+          {
+            "key": "group_name",
+            "optional": true,
+            "type": "string",
+            "description": "Only templates in this group."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "templates",
+            "optional": false,
+            "type": "{ template_id?: string | null, name?: string | null, status?: string | null, created_at?: string | null, updated_at?: string | null, group_name?: string | null }[]"
+          },
+          {
+            "key": "next_offset",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "craftmypdf.api.templates.listVersions",
+      "shortPath": "templates.listVersions",
+      "description": "List the saved versions of a template",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string",
+            "description": "Template whose versions to list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "reference_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "versions",
+            "optional": false,
+            "type": "{ version?: number | null, keep?: boolean | null, description?: string | null, updated_at?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "craftmypdf.api.templates.queryUsage",
+      "shortPath": "templates.queryUsage",
+      "description": "Report how many PDFs and credits the given templates used in a date range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_ids",
+            "optional": false,
+            "type": "string[]",
+            "description": "Templates to report on."
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string",
+            "description": "Start of the window, ISO 8601 in UTC, for example 2025-01-30T00:00:00Z."
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string",
+            "description": "End of the window, ISO 8601 in UTC."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "template_ids",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ template_id?: string | null, total_credit?: number | string | null, total_count?: number | string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "craftmypdf.api.templates.retainVersions",
+      "shortPath": "templates.retainVersions",
+      "description": "Mark template versions to protect from automatic cleanup, or release the ones already kept; a released version can be cleaned up later",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string",
+            "description": "Template whose versions to mark."
+          },
+          {
+            "key": "versions",
+            "optional": false,
+            "type": "number[]",
+            "description": "Version numbers to mark."
+          },
+          {
+            "key": "keep",
+            "optional": false,
+            "type": "boolean",
+            "description": "True protects these versions from the automatic cleanup; false releases them."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "versions",
+            "optional": false,
+            "type": "{ version?: number | null, keep?: boolean | null, description?: string | null, updated_at?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "craftmypdf.api.templates.transfer",
+      "shortPath": "templates.transfer",
+      "description": "Move a template to another team, after which this account no longer owns it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string",
+            "description": "Template to transfer."
+          },
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string",
+            "description": "Team to transfer it to."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "craftmypdf.api.templates.update",
+      "shortPath": "templates.update",
+      "description": "Change a template's name, sample JSON data or body; the body is what the template renders",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string",
+            "description": "Template to update."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "New template name."
+          },
+          {
+            "key": "json",
+            "optional": true,
+            "type": "string",
+            "description": "New sample JSON data, as a stringified JSON document."
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string",
+            "description": "New template body. CraftMyPDF warns to change this only when you know the template format."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "craftmypdf.api.transactions.list",
+      "shortPath": "transactions.list",
+      "description": "List past generations with their status, credit cost and file size",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "How many transactions to return. CraftMyPDF defaults to 300."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "How many records to skip. Defaults to 0."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "transactions",
+            "optional": false,
+            "type": "{ transaction_ref?: string | null, transaction_type?: string | null, exec_tm?: number | null, credit?: number | string | null, created_at?: string | null, resp_file_size?: number | null, resp_status?: string | null }[]"
+          },
+          {
+            "key": "next_offset",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

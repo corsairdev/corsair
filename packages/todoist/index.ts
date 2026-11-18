@@ -248,7 +248,7 @@ const todoistEndpointMeta = {
 	},
 	'tasks.move': {
 		riskLevel: 'write',
-		description: 'Move a Todoist task between project or section',
+		description: 'Move a Todoist task to one project, section, or parent',
 	},
 	'tasks.quickAdd': {
 		riskLevel: 'write',

@@ -1,0 +1,15 @@
+displayName: Rootly
+description: Incident management platform where this plugin gets, updates, and deletes incidents and manages incident action items.
+domain: rootly.com
+examples:
+  read:
+    path: incidents.get
+    title: Get an incident
+    args:
+      id: 1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d
+  write:
+    path: incidents.update
+    title: Update an incident
+    args:
+      id: 1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d
+      title: Checkout API latency

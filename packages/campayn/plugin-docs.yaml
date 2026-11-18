@@ -1,0 +1,20 @@
+displayName: Campayn
+description: Email marketing platform. Manage contact lists, contacts, and webforms, read messages and message statistics, view reports, and sign up contacts.
+domain: campayn.com
+examples:
+  read:
+    path: lists.getLists
+    title: List contact lists
+  write:
+    path: contacts.createContact
+    title: Create a contact
+    args:
+      listId: "12345"
+      email: you@example.com
+      first_name: Octo
+      last_name: Cat
+dbExample:
+  entity: contacts
+  note: >-
+    These tables exist, but Campayn calls don't fill them yet. This returns only rows you have written yourself.
+  limit: 50

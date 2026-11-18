@@ -1,0 +1,546 @@
+---
+title: "ElevenLabs webhooks"
+sidebarTitle: "Webhooks"
+description: "ElevenLabs incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
+---
+
+The ElevenLabs plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/elevenlabs/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `conversations`
+  - `callInitiationFailure` (`conversations.callInitiationFailure`)
+  - `postCallAudio` (`conversations.postCallAudio`)
+  - `postCallTranscription` (`conversations.postCallTranscription`)
+- `speechToText`
+  - `transcriptionCompleted` (`speechToText.transcriptionCompleted`)
+  - `transcriptionFailed` (`speechToText.transcriptionFailed`)
+- `voices`
+  - `removalNotice` (`voices.removalNotice`)
+  - `removalNoticeWithdrawn` (`voices.removalNoticeWithdrawn`)
+  - `removed` (`voices.removed`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
+}
+```
+
+## Events
+
+## Conversations
+
+### Call Initiation Failure
+
+`conversations.callInitiationFailure`
+
+A phone call could not be started: busy, no answer or unknown.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `call_initiation_failure` | Yes | — |
+| `event_timestamp` | `number \| string \| null` | No | When the event happened, in Unix time. |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  agent_id?: string | null,
+  conversation_id?: string | null,
+  failure_reason?: string | null,
+  metadata?: Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: call_initiation_failure,
+  event_timestamp?: number | string | null,
+  data?: {
+    agent_id?: string | null,
+    conversation_id?: string | null,
+    failure_reason?: string | null,
+    metadata?: Record<string, any> | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+elevenlabs({
+    webhookHooks: {
+        conversations: {
+            callInitiationFailure: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Post Call Audio
+
+`conversations.postCallAudio`
+
+A conversation ended: the whole conversation as base64 MP3.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `post_call_audio` | Yes | — |
+| `event_timestamp` | `number \| string \| null` | No | When the event happened, in Unix time. |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  agent_id?: string | null,
+  conversation_id?: string | null,
+  full_audio?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: post_call_audio,
+  event_timestamp?: number | string | null,
+  data?: {
+    agent_id?: string | null,
+    conversation_id?: string | null,
+    full_audio?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+elevenlabs({
+    webhookHooks: {
+        conversations: {
+            postCallAudio: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Post Call Transcription
+
+`conversations.postCallTranscription`
+
+A conversation ended and its analysis is ready: transcript, metadata and analysis.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `post_call_transcription` | Yes | — |
+| `event_timestamp` | `number \| string \| null` | No | When the event happened, in Unix time. |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  agent_id?: string | null,
+  conversation_id?: string | null,
+  status?: string | null,
+  transcript?: Record<string, any>[] | null,
+  metadata?: Record<string, any> | null,
+  analysis?: Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: post_call_transcription,
+  event_timestamp?: number | string | null,
+  data?: {
+    agent_id?: string | null,
+    conversation_id?: string | null,
+    status?: string | null,
+    transcript?: Record<string, any>[] | null,
+    metadata?: Record<string, any> | null,
+    analysis?: Record<string, any> | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+elevenlabs({
+    webhookHooks: {
+        conversations: {
+            postCallTranscription: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Speech To Text
+
+### Transcription Completed
+
+`speechToText.transcriptionCompleted`
+
+A transcription started with webhook true finished.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `speech_to_text_transcription` | Yes | — |
+| `event_timestamp` | `number \| string \| null` | No | When the event happened, in Unix time. |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  request_id?: string | null,
+  webhook_metadata?: Record<string, any> | string | null,
+  transcription?: {
+    language_code?: string | null,
+    language_probability?: number | null,
+    text?: string | null,
+    words?: Record<string, any>[] | null,
+    transcription_id?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: speech_to_text_transcription,
+  event_timestamp?: number | string | null,
+  data?: {
+    request_id?: string | null,
+    webhook_metadata?: Record<string, any> | string | null,
+    transcription?: {
+      language_code?: string | null,
+      language_probability?: number | null,
+      text?: string | null,
+      words?: Record<string, any>[] | null,
+      transcription_id?: string | null
+    } | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+elevenlabs({
+    webhookHooks: {
+        speechToText: {
+            transcriptionCompleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Transcription Failed
+
+`speechToText.transcriptionFailed`
+
+A transcription started with webhook true failed.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `webhook_error` | Yes | — |
+| `event_timestamp` | `number \| string \| null` | No | When the event happened, in Unix time. |
+| `request_id` | `string \| null` | No | The request_id speechToText.convert returned. |
+| `error_message` | `string \| null` | No | — |
+| `webhook_metadata` | `Record<string, any> \| string \| null` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: webhook_error,
+  event_timestamp?: number | string | null,
+  request_id?: string | null,
+  error_message?: string | null,
+  webhook_metadata?: Record<string, any> | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+elevenlabs({
+    webhookHooks: {
+        speechToText: {
+            transcriptionFailed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Voices
+
+### Removal Notice
+
+`voices.removalNotice`
+
+A shared voice in use is scheduled to be removed.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `voice_removal_notice` | Yes | — |
+| `event_timestamp` | `number \| string \| null` | No | When the event happened, in Unix time. |
+| `data` | `Record<string, any> \| null` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: voice_removal_notice,
+  event_timestamp?: number | string | null,
+  data?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+elevenlabs({
+    webhookHooks: {
+        voices: {
+            removalNotice: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Removal Notice Withdrawn
+
+`voices.removalNoticeWithdrawn`
+
+A shared voice is no longer scheduled for removal.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `voice_removal_notice_withdrawn` | Yes | — |
+| `event_timestamp` | `number \| string \| null` | No | When the event happened, in Unix time. |
+| `data` | `Record<string, any> \| null` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: voice_removal_notice_withdrawn,
+  event_timestamp?: number | string | null,
+  data?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+elevenlabs({
+    webhookHooks: {
+        voices: {
+            removalNoticeWithdrawn: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Removed
+
+`voices.removed`
+
+A shared voice was removed and can no longer be used.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `voice_removed` | Yes | — |
+| `event_timestamp` | `number \| string \| null` | No | When the event happened, in Unix time. |
+| `data` | `Record<string, any> \| null` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: voice_removed,
+  event_timestamp?: number | string | null,
+  data?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+elevenlabs({
+    webhookHooks: {
+        voices: {
+            removed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

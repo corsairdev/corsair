@@ -1,0 +1,20 @@
+displayName: Wix
+description: Website platform API for sites, contacts, stores, orders, bookings, members, events, forms, CMS data, media, marketing, and billing.
+domain: wix.com
+examples:
+  read:
+    path: contacts.list
+    title: List contacts
+  write:
+    path: contacts.addLabels
+    title: Add labels to a contact
+    args:
+      contactId: 11111111-2222-3333-4444-555555555555
+      labelKeys:
+        - custom.vip
+dbExample:
+  entity: contacts
+  note: >-
+    This table exists, but Wix calls don't fill it yet. This returns only rows
+    you have written yourself.
+  limit: 50

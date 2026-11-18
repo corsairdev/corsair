@@ -1,0 +1,17 @@
+displayName: cloro
+description: Search monitoring API. Run prompts on ChatGPT, Gemini, Copilot, Perplexity, and Google Search, AI Mode, and News, and check credits.
+domain: cloro.dev
+examples:
+  read:
+    path: utility.credits
+    title: Check your credits
+  write:
+    path: monitor.chatgpt
+    title: Monitor a ChatGPT answer
+    args:
+      prompt: What are the best project management tools?
+      country: US
+dbExample:
+  entity: snapshots
+  note: Search synced snapshots without hitting Cloro.
+  limit: 50

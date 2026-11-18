@@ -1,0 +1,1647 @@
+{
+  "id": "labs64netlicensing",
+  "displayName": "Labs64 NetLicensing",
+  "description": "Manage NetLicensing products, product modules, license templates, licensees and licenses, validate a licensee at run time, and read transactions.",
+  "npmPackageName": "@corsair-dev/labs64netlicensing",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 29,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "labs64netlicensing.api.licensees.create",
+      "shortPath": "licensees.create",
+      "description": "Create a licensee for a product.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "productNumber",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string",
+            "description": "Licensee number; generated when left out"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "aliases",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "markedForTransfer",
+            "optional": true,
+            "type": "boolean",
+            "description": "Allow moving this licensee’s licenses away"
+          },
+          {
+            "key": "customProperties",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Extra fields NetLicensing stores as custom properties"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ type?: string, number?: string, active?: boolean, name?: string, properties: Record<string, string>, lists?: { name?: string, properties: Record<string, string>, lists?: (recursive)[] }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "labs64netlicensing.api.licensees.delete",
+      "shortPath": "licensees.delete",
+      "description": "Delete a licensee; forceCascade also deletes its licenses.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "licenseeNumber",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "forceCascade",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also delete everything that depends on the entity"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "number",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "labs64netlicensing.api.licensees.get",
+      "shortPath": "licensees.get",
+      "description": "Get one licensee by number.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "licenseeNumber",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ type?: string, number?: string, active?: boolean, name?: string, properties: Record<string, string>, lists?: { name?: string, properties: Record<string, string>, lists?: (recursive)[] }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "labs64netlicensing.api.licensees.list",
+      "shortPath": "licensees.list",
+      "description": "List licensees (the vendor's customers).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ type?: string, number?: string, active?: boolean, name?: string, properties: Record<string, string>, lists?: { name?: string, properties: Record<string, string>, lists?: (recursive)[] }[] }[]"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "{ pageNumber?: number, totalPages?: number, totalItems?: number, hasNext?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "labs64netlicensing.api.licensees.transfer",
+      "shortPath": "licensees.transfer",
+      "description": "Move every license of a source licensee (marked for transfer) to this licensee; NetLicensing then removes the source licensee.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "licenseeNumber",
+            "optional": false,
+            "type": "string",
+            "description": "Licensee that receives the licenses"
+          },
+          {
+            "key": "sourceLicenseeNumber",
+            "optional": false,
+            "type": "string",
+            "description": "Licensee whose licenses move; must be markedForTransfer"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transferred",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "licenseeNumber",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sourceLicenseeNumber",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "labs64netlicensing.api.licensees.update",
+      "shortPath": "licensees.update",
+      "description": "Update a licensee.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "licenseeNumber",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string",
+            "description": "New number for the entity (renames it)"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "aliases",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "markedForTransfer",
+            "optional": true,
+            "type": "boolean",
+            "description": "Allow moving this licensee’s licenses away"
+          },
+          {
+            "key": "customProperties",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Extra fields NetLicensing stores as custom properties"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ type?: string, number?: string, active?: boolean, name?: string, properties: Record<string, string>, lists?: { name?: string, properties: Record<string, string>, lists?: (recursive)[] }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "labs64netlicensing.api.licensees.validate",
+      "shortPath": "licensees.validate",
+      "description": "Check which product modules a licensee may use; floating checkouts and pay-per-use counts change unless dryRun is true.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "licenseeNumber",
+            "optional": false,
+            "type": "string",
+            "description": "Licensee number or alias"
+          },
+          {
+            "key": "productNumber",
+            "optional": true,
+            "type": "string",
+            "description": "Needed when the licensee does not exist yet and the product auto-creates licensees"
+          },
+          {
+            "key": "licenseeName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dryRun",
+            "optional": true,
+            "type": "boolean",
+            "description": "Validate without saving any change"
+          },
+          {
+            "key": "forOfflineUse",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Per-module parameters as NetLicensing names them, e.g. { productModuleNumber: \"M001\", sessionId: \"abc\", action: \"checkOut\" }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ttl",
+            "optional": true,
+            "type": "string",
+            "description": "Reuse this result until this time, then validate again"
+          },
+          {
+            "key": "validations",
+            "optional": false,
+            "type": "{ type?: string, number?: string, active?: boolean, name?: string, properties: Record<string, string>, lists?: { name?: string, properties: Record<string, string>, lists?: (recursive)[] }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "labs64netlicensing.api.licenses.create",
+      "shortPath": "licenses.create",
+      "description": "Create a license for a licensee from a license template.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string",
+            "description": "License number; generated when left out"
+          },
+          {
+            "key": "licenseeNumber",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "licenseTemplateNumber",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "transactionNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parentFeature",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeVolume",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeVolumePeriod",
+            "optional": true,
+            "type": "DAY | WEEK | MONTH | YEAR"
+          },
+          {
+            "key": "maxSessions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "quantity",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "usedQuantity",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gracePeriod",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "customProperties",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Extra fields NetLicensing stores as custom properties"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ type?: string, number?: string, active?: boolean, name?: string, properties: Record<string, string>, lists?: { name?: string, properties: Record<string, string>, lists?: (recursive)[] }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "labs64netlicensing.api.licenses.delete",
+      "shortPath": "licenses.delete",
+      "description": "Delete a license.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "licenseNumber",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "forceCascade",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also delete everything that depends on the entity"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "number",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "labs64netlicensing.api.licenses.get",
+      "shortPath": "licenses.get",
+      "description": "Get one license by number.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "licenseNumber",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ type?: string, number?: string, active?: boolean, name?: string, properties: Record<string, string>, lists?: { name?: string, properties: Record<string, string>, lists?: (recursive)[] }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "labs64netlicensing.api.licenses.list",
+      "shortPath": "licenses.list",
+      "description": "List the vendor's licenses.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "licenses",
+            "optional": false,
+            "type": "{ number: string, active?: boolean }[]"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "{ pageNumber?: number, totalPages?: number, totalItems?: number, hasNext?: boolean }",
+            "description": "Paging from NetLicensing; ask for the next page with filter"
+          }
+        ]
+      }
+    },
+    {
+      "path": "labs64netlicensing.api.licenses.update",
+      "shortPath": "licenses.update",
+      "description": "Update a license, for example to deactivate it.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "licenseNumber",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string",
+            "description": "New number for the entity (renames it)"
+          },
+          {
+            "key": "licenseeNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "licenseTemplateNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "transactionNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parentFeature",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeVolume",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeVolumePeriod",
+            "optional": true,
+            "type": "DAY | WEEK | MONTH | YEAR"
+          },
+          {
+            "key": "maxSessions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "quantity",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "usedQuantity",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gracePeriod",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "customProperties",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Extra fields NetLicensing stores as custom properties"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ type?: string, number?: string, active?: boolean, name?: string, properties: Record<string, string>, lists?: { name?: string, properties: Record<string, string>, lists?: (recursive)[] }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "labs64netlicensing.api.licenseTemplates.create",
+      "shortPath": "licenseTemplates.create",
+      "description": "Create a license template in a product module.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string",
+            "description": "Template number; generated when left out"
+          },
+          {
+            "key": "productModuleNumber",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "licenseType",
+            "optional": false,
+            "type": "FEATURE | TIMEVOLUME | FLOATING | QUANTITY",
+            "description": "Must fit the module licensing model"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "price",
+            "optional": true,
+            "type": "string",
+            "description": "Decimal price; above 0 needs currency"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "EUR | USD"
+          },
+          {
+            "key": "automatic",
+            "optional": true,
+            "type": "boolean",
+            "description": "Give every new licensee one license"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hideLicenses",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "timeVolume",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeVolumePeriod",
+            "optional": true,
+            "type": "DAY | WEEK | MONTH | YEAR"
+          },
+          {
+            "key": "maxSessions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "quantity",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gracePeriod",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "promoCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "discountType",
+            "optional": true,
+            "type": "PERCENT | FIX"
+          },
+          {
+            "key": "discountAmount",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "discountCurrency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "minCartTotal",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customProperties",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Extra fields NetLicensing stores as custom properties"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ type?: string, number?: string, active?: boolean, name?: string, properties: Record<string, string>, lists?: { name?: string, properties: Record<string, string>, lists?: (recursive)[] }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "labs64netlicensing.api.licenseTemplates.delete",
+      "shortPath": "licenseTemplates.delete",
+      "description": "Delete a license template; forceCascade also deletes its licenses.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "licenseTemplateNumber",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "forceCascade",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also delete everything that depends on the entity"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "number",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "labs64netlicensing.api.licenseTemplates.get",
+      "shortPath": "licenseTemplates.get",
+      "description": "Get one license template by number.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "licenseTemplateNumber",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ type?: string, number?: string, active?: boolean, name?: string, properties: Record<string, string>, lists?: { name?: string, properties: Record<string, string>, lists?: (recursive)[] }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "labs64netlicensing.api.licenseTemplates.list",
+      "shortPath": "licenseTemplates.list",
+      "description": "List license templates.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ type?: string, number?: string, active?: boolean, name?: string, properties: Record<string, string>, lists?: { name?: string, properties: Record<string, string>, lists?: (recursive)[] }[] }[]"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "{ pageNumber?: number, totalPages?: number, totalItems?: number, hasNext?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "labs64netlicensing.api.licenseTemplates.update",
+      "shortPath": "licenseTemplates.update",
+      "description": "Update a license template.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "licenseTemplateNumber",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string",
+            "description": "New number for the entity (renames it)"
+          },
+          {
+            "key": "productModuleNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "licenseType",
+            "optional": true,
+            "type": "FEATURE | TIMEVOLUME | FLOATING | QUANTITY",
+            "description": "Must fit the module licensing model"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "price",
+            "optional": true,
+            "type": "string",
+            "description": "Decimal price; above 0 needs currency"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "EUR | USD"
+          },
+          {
+            "key": "automatic",
+            "optional": true,
+            "type": "boolean",
+            "description": "Give every new licensee one license"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hideLicenses",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "timeVolume",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeVolumePeriod",
+            "optional": true,
+            "type": "DAY | WEEK | MONTH | YEAR"
+          },
+          {
+            "key": "maxSessions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "quantity",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gracePeriod",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "promoCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "discountType",
+            "optional": true,
+            "type": "PERCENT | FIX"
+          },
+          {
+            "key": "discountAmount",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "discountCurrency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "minCartTotal",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customProperties",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Extra fields NetLicensing stores as custom properties"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ type?: string, number?: string, active?: boolean, name?: string, properties: Record<string, string>, lists?: { name?: string, properties: Record<string, string>, lists?: (recursive)[] }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "labs64netlicensing.api.productModules.create",
+      "shortPath": "productModules.create",
+      "description": "Create a product module with a licensing model.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string",
+            "description": "Module number; generated when left out"
+          },
+          {
+            "key": "productNumber",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "licensingModel",
+            "optional": false,
+            "type": "string",
+            "description": "TryAndBuy, Rental, Subscription, Floating, MultiFeature, PayPerUse, PricingTable, Quota, NodeLocked or Discount"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "maxCheckoutValidity",
+            "optional": true,
+            "type": "string",
+            "description": "Floating: max session time in seconds"
+          },
+          {
+            "key": "yellowThreshold",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "redThreshold",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nodeSecretMode",
+            "optional": true,
+            "type": "PREDEFINED | CLIENT"
+          },
+          {
+            "key": "customProperties",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Extra fields NetLicensing stores as custom properties"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ type?: string, number?: string, active?: boolean, name?: string, properties: Record<string, string>, lists?: { name?: string, properties: Record<string, string>, lists?: (recursive)[] }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "labs64netlicensing.api.productModules.delete",
+      "shortPath": "productModules.delete",
+      "description": "Delete a product module; forceCascade also deletes what depends on it.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "productModuleNumber",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "forceCascade",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also delete everything that depends on the entity"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "number",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "labs64netlicensing.api.productModules.get",
+      "shortPath": "productModules.get",
+      "description": "Get one product module by number.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "productModuleNumber",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ type?: string, number?: string, active?: boolean, name?: string, properties: Record<string, string>, lists?: { name?: string, properties: Record<string, string>, lists?: (recursive)[] }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "labs64netlicensing.api.productModules.list",
+      "shortPath": "productModules.list",
+      "description": "List product modules.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ type?: string, number?: string, active?: boolean, name?: string, properties: Record<string, string>, lists?: { name?: string, properties: Record<string, string>, lists?: (recursive)[] }[] }[]"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "{ pageNumber?: number, totalPages?: number, totalItems?: number, hasNext?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "labs64netlicensing.api.productModules.update",
+      "shortPath": "productModules.update",
+      "description": "Update a product module.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "productModuleNumber",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string",
+            "description": "New number for the entity (renames it)"
+          },
+          {
+            "key": "productNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "licensingModel",
+            "optional": true,
+            "type": "string",
+            "description": "TryAndBuy, Rental, Subscription, Floating, MultiFeature, PayPerUse, PricingTable, Quota, NodeLocked or Discount"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "maxCheckoutValidity",
+            "optional": true,
+            "type": "string",
+            "description": "Floating: max session time in seconds"
+          },
+          {
+            "key": "yellowThreshold",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "redThreshold",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nodeSecretMode",
+            "optional": true,
+            "type": "PREDEFINED | CLIENT"
+          },
+          {
+            "key": "customProperties",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Extra fields NetLicensing stores as custom properties"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ type?: string, number?: string, active?: boolean, name?: string, properties: Record<string, string>, lists?: { name?: string, properties: Record<string, string>, lists?: (recursive)[] }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "labs64netlicensing.api.products.create",
+      "shortPath": "products.create",
+      "description": "Create a product.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string",
+            "description": "Product number; generated when left out"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Product name"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "licenseeAutoCreate",
+            "optional": true,
+            "type": "boolean",
+            "description": "Create an unknown licensee on its first validation"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "licensingInfo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "discount",
+            "optional": true,
+            "type": "string[]",
+            "description": "Volume discounts as totalPrice;currency;amount (amount% for a percentage)"
+          },
+          {
+            "key": "licenseeSecretMode",
+            "optional": true,
+            "type": "PREDEFINED | CLIENT"
+          },
+          {
+            "key": "vatMode",
+            "optional": true,
+            "type": "GROSS | NET"
+          },
+          {
+            "key": "customProperties",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Extra fields NetLicensing stores as custom properties"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ type?: string, number?: string, active?: boolean, name?: string, properties: Record<string, string>, lists?: { name?: string, properties: Record<string, string>, lists?: (recursive)[] }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "labs64netlicensing.api.products.delete",
+      "shortPath": "products.delete",
+      "description": "Delete a product; forceCascade also deletes its modules, templates, licensees and licenses.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "productNumber",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "forceCascade",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also delete everything that depends on the entity"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "number",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "labs64netlicensing.api.products.get",
+      "shortPath": "products.get",
+      "description": "Get one product by number.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "productNumber",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ type?: string, number?: string, active?: boolean, name?: string, properties: Record<string, string>, lists?: { name?: string, properties: Record<string, string>, lists?: (recursive)[] }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "labs64netlicensing.api.products.list",
+      "shortPath": "products.list",
+      "description": "List the vendor's products.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "products",
+            "optional": false,
+            "type": "{ number: string, active?: boolean, name?: string, version?: string }[]"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "{ pageNumber?: number, totalPages?: number, totalItems?: number, hasNext?: boolean }",
+            "description": "Paging from NetLicensing; ask for the next page with filter"
+          }
+        ]
+      }
+    },
+    {
+      "path": "labs64netlicensing.api.products.update",
+      "shortPath": "products.update",
+      "description": "Update a product; fields left out stay as they are.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "productNumber",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string",
+            "description": "New number for the entity (renames it)"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "licenseeAutoCreate",
+            "optional": true,
+            "type": "boolean",
+            "description": "Create an unknown licensee on its first validation"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "licensingInfo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "discount",
+            "optional": true,
+            "type": "string[]",
+            "description": "Volume discounts as totalPrice;currency;amount (amount% for a percentage)"
+          },
+          {
+            "key": "licenseeSecretMode",
+            "optional": true,
+            "type": "PREDEFINED | CLIENT"
+          },
+          {
+            "key": "vatMode",
+            "optional": true,
+            "type": "GROSS | NET"
+          },
+          {
+            "key": "customProperties",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Extra fields NetLicensing stores as custom properties"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ type?: string, number?: string, active?: boolean, name?: string, properties: Record<string, string>, lists?: { name?: string, properties: Record<string, string>, lists?: (recursive)[] }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "labs64netlicensing.api.transactions.get",
+      "shortPath": "transactions.get",
+      "description": "Get one transaction by number.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transactionNumber",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ type?: string, number?: string, active?: boolean, name?: string, properties: Record<string, string>, lists?: { name?: string, properties: Record<string, string>, lists?: (recursive)[] }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "labs64netlicensing.api.transactions.list",
+      "shortPath": "transactions.list",
+      "description": "List transactions, newest first.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ type?: string, number?: string, active?: boolean, name?: string, properties: Record<string, string>, lists?: { name?: string, properties: Record<string, string>, lists?: (recursive)[] }[] }[]"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "{ pageNumber?: number, totalPages?: number, totalItems?: number, hasNext?: boolean }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "labs64netlicensing.db.licenses.search",
+      "entityName": "licenses",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "active",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "labs64netlicensing.db.products.search",
+      "entityName": "products",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "active",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "version",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

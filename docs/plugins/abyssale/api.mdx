@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Abyssale: every `abyssale.api.*` operation with input and output types."
+title: "Abyssale API reference"
+sidebarTitle: "API"
+description: "API reference for the Abyssale plugin in Corsair: every `abyssale.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `abyssale.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -119,9 +118,7 @@ await corsair.abyssale.api.fonts.list({});
   id: string,
   name: string,
   type: google | custom,
-  available_weights: (
-    number | string
-  )[]
+  available_weights: (number | string)[]
 }[]
 ```
 </Accordion>
@@ -165,8 +162,8 @@ await corsair.abyssale.api.generation.batch({});
 <Accordion title="elements full type">
 
 ```ts
-{
-}
+Record<string, {
+}>
 ```
 </Accordion>
 
@@ -215,8 +212,8 @@ await corsair.abyssale.api.generation.batch({});
 <Accordion title="pages full type">
 
 ```ts
-{
-}
+Record<string, {
+}>
 ```
 </Accordion>
 </AccordionGroup>
@@ -260,8 +257,8 @@ await corsair.abyssale.api.generation.image({});
 <Accordion title="elements full type">
 
 ```ts
-{
-}
+Record<string, {
+}>
 ```
 </Accordion>
 </AccordionGroup>

@@ -1,0 +1,3948 @@
+{
+  "id": "gmicloud",
+  "displayName": "GMI Cloud",
+  "description": "GPU cloud for AI - serverless LLM, image, video, and audio inference, the GMI Router, GPU containers and bare-metal servers, and code sandboxes.",
+  "npmPackageName": "@corsair-dev/gmicloud",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 72,
+    "webhooks": 0,
+    "db": 8
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "gmicloud.api.apiKeys.getCurrent",
+      "shortPath": "apiKeys.getCurrent",
+      "description": "Verify the configured API key and return its details, including the organization it belongs to",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "{ id: string, type?: ie_model, scope: ie_model | ce_resource, owner: { id: string } }"
+          },
+          {
+            "key": "organization",
+            "optional": false,
+            "type": "{ id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.baremetals.action",
+      "shortPath": "baremetals.action",
+      "description": "Start, stop, power-cycle, or reboot a bare-metal server",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "start | stop | powercycle | reboot"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.baremetals.create",
+      "shortPath": "baremetals.create",
+      "description": "Provision bare-metal GPU servers (billed while they exist)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "enableZabbixAgent",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether to enable Zabbix agent on the baremetal node"
+          },
+          {
+            "key": "idc",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "imageId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the image to use for creating the baremetal instance"
+          },
+          {
+            "key": "internalIp",
+            "optional": true,
+            "type": "string",
+            "description": "Manually allocate internal IP address(IPv4 only)."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "product",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sshKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sshKeyIdList",
+            "optional": true,
+            "type": "string[]",
+            "description": "The list of SSH key IDs to use for creating the baremetal instance"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string }[]"
+      }
+    },
+    {
+      "path": "gmicloud.api.baremetals.delete",
+      "shortPath": "baremetals.delete",
+      "description": "Delete a bare-metal server and release its resources",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.baremetals.get",
+      "shortPath": "baremetals.get",
+      "description": "Get a bare-metal server by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "associatedFirewalls",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "consoleReady",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "idc",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "image",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "imageId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "networks",
+            "optional": false,
+            "type": "{ ip?: string, type?: internal | external }[]"
+          },
+          {
+            "key": "orgId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "product",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "string",
+            "description": "The reason for the validation error."
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "creating | deleted | deleting | error | powercycling | rebooting | rebuilding | running | starting | stopped | stopping | unknown"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.baremetals.list",
+      "shortPath": "baremetals.list",
+      "description": "List bare-metal GPU servers, optionally filtered by data center",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "idc",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ associatedFirewalls: string[], consoleReady: boolean, createdAt: string, id: string, idc: string, image: string, imageId: string, name: string, networks: { ip?: string, type?: internal | external }[], orgId: string, product: string, reason?: string, status: creating | deleted | deleting | error | powercycling | rebooting | rebuilding | running | starting | stopped | stopping | unknown }[]"
+      }
+    },
+    {
+      "path": "gmicloud.api.baremetals.listProducts",
+      "shortPath": "baremetals.listProducts",
+      "description": "List bare-metal server products (GPU types and specs) in a data center",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "idc",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ gpuModel?: string, idc: string, name: string, price: number, productLine?: string, spec: Record<string, any>, type: Container | BareMetal | Storage | EIP, valid: boolean }[]"
+      }
+    },
+    {
+      "path": "gmicloud.api.baremetals.update",
+      "shortPath": "baremetals.update",
+      "description": "Rename a bare-metal server",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "associatedFirewalls",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "consoleReady",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "idc",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "image",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "imageId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "networks",
+            "optional": false,
+            "type": "{ ip?: string, type?: internal | external }[]"
+          },
+          {
+            "key": "orgId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "product",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "string",
+            "description": "The reason for the validation error."
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "creating | deleted | deleting | error | powercycling | rebooting | rebuilding | running | starting | stopped | stopping | unknown"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.chat.createCompletion",
+      "shortPath": "chat.createCompletion",
+      "description": "Generate a chat completion with an LLM through the OpenAI-compatible API (billed per token)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string",
+            "description": "Model ID from models.list, e.g. deepseek-ai/DeepSeek-R1"
+          },
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ role: system | developer | user | assistant | tool, content?: string | { type: string, text?: string, image_url?: { url: string, detail?: string }, input_audio?: { data: string, format: string } }[] | null, name?: string, tool_calls?: { id: string, type: function, function: { name: string, arguments: string } }[], tool_call_id?: string }[]"
+          },
+          {
+            "key": "tools",
+            "optional": true,
+            "type": "{ type: function, function: { name: string, description?: string, parameters?: Record<string, any>, strict?: boolean } }[]"
+          },
+          {
+            "key": "tool_choice",
+            "optional": true,
+            "type": "none | auto | required | { type: function, function: { name: string } }"
+          },
+          {
+            "key": "max_tokens",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "top_p",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "top_k",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "frequency_penalty",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "presence_penalty",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "repetition_penalty",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "seed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ignore_eos",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "stop",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "response_format",
+            "optional": true,
+            "type": "{ type: text | json_object | json_schema, json_schema?: Record<string, any> }"
+          },
+          {
+            "key": "context_length_exceeded_behavior",
+            "optional": true,
+            "type": "truncate | error"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "choices",
+            "optional": false,
+            "type": "{ index?: number, message: { role: string, content: string | null, reasoning_content?: string | null, tool_calls?: { id: string, type: function, function: { name: string, arguments: string } }[] | null }, finish_reason?: string | null }[]"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ prompt_tokens: number, completion_tokens: number, total_tokens: number } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.containers.create",
+      "shortPath": "containers.create",
+      "description": "Launch GPU container workloads from a template (billed while they run)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "idc",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "product",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "args",
+            "optional": true,
+            "type": "string[]",
+            "description": "Optional container command arguments"
+          },
+          {
+            "key": "command",
+            "optional": true,
+            "type": "string",
+            "description": "Optional container start command"
+          },
+          {
+            "key": "envs",
+            "optional": true,
+            "type": "{ name: string, value: string }[]"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ports",
+            "optional": true,
+            "type": "{ containerPort: number, port?: number, protocol: TCP | UDP }[]"
+          },
+          {
+            "key": "sshKeyIdList",
+            "optional": true,
+            "type": "string[]",
+            "description": "The list of SSH key IDs to use in the container"
+          },
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "string",
+            "description": "template id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string }[]"
+      }
+    },
+    {
+      "path": "gmicloud.api.containers.createShell",
+      "shortPath": "containers.createShell",
+      "description": "Generate a web shell URL path for a running container",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "urlPath",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.containers.delete",
+      "shortPath": "containers.delete",
+      "description": "Delete a container workload; its local data is lost",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.containers.get",
+      "shortPath": "containers.get",
+      "description": "Get a container workload by ID, including status and IP addresses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eipAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eipId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firewalls",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "inboundIP",
+            "optional": true,
+            "type": "{ ipAddress: string, status: ready | pending | error | not_applicable }"
+          },
+          {
+            "key": "modifiedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outboundIP",
+            "optional": true,
+            "type": "{ ipAddress: string, status: ready | pending | error | not_applicable }"
+          },
+          {
+            "key": "publicIP",
+            "optional": true,
+            "type": "{ ipAddress: string, status: ready | pending | error | not_applicable }"
+          },
+          {
+            "key": "reason",
+            "optional": false,
+            "type": "string",
+            "description": "reason of container status"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "unknown | creating | running | terminating | stopped | error | zombie"
+          },
+          {
+            "key": "storages",
+            "optional": false,
+            "type": "{ containerPath: string, id: string }[]"
+          },
+          {
+            "key": "idc",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "product",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "args",
+            "optional": true,
+            "type": "string[]",
+            "description": "Optional container command arguments"
+          },
+          {
+            "key": "command",
+            "optional": true,
+            "type": "string",
+            "description": "Optional container start command"
+          },
+          {
+            "key": "envs",
+            "optional": true,
+            "type": "{ name: string, value: string }[]"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ports",
+            "optional": true,
+            "type": "{ containerPort: number, port?: number, protocol: TCP | UDP }[]"
+          },
+          {
+            "key": "sshKeyIdList",
+            "optional": true,
+            "type": "string[]",
+            "description": "The list of SSH key IDs to use in the container"
+          },
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "string",
+            "description": "template id"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.containers.getLogs",
+      "shortPath": "containers.getLogs",
+      "description": "Download the logs of a container workload as text",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.containers.list",
+      "shortPath": "containers.list",
+      "description": "List container workloads in the organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ createdAt?: string, eipAddress?: string, eipId?: string, firewalls?: string[], id?: string, inboundIP?: { ipAddress: string, status: ready | pending | error | not_applicable }, modifiedAt?: string, orgId?: string, outboundIP?: { ipAddress: string, status: ready | pending | error | not_applicable }, publicIP?: { ipAddress: string, status: ready | pending | error | not_applicable }, reason: string, status: unknown | creating | running | terminating | stopped | error | zombie, storages: { containerPath: string, id: string }[], idc: string, product: string, args?: string[], command?: string, envs?: { name: string, value: string }[], name: string, ports?: { containerPort: number, port?: number, protocol: TCP | UDP }[], sshKeyIdList?: string[], templateId: string }[]"
+      }
+    },
+    {
+      "path": "gmicloud.api.containers.listProducts",
+      "shortPath": "containers.listProducts",
+      "description": "List container products (GPU types and specs) in a data center",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "idc",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ gpuModel?: string, idc: string, name: string, price: number, productLine?: string, spec: Record<string, any>, type: Container | BareMetal | Storage | EIP, valid: boolean }[]"
+      }
+    },
+    {
+      "path": "gmicloud.api.containers.restart",
+      "shortPath": "containers.restart",
+      "description": "Restart a container workload",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.containers.update",
+      "shortPath": "containers.update",
+      "description": "Update a container's name, template, command, arguments, environment, ports, or SSH keys",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "args",
+            "optional": true,
+            "type": "string[]",
+            "description": "Optional container command arguments"
+          },
+          {
+            "key": "command",
+            "optional": true,
+            "type": "string",
+            "description": "Optional container start command"
+          },
+          {
+            "key": "envs",
+            "optional": true,
+            "type": "{ name: string, value: string }[]"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ports",
+            "optional": true,
+            "type": "{ containerPort: number, port?: number, protocol: TCP | UDP }[]"
+          },
+          {
+            "key": "sshKeyIdList",
+            "optional": true,
+            "type": "string[]",
+            "description": "The list of SSH key IDs to use in the container"
+          },
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "string",
+            "description": "template id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.elasticIps.allocate",
+      "shortPath": "elasticIps.allocate",
+      "description": "Allocate a static public IPv4 address for the organization",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "idc",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the elastic IP"
+          },
+          {
+            "key": "product",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string }[]"
+      }
+    },
+    {
+      "path": "gmicloud.api.elasticIps.associate",
+      "shortPath": "elasticIps.associate",
+      "description": "Attach an elastic IP to a bare-metal server or container",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "instanceID",
+            "optional": true,
+            "type": "string | null",
+            "description": "set instanceID and instanceType to associate the elastic IP to the instance, set to null to disassociate the elastic IP from the instance"
+          },
+          {
+            "key": "instanceType",
+            "optional": true,
+            "type": "baremetal | container | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.elasticIps.disassociate",
+      "shortPath": "elasticIps.disassociate",
+      "description": "Detach an elastic IP from its instance",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.elasticIps.get",
+      "shortPath": "elasticIps.get",
+      "description": "Get an elastic IP by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orgId",
+            "optional": false,
+            "type": "string",
+            "description": "if nil, it means the elastic IP is not associated with any instance"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "released | associated | disassociated"
+          },
+          {
+            "key": "internetConnectionType",
+            "optional": false,
+            "type": "BGP | Dual-Homed"
+          },
+          {
+            "key": "maxBandwidth",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the elastic IP"
+          },
+          {
+            "key": "idc",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ipAddress",
+            "optional": false,
+            "type": "string",
+            "description": "IP address of the elastic IP."
+          },
+          {
+            "key": "product",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "instanceID",
+            "optional": true,
+            "type": "string | null",
+            "description": "set instanceID and instanceType to associate the elastic IP to the instance, set to null to disassociate the elastic IP from the instance"
+          },
+          {
+            "key": "instanceType",
+            "optional": true,
+            "type": "baremetal | container | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.elasticIps.list",
+      "shortPath": "elasticIps.list",
+      "description": "List elastic IPs allocated to the organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, orgId: string, status: released | associated | disassociated, internetConnectionType: BGP | Dual-Homed, maxBandwidth: string, name: string, idc: string, ipAddress: string, product: string, instanceID?: string | null, instanceType?: baremetal | container | null }[]"
+      }
+    },
+    {
+      "path": "gmicloud.api.elasticIps.listProducts",
+      "shortPath": "elasticIps.listProducts",
+      "description": "List elastic IP products in a data center",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "idc",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ gpuModel?: string, idc: string, name: string, price: number, productLine?: string, spec: Record<string, any>, type: Container | BareMetal | Storage | EIP, valid: boolean }[]"
+      }
+    },
+    {
+      "path": "gmicloud.api.elasticIps.release",
+      "shortPath": "elasticIps.release",
+      "description": "Release an elastic IP; the address cannot be reclaimed",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.firewalls.associate",
+      "shortPath": "firewalls.associate",
+      "description": "Apply a firewall to bare-metal servers or containers",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "instances",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "instanceType",
+            "optional": true,
+            "type": "baremetal | container"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.firewalls.create",
+      "shortPath": "firewalls.create",
+      "description": "Create a firewall with inbound rules in a data center",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "inboundRules",
+            "optional": false,
+            "type": "({ description?: string, portRange: { max: number, min: number }, protocol: tcp | udp, remoteIpPrefix: string } | { description?: string, protocol: icmp | any, remoteIpPrefix: string })[]"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "idc",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "inboundRules",
+            "optional": false,
+            "type": "({ description?: string, portRange: { max: number, min: number }, protocol: tcp | udp, remoteIpPrefix: string } | { description?: string, protocol: icmp | any, remoteIpPrefix: string })[]"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "idc",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "assoInstances",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "assoContainers",
+            "optional": true,
+            "type": "string[]",
+            "description": "Associated container instance IDs"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isPreset",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether this is a preset firewall (cannot be deleted or have rules modified)"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | building | error"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.firewalls.delete",
+      "shortPath": "firewalls.delete",
+      "description": "Delete a firewall",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.firewalls.disassociate",
+      "shortPath": "firewalls.disassociate",
+      "description": "Remove a firewall from bare-metal servers or containers",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "instances",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "instanceType",
+            "optional": true,
+            "type": "baremetal | container"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.firewalls.get",
+      "shortPath": "firewalls.get",
+      "description": "Get a firewall and its rules by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "inboundRules",
+            "optional": false,
+            "type": "({ description?: string, portRange: { max: number, min: number }, protocol: tcp | udp, remoteIpPrefix: string } | { description?: string, protocol: icmp | any, remoteIpPrefix: string })[]"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "idc",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "assoInstances",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "assoContainers",
+            "optional": true,
+            "type": "string[]",
+            "description": "Associated container instance IDs"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isPreset",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether this is a preset firewall (cannot be deleted or have rules modified)"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | building | error"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.firewalls.list",
+      "shortPath": "firewalls.list",
+      "description": "List firewalls, optionally filtered by data center",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "idc",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ description?: string, inboundRules: ({ description?: string, portRange: { max: number, min: number }, protocol: tcp | udp, remoteIpPrefix: string } | { description?: string, protocol: icmp | any, remoteIpPrefix: string })[], name: string, idc: string, assoInstances?: string[], assoContainers?: string[], id?: string, isPreset?: boolean, orgId?: string, status?: active | building | error }[]"
+      }
+    },
+    {
+      "path": "gmicloud.api.firewalls.update",
+      "shortPath": "firewalls.update",
+      "description": "Replace a firewall's name, description, and inbound rules",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "inboundRules",
+            "optional": false,
+            "type": "({ description?: string, portRange: { max: number, min: number }, protocol: tcp | udp, remoteIpPrefix: string } | { description?: string, protocol: icmp | any, remoteIpPrefix: string })[]"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "inboundRules",
+            "optional": false,
+            "type": "({ description?: string, portRange: { max: number, min: number }, protocol: tcp | udp, remoteIpPrefix: string } | { description?: string, protocol: icmp | any, remoteIpPrefix: string })[]"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "idc",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "assoInstances",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "assoContainers",
+            "optional": true,
+            "type": "string[]",
+            "description": "Associated container instance IDs"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isPreset",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether this is a preset firewall (cannot be deleted or have rules modified)"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | building | error"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.idcs.list",
+      "shortPath": "idcs.list",
+      "description": "List the data centers (IDCs) available for GPU compute resources",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "idcs",
+            "optional": false,
+            "type": "{ idcId: string, name: string, country: string, countrySubdivision: string, status: available | full | maintenance }[]",
+            "description": "A list of IDCs."
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.images.get",
+      "shortPath": "images.get",
+      "description": "Get an OS image by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "supportedProducts",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "BootMode",
+            "optional": false,
+            "type": "UEFI | Legacy"
+          },
+          {
+            "key": "DefaultPartitionTable",
+            "optional": false,
+            "type": "{ fileSystem: string, mountPoint: string, name: string, size: string }[]"
+          },
+          {
+            "key": "OSArchitecture",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "OSSeries",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "OSVersion",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "SystemDiskSize",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "icon",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "idc",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orgId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "Public | Customized"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.images.list",
+      "shortPath": "images.list",
+      "description": "List OS images for bare-metal servers, optionally filtered by data center and product",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "idc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "product",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ supportedProducts: string[], BootMode: UEFI | Legacy, DefaultPartitionTable: { fileSystem: string, mountPoint: string, name: string, size: string }[], OSArchitecture: string, OSSeries: string, OSVersion: string, SystemDiskSize: string, icon: string, idc: string, name: string, orgId: string, path: string, createdAt: string, id: string, type: Public | Customized }[]"
+      }
+    },
+    {
+      "path": "gmicloud.api.mediaModels.get",
+      "shortPath": "mediaModels.get",
+      "description": "Get a media model's description and the payload parameters its requests accept",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": false,
+            "type": "string",
+            "description": "Model ID from mediaModels.list, e.g. Veo3"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "org_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "brief_description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "detailed_description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modalities",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{ name: string, display_name?: string | null, description?: string | null, type?: string | null, required?: boolean | null, default?: any }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.mediaModels.list",
+      "shortPath": "mediaModels.list",
+      "description": "List the video, image, and audio model IDs served by the GMI request queue",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_ids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.mediaRequests.create",
+      "shortPath": "mediaRequests.create",
+      "description": "Queue a video, image, or audio generation request; poll mediaRequests.get for the outcome (billed)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string",
+            "description": "Model ID from mediaModels.list"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "Model parameters, e.g. { prompt, durationSeconds, aspectRatio }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string",
+            "description": "dispatched, processing, success, failed, or another queue state"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "queued_at",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.mediaRequests.get",
+      "shortPath": "mediaRequests.get",
+      "description": "Get the status of a queued media request and, once it succeeds, its output file URLs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string",
+            "description": "dispatched, processing, success, failed, or another queue state"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "queued_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "org_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_public",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "payload",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "outcome",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.models.list",
+      "shortPath": "models.list",
+      "description": "List the LLMs available on GMI Cloud serverless inference",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, object?: string, name?: string | null, created?: number | null, owned_by?: string | null, context_length?: number | null, quantization?: string | null, pricing?: { prompt?: string, completion?: string } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.router.autoroute",
+      "shortPath": "router.autoroute",
+      "description": "Let the GMI Router pick the best model for a conversation by cost, balance, or quality and return its completion",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ role: system | developer | user | assistant | tool, content?: string | { type: string, text?: string, image_url?: { url: string, detail?: string }, input_audio?: { data: string, format: string } }[] | null, name?: string, tool_calls?: { id: string, type: function, function: { name: string, arguments: string } }[], tool_call_id?: string }[]"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "cost | balanced | quality",
+            "description": "What the router optimizes for; balanced by default"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "{ role: string, content: string | null }"
+          },
+          {
+            "key": "routing_metadata",
+            "optional": true,
+            "type": "{ selected_model: string, task_type?: string | null, selected_mode?: string | null, fallback_models?: string[] | null, recommendation_id?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.sandboxes.connect",
+      "shortPath": "sandboxes.connect",
+      "description": "Connect to a running sandbox and return its data-plane domain and access token; a timeout extends its lifetime",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique sandbox resource ID (UUID; the 'id' field of the create response)."
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number",
+            "description": "When greater than 0, extends the lifetime of a running sandbox (extend-only, never shortens)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string",
+            "description": "Request tracing ID"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, sandbox_key: string, template_id: string, domain: string, sandbox_access_token: string, traffic_access_token: string, end_at: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.sandboxes.create",
+      "shortPath": "sandboxes.create",
+      "description": "Create a sandbox from a template; returns the data-plane host and access token used by sandboxExec and sandboxFiles",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "idempotency_key",
+            "optional": true,
+            "type": "string",
+            "description": "Optional caller-generated idempotency key (a UUID is recommended)."
+          },
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string",
+            "description": "Template identifier or name."
+          },
+          {
+            "key": "idc_name",
+            "optional": true,
+            "type": "string",
+            "description": "Target data center name, e.g."
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number",
+            "description": "Time-to-live in seconds."
+          },
+          {
+            "key": "env_vars",
+            "optional": true,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Customer-defined key/value pairs; the platform does not interpret them."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string",
+            "description": "Request tracing ID"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, sandbox_key?: string, template_id?: string, domain?: string, sandbox_access_token?: string, traffic_access_token?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.sandboxes.delete",
+      "shortPath": "sandboxes.delete",
+      "description": "Kill a sandbox; it moves to deleting and then deleted once resources are released",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique sandbox resource ID (UUID; the 'id' field of the create response)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, state?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.sandboxes.get",
+      "shortPath": "sandboxes.get",
+      "description": "Get sandbox details, including state, resources, and failure reason",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique sandbox resource ID (UUID; the 'id' field of the create response)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string",
+            "description": "Request tracing ID"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, sandbox_key?: string, template_id?: string, idc_name?: string, state?: provisioning | running | checkpointing | updating | failed, product?: string, product_name?: string, resources?: { vcpu?: number, memory_mb?: number, disk_mb?: number }, metadata?: Record<string, string>, latest_operation?: { type: create | delete | set_timeout, status: pending | succeeded | failed, error_code?: string, message?: string, completed_at?: string }, failure?: { code?: string, message?: string, occurred_at?: string }, created_at?: string, running_at?: string, started_at?: string, end_at?: string, domain?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.sandboxes.list",
+      "shortPath": "sandboxes.list",
+      "description": "List active sandboxes (provisioning, running, updating, checkpointing, failed) with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, starting from 1; default 1"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page; default 20, maximum 100"
+          },
+          {
+            "key": "idc_name",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by data center name, e.g."
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "(provisioning | running | failed)[]",
+            "description": "Filter by external state."
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Filter by customer metadata key/value, e.g."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string",
+            "description": "Request tracing ID"
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number",
+            "description": "Total number of active sandboxes"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id?: string, sandbox_key?: string, template_id?: string, idc_name?: string, state?: provisioning | running | checkpointing | updating | failed, metadata?: Record<string, string>, created_at?: string, running_at?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.sandboxes.setTimeout",
+      "shortPath": "sandboxes.setTimeout",
+      "description": "Reset a running sandbox's time-to-live relative to now (300 seconds when omitted)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique sandbox resource ID (UUID; the 'id' field of the create response)."
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number",
+            "description": "Time-to-live in seconds, measured from the current time."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string",
+            "description": "Request tracing ID"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, old_end_at: string, new_end_at: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.sandboxes.updateMetadata",
+      "shortPath": "sandboxes.updateMetadata",
+      "description": "Replace a sandbox's metadata as a whole (an empty object clears it)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique sandbox resource ID (UUID; the 'id' field of the create response)."
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "Record<string, string>",
+            "description": "Customer metadata, replaced as a whole."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string",
+            "description": "Request tracing ID"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, sandbox_key?: string, template_id?: string, idc_name?: string, state?: provisioning | running | checkpointing | updating | failed, product?: string, product_name?: string, resources?: { vcpu?: number, memory_mb?: number, disk_mb?: number }, metadata?: Record<string, string>, latest_operation?: { type: create | delete | set_timeout, status: pending | succeeded | failed, error_code?: string, message?: string, completed_at?: string }, failure?: { code?: string, message?: string, occurred_at?: string }, created_at?: string, running_at?: string, started_at?: string, end_at?: string, domain?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.sandboxExec.cancel",
+      "shortPath": "sandboxExec.cancel",
+      "description": "Cancel a running sandbox command",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandbox_key",
+            "optional": false,
+            "type": "string",
+            "description": "sandbox_key returned by sandboxes.create or sandboxes.connect"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "domain returned by sandboxes.create or sandboxes.connect"
+          },
+          {
+            "key": "access_token",
+            "optional": false,
+            "type": "string",
+            "description": "sandbox_access_token returned by sandboxes.create or sandboxes.connect"
+          },
+          {
+            "key": "execution_id",
+            "optional": false,
+            "type": "string",
+            "description": "Public execution identifier returned by the create operation."
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string",
+            "description": "Optional request correlation identifier echoed in the response."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ request_id?: string, execution_id: string, sandbox_id: string, status: pending | running | canceling | succeeded | failed | canceled, exit_code: number | null, stdout: string | null, stderr: string | null, stdout_truncated: boolean | null, stderr_truncated: boolean | null, started_at: string | null, completed_at: string | null } | { request_id?: string, execution_id: string, sandbox_id: string, status: pending | running | canceling | succeeded | failed | canceled }"
+      }
+    },
+    {
+      "path": "gmicloud.api.sandboxExec.get",
+      "shortPath": "sandboxExec.get",
+      "description": "Get the status, exit code, and output of a sandbox command",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandbox_key",
+            "optional": false,
+            "type": "string",
+            "description": "sandbox_key returned by sandboxes.create or sandboxes.connect"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "domain returned by sandboxes.create or sandboxes.connect"
+          },
+          {
+            "key": "access_token",
+            "optional": false,
+            "type": "string",
+            "description": "sandbox_access_token returned by sandboxes.create or sandboxes.connect"
+          },
+          {
+            "key": "execution_id",
+            "optional": false,
+            "type": "string",
+            "description": "Public execution identifier returned by the create operation."
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string",
+            "description": "Optional request correlation identifier echoed in the response."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string",
+            "description": "Echo of X-Request-ID when supplied."
+          },
+          {
+            "key": "execution_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sandbox_id",
+            "optional": false,
+            "type": "string",
+            "description": "Echo of the data-plane addressing key (i.e."
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "pending | running | canceling | succeeded | failed | canceled"
+          },
+          {
+            "key": "exit_code",
+            "optional": false,
+            "type": "number | null",
+            "description": "Process exit code; null while non-terminal or when canceled."
+          },
+          {
+            "key": "stdout",
+            "optional": false,
+            "type": "string | null",
+            "description": "Captured standard output, or null while not yet available."
+          },
+          {
+            "key": "stderr",
+            "optional": false,
+            "type": "string | null",
+            "description": "Captured standard error, or null while not yet available."
+          },
+          {
+            "key": "stdout_truncated",
+            "optional": false,
+            "type": "boolean | null"
+          },
+          {
+            "key": "stderr_truncated",
+            "optional": false,
+            "type": "boolean | null"
+          },
+          {
+            "key": "started_at",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "completed_at",
+            "optional": false,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.sandboxExec.run",
+      "shortPath": "sandboxExec.run",
+      "description": "Run a shell command inside a sandbox; with wait it returns the result, otherwise poll sandboxExec.get",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandbox_key",
+            "optional": false,
+            "type": "string",
+            "description": "sandbox_key returned by sandboxes.create or sandboxes.connect"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "domain returned by sandboxes.create or sandboxes.connect"
+          },
+          {
+            "key": "access_token",
+            "optional": false,
+            "type": "string",
+            "description": "sandbox_access_token returned by sandboxes.create or sandboxes.connect"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string",
+            "description": "Optional request correlation identifier echoed in the response."
+          },
+          {
+            "key": "wait",
+            "optional": true,
+            "type": "boolean",
+            "description": "Wait for a terminal result before responding."
+          },
+          {
+            "key": "wait_timeout_seconds",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum time to wait when 'wait=true', in seconds."
+          },
+          {
+            "key": "action",
+            "optional": true,
+            "type": "exec",
+            "description": "Defaults to \"exec\"."
+          },
+          {
+            "key": "parameters",
+            "optional": false,
+            "type": "{ command: string, envs?: Record<string, string>, cwd?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ request_id?: string, execution_id: string, sandbox_id: string, status: pending | running | canceling | succeeded | failed | canceled, exit_code: number | null, stdout: string | null, stderr: string | null, stdout_truncated: boolean | null, stderr_truncated: boolean | null, started_at: string | null, completed_at: string | null } | { request_id?: string, execution_id: string, sandbox_id: string, status: pending | running | canceling | succeeded | failed | canceled }"
+      }
+    },
+    {
+      "path": "gmicloud.api.sandboxFiles.download",
+      "shortPath": "sandboxFiles.download",
+      "description": "Download a file from a sandbox by absolute path; returns base64 content",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandbox_key",
+            "optional": false,
+            "type": "string",
+            "description": "sandbox_key returned by sandboxes.create or sandboxes.connect"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "domain returned by sandboxes.create or sandboxes.connect"
+          },
+          {
+            "key": "access_token",
+            "optional": false,
+            "type": "string",
+            "description": "sandbox_access_token returned by sandboxes.create or sandboxes.connect"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string",
+            "description": "**Absolute path** inside the sandbox."
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string",
+            "description": "Perform the file operation as this user; defaults to the sandbox's default user."
+          },
+          {
+            "key": "range",
+            "optional": true,
+            "type": "string",
+            "description": "Only honored in data centers with 'Accept-Ranges: bytes'; format 'bytes=<start>-<end>'."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "contentBase64",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.sandboxFiles.upload",
+      "shortPath": "sandboxFiles.upload",
+      "description": "Write a file to an absolute path inside a sandbox, overwriting any existing file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandbox_key",
+            "optional": false,
+            "type": "string",
+            "description": "sandbox_key returned by sandboxes.create or sandboxes.connect"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "domain returned by sandboxes.create or sandboxes.connect"
+          },
+          {
+            "key": "access_token",
+            "optional": false,
+            "type": "string",
+            "description": "sandbox_access_token returned by sandboxes.create or sandboxes.connect"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string",
+            "description": "**Absolute path** inside the sandbox."
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string",
+            "description": "Perform the file operation as this user; defaults to the sandbox's default user."
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string",
+            "description": "File content, as UTF-8 text or base64 (see encoding)"
+          },
+          {
+            "key": "encoding",
+            "optional": true,
+            "type": "utf8 | base64",
+            "description": "Defaults to \"utf8\"."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ path: string, name: string, type: file }[]"
+      }
+    },
+    {
+      "path": "gmicloud.api.sandboxProducts.list",
+      "shortPath": "sandboxProducts.list",
+      "description": "List the sandbox product catalog (CPU, memory, disk) in a data center",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "idc_name",
+            "optional": false,
+            "type": "string",
+            "description": "IDC identifier used for capability and resource resolution."
+          },
+          {
+            "key": "resource_type",
+            "optional": true,
+            "type": "sandbox",
+            "description": "Resource type to list."
+          },
+          {
+            "key": "include_unavailable",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include products whose status is 'unavailable'."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string",
+            "description": "HTTP request correlation identifier."
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ resource_type: sandbox, product: string, name: string, status: active | unavailable, resources: { cpu_count: number, memory_mb: number, disk_size_mb: number, architecture: x86_64 | arm64 } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.sandboxTemplates.create",
+      "shortPath": "sandboxTemplates.create",
+      "description": "Create a sandbox template from an image or another template and start its first build",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "idempotency_key",
+            "optional": false,
+            "type": "string",
+            "description": "Caller-generated key that makes the mutation safe to retry (a UUID is recommended)."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Organization-scoped Template display name."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Human-readable Template description."
+          },
+          {
+            "key": "idc_name",
+            "optional": true,
+            "type": "string",
+            "description": "IDC that permanently owns the Template."
+          },
+          {
+            "key": "resources",
+            "optional": false,
+            "type": "{ type: preset, product: string } | { type: custom, cpu_count: number, memory_mb: number, disk_size_mb: number, architecture?: x86_64 | arm64 }"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "User-defined labels used for filtering."
+          },
+          {
+            "key": "build",
+            "optional": true,
+            "type": "{ source: { type: image, image: string } | { type: template, template_id: string, build_id?: string }, commands?: string[], envs?: Record<string, string>, start_cmd?: string }",
+            "description": "Initial Build definition created and started with the Template (combined flow, every IDC supports it)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string",
+            "description": "HTTP request correlation identifier."
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, build_id: string, status: waiting | building | ready | error }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.sandboxTemplates.delete",
+      "shortPath": "sandboxTemplates.delete",
+      "description": "Delete a sandbox template; existing sandboxes keep running",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Template identifier."
+          },
+          {
+            "key": "idc_name",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by data center name, e.g."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string",
+            "description": "Deletion request correlation identifier."
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, deleted: true }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.sandboxTemplates.get",
+      "shortPath": "sandboxTemplates.get",
+      "description": "Get a sandbox template with its current and latest build",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Template identifier."
+          },
+          {
+            "key": "idc_name",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by data center name, e.g."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string",
+            "description": "HTTP request correlation identifier."
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, description?: string, idc_name: string, source_type: image | template | sandbox, product?: string | null, product_name?: X_SMALL | SMALL | MEDIUM | LARGE | X_LARGE | null, resources: { cpu_count: number, memory_mb: number, disk_size_mb: number, architecture: x86_64 | arm64 }, labels?: Record<string, string>, current_build_id?: string | null, latest_build_id: string, latest_build_status: waiting | building | ready | error, rebuildable?: boolean, deleted_at?: string | null, created_at: string, updated_at: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.sandboxTemplates.getBuild",
+      "shortPath": "sandboxTemplates.getBuild",
+      "description": "Get a sandbox template build status and artifact availability",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string",
+            "description": "Owning Template identifier."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Template Build identifier."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string",
+            "description": "HTTP request correlation identifier."
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, template_id: string, trigger: initial_build | rebuild | snapshot, status: waiting | building | ready | error, artifact_state: absent | unknown | available | reclaimed | retained, source_type: image | template | sandbox, source?: Record<string, any>, resources: { cpu_count: number, memory_mb: number, disk_size_mb: number, architecture: x86_64 | arm64 }, product?: string | null, product_name?: X_SMALL | SMALL | MEDIUM | LARGE | X_LARGE | null, commands?: string[], start_cmd?: string | null, failure?: { code: string, message: string } | null, created_at: string, started_at?: string | null, finished_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.sandboxTemplates.getBuildLogs",
+      "shortPath": "sandboxTemplates.getBuildLogs",
+      "description": "Get build logs for a sandbox template build, paged by offset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string",
+            "description": "Owning Template identifier."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Template Build identifier."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Zero-based normalized log entry offset."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of log entries to return."
+          },
+          {
+            "key": "level",
+            "optional": true,
+            "type": "debug | info | warn | error",
+            "description": "Optional normalized log level filter."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string",
+            "description": "HTTP request correlation identifier."
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ entries: { offset: number, timestamp?: string | null, level: debug | info | warn | error, message: string }[], next_offset: number, has_more: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.sandboxTemplates.list",
+      "shortPath": "sandboxTemplates.list",
+      "description": "List sandbox templates with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "idc_name",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by data center name, e.g."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, starting from 1; default 1"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page; default 20, maximum 100"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string",
+            "description": "HTTP request correlation identifier."
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number",
+            "description": "Total number of matching Templates."
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number",
+            "description": "One-based page number."
+          },
+          {
+            "key": "page_size",
+            "optional": false,
+            "type": "number",
+            "description": "Requested number of Templates per page."
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, name: string, description?: string, idc_name: string, source_type: image | template | sandbox, product?: string | null, product_name?: X_SMALL | SMALL | MEDIUM | LARGE | X_LARGE | null, resources: { cpu_count: number, memory_mb: number, disk_size_mb: number, architecture: x86_64 | arm64 }, labels?: Record<string, string>, current_build_id?: string | null, latest_build_id: string, latest_build_status: waiting | building | ready | error, rebuildable?: boolean, deleted_at?: string | null, created_at: string, updated_at: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.sandboxTemplates.listBuilds",
+      "shortPath": "sandboxTemplates.listBuilds",
+      "description": "List the builds of a sandbox template, newest first, with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string",
+            "description": "Owning Template identifier."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, starting from 1; default 1"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page; default 20, maximum 100"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string",
+            "description": "HTTP request correlation identifier."
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number",
+            "description": "Total number of Build attempts for the Template."
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number",
+            "description": "One-based page number."
+          },
+          {
+            "key": "page_size",
+            "optional": false,
+            "type": "number",
+            "description": "Requested number of Builds per page."
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, template_id: string, trigger: initial_build | rebuild | snapshot, status: waiting | building | ready | error, artifact_state: absent | unknown | available | reclaimed | retained, source_type: image | template | sandbox, source?: Record<string, any>, resources: { cpu_count: number, memory_mb: number, disk_size_mb: number, architecture: x86_64 | arm64 }, product?: string | null, product_name?: X_SMALL | SMALL | MEDIUM | LARGE | X_LARGE | null, commands?: string[], start_cmd?: string | null, failure?: { code: string, message: string } | null, created_at: string, started_at?: string | null, finished_at?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.sandboxTemplates.update",
+      "shortPath": "sandboxTemplates.update",
+      "description": "Update a sandbox template's name, description, or labels",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Template identifier."
+          },
+          {
+            "key": "idc_name",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by data center name, e.g."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "New organization-scoped display name."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "New human-readable description."
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Complete replacement of user-defined labels."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string",
+            "description": "HTTP request correlation identifier."
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, description?: string, idc_name: string, source_type: image | template | sandbox, product?: string | null, product_name?: X_SMALL | SMALL | MEDIUM | LARGE | X_LARGE | null, resources: { cpu_count: number, memory_mb: number, disk_size_mb: number, architecture: x86_64 | arm64 }, labels?: Record<string, string>, current_build_id?: string | null, latest_build_id: string, latest_build_status: waiting | building | ready | error, rebuildable?: boolean, deleted_at?: string | null, created_at: string, updated_at: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.templates.create",
+      "shortPath": "templates.create",
+      "description": "Create a custom container template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credential",
+            "optional": true,
+            "type": "{ secret?: string, username?: string }"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "draft | published | unpublished"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.templates.delete",
+      "shortPath": "templates.delete",
+      "description": "Delete a custom container template",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.templates.get",
+      "shortPath": "templates.get",
+      "description": "Get a container template by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "official",
+            "optional": false,
+            "type": "boolean",
+            "description": "true means the template is provided by GMI Cloud and it's read only."
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credential",
+            "optional": true,
+            "type": "{ secret?: string, username?: string }"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "draft | published | unpublished"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.templates.list",
+      "shortPath": "templates.list",
+      "description": "List container templates (official and custom) used to launch containers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, official: boolean, orgId?: string, credential?: { secret?: string, username?: string }, description?: string, name: string, path: string, status?: draft | published | unpublished }[]"
+      }
+    },
+    {
+      "path": "gmicloud.api.templates.update",
+      "shortPath": "templates.update",
+      "description": "Update a custom container template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credential",
+            "optional": true,
+            "type": "{ secret?: string, username?: string }"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "draft | published | unpublished"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.uploads.createUrl",
+      "shortPath": "uploads.createUrl",
+      "description": "Get a pre-signed upload URL and the stable public URL to reference an image, video, or audio file in media requests",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_type",
+            "optional": false,
+            "type": "jpeg | jpg | png | mp4 | mp3 | wav"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "upload_url",
+            "optional": false,
+            "type": "string",
+            "description": "Pre-signed URL to PUT the raw bytes to; valid for about 15 minutes"
+          },
+          {
+            "key": "public_url",
+            "optional": false,
+            "type": "string",
+            "description": "Stable public URL to pass in media requests"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.vpcs.allocate",
+      "shortPath": "vpcs.allocate",
+      "description": "Allocate the default VPC for the organization in a data center",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "idc",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "idc",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orgId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subnets",
+            "optional": false,
+            "type": "{ cidr: string, id: string, name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.vpcs.get",
+      "shortPath": "vpcs.get",
+      "description": "Get a VPC and its subnets by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "idc",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orgId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subnets",
+            "optional": false,
+            "type": "{ cidr: string, id: string, name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmicloud.api.vpcs.list",
+      "shortPath": "vpcs.list",
+      "description": "List VPCs, optionally filtered by data center",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "idc",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ createdAt: string, id: string, idc: string, name: string, orgId: string, subnets: { cidr: string, id: string, name: string }[] }[]"
+      }
+    },
+    {
+      "path": "gmicloud.api.vpcs.release",
+      "shortPath": "vpcs.release",
+      "description": "Release the default VPC",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "gmicloud.db.baremetals.search",
+      "entityName": "baremetals",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "consoleReady",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "idc",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "image",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "imageId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "orgId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "product",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "reason",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "gmicloud.db.containers.search",
+      "entityName": "containers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "eipAddress",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "eipId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "modifiedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "orgId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "reason",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "idc",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "product",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "command",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "templateId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "gmicloud.db.elasticIps.search",
+      "entityName": "elasticIps",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "orgId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "internetConnectionType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "maxBandwidth",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "idc",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ipAddress",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "product",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "instanceID",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "instanceType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "gmicloud.db.firewalls.search",
+      "entityName": "firewalls",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "idc",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isPreset",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "orgId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "gmicloud.db.mediaRequests.search",
+      "entityName": "mediaRequests",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "requestId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "model",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "gmicloud.db.models.search",
+      "entityName": "models",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "object",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "owned_by",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "context_length",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "quantization",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "gmicloud.db.sandboxes.search",
+      "entityName": "sandboxes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sandbox_key",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "template_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "idc_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "product",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "product_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "running_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "started_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "end_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "gmicloud.db.sandboxTemplates.search",
+      "entityName": "sandboxTemplates",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "idc_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "source_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "product",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "product_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "current_build_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "latest_build_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "latest_build_status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "rebuildable",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "deleted_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

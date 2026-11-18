@@ -1,0 +1,870 @@
+{
+  "id": "teamcamp",
+  "displayName": "Teamcamp",
+  "description": "Project management for client work. Read and create projects, their task groups and their tasks, with the workspace members and customers a project is built from.",
+  "npmPackageName": "@corsair-dev/teamcamp",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 12,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "teamcamp.api.account.verify",
+      "shortPath": "account.verify",
+      "description": "Read the workspace the key belongs to, which also confirms the key is valid",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspaceName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teamcamp.api.customers.list",
+      "shortPath": "customers.list",
+      "description": "List the customers a project can be billed to, with their clients",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customers",
+            "optional": false,
+            "type": "{ customerId: string, address?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, companyName?: string | null, phone?: string | null, clients?: { clientId?: string | null, name?: string | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teamcamp.api.groups.list",
+      "shortPath": "groups.list",
+      "description": "List the task groups of a project, by id and name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string",
+            "description": "The project to list the task groups of."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groups",
+            "optional": false,
+            "type": "{ groupId: string, groupName?: string | null, projectId?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teamcamp.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Create a project, optionally from a template and with a customer and dates",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectName",
+            "optional": false,
+            "type": "string",
+            "description": "The project name."
+          },
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "string",
+            "description": "The customer to bill the project to."
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "The project start date."
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string",
+            "description": "The project due date."
+          },
+          {
+            "key": "templateId",
+            "optional": true,
+            "type": "string",
+            "description": "A project template to copy the statuses and groups from."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ownerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "favoriteUsers",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "projectUsers",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "statusEnable",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "estimate",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ Name?: string | null, Type?: number | null, _id?: string | null, Index?: number | null, Default?: boolean | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teamcamp.api.projects.delete",
+      "shortPath": "projects.delete",
+      "description": "Delete a project. It is archived rather than erased: it leaves the project list, but a read by id still returns it marked archived",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string",
+            "description": "The project to delete."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "archived",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teamcamp.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Read one project: its members, owner, dates and workflow statuses, which a task create needs for its status id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string",
+            "description": "The project id, as the project list reports it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ownerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "favoriteUsers",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "projectUsers",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "statusEnable",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "estimate",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ Name?: string | null, Type?: number | null, _id?: string | null, Index?: number | null, Default?: boolean | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teamcamp.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List the projects in the workspace, by id and name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projects",
+            "optional": false,
+            "type": "{ projectId: string, projectName?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teamcamp.api.projects.update",
+      "shortPath": "projects.update",
+      "description": "Change a project name, description, dates or customer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string",
+            "description": "The project to update."
+          },
+          {
+            "key": "projectName",
+            "optional": true,
+            "type": "string",
+            "description": "The new project name."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "The new description."
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "The new start date."
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string",
+            "description": "The new due date."
+          },
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "string",
+            "description": "The customer to bill the project to."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ownerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "favoriteUsers",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "projectUsers",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "statusEnable",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "estimate",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ Name?: string | null, Type?: number | null, _id?: string | null, Index?: number | null, Default?: boolean | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teamcamp.api.tasks.create",
+      "shortPath": "tasks.create",
+      "description": "Create a task in a project, with a priority, due date, assignees, group, status, milestone, estimate and attachments",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string",
+            "description": "The project the task belongs to."
+          },
+          {
+            "key": "taskName",
+            "optional": false,
+            "type": "string",
+            "description": "The task name."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "The task description."
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "none | urgent | high | medium | low",
+            "description": "The task priority. Omit it for no priority. The project must have task priorities turned on in Teamcamp, or Teamcamp answers 400 \"Not enable priority in your project.\""
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string",
+            "description": "The task due date."
+          },
+          {
+            "key": "groupId",
+            "optional": true,
+            "type": "string",
+            "description": "The task group to place it in."
+          },
+          {
+            "key": "taskUsers",
+            "optional": true,
+            "type": "string[]",
+            "description": "User ids to assign as the task assignees."
+          },
+          {
+            "key": "statusId",
+            "optional": true,
+            "type": "string",
+            "description": "The workflow status id, as a project read lists it under `status`. Teamcamp does not check it, so a wrong id is saved as given."
+          },
+          {
+            "key": "milestoneId",
+            "optional": true,
+            "type": "number",
+            "description": "The milestone id, when the project has milestones."
+          },
+          {
+            "key": "estimateTime",
+            "optional": true,
+            "type": "number",
+            "description": "The estimated hours for the task. The project must have estimates turned on in Teamcamp, or Teamcamp answers 400."
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ fileType: string, href: string, name: string, size: string }[]",
+            "description": "Files to attach, each with its type, url, name and a human-readable size such as \"12 KB\"."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "taskName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "statusId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "groupId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "taskUsers",
+            "optional": true,
+            "type": "{ taskUserId?: string | null }[] | null"
+          },
+          {
+            "key": "subscribers",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "estimateTime",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "milestoneId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "Record<string, JsonValue>[] | null"
+          },
+          {
+            "key": "comments",
+            "optional": true,
+            "type": "{ _id?: string | null, commentId?: string | null, content?: string | null, CreatedBy?: string | null, UpdatedBy?: string | null, CreatedTime?: string | null, UpdatedTime?: string | null, Type?: number | null }[] | null"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedBy",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "JsonValue[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teamcamp.api.tasks.get",
+      "shortPath": "tasks.get",
+      "description": "Read one task, with its assignees, labels, files and comments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string",
+            "description": "The task id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "taskName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "statusId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "groupId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "taskUsers",
+            "optional": true,
+            "type": "{ taskUserId?: string | null }[] | null"
+          },
+          {
+            "key": "subscribers",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "estimateTime",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "milestoneId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "Record<string, JsonValue>[] | null"
+          },
+          {
+            "key": "comments",
+            "optional": true,
+            "type": "{ _id?: string | null, commentId?: string | null, content?: string | null, CreatedBy?: string | null, UpdatedBy?: string | null, CreatedTime?: string | null, UpdatedTime?: string | null, Type?: number | null }[] | null"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedBy",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "JsonValue[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teamcamp.api.tasks.list",
+      "shortPath": "tasks.list",
+      "description": "List the tasks of a project, optionally only the completed or only the open ones",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string",
+            "description": "The project to list tasks from. Required by the API."
+          },
+          {
+            "key": "complete",
+            "optional": true,
+            "type": "boolean",
+            "description": "True returns only completed tasks, false only open ones. Omit it for both."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tasks",
+            "optional": false,
+            "type": "{ taskId: string, taskName?: string | null, status?: boolean | null, statusId?: string | null, createdAt?: string | null, updatedAt?: string | null, id?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teamcamp.api.users.list",
+      "shortPath": "users.list",
+      "description": "List the workspace members, with their role, timezone and last seen time",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, email?: string | null, phone?: string | null, timezone?: string | null, dateFormat?: string | null, profile_photo?: string | null, isOwner?: boolean | null, isAdmin?: boolean | null, lastSeen?: string | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

@@ -1,0 +1,1650 @@
+---
+title: "SimpleKPI API reference"
+sidebarTitle: "API"
+description: "API reference for the SimpleKPI plugin in Corsair: every `simplekpi.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Breakdown Items
+
+### create
+
+`breakdownItems.create`
+
+Create a breakdown item, such as a person, team, product or region; its id is what an entry sends as source_id
+
+**Risk:** `write`
+
+```ts
+await corsair.simplekpi.api.breakdownItems.create({ name: 'EMEA', breakdown_id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `breakdown_id` | `number` | No | Omit it for an item that combines several breakdowns. |
+| `is_archived` | `boolean` | No | Archive the item. An update replaces the item, so send it again. |
+| `sort_order` | `number` | No | Display position. An update replaces the item, so send it again. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `breakdown_id` | `number \| string \| null` | No | Null when the item combines more than one breakdown. |
+| `user_id` | `number \| string \| null` | No | Set for a People breakdown item, null for every other kind. |
+| `is_system` | `boolean \| null` | No | — |
+| `is_archived` | `boolean \| null` | No | — |
+| `sort_order` | `number \| string \| null` | No | — |
+| `created_at` | `string \| null` | No | ISO 8601. |
+| `updated_at` | `string \| null` | No | ISO 8601. |
+
+
+
+---
+
+### delete
+
+`breakdownItems.delete`
+
+Delete a breakdown item. SimpleKPI answers 204 but keeps the item archived (is_archived true) rather than removing it
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.simplekpi.api.breakdownItems.delete({ id: 77 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | A positive integer assigned by SimpleKPI. |
+
+SimpleKPI answers 204 but keeps the item, archived (`is_archived: true`), rather than removing it (live, 11-16).
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`breakdownItems.get`
+
+Read one breakdown item by id, with the breakdown it belongs to
+
+**Risk:** `read`
+
+```ts
+await corsair.simplekpi.api.breakdownItems.get({ id: 77 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | A positive integer assigned by SimpleKPI. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `breakdown_id` | `number \| string \| null` | No | Null when the item combines more than one breakdown. |
+| `user_id` | `number \| string \| null` | No | Set for a People breakdown item, null for every other kind. |
+| `is_system` | `boolean \| null` | No | — |
+| `is_archived` | `boolean \| null` | No | — |
+| `sort_order` | `number \| string \| null` | No | — |
+| `created_at` | `string \| null` | No | ISO 8601. |
+| `updated_at` | `string \| null` | No | ISO 8601. |
+
+
+
+---
+
+### list
+
+`breakdownItems.list`
+
+List the breakdown items a KPI can be broken down by, a page at a time; the API has no breakdown filter, so filter on breakdown_id across the pages
+
+**Risk:** `read`
+
+```ts
+await corsair.simplekpi.api.breakdownItems.list({ page: 1, rows: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Which page to return, counting from 1. |
+| `rows` | `number` | No | How many rows per page, 500 by default. Page until one comes back short, because there is no total. |
+
+The API has no breakdown filter, so page through the items and filter on `breakdown_id` yourself.
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number | string,
+  name?: string | null,
+  breakdown_id?: number | string | null,
+  user_id?: number | string | null,
+  is_system?: boolean | null,
+  is_archived?: boolean | null,
+  sort_order?: number | string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`breakdownItems.update`
+
+Replace a breakdown item; anything left out is reset to its default
+
+**Risk:** `write`
+
+```ts
+await corsair.simplekpi.api.breakdownItems.update({ id: 77, name: 'EMEA North' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | A positive integer assigned by SimpleKPI. |
+| `name` | `string` | Yes | — |
+| `breakdown_id` | `number \| null` | No | A positive integer assigned by SimpleKPI. |
+| `is_archived` | `boolean` | No | Archive the item. An update replaces the item, so send it again. |
+| `sort_order` | `number` | No | Display position. An update replaces the item, so send it again. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `breakdown_id` | `number \| string \| null` | No | Null when the item combines more than one breakdown. |
+| `user_id` | `number \| string \| null` | No | Set for a People breakdown item, null for every other kind. |
+| `is_system` | `boolean \| null` | No | — |
+| `is_archived` | `boolean \| null` | No | — |
+| `sort_order` | `number \| string \| null` | No | — |
+| `created_at` | `string \| null` | No | ISO 8601. |
+| `updated_at` | `string \| null` | No | ISO 8601. |
+
+
+
+---
+
+## Kpi Categories
+
+### create
+
+`kpiCategories.create`
+
+Create a KPI category, which groups KPIs on the dashboard
+
+**Risk:** `write`
+
+```ts
+await corsair.simplekpi.api.kpiCategories.create({ name: 'Sales' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `sort_order` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `sort_order` | `number \| string \| null` | No | — |
+| `created_at` | `string \| null` | No | ISO 8601. |
+| `updated_at` | `string \| null` | No | ISO 8601. |
+
+
+
+---
+
+### delete
+
+`kpiCategories.delete`
+
+Delete a KPI category; the KPIs in it are affected and this cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.simplekpi.api.kpiCategories.delete({ id: 5478 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | A positive integer assigned by SimpleKPI. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`kpiCategories.get`
+
+Read one KPI category by id, with its name and sort order
+
+**Risk:** `read`
+
+```ts
+await corsair.simplekpi.api.kpiCategories.get({ id: 5478 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | A positive integer assigned by SimpleKPI. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `sort_order` | `number \| string \| null` | No | — |
+| `created_at` | `string \| null` | No | ISO 8601. |
+| `updated_at` | `string \| null` | No | ISO 8601. |
+
+
+
+---
+
+### kpis.create
+
+`kpiCategories.kpis.create`
+
+Create a KPI inside one category; it lands in the category in the path even when the body names another
+
+**Risk:** `write`
+
+```ts
+await corsair.simplekpi.api.kpiCategories.kpis.create({ category_id: 5478, name: 'New Sales', icon_id: 1, unit_id: 123, frequency_id: 'W', value_direction: 'U', aggregate_function: 'SUM' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category_id` | `number` | Yes | A positive integer assigned by SimpleKPI. |
+| `icon_id` | `number` | Yes | A real icon id from kpiIcons. Omit it and the request fails. |
+| `unit_id` | `number` | Yes | A real unit id from kpiUnits. Omit it and the request fails. |
+| `frequency_id` | `string` | Yes | A frequency id from kpiFrequencies: D daily, W weekly, M monthly, Q quarterly, Y yearly. Case sensitive. |
+| `name` | `string` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `target_default` | `number \| null` | No | Applied to new entries with no target. |
+| `value_direction` | `U \| D \| N` | Yes | U up is good, D down is good, N neither. |
+| `aggregate_function` | `SUM \| AVG` | Yes | How values roll up across a period. |
+| `sort_order` | `number` | No | — |
+| `is_active` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `category_id` | `number \| string \| null` | No | — |
+| `icon_id` | `number \| string \| null` | No | — |
+| `unit_id` | `number \| string \| null` | No | — |
+| `frequency_id` | `string \| null` | No | A frequency id from kpiFrequencies: D daily, W weekly, M monthly, Q quarterly, Y yearly. Case sensitive. |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `target_default` | `number \| null` | No | — |
+| `value_direction` | `U \| D \| N \| null` | No | — |
+| `aggregate_function` | `SUM \| AVG \| null` | No | — |
+| `is_calculated` | `boolean \| null` | No | Calculated KPIs take no entries through the API. |
+| `sort_order` | `number \| string \| null` | No | — |
+| `is_active` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | ISO 8601. |
+| `updated_at` | `string \| null` | No | ISO 8601. |
+
+
+
+---
+
+### kpis.delete
+
+`kpiCategories.kpis.delete`
+
+Delete a KPI through its category, with every entry recorded against it; this cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.simplekpi.api.kpiCategories.kpis.delete({ category_id: 5478, id: 1234 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category_id` | `number` | Yes | A positive integer assigned by SimpleKPI. |
+| `id` | `number` | Yes | A positive integer assigned by SimpleKPI. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### kpis.get
+
+`kpiCategories.kpis.get`
+
+Read one KPI through its category. A KPI under a different category answers 404
+
+**Risk:** `read`
+
+```ts
+await corsair.simplekpi.api.kpiCategories.kpis.get({ category_id: 5478, id: 1234 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category_id` | `number` | Yes | A positive integer assigned by SimpleKPI. |
+| `id` | `number` | Yes | A positive integer assigned by SimpleKPI. |
+
+A KPI under a different category answers 404, which is how the API keeps a caller on the right parent.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `category_id` | `number \| string \| null` | No | — |
+| `icon_id` | `number \| string \| null` | No | — |
+| `unit_id` | `number \| string \| null` | No | — |
+| `frequency_id` | `string \| null` | No | A frequency id from kpiFrequencies: D daily, W weekly, M monthly, Q quarterly, Y yearly. Case sensitive. |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `target_default` | `number \| null` | No | — |
+| `value_direction` | `U \| D \| N \| null` | No | — |
+| `aggregate_function` | `SUM \| AVG \| null` | No | — |
+| `is_calculated` | `boolean \| null` | No | Calculated KPIs take no entries through the API. |
+| `sort_order` | `number \| string \| null` | No | — |
+| `is_active` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | ISO 8601. |
+| `updated_at` | `string \| null` | No | ISO 8601. |
+
+
+
+---
+
+### kpis.list
+
+`kpiCategories.kpis.list`
+
+List the KPIs inside one category
+
+**Risk:** `read`
+
+```ts
+await corsair.simplekpi.api.kpiCategories.kpis.list({ category_id: 5478 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category_id` | `number` | Yes | A positive integer assigned by SimpleKPI. |
+| `page` | `number` | No | Which page to return, counting from 1. |
+| `rows` | `number` | No | How many rows per page, 500 by default. Page until one comes back short, because there is no total. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number | string,
+  category_id?: number | string | null,
+  icon_id?: number | string | null,
+  unit_id?: number | string | null,
+  frequency_id?: string | null,
+  name?: string | null,
+  description?: string | null,
+  target_default?: number | null,
+  value_direction?: U | D | N | null,
+  aggregate_function?: SUM | AVG | null,
+  is_calculated?: boolean | null,
+  sort_order?: number | string | null,
+  is_active?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### kpis.update
+
+`kpiCategories.kpis.update`
+
+Replace a KPI through its category. Anything left out is reset to its default
+
+**Risk:** `write`
+
+```ts
+await corsair.simplekpi.api.kpiCategories.kpis.update({ category_id: 5478, id: 1234, name: 'New Sales', icon_id: 1, unit_id: 123, frequency_id: 'W', value_direction: 'U', aggregate_function: 'SUM' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category_id` | `number` | Yes | A positive integer assigned by SimpleKPI. |
+| `icon_id` | `number` | Yes | A real icon id from kpiIcons. Omit it and the request fails. |
+| `unit_id` | `number` | Yes | A real unit id from kpiUnits. Omit it and the request fails. |
+| `frequency_id` | `string` | Yes | A frequency id from kpiFrequencies: D daily, W weekly, M monthly, Q quarterly, Y yearly. Case sensitive. |
+| `name` | `string` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `target_default` | `number \| null` | No | Applied to new entries with no target. |
+| `value_direction` | `U \| D \| N` | Yes | U up is good, D down is good, N neither. |
+| `aggregate_function` | `SUM \| AVG` | Yes | How values roll up across a period. |
+| `sort_order` | `number` | No | — |
+| `is_active` | `boolean` | No | — |
+| `id` | `number` | Yes | A positive integer assigned by SimpleKPI. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `category_id` | `number \| string \| null` | No | — |
+| `icon_id` | `number \| string \| null` | No | — |
+| `unit_id` | `number \| string \| null` | No | — |
+| `frequency_id` | `string \| null` | No | A frequency id from kpiFrequencies: D daily, W weekly, M monthly, Q quarterly, Y yearly. Case sensitive. |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `target_default` | `number \| null` | No | — |
+| `value_direction` | `U \| D \| N \| null` | No | — |
+| `aggregate_function` | `SUM \| AVG \| null` | No | — |
+| `is_calculated` | `boolean \| null` | No | Calculated KPIs take no entries through the API. |
+| `sort_order` | `number \| string \| null` | No | — |
+| `is_active` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | ISO 8601. |
+| `updated_at` | `string \| null` | No | ISO 8601. |
+
+
+
+---
+
+### list
+
+`kpiCategories.list`
+
+List the KPI categories on the account
+
+**Risk:** `read`
+
+```ts
+await corsair.simplekpi.api.kpiCategories.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Which page to return, counting from 1. |
+| `rows` | `number` | No | How many rows per page, 500 by default. Page until one comes back short, because there is no total. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number | string,
+  name?: string | null,
+  sort_order?: number | string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`kpiCategories.update`
+
+Replace a KPI category; anything left out is reset to its default
+
+**Risk:** `write`
+
+```ts
+await corsair.simplekpi.api.kpiCategories.update({ id: 5478, name: 'Revenue' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | A positive integer assigned by SimpleKPI. |
+| `name` | `string` | Yes | — |
+| `sort_order` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `sort_order` | `number \| string \| null` | No | — |
+| `created_at` | `string \| null` | No | ISO 8601. |
+| `updated_at` | `string \| null` | No | ISO 8601. |
+
+
+
+---
+
+## Kpi Entries
+
+### create
+
+`kpiEntries.create`
+
+Write or update one KPI entry. kpi_id, source_id and entry_date identify it, so the same trio again updates rather than duplicating. A write with every value empty answers stored: false
+
+**Risk:** `write`
+
+```ts
+await corsair.simplekpi.api.kpiEntries.create({ kpi_id: 1234, entry_date: '2026-08-03', actual: 42, target: 50, setActual: true, setTarget: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number \| null` | No | The user the entry is against. |
+| `email` | `string \| null` | No | Identifies the user by email instead of user_id. Send one, not both. |
+| `kpi_id` | `number` | Yes | — |
+| `source_id` | `number \| null` | No | The breakdown source. Omit it for the KPI's default source. |
+| `entry_date` | `string` | Yes | A date the KPI's frequency allows. A weekly KPI rejects a mid-week date. |
+| `actual` | `number \| null` | No | — |
+| `target` | `number \| null` | No | — |
+| `notes` | `string \| null` | No | — |
+| `setActual` | `boolean` | No | True writes actual, false leaves the stored value untouched. |
+| `setTarget` | `boolean` | No | True writes target, false leaves the stored value untouched. |
+| `setNotes` | `boolean` | No | True writes notes, false leaves the stored text untouched. |
+| `addToActual` | `boolean` | No | True adds actual to the stored value instead of replacing it. |
+
+An upsert on kpi_id, source_id and entry_date. A write with every value empty answers 200 with `{ stored: false }`, which the output models alongside the entry shape.
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number | string,
+  user_id?: number | string | null,
+  source_id?: number | string | null,
+  kpi_id?: number | string | null,
+  entry_date?: string | null,
+  actual?: number | null,
+  target?: number | null,
+  notes?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+} | {
+  stored: false,
+  source_id?: number | string | null,
+  kpi_id?: number | string | null,
+  entry_date?: string | null,
+  detail?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### createBatch
+
+`kpiEntries.createBatch`
+
+Write many KPI entries in one request. It answers 200 even when every row was rejected, so rows_added is the only signal; a batch that stored nothing throws
+
+**Risk:** `write`
+
+```ts
+await corsair.simplekpi.api.kpiEntries.createBatch({ entries: [{ kpi_id: 1234, entry_date: '2026-08-03', actual: 1 }], hasActuals: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entries` | `object[]` | Yes | The entries to write; each takes the single-entry shape. |
+| `hasActuals` | `boolean` | No | — |
+| `hasTargets` | `boolean` | No | — |
+| `hasNotes` | `boolean` | No | — |
+
+The route answers 200 even when every row was rejected, so rows_added is the signal. A batch that stored nothing throws rather than reporting success.
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+{
+  user_id?: number | null,
+  email?: string | null,
+  kpi_id: number,
+  source_id?: number | null,
+  entry_date: string,
+  actual?: number | null,
+  target?: number | null,
+  notes?: string | null,
+  setActual?: boolean,
+  setTarget?: boolean,
+  setNotes?: boolean,
+  addToActual?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rows_added` | `number \| string` | Yes | — |
+| `rows_rejected` | `number \| string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`kpiEntries.delete`
+
+Delete one KPI entry; this cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.simplekpi.api.kpiEntries.delete({ id: 987654 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | A positive integer assigned by SimpleKPI. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`kpiEntries.get`
+
+Read one KPI entry by id, with its actual, target and notes
+
+**Risk:** `read`
+
+```ts
+await corsair.simplekpi.api.kpiEntries.get({ id: 987654 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | A positive integer assigned by SimpleKPI. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `user_id` | `number \| string \| null` | No | — |
+| `source_id` | `number \| string \| null` | No | — |
+| `kpi_id` | `number \| string \| null` | No | — |
+| `entry_date` | `string \| null` | No | ISO 8601. |
+| `actual` | `number \| null` | No | — |
+| `target` | `number \| null` | No | — |
+| `notes` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | ISO 8601. |
+| `updated_at` | `string \| null` | No | ISO 8601. |
+
+
+
+---
+
+### list
+
+`kpiEntries.list`
+
+List KPI entries, filtered by user, KPI, breakdown source and date range; narrow by KPI and dates or the response gets large
+
+**Risk:** `read`
+
+```ts
+await corsair.simplekpi.api.kpiEntries.list({ kpiId: 1234, dateFrom: '2026-08-01', dateTo: '2026-08-31', rows: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `number` | No | Only entries for this user. |
+| `kpiId` | `number` | No | Only entries for this KPI. |
+| `sourceId` | `number` | No | Only entries for this breakdown source. |
+| `dateFrom` | `string` | No | Earliest entry date, inclusive. |
+| `dateTo` | `string` | No | Latest entry date, inclusive. |
+| `page` | `number` | No | Which page to return, counting from 1. |
+| `rows` | `number` | No | How many rows per page, 500 by default. Page until one comes back short, because there is no total. |
+
+All filters are optional, but narrow by kpiId and a date range or the response gets large. Filters are camelCase on this route, unlike the bodies.
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number | string,
+  user_id?: number | string | null,
+  source_id?: number | string | null,
+  kpi_id?: number | string | null,
+  entry_date?: string | null,
+  actual?: number | null,
+  target?: number | null,
+  notes?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`kpiEntries.update`
+
+Change one KPI entry named in the path; the setActual, setTarget and setNotes flags choose which values are written
+
+**Risk:** `write`
+
+```ts
+await corsair.simplekpi.api.kpiEntries.update({ id: 987654, kpi_id: 1234, entry_date: '2026-08-03', actual: 50, setActual: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | A positive integer assigned by SimpleKPI. |
+| `user_id` | `number \| null` | No | The user the entry is against. |
+| `email` | `string \| null` | No | Identifies the user by email instead of user_id. Send one, not both. |
+| `kpi_id` | `number` | Yes | — |
+| `source_id` | `number \| null` | No | The breakdown source. Omit it for the KPI's default source. |
+| `entry_date` | `string` | Yes | A date the KPI's frequency allows. A weekly KPI rejects a mid-week date. |
+| `actual` | `number \| null` | No | — |
+| `target` | `number \| null` | No | — |
+| `notes` | `string \| null` | No | — |
+| `setActual` | `boolean` | No | True writes actual, false leaves the stored value untouched. |
+| `setTarget` | `boolean` | No | True writes target, false leaves the stored value untouched. |
+| `setNotes` | `boolean` | No | True writes notes, false leaves the stored text untouched. |
+| `addToActual` | `boolean` | No | True adds actual to the stored value instead of replacing it. |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number | string,
+  user_id?: number | string | null,
+  source_id?: number | string | null,
+  kpi_id?: number | string | null,
+  entry_date?: string | null,
+  actual?: number | null,
+  target?: number | null,
+  notes?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+} | {
+  stored: false,
+  source_id?: number | string | null,
+  kpi_id?: number | string | null,
+  entry_date?: string | null,
+  detail?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Kpi Frequencies
+
+### get
+
+`kpiFrequencies.get`
+
+Read one KPI frequency by its id, such as W for weekly
+
+**Risk:** `read`
+
+```ts
+await corsair.simplekpi.api.kpiFrequencies.get({ id: 'W' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | A frequency id such as W. Case sensitive. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`kpiFrequencies.list`
+
+List the frequencies a KPI can use: D daily, W weekly, M monthly, Q quarterly, Y yearly
+
+**Risk:** `read`
+
+```ts
+await corsair.simplekpi.api.kpiFrequencies.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Kpi Icons
+
+### get
+
+`kpiIcons.get`
+
+Read one KPI icon by id, which is what a KPI sends as icon_id
+
+**Risk:** `read`
+
+```ts
+await corsair.simplekpi.api.kpiIcons.get({ id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | A positive integer assigned by SimpleKPI. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`kpiIcons.list`
+
+List the icons a KPI can use, which is where a valid icon_id comes from
+
+**Risk:** `read`
+
+```ts
+await corsair.simplekpi.api.kpiIcons.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number | string,
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Kpis
+
+### create
+
+`kpis.create`
+
+Create a KPI. icon_id and unit_id must be real ids from kpiIcons and kpiUnits even though the contract does not mark them mandatory
+
+**Risk:** `write`
+
+```ts
+await corsair.simplekpi.api.kpis.create({ name: 'New Sales', icon_id: 1, unit_id: 123, frequency_id: 'W', value_direction: 'U', aggregate_function: 'SUM', category_id: 5478 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category_id` | `number` | No | The category the KPI belongs to. |
+| `icon_id` | `number` | Yes | A real icon id from kpiIcons. Omit it and the request fails. |
+| `unit_id` | `number` | Yes | A real unit id from kpiUnits. Omit it and the request fails. |
+| `frequency_id` | `string` | Yes | A frequency id from kpiFrequencies: D daily, W weekly, M monthly, Q quarterly, Y yearly. Case sensitive. |
+| `name` | `string` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `target_default` | `number \| null` | No | Applied to new entries with no target. |
+| `value_direction` | `U \| D \| N` | Yes | U up is good, D down is good, N neither. |
+| `aggregate_function` | `SUM \| AVG` | Yes | How values roll up across a period. |
+| `sort_order` | `number` | No | — |
+| `is_active` | `boolean` | No | — |
+
+icon_id and unit_id must be real ids: the contract does not mark them mandatory, but the API validates them and a missing one becomes 0, which fails with a 400.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `category_id` | `number \| string \| null` | No | — |
+| `icon_id` | `number \| string \| null` | No | — |
+| `unit_id` | `number \| string \| null` | No | — |
+| `frequency_id` | `string \| null` | No | A frequency id from kpiFrequencies: D daily, W weekly, M monthly, Q quarterly, Y yearly. Case sensitive. |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `target_default` | `number \| null` | No | — |
+| `value_direction` | `U \| D \| N \| null` | No | — |
+| `aggregate_function` | `SUM \| AVG \| null` | No | — |
+| `is_calculated` | `boolean \| null` | No | Calculated KPIs take no entries through the API. |
+| `sort_order` | `number \| string \| null` | No | — |
+| `is_active` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | ISO 8601. |
+| `updated_at` | `string \| null` | No | ISO 8601. |
+
+
+
+---
+
+### delete
+
+`kpis.delete`
+
+Delete a KPI and every entry recorded against it; this cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.simplekpi.api.kpis.delete({ id: 1234 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | A positive integer assigned by SimpleKPI. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`kpis.get`
+
+Read one KPI by id, with its frequency, unit, icon, value direction and aggregate function
+
+**Risk:** `read`
+
+```ts
+await corsair.simplekpi.api.kpis.get({ id: 1234 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | A positive integer assigned by SimpleKPI. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `category_id` | `number \| string \| null` | No | — |
+| `icon_id` | `number \| string \| null` | No | — |
+| `unit_id` | `number \| string \| null` | No | — |
+| `frequency_id` | `string \| null` | No | A frequency id from kpiFrequencies: D daily, W weekly, M monthly, Q quarterly, Y yearly. Case sensitive. |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `target_default` | `number \| null` | No | — |
+| `value_direction` | `U \| D \| N \| null` | No | — |
+| `aggregate_function` | `SUM \| AVG \| null` | No | — |
+| `is_calculated` | `boolean \| null` | No | Calculated KPIs take no entries through the API. |
+| `sort_order` | `number \| string \| null` | No | — |
+| `is_active` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | ISO 8601. |
+| `updated_at` | `string \| null` | No | ISO 8601. |
+
+
+
+---
+
+### list
+
+`kpis.list`
+
+List the KPIs on the account with their frequency, unit, icon, value direction and aggregate function; page until a page comes back short
+
+**Risk:** `read`
+
+```ts
+await corsair.simplekpi.api.kpis.list({ page: 1, rows: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Which page to return, counting from 1. |
+| `rows` | `number` | No | How many rows per page, 500 by default. Page until one comes back short, because there is no total. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number | string,
+  category_id?: number | string | null,
+  icon_id?: number | string | null,
+  unit_id?: number | string | null,
+  frequency_id?: string | null,
+  name?: string | null,
+  description?: string | null,
+  target_default?: number | null,
+  value_direction?: U | D | N | null,
+  aggregate_function?: SUM | AVG | null,
+  is_calculated?: boolean | null,
+  sort_order?: number | string | null,
+  is_active?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`kpis.update`
+
+Replace a KPI wholesale. Anything left out is reset to its default rather than kept, so read it first and send it back changed
+
+**Risk:** `write`
+
+```ts
+await corsair.simplekpi.api.kpis.update({ id: 1234, name: 'New Sales', icon_id: 1, unit_id: 123, frequency_id: 'W', value_direction: 'U', aggregate_function: 'SUM' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | A positive integer assigned by SimpleKPI. |
+| `category_id` | `number` | No | The category the KPI belongs to. |
+| `icon_id` | `number` | Yes | A real icon id from kpiIcons. Omit it and the request fails. |
+| `unit_id` | `number` | Yes | A real unit id from kpiUnits. Omit it and the request fails. |
+| `frequency_id` | `string` | Yes | A frequency id from kpiFrequencies: D daily, W weekly, M monthly, Q quarterly, Y yearly. Case sensitive. |
+| `name` | `string` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `target_default` | `number \| null` | No | Applied to new entries with no target. |
+| `value_direction` | `U \| D \| N` | Yes | U up is good, D down is good, N neither. |
+| `aggregate_function` | `SUM \| AVG` | Yes | How values roll up across a period. |
+| `sort_order` | `number` | No | — |
+| `is_active` | `boolean` | No | — |
+
+PUT replaces the whole object. A field left out is reset to its default, not kept, so read the KPI first and send it back changed.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `category_id` | `number \| string \| null` | No | — |
+| `icon_id` | `number \| string \| null` | No | — |
+| `unit_id` | `number \| string \| null` | No | — |
+| `frequency_id` | `string \| null` | No | A frequency id from kpiFrequencies: D daily, W weekly, M monthly, Q quarterly, Y yearly. Case sensitive. |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `target_default` | `number \| null` | No | — |
+| `value_direction` | `U \| D \| N \| null` | No | — |
+| `aggregate_function` | `SUM \| AVG \| null` | No | — |
+| `is_calculated` | `boolean \| null` | No | Calculated KPIs take no entries through the API. |
+| `sort_order` | `number \| string \| null` | No | — |
+| `is_active` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | ISO 8601. |
+| `updated_at` | `string \| null` | No | ISO 8601. |
+
+
+
+---
+
+## Kpi Units
+
+### create
+
+`kpiUnits.create`
+
+Create a KPI unit with a numeric entry format and a display format
+
+**Risk:** `write`
+
+```ts
+await corsair.simplekpi.api.kpiUnits.create({ name: 'Pounds', entry_format: '#,##0.00', display_format: '#,##0' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `entry_format` | `string` | Yes | Such as #,##0.00 or 0.##. |
+| `display_format` | `string` | Yes | Same notation as entry_format. |
+| `is_percentage` | `boolean` | No | — |
+
+Both formats use digits and # as placeholders, with comma grouping and one decimal group, such as #,##0.00 or 0.##.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `entry_format` | `string \| null` | No | — |
+| `display_format` | `string \| null` | No | — |
+| `is_percentage` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | ISO 8601. |
+| `updated_at` | `string \| null` | No | ISO 8601. |
+
+
+
+---
+
+### delete
+
+`kpiUnits.delete`
+
+Delete a KPI unit; KPIs using it are affected, and this cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.simplekpi.api.kpiUnits.delete({ id: 123 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | A positive integer assigned by SimpleKPI. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`kpiUnits.get`
+
+Read one KPI unit by id, with its entry and display formats
+
+**Risk:** `read`
+
+```ts
+await corsair.simplekpi.api.kpiUnits.get({ id: 123 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | A positive integer assigned by SimpleKPI. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `entry_format` | `string \| null` | No | — |
+| `display_format` | `string \| null` | No | — |
+| `is_percentage` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | ISO 8601. |
+| `updated_at` | `string \| null` | No | ISO 8601. |
+
+
+
+---
+
+### list
+
+`kpiUnits.list`
+
+List the units a KPI can use, with their entry and display formats
+
+**Risk:** `read`
+
+```ts
+await corsair.simplekpi.api.kpiUnits.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Which page to return, counting from 1. |
+| `rows` | `number` | No | How many rows per page, 500 by default. Page until one comes back short, because there is no total. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number | string,
+  name?: string | null,
+  entry_format?: string | null,
+  display_format?: string | null,
+  is_percentage?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`kpiUnits.update`
+
+Replace a KPI unit; anything left out is reset to its default
+
+**Risk:** `write`
+
+```ts
+await corsair.simplekpi.api.kpiUnits.update({ id: 123, name: 'Pounds', entry_format: '#,##0.00', display_format: '#,##0' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | A positive integer assigned by SimpleKPI. |
+| `name` | `string` | Yes | — |
+| `entry_format` | `string` | Yes | Such as #,##0.00 or 0.##. |
+| `display_format` | `string` | Yes | Same notation as entry_format. |
+| `is_percentage` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `entry_format` | `string \| null` | No | — |
+| `display_format` | `string \| null` | No | — |
+| `is_percentage` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | ISO 8601. |
+| `updated_at` | `string \| null` | No | ISO 8601. |
+
+
+
+---
+
+## Reports
+
+### allDataEntries
+
+`reports.allDataEntries`
+
+Read actuals and targets as one row per KPI, breakdown source and period, already aggregated to each KPI's own frequency
+
+**Risk:** `read`
+
+```ts
+await corsair.simplekpi.api.reports.allDataEntries({ kpiIDs: [1234], dateFrom: '2026-08-01', dateTo: '2026-08-31' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kpiIDs` | `number[]` | No | The KPIs to report on. Sent as a comma separated list. |
+| `dateFrom` | `string` | No | — |
+| `dateTo` | `string` | No | — |
+| `userIDs` | `number[]` | No | Only these users. Sent as a comma separated list. |
+| `groupItemIDs` | `number[]` | No | Only these breakdown items. Sent as a comma separated list. |
+
+The kpiIDs filter is sent as a comma separated list, which is how this one route takes an array.
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  kpi_id: number | string,
+  kpi_name?: string | null,
+  kpi_description?: string | null,
+  item_id?: number | string | null,
+  item_name?: string | null,
+  period_id?: string | null,
+  period?: string | null,
+  label_format?: string | null,
+  is_percentage?: boolean | null,
+  has_target?: boolean | null,
+  direction?: string | null,
+  direction_name?: string | null,
+  entry_date?: string | null,
+  actual?: number | null,
+  target?: number | null,
+  notes?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Users
+
+### get
+
+`users.get`
+
+Read one user by id, which is what an entry sends as user_id
+
+**Risk:** `read`
+
+```ts
+await corsair.simplekpi.api.users.get({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | A positive integer assigned by SimpleKPI. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `user_type` | `string \| null` | No | — |
+| `user_status_id` | `string \| null` | No | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | ISO 8601. |
+| `updated_at` | `string \| null` | No | ISO 8601. |
+
+
+
+---
+
+### list
+
+`users.list`
+
+List the people on the account with their role and status; read-only, because people are added in the app
+
+**Risk:** `read`
+
+```ts
+await corsair.simplekpi.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Which page to return, counting from 1. |
+| `rows` | `number` | No | How many rows per page, 500 by default. Page until one comes back short, because there is no total. |
+
+Read-only: there is no users:write scope, and people are added and changed in the app.
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number | string,
+  user_type?: string | null,
+  user_status_id?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

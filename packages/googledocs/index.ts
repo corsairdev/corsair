@@ -174,11 +174,18 @@ const googledocsEndpointMeta = {
 	},
 	'documents.getDocument': {
 		riskLevel: 'read',
-		description: 'Retrieve a Google Doc by id',
+		description:
+			'Retrieve a Google Doc by id (set includeTabsContent for multi-tab documents)',
 	},
 	'documents.getDocumentPlaintext': {
 		riskLevel: 'read',
-		description: 'Retrieve a Google Doc as best-effort plain text',
+		description:
+			'Retrieve a Google Doc as plain text; optional tabId, tabTitle, or tabIndex for a specific tab',
+	},
+	'documents.listDocumentTabs': {
+		riskLevel: 'read',
+		description:
+			'List tab id, title, and hierarchy for a Google Doc (includes nested tabs)',
 	},
 	'documents.updateDocumentMarkdown': {
 		riskLevel: 'write',

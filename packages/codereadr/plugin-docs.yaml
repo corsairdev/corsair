@@ -1,0 +1,84 @@
+displayName: CodeREADr
+description: Barcode scanning and data capture with CodeREADr - search and delete scan records, manage validation services, databases and app users, and read the scan uploads and API limits.
+domain: codereadr.com
+recommendedAuth: api_key
+overviewNote: |
+  Find your API key in CodeREADr under Account Settings, API Keys (https://secure.codereadr.com/account/api/key). A paid plan is required for production use; testing works on a free account.
+
+  Things to know before you call:
+
+  - **Failures come back as HTTP 200.** CodeREADr reports a failed call in the body as `<status>0</status>` with an `<error code="…">` node, not with an HTTP status. This plugin checks that status and throws a `CodereadrAPIError` carrying the numeric `code`, so a wrong key or a rejected variable never looks like a successful call.
+  - **The API key travels in the POST body.** GET requests are disabled by default and the docs advise against putting a key in a URL, so every call is a form-encoded POST to `https://api.codereadr.com/api/`.
+  - **Scans are the records you retrieve.** `scans.list` searches by date range, service, device, user, validation status, barcode value and stored properties, and pages with `limit`/`offset`. It returns `next_offset` while a page comes back full.
+  - **Nothing is mirrored locally.** The plugin reads the live API and stores no entities, so a retrieved scan always reflects the account as it is now.
+  - **Deletes cannot be undone.** `scans.delete`, `services.delete`, `databases.delete`, `databases.clear` and `users.delete` are marked destructive and irreversible. `services.delete` and `users.delete` also accept `all`, which removes every service or every app user except the account owner.
+  - **Rate limits.** The API allows a fixed number of calls per minute and per day, and answers error code 111 or 113 when exceeded. The two windows reset differently: the per-minute counter at the start of each minute, the per-day counter at midnight. The plugin retries the per-minute limit, waiting whatever `Retry-After` the server sends and one minute when it sends none. The daily limit is not retried, because it cannot clear before midnight: the call fails at once with code 113. Check `limits.retrieve` before a long run. Code 2, CodeREADr's own transient failure, is retried only for the calls named in the next point; every other error code is a rejected request and is not retried.
+  - **Writes are not replayed on server errors.** Only reads, and the database upserts, which are idempotent, are repeated after a transient failure.
+  - **No webhooks.** CodeREADr can post scan data to your own URL (Postback URL or Direct Scan URL), which is configured on the service rather than received by the plugin.
+examples:
+  read:
+    path: scans.list
+    title: List valid scans for a service since a fixed date
+    args:
+      service_id:
+        - 927
+      status:
+        - '1'
+      start_date: '2026-11-08'
+      limit: 50
+  write:
+    path: databases.upsertValue
+    title: Add a barcode to a validation database
+    args:
+      database_id: 120
+      value: A1B2C3D
+      response: Admitted to Hall 2
+apiExamples:
+  scans.list:
+    call: "{ service_id: [927], status: ['1'], start_date: '2026-11-08', limit: 50 }"
+  scans.delete:
+    call: "{ scan_id: [13193, 13194] }"
+  services.list:
+    call: "{}"
+  services.create:
+    call: "{ validation_method: 'record', service_name: 'Warehouse intake' }"
+  services.update:
+    call: "{ service_id: 927, service_name: 'Warehouse intake (north)' }"
+  services.delete:
+    call: "{ service_id: [927] }"
+  databases.list:
+    call: "{ info_level: 'services' }"
+  databases.create:
+    call: "{ database_name: 'Event tickets', case_sensitivity: false }"
+  databases.update:
+    call: "{ database_id: 120, database_name: 'Event tickets 2026' }"
+  databases.delete:
+    call: "{ database_id: 120 }"
+  databases.clear:
+    call: "{ database_id: 120 }"
+  databases.showValues:
+    call: "{ database_id: 120, valuelike: 'A1', limit: 50 }"
+  databases.upsertValue:
+    call: "{ database_id: 120, value: 'A1B2C3D', response: 'Admitted to Hall 2' }"
+  databases.upsertValues:
+    call: "{ database_id: 120, values: [{ value: 'A1', response: 'Hall 2' }, { value: 'B1', response: 'Hall 3' }] }"
+  users.list:
+    call: "{}"
+  users.create:
+    call: "{ username: 'scanner@example.com', device_limit: 2 }"
+  users.update:
+    call: "{ user_id: 73, device_limit: 5 }"
+  users.delete:
+    call: "{ user_id: [73] }"
+  questions.list:
+    call: "{}"
+  questions.create:
+    call: "{ question_text: 'Which dock?', question_type: 'dropdown' }"
+  devices.list:
+    call: "{}"
+  devices.update:
+    call: "{ device_id: 73, device_name: 'North gate scanner' }"
+  uploads.list:
+    call: "{ service_id: [927], limit: 20 }"
+  limits.retrieve:
+    call: "{}"

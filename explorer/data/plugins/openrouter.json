@@ -84,7 +84,7 @@
           {
             "key": "logitBias",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, number>"
           },
           {
             "key": "user",
@@ -94,12 +94,12 @@
           {
             "key": "responseFormat",
             "optional": true,
-            "type": "{ type: text | json_object | json_schema, json_schema?: { name: string, strict?: boolean, schema?: {} } }"
+            "type": "{ type: text | json_object | json_schema, json_schema?: { name: string, strict?: boolean, schema?: Record<string, any> } }"
           },
           {
             "key": "tools",
             "optional": true,
-            "type": "{ type: function, function: { name: string, description?: string, parameters?: {} } }[]"
+            "type": "{ type: function, function: { name: string, description?: string, parameters?: Record<string, any> } }[]"
           },
           {
             "key": "toolChoice",
@@ -164,7 +164,7 @@
           {
             "key": "choices",
             "optional": false,
-            "type": "{ index: number, message: { role: assistant, content?: string | null, tool_calls?: { id: string, type: function, function: { name: string, arguments: string } }[], reasoning?: string | null, reasoning_details?: {}[] }, finish_reason?: string | null }[]"
+            "type": "{ index: number, message: { role: assistant, content: string | null, tool_calls?: { id: string, type: function, function: { name: string, arguments: string } }[], reasoning?: string | null, reasoning_details?: Record<string, any>[] }, finish_reason: string | null }[]"
           },
           {
             "key": "usage",
@@ -225,7 +225,7 @@
           {
             "key": "input",
             "optional": false,
-            "type": "string | string[] | number[] | number[][] | {}[]"
+            "type": "string | string[] | number[] | number[][] | Record<string, any>[]"
           },
           {
             "key": "encodingFormat",
@@ -306,7 +306,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, model?: string, provider?: string, provider_name?: string | null, api_type?: string | null, created_at?: string, streamed?: boolean | null, finish_reason?: string | null, total_cost?: number | null, prompt_tokens?: number, completion_tokens?: number, total_tokens?: number, usage?: number | {}, tokens_prompt?: number | null, tokens_completion?: number | null, provider_responses?: any[] | null, provider_response?: {} }"
+            "type": "{ id: string, model?: string, provider?: string, provider_name?: string | null, api_type?: string | null, created_at?: string, streamed?: boolean | null, finish_reason?: string | null, total_cost?: number | null, prompt_tokens?: number, completion_tokens?: number, total_tokens?: number, usage?: number | Record<string, any>, tokens_prompt?: number | null, tokens_completion?: number | null, provider_responses?: any[] | null, provider_response?: Record<string, any> }"
           }
         ]
       }
@@ -352,7 +352,7 @@
           {
             "key": "messages",
             "optional": false,
-            "type": "{ role: user | assistant, content: string | ({ type: text, text: string } | { type: image, source: { type: base64, media_type: string, data: string } | { type: url, url: string } } | { type: document, source: { type: base64, media_type: string, data: string } | { type: url, url: string } | { type: text, media_type: text/plain, data: string } | { type: content, content: string | ({ type: text, text: string } | { type: image, source: { type: base64, media_type: string, data: string } | { type: url, url: string } })[] } | { type: file, file_id: string }, title?: string | null, context?: string | null, citations?: { enabled?: boolean } | null } | { type: tool_use, id: string, name: string, input: {} } | { type: tool_result, tool_use_id: string, content: string | any[], is_error?: boolean } | { type: thinking, thinking: string, signature?: string } | { type: redacted_thinking, data: string })[] }[]"
+            "type": "{ role: user | assistant, content: string | ({ type: text, text: string } | { type: image, source: { type: base64, media_type: string, data: string } | { type: url, url: string } } | { type: document, source: { type: base64, media_type: string, data: string } | { type: url, url: string } | { type: text, media_type: text/plain, data: string } | { type: content, content: string | ({ type: text, text: string } | { type: image, source: { type: base64, media_type: string, data: string } | { type: url, url: string } })[] } | { type: file, file_id: string }, title?: string | null, context?: string | null, citations?: { enabled?: boolean } | null } | { type: tool_use, id: string, name: string, input: Record<string, any> } | { type: tool_result, tool_use_id: string, content: string | any[], is_error?: boolean } | { type: thinking, thinking: string, signature?: string } | { type: redacted_thinking, data: string })[] }[]"
           },
           {
             "key": "system",
@@ -377,7 +377,7 @@
           {
             "key": "tools",
             "optional": true,
-            "type": "{ name: string, description?: string, input_schema: {} }[]"
+            "type": "{ name: string, description?: string, input_schema: Record<string, any> }[]"
           },
           {
             "key": "toolChoice",
@@ -416,13 +416,13 @@
           },
           {
             "key": "stop_reason",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "content",
             "optional": false,
-            "type": "({ type: text, text: string, citations?: any[] | null } | { type: thinking, thinking: string, signature?: string } | { type: redacted_thinking, data: string } | { type: tool_use, id: string, name: string, input: {} })[]"
+            "type": "({ type: text, text: string, citations?: any[] | null } | { type: thinking, thinking: string, signature?: string } | { type: redacted_thinking, data: string } | { type: tool_use, id: string, name: string, input: Record<string, any> })[]"
           },
           {
             "key": "usage",
@@ -463,7 +463,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, name: string, created?: number, description?: string, architecture?: {}, endpoints: { name: string, model_id?: string, model_name?: string, provider_name: string, tag?: string, context_length?: number, max_completion_tokens?: number | null, max_prompt_tokens?: number | null, quantization?: string | null, pricing?: {}, supported_parameters?: string[], status?: number, uptime_last_30m?: number | null, uptime_last_5m?: number | null, uptime_last_1d?: number | null, supports_implicit_caching?: boolean, supports_voice_cloning?: boolean, latency_last_30m?: { p50?: number, p75?: number, p90?: number, p99?: number } | null, throughput_last_30m?: { p50?: number, p75?: number, p90?: number, p99?: number } | null }[] }"
+            "type": "{ id: string, name: string, created?: number, description?: string, architecture?: Record<string, any>, endpoints: { name: string, model_id?: string, model_name?: string, provider_name: string, tag?: string, context_length?: number, max_completion_tokens?: number | null, max_prompt_tokens?: number | null, quantization?: string | null, pricing?: Record<string, string | number | any[] | Record<string, any>>, supported_parameters?: string[], status?: number, uptime_last_30m?: number | null, uptime_last_5m?: number | null, uptime_last_1d?: number | null, supports_implicit_caching?: boolean, supports_voice_cloning?: boolean, latency_last_30m?: { p50?: number, p75?: number, p90?: number, p99?: number } | null, throughput_last_30m?: { p50?: number, p75?: number, p90?: number, p99?: number } | null }[] }"
           }
         ]
       }
@@ -514,7 +514,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, name?: string, created?: number, description?: string, context_length?: number, pricing?: {}, architecture?: { modality?: string, input_modalities?: string[], output_modalities?: string[], tokenizer?: string, instruct_type?: string | null }, top_provider?: { context_length?: number | null, max_completion_tokens?: number | null, is_moderated?: boolean }, per_request_limits?: { prompt_tokens?: string | null, completion_tokens?: string | null } | null, supported_parameters?: string[] }[]"
+            "type": "{ id: string, name?: string, created?: number, description?: string, context_length?: number, pricing?: Record<string, string | number | any[] | Record<string, any>>, architecture?: { modality?: string, input_modalities?: string[], output_modalities?: string[], tokenizer?: string, instruct_type?: string | null }, top_provider?: { context_length?: number | null, max_completion_tokens?: number | null, is_moderated?: boolean }, per_request_limits?: { prompt_tokens?: string | null, completion_tokens?: string | null } | null, supported_parameters?: string[] }[]"
           },
           {
             "key": "links",
@@ -555,7 +555,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, name?: string, created?: number, description?: string, context_length?: number, pricing?: {}, architecture?: { modality?: string, input_modalities?: string[], output_modalities?: string[], tokenizer?: string, instruct_type?: string | null }, top_provider?: { context_length?: number | null, max_completion_tokens?: number | null, is_moderated?: boolean }, per_request_limits?: { prompt_tokens?: string | null, completion_tokens?: string | null } | null, supported_parameters?: string[] }[]"
+            "type": "{ id: string, name?: string, created?: number, description?: string, context_length?: number, pricing?: Record<string, string | number | any[] | Record<string, any>>, architecture?: { modality?: string, input_modalities?: string[], output_modalities?: string[], tokenizer?: string, instruct_type?: string | null }, top_provider?: { context_length?: number | null, max_completion_tokens?: number | null, is_moderated?: boolean }, per_request_limits?: { prompt_tokens?: string | null, completion_tokens?: string | null } | null, supported_parameters?: string[] }[]"
           },
           {
             "key": "links",
@@ -596,7 +596,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, name?: string, created?: number, description?: string, context_length?: number, pricing?: {}, architecture?: { modality?: string, input_modalities?: string[], output_modalities?: string[], tokenizer?: string, instruct_type?: string | null }, top_provider?: { context_length?: number | null, max_completion_tokens?: number | null, is_moderated?: boolean }, per_request_limits?: { prompt_tokens?: string | null, completion_tokens?: string | null } | null, supported_parameters?: string[] }[]"
+            "type": "{ id: string, name?: string, created?: number, description?: string, context_length?: number, pricing?: Record<string, string | number | any[] | Record<string, any>>, architecture?: { modality?: string, input_modalities?: string[], output_modalities?: string[], tokenizer?: string, instruct_type?: string | null }, top_provider?: { context_length?: number | null, max_completion_tokens?: number | null, is_moderated?: boolean }, per_request_limits?: { prompt_tokens?: string | null, completion_tokens?: string | null } | null, supported_parameters?: string[] }[]"
           },
           {
             "key": "links",
@@ -646,7 +646,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ name: string, model_id?: string, model_name?: string, provider_name: string, tag?: string, context_length?: number, max_completion_tokens?: number | null, max_prompt_tokens?: number | null, quantization?: string | null, pricing?: {}, supported_parameters?: string[], status?: number, uptime_last_30m?: number | null, uptime_last_5m?: number | null, uptime_last_1d?: number | null, supports_implicit_caching?: boolean, supports_voice_cloning?: boolean, latency_last_30m?: { p50?: number, p75?: number, p90?: number, p99?: number } | null, throughput_last_30m?: { p50?: number, p75?: number, p90?: number, p99?: number } | null }[]"
+            "type": "{ name: string, model_id?: string, model_name?: string, provider_name: string, tag?: string, context_length?: number, max_completion_tokens?: number | null, max_prompt_tokens?: number | null, quantization?: string | null, pricing?: Record<string, string | number | any[] | Record<string, any>>, supported_parameters?: string[], status?: number, uptime_last_30m?: number | null, uptime_last_5m?: number | null, uptime_last_1d?: number | null, supports_implicit_caching?: boolean, supports_voice_cloning?: boolean, latency_last_30m?: { p50?: number, p75?: number, p90?: number, p99?: number } | null, throughput_last_30m?: { p50?: number, p75?: number, p90?: number, p99?: number } | null }[]"
           }
         ]
       }

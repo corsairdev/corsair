@@ -1,0 +1,84 @@
+displayName: respond.io
+description: Manage contacts, send and read messages, assign and close conversations, and read workspace channels, templates and custom fields with respond.io.
+domain: respond.io
+recommendedAuth: api_key
+overviewNote: |
+  Create an Access Token under **Settings, Integrations, Developer API** in respond.io. A workspace can hold up to 10, and the Developer API needs the **Growth plan or above**. The token goes in `Authorization: Bearer`.
+
+  **A contact is always addressed by a prefixed identifier**: `id:123`, `email:a@b.com` or `phone:+60123456789`. A bare value is treated as an `id:`, and a value that already carries a prefix is passed through unchanged, so both forms work.
+
+  Things to know before you send anything:
+
+  - **`messages.send` reaches the customer.** Without a `channelId` respond.io uses the last channel the contact interacted on, which is convenient but can send somewhere unexpected if the contact has moved; a `custom_payload` message *requires* the channel. Message types are snake_case on the wire: `text`, `attachment`, `custom_payload`, `quick_reply`, `whatsapp_template`, `email`, `facebook_template`. A `449` means the message cannot be delivered there — most often a Facebook or Instagram message outside the 24-hour window without a `messageTag`.
+  - **A created contact is not immediately usable.** respond.io needs processing time after a create, and the docs say to wait before acting on it. Use `contacts.upsert` when you do not know whether the contact already exists — it is a separate route, not a flag.
+  - **`contacts.list` always sends a search, a filter and a timezone**, because respond.io answers `400` when any of the three is missing; the defaults (empty search, no conditions, UTC) match every contact. It is a POST so the filter can be a body, and it takes `$and` or `$or` (exactly one of the two). Operators include `isEqualTo`, `hasAnyOf` for tags and lifecycle, and `isTimestampBetween`, which takes `{from, to}`. Give `timezone` when a timestamp condition needs a local day boundary.
+  - **`messages.list` can return an empty page with more to come.** With `includeComments: true` the list mixes comments in and each item carries a `type`; an empty page can still have `pagination.next` set, so keep paging until `next` is `null`. `limit` stops at 50.
+  - **`conversations.assign` takes a user ID (a number) or a user email, and unassigns with `null`,** which the plugin always sends when no assignee is given — an absent key would read as "no change". An ID given as a numeric string is sent as a number, since respond.io rejects a string ID.
+  - **A close takes a closing note and a summary**, but `summary` is ignored unless `category` is set. Use `space.listClosingNotes` for the valid names.
+  - **Writes answer an ID or a code, not the record.** `contacts.create` and `contacts.lifecycle` answer `{code, message}`; `update`, `delete`, `upsert`, `merge`, both tag routes and both conversation routes answer `{contactId}`. To get the contact back, read it.
+  - **Paging.** Every list answers `pagination.next` as a whole URL. Pass it back as `cursorId` as it is, or just its `cursorId` value.
+  - **`space.listCustomFields` is what a contact write needs.** A custom field's `value` must match its type: a date is `yyyy-mm-dd`, a time `HH:MM` in 24-hour form, a checkbox `"true"`/`"false"`, and a number has no quotes. Only this route tells you the `dataType` and, for a list field, its `allowedValues`.
+  - **`contacts.channels` is plural** (`/channels`) where every other contact sub-route is singular. The channel IDs it returns are what a custom-payload message needs.
+  - **Rate limit.** 5 requests a second per HTTP method per request path, tracked independently, with `Retry-After` and `X-RateLimit-*` on a `429`.
+examples:
+  read:
+    path: contacts.get
+    title: Read a contact
+    args:
+      identifier: 'id:12345'
+  write:
+    path: messages.send
+    title: Send a text message
+    args:
+      identifier: 'id:12345'
+      channelId: 42
+      message:
+        type: text
+        text: Your order has shipped.
+apiExamples:
+  contacts.get:
+    call: "{ identifier: 'id:12345' }"
+  contacts.create:
+    call: "{ identifier: 'phone:+60123456789', firstName: 'Muhammad', email: 'test@example.com', countryCode: 'MY' }"
+  contacts.update:
+    call: "{ identifier: 'id:12345', firstName: 'Updated' }"
+  contacts.delete:
+    call: "{ identifier: 'id:12345' }"
+  contacts.upsert:
+    call: "{ identifier: 'email:a@b.com', firstName: 'A', custom_fields: [{ name: 'Plan', value: 'pro' }] }"
+  contacts.merge:
+    call: "{ contactIds: [1, 2], firstName: 'Muhammad', email: 'test@example.com' }"
+  contacts.list:
+    call: "{ filter: { $and: [{ category: 'contactTag', field: 'vip', operator: 'hasAnyOf', value: ['vip'] }] }, timezone: 'Asia/Kuala_Lumpur', limit: 50 }"
+  contacts.addTags:
+    call: "{ identifier: 'id:1', tags: ['vip', 'renewal'] }"
+  contacts.deleteTags:
+    call: "{ identifier: 'id:1', tags: ['vip'] }"
+  contacts.channels:
+    call: "{ identifier: 'id:1' }"
+  contacts.lifecycle:
+    call: "{ identifier: 'id:1', name: 'Hot Lead' }"
+  conversations.assign:
+    call: "{ identifier: 'id:1', assignee: 'jane@example.com' }"
+  conversations.status:
+    call: "{ identifier: 'id:1', status: 'close', category: 'Resolved', summary: 'Handled in one call.' }"
+  messages.send:
+    call: "{ identifier: 'id:12345', channelId: 42, message: { type: 'text', text: 'Your order has shipped.' } }"
+  messages.get:
+    call: "{ identifier: 'id:1', messageId: 1262965213 }"
+  messages.list:
+    call: "{ identifier: 'id:1', limit: 50, includeComments: true }"
+  messages.comment:
+    call: "{ identifier: 'id:1', text: 'This is a comment' }"
+  space.listUsers:
+    call: "{ limit: 50 }"
+  space.getUser:
+    call: "{ id: 67890 }"
+  space.listChannels:
+    call: "{}"
+  space.listTemplates:
+    call: "{ channelId: 42 }"
+  space.listClosingNotes:
+    call: "{}"
+  space.listCustomFields:
+    call: "{}"

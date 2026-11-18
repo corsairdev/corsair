@@ -1,9 +1,8 @@
 ---
-title: API
+title: "SecurityTrails API reference"
+sidebarTitle: "API"
 description: "API reference for SecurityTrails: every `securitytrails.api.*` operation with input and output types."
 ---
-
-Every `securitytrails.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -96,7 +95,7 @@ await corsair.securitytrails.api.company.associatedIps({});
 | `domain` | `string` | No | — |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
-| `redir` | `string` | No | — |
+| `redir` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="records full type">
@@ -140,7 +139,7 @@ await corsair.securitytrails.api.domain.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `hostname` | `string` | No | — |
-| `alexa_rank` | `number` | No | — |
+| `alexa_rank` | `number \| null` | No | — |
 | `current_dns` | `object` | No | — |
 
 <AccordionGroup>
@@ -240,8 +239,7 @@ await corsair.securitytrails.api.domain.ssl({});
   max_page?: number,
   page?: number,
   total_pages?: number,
-  query?: {
-  }
+  query?: Record<string, any>
 }
 ```
 </Accordion>
@@ -260,8 +258,7 @@ await corsair.securitytrails.api.domain.ssl({});
     country?: string[],
     organization?: string[]
   },
-  subject?: {
-  },
+  subject?: Record<string, any>,
   not_after?: number | null,
   not_before?: number | null,
   serial_number?: string
@@ -443,7 +440,7 @@ await corsair.securitytrails.api.projects.bulkStaticAssetRules({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 | `complete` | `boolean` | No | — |
 | `task_ids` | `string[]` | No | — |
 
@@ -479,8 +476,7 @@ await corsair.securitytrails.api.projects.bulkStaticAssetRules({});
 
 ```ts
 {
-  params?: {
-  } | null,
+  params?: Record<string, any> | null,
   counts?: {
     total?: number | null,
     returned?: number
@@ -492,7 +488,7 @@ await corsair.securitytrails.api.projects.bulkStaticAssetRules({});
     sort?: string[][] | null
   } | null,
   request_id?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -547,8 +543,7 @@ await corsair.securitytrails.api.projects.list({});
 
 ```ts
 {
-  params?: {
-  } | null,
+  params?: Record<string, any> | null,
   counts?: {
     total?: number | null,
     returned?: number
@@ -591,17 +586,7 @@ await corsair.securitytrails.api.scroll.get({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -634,9 +619,9 @@ await corsair.securitytrails.api.sql.query({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `query` | `string` | No | — |
-| `id` | `string` | No | — |
+| `id` | `string \| null` | No | — |
 | `total` | `object` | No | — |
-| `records` | `object[]` | No | — |
+| `records` | `Record<string, any>[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="total full type">
@@ -646,14 +631,6 @@ await corsair.securitytrails.api.sql.query({});
   value?: string | number,
   relation?: string
 }
-```
-</Accordion>
-
-<Accordion title="records full type">
-
-```ts
-{
-}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -687,9 +664,9 @@ await corsair.securitytrails.api.sql.scroll({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `query` | `string` | No | — |
-| `id` | `string` | No | — |
+| `id` | `string \| null` | No | — |
 | `total` | `object` | No | — |
-| `records` | `object[]` | No | — |
+| `records` | `Record<string, any>[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="total full type">
@@ -699,14 +676,6 @@ await corsair.securitytrails.api.sql.scroll({});
   value?: string | number,
   relation?: string
 }
-```
-</Accordion>
-
-<Accordion title="records full type">
-
-```ts
-{
-}[]
 ```
 </Accordion>
 </AccordionGroup>

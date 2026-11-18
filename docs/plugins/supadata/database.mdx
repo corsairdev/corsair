@@ -1,6 +1,7 @@
 ---
-title: Database
-description: "Supadata local sync: searchable entities, `.search()` filters, and operators."
+title: "Supadata database"
+sidebarTitle: "Database"
+description: "Supadata local sync in Corsair: the entities stored in your database, the `.search()` filters each one accepts, and the filter operators."
 ---
 
 The Supadata plugin syncs data locally. Use `corsair.supadata.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
@@ -52,6 +53,8 @@ const rows = await corsair.supadata.db.mediaMetadata.search({
 | Field | Type | Operators |
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `platform` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `url` | `string` | equals, contains, startsWith, endsWith, in |
 | `title` | `string` | equals, contains, startsWith, endsWith, in |
@@ -79,6 +82,7 @@ const rows = await corsair.supadata.db.transcriptJobs.search({
 | Field | Type | Operators |
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `lang` | `string` | equals, contains, startsWith, endsWith, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
@@ -234,6 +238,7 @@ const rows = await corsair.supadata.db.youtubeSearchResults.search({
 | Field | Type | Operators |
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `title` | `string` | equals, contains, startsWith, endsWith, in |
 | `description` | `string` | equals, contains, startsWith, endsWith, in |

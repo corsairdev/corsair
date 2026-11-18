@@ -1,0 +1,19 @@
+displayName: Code Interpreter
+description: LibreChat Code Interpreter API. Execute code in a sandbox and upload, list, download, and delete session files.
+domain: code.librechat.ai
+examples:
+  read:
+    path: file.list
+    title: List files
+  write:
+    path: code.execute
+    title: Run code
+    args:
+      code: print('hello')
+      language: python
+dbExample:
+  entity: sessions
+  note: >-
+    This table exists, but Code Interpreter calls don't fill it yet. This returns only rows
+    you have written yourself.
+  limit: 50

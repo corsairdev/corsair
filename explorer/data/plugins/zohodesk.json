@@ -1,0 +1,2078 @@
+{
+  "id": "zohodesk",
+  "displayName": "Zoho Desk",
+  "description": "Read tickets, threads, contacts, agents, departments and roles in Zoho Desk, update tasks in bulk and manage department logos.",
+  "npmPackageName": "@corsair-dev/zohodesk",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 22,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "tenant_external_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "zohodesk.api.agents.get",
+      "shortPath": "agents.get",
+      "description": "Get an agent, optionally with its profile, role, departments and verified emails",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "(profile | role | associatedDepartments | associatedChatDepartments | verifiedEmails)[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "zuid",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "emailId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isConfirmed",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "roleId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "profileId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "rolePermissionType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "langCode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "countryCode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "timeZone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "aboutInfo",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mobile",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "extn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "photoURL",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "channelExpert",
+            "optional": true,
+            "type": "(string | null)[] | null"
+          },
+          {
+            "key": "associatedDepartmentIds",
+            "optional": true,
+            "type": "(string | number | null)[] | null"
+          },
+          {
+            "key": "associatedChatDepartmentIds",
+            "optional": true,
+            "type": "(string | number | null)[] | null"
+          },
+          {
+            "key": "cf",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "{ id?: string | number | null, name?: string | null } | null"
+          },
+          {
+            "key": "profile",
+            "optional": true,
+            "type": "{ id?: string | number | null, name?: string | null } | null"
+          },
+          {
+            "key": "associatedDepartments",
+            "optional": true,
+            "type": "{}[] | null"
+          },
+          {
+            "key": "associatedChatDepartments",
+            "optional": true,
+            "type": "{}[] | null"
+          },
+          {
+            "key": "verifiedEmails",
+            "optional": true,
+            "type": "(string | null)[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohodesk.api.agents.getCount",
+      "shortPath": "agents.getCount",
+      "description": "Count agents, optionally by status, confirmation and light agent inclusion",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "ACTIVE | DISABLED"
+          },
+          {
+            "key": "isConfirmed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeLightAgent",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohodesk.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Get a contact, optionally with its accounts and owner",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "(accounts | owner)[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "secondaryEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mobile",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "street",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "facebook",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "twitter",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "photoURL",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "ownerId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "layoutId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "accountCount",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "createdTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modifiedTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isSpam",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "isAnonymous",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "isEndUser",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "isFollowing",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "isDeleted",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "isTrashed",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "cf",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "customerHappiness",
+            "optional": true,
+            "type": "{ badPercentage?: number | string | null, okPercentage?: number | string | null, goodPercentage?: number | string | null } | null"
+          },
+          {
+            "key": "zohoCRMContact",
+            "optional": true,
+            "type": "{ id?: string | number | null, type?: string | null } | null"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "{ id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null"
+          },
+          {
+            "key": "account",
+            "optional": true,
+            "type": "{ id?: string | number | null, accountName?: string | null, website?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohodesk.api.contacts.getByIds",
+      "shortPath": "contacts.getByIds",
+      "description": "Get up to 20 contacts by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]",
+            "description": "Up to 20 contact IDs"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | number | null, firstName?: string | null, lastName?: string | null, email?: string | null, secondaryEmail?: string | null, phone?: string | null, mobile?: string | null, type?: string | null, title?: string | null, description?: string | null, street?: string | null, city?: string | null, state?: string | null, country?: string | null, zip?: number | string | null, facebook?: string | null, twitter?: string | null, photoURL?: string | null, webUrl?: string | null, accountId?: string | number | null, ownerId?: string | number | null, layoutId?: string | number | null, accountCount?: number | string | null, createdTime?: string | null, modifiedTime?: string | null, isSpam?: boolean | string | null, isAnonymous?: boolean | string | null, isEndUser?: boolean | string | null, isFollowing?: boolean | string | null, isDeleted?: boolean | string | null, isTrashed?: boolean | string | null, cf?: Record<string, any> | null, customFields?: Record<string, any> | null, customerHappiness?: { badPercentage?: number | string | null, okPercentage?: number | string | null, goodPercentage?: number | string | null } | null, zohoCRMContact?: { id?: string | number | null, type?: string | null } | null, owner?: { id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null, account?: { id?: string | number | null, accountName?: string | null, website?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohodesk.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List contacts with view and saved filter, paging, sorting and field selection",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number",
+            "description": "Index of the first record to return"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Number of records to return, up to 100"
+          },
+          {
+            "key": "viewId",
+            "optional": true,
+            "type": "string",
+            "description": "View to apply"
+          },
+          {
+            "key": "filterId",
+            "optional": true,
+            "type": "string",
+            "description": "Saved filter to apply"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "string",
+            "description": "firstName, lastName or createdTime. Prefix with - for descending"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "accounts[]"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string[]",
+            "description": "Fields to return, up to 30. Multi-line text fields are excluded"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | number | null, firstName?: string | null, lastName?: string | null, email?: string | null, secondaryEmail?: string | null, phone?: string | null, mobile?: string | null, type?: string | null, title?: string | null, description?: string | null, street?: string | null, city?: string | null, state?: string | null, country?: string | null, zip?: number | string | null, facebook?: string | null, twitter?: string | null, photoURL?: string | null, webUrl?: string | null, accountId?: string | number | null, ownerId?: string | number | null, layoutId?: string | number | null, accountCount?: number | string | null, createdTime?: string | null, modifiedTime?: string | null, isSpam?: boolean | string | null, isAnonymous?: boolean | string | null, isEndUser?: boolean | string | null, isFollowing?: boolean | string | null, isDeleted?: boolean | string | null, isTrashed?: boolean | string | null, cf?: Record<string, any> | null, customFields?: Record<string, any> | null, customerHappiness?: { badPercentage?: number | string | null, okPercentage?: number | string | null, goodPercentage?: number | string | null } | null, zohoCRMContact?: { id?: string | number | null, type?: string | null } | null, owner?: { id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null, account?: { id?: string | number | null, accountName?: string | null, website?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohodesk.api.contacts.listAccounts",
+      "shortPath": "contacts.listAccounts",
+      "description": "List the accounts of a contact",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number",
+            "description": "Index of the first record to return"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Number of records to return, up to 100"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "string",
+            "description": "accountName, createdTime or mappingType. Prefix with - for descending"
+          },
+          {
+            "key": "startsWith",
+            "optional": true,
+            "type": "string",
+            "description": "Letter account names must start with"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | number | null, accountName?: string | null, website?: string | null, phone?: string | null, email?: string | null, webUrl?: string | null, createdTime?: string | null, mappingType?: string | null, mappingInfo?: { mappingId?: string | number | null, mappingType?: string | null, isAccountTicketsViewable?: boolean | string | null } | null, zohoCRMAccount?: { id?: string | number | null } | null, customerHappiness?: { badPercentage?: number | string | null, okPercentage?: number | string | null, goodPercentage?: number | string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohodesk.api.departments.get",
+      "shortPath": "departments.get",
+      "description": "Get a department by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "departmentId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "nameInCustomerPortal",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sanitizedName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "chatStatus",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "creatorId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "createdTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isDefault",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "isEnabled",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "hasLogo",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "isAssignToTeamEnabled",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "isVisibleInCustomerPortal",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "associatedAgentIds",
+            "optional": true,
+            "type": "(string | number | null)[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohodesk.api.departments.getCount",
+      "shortPath": "departments.getCount",
+      "description": "Count departments, optionally only enabled or disabled ones",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "isEnabled",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohodesk.api.departments.getLogo",
+      "shortPath": "departments.getLogo",
+      "description": "Download the logo of a department as base64",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "departmentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fileSize",
+            "optional": true,
+            "type": "ACTUAL | THUMBNAIL",
+            "description": "Image size. Zoho defaults to ACTUAL"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contentBase64",
+            "optional": false,
+            "type": "string",
+            "description": "Image bytes as base64"
+          },
+          {
+            "key": "size",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the image in bytes"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohodesk.api.departments.list",
+      "shortPath": "departments.list",
+      "description": "List departments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number",
+            "description": "Index of the first record to return"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Number of records to return, up to 200"
+          },
+          {
+            "key": "isEnabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "searchStr",
+            "optional": true,
+            "type": "string",
+            "description": "Use term* for starts with, *term* for contains, term for exact"
+          },
+          {
+            "key": "chatStatus",
+            "optional": true,
+            "type": "AVAILABLE | DISABLED | NOT_CREATED | ${UNAVAILABLE}",
+            "description": "${UNAVAILABLE} means departments not available for chat"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | number | null, name?: string | null, description?: string | null, nameInCustomerPortal?: string | null, sanitizedName?: string | null, chatStatus?: string | null, creatorId?: string | number | null, createdTime?: string | null, isDefault?: boolean | string | null, isEnabled?: boolean | string | null, hasLogo?: boolean | string | null, isAssignToTeamEnabled?: boolean | string | null, isVisibleInCustomerPortal?: boolean | string | null, associatedAgentIds?: (string | number | null)[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohodesk.api.departments.listTeams",
+      "shortPath": "departments.listTeams",
+      "description": "List the teams in a department",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "departmentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number",
+            "description": "Index of the first record to return"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Up to 200. Omit or pass 0 for every team"
+          },
+          {
+            "key": "searchStr",
+            "optional": true,
+            "type": "string",
+            "description": "Team name search"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teams",
+            "optional": false,
+            "type": "{ id?: string | number | null, name?: string | null, description?: string | null, departmentId?: string | number | null, logoUrl?: string | null, agents?: (string | number | null)[] | null, derivedAgents?: (string | number | null)[] | null, roles?: (string | number | null)[] | null, rolesWithSubordinates?: (string | number | null)[] | null, subTeams?: (string | number | null)[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohodesk.api.departments.uploadLogo",
+      "shortPath": "departments.uploadLogo",
+      "description": "Replace the logo of a department with a jpg, png or gif of up to 2MB",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "departmentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fileName",
+            "optional": false,
+            "type": "string",
+            "description": "File name ending in jpg, jpeg, png or gif"
+          },
+          {
+            "key": "contentBase64",
+            "optional": false,
+            "type": "string",
+            "description": "Image bytes as base64, 2MB at most"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uploaded",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohodesk.api.organizations.list",
+      "shortPath": "organizations.list",
+      "description": "List the organizations the user belongs to",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | number | null, companyName?: string | null, portalName?: string | null, portalURL?: string | null, alias?: string | null, edition?: string | null, description?: string | null, website?: string | null, phoneNumber?: string | null, dialCode?: string | null, mobile?: string | null, fax?: string | null, primaryContact?: string | null, street?: string | null, city?: string | null, state?: string | null, country?: string | null, zip?: number | string | null, timeZone?: string | null, currencyCode?: string | null, currencyLocale?: string | null, currencySymbol?: string | null, employeeCount?: number | string | null, employeeCountRange?: string | null, industry?: string | null, logoURL?: string | null, faviconURL?: string | null, isDefault?: boolean | string | null, isAdminInOrg?: boolean | string | null, isSandboxPortal?: boolean | string | null, isPayloadEncryptionEnabled?: boolean | string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohodesk.api.roles.list",
+      "shortPath": "roles.list",
+      "description": "List roles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number",
+            "description": "Index of the first record to return"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Number of records to return, up to 500"
+          },
+          {
+            "key": "isVisible",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isDefault",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "searchStr",
+            "optional": true,
+            "type": "string",
+            "description": "Use term* for starts with, *term* for contains, term for exact"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | number | null, name?: string | null, description?: string | null, reportsTo?: string | number | null, isDefault?: boolean | string | null, isVisible?: boolean | string | null, shareDataWithPeers?: boolean | string | null, immediateSubRoles?: (string | number | null)[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohodesk.api.roles.listByIds",
+      "shortPath": "roles.listByIds",
+      "description": "Get up to 50 roles by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "roleIds",
+            "optional": false,
+            "type": "string[]",
+            "description": "Up to 50 role IDs"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | number | null, name?: string | null, description?: string | null, reportsTo?: string | number | null, isDefault?: boolean | string | null, isVisible?: boolean | string | null, shareDataWithPeers?: boolean | string | null, immediateSubRoles?: (string | number | null)[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohodesk.api.tasks.updateMany",
+      "shortPath": "tasks.updateMany",
+      "description": "Set one field on up to 50 tasks",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]",
+            "description": "Up to 50 task IDs"
+          },
+          {
+            "key": "fieldName",
+            "optional": false,
+            "type": "string",
+            "description": "Field to update"
+          },
+          {
+            "key": "fieldValue",
+            "optional": true,
+            "type": "string",
+            "description": "New value of the field"
+          },
+          {
+            "key": "isCustomField",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether fieldName is a user-defined field"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id?: string | number | null, success?: boolean | string | null, errors?: { errorCode?: string | null, errorMessage?: string | null, httpCode?: number | string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohodesk.api.tickets.get",
+      "shortPath": "tickets.get",
+      "description": "Get a ticket by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticketId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "(contacts | products | assignee | departments | team | contract | isRead | skills)[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "ticketNumber",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "statusType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "channelCode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "subCategory",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "classification",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sentiment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "resolution",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "departmentId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "contactId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "assigneeId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "productId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "modifiedBy",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "layoutId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "slaId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "responseDueDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customerResponseTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modifiedTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "closedTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "onholdTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lockedTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "threadCount",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "commentCount",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "attachmentCount",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "taskCount",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "tagCount",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "followerCount",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "isSpam",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "isOverDue",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "isEscalated",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "isRead",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "isArchived",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "isDeleted",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "isTrashed",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "{ appName?: string | null, extId?: string | null, permalink?: string | null, type?: string | null, appPhotoURL?: string | null } | null"
+          },
+          {
+            "key": "cf",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "contact",
+            "optional": true,
+            "type": "{ id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "{ id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null"
+          },
+          {
+            "key": "department",
+            "optional": true,
+            "type": "{ id?: string | number | null, name?: string | null } | null"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "{ id?: string | number | null, name?: string | null } | null"
+          },
+          {
+            "key": "product",
+            "optional": true,
+            "type": "{ id?: string | number | null, productName?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohodesk.api.tickets.getLatestThread",
+      "shortPath": "tickets.getLatestThread",
+      "description": "Get the most recent thread of a ticket, or null if it has none",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticketId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "needPublic",
+            "optional": true,
+            "type": "boolean",
+            "description": "Only a public thread"
+          },
+          {
+            "key": "needIncomingThread",
+            "optional": true,
+            "type": "boolean",
+            "description": "Only an incoming thread"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "(plainText | source)[]",
+            "description": "Extra data to include. plainText adds the plain text content"
+          },
+          {
+            "key": "threadStatus",
+            "optional": true,
+            "type": "success | failed",
+            "description": "Delivery status of the thread"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "plainText",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sentiment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "canReply",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "hasAttach",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "isForward",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "isDescriptionThread",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "isContentTruncated",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "fullContentURL",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fromEmailAddress",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cc",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "bcc",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "replyTo",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "facebookProfile",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "twitterProfile",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "attachmentCount",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "{ id?: string | number | null, name?: string | null, size?: number | string | null, status?: string | null, href?: string | null, previewurl?: string | null }[] | null"
+          },
+          {
+            "key": "readReceipts",
+            "optional": true,
+            "type": "{ senderName?: string | null, recipientType?: string | null, from?: string | null }[] | null"
+          },
+          {
+            "key": "actions",
+            "optional": true,
+            "type": "{ method?: string | null, rel?: string | null, href?: string | null }[] | null"
+          },
+          {
+            "key": "keyWords",
+            "optional": true,
+            "type": "(string | null)[] | null"
+          },
+          {
+            "key": "aspects",
+            "optional": true,
+            "type": "(string | null)[] | null"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "{ id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null"
+          },
+          {
+            "key": "impersonatedUser",
+            "optional": true,
+            "type": "{ id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "{ appName?: string | null, extId?: string | null, permalink?: string | null, type?: string | null, appPhotoURL?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohodesk.api.tickets.getResolution",
+      "shortPath": "tickets.getResolution",
+      "description": "Get the resolution of a ticket, or null if it has none",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticketId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modifiedTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "{ id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohodesk.api.tickets.getThread",
+      "shortPath": "tickets.getThread",
+      "description": "Get one thread of a ticket",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticketId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "threadId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "(plainText | source)[]",
+            "description": "Extra data to include. plainText adds the plain text content"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "plainText",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sentiment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "canReply",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "hasAttach",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "isForward",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "isDescriptionThread",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "isContentTruncated",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "fullContentURL",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fromEmailAddress",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cc",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "bcc",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "replyTo",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "facebookProfile",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "twitterProfile",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "attachmentCount",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "{ id?: string | number | null, name?: string | null, size?: number | string | null, status?: string | null, href?: string | null, previewurl?: string | null }[] | null"
+          },
+          {
+            "key": "readReceipts",
+            "optional": true,
+            "type": "{ senderName?: string | null, recipientType?: string | null, from?: string | null }[] | null"
+          },
+          {
+            "key": "actions",
+            "optional": true,
+            "type": "{ method?: string | null, rel?: string | null, href?: string | null }[] | null"
+          },
+          {
+            "key": "keyWords",
+            "optional": true,
+            "type": "(string | null)[] | null"
+          },
+          {
+            "key": "aspects",
+            "optional": true,
+            "type": "(string | null)[] | null"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "{ id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null"
+          },
+          {
+            "key": "impersonatedUser",
+            "optional": true,
+            "type": "{ id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "{ appName?: string | null, extId?: string | null, permalink?: string | null, type?: string | null, appPhotoURL?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohodesk.api.tickets.list",
+      "shortPath": "tickets.list",
+      "description": "List tickets, filtered by department, view, assignee, team, channel, status or priority",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number",
+            "description": "Index of the first record to return"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Number of records to return, up to 100"
+          },
+          {
+            "key": "departmentIds",
+            "optional": true,
+            "type": "string[]",
+            "description": "Departments to list from. Needed for an all-departments view"
+          },
+          {
+            "key": "viewId",
+            "optional": true,
+            "type": "string",
+            "description": "View to list tickets from"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "string[]",
+            "description": "Assignee IDs, or Unassigned"
+          },
+          {
+            "key": "teamIds",
+            "optional": true,
+            "type": "string[]",
+            "description": "Team IDs, or Unassigned"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "string[]",
+            "description": "Priorities such as High, Medium, Low, or custom values"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "string",
+            "description": "responseDueDate, customerResponseTime or createdTime. Prefix with - for descending"
+          },
+          {
+            "key": "receivedInDays",
+            "optional": true,
+            "type": "15 | 30 | 90",
+            "description": "Only tickets with a customerResponseTime in this many days"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "(contacts | products | assignee | departments | team | isRead)[]"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string[]",
+            "description": "Fields to return, up to 30. Multi-line text fields are excluded"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | number | null, ticketNumber?: number | string | null, subject?: string | null, description?: string | null, status?: string | null, statusType?: string | null, priority?: string | null, channel?: string | null, channelCode?: string | null, category?: string | null, subCategory?: string | null, classification?: string | null, language?: string | null, sentiment?: string | null, resolution?: string | null, email?: string | null, phone?: string | null, departmentId?: string | number | null, contactId?: string | number | null, accountId?: string | number | null, assigneeId?: string | number | null, teamId?: string | number | null, productId?: string | number | null, createdBy?: string | number | null, modifiedBy?: string | number | null, layoutId?: string | number | null, slaId?: string | number | null, dueDate?: string | null, responseDueDate?: string | null, customerResponseTime?: string | null, createdTime?: string | null, modifiedTime?: string | null, closedTime?: string | null, onholdTime?: string | null, lockedTime?: string | null, threadCount?: number | string | null, commentCount?: number | string | null, attachmentCount?: number | string | null, taskCount?: number | string | null, tagCount?: number | string | null, followerCount?: number | string | null, isSpam?: boolean | string | null, isOverDue?: boolean | string | null, isEscalated?: boolean | string | null, isRead?: boolean | string | null, isArchived?: boolean | string | null, isDeleted?: boolean | string | null, isTrashed?: boolean | string | null, webUrl?: string | null, source?: { appName?: string | null, extId?: string | null, permalink?: string | null, type?: string | null, appPhotoURL?: string | null } | null, cf?: Record<string, any> | null, customFields?: Record<string, any> | null, contact?: { id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null, assignee?: { id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null, department?: { id?: string | number | null, name?: string | null } | null, team?: { id?: string | number | null, name?: string | null } | null, product?: { id?: string | number | null, productName?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohodesk.api.tickets.listConversations",
+      "shortPath": "tickets.listConversations",
+      "description": "List the threads and comments of a ticket",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticketId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number",
+            "description": "Index of the first record to return"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Up to 200. Defaults to 100"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | number | null, summary?: string | null, content?: string | null, plainText?: string | null, contentType?: string | null, status?: string | null, direction?: string | null, visibility?: string | null, channel?: string | null, sentiment?: string | null, createdTime?: string | null, canReply?: boolean | string | null, hasAttach?: boolean | string | null, isForward?: boolean | string | null, isDescriptionThread?: boolean | string | null, isContentTruncated?: boolean | string | null, fullContentURL?: string | null, fromEmailAddress?: string | null, to?: string | null, cc?: string | null, bcc?: string | null, replyTo?: string | null, facebookProfile?: string | null, twitterProfile?: string | null, attachmentCount?: number | string | null, attachments?: { id?: string | number | null, name?: string | null, size?: number | string | null, status?: string | null, href?: string | null, previewurl?: string | null }[] | null, readReceipts?: { senderName?: string | null, recipientType?: string | null, from?: string | null }[] | null, actions?: { method?: string | null, rel?: string | null, href?: string | null }[] | null, keyWords?: (string | null)[] | null, aspects?: (string | null)[] | null, author?: { id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null, impersonatedUser?: { id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null, source?: { appName?: string | null, extId?: string | null, permalink?: string | null, type?: string | null, appPhotoURL?: string | null } | null, type?: string | null, commentedTime?: string | null, modifiedTime?: string | null, isPublic?: boolean | string | null, commenterId?: string | number | null, commenter?: { id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null, responderId?: string | number | null, respondedIn?: string | null, lastRatingIconURL?: string | null, attachmentIds?: (string | number | null)[] | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "zohodesk.db.contacts.search",
+      "entityName": "contacts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "firstName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "secondaryEmail",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "mobile",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "accountId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ownerId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "webUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "zohodesk.db.tickets.search",
+      "entityName": "tickets",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ticketNumber",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subject",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "statusType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "priority",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "channel",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "category",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "departmentId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "contactId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "accountId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "assigneeId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "teamId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dueDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "closedTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "webUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

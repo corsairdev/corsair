@@ -44,7 +44,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -84,7 +84,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -115,7 +115,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -140,7 +140,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -170,7 +170,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -195,7 +195,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -220,7 +220,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -250,7 +250,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -275,7 +275,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -300,7 +300,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -355,7 +355,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -395,7 +395,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -426,7 +426,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -456,7 +456,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -486,7 +486,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -526,7 +526,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -556,7 +556,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -586,7 +586,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -616,7 +616,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -646,7 +646,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -676,7 +676,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -726,7 +726,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -801,7 +801,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -856,7 +856,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -901,7 +901,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -956,7 +956,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1011,7 +1011,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1066,7 +1066,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1116,7 +1116,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1176,7 +1176,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1196,7 +1196,7 @@
           {
             "key": "carts",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "pairs",
@@ -1206,22 +1206,22 @@
           {
             "key": "design",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "details",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "segment",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "template",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "send_test",
@@ -1231,12 +1231,12 @@
           {
             "key": "scheduling",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "a_b_settings",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -1246,7 +1246,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1266,12 +1266,12 @@
           {
             "key": "campaign",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "campaign_contacts",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -1281,7 +1281,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1312,7 +1312,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1342,7 +1342,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1372,7 +1372,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1402,7 +1402,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1432,7 +1432,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1457,7 +1457,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1487,7 +1487,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1557,7 +1557,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1587,7 +1587,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1647,7 +1647,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1687,7 +1687,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1747,7 +1747,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1787,7 +1787,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1852,7 +1852,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1887,7 +1887,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1917,7 +1917,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1942,7 +1942,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1972,7 +1972,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2082,7 +2082,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2347,7 +2347,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2378,7 +2378,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2428,7 +2428,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2458,7 +2458,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2488,7 +2488,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2518,7 +2518,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2578,7 +2578,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2608,7 +2608,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2638,7 +2638,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2688,7 +2688,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2723,7 +2723,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2758,7 +2758,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2803,7 +2803,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2848,7 +2848,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2893,7 +2893,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2938,7 +2938,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2983,7 +2983,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3038,7 +3038,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3078,7 +3078,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3118,7 +3118,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3153,7 +3153,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3203,7 +3203,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3234,7 +3234,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3259,7 +3259,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3284,7 +3284,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3309,7 +3309,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3345,7 +3345,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3365,17 +3365,17 @@
           {
             "key": "bcc",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "design",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "details",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "email_package",
@@ -3390,7 +3390,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3410,17 +3410,17 @@
           {
             "key": "bcc",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "design",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "details",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "email_package",
@@ -3435,7 +3435,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3715,7 +3715,7 @@
           {
             "key": "double_opt_in_config",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "external_name",
@@ -3735,7 +3735,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3890,7 +3890,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3920,7 +3920,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3956,7 +3956,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3987,7 +3987,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4027,7 +4027,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4057,7 +4057,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4117,7 +4117,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4172,7 +4172,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4207,7 +4207,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4242,7 +4242,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4532,7 +4532,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4562,7 +4562,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4592,7 +4592,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4647,7 +4647,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4672,7 +4672,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4708,7 +4708,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4733,7 +4733,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4793,7 +4793,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4853,7 +4853,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4913,7 +4913,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4938,7 +4938,7 @@
           {
             "key": "rules_segment",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -4948,7 +4948,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4973,7 +4973,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4998,7 +4998,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5023,7 +5023,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5048,7 +5048,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5073,7 +5073,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5103,7 +5103,7 @@
           {
             "key": "rules_segment",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -5113,7 +5113,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5138,7 +5138,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5173,7 +5173,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5204,7 +5204,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5229,7 +5229,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5269,7 +5269,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5299,7 +5299,7 @@
           {
             "key": "segment",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "from_name",
@@ -5309,7 +5309,7 @@
           {
             "key": "scheduling",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "can_unsubscribe",
@@ -5334,7 +5334,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5389,7 +5389,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5444,7 +5444,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5474,7 +5474,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5534,7 +5534,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5564,7 +5564,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5639,7 +5639,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5669,7 +5669,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5739,7 +5739,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5774,7 +5774,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5799,12 +5799,12 @@
           {
             "key": "design",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "details",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "send_test",
@@ -5824,7 +5824,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5869,7 +5869,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5909,7 +5909,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5949,7 +5949,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5999,7 +5999,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -6049,7 +6049,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -6109,7 +6109,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -6179,7 +6179,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -6209,7 +6209,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -6279,7 +6279,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -6339,7 +6339,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -6409,7 +6409,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -6459,7 +6459,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -6529,7 +6529,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -6560,7 +6560,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -6591,7 +6591,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -6621,7 +6621,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -6661,7 +6661,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -6686,7 +6686,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -6711,7 +6711,7 @@
           {
             "key": "campaign_details",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "Id",
@@ -6726,7 +6726,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -6761,7 +6761,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -6826,7 +6826,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -6866,7 +6866,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -6901,7 +6901,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -6926,7 +6926,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -6966,7 +6966,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -6997,7 +6997,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -7033,7 +7033,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -7063,7 +7063,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -7108,7 +7108,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -7138,7 +7138,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -7193,7 +7193,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -7253,7 +7253,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -7283,7 +7283,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -7348,7 +7348,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -7408,7 +7408,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },

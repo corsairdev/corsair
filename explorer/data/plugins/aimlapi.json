@@ -54,12 +54,12 @@
           {
             "key": "toolResources",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "temperature",
@@ -109,7 +109,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -201,7 +201,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -308,12 +308,12 @@
           {
             "key": "toolResources",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "temperature",
@@ -363,7 +363,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -419,7 +419,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -560,7 +560,7 @@
           {
             "key": "usage",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -647,7 +647,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -687,7 +687,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -789,7 +789,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -886,7 +886,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -926,7 +926,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -942,7 +942,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, type?: string, name?: string, provider?: string, info?: { name?: string, developer?: string, description?: string, contextLength?: number, maxTokens?: number, url?: string, docsUrl?: string, docs_url?: string, releasedAt?: string }, features?: string[], endpoints?: string[], aliases?: string[], tags?: string[], metadata?: {} }[] | { object?: string, data: { id: string, type?: string, name?: string, provider?: string, info?: { name?: string, developer?: string, description?: string, contextLength?: number, maxTokens?: number, url?: string, docsUrl?: string, docs_url?: string, releasedAt?: string }, features?: string[], endpoints?: string[], aliases?: string[], tags?: string[], metadata?: {} }[], has_more?: boolean, first_id?: string, last_id?: string }"
+        "type": "{ id: string, type?: string, name?: string, provider?: string, info?: { name?: string, developer?: string, description?: string, contextLength?: number, maxTokens?: number, url?: string, docsUrl?: string, docs_url?: string, releasedAt?: string }, features?: string[], endpoints?: string[], aliases?: string[], tags?: string[], metadata?: Record<string, any> }[] | { object?: string, data: { id: string, type?: string, name?: string, provider?: string, info?: { name?: string, developer?: string, description?: string, contextLength?: number, maxTokens?: number, url?: string, docsUrl?: string, docs_url?: string, releasedAt?: string }, features?: string[], endpoints?: string[], aliases?: string[], tags?: string[], metadata?: Record<string, any> }[], has_more?: boolean, first_id?: string, last_id?: string }"
       }
     },
     {
@@ -982,7 +982,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, type?: string, name?: string, provider?: string, info?: { name?: string, developer?: string, description?: string, contextLength?: number, maxTokens?: number, url?: string, docsUrl?: string, docs_url?: string, releasedAt?: string }, features?: string[], endpoints?: string[], aliases?: string[], tags?: string[], metadata?: {} }[] | { object?: string, data: { id: string, type?: string, name?: string, provider?: string, info?: { name?: string, developer?: string, description?: string, contextLength?: number, maxTokens?: number, url?: string, docsUrl?: string, docs_url?: string, releasedAt?: string }, features?: string[], endpoints?: string[], aliases?: string[], tags?: string[], metadata?: {} }[], has_more?: boolean, first_id?: string, last_id?: string }"
+        "type": "{ id: string, type?: string, name?: string, provider?: string, info?: { name?: string, developer?: string, description?: string, contextLength?: number, maxTokens?: number, url?: string, docsUrl?: string, docs_url?: string, releasedAt?: string }, features?: string[], endpoints?: string[], aliases?: string[], tags?: string[], metadata?: Record<string, any> }[] | { object?: string, data: { id: string, type?: string, name?: string, provider?: string, info?: { name?: string, developer?: string, description?: string, contextLength?: number, maxTokens?: number, url?: string, docsUrl?: string, docs_url?: string, releasedAt?: string }, features?: string[], endpoints?: string[], aliases?: string[], tags?: string[], metadata?: Record<string, any> }[], has_more?: boolean, first_id?: string, last_id?: string }"
       }
     },
     {
@@ -1051,7 +1051,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1112,7 +1112,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1153,7 +1153,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1193,7 +1193,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1254,7 +1254,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1386,7 +1386,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1417,7 +1417,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1457,7 +1457,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1523,7 +1523,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1615,12 +1615,12 @@
           {
             "key": "toolResources",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1660,7 +1660,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1752,7 +1752,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1773,12 +1773,12 @@
           {
             "key": "toolResources",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1818,7 +1818,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }

@@ -173,6 +173,45 @@ describe('createCorsair with a ck_cloud_ key', () => {
 		).resolves.toBeDefined();
 	});
 
+	it('withTenant passes the bound account on call and db requests', async () => {
+		const fetchMock = jest.fn(
+			async () => new Response(JSON.stringify({ data: [] }), { status: 200 }),
+		);
+		const corsair = createCorsair({
+			plugins: [slack()],
+			multiTenancy: true,
+			hub: {
+				projectApiKey: 'ck_cloud_x',
+				baseUrl: 'https://vm/p/api/corsair',
+			},
+		});
+		const prev = global.fetch;
+		global.fetch = fetchMock as unknown as typeof fetch;
+		try {
+			const t = corsair.withTenant('acme', { accounts: { slack: 'a@x.com' } });
+			await t.slack.api.messages.post({ channel: '#g', text: 'hi' });
+			await t.slack.db.messages.list();
+			await corsair
+				.withTenant('acme')
+				.slack.api.messages.post({ channel: '#g', text: 'hi' });
+		} finally {
+			global.fetch = prev;
+		}
+		const bodies = fetchMock.mock.calls.map(
+			(c: unknown[]) =>
+				JSON.parse(String((c[1] as RequestInit).body)) as Record<
+					string,
+					unknown
+				>,
+		);
+		expect(bodies[0]).toMatchObject({ account: 'a@x.com' });
+		expect(bodies[1]).toMatchObject({ account: 'a@x.com' });
+		expect(bodies[2]).not.toHaveProperty('account');
+		await expect(
+			corsair.withTenant('acme').slack.accounts.list(),
+		).rejects.toThrow(/not supported in cloud mode/);
+	});
+
 	it('multi-tenant connectionStatus.get() throws without a tenantId', () => {
 		const corsair = createCorsair({
 			plugins: [slack()],
@@ -256,6 +295,27 @@ describe('corsairCloud', () => {
 		expect((init.headers as Record<string, string>).authorization).toBe(
 			'Bearer ck_cloud_x',
 		);
+	});
+
+	it('withInstance().withTenant() passes the bound account on a call', async () => {
+		jest.spyOn(globalThis, 'fetch').mockImplementation(async (url) => {
+			if (String(url) === 'https://vm/p/instances') {
+				return instanceResolve('users', 'https://vm/users');
+			}
+			return new Response(JSON.stringify({ data: {} }), { status: 200 });
+		});
+		const corsair = corsairCloud({
+			apiKey: 'ck_cloud_x',
+			url: 'https://vm/p/api/corsair',
+		});
+
+		await corsair
+			.withInstance('users')
+			.withTenant('acme', { accounts: { gmail: 'b@x.com' } })
+			.gmail.api.messages.list({});
+
+		const [, init] = (globalThis.fetch as jest.Mock).mock.calls[1];
+		expect(JSON.parse(init.body)).toMatchObject({ account: 'b@x.com' });
 	});
 
 	it('accepts any plugin id dynamically (the VM is the authority)', async () => {
@@ -380,13 +440,16 @@ describe('corsairCloud', () => {
 	});
 
 	it('withInstance rejects for a name absent from the resolved instance map', async () => {
-		jest.spyOn(globalThis, 'fetch').mockResolvedValue(
-			new Response(
-				JSON.stringify({
-					instances: [{ instanceKey: 'users', url: 'https://vm/users' }],
-				}),
-				{ status: 200 },
-			),
+		// A fresh Response per call: a miss re-resolves, and a body can only be
+		// read once.
+		jest.spyOn(globalThis, 'fetch').mockImplementation(
+			async () =>
+				new Response(
+					JSON.stringify({
+						instances: [{ instanceKey: 'users', url: 'https://vm/users' }],
+					}),
+					{ status: 200 },
+				),
 		);
 
 		const corsair = corsairCloud({
@@ -442,6 +505,86 @@ describe('corsairCloud', () => {
 		expect(resolveCalls).toHaveLength(1);
 	});
 
+	it('re-resolves once for a key the cached map does not hold', async () => {
+		// An instance created after the first resolve must not stay unreachable
+		// for the process's life.
+		let deployed = ['users'];
+		const fetchMock = jest
+			.spyOn(globalThis, 'fetch')
+			.mockImplementation(async (url) => {
+				if (String(url) === 'https://vm/p/instances') {
+					return new Response(
+						JSON.stringify({
+							instances: deployed.map((k) => ({
+								instanceKey: k,
+								url: `https://vm/${k}`,
+							})),
+						}),
+						{ status: 200 },
+					);
+				}
+				return new Response(JSON.stringify({ data: {} }), { status: 200 });
+			});
+
+		const corsair = corsairCloud({
+			apiKey: 'ck_cloud_x',
+			url: 'https://vm/p/api/corsair',
+		});
+		await corsair
+			.withInstance('users')
+			.withTenant('a')
+			.notion.api.pages.searchPage({});
+
+		deployed = ['users', 'billing'];
+		await corsair
+			.withInstance('billing')
+			.withTenant('a')
+			.notion.api.pages.searchPage({});
+		expect(
+			fetchMock.mock.calls.filter(([url]) =>
+				String(url).startsWith('https://vm/billing'),
+			),
+		).not.toHaveLength(0);
+	});
+
+	it('shares one refresh across concurrent calls for a missing key', async () => {
+		// Each caller finds the same stale map, so each would otherwise start its
+		// own refresh and a burst would fetch once per caller.
+		const fetchMock = jest
+			.spyOn(globalThis, 'fetch')
+			.mockImplementation(async (url) => {
+				if (String(url) === 'https://vm/p/instances') {
+					return instanceResolve('users', 'https://vm/users');
+				}
+				return new Response(JSON.stringify({ data: {} }), { status: 200 });
+			});
+
+		const corsair = corsairCloud({
+			apiKey: 'ck_cloud_x',
+			url: 'https://vm/p/api/corsair',
+		});
+		await corsair
+			.withInstance('users')
+			.withTenant('a')
+			.notion.api.pages.searchPage({});
+		const resolves = () =>
+			fetchMock.mock.calls.filter(
+				([url]) => String(url) === 'https://vm/p/instances',
+			).length;
+		const before = resolves();
+
+		await Promise.all(
+			Array.from({ length: 5 }, () =>
+				corsair
+					.withInstance('billing')
+					.withTenant('a')
+					.notion.api.pages.searchPage({})
+					.catch(() => undefined),
+			),
+		);
+		expect(resolves() - before).toBe(1);
+	});
+
 	it('scopes connectionStatus to the instance (routed to the instance URL)', async () => {
 		jest.spyOn(globalThis, 'fetch').mockImplementation(async (url) => {
 			if (String(url) === 'https://vm/p/instances') {
@@ -460,18 +603,66 @@ describe('corsairCloud', () => {
 		expect(url).toBe('https://vm/users/connection-status?tenantId=acme');
 	});
 
-	it('exposes project-scoped tenants on manage', async () => {
-		jest
-			.spyOn(globalThis, 'fetch')
-			.mockResolvedValue(
-				new Response(JSON.stringify([{ id: 'acme' }]), { status: 200 }),
-			);
+	it('refuses management for a key that carries no project slug', () => {
 		const corsair = corsairCloud({
 			apiKey: 'ck_cloud_x',
 			url: 'https://vm/p/api/corsair',
 		});
-		await corsair.manage.tenants.list();
-		const [url] = (globalThis.fetch as jest.Mock).mock.calls[0];
-		expect(url).toBe('https://vm/p/api/corsair/tenants');
+		expect(() => corsair.manage.project.get()).toThrow(/managementUrl/);
+		expect(() => corsair.withInstance('app').tenants.list()).toThrow(
+			/managementUrl/,
+		);
+	});
+
+	it('normalises a managementUrl override and ignores an empty one', async () => {
+		const fetchMock = jest
+			.spyOn(globalThis, 'fetch')
+			.mockImplementation(
+				async () =>
+					new Response(JSON.stringify({ object: 'project' }), { status: 200 }),
+			);
+		await corsairCloud({
+			apiKey: 'ck_cloud_acme.secret',
+			managementUrl: 'https://mgmt.test/v1/projects/acme/',
+		}).manage.project.get();
+		expect(String(fetchMock.mock.calls[0]![0])).toBe(
+			'https://mgmt.test/v1/projects/acme/project',
+		);
+
+		// An empty override falls back to the URL the key's slug places.
+		await corsairCloud({
+			apiKey: 'ck_cloud_acme.secret',
+			managementUrl: '   ',
+		}).manage.project.get();
+		expect(String(fetchMock.mock.calls[1]![0])).toBe(
+			'https://api.corsair.cloud/v1/projects/acme/project',
+		);
+	});
+
+	it('still routes per-op calls for a key that carries no project slug', async () => {
+		const fetchMock = jest
+			.fn()
+			.mockResolvedValueOnce(
+				new Response(
+					JSON.stringify({
+						instances: [{ instanceKey: 'app', url: 'https://vm/app' }],
+					}),
+					{ status: 200 },
+				),
+			)
+			.mockResolvedValueOnce(
+				new Response(JSON.stringify({ data: 'ok' }), { status: 200 }),
+			);
+		const corsair = corsairCloud({
+			apiKey: 'ck_cloud_x',
+			url: 'https://vm/p/api/corsair',
+			fetch: fetchMock as unknown as typeof fetch,
+		});
+		await (
+			corsair.withInstance('app').withTenant('acme') as any
+		).slack.api.ok();
+		expect(fetchMock.mock.calls[1][0]).toBe(
+			'https://vm/app/acme/slack/call/ok',
+		);
 	});
 });

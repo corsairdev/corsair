@@ -49,7 +49,7 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "segments",
@@ -157,17 +157,17 @@
           {
             "key": "first_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "last_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "unsubscribed",
@@ -249,7 +249,7 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -310,7 +310,7 @@
           {
             "key": "created_at",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "region",
@@ -393,7 +393,7 @@
           {
             "key": "created_at",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "region",
@@ -485,7 +485,7 @@
           {
             "key": "created_at",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "region",
@@ -506,7 +506,7 @@
           {
             "key": "emails",
             "optional": false,
-            "type": "{ from: string, to: string | string[], subject: string, html?: string, text?: string, cc?: string | string[], bcc?: string | string[], reply_to?: string | string[], scheduled_at?: string, tags?: { name: string, value: string }[], headers?: {} }[]"
+            "type": "{ from: string, to: string | string[], subject: string, html?: string, text?: string, cc?: string | string[], bcc?: string | string[], reply_to?: string | string[], scheduled_at?: string, tags?: { name: string, value: string }[], headers?: Record<string, string> }[]"
           }
         ]
       },
@@ -593,7 +593,7 @@
           {
             "key": "created_at",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "subject",
@@ -710,7 +710,7 @@
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -1218,6 +1218,11 @@
         },
         {
           "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

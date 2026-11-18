@@ -75,7 +75,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "model",
@@ -121,7 +121,7 @@
           {
             "key": "schema",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "maxCredits",
@@ -238,7 +238,7 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "data",
@@ -329,12 +329,12 @@
           {
             "key": "webhook",
             "optional": true,
-            "type": "{ url: string, headers?: {}, metadata?: {}, events?: completed | page | failed | started[] }"
+            "type": "{ url: string, headers?: Record<string, string>, metadata?: Record<string, any>, events?: (completed | page | failed | started)[] }"
           },
           {
             "key": "scrapeOptions",
             "optional": true,
-            "type": "{ formats?: (markdown | summary | html | rawHtml | links | images | audio | { type: markdown } | { type: summary } | { type: html } | { type: rawHtml } | { type: links } | { type: images } | { type: audio } | { type: screenshot, fullPage?: boolean, quality?: number, viewport?: { width: number, height: number } } | { type: json, schema?: {}, prompt?: string } | { type: changeTracking, modes?: git-diff | json[], schema?: {}, prompt?: string, tag?: string | null } | { type: branding })[], onlyMainContent?: boolean, includeTags?: string[], excludeTags?: string[], maxAge?: number, minAge?: number, headers?: {}, waitFor?: number, mobile?: boolean, skipTlsVerification?: boolean, timeout?: number, parsers?: { type: pdf, mode?: fast | auto | ocr, maxPages?: number }[], actions?: ({ type: wait, milliseconds: number } | { type: wait, selector: string } | { type: screenshot, fullPage?: boolean, quality?: number, viewport?: { width: number, height: number } } | { type: click, selector: string, all?: boolean } | { type: write, text: string } | { type: press, key: string } | { type: scroll, direction?: up | down, selector?: string } | { type: scrape } | { type: executeJavascript, script: string } | { type: pdf, format?: A0 | A1 | A2 | A3 | A4 | A5 | A6 | Letter | Legal | Tabloid | Ledger, landscape?: boolean, scale?: number })[], location?: { country?: string, languages?: string[] }, removeBase64Images?: boolean, blockAds?: boolean, proxy?: basic | enhanced | auto, storeInCache?: boolean, profile?: { name: string, saveChanges?: boolean } }"
+            "type": "{ formats?: (markdown | summary | html | rawHtml | links | images | audio | { type: markdown } | { type: summary } | { type: html } | { type: rawHtml } | { type: links } | { type: images } | { type: audio } | { type: screenshot, fullPage?: boolean, quality?: number, viewport?: { width: number, height: number } } | { type: json, schema?: Record<string, any>, prompt?: string } | { type: changeTracking, modes?: (git-diff | json)[], schema?: Record<string, any>, prompt?: string, tag?: string | null } | { type: branding })[], onlyMainContent?: boolean, includeTags?: string[], excludeTags?: string[], maxAge?: number, minAge?: number, headers?: Record<string, string>, waitFor?: number, mobile?: boolean, skipTlsVerification?: boolean, timeout?: number, parsers?: { type: pdf, mode?: fast | auto | ocr, maxPages?: number }[], actions?: ({ type: wait, milliseconds: number } | { type: wait, selector: string } | { type: screenshot, fullPage?: boolean, quality?: number, viewport?: { width: number, height: number } } | { type: click, selector: string, all?: boolean } | { type: write, text: string } | { type: press, key: string } | { type: scroll, direction?: up | down, selector?: string } | { type: scrape } | { type: executeJavascript, script: string } | { type: pdf, format?: A0 | A1 | A2 | A3 | A4 | A5 | A6 | Letter | Legal | Tabloid | Ledger, landscape?: boolean, scale?: number })[], location?: { country?: string, languages?: string[] }, removeBase64Images?: boolean, blockAds?: boolean, proxy?: basic | enhanced | auto, storeInCache?: boolean, profile?: { name: string, saveChanges?: boolean } }"
           },
           {
             "key": "zeroDataRetention",
@@ -451,7 +451,7 @@
           {
             "key": "formats",
             "optional": true,
-            "type": "(markdown | summary | html | rawHtml | links | images | audio | { type: markdown } | { type: summary } | { type: html } | { type: rawHtml } | { type: links } | { type: images } | { type: audio } | { type: screenshot, fullPage?: boolean, quality?: number, viewport?: { width: number, height: number } } | { type: json, schema?: {}, prompt?: string } | { type: changeTracking, modes?: git-diff | json[], schema?: {}, prompt?: string, tag?: string | null } | { type: branding })[]"
+            "type": "(markdown | summary | html | rawHtml | links | images | audio | { type: markdown } | { type: summary } | { type: html } | { type: rawHtml } | { type: links } | { type: images } | { type: audio } | { type: screenshot, fullPage?: boolean, quality?: number, viewport?: { width: number, height: number } } | { type: json, schema?: Record<string, any>, prompt?: string } | { type: changeTracking, modes?: (git-diff | json)[], schema?: Record<string, any>, prompt?: string, tag?: string | null } | { type: branding })[]"
           },
           {
             "key": "onlyMainContent",
@@ -481,7 +481,7 @@
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "waitFor",
@@ -561,7 +561,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ markdown?: string, summary?: string | null, html?: string | null, rawHtml?: string | null, screenshot?: string | null, audio?: string | null, links?: string[], actions?: { screenshots?: string[], scrapes?: { url?: string, html?: string }[], javascriptReturns?: { type?: string, value?: any }[], pdfs?: string[] } | null, metadata?: { title?: string | string[], description?: string | string[], language?: string | string[] | null, keywords?: string | string[], sourceURL?: string, url?: string, scrapeId?: string, statusCode?: number, contentType?: string, error?: string | null, ogLocaleAlternate?: string[], concurrencyLimited?: boolean, concurrencyQueueDurationMs?: number }, warning?: string | null, changeTracking?: { previousScrapeAt?: string | null, changeStatus?: new | same | changed | removed, visibility?: visible | hidden, diff?: string | null, json?: {} | null } | null, branding?: {} | null, json?: any, images?: {}[] }"
+            "type": "{ markdown?: string, summary?: string | null, html?: string | null, rawHtml?: string | null, screenshot?: string | null, audio?: string | null, links?: string[], actions?: { screenshots?: string[], scrapes?: { url?: string, html?: string }[], javascriptReturns?: { type?: string, value?: any }[], pdfs?: string[] } | null, metadata?: { title?: string | string[], description?: string | string[], language?: string | string[] | null, keywords?: string | string[], sourceURL?: string, url?: string, scrapeId?: string, statusCode?: number, contentType?: string, error?: string | null, ogLocaleAlternate?: string[], concurrencyLimited?: boolean, concurrencyQueueDurationMs?: number }, warning?: string | null, changeTracking?: { previousScrapeAt?: string | null, changeStatus?: new | same | changed | removed, visibility?: visible | hidden, diff?: string | null, json?: Record<string, any> | null } | null, branding?: Record<string, any> | null, json?: any, images?: Record<string, any>[] }"
           }
         ]
       }
@@ -622,12 +622,12 @@
           {
             "key": "enterprise",
             "optional": true,
-            "type": "anon | zdr[]"
+            "type": "(anon | zdr)[]"
           },
           {
             "key": "scrapeOptions",
             "optional": true,
-            "type": "{ formats?: (markdown | summary | html | rawHtml | links | images | audio | { type: markdown } | { type: summary } | { type: html } | { type: rawHtml } | { type: links } | { type: images } | { type: audio } | { type: screenshot, fullPage?: boolean, quality?: number, viewport?: { width: number, height: number } } | { type: json, schema?: {}, prompt?: string } | { type: changeTracking, modes?: git-diff | json[], schema?: {}, prompt?: string, tag?: string | null } | { type: branding })[], onlyMainContent?: boolean, includeTags?: string[], excludeTags?: string[], maxAge?: number, minAge?: number, headers?: {}, waitFor?: number, mobile?: boolean, skipTlsVerification?: boolean, timeout?: number, parsers?: { type: pdf, mode?: fast | auto | ocr, maxPages?: number }[], actions?: ({ type: wait, milliseconds: number } | { type: wait, selector: string } | { type: screenshot, fullPage?: boolean, quality?: number, viewport?: { width: number, height: number } } | { type: click, selector: string, all?: boolean } | { type: write, text: string } | { type: press, key: string } | { type: scroll, direction?: up | down, selector?: string } | { type: scrape } | { type: executeJavascript, script: string } | { type: pdf, format?: A0 | A1 | A2 | A3 | A4 | A5 | A6 | Letter | Legal | Tabloid | Ledger, landscape?: boolean, scale?: number })[], location?: { country?: string, languages?: string[] }, removeBase64Images?: boolean, blockAds?: boolean, proxy?: basic | enhanced | auto, storeInCache?: boolean, profile?: { name: string, saveChanges?: boolean } }"
+            "type": "{ formats?: (markdown | summary | html | rawHtml | links | images | audio | { type: markdown } | { type: summary } | { type: html } | { type: rawHtml } | { type: links } | { type: images } | { type: audio } | { type: screenshot, fullPage?: boolean, quality?: number, viewport?: { width: number, height: number } } | { type: json, schema?: Record<string, any>, prompt?: string } | { type: changeTracking, modes?: (git-diff | json)[], schema?: Record<string, any>, prompt?: string, tag?: string | null } | { type: branding })[], onlyMainContent?: boolean, includeTags?: string[], excludeTags?: string[], maxAge?: number, minAge?: number, headers?: Record<string, string>, waitFor?: number, mobile?: boolean, skipTlsVerification?: boolean, timeout?: number, parsers?: { type: pdf, mode?: fast | auto | ocr, maxPages?: number }[], actions?: ({ type: wait, milliseconds: number } | { type: wait, selector: string } | { type: screenshot, fullPage?: boolean, quality?: number, viewport?: { width: number, height: number } } | { type: click, selector: string, all?: boolean } | { type: write, text: string } | { type: press, key: string } | { type: scroll, direction?: up | down, selector?: string } | { type: scrape } | { type: executeJavascript, script: string } | { type: pdf, format?: A0 | A1 | A2 | A3 | A4 | A5 | A6 | Letter | Legal | Tabloid | Ledger, landscape?: boolean, scale?: number })[], location?: { country?: string, languages?: string[] }, removeBase64Images?: boolean, blockAds?: boolean, proxy?: basic | enhanced | auto, storeInCache?: boolean, profile?: { name: string, saveChanges?: boolean } }"
           }
         ]
       },
@@ -647,7 +647,7 @@
           {
             "key": "warning",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "id",
@@ -689,12 +689,12 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ creditsUsed?: number, action?: string, input?: {} }[]"
+            "type": "{ creditsUsed?: number, action?: string, input?: Record<string, any> }[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "error",
@@ -703,7 +703,7 @@
           }
         ]
       },
-      "responseType": "{ success: boolean, type: agent.action, id: string, data: { creditsUsed?: number, action?: string, input?: {} }[], metadata?: {}, error?: string }",
+      "responseType": "{ success: boolean, type: agent.action, id: string, data: { creditsUsed?: number, action?: string, input?: Record<string, any> }[], metadata?: Record<string, any>, error?: string }",
       "usageExample": "firecrawl({\n    webhookHooks: {\n        agent: {\n            action: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -736,7 +736,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "error",
@@ -745,7 +745,7 @@
           }
         ]
       },
-      "responseType": "{ success: boolean, type: agent.cancelled, id: string, data: { creditsUsed?: number }[], metadata?: {}, error?: string }",
+      "responseType": "{ success: boolean, type: agent.cancelled, id: string, data: { creditsUsed?: number }[], metadata?: Record<string, any>, error?: string }",
       "usageExample": "firecrawl({\n    webhookHooks: {\n        agent: {\n            cancelled: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -773,12 +773,12 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ creditsUsed?: number, data?: {} }[]"
+            "type": "{ creditsUsed?: number, data?: Record<string, any> }[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "error",
@@ -787,7 +787,7 @@
           }
         ]
       },
-      "responseType": "{ success: boolean, type: agent.completed, id: string, data: { creditsUsed?: number, data?: {} }[], metadata?: {}, error?: string }",
+      "responseType": "{ success: boolean, type: agent.completed, id: string, data: { creditsUsed?: number, data?: Record<string, any> }[], metadata?: Record<string, any>, error?: string }",
       "usageExample": "firecrawl({\n    webhookHooks: {\n        agent: {\n            completed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -820,7 +820,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "error",
@@ -829,7 +829,7 @@
           }
         ]
       },
-      "responseType": "{ success: boolean, type: agent.failed, id: string, data: { creditsUsed?: number }[], metadata?: {}, error?: string }",
+      "responseType": "{ success: boolean, type: agent.failed, id: string, data: { creditsUsed?: number }[], metadata?: Record<string, any>, error?: string }",
       "usageExample": "firecrawl({\n    webhookHooks: {\n        agent: {\n            failed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -862,7 +862,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "error",
@@ -871,7 +871,7 @@
           }
         ]
       },
-      "responseType": "{ success: boolean, type: agent.started, id: string, data: never[], metadata?: {}, error?: string }",
+      "responseType": "{ success: boolean, type: agent.started, id: string, data: never[], metadata?: Record<string, any>, error?: string }",
       "usageExample": "firecrawl({\n    webhookHooks: {\n        agent: {\n            started: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -904,7 +904,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "error",
@@ -913,7 +913,7 @@
           }
         ]
       },
-      "responseType": "{ success: boolean, type: batch_scrape.completed, id: string, data: never[], metadata?: {}, error?: string }",
+      "responseType": "{ success: boolean, type: batch_scrape.completed, id: string, data: never[], metadata?: Record<string, any>, error?: string }",
       "usageExample": "firecrawl({\n    webhookHooks: {\n        batchScrape: {\n            completed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -946,7 +946,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "error",
@@ -955,7 +955,7 @@
           }
         ]
       },
-      "responseType": "{ success: boolean, type: batch_scrape.page, id: string, data: { markdown?: string, html?: string | null, rawHtml?: string | null, links?: string[], screenshot?: string | null, metadata?: { title?: string | string[], description?: string | string[], language?: string | string[] | null, keywords?: string | string[], sourceURL?: string, url?: string, scrapeId?: string, statusCode?: number, contentType?: string, error?: string | null, ogLocaleAlternate?: string[], concurrencyLimited?: boolean, concurrencyQueueDurationMs?: number } }[], metadata?: {}, error?: string }",
+      "responseType": "{ success: boolean, type: batch_scrape.page, id: string, data: { markdown?: string, html?: string | null, rawHtml?: string | null, links?: string[], screenshot?: string | null, metadata?: { title?: string | string[], description?: string | string[], language?: string | string[] | null, keywords?: string | string[], sourceURL?: string, url?: string, scrapeId?: string, statusCode?: number, contentType?: string, error?: string | null, ogLocaleAlternate?: string[], concurrencyLimited?: boolean, concurrencyQueueDurationMs?: number } }[], metadata?: Record<string, any>, error?: string }",
       "usageExample": "firecrawl({\n    webhookHooks: {\n        batchScrape: {\n            page: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -988,7 +988,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "error",
@@ -997,7 +997,7 @@
           }
         ]
       },
-      "responseType": "{ success: boolean, type: batch_scrape.started, id: string, data: never[], metadata?: {}, error?: string }",
+      "responseType": "{ success: boolean, type: batch_scrape.started, id: string, data: never[], metadata?: Record<string, any>, error?: string }",
       "usageExample": "firecrawl({\n    webhookHooks: {\n        batchScrape: {\n            started: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -1030,7 +1030,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "error",
@@ -1039,7 +1039,7 @@
           }
         ]
       },
-      "responseType": "{ success: boolean, type: crawl.completed, id: string, data: never[], metadata?: {}, error?: string }",
+      "responseType": "{ success: boolean, type: crawl.completed, id: string, data: never[], metadata?: Record<string, any>, error?: string }",
       "usageExample": "firecrawl({\n    webhookHooks: {\n        crawl: {\n            completed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -1072,7 +1072,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "error",
@@ -1081,7 +1081,7 @@
           }
         ]
       },
-      "responseType": "{ success: boolean, type: crawl.page, id: string, data: { markdown?: string, html?: string | null, rawHtml?: string | null, links?: string[], screenshot?: string | null, metadata?: { title?: string | string[], description?: string | string[], language?: string | string[] | null, keywords?: string | string[], sourceURL?: string, url?: string, scrapeId?: string, statusCode?: number, contentType?: string, error?: string | null, ogLocaleAlternate?: string[], concurrencyLimited?: boolean, concurrencyQueueDurationMs?: number } }[], metadata?: {}, error?: string }",
+      "responseType": "{ success: boolean, type: crawl.page, id: string, data: { markdown?: string, html?: string | null, rawHtml?: string | null, links?: string[], screenshot?: string | null, metadata?: { title?: string | string[], description?: string | string[], language?: string | string[] | null, keywords?: string | string[], sourceURL?: string, url?: string, scrapeId?: string, statusCode?: number, contentType?: string, error?: string | null, ogLocaleAlternate?: string[], concurrencyLimited?: boolean, concurrencyQueueDurationMs?: number } }[], metadata?: Record<string, any>, error?: string }",
       "usageExample": "firecrawl({\n    webhookHooks: {\n        crawl: {\n            page: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -1114,7 +1114,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "error",
@@ -1123,7 +1123,7 @@
           }
         ]
       },
-      "responseType": "{ success: boolean, type: crawl.started, id: string, data: never[], metadata?: {}, error?: string }",
+      "responseType": "{ success: boolean, type: crawl.started, id: string, data: never[], metadata?: Record<string, any>, error?: string }",
       "usageExample": "firecrawl({\n    webhookHooks: {\n        crawl: {\n            started: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -1151,12 +1151,12 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ success: boolean, data: {}, extractId: string, llmUsage?: number, totalUrlsScraped?: number, sources?: {} }[]"
+            "type": "{ success: boolean, data: Record<string, any>, extractId: string, llmUsage?: number, totalUrlsScraped?: number, sources?: Record<string, string[]> }[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "error",
@@ -1165,7 +1165,7 @@
           }
         ]
       },
-      "responseType": "{ success: boolean, type: extract.completed, id: string, data: { success: boolean, data: {}, extractId: string, llmUsage?: number, totalUrlsScraped?: number, sources?: {} }[], metadata?: {}, error?: string }",
+      "responseType": "{ success: boolean, type: extract.completed, id: string, data: { success: boolean, data: Record<string, any>, extractId: string, llmUsage?: number, totalUrlsScraped?: number, sources?: Record<string, string[]> }[], metadata?: Record<string, any>, error?: string }",
       "usageExample": "firecrawl({\n    webhookHooks: {\n        extract: {\n            completed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -1198,7 +1198,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "error",
@@ -1207,7 +1207,7 @@
           }
         ]
       },
-      "responseType": "{ success: boolean, type: extract.failed, id: string, data: never[], metadata?: {}, error?: string }",
+      "responseType": "{ success: boolean, type: extract.failed, id: string, data: never[], metadata?: Record<string, any>, error?: string }",
       "usageExample": "firecrawl({\n    webhookHooks: {\n        extract: {\n            failed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -1240,7 +1240,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "error",
@@ -1249,7 +1249,7 @@
           }
         ]
       },
-      "responseType": "{ success: boolean, type: extract.started, id: string, data: never[], metadata?: {}, error?: string }",
+      "responseType": "{ success: boolean, type: extract.started, id: string, data: never[], metadata?: Record<string, any>, error?: string }",
       "usageExample": "firecrawl({\n    webhookHooks: {\n        extract: {\n            started: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     }
   ],
@@ -1265,6 +1265,11 @@
         },
         {
           "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "kind",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Bubble: every `bubble.api.*` operation with input and output types."
+title: "Bubble API reference"
+sidebarTitle: "API"
+description: "API reference for the Bubble plugin in Corsair: every `bubble.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `bubble.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -26,17 +25,7 @@ await corsair.bubble.api.meta.getSwagger({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -212,7 +201,7 @@ await corsair.bubble.api.things.list({});
 {
   key: string,
   constraint_type: string,
-  value?: string | number | boolean | lazy
+  value?: string | number | boolean | JsonValue
 }[]
 ```
 </Accordion>
@@ -332,17 +321,7 @@ await corsair.bubble.api.workflows.run({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `workflowName` | `string` | Yes | — |
-| `params` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `params` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -350,7 +329,7 @@ await corsair.bubble.api.workflows.run({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `string` | No | — |
+| `status` | `string \| null` | No | — |
 
 
 
@@ -373,17 +352,7 @@ await corsair.bubble.api.workflows.runGet({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `workflowName` | `string` | Yes | — |
-| `params` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `params` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -391,7 +360,7 @@ await corsair.bubble.api.workflows.runGet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `string` | No | — |
+| `status` | `string \| null` | No | — |
 
 
 

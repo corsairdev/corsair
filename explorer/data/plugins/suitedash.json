@@ -1,0 +1,1082 @@
+{
+  "id": "suitedash",
+  "displayName": "SuiteDash",
+  "description": "Client portal CRM from SuiteDash - manage companies, contacts and projects, read the account's custom field definitions, list worlds, and subscribe contacts to marketing audiences.",
+  "npmPackageName": "@corsair-dev/suitedash",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 16,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "secret_key"]
+    }
+  ],
+  "api": [
+    {
+      "path": "suitedash.api.companies.create",
+      "shortPath": "companies.create",
+      "description": "Create a company, optionally with its first contact in the same call. The role decides what the client portal shows it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": false,
+            "type": "Lead | Client | Prospect"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "home_phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "work_phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "shop_phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "full_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ address_line_1?: string | null, address_line_2?: string | null, city?: string | null, state?: string | null, country?: string | null, zip?: string | null }"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "background_info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "public_custom_fields",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "private_custom_fields",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "target_custom_fields",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "primaryContact",
+            "optional": true,
+            "type": "{ create_primary_contact_if_not_exists?: boolean, role?: Lead | Client | Prospect, name_prefix?: string | null, first_name?: string, last_name?: string, email?: string, phone?: string | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uid?: string | null, role?: Lead | Client | Prospect | null, name?: string | null, phone?: string | null, category?: { name?: string | null, color?: string | null, isDefault?: boolean | null } | null, home_phone?: string | null, work_phone?: string | null, shop_phone?: string | null, website?: string | null, full_address?: string | null, address?: { address_line_1?: string | null, address_line_2?: string | null, city?: string | null, state?: string | null, country?: string | null, zip?: string | null } | null, primaryContact?: { uid?: string | null, role?: string | null, name_prefix?: string | null, first_name?: string | null, last_name?: string | null, email?: string | null } | null, tags?: string[] | null, background_info?: string | null, created?: string | null, public_custom_fields?: any[] | Record<string, any> | null, private_custom_fields?: any[] | Record<string, any> | null, target_custom_fields?: any[] | Record<string, any> | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ pagination?: { pageSize?: number | null, totalPages?: number | null, totalItems?: number | null, currentPageNumber?: number | null, previousPage?: string | null, nextPage?: string | null } | null, attributes?: Record<string, { type?: string | null, format?: string | null, required?: boolean | null, nullable?: boolean | null, allowed_on_action?: string[] | null, allowed_values?: string[] | null, field_name?: string | null, field_description?: string | null }> | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "suitedash.api.companies.get",
+      "shortPath": "companies.get",
+      "description": "Read one company by uid or exact name, with its category, address, primary contact and custom fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string",
+            "description": "The company's uid or its exact name. SuiteDash decides which from the value, so send the name as the name."
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include the meta block: the paging object plus this account's custom field definitions."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uid?: string | null, role?: Lead | Client | Prospect | null, name?: string | null, phone?: string | null, category?: { name?: string | null, color?: string | null, isDefault?: boolean | null } | null, home_phone?: string | null, work_phone?: string | null, shop_phone?: string | null, website?: string | null, full_address?: string | null, address?: { address_line_1?: string | null, address_line_2?: string | null, city?: string | null, state?: string | null, country?: string | null, zip?: string | null } | null, primaryContact?: { uid?: string | null, role?: string | null, name_prefix?: string | null, first_name?: string | null, last_name?: string | null, email?: string | null } | null, tags?: string[] | null, background_info?: string | null, created?: string | null, public_custom_fields?: any[] | Record<string, any> | null, private_custom_fields?: any[] | Record<string, any> | null, target_custom_fields?: any[] | Record<string, any> | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ pagination?: { pageSize?: number | null, totalPages?: number | null, totalItems?: number | null, currentPageNumber?: number | null, previousPage?: string | null, nextPage?: string | null } | null, attributes?: Record<string, { type?: string | null, format?: string | null, required?: boolean | null, nullable?: boolean | null, allowed_on_action?: string[] | null, allowed_values?: string[] | null, field_name?: string | null, field_description?: string | null }> | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "suitedash.api.companies.list",
+      "shortPath": "companies.list",
+      "description": "List companies with filters for when they were created, an order, and whether to include the paging and custom field meta",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1."
+          },
+          {
+            "key": "createdMin",
+            "optional": true,
+            "type": "string",
+            "description": "Only records created at or after this."
+          },
+          {
+            "key": "createdMax",
+            "optional": true,
+            "type": "string",
+            "description": "Only records created before this."
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "string",
+            "description": "A field name, optionally followed by :asc or :desc."
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include the meta block: the paging object plus this account's custom field definitions."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uid?: string | null, role?: Lead | Client | Prospect | null, name?: string | null, phone?: string | null, category?: { name?: string | null, color?: string | null, isDefault?: boolean | null } | null, home_phone?: string | null, work_phone?: string | null, shop_phone?: string | null, website?: string | null, full_address?: string | null, address?: { address_line_1?: string | null, address_line_2?: string | null, city?: string | null, state?: string | null, country?: string | null, zip?: string | null } | null, primaryContact?: { uid?: string | null, role?: string | null, name_prefix?: string | null, first_name?: string | null, last_name?: string | null, email?: string | null } | null, tags?: string[] | null, background_info?: string | null, created?: string | null, public_custom_fields?: any[] | Record<string, any> | null, private_custom_fields?: any[] | Record<string, any> | null, target_custom_fields?: any[] | Record<string, any> | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ pagination?: { pageSize?: number | null, totalPages?: number | null, totalItems?: number | null, currentPageNumber?: number | null, previousPage?: string | null, nextPage?: string | null } | null, attributes?: Record<string, { type?: string | null, format?: string | null, required?: boolean | null, nullable?: boolean | null, allowed_on_action?: string[] | null, allowed_values?: string[] | null, field_name?: string | null, field_description?: string | null }> | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "suitedash.api.companies.meta",
+      "shortPath": "companies.meta",
+      "description": "Read the meta attributes of the company custom fields, which is where the uuid keys a write uses come from",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, { type?: string | null, format?: string | null, required?: boolean | null, nullable?: boolean | null, allowed_on_action?: string[] | null, allowed_values?: string[] | null, field_name?: string | null, field_description?: string | null }>"
+      }
+    },
+    {
+      "path": "suitedash.api.companies.update",
+      "shortPath": "companies.update",
+      "description": "Change a company's details, phones, address, tags or custom fields. Only the fields sent change",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string",
+            "description": "The company's uid or its exact name. SuiteDash decides which from the value, so send the name as the name."
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "home_phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "work_phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "shop_phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "full_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ address_line_1?: string | null, address_line_2?: string | null, city?: string | null, state?: string | null, country?: string | null, zip?: string | null }"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "background_info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "public_custom_fields",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "private_custom_fields",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "target_custom_fields",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uid?: string | null, role?: Lead | Client | Prospect | null, name?: string | null, phone?: string | null, category?: { name?: string | null, color?: string | null, isDefault?: boolean | null } | null, home_phone?: string | null, work_phone?: string | null, shop_phone?: string | null, website?: string | null, full_address?: string | null, address?: { address_line_1?: string | null, address_line_2?: string | null, city?: string | null, state?: string | null, country?: string | null, zip?: string | null } | null, primaryContact?: { uid?: string | null, role?: string | null, name_prefix?: string | null, first_name?: string | null, last_name?: string | null, email?: string | null } | null, tags?: string[] | null, background_info?: string | null, created?: string | null, public_custom_fields?: any[] | Record<string, any> | null, private_custom_fields?: any[] | Record<string, any> | null, target_custom_fields?: any[] | Record<string, any> | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ pagination?: { pageSize?: number | null, totalPages?: number | null, totalItems?: number | null, currentPageNumber?: number | null, previousPage?: string | null, nextPage?: string | null } | null, attributes?: Record<string, { type?: string | null, format?: string | null, required?: boolean | null, nullable?: boolean | null, allowed_on_action?: string[] | null, allowed_values?: string[] | null, field_name?: string | null, field_description?: string | null }> | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "suitedash.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create a contact. First name, last name, email and role are required, and the role decides portal access. send_welcome_email sends the portal invitation",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name_prefix",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "first_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "home_email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "work_email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "home_phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "work_phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "shop_phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "full_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ address_line_1?: string | null, address_line_2?: string | null, city?: string | null, state?: string | null, country?: string | null, zip?: string | null }"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "send_welcome_email",
+            "optional": true,
+            "type": "boolean",
+            "description": "Send the portal welcome email as part of the write."
+          },
+          {
+            "key": "public_custom_fields",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "private_custom_fields",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "target_custom_fields",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "role",
+            "optional": false,
+            "type": "Lead | Client | Prospect",
+            "description": "The contact role, which decides what the portal shows them."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uid?: string | null, role?: string | null, name_prefix?: string | null, first_name?: string | null, last_name?: string | null, email?: string | null, home_email?: string | null, work_email?: string | null, phone?: string | null, home_phone?: string | null, work_phone?: string | null, shop_phone?: string | null, title?: string | null, website?: string | null, active?: boolean | null, full_address?: string | null, address?: { address_line_1?: string | null, address_line_2?: string | null, city?: string | null, state?: string | null, country?: string | null, zip?: string | null } | null, company?: any | null, companies?: any[] | null, tags?: string[] | null, created?: string | null, public_custom_fields?: any[] | Record<string, any> | null, private_custom_fields?: any[] | Record<string, any> | null, target_custom_fields?: any[] | Record<string, any> | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ pagination?: { pageSize?: number | null, totalPages?: number | null, totalItems?: number | null, currentPageNumber?: number | null, previousPage?: string | null, nextPage?: string | null } | null, attributes?: Record<string, { type?: string | null, format?: string | null, required?: boolean | null, nullable?: boolean | null, allowed_on_action?: string[] | null, allowed_values?: string[] | null, field_name?: string | null, field_description?: string | null }> | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "suitedash.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Read one contact by uid or email, with their roles, phones, addresses and custom fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string",
+            "description": "The contact's uid or its email address. SuiteDash decides which from the value."
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include the meta block: the paging object plus this account's custom field definitions."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uid?: string | null, role?: string | null, name_prefix?: string | null, first_name?: string | null, last_name?: string | null, email?: string | null, home_email?: string | null, work_email?: string | null, phone?: string | null, home_phone?: string | null, work_phone?: string | null, shop_phone?: string | null, title?: string | null, website?: string | null, active?: boolean | null, full_address?: string | null, address?: { address_line_1?: string | null, address_line_2?: string | null, city?: string | null, state?: string | null, country?: string | null, zip?: string | null } | null, company?: any | null, companies?: any[] | null, tags?: string[] | null, created?: string | null, public_custom_fields?: any[] | Record<string, any> | null, private_custom_fields?: any[] | Record<string, any> | null, target_custom_fields?: any[] | Record<string, any> | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ pagination?: { pageSize?: number | null, totalPages?: number | null, totalItems?: number | null, currentPageNumber?: number | null, previousPage?: string | null, nextPage?: string | null } | null, attributes?: Record<string, { type?: string | null, format?: string | null, required?: boolean | null, nullable?: boolean | null, allowed_on_action?: string[] | null, allowed_values?: string[] | null, field_name?: string | null, field_description?: string | null }> | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "suitedash.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List contacts with filters for when they were created, an order, and whether to include the meta block",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1."
+          },
+          {
+            "key": "createdMin",
+            "optional": true,
+            "type": "string",
+            "description": "Only records created at or after this."
+          },
+          {
+            "key": "createdMax",
+            "optional": true,
+            "type": "string",
+            "description": "Only records created before this."
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "string",
+            "description": "A field name, optionally followed by :asc or :desc."
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include the meta block: the paging object plus this account's custom field definitions."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uid?: string | null, role?: string | null, name_prefix?: string | null, first_name?: string | null, last_name?: string | null, email?: string | null, home_email?: string | null, work_email?: string | null, phone?: string | null, home_phone?: string | null, work_phone?: string | null, shop_phone?: string | null, title?: string | null, website?: string | null, active?: boolean | null, full_address?: string | null, address?: { address_line_1?: string | null, address_line_2?: string | null, city?: string | null, state?: string | null, country?: string | null, zip?: string | null } | null, company?: any | null, companies?: any[] | null, tags?: string[] | null, created?: string | null, public_custom_fields?: any[] | Record<string, any> | null, private_custom_fields?: any[] | Record<string, any> | null, target_custom_fields?: any[] | Record<string, any> | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ pagination?: { pageSize?: number | null, totalPages?: number | null, totalItems?: number | null, currentPageNumber?: number | null, previousPage?: string | null, nextPage?: string | null } | null, attributes?: Record<string, { type?: string | null, format?: string | null, required?: boolean | null, nullable?: boolean | null, allowed_on_action?: string[] | null, allowed_values?: string[] | null, field_name?: string | null, field_description?: string | null }> | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "suitedash.api.contacts.meta",
+      "shortPath": "contacts.meta",
+      "description": "Read the meta attributes of the contact custom fields, which is where the uuid keys a write uses come from",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, { type?: string | null, format?: string | null, required?: boolean | null, nullable?: boolean | null, allowed_on_action?: string[] | null, allowed_values?: string[] | null, field_name?: string | null, field_description?: string | null }>"
+      }
+    },
+    {
+      "path": "suitedash.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Change a contact's details, addresses, tags or custom fields, optionally sending the portal welcome email",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string",
+            "description": "The contact's uid or its email address. SuiteDash decides which from the value."
+          },
+          {
+            "key": "name_prefix",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "home_email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "work_email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "home_phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "work_phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "shop_phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "full_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ address_line_1?: string | null, address_line_2?: string | null, city?: string | null, state?: string | null, country?: string | null, zip?: string | null }"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "send_welcome_email",
+            "optional": true,
+            "type": "boolean",
+            "description": "Send the portal welcome email as part of the write."
+          },
+          {
+            "key": "public_custom_fields",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "private_custom_fields",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "target_custom_fields",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uid?: string | null, role?: string | null, name_prefix?: string | null, first_name?: string | null, last_name?: string | null, email?: string | null, home_email?: string | null, work_email?: string | null, phone?: string | null, home_phone?: string | null, work_phone?: string | null, shop_phone?: string | null, title?: string | null, website?: string | null, active?: boolean | null, full_address?: string | null, address?: { address_line_1?: string | null, address_line_2?: string | null, city?: string | null, state?: string | null, country?: string | null, zip?: string | null } | null, company?: any | null, companies?: any[] | null, tags?: string[] | null, created?: string | null, public_custom_fields?: any[] | Record<string, any> | null, private_custom_fields?: any[] | Record<string, any> | null, target_custom_fields?: any[] | Record<string, any> | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ pagination?: { pageSize?: number | null, totalPages?: number | null, totalItems?: number | null, currentPageNumber?: number | null, previousPage?: string | null, nextPage?: string | null } | null, attributes?: Record<string, { type?: string | null, format?: string | null, required?: boolean | null, nullable?: boolean | null, allowed_on_action?: string[] | null, allowed_values?: string[] | null, field_name?: string | null, field_description?: string | null }> | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "suitedash.api.marketing.subscribe",
+      "shortPath": "marketing.subscribe",
+      "description": "Subscribe contacts to marketing audiences, which can start the emails those audiences send. A partial failure throws, with the per-subscriber results on the error body",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscribers",
+            "optional": false,
+            "type": "{ email: string, first_name?: string, last_name?: string, audiences: number[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ success?: boolean | null, errors?: string[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "suitedash.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Find one project by uid, exact name, a name fragment, or the most recent one, with its clients, team and custom fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "uid | name | contains_the_following | most_recent",
+            "description": "How to find the project: uid, exact name, a name fragment, or most_recent with identifier \"true\"."
+          },
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include the meta block: the paging object plus this account's custom field definitions."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uid?: string | null, name?: string | null, status?: string | null, start_date?: string | null, end_date?: string | null, due_time?: string | null, created?: string | null, info_description?: string | null, info_title_client?: string | null, info_description_client?: string | null, client?: { uid?: string | null, full_name?: string | null, email?: string | null } | null, secondary_clients?: any[] | null, teammates?: any[] | null, team?: { uid?: string | null, name?: string | null } | null, leader?: any | null, project_custom_fields?: any[] | Record<string, any> | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ pagination?: { pageSize?: number | null, totalPages?: number | null, totalItems?: number | null, currentPageNumber?: number | null, previousPage?: string | null, nextPage?: string | null } | null, attributes?: Record<string, { type?: string | null, format?: string | null, required?: boolean | null, nullable?: boolean | null, allowed_on_action?: string[] | null, allowed_values?: string[] | null, field_name?: string | null, field_description?: string | null }> | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "suitedash.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List projects with filters for when they were created, an order, and whether to include the meta block",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1."
+          },
+          {
+            "key": "createdMin",
+            "optional": true,
+            "type": "string",
+            "description": "Only records created at or after this."
+          },
+          {
+            "key": "createdMax",
+            "optional": true,
+            "type": "string",
+            "description": "Only records created before this."
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "string",
+            "description": "A field name, optionally followed by :asc or :desc."
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include the meta block: the paging object plus this account's custom field definitions."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uid?: string | null, name?: string | null, status?: string | null, start_date?: string | null, end_date?: string | null, due_time?: string | null, created?: string | null, info_description?: string | null, info_title_client?: string | null, info_description_client?: string | null, client?: { uid?: string | null, full_name?: string | null, email?: string | null } | null, secondary_clients?: any[] | null, teammates?: any[] | null, team?: { uid?: string | null, name?: string | null } | null, leader?: any | null, project_custom_fields?: any[] | Record<string, any> | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ pagination?: { pageSize?: number | null, totalPages?: number | null, totalItems?: number | null, currentPageNumber?: number | null, previousPage?: string | null, nextPage?: string | null } | null, attributes?: Record<string, { type?: string | null, format?: string | null, required?: boolean | null, nullable?: boolean | null, allowed_on_action?: string[] | null, allowed_values?: string[] | null, field_name?: string | null, field_description?: string | null }> | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "suitedash.api.projects.meta",
+      "shortPath": "projects.meta",
+      "description": "Read the meta attributes of the project custom fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, { type?: string | null, format?: string | null, required?: boolean | null, nullable?: boolean | null, allowed_on_action?: string[] | null, allowed_values?: string[] | null, field_name?: string | null, field_description?: string | null }>"
+      }
+    },
+    {
+      "path": "suitedash.api.projects.update",
+      "shortPath": "projects.update",
+      "description": "Change a project's name, status, dates, information text or custom fields. SuiteDash's update schema is open, so only the documented fields are typed",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "uid | name | contains_the_following | most_recent",
+            "description": "How to find the project: uid, exact name, a name fragment, or most_recent with identifier \"true\"."
+          },
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "due_time",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "info_title_client",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "info_description_client",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "info_description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "project_custom_fields",
+            "optional": true,
+            "type": "any[] | Record<string, any> | null",
+            "description": "The custom fields of this record. A response sends an array; a write sends an object keyed by field uuid."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uid?: string | null, name?: string | null, status?: string | null, start_date?: string | null, end_date?: string | null, due_time?: string | null, created?: string | null, info_description?: string | null, info_title_client?: string | null, info_description_client?: string | null, client?: { uid?: string | null, full_name?: string | null, email?: string | null } | null, secondary_clients?: any[] | null, teammates?: any[] | null, team?: { uid?: string | null, name?: string | null } | null, leader?: any | null, project_custom_fields?: any[] | Record<string, any> | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ pagination?: { pageSize?: number | null, totalPages?: number | null, totalItems?: number | null, currentPageNumber?: number | null, previousPage?: string | null, nextPage?: string | null } | null, attributes?: Record<string, { type?: string | null, format?: string | null, required?: boolean | null, nullable?: boolean | null, allowed_on_action?: string[] | null, allowed_values?: string[] | null, field_name?: string | null, field_description?: string | null }> | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "suitedash.api.worlds.list",
+      "shortPath": "worlds.list",
+      "description": "List the worlds on the account, which is a Power-up and answers a bare array rather than the CRM list envelope",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uid?: string | null, key?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ pageSize?: number | null, totalPages?: number | null, totalItems?: number | null, currentPageNumber?: number | null, previousPage?: string | null, nextPage?: string | null } | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

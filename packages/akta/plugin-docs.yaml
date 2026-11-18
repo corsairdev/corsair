@@ -1,0 +1,20 @@
+displayName: Akta
+description: Company intelligence API for looking up companies, enriching firmographic data, and reading employee reviews, product reviews, and industry news.
+domain: akta.pro
+examples:
+  read:
+    path: company.search
+    title: Search companies
+    args:
+      query: Canva
+  write:
+    path: company.enrich
+    title: Enrich a company
+    args:
+      company: https://canva.com
+      sections:
+        - firmographic
+dbExample:
+  entity: companies
+  note: Search synced companies without hitting Akta.
+  limit: 50

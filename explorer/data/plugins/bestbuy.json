@@ -1,7 +1,7 @@
 {
   "id": "bestbuy",
-  "displayName": "Best Buy Remix API",
-  "description": "Best Buy Remix API plugin for Corsair",
+  "displayName": "Best Buy",
+  "description": "Best Buy Remix API for searching and reading retail products, categories, stores, and customer reviews.",
   "npmPackageName": "@corsair-dev/bestbuy",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -46,27 +46,27 @@
           {
             "key": "id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "path",
             "optional": true,
-            "type": "{ id?: string | null, name?: string | null }[]"
+            "type": "{ id?: string | null, name?: string | null }[] | null"
           },
           {
             "key": "subCategories",
             "optional": true,
-            "type": "{ id?: string | null, name?: string | null }[]"
+            "type": "{ id?: string | null, name?: string | null }[] | null"
           }
         ]
       }
@@ -201,472 +201,472 @@
           {
             "key": "sku",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "upc",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "manufacturer",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "modelNumber",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "color",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "condition",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "longDescription",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "longDescriptionHtml",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "shortDescription",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "shortDescriptionHtml",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerReviewAverage",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "customerReviewCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "customerTopRated",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "depth",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "height",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "width",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "weight",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "digital",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "format",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "preowned",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "quantityLimit",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "releaseDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "warrantyLabor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "warrantyParts",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "accessories",
             "optional": true,
-            "type": "{ sku?: string | number | null }[]"
+            "type": "{ sku?: string | number | null }[] | null"
           },
           {
             "key": "details",
             "optional": true,
-            "type": "{ name?: string | null, value?: string | null }[]"
+            "type": "{ name?: string | null, value?: string | null }[] | null"
           },
           {
             "key": "features",
             "optional": true,
-            "type": "{ feature?: string | null }[]"
+            "type": "{ feature?: string | null }[] | null"
           },
           {
             "key": "includedItemList",
             "optional": true,
-            "type": "{ includedItem?: string | null }[]"
+            "type": "{ includedItem?: string | null }[] | null"
           },
           {
             "key": "productVariations",
             "optional": true,
-            "type": "{ sku?: string | number | null }[]"
+            "type": "{ sku?: string | number | null }[] | null"
           },
           {
             "key": "proposition65WarningMessage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "proposition65WarningType",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "dollarSavings",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "lowPriceGuarantee",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "onSale",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "percentSavings",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "priceRestriction",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "priceUpdateDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "regularPrice",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "salePrice",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "contracts",
             "optional": true,
-            "type": "{}[]"
+            "type": "{}[] | null"
           },
           {
             "key": "priceWithPlan",
             "optional": true,
-            "type": "{}"
+            "type": "{} | null"
           },
           {
             "key": "friendsAndFamilyPickup",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "homeDelivery",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "inStoreAvailability",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "inStoreAvailabilityUpdateDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "inStorePickup",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "onlineAvailability",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "onlineAvailabilityUpdateDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "orderable",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "specialOrder",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "freeShipping",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "freeShippingEligible",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "shippingCost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "shippingWeight",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "shippingLevelsOfService",
             "optional": true,
-            "type": "{ serviceLevelId?: number | null, serviceLevelName?: string | null, unitShippingPrice?: number | null }[]"
+            "type": "{ serviceLevelId?: number | null, serviceLevelName?: string | null, unitShippingPrice?: number | null }[] | null"
           },
           {
             "key": "accessoriesImage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "alternateViewsImage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "angleImage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "backViewImage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "energyGuideImage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "image",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "largeFrontImage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "largeImage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "leftViewImage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "mediumImage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "remoteControlImage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "rightViewImage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "spin360Url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "thumbnailImage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "topViewImage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "addToCartUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "affiliateAddToCartUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "affiliateUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "class",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "classId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "department",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "departmentId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "subclass",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "subclassId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "categoryPath",
             "optional": true,
-            "type": "{ id?: string | null, name?: string | null }[]"
+            "type": "{ id?: string | null, name?: string | null }[] | null"
           },
           {
             "key": "lists",
             "optional": true,
-            "type": "{ endDate?: string | null, listId?: string | null, startDate?: string | null }[]"
+            "type": "{ endDate?: string | null, listId?: string | null, startDate?: string | null }[] | null"
           },
           {
             "key": "offers",
             "optional": true,
-            "type": "{ endDate?: string | null, id?: string | null, startDate?: string | null, text?: string | null, type?: string | null, url?: string | null }[]"
+            "type": "{ endDate?: string | null, id?: string | null, startDate?: string | null, text?: string | null, type?: string | null, url?: string | null }[] | null"
           },
           {
             "key": "active",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "activeUpdateDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "bundledIn",
             "optional": true,
-            "type": "{ sku?: string | number | null }[]"
+            "type": "{ sku?: string | number | null }[] | null"
           },
           {
             "key": "itemUpdateDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "members",
             "optional": true,
-            "type": "{ sku?: string | number | null }[]"
+            "type": "{ sku?: string | number | null }[] | null"
           },
           {
             "key": "new",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "secondaryMarket",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "startDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -819,57 +819,57 @@
           {
             "key": "id",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "sku",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "comment",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "rating",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "submissionTime",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "recommended",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "qualityRating",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "valueRating",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "easeOfUseRating",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "reviewer",
             "optional": true,
-            "type": "{ name?: string | null } | { name?: string | null }[]"
+            "type": "{ name?: string | null } | { name?: string | null }[] | null"
           }
         ]
       }
@@ -1016,112 +1016,112 @@
           {
             "key": "storeId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "longName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "address",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "address2",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "city",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "region",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "postalCode",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "fullPostalCode",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lat",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "lng",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "distance",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "location",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "locationType",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "storeType",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "hours",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "hoursAmPm",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "gmtOffset",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "detailedHours",
             "optional": true,
-            "type": "{ day?: string | null, date?: string | null, open?: string | null, close?: string | null }[]"
+            "type": "{ day?: string | null, date?: string | null, open?: string | null, close?: string | null }[] | null"
           },
           {
             "key": "services",
             "optional": true,
-            "type": "{ service?: string | null }[]"
+            "type": "{ service?: string | null }[] | null"
           }
         ]
       }

@@ -76,7 +76,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -130,7 +130,7 @@
           {
             "key": "collections",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "totalCount",
@@ -140,7 +140,7 @@
           {
             "key": "pageKey",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -207,32 +207,32 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "symbol",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "totalSupply",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tokenType",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "contractDeployer",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "deployedBlockNumber",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "openSeaMetadata",
@@ -242,7 +242,7 @@
           {
             "key": "isSpam",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "spamClassifications",
@@ -308,7 +308,7 @@
           {
             "key": "contracts",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "totalCount",
@@ -318,7 +318,7 @@
           {
             "key": "pageKey",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -350,7 +350,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -414,22 +414,22 @@
           {
             "key": "tokenType",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tokenUri",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "image",
@@ -439,42 +439,42 @@
           {
             "key": "animation",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "raw",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "collection",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "mint",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "owners",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "timeLastUpdated",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "balance",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "acquiredAt",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "network",
@@ -489,7 +489,7 @@
           {
             "key": "isSpam",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "spamClassifications",
@@ -535,7 +535,7 @@
           {
             "key": "nfts",
             "optional": true,
-            "type": "{ contract?: { address: string, name?: string | null, symbol?: string | null, totalSupply?: string | null, tokenType?: string | null, contractDeployer?: string | null, deployedBlockNumber?: number | null, openSeaMetadata?: { collectionName?: string | null, collectionSlug?: string | null, safelistRequestStatus?: string | null, imageUrl?: string | null, description?: string | null, externalUrl?: string | null, twitterUsername?: string | null, discordUrl?: string | null, bannerImageUrl?: string | null, floorPrice?: number | null }, isSpam?: boolean | null, spamClassifications?: string[] }, contractAddress?: string, tokenId: string, tokenType?: string | null, name?: string | null, description?: string | null, tokenUri?: string | null, image?: { cachedUrl?: string | null, thumbnailUrl?: string | null, pngUrl?: string | null, contentType?: string | null, size?: number | null, originalUrl?: string | null }, animation?: {} | null, raw?: {}, collection?: {} | null, mint?: {} | null, owners?: string[] | null, timeLastUpdated?: string | null, balance?: string | null, acquiredAt?: {} | null, network?: string, address?: string, isSpam?: boolean | null, spamClassifications?: string[] }[]"
+            "type": "{ contract?: { address: string, name?: string | null, symbol?: string | null, totalSupply?: string | null, tokenType?: string | null, contractDeployer?: string | null, deployedBlockNumber?: number | null, openSeaMetadata?: { collectionName?: string | null, collectionSlug?: string | null, safelistRequestStatus?: string | null, imageUrl?: string | null, description?: string | null, externalUrl?: string | null, twitterUsername?: string | null, discordUrl?: string | null, bannerImageUrl?: string | null, floorPrice?: number | null }, isSpam?: boolean | null, spamClassifications?: string[] }, contractAddress?: string, tokenId: string, tokenType?: string | null, name?: string | null, description?: string | null, tokenUri?: string | null, image?: { cachedUrl?: string | null, thumbnailUrl?: string | null, pngUrl?: string | null, contentType?: string | null, size?: number | null, originalUrl?: string | null }, animation?: Record<string, any> | null, raw?: Record<string, any>, collection?: Record<string, any> | null, mint?: Record<string, any> | null, owners?: string[] | null, timeLastUpdated?: string | null, balance?: string | null, acquiredAt?: Record<string, any> | null, network?: string, address?: string, isSpam?: boolean | null, spamClassifications?: string[] }[]"
           }
         ]
       }
@@ -616,12 +616,12 @@
           {
             "key": "nftSales",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "pageKey",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -677,12 +677,12 @@
           {
             "key": "nfts",
             "optional": true,
-            "type": "{ contract?: { address: string, name?: string | null, symbol?: string | null, totalSupply?: string | null, tokenType?: string | null, contractDeployer?: string | null, deployedBlockNumber?: number | null, openSeaMetadata?: { collectionName?: string | null, collectionSlug?: string | null, safelistRequestStatus?: string | null, imageUrl?: string | null, description?: string | null, externalUrl?: string | null, twitterUsername?: string | null, discordUrl?: string | null, bannerImageUrl?: string | null, floorPrice?: number | null }, isSpam?: boolean | null, spamClassifications?: string[] }, contractAddress?: string, tokenId: string, tokenType?: string | null, name?: string | null, description?: string | null, tokenUri?: string | null, image?: { cachedUrl?: string | null, thumbnailUrl?: string | null, pngUrl?: string | null, contentType?: string | null, size?: number | null, originalUrl?: string | null }, animation?: {} | null, raw?: {}, collection?: {} | null, mint?: {} | null, owners?: string[] | null, timeLastUpdated?: string | null, balance?: string | null, acquiredAt?: {} | null, network?: string, address?: string, isSpam?: boolean | null, spamClassifications?: string[] }[]"
+            "type": "{ contract?: { address: string, name?: string | null, symbol?: string | null, totalSupply?: string | null, tokenType?: string | null, contractDeployer?: string | null, deployedBlockNumber?: number | null, openSeaMetadata?: { collectionName?: string | null, collectionSlug?: string | null, safelistRequestStatus?: string | null, imageUrl?: string | null, description?: string | null, externalUrl?: string | null, twitterUsername?: string | null, discordUrl?: string | null, bannerImageUrl?: string | null, floorPrice?: number | null }, isSpam?: boolean | null, spamClassifications?: string[] }, contractAddress?: string, tokenId: string, tokenType?: string | null, name?: string | null, description?: string | null, tokenUri?: string | null, image?: { cachedUrl?: string | null, thumbnailUrl?: string | null, pngUrl?: string | null, contentType?: string | null, size?: number | null, originalUrl?: string | null }, animation?: Record<string, any> | null, raw?: Record<string, any>, collection?: Record<string, any> | null, mint?: Record<string, any> | null, owners?: string[] | null, timeLastUpdated?: string | null, balance?: string | null, acquiredAt?: Record<string, any> | null, network?: string, address?: string, isSpam?: boolean | null, spamClassifications?: string[] }[]"
           },
           {
             "key": "pageKey",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -733,12 +733,12 @@
           {
             "key": "nfts",
             "optional": true,
-            "type": "{ contract?: { address: string, name?: string | null, symbol?: string | null, totalSupply?: string | null, tokenType?: string | null, contractDeployer?: string | null, deployedBlockNumber?: number | null, openSeaMetadata?: { collectionName?: string | null, collectionSlug?: string | null, safelistRequestStatus?: string | null, imageUrl?: string | null, description?: string | null, externalUrl?: string | null, twitterUsername?: string | null, discordUrl?: string | null, bannerImageUrl?: string | null, floorPrice?: number | null }, isSpam?: boolean | null, spamClassifications?: string[] }, contractAddress?: string, tokenId: string, tokenType?: string | null, name?: string | null, description?: string | null, tokenUri?: string | null, image?: { cachedUrl?: string | null, thumbnailUrl?: string | null, pngUrl?: string | null, contentType?: string | null, size?: number | null, originalUrl?: string | null }, animation?: {} | null, raw?: {}, collection?: {} | null, mint?: {} | null, owners?: string[] | null, timeLastUpdated?: string | null, balance?: string | null, acquiredAt?: {} | null, network?: string, address?: string, isSpam?: boolean | null, spamClassifications?: string[] }[]"
+            "type": "{ contract?: { address: string, name?: string | null, symbol?: string | null, totalSupply?: string | null, tokenType?: string | null, contractDeployer?: string | null, deployedBlockNumber?: number | null, openSeaMetadata?: { collectionName?: string | null, collectionSlug?: string | null, safelistRequestStatus?: string | null, imageUrl?: string | null, description?: string | null, externalUrl?: string | null, twitterUsername?: string | null, discordUrl?: string | null, bannerImageUrl?: string | null, floorPrice?: number | null }, isSpam?: boolean | null, spamClassifications?: string[] }, contractAddress?: string, tokenId: string, tokenType?: string | null, name?: string | null, description?: string | null, tokenUri?: string | null, image?: { cachedUrl?: string | null, thumbnailUrl?: string | null, pngUrl?: string | null, contentType?: string | null, size?: number | null, originalUrl?: string | null }, animation?: Record<string, any> | null, raw?: Record<string, any>, collection?: Record<string, any> | null, mint?: Record<string, any> | null, owners?: string[] | null, timeLastUpdated?: string | null, balance?: string | null, acquiredAt?: Record<string, any> | null, network?: string, address?: string, isSpam?: boolean | null, spamClassifications?: string[] }[]"
           },
           {
             "key": "pageKey",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -814,7 +814,7 @@
           {
             "key": "ownedNfts",
             "optional": false,
-            "type": "{ contract?: { address: string, name?: string | null, symbol?: string | null, totalSupply?: string | null, tokenType?: string | null, contractDeployer?: string | null, deployedBlockNumber?: number | null, openSeaMetadata?: { collectionName?: string | null, collectionSlug?: string | null, safelistRequestStatus?: string | null, imageUrl?: string | null, description?: string | null, externalUrl?: string | null, twitterUsername?: string | null, discordUrl?: string | null, bannerImageUrl?: string | null, floorPrice?: number | null }, isSpam?: boolean | null, spamClassifications?: string[] }, contractAddress?: string, tokenId: string, tokenType?: string | null, name?: string | null, description?: string | null, tokenUri?: string | null, image?: { cachedUrl?: string | null, thumbnailUrl?: string | null, pngUrl?: string | null, contentType?: string | null, size?: number | null, originalUrl?: string | null }, animation?: {} | null, raw?: {}, collection?: {} | null, mint?: {} | null, owners?: string[] | null, timeLastUpdated?: string | null, balance?: string | null, acquiredAt?: {} | null, network?: string, address?: string, isSpam?: boolean | null, spamClassifications?: string[] }[]"
+            "type": "{ contract?: { address: string, name?: string | null, symbol?: string | null, totalSupply?: string | null, tokenType?: string | null, contractDeployer?: string | null, deployedBlockNumber?: number | null, openSeaMetadata?: { collectionName?: string | null, collectionSlug?: string | null, safelistRequestStatus?: string | null, imageUrl?: string | null, description?: string | null, externalUrl?: string | null, twitterUsername?: string | null, discordUrl?: string | null, bannerImageUrl?: string | null, floorPrice?: number | null }, isSpam?: boolean | null, spamClassifications?: string[] }, contractAddress?: string, tokenId: string, tokenType?: string | null, name?: string | null, description?: string | null, tokenUri?: string | null, image?: { cachedUrl?: string | null, thumbnailUrl?: string | null, pngUrl?: string | null, contentType?: string | null, size?: number | null, originalUrl?: string | null }, animation?: Record<string, any> | null, raw?: Record<string, any>, collection?: Record<string, any> | null, mint?: Record<string, any> | null, owners?: string[] | null, timeLastUpdated?: string | null, balance?: string | null, acquiredAt?: Record<string, any> | null, network?: string, address?: string, isSpam?: boolean | null, spamClassifications?: string[] }[]"
           },
           {
             "key": "totalCount",
@@ -824,12 +824,12 @@
           {
             "key": "validAt",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "pageKey",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -875,12 +875,12 @@
           {
             "key": "owners",
             "optional": false,
-            "type": "(string | {})[]"
+            "type": "(string | Record<string, any>)[]"
           },
           {
             "key": "pageKey",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -926,12 +926,12 @@
           {
             "key": "owners",
             "optional": false,
-            "type": "(string | {})[]"
+            "type": "(string | Record<string, any>)[]"
           },
           {
             "key": "pageKey",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -977,7 +977,7 @@
           {
             "key": "pageKey",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1258,7 +1258,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1307,7 +1307,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ contracts?: {}[], totalCount?: number, pageKey?: string | null }"
+            "type": "{ contracts?: Record<string, any>[], totalCount?: number, pageKey?: string | null }"
           }
         ]
       }
@@ -1373,7 +1373,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ ownedNfts?: { contract?: { address: string, name?: string | null, symbol?: string | null, totalSupply?: string | null, tokenType?: string | null, contractDeployer?: string | null, deployedBlockNumber?: number | null, openSeaMetadata?: { collectionName?: string | null, collectionSlug?: string | null, safelistRequestStatus?: string | null, imageUrl?: string | null, description?: string | null, externalUrl?: string | null, twitterUsername?: string | null, discordUrl?: string | null, bannerImageUrl?: string | null, floorPrice?: number | null }, isSpam?: boolean | null, spamClassifications?: string[] }, contractAddress?: string, tokenId: string, tokenType?: string | null, name?: string | null, description?: string | null, tokenUri?: string | null, image?: { cachedUrl?: string | null, thumbnailUrl?: string | null, pngUrl?: string | null, contentType?: string | null, size?: number | null, originalUrl?: string | null }, animation?: {} | null, raw?: {}, collection?: {} | null, mint?: {} | null, owners?: string[] | null, timeLastUpdated?: string | null, balance?: string | null, acquiredAt?: {} | null, network?: string, address?: string, isSpam?: boolean | null, spamClassifications?: string[] }[], totalCount?: number, pageKey?: string | null }"
+            "type": "{ ownedNfts?: { contract?: { address: string, name?: string | null, symbol?: string | null, totalSupply?: string | null, tokenType?: string | null, contractDeployer?: string | null, deployedBlockNumber?: number | null, openSeaMetadata?: { collectionName?: string | null, collectionSlug?: string | null, safelistRequestStatus?: string | null, imageUrl?: string | null, description?: string | null, externalUrl?: string | null, twitterUsername?: string | null, discordUrl?: string | null, bannerImageUrl?: string | null, floorPrice?: number | null }, isSpam?: boolean | null, spamClassifications?: string[] }, contractAddress?: string, tokenId: string, tokenType?: string | null, name?: string | null, description?: string | null, tokenUri?: string | null, image?: { cachedUrl?: string | null, thumbnailUrl?: string | null, pngUrl?: string | null, contentType?: string | null, size?: number | null, originalUrl?: string | null }, animation?: Record<string, any> | null, raw?: Record<string, any>, collection?: Record<string, any> | null, mint?: Record<string, any> | null, owners?: string[] | null, timeLastUpdated?: string | null, balance?: string | null, acquiredAt?: Record<string, any> | null, network?: string, address?: string, isSpam?: boolean | null, spamClassifications?: string[] }[], totalCount?: number, pageKey?: string | null }"
           }
         ]
       }
@@ -1465,7 +1465,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ tokens?: { network: string, address: string, tokenAddress?: string | null, tokenBalance: string, tokenMetadata?: {}, tokenPrices?: {}[], error?: string | null }[], pageKey?: string | null }"
+            "type": "{ tokens?: { network: string, address: string, tokenAddress?: string | null, tokenBalance: string, tokenMetadata?: Record<string, any>, tokenPrices?: Record<string, any>[], error?: string | null }[], pageKey?: string | null }"
           }
         ]
       }
@@ -1506,7 +1506,7 @@
           {
             "key": "transactions",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "before",
@@ -1623,7 +1623,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ symbol: string, prices?: { currency: string, value: string, lastUpdatedAt: string }[], error?: {} }[]"
+            "type": "{ symbol: string, prices?: { currency: string, value: string, lastUpdatedAt: string }[], error?: Record<string, any> }[]"
           }
         ]
       }
@@ -1649,7 +1649,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ network?: string, address?: string, prices?: { currency: string, value: string, lastUpdatedAt: string }[], error?: {} }[]"
+            "type": "{ network?: string, address?: string, prices?: { currency: string, value: string, lastUpdatedAt: string }[], error?: Record<string, any> }[]"
           }
         ]
       }
@@ -1674,8 +1674,9 @@
           },
           {
             "key": "blockTag",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"latest\"."
           }
         ]
       },
@@ -1731,7 +1732,7 @@
           {
             "key": "tokenBalances",
             "optional": false,
-            "type": "{ contractAddress: string, tokenBalance?: string | null, error?: string | null }[]"
+            "type": "{ contractAddress: string, tokenBalance: string | null, error?: string | null }[]"
           }
         ]
       }
@@ -1762,22 +1763,22 @@
           {
             "key": "decimals",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "logo",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "symbol",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }

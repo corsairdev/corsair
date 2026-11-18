@@ -1,12 +1,11 @@
 ---
-title: Database
-description: "Mailcheck local sync: searchable entities, `.search()` filters, and operators."
+title: "Mailcheck database"
+sidebarTitle: "Database"
+description: "The Mailcheck plugin in Corsair returns live API data and stores no local entities, so there is nothing to search locally."
 ---
 
-The Mailcheck plugin syncs data locally. Use `corsair.mailcheck.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+No local `.search()` operations are available for Mailcheck. To read its data, call the [API operations](/plugins/mailcheck/api), which return what Mailcheck has at that moment.
 
 <Info>
 **New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
 </Info>
-
-

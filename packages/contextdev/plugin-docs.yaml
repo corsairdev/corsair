@@ -1,0 +1,4 @@
+displayName: Context.dev
+description: Web context API for agents that scrapes, crawls, searches, and extracts web pages, and looks up brands, company news, and people.
+domain: context.dev
+recommendedAuth: api_key

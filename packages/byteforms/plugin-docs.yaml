@@ -1,0 +1,12 @@
+displayName: ByteForms
+description: Form builder platform. Create, list, read, and delete forms and read the responses submitted to them.
+domain: bytesuite.io
+examples:
+  read:
+    path: forms.list
+    title: List forms
+  write:
+    path: forms.create
+    title: Create a form
+    args:
+      name: Customer feedback

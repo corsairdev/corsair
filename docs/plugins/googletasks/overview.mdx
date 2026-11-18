@@ -1,0 +1,129 @@
+---
+title: "Google Tasks plugin"
+sidebarTitle: "Overview"
+description: "Manage Google task lists and tasks with scoped OAuth access, pagination, task ordering, and schema-validated REST operations."
+---
+
+Use **Google Tasks** through Corsair: one client, typed API calls.
+
+OAuth uses the single narrowest scope that supports the configured operation set: `https://www.googleapis.com/auth/tasks` for read and write operations. For read-only integrations set `scopeMode: 'readonly'` to request only `https://www.googleapis.com/auth/tasks.readonly`; mutation operations then require a full-scope connection. The API has no supported webhook subscription endpoints, so changes are read through the paginated list methods.
+
+**What you get:**
+
+- 14 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/googletasks better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/googletasks better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/googletasks better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/googletasks better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { googletasks } from '@corsair-dev/googletasks';
+
+export const corsair = createCorsair({
+	plugins: [
+		googletasks(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="OAuth 2.0 (Recommended)">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Google Tasks OAuth app.
+
+```ts
+googletasks()
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'googletasks',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`taskLists.get`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.googletasks.api.taskLists.get({});
+```
+
+
+**`taskLists.delete`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.googletasks.api.taskLists.delete({});
+```
+
+
+See the full list on the [API](/plugins/googletasks/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/googletasks/api">
+    Every `googletasks.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

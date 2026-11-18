@@ -1,6 +1,7 @@
 ---
-title: Webhooks
-description: "Firecrawl incoming webhooks: event paths, payloads, and response data."
+title: "Firecrawl webhooks"
+sidebarTitle: "Webhooks"
+description: "Firecrawl incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
 ---
 
 The Firecrawl plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/firecrawl/overview) for setup context and the exact URL shape).
@@ -38,9 +39,23 @@ import { corsair } from "@/server/corsair";
 
 export async function POST(request: Request) {
     const headers = Object.fromEntries(request.headers);
-    const body = await request.json();
-    const result = await processWebhook(corsair, headers, body);
-    return result.response;
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
 }
 ```
 
@@ -62,7 +77,7 @@ The agent executed a tool action
 | `type` | `agent.action` | Yes | — |
 | `id` | `string` | Yes | — |
 | `data` | `object[]` | Yes | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `error` | `string` | No | — |
 
 <AccordionGroup>
@@ -72,17 +87,8 @@ The agent executed a tool action
 {
   creditsUsed?: number,
   action?: string,
-  input?: {
-  }
+  input?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -100,11 +106,9 @@ The agent executed a tool action
   data: {
     creditsUsed?: number,
     action?: string,
-    input?: {
-    }
+    input?: Record<string, any>
   }[],
-  metadata?: {
-  },
+  metadata?: Record<string, any>,
   error?: string
 }
 ```
@@ -145,7 +149,7 @@ An agent job was cancelled
 | `type` | `agent.cancelled` | Yes | — |
 | `id` | `string` | Yes | — |
 | `data` | `object[]` | Yes | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `error` | `string` | No | — |
 
 <AccordionGroup>
@@ -155,14 +159,6 @@ An agent job was cancelled
 {
   creditsUsed?: number
 }[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -180,8 +176,7 @@ An agent job was cancelled
   data: {
     creditsUsed?: number
   }[],
-  metadata?: {
-  },
+  metadata?: Record<string, any>,
   error?: string
 }
 ```
@@ -222,7 +217,7 @@ An agent job completed successfully
 | `type` | `agent.completed` | Yes | — |
 | `id` | `string` | Yes | — |
 | `data` | `object[]` | Yes | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `error` | `string` | No | — |
 
 <AccordionGroup>
@@ -231,17 +226,8 @@ An agent job completed successfully
 ```ts
 {
   creditsUsed?: number,
-  data?: {
-  }
+  data?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -258,11 +244,9 @@ An agent job completed successfully
   id: string,
   data: {
     creditsUsed?: number,
-    data?: {
-    }
+    data?: Record<string, any>
   }[],
-  metadata?: {
-  },
+  metadata?: Record<string, any>,
   error?: string
 }
 ```
@@ -303,7 +287,7 @@ An agent job failed
 | `type` | `agent.failed` | Yes | — |
 | `id` | `string` | Yes | — |
 | `data` | `object[]` | Yes | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `error` | `string` | No | — |
 
 <AccordionGroup>
@@ -313,14 +297,6 @@ An agent job failed
 {
   creditsUsed?: number
 }[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -338,8 +314,7 @@ An agent job failed
   data: {
     creditsUsed?: number
   }[],
-  metadata?: {
-  },
+  metadata?: Record<string, any>,
   error?: string
 }
 ```
@@ -380,18 +355,8 @@ An agent job started
 | `type` | `agent.started` | Yes | — |
 | `id` | `string` | Yes | — |
 | `data` | `never[]` | Yes | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `error` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -404,8 +369,7 @@ An agent job started
   type: agent.started,
   id: string,
   data: never[],
-  metadata?: {
-  },
+  metadata?: Record<string, any>,
   error?: string
 }
 ```
@@ -448,18 +412,8 @@ A batch scrape job completed
 | `type` | `batch_scrape.completed` | Yes | — |
 | `id` | `string` | Yes | — |
 | `data` | `never[]` | Yes | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `error` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -472,8 +426,7 @@ A batch scrape job completed
   type: batch_scrape.completed,
   id: string,
   data: never[],
-  metadata?: {
-  },
+  metadata?: Record<string, any>,
   error?: string
 }
 ```
@@ -514,7 +467,7 @@ A URL was scraped in a batch job
 | `type` | `batch_scrape.page` | Yes | — |
 | `id` | `string` | Yes | — |
 | `data` | `object[]` | Yes | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `error` | `string` | No | — |
 
 <AccordionGroup>
@@ -543,14 +496,6 @@ A URL was scraped in a batch job
     concurrencyQueueDurationMs?: number
   }
 }[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -587,8 +532,7 @@ A URL was scraped in a batch job
       concurrencyQueueDurationMs?: number
     }
   }[],
-  metadata?: {
-  },
+  metadata?: Record<string, any>,
   error?: string
 }
 ```
@@ -629,18 +573,8 @@ A batch scrape job started
 | `type` | `batch_scrape.started` | Yes | — |
 | `id` | `string` | Yes | — |
 | `data` | `never[]` | Yes | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `error` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -653,8 +587,7 @@ A batch scrape job started
   type: batch_scrape.started,
   id: string,
   data: never[],
-  metadata?: {
-  },
+  metadata?: Record<string, any>,
   error?: string
 }
 ```
@@ -697,18 +630,8 @@ A crawl job finished
 | `type` | `crawl.completed` | Yes | — |
 | `id` | `string` | Yes | — |
 | `data` | `never[]` | Yes | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `error` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -721,8 +644,7 @@ A crawl job finished
   type: crawl.completed,
   id: string,
   data: never[],
-  metadata?: {
-  },
+  metadata?: Record<string, any>,
   error?: string
 }
 ```
@@ -763,7 +685,7 @@ A page was scraped during a crawl
 | `type` | `crawl.page` | Yes | — |
 | `id` | `string` | Yes | — |
 | `data` | `object[]` | Yes | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `error` | `string` | No | — |
 
 <AccordionGroup>
@@ -792,14 +714,6 @@ A page was scraped during a crawl
     concurrencyQueueDurationMs?: number
   }
 }[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -836,8 +750,7 @@ A page was scraped during a crawl
       concurrencyQueueDurationMs?: number
     }
   }[],
-  metadata?: {
-  },
+  metadata?: Record<string, any>,
   error?: string
 }
 ```
@@ -878,18 +791,8 @@ A crawl job started processing
 | `type` | `crawl.started` | Yes | — |
 | `id` | `string` | Yes | — |
 | `data` | `never[]` | Yes | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `error` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -902,8 +805,7 @@ A crawl job started processing
   type: crawl.started,
   id: string,
   data: never[],
-  metadata?: {
-  },
+  metadata?: Record<string, any>,
   error?: string
 }
 ```
@@ -946,7 +848,7 @@ An extract job completed successfully
 | `type` | `extract.completed` | Yes | — |
 | `id` | `string` | Yes | — |
 | `data` | `object[]` | Yes | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `error` | `string` | No | — |
 
 <AccordionGroup>
@@ -955,22 +857,12 @@ An extract job completed successfully
 ```ts
 {
   success: boolean,
-  data: {
-  },
+  data: Record<string, any>,
   extractId: string,
   llmUsage?: number,
   totalUrlsScraped?: number,
-  sources?: {
-  }
+  sources?: Record<string, string[]>
 }[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -987,16 +879,13 @@ An extract job completed successfully
   id: string,
   data: {
     success: boolean,
-    data: {
-    },
+    data: Record<string, any>,
     extractId: string,
     llmUsage?: number,
     totalUrlsScraped?: number,
-    sources?: {
-    }
+    sources?: Record<string, string[]>
   }[],
-  metadata?: {
-  },
+  metadata?: Record<string, any>,
   error?: string
 }
 ```
@@ -1037,18 +926,8 @@ An extract job failed
 | `type` | `extract.failed` | Yes | — |
 | `id` | `string` | Yes | — |
 | `data` | `never[]` | Yes | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `error` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1061,8 +940,7 @@ An extract job failed
   type: extract.failed,
   id: string,
   data: never[],
-  metadata?: {
-  },
+  metadata?: Record<string, any>,
   error?: string
 }
 ```
@@ -1103,18 +981,8 @@ An extract job started
 | `type` | `extract.started` | Yes | — |
 | `id` | `string` | Yes | — |
 | `data` | `never[]` | Yes | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `error` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1127,8 +995,7 @@ An extract job started
   type: extract.started,
   id: string,
   data: never[],
-  metadata?: {
-  },
+  metadata?: Record<string, any>,
   error?: string
 }
 ```

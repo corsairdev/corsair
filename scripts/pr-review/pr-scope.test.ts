@@ -85,6 +85,34 @@ test('skips heavy checks for explorer and documentation-only changes', () => {
 	);
 });
 
+test('skips heavy checks for docs site config and skill markdown', () => {
+	assert.deepEqual(
+		classifyPrScope([
+			'docs/cloud/hosted-mcp.mdx',
+			'docs/docs.json',
+			'docs/llms.txt',
+			'docs/icons/codex.svg',
+			'skills/corsair/SKILL.md',
+		]),
+		{ lane: 'skip-heavy' },
+	);
+});
+
+test('keeps the full lane when a docs PR also changes a script', () => {
+	assert.deepEqual(
+		classifyPrScope(['docs/docs.json', 'scripts/generate-plugin-docs.ts']),
+		{ lane: 'full', includeWww: false },
+	);
+});
+
+test('keeps the full lane when a package file moves into docs', () => {
+	// The collectors list a rename as both its old and new path.
+	assert.deepEqual(
+		classifyPrScope(['docs/examples/index.ts', 'packages/corsair/index.ts']),
+		{ lane: 'full', includeWww: false },
+	);
+});
+
 test('uses the www lane for www-only changes', () => {
 	assert.deepEqual(classifyPrScope(['www/src/app/page.tsx']), {
 		lane: 'www',

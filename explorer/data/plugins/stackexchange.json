@@ -1,0 +1,323 @@
+{
+  "id": "stackexchange",
+  "displayName": "Stack Exchange",
+  "description": "Read public and authenticated Stack Exchange content across individual sites and the network, and invoke documented API v2.3 write methods with OAuth user authorization.",
+  "npmPackageName": "@corsair-dev/stackexchange",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 3,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "stackexchange.api.network.read",
+      "shortPath": "network.read",
+      "description": "Read Stack Exchange network API v2.3 resources using a documented route.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "route",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pathParams",
+            "optional": true,
+            "type": "Record<string, string | number>"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "Record<string, string | number | boolean | (string | number | boolean)[]>"
+          },
+          {
+            "key": "method",
+            "optional": true,
+            "type": "GET | POST"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "backoff",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "quota_max",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "quota_remaining",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error_message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stackexchange.api.site.read",
+      "shortPath": "site.read",
+      "description": "Read Stack Exchange per-site API v2.3 resources using a documented route.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "route",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pathParams",
+            "optional": true,
+            "type": "Record<string, string | number>"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "Record<string, string | number | boolean | (string | number | boolean)[]>"
+          },
+          {
+            "key": "site",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "backoff",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "quota_max",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "quota_remaining",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error_message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stackexchange.api.site.write",
+      "shortPath": "site.write",
+      "description": "Invoke a documented per-site POST method; includes edits, votes, flags and deletes.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "route",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pathParams",
+            "optional": true,
+            "type": "Record<string, string | number>"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "Record<string, string | number | boolean | (string | number | boolean)[]>"
+          },
+          {
+            "key": "site",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "backoff",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "quota_max",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "quota_remaining",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error_message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

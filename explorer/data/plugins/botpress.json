@@ -38,22 +38,22 @@
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "displayName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "emailVerified",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           }
         ]
       }
@@ -145,22 +145,22 @@
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "displayName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "emailVerified",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           }
         ]
       }
@@ -191,12 +191,12 @@
           {
             "key": "chargedInvoices",
             "optional": true,
-            "type": "{ id: string, amount: number }[]"
+            "type": "{ id: string, amount: number }[] | null"
           },
           {
             "key": "failedInvoices",
             "optional": true,
-            "type": "{ id: string, amount: number, failedReason: string }[]"
+            "type": "{ id: string, amount: number, failedReason: string }[] | null"
           }
         ]
       }
@@ -222,12 +222,12 @@
           {
             "key": "total",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "lineItems",
             "optional": true,
-            "type": "{ id: string, description?: string | null, totalInCents?: number | null, currency?: string | null, pricePerUnitInCents?: number | null, quantity?: number | null, type?: invoiceitem | subscription | null, periodStart?: string | null, periodEnd?: string | null }[]"
+            "type": "{ id: string, description?: string | null, totalInCents?: number | null, currency?: string | null, pricePerUnitInCents?: number | null, quantity?: number | null, type?: invoiceitem | subscription | null, periodStart?: string | null, periodEnd?: string | null }[] | null"
           }
         ]
       }
@@ -298,7 +298,7 @@
           {
             "key": "tags",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "dev",
@@ -318,47 +318,47 @@
           {
             "key": "states",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "events",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "recurringEvents",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "actions",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "configuration",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "user",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "conversation",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "message",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "subscriptions",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "maxExecutionTime",
@@ -368,12 +368,12 @@
           {
             "key": "medias",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "secrets",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | null>"
           },
           {
             "key": "type",
@@ -398,52 +398,52 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdBy",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "dev",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "alwaysAlive",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "signingSecret",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tags",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       }
@@ -494,7 +494,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ timestamp?: string | null, integrationName?: string | null, actionType?: string | null, input?: {} | null, inputTruncated?: boolean | null, output?: {} | null, outputTruncated?: boolean | null, status?: SUCCESS | FAILURE | null, durationMs?: number | null, cached?: boolean | null, errorMessage?: string | null }[]"
+            "type": "{ timestamp?: string | null, integrationName?: string | null, actionType?: string | null, input?: Record<string, any> | null, inputTruncated?: boolean | null, output?: Record<string, any> | null, outputTruncated?: boolean | null, status?: SUCCESS | FAILURE | null, durationMs?: number | null, cached?: boolean | null, errorMessage?: string | null }[]"
           },
           {
             "key": "nextToken",
@@ -571,7 +571,7 @@
           {
             "key": "tags",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "blocked",
@@ -591,7 +591,7 @@
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "authentication",
@@ -601,57 +601,57 @@
           {
             "key": "configuration",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "user",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "message",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "conversation",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "events",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "actions",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "states",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "recurringEvents",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "integrations",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "plugins",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "subscriptions",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "code",
@@ -661,12 +661,12 @@
           {
             "key": "medias",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "secrets",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | null>"
           },
           {
             "key": "layers",
@@ -696,52 +696,52 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdBy",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "dev",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "alwaysAlive",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "signingSecret",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tags",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       }
@@ -767,12 +767,12 @@
           {
             "key": "tags",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -787,37 +787,37 @@
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "channel",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "integration",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tags",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           },
           {
             "key": "messageCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       }
@@ -848,7 +848,7 @@
           {
             "key": "tags",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "sortField",
@@ -903,7 +903,7 @@
           {
             "key": "conversations",
             "optional": false,
-            "type": "{ id: string, createdAt?: string | null, updatedAt?: string | null, channel?: string | null, integration?: string | null, tags?: {} | null, messageCount?: number | null, properties?: {} | null }[]"
+            "type": "{ id: string, createdAt?: string | null, updatedAt?: string | null, channel?: string | null, integration?: string | null, tags?: Record<string, string> | null, messageCount?: number | null, properties?: Record<string, string> | null }[]"
           },
           {
             "key": "nextToken",
@@ -944,12 +944,12 @@
           {
             "key": "payload",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "tags",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "schedule",
@@ -974,47 +974,47 @@
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "payload",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "direction",
             "optional": true,
-            "type": "incoming | outgoing"
+            "type": "incoming | outgoing | null"
           },
           {
             "key": "userId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "conversationId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tags",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           },
           {
             "key": "origin",
             "optional": true,
-            "type": "synthetic"
+            "type": "synthetic | null"
           }
         ]
       }
@@ -1045,7 +1045,7 @@
           {
             "key": "output",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "timeoutAt",
@@ -1060,7 +1060,7 @@
           {
             "key": "tags",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | null>"
           },
           {
             "key": "userId",
@@ -1085,67 +1085,67 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "pending | in_progress | failed | completed | listening | paused | timedout | cancelled"
+            "type": "pending | in_progress | failed | completed | listening | paused | timedout | cancelled | null"
           },
           {
             "key": "input",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "output",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "parentWorkflowId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "conversationId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "userId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "completedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "failureReason",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "timeoutAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tags",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       }
@@ -1278,13 +1278,13 @@
           {
             "key": "interfaces",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1328,52 +1328,52 @@
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "iconUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "public",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "visibility",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "verificationStatus",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lifecycleStatus",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ownerWorkspace",
             "optional": true,
-            "type": "{ id?: string | null, handle?: string | null, name?: string | null }"
+            "type": "{ id?: string | null, handle?: string | null, name?: string | null } | null"
           }
         ]
       }
@@ -1414,52 +1414,52 @@
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "iconUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "public",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "visibility",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "verificationStatus",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lifecycleStatus",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ownerWorkspace",
             "optional": true,
-            "type": "{ id?: string | null, handle?: string | null, name?: string | null }"
+            "type": "{ id?: string | null, handle?: string | null, name?: string | null } | null"
           }
         ]
       }
@@ -1505,37 +1505,37 @@
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "iconUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "readmeUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "public",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           }
         ]
       }
@@ -1576,37 +1576,37 @@
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "iconUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "readmeUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "public",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           }
         ]
       }
@@ -1652,42 +1652,42 @@
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "iconUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "public",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "visibility",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lifecycleStatus",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1728,42 +1728,42 @@
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "iconUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "public",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "visibility",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lifecycleStatus",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2018,47 +2018,47 @@
           {
             "key": "configuration",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "configurations",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "states",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "events",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "actions",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "entities",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "channels",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "user",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "interfaces",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "identifier",
@@ -2068,7 +2068,7 @@
           {
             "key": "extraOperations",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, { enabled: boolean }>"
           },
           {
             "key": "sdkVersion",
@@ -2078,7 +2078,7 @@
           {
             "key": "secrets",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | null>"
           },
           {
             "key": "icon",
@@ -2108,7 +2108,7 @@
           {
             "key": "attributes",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -2133,57 +2133,57 @@
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "visibility",
             "optional": true,
-            "type": "public | private | unlisted"
+            "type": "public | private | unlisted | null"
           },
           {
             "key": "verificationStatus",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "dev",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "iconUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "readmeUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "signingSecret",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2259,57 +2259,57 @@
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "visibility",
             "optional": true,
-            "type": "public | private | unlisted"
+            "type": "public | private | unlisted | null"
           },
           {
             "key": "verificationStatus",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "dev",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "iconUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "readmeUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "signingSecret",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2466,47 +2466,47 @@
           {
             "key": "configuration",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "configurations",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "states",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "events",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "actions",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "entities",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "channels",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "user",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "interfaces",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "identifier",
@@ -2516,7 +2516,7 @@
           {
             "key": "extraOperations",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, { enabled: boolean }>"
           },
           {
             "key": "sdkVersion",
@@ -2531,7 +2531,7 @@
           {
             "key": "secrets",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | null>"
           },
           {
             "key": "icon",
@@ -2631,7 +2631,7 @@
           {
             "key": "tags",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -2641,7 +2641,7 @@
           {
             "key": "knowledgeBases",
             "optional": false,
-            "type": "{ id: string, name: string, description?: string | null, createdAt?: string | null, tags?: {} | null }[]"
+            "type": "{ id: string, name: string, description?: string | null, createdAt?: string | null, tags?: Record<string, string> | null }[]"
           },
           {
             "key": "nextToken",
@@ -2733,12 +2733,12 @@
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2754,7 +2754,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "script",
@@ -2835,12 +2835,12 @@
           {
             "key": "suggestions",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "usedBy",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2881,82 +2881,82 @@
           {
             "key": "ownerId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "blocked",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "plan",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "billingVersion",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "spendingLimit",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "botCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "about",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "profilePicture",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "contactEmail",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "website",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "socialAccounts",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "isPublic",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "handle",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "activeTrialId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -3012,82 +3012,82 @@
           {
             "key": "ownerId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "blocked",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "plan",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "billingVersion",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "spendingLimit",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "botCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "about",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "profilePicture",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "contactEmail",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "website",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "socialAccounts",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "isPublic",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "handle",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "activeTrialId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -3103,7 +3103,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, { type?: invocation_timeout | invocation_calls | storage_count | bot_count | knowledgebase_vector_storage | workspace_ratelimit | table_row_count | workspace_member_count | integrations_owned_count | ai_spend | openai_spend | bing_search_spend | always_alive | indexed_file_count | file_max_size_bytes | null, completion?: number | null }>"
       }
     },
     {
@@ -3137,17 +3137,17 @@
           {
             "key": "period",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "value",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "invocation_timeout | invocation_calls | storage_count | bot_count | knowledgebase_vector_storage | workspace_ratelimit | table_row_count | workspace_member_count | integrations_owned_count | ai_spend | openai_spend | bing_search_spend | always_alive | indexed_file_count | file_max_size_bytes"
+            "type": "invocation_timeout | invocation_calls | storage_count | bot_count | knowledgebase_vector_storage | workspace_ratelimit | table_row_count | workspace_member_count | integrations_owned_count | ai_spend | openai_spend | bing_search_spend | always_alive | indexed_file_count | file_max_size_bytes | null"
           }
         ]
       }
@@ -3340,82 +3340,82 @@
           {
             "key": "ownerId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "blocked",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "plan",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "billingVersion",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "spendingLimit",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "botCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "about",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "profilePicture",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "contactEmail",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "website",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "socialAccounts",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "isPublic",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "handle",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "activeTrialId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }

@@ -1,7 +1,7 @@
 {
   "id": "whautomate",
   "displayName": "Whautomate",
-  "description": "Whautomate plugin for Corsair",
+  "description": "Customer engagement and booking platform for managing contacts, broadcasts, segments, services, service categories, staff availability, and webhooks.",
   "npmPackageName": "@corsair-dev/whautomate",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -84,7 +84,7 @@
           {
             "key": "segmentId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "messageTemplate",
@@ -94,12 +94,12 @@
           {
             "key": "scheduledAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sentAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "stats",
@@ -215,7 +215,7 @@
           {
             "key": "customFields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -235,27 +235,27 @@
           {
             "key": "phoneNumber",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "avatar",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "segmentId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "location",
@@ -265,12 +265,12 @@
           {
             "key": "stage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tags",
@@ -280,7 +280,7 @@
           {
             "key": "customFields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "createdAt",
@@ -327,7 +327,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, name: string, phoneNumber?: string | null, phone?: string | null, email?: string | null, avatar?: string | null, segmentId?: string | null, location?: { id: string, title?: string }, stage?: string | null, notes?: string | null, tags?: string[], customFields?: {} | null, createdAt?: string, updatedAt?: string }[] | { data: { id: string, name: string, phoneNumber?: string | null, phone?: string | null, email?: string | null, avatar?: string | null, segmentId?: string | null, location?: { id: string, title?: string }, stage?: string | null, notes?: string | null, tags?: string[], customFields?: {} | null, createdAt?: string, updatedAt?: string }[], pagination?: { page?: number, limit?: number, total?: number, totalPages?: number } }"
+        "type": "{ id: string, name: string, phoneNumber?: string | null, phone?: string | null, email?: string | null, avatar?: string | null, segmentId?: string | null, location?: { id: string, title?: string }, stage?: string | null, notes?: string | null, tags?: string[], customFields?: Record<string, any> | null, createdAt?: string, updatedAt?: string }[] | { data: { id: string, name: string, phoneNumber?: string | null, phone?: string | null, email?: string | null, avatar?: string | null, segmentId?: string | null, location?: { id: string, title?: string }, stage?: string | null, notes?: string | null, tags?: string[], customFields?: Record<string, any> | null, createdAt?: string, updatedAt?: string }[], pagination?: { page?: number, limit?: number, total?: number, totalPages?: number } }"
       }
     },
     {
@@ -518,7 +518,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "price",
@@ -533,7 +533,7 @@
           {
             "key": "categoryId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isActive",
@@ -654,7 +654,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "price",
@@ -669,7 +669,7 @@
           {
             "key": "categoryId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isActive",
@@ -755,22 +755,22 @@
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "avatar",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "role",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "active",

@@ -1,0 +1,16 @@
+displayName: Claid.ai
+description: Image editing and generation API. Remove or generate backgrounds, resize, polish, blur license plates, edit images with AI, and manage storage connections.
+domain: claid.ai
+examples:
+  read:
+    path: storageList
+    title: List storage connections
+  write:
+    path: backgroundRemove
+    title: Remove an image background
+    args:
+      input: https://example.com/photo.jpg
+dbExample:
+  entity: storages
+  note: Search synced storages without hitting Claid.ai.
+  limit: 50

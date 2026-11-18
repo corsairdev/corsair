@@ -29,7 +29,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -78,27 +78,27 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "merge_tag_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_html",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "string_value",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -159,27 +159,27 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "merge_tag_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_html",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "string_value",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -220,17 +220,17 @@
           {
             "key": "has_more",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -286,27 +286,27 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "merge_tag_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_html",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "string_value",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -382,67 +382,67 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "from_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "from_email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "filter_soft_bounces",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "max_soft_bounces",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "bounce_danger_percent",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "unsubscribe_text",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "connection_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "contact_limit",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_contacts",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "engagement",
             "optional": true,
-            "type": "{ num_opened?: number | null, percent_opened?: number | null, num_clicked?: number | null, percent_clicked?: number | null }"
+            "type": "{ num_opened?: number | null, percent_opened?: number | null, num_clicked?: number | null, percent_clicked?: number | null } | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -473,67 +473,67 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "from_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "from_email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "filter_soft_bounces",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "max_soft_bounces",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "bounce_danger_percent",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "unsubscribe_text",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "connection_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "contact_limit",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_contacts",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "engagement",
             "optional": true,
-            "type": "{ num_opened?: number | null, percent_opened?: number | null, num_clicked?: number | null, percent_clicked?: number | null }"
+            "type": "{ num_opened?: number | null, percent_opened?: number | null, num_clicked?: number | null, percent_clicked?: number | null } | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -569,17 +569,17 @@
           {
             "key": "has_more",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -660,67 +660,67 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "from_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "from_email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "filter_soft_bounces",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "max_soft_bounces",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "bounce_danger_percent",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "unsubscribe_text",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "connection_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "contact_limit",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_contacts",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "engagement",
             "optional": true,
-            "type": "{ num_opened?: number | null, percent_opened?: number | null, num_clicked?: number | null, percent_clicked?: number | null }"
+            "type": "{ num_opened?: number | null, percent_opened?: number | null, num_clicked?: number | null, percent_clicked?: number | null } | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -871,187 +871,187 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "subject",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "from",
             "optional": true,
-            "type": "{ email?: string | null, name?: string | null }"
+            "type": "{ email?: string | null, name?: string | null } | null"
           },
           {
             "key": "recipient_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "reply_to",
             "optional": true,
-            "type": "{ email?: string | null, name?: string | null }"
+            "type": "{ email?: string | null, name?: string | null } | null"
           },
           {
             "key": "html",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "text",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "preview",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "auto_text",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "link_params",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "track_opens",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "track_clicks",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "track_text_clicks",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "segment_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "message_type_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "suppression_list_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "list_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "excluded_list_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "scheduled_for",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "throttling_type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "throttling_amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "throttling_period",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_sent",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_rejected",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_clicks",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_total_clicks",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_opens",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_total_opens",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_hard_bounces",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_soft_bounces",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_complaints",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_unsubscribes",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "started",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "sent",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "delayed_until",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -1087,187 +1087,187 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "subject",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "from",
             "optional": true,
-            "type": "{ email?: string | null, name?: string | null }"
+            "type": "{ email?: string | null, name?: string | null } | null"
           },
           {
             "key": "recipient_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "reply_to",
             "optional": true,
-            "type": "{ email?: string | null, name?: string | null }"
+            "type": "{ email?: string | null, name?: string | null } | null"
           },
           {
             "key": "html",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "text",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "preview",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "auto_text",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "link_params",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "track_opens",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "track_clicks",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "track_text_clicks",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "segment_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "message_type_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "suppression_list_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "list_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "excluded_list_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "scheduled_for",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "throttling_type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "throttling_amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "throttling_period",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_sent",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_rejected",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_clicks",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_total_clicks",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_opens",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_total_opens",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_hard_bounces",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_soft_bounces",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_complaints",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_unsubscribes",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "started",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "sent",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "delayed_until",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -1308,17 +1308,17 @@
           {
             "key": "has_more",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -1474,187 +1474,187 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "subject",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "from",
             "optional": true,
-            "type": "{ email?: string | null, name?: string | null }"
+            "type": "{ email?: string | null, name?: string | null } | null"
           },
           {
             "key": "recipient_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "reply_to",
             "optional": true,
-            "type": "{ email?: string | null, name?: string | null }"
+            "type": "{ email?: string | null, name?: string | null } | null"
           },
           {
             "key": "html",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "text",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "preview",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "auto_text",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "link_params",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "track_opens",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "track_clicks",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "track_text_clicks",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "segment_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "message_type_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "suppression_list_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "list_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "excluded_list_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "scheduled_for",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "throttling_type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "throttling_amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "throttling_period",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_sent",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_rejected",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_clicks",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_total_clicks",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_opens",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_total_opens",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_hard_bounces",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_soft_bounces",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_complaints",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_unsubscribes",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "started",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "sent",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "delayed_until",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -1690,17 +1690,17 @@
           {
             "key": "has_more",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -1761,52 +1761,52 @@
           {
             "key": "brand_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "field_values",
             "optional": true,
-            "type": "{ name?: string | null, string?: string | null, date?: string | null, integer?: number | null }[]"
+            "type": "{ name?: string | null, string?: string | null, date?: string | null, integer?: number | null }[] | null"
           },
           {
             "key": "list_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "unsubscribe_all",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "unsubscribe_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "num_soft_bounces",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_hard_bounces",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_complaints",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -1847,42 +1847,42 @@
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "num_created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_new_not_created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_updated",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_validation_credits_used",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "completed",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "results",
             "optional": true,
-            "type": "{ email?: string | null, id?: string | null, custom_id?: string | null, success?: boolean | null, code?: string | null, message?: string | null }[]"
+            "type": "{ email?: string | null, id?: string | null, custom_id?: string | null, success?: boolean | null, code?: string | null, message?: string | null }[] | null"
           }
         ]
       }
@@ -1913,7 +1913,7 @@
           {
             "key": "id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1949,52 +1949,52 @@
           {
             "key": "brand_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "field_values",
             "optional": true,
-            "type": "{ name?: string | null, string?: string | null, date?: string | null, integer?: number | null }[]"
+            "type": "{ name?: string | null, string?: string | null, date?: string | null, integer?: number | null }[] | null"
           },
           {
             "key": "list_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "unsubscribe_all",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "unsubscribe_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "num_soft_bounces",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_hard_bounces",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_complaints",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -2030,42 +2030,42 @@
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "num_created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_new_not_created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_updated",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_validation_credits_used",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "completed",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "results",
             "optional": true,
-            "type": "{ email?: string | null, id?: string | null, custom_id?: string | null, success?: boolean | null, code?: string | null, message?: string | null }[]"
+            "type": "{ email?: string | null, id?: string | null, custom_id?: string | null, success?: boolean | null, code?: string | null, message?: string | null }[] | null"
           }
         ]
       }
@@ -2111,17 +2111,17 @@
           {
             "key": "has_more",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -2197,52 +2197,52 @@
           {
             "key": "brand_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "field_values",
             "optional": true,
-            "type": "{ name?: string | null, string?: string | null, date?: string | null, integer?: number | null }[]"
+            "type": "{ name?: string | null, string?: string | null, date?: string | null, integer?: number | null }[] | null"
           },
           {
             "key": "list_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "unsubscribe_all",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "unsubscribe_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "num_soft_bounces",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_hard_bounces",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_complaints",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -2303,52 +2303,52 @@
           {
             "key": "brand_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "field_values",
             "optional": true,
-            "type": "{ name?: string | null, string?: string | null, date?: string | null, integer?: number | null }[]"
+            "type": "{ name?: string | null, string?: string | null, date?: string | null, integer?: number | null }[] | null"
           },
           {
             "key": "list_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "unsubscribe_all",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "unsubscribe_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "num_soft_bounces",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_hard_bounces",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_complaints",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -2399,27 +2399,27 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "merge_tag_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sample_value",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -2480,27 +2480,27 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "merge_tag_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sample_value",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -2541,17 +2541,17 @@
           {
             "key": "has_more",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -2602,27 +2602,27 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "merge_tag_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sample_value",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -2658,27 +2658,27 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "all",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "num_contacts",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "engagement",
             "optional": true,
-            "type": "{ num_opened?: number | null, percent_opened?: number | null, num_clicked?: number | null, percent_clicked?: number | null }"
+            "type": "{ num_opened?: number | null, percent_opened?: number | null, num_clicked?: number | null, percent_clicked?: number | null } | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -2739,27 +2739,27 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "all",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "num_contacts",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "engagement",
             "optional": true,
-            "type": "{ num_opened?: number | null, percent_opened?: number | null, num_clicked?: number | null, percent_clicked?: number | null }"
+            "type": "{ num_opened?: number | null, percent_opened?: number | null, num_clicked?: number | null, percent_clicked?: number | null } | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -2800,17 +2800,17 @@
           {
             "key": "has_more",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -2851,27 +2851,27 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "all",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "num_contacts",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "engagement",
             "optional": true,
-            "type": "{ num_opened?: number | null, percent_opened?: number | null, num_clicked?: number | null, percent_clicked?: number | null }"
+            "type": "{ num_opened?: number | null, percent_opened?: number | null, num_clicked?: number | null, percent_clicked?: number | null } | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -2917,17 +2917,17 @@
           {
             "key": "has_more",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -2958,7 +2958,7 @@
           {
             "key": "conditions",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
@@ -2973,22 +2973,22 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "operator",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "conditions",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -3055,22 +3055,22 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "operator",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "conditions",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -3111,17 +3111,17 @@
           {
             "key": "has_more",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -3157,7 +3157,7 @@
           {
             "key": "conditions",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
@@ -3172,22 +3172,22 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "operator",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "conditions",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -3228,17 +3228,17 @@
           {
             "key": "has_more",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -3274,17 +3274,17 @@
           {
             "key": "file_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "file_size",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -3320,17 +3320,17 @@
           {
             "key": "file_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "file_size",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -3371,17 +3371,17 @@
           {
             "key": "has_more",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -3432,27 +3432,27 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "shared_with_account",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "html",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -3519,27 +3519,27 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "shared_with_account",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "html",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -3580,17 +3580,17 @@
           {
             "key": "has_more",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -3646,27 +3646,27 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "shared_with_account",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "html",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -3782,137 +3782,137 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "subject",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "from",
             "optional": true,
-            "type": "{ email?: string | null, name?: string | null }"
+            "type": "{ email?: string | null, name?: string | null } | null"
           },
           {
             "key": "recipient_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "reply_to",
             "optional": true,
-            "type": "{ email?: string | null, name?: string | null }"
+            "type": "{ email?: string | null, name?: string | null } | null"
           },
           {
             "key": "html",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "text",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "preview",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "auto_text",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "link_params",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "track_opens",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "track_clicks",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "track_text_clicks",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "message_type_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "list_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "num_sent",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_rejected",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_clicks",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_opens",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_hard_bounces",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_soft_bounces",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_complaints",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_unsubscribes",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "started",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "sent",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -3948,137 +3948,137 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "subject",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "from",
             "optional": true,
-            "type": "{ email?: string | null, name?: string | null }"
+            "type": "{ email?: string | null, name?: string | null } | null"
           },
           {
             "key": "recipient_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "reply_to",
             "optional": true,
-            "type": "{ email?: string | null, name?: string | null }"
+            "type": "{ email?: string | null, name?: string | null } | null"
           },
           {
             "key": "html",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "text",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "preview",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "auto_text",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "link_params",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "track_opens",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "track_clicks",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "track_text_clicks",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "message_type_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "list_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "num_sent",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_rejected",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_clicks",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_opens",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_hard_bounces",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_soft_bounces",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_complaints",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_unsubscribes",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "started",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "sent",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -4119,17 +4119,17 @@
           {
             "key": "has_more",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -4250,137 +4250,137 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "subject",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "from",
             "optional": true,
-            "type": "{ email?: string | null, name?: string | null }"
+            "type": "{ email?: string | null, name?: string | null } | null"
           },
           {
             "key": "recipient_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "reply_to",
             "optional": true,
-            "type": "{ email?: string | null, name?: string | null }"
+            "type": "{ email?: string | null, name?: string | null } | null"
           },
           {
             "key": "html",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "text",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "preview",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "auto_text",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "link_params",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "track_opens",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "track_clicks",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "track_text_clicks",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "message_type_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "list_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "num_sent",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_rejected",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_clicks",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_opens",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_hard_bounces",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_soft_bounces",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_complaints",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_unsubscribes",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "started",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "sent",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -4426,32 +4426,32 @@
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "role",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "allowed_brands",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "is_activated",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_owner",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -4502,32 +4502,32 @@
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "role",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "allowed_brands",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "is_activated",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_owner",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -4563,17 +4563,17 @@
           {
             "key": "has_more",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -4619,32 +4619,32 @@
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "role",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "allowed_brands",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "is_activated",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_owner",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }

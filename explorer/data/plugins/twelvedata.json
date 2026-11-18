@@ -1,0 +1,2455 @@
+{
+  "id": "twelvedata",
+  "displayName": "Twelve Data",
+  "description": "Read quotes, prices and OHLC time series, exchange rates and technical indicators, plus the stock, forex and crypto reference lists.",
+  "npmPackageName": "@corsair-dev/twelvedata",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 36,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "twelvedata.api.indicators.adx",
+      "shortPath": "indicators.adx",
+      "description": "Read the ADX technical indicator for a symbol over an interval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "1min | 5min | 15min | 30min | 45min | 1h | 2h | 4h | 1day | 1week | 1month",
+            "description": "Candle size"
+          },
+          {
+            "key": "time_period",
+            "optional": true,
+            "type": "number",
+            "description": "Look-back period; the provider default depends on the indicator"
+          },
+          {
+            "key": "series_type",
+            "optional": true,
+            "type": "close | open | high | low",
+            "description": "Which price the indicator reads; default close"
+          },
+          {
+            "key": "outputsize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ symbol?: string | null, interval?: string | null, indicator?: string | Record<string, any> | null } | null"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "Record<string, string | null>[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "ok or error"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twelvedata.api.indicators.apo",
+      "shortPath": "indicators.apo",
+      "description": "Read the APO technical indicator for a symbol over an interval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "1min | 5min | 15min | 30min | 45min | 1h | 2h | 4h | 1day | 1week | 1month",
+            "description": "Candle size"
+          },
+          {
+            "key": "time_period",
+            "optional": true,
+            "type": "number",
+            "description": "Look-back period; the provider default depends on the indicator"
+          },
+          {
+            "key": "series_type",
+            "optional": true,
+            "type": "close | open | high | low",
+            "description": "Which price the indicator reads; default close"
+          },
+          {
+            "key": "outputsize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ symbol?: string | null, interval?: string | null, indicator?: string | Record<string, any> | null } | null"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "Record<string, string | null>[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "ok or error"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twelvedata.api.indicators.atr",
+      "shortPath": "indicators.atr",
+      "description": "Read the ATR technical indicator for a symbol over an interval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "1min | 5min | 15min | 30min | 45min | 1h | 2h | 4h | 1day | 1week | 1month",
+            "description": "Candle size"
+          },
+          {
+            "key": "time_period",
+            "optional": true,
+            "type": "number",
+            "description": "Look-back period; the provider default depends on the indicator"
+          },
+          {
+            "key": "series_type",
+            "optional": true,
+            "type": "close | open | high | low",
+            "description": "Which price the indicator reads; default close"
+          },
+          {
+            "key": "outputsize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ symbol?: string | null, interval?: string | null, indicator?: string | Record<string, any> | null } | null"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "Record<string, string | null>[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "ok or error"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twelvedata.api.indicators.bbands",
+      "shortPath": "indicators.bbands",
+      "description": "Read the BBANDS technical indicator for a symbol over an interval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "1min | 5min | 15min | 30min | 45min | 1h | 2h | 4h | 1day | 1week | 1month",
+            "description": "Candle size"
+          },
+          {
+            "key": "time_period",
+            "optional": true,
+            "type": "number",
+            "description": "Look-back period; the provider default depends on the indicator"
+          },
+          {
+            "key": "series_type",
+            "optional": true,
+            "type": "close | open | high | low",
+            "description": "Which price the indicator reads; default close"
+          },
+          {
+            "key": "outputsize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ symbol?: string | null, interval?: string | null, indicator?: string | Record<string, any> | null } | null"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "Record<string, string | null>[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "ok or error"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twelvedata.api.indicators.beta",
+      "shortPath": "indicators.beta",
+      "description": "Read the BETA technical indicator for a symbol over an interval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "1min | 5min | 15min | 30min | 45min | 1h | 2h | 4h | 1day | 1week | 1month",
+            "description": "Candle size"
+          },
+          {
+            "key": "time_period",
+            "optional": true,
+            "type": "number",
+            "description": "Look-back period; the provider default depends on the indicator"
+          },
+          {
+            "key": "outputsize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "series_type_1",
+            "optional": true,
+            "type": "close | open | high | low",
+            "description": "First price series; default open"
+          },
+          {
+            "key": "series_type_2",
+            "optional": true,
+            "type": "close | open | high | low",
+            "description": "Second price series; default close"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ symbol?: string | null, interval?: string | null, indicator?: string | Record<string, any> | null } | null"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "Record<string, string | null>[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "ok or error"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twelvedata.api.indicators.cci",
+      "shortPath": "indicators.cci",
+      "description": "Read the CCI technical indicator for a symbol over an interval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "1min | 5min | 15min | 30min | 45min | 1h | 2h | 4h | 1day | 1week | 1month",
+            "description": "Candle size"
+          },
+          {
+            "key": "time_period",
+            "optional": true,
+            "type": "number",
+            "description": "Look-back period; the provider default depends on the indicator"
+          },
+          {
+            "key": "series_type",
+            "optional": true,
+            "type": "close | open | high | low",
+            "description": "Which price the indicator reads; default close"
+          },
+          {
+            "key": "outputsize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ symbol?: string | null, interval?: string | null, indicator?: string | Record<string, any> | null } | null"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "Record<string, string | null>[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "ok or error"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twelvedata.api.indicators.correl",
+      "shortPath": "indicators.correl",
+      "description": "Read the CORREL technical indicator for a symbol over an interval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "1min | 5min | 15min | 30min | 45min | 1h | 2h | 4h | 1day | 1week | 1month",
+            "description": "Candle size"
+          },
+          {
+            "key": "time_period",
+            "optional": true,
+            "type": "number",
+            "description": "Look-back period; the provider default depends on the indicator"
+          },
+          {
+            "key": "outputsize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "series_type_1",
+            "optional": true,
+            "type": "close | open | high | low",
+            "description": "First price series; default open"
+          },
+          {
+            "key": "series_type_2",
+            "optional": true,
+            "type": "close | open | high | low",
+            "description": "Second price series; default close"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ symbol?: string | null, interval?: string | null, indicator?: string | Record<string, any> | null } | null"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "Record<string, string | null>[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "ok or error"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twelvedata.api.indicators.ema",
+      "shortPath": "indicators.ema",
+      "description": "Read the EMA technical indicator for a symbol over an interval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "1min | 5min | 15min | 30min | 45min | 1h | 2h | 4h | 1day | 1week | 1month",
+            "description": "Candle size"
+          },
+          {
+            "key": "time_period",
+            "optional": true,
+            "type": "number",
+            "description": "Look-back period; the provider default depends on the indicator"
+          },
+          {
+            "key": "series_type",
+            "optional": true,
+            "type": "close | open | high | low",
+            "description": "Which price the indicator reads; default close"
+          },
+          {
+            "key": "outputsize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ symbol?: string | null, interval?: string | null, indicator?: string | Record<string, any> | null } | null"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "Record<string, string | null>[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "ok or error"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twelvedata.api.indicators.macd",
+      "shortPath": "indicators.macd",
+      "description": "Read the MACD technical indicator for a symbol over an interval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "1min | 5min | 15min | 30min | 45min | 1h | 2h | 4h | 1day | 1week | 1month",
+            "description": "Candle size"
+          },
+          {
+            "key": "time_period",
+            "optional": true,
+            "type": "number",
+            "description": "Look-back period; the provider default depends on the indicator"
+          },
+          {
+            "key": "series_type",
+            "optional": true,
+            "type": "close | open | high | low",
+            "description": "Which price the indicator reads; default close"
+          },
+          {
+            "key": "outputsize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ symbol?: string | null, interval?: string | null, indicator?: string | Record<string, any> | null } | null"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "Record<string, string | null>[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "ok or error"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twelvedata.api.indicators.max",
+      "shortPath": "indicators.max",
+      "description": "Read the MAX technical indicator for a symbol over an interval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "1min | 5min | 15min | 30min | 45min | 1h | 2h | 4h | 1day | 1week | 1month",
+            "description": "Candle size"
+          },
+          {
+            "key": "time_period",
+            "optional": true,
+            "type": "number",
+            "description": "Look-back period; the provider default depends on the indicator"
+          },
+          {
+            "key": "series_type",
+            "optional": true,
+            "type": "close | open | high | low",
+            "description": "Which price the indicator reads; default close"
+          },
+          {
+            "key": "outputsize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ symbol?: string | null, interval?: string | null, indicator?: string | Record<string, any> | null } | null"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "Record<string, string | null>[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "ok or error"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twelvedata.api.indicators.mfi",
+      "shortPath": "indicators.mfi",
+      "description": "Read the MFI technical indicator for a symbol over an interval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "1min | 5min | 15min | 30min | 45min | 1h | 2h | 4h | 1day | 1week | 1month",
+            "description": "Candle size"
+          },
+          {
+            "key": "time_period",
+            "optional": true,
+            "type": "number",
+            "description": "Look-back period; the provider default depends on the indicator"
+          },
+          {
+            "key": "series_type",
+            "optional": true,
+            "type": "close | open | high | low",
+            "description": "Which price the indicator reads; default close"
+          },
+          {
+            "key": "outputsize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ symbol?: string | null, interval?: string | null, indicator?: string | Record<string, any> | null } | null"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "Record<string, string | null>[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "ok or error"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twelvedata.api.indicators.min",
+      "shortPath": "indicators.min",
+      "description": "Read the MIN technical indicator for a symbol over an interval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "1min | 5min | 15min | 30min | 45min | 1h | 2h | 4h | 1day | 1week | 1month",
+            "description": "Candle size"
+          },
+          {
+            "key": "time_period",
+            "optional": true,
+            "type": "number",
+            "description": "Look-back period; the provider default depends on the indicator"
+          },
+          {
+            "key": "series_type",
+            "optional": true,
+            "type": "close | open | high | low",
+            "description": "Which price the indicator reads; default close"
+          },
+          {
+            "key": "outputsize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ symbol?: string | null, interval?: string | null, indicator?: string | Record<string, any> | null } | null"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "Record<string, string | null>[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "ok or error"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twelvedata.api.indicators.ppo",
+      "shortPath": "indicators.ppo",
+      "description": "Read the PPO technical indicator for a symbol over an interval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "1min | 5min | 15min | 30min | 45min | 1h | 2h | 4h | 1day | 1week | 1month",
+            "description": "Candle size"
+          },
+          {
+            "key": "time_period",
+            "optional": true,
+            "type": "number",
+            "description": "Look-back period; the provider default depends on the indicator"
+          },
+          {
+            "key": "series_type",
+            "optional": true,
+            "type": "close | open | high | low",
+            "description": "Which price the indicator reads; default close"
+          },
+          {
+            "key": "outputsize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ symbol?: string | null, interval?: string | null, indicator?: string | Record<string, any> | null } | null"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "Record<string, string | null>[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "ok or error"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twelvedata.api.indicators.roc",
+      "shortPath": "indicators.roc",
+      "description": "Read the ROC technical indicator for a symbol over an interval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "1min | 5min | 15min | 30min | 45min | 1h | 2h | 4h | 1day | 1week | 1month",
+            "description": "Candle size"
+          },
+          {
+            "key": "time_period",
+            "optional": true,
+            "type": "number",
+            "description": "Look-back period; the provider default depends on the indicator"
+          },
+          {
+            "key": "series_type",
+            "optional": true,
+            "type": "close | open | high | low",
+            "description": "Which price the indicator reads; default close"
+          },
+          {
+            "key": "outputsize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ symbol?: string | null, interval?: string | null, indicator?: string | Record<string, any> | null } | null"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "Record<string, string | null>[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "ok or error"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twelvedata.api.indicators.rsi",
+      "shortPath": "indicators.rsi",
+      "description": "Read the RSI technical indicator for a symbol over an interval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "1min | 5min | 15min | 30min | 45min | 1h | 2h | 4h | 1day | 1week | 1month",
+            "description": "Candle size"
+          },
+          {
+            "key": "time_period",
+            "optional": true,
+            "type": "number",
+            "description": "Look-back period; the provider default depends on the indicator"
+          },
+          {
+            "key": "series_type",
+            "optional": true,
+            "type": "close | open | high | low",
+            "description": "Which price the indicator reads; default close"
+          },
+          {
+            "key": "outputsize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ symbol?: string | null, interval?: string | null, indicator?: string | Record<string, any> | null } | null"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "Record<string, string | null>[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "ok or error"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twelvedata.api.indicators.sma",
+      "shortPath": "indicators.sma",
+      "description": "Read the SMA technical indicator for a symbol over an interval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "1min | 5min | 15min | 30min | 45min | 1h | 2h | 4h | 1day | 1week | 1month",
+            "description": "Candle size"
+          },
+          {
+            "key": "time_period",
+            "optional": true,
+            "type": "number",
+            "description": "Look-back period; the provider default depends on the indicator"
+          },
+          {
+            "key": "series_type",
+            "optional": true,
+            "type": "close | open | high | low",
+            "description": "Which price the indicator reads; default close"
+          },
+          {
+            "key": "outputsize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ symbol?: string | null, interval?: string | null, indicator?: string | Record<string, any> | null } | null"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "Record<string, string | null>[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "ok or error"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twelvedata.api.indicators.stddev",
+      "shortPath": "indicators.stddev",
+      "description": "Read the STDDEV technical indicator for a symbol over an interval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "1min | 5min | 15min | 30min | 45min | 1h | 2h | 4h | 1day | 1week | 1month",
+            "description": "Candle size"
+          },
+          {
+            "key": "time_period",
+            "optional": true,
+            "type": "number",
+            "description": "Look-back period; the provider default depends on the indicator"
+          },
+          {
+            "key": "series_type",
+            "optional": true,
+            "type": "close | open | high | low",
+            "description": "Which price the indicator reads; default close"
+          },
+          {
+            "key": "outputsize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ symbol?: string | null, interval?: string | null, indicator?: string | Record<string, any> | null } | null"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "Record<string, string | null>[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "ok or error"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twelvedata.api.indicators.stoch",
+      "shortPath": "indicators.stoch",
+      "description": "Read the STOCH technical indicator for a symbol over an interval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "1min | 5min | 15min | 30min | 45min | 1h | 2h | 4h | 1day | 1week | 1month",
+            "description": "Candle size"
+          },
+          {
+            "key": "time_period",
+            "optional": true,
+            "type": "number",
+            "description": "Look-back period; the provider default depends on the indicator"
+          },
+          {
+            "key": "series_type",
+            "optional": true,
+            "type": "close | open | high | low",
+            "description": "Which price the indicator reads; default close"
+          },
+          {
+            "key": "outputsize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ symbol?: string | null, interval?: string | null, indicator?: string | Record<string, any> | null } | null"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "Record<string, string | null>[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "ok or error"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twelvedata.api.indicators.stochrsi",
+      "shortPath": "indicators.stochrsi",
+      "description": "Read the STOCHRSI technical indicator for a symbol over an interval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "1min | 5min | 15min | 30min | 45min | 1h | 2h | 4h | 1day | 1week | 1month",
+            "description": "Candle size"
+          },
+          {
+            "key": "time_period",
+            "optional": true,
+            "type": "number",
+            "description": "Look-back period; the provider default depends on the indicator"
+          },
+          {
+            "key": "series_type",
+            "optional": true,
+            "type": "close | open | high | low",
+            "description": "Which price the indicator reads; default close"
+          },
+          {
+            "key": "outputsize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ symbol?: string | null, interval?: string | null, indicator?: string | Record<string, any> | null } | null"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "Record<string, string | null>[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "ok or error"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twelvedata.api.indicators.supertrend",
+      "shortPath": "indicators.supertrend",
+      "description": "Read the SUPERTREND technical indicator for a symbol over an interval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "1min | 5min | 15min | 30min | 45min | 1h | 2h | 4h | 1day | 1week | 1month",
+            "description": "Candle size"
+          },
+          {
+            "key": "time_period",
+            "optional": true,
+            "type": "number",
+            "description": "Look-back period; the provider default depends on the indicator"
+          },
+          {
+            "key": "series_type",
+            "optional": true,
+            "type": "close | open | high | low",
+            "description": "Which price the indicator reads; default close"
+          },
+          {
+            "key": "outputsize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ symbol?: string | null, interval?: string | null, indicator?: string | Record<string, any> | null } | null"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "Record<string, string | null>[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "ok or error"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twelvedata.api.indicators.tsf",
+      "shortPath": "indicators.tsf",
+      "description": "Read the TSF technical indicator for a symbol over an interval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "1min | 5min | 15min | 30min | 45min | 1h | 2h | 4h | 1day | 1week | 1month",
+            "description": "Candle size"
+          },
+          {
+            "key": "time_period",
+            "optional": true,
+            "type": "number",
+            "description": "Look-back period; the provider default depends on the indicator"
+          },
+          {
+            "key": "series_type",
+            "optional": true,
+            "type": "close | open | high | low",
+            "description": "Which price the indicator reads; default close"
+          },
+          {
+            "key": "outputsize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ symbol?: string | null, interval?: string | null, indicator?: string | Record<string, any> | null } | null"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "Record<string, string | null>[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "ok or error"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twelvedata.api.indicators.ultosc",
+      "shortPath": "indicators.ultosc",
+      "description": "Read the ULTOSC technical indicator for a symbol over an interval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "1min | 5min | 15min | 30min | 45min | 1h | 2h | 4h | 1day | 1week | 1month",
+            "description": "Candle size"
+          },
+          {
+            "key": "time_period",
+            "optional": true,
+            "type": "number",
+            "description": "Look-back period; the provider default depends on the indicator"
+          },
+          {
+            "key": "series_type",
+            "optional": true,
+            "type": "close | open | high | low",
+            "description": "Which price the indicator reads; default close"
+          },
+          {
+            "key": "outputsize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ symbol?: string | null, interval?: string | null, indicator?: string | Record<string, any> | null } | null"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "Record<string, string | null>[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "ok or error"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twelvedata.api.indicators.willr",
+      "shortPath": "indicators.willr",
+      "description": "Read the WILLR technical indicator for a symbol over an interval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "1min | 5min | 15min | 30min | 45min | 1h | 2h | 4h | 1day | 1week | 1month",
+            "description": "Candle size"
+          },
+          {
+            "key": "time_period",
+            "optional": true,
+            "type": "number",
+            "description": "Look-back period; the provider default depends on the indicator"
+          },
+          {
+            "key": "series_type",
+            "optional": true,
+            "type": "close | open | high | low",
+            "description": "Which price the indicator reads; default close"
+          },
+          {
+            "key": "outputsize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ symbol?: string | null, interval?: string | null, indicator?: string | Record<string, any> | null } | null"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "Record<string, string | null>[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "ok or error"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twelvedata.api.indicators.wma",
+      "shortPath": "indicators.wma",
+      "description": "Read the WMA technical indicator for a symbol over an interval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "1min | 5min | 15min | 30min | 45min | 1h | 2h | 4h | 1day | 1week | 1month",
+            "description": "Candle size"
+          },
+          {
+            "key": "time_period",
+            "optional": true,
+            "type": "number",
+            "description": "Look-back period; the provider default depends on the indicator"
+          },
+          {
+            "key": "series_type",
+            "optional": true,
+            "type": "close | open | high | low",
+            "description": "Which price the indicator reads; default close"
+          },
+          {
+            "key": "outputsize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ symbol?: string | null, interval?: string | null, indicator?: string | Record<string, any> | null } | null"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "Record<string, string | null>[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "ok or error"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twelvedata.api.market.apiUsage",
+      "shortPath": "market.apiUsage",
+      "description": "Read how many API calls the key has made, and the plan limit",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "current_usage",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "plan_limit",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twelvedata.api.market.exchangeRate",
+      "shortPath": "market.exchangeRate",
+      "description": "Read the current exchange rate of one currency pair",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string",
+            "description": "A pair such as EUR/USD"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "rate",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twelvedata.api.market.price",
+      "shortPath": "market.price",
+      "description": "Read the latest price for a symbol, the smallest of the market-data answers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string",
+            "description": "One symbol, such as AAPL or EUR/USD"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string",
+            "description": "Narrow to one exchange"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "Narrow to one country"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "price",
+            "optional": false,
+            "type": "string",
+            "description": "A decimal number, sent as a string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twelvedata.api.market.quote",
+      "shortPath": "market.quote",
+      "description": "Read the latest quote for a symbol: open, high, low, close, change and 52-week range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string",
+            "description": "One symbol, such as AAPL or EUR/USD"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string",
+            "description": "Narrow to one exchange"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "Narrow to one country"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mic_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "datetime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "open",
+            "optional": true,
+            "type": "string | null",
+            "description": "A decimal number, sent as a string"
+          },
+          {
+            "key": "high",
+            "optional": true,
+            "type": "string | null",
+            "description": "A decimal number, sent as a string"
+          },
+          {
+            "key": "low",
+            "optional": true,
+            "type": "string | null",
+            "description": "A decimal number, sent as a string"
+          },
+          {
+            "key": "close",
+            "optional": true,
+            "type": "string | null",
+            "description": "A decimal number, sent as a string"
+          },
+          {
+            "key": "volume",
+            "optional": true,
+            "type": "string | null",
+            "description": "A decimal number, sent as a string"
+          },
+          {
+            "key": "previous_close",
+            "optional": true,
+            "type": "string | null",
+            "description": "A decimal number, sent as a string"
+          },
+          {
+            "key": "change",
+            "optional": true,
+            "type": "string | null",
+            "description": "A decimal number, sent as a string"
+          },
+          {
+            "key": "percent_change",
+            "optional": true,
+            "type": "string | null",
+            "description": "A decimal number, sent as a string"
+          },
+          {
+            "key": "average_volume",
+            "optional": true,
+            "type": "string | null",
+            "description": "A decimal number, sent as a string"
+          },
+          {
+            "key": "is_market_open",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "fifty_two_week",
+            "optional": true,
+            "type": "{ low?: string | null, high?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twelvedata.api.market.timeSeries",
+      "shortPath": "market.timeSeries",
+      "description": "Read OHLC candles for a symbol over an interval, with a date window and ordering",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "1min | 5min | 15min | 30min | 45min | 1h | 2h | 4h | 1day | 1week | 1month",
+            "description": "Candle size"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outputsize",
+            "optional": true,
+            "type": "number",
+            "description": "How many candles; default 30, plan-dependent above 5000"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string",
+            "description": "ISO date or date-time"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string",
+            "description": "ISO date or date-time"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "Default desc"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string",
+            "description": "Exchange timezone, or UTC"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ symbol?: string | null, interval?: string | null, currency?: string | null, exchange?: string | null, type?: string | null } | null"
+          },
+          {
+            "key": "values",
+            "optional": false,
+            "type": "{ datetime: string, open: string, high: string, low: string, close: string, volume?: string | null }[]"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "ok or error"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twelvedata.api.reference.bonds",
+      "shortPath": "reference.bonds",
+      "description": "List the bonds Twelve Data covers, filtered by symbol, exchange or country",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number; default 1"
+          },
+          {
+            "key": "outputsize",
+            "optional": true,
+            "type": "number",
+            "description": "Rows per page; default 50"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ count?: number | null, list: { symbol: string, name?: string | null, currency?: string | null, exchange?: string | null, mic_code?: string | null, country?: string | null, type?: string | null, figi_code?: string | null, cfi_code?: string | null, isin?: string | null, cusip?: string | null }[] }"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "ok or error"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twelvedata.api.reference.cryptocurrencies",
+      "shortPath": "reference.cryptocurrencies",
+      "description": "List the cryptocurrency pairs available",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ symbol: string, available_exchanges?: string[] | null, currency_base?: string | null, currency_quote?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twelvedata.api.reference.etf",
+      "shortPath": "reference.etf",
+      "description": "List the ETFs Twelve Data covers, filtered by symbol, exchange or country",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": true,
+            "type": "string",
+            "description": "One symbol, or several separated by commas"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ symbol: string, name?: string | null, currency?: string | null, exchange?: string | null, mic_code?: string | null, country?: string | null, type?: string | null, figi_code?: string | null, cfi_code?: string | null, isin?: string | null, cusip?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twelvedata.api.reference.exchanges",
+      "shortPath": "reference.exchanges",
+      "description": "List the exchanges Twelve Data covers, with their timezone",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ title?: string | null, name?: string | null, code?: string | null, country?: string | null, timezone?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twelvedata.api.reference.forexPairs",
+      "shortPath": "reference.forexPairs",
+      "description": "List the currency pairs available, by base or quote currency",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "currency_base",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency_quote",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ symbol: string, currency_group?: string | null, currency_base?: string | null, currency_quote?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twelvedata.api.reference.funds",
+      "shortPath": "reference.funds",
+      "description": "List the mutual funds Twelve Data covers, by country or symbol",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "symbol",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number; default 1"
+          },
+          {
+            "key": "outputsize",
+            "optional": true,
+            "type": "number",
+            "description": "Rows per page; default 50"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ count?: number | null, list: { symbol: string, name?: string | null, currency?: string | null, exchange?: string | null, mic_code?: string | null, country?: string | null, type?: string | null, figi_code?: string | null, cfi_code?: string | null, isin?: string | null, cusip?: string | null }[] }"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "ok or error"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twelvedata.api.reference.stocks",
+      "shortPath": "reference.stocks",
+      "description": "List the stocks Twelve Data covers, filtered by symbol, exchange or country",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": true,
+            "type": "string",
+            "description": "One symbol, or several separated by commas"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string",
+            "description": "Common Stock, ETF, Depository Receipt, and so on"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ symbol: string, name?: string | null, currency?: string | null, exchange?: string | null, mic_code?: string | null, country?: string | null, type?: string | null, figi_code?: string | null, cfi_code?: string | null, isin?: string | null, cusip?: string | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

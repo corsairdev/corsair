@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Cincopa: every `cincopa.api.*` operation with input and output types."
+title: "Cincopa API reference"
+sidebarTitle: "API"
+description: "API reference for the Cincopa plugin in Corsair: every `cincopa.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `cincopa.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -149,7 +148,7 @@ await corsair.cincopa.api.gallery.list({});
 | `runtime` | `number` | Yes | — |
 | `workspace` | `string` | No | — |
 | `galleries` | `object[]` | Yes | — |
-| `tag_cloud` | `object` | Yes | — |
+| `tag_cloud` | `Record<string, number>` | Yes | — |
 | `items_data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -165,14 +164,6 @@ await corsair.cincopa.api.gallery.list({});
   modified: string,
   syncstatus: string
 }[]
-```
-</Accordion>
-
-<Accordion title="tag_cloud full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 

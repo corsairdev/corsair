@@ -1,7 +1,7 @@
 {
   "id": "waboxapp",
-  "displayName": "Waboxapp",
-  "description": "Waboxapp plugin for Corsair",
+  "displayName": "waboxapp",
+  "description": "WhatsApp messaging API for sending text, image, link, and media messages and checking the linked account status.",
   "npmPackageName": "@corsair-dev/waboxapp",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

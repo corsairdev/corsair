@@ -89,7 +89,7 @@ export const list: GmailEndpoints['messagesList'] = async (ctx, input) => {
 			q: input.q,
 			maxResults: input.maxResults,
 			pageToken: input.pageToken,
-			labelIds: input.labelIds?.join(','),
+			labelIds: input.labelIds,
 			includeSpamTrash: input.includeSpamTrash,
 		},
 	});
@@ -97,7 +97,12 @@ export const list: GmailEndpoints['messagesList'] = async (ctx, input) => {
 	if (result.messages && ctx.db.messages) {
 		try {
 			for (const message of result.messages) {
-				if (message.id) {
+				// List entries carry only id and threadId, and upsert replaces the
+				// stored row, so only insert messages that are not stored yet.
+				if (
+					message.id &&
+					!(await ctx.db.messages.existsByEntityId(message.id))
+				) {
 					await ctx.db.messages.upsertByEntityId(message.id, {
 						...message,
 						id: message.id,
@@ -126,7 +131,7 @@ export const get: GmailEndpoints['messagesGet'] = async (ctx, input) => {
 		method: 'GET',
 		query: {
 			format: input.format,
-			metadataHeaders: input.metadataHeaders?.join(','),
+			metadataHeaders: input.metadataHeaders,
 		},
 	});
 

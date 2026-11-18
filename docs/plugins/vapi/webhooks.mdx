@@ -1,6 +1,7 @@
 ---
-title: Webhooks
-description: "Vapi incoming webhooks: event paths, payloads, and response data."
+title: "Vapi webhooks"
+sidebarTitle: "Webhooks"
+description: "Vapi incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
 ---
 
 The Vapi plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/vapi/overview) for setup context and the exact URL shape).
@@ -28,9 +29,23 @@ import { corsair } from "@/server/corsair";
 
 export async function POST(request: Request) {
     const headers = Object.fromEntries(request.headers);
-    const body = await request.json();
-    const result = await processWebhook(corsair, headers, body);
-    return result.response;
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
 }
 ```
 
@@ -67,15 +82,11 @@ Sent when the active workflow node changes
     startedAt?: string | null,
     endedAt?: string | null,
     cost?: number,
-    messages?: {
-    }[],
-    artifact?: {
-    },
-    analysis?: {
-    }
+    messages?: Record<string, any>[],
+    artifact?: Record<string, any>,
+    analysis?: Record<string, any>
   },
-  node?: {
-  },
+  node?: Record<string, any>,
   timestamp?: string
 }
 ```
@@ -145,17 +156,12 @@ Sent to fetch assistant configuration for an incoming call
     startedAt?: string | null,
     endedAt?: string | null,
     cost?: number,
-    messages?: {
-    }[],
-    artifact?: {
-    },
-    analysis?: {
-    }
+    messages?: Record<string, any>[],
+    artifact?: Record<string, any>,
+    analysis?: Record<string, any>
   },
-  phoneNumber?: {
-  },
-  customer?: {
-  },
+  phoneNumber?: Record<string, any>,
+  customer?: Record<string, any>,
   timestamp?: string
 }
 ```
@@ -169,8 +175,7 @@ Sent to fetch assistant configuration for an incoming call
 
 ```ts
 {
-  assistant?: {
-  },
+  assistant?: Record<string, any>,
   assistantId?: string,
   error?: string
 }
@@ -227,22 +232,16 @@ Sent at the end of a call with transcript, summary, and analysis
     startedAt?: string | null,
     endedAt?: string | null,
     cost?: number,
-    messages?: {
-    }[],
-    artifact?: {
-    },
-    analysis?: {
-    }
+    messages?: Record<string, any>[],
+    artifact?: Record<string, any>,
+    analysis?: Record<string, any>
   },
   endedReason?: string,
   transcript?: string,
   summary?: string,
-  messages?: {
-  }[],
-  analysis?: {
-  },
-  artifact?: {
-  },
+  messages?: Record<string, any>[],
+  analysis?: Record<string, any>,
+  artifact?: Record<string, any>,
   timestamp?: string
 }
 ```
@@ -310,12 +309,9 @@ Sent when the call status changes
     startedAt?: string | null,
     endedAt?: string | null,
     cost?: number,
-    messages?: {
-    }[],
-    artifact?: {
-    },
-    analysis?: {
-    }
+    messages?: Record<string, any>[],
+    artifact?: Record<string, any>,
+    analysis?: Record<string, any>
   },
   status: string,
   timestamp?: string
@@ -385,12 +381,9 @@ Triggered when the assistant makes tool calls during a call
     startedAt?: string | null,
     endedAt?: string | null,
     cost?: number,
-    messages?: {
-    }[],
-    artifact?: {
-    },
-    analysis?: {
-    }
+    messages?: Record<string, any>[],
+    artifact?: Record<string, any>,
+    analysis?: Record<string, any>
   },
   toolCallList: {
     id: string,
@@ -400,8 +393,7 @@ Triggered when the assistant makes tool calls during a call
       arguments: string
     }
   }[],
-  toolWithToolCallList?: {
-  }[],
+  toolWithToolCallList?: Record<string, any>[],
   timestamp?: string
 }
 ```
@@ -473,12 +465,9 @@ Triggered when processing a transfer destination request
     startedAt?: string | null,
     endedAt?: string | null,
     cost?: number,
-    messages?: {
-    }[],
-    artifact?: {
-    },
-    analysis?: {
-    }
+    messages?: Record<string, any>[],
+    artifact?: Record<string, any>,
+    analysis?: Record<string, any>
   },
   timestamp?: string
 }
@@ -493,8 +482,7 @@ Triggered when processing a transfer destination request
 
 ```ts
 {
-  destination?: {
-  },
+  destination?: Record<string, any>,
   error?: string
 }
 ```

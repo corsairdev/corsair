@@ -1,0 +1,138 @@
+---
+title: "Polygon.io plugin"
+sidebarTitle: "Overview"
+description: "US stock market data from Polygon.io (now Massive) - historical aggregates, ticker reference data, snapshots and market status."
+---
+
+Use **Polygon.io** through Corsair: one client, typed API calls.
+
+Polygon.io renamed itself Massive in 2025: polygon.io now redirects to massive.com, and `api.polygon.io` and `api.massive.com` serve the same API. The plugin calls `api.polygon.io`. Create a key in the Massive dashboard under Keys and paste it into the plugin; it travels as the documented `apiKey` query parameter.
+
+What to know before you query:
+
+- **Plans gate the data, not the routes.** A free (Basic) key reaches market status and holidays, tickers, ticker types, exchanges and the end-of-day aggregates (`bars` by minute and up, `previousDay`, `dailySummary`, `marketSummary`). Snapshots, movers and second bars need a paid plan. When a plan does not include a dataset the API answers 403 `NOT_AUTHORIZED` rather than an empty result, and the plugin reports that as a permission error instead of retrying.
+- **`status` is not always `OK`.** A plan with delayed data answers `DELAYED`, so the field stays a string rather than an enum a future value could break.
+- **Paging.** `aggregates.bars` and `tickers.list` return `next_url` while another page exists (`marketSummary` answers every ticker in one page). It already carries the cursor and your filters, so pass it to the same operation as `nextUrl` and the other arguments are ignored. Any `apiKey` the URL echoes is dropped, because the plugin adds the caller's own.
+- **A missing bar is not an error.** `aggregates.bars` omits `results` when no qualifying trades happened in the window, so the plugin reads that as an empty page rather than a failed call. It does not mean the market was closed: an open session with no trades produces the same answer. Use `market.status` when you need the current market state.
+- **Rates.** The free tier allows 5 calls a minute. A 429 is retried by the transport three times, honouring any `Retry-After` the API sends; the plugin adds no retries of its own, so the budget is not multiplied.
+- **Webhooks.** The API sends none, so the plugin receives none.
+
+**What you get:**
+
+- 12 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/polygonio better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/polygonio better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/polygonio better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/polygonio better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { polygonio } from '@corsair-dev/polygonio';
+
+export const corsair = createCorsair({
+	plugins: [
+		polygonio(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Polygon.io API key before the first call: `pnpm corsair setup --plugin=polygonio --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+polygonio()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'polygonio',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List actively traded US stocks**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.polygonio.api.tickers.list({ market: 'stocks', active: true });
+```
+
+
+**Read a ticker's latest snapshot**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.polygonio.api.snapshots.snapshot({ ticker: 'AAPL' });
+```
+
+
+See the full list on the [API](/plugins/polygonio/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/polygonio/api">
+    Every `polygonio.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

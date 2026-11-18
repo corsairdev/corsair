@@ -64,8 +64,8 @@
           },
           {
             "key": "externalId",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           }
         ]
       }
@@ -91,7 +91,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, organizationId: string, name: string, externalId?: string | null }[]"
+            "type": "{ id: string, organizationId: string, name: string, externalId: string | null }[]"
           }
         ]
       }
@@ -223,33 +223,33 @@
           },
           {
             "key": "businessName",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "businessAddress1",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "businessAddress2",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "businessAddress3",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "businessCountry",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "businessTaxNumber",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           }
         ]
       }

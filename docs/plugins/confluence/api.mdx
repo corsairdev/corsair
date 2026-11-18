@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Confluence: every `confluence.api.*` operation with input and output types."
+title: "Confluence API reference"
+sidebarTitle: "API"
+description: "API reference for the Confluence plugin in Corsair: every `confluence.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `confluence.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -146,14 +145,10 @@ await corsair.confluence.api.pages.search({});
     type: string,
     status?: string,
     title: string,
-    childTypes?: {
-    },
-    macroRenderedOutput?: {
-    },
-    restrictions?: {
-    },
-    _expandable?: {
-    },
+    childTypes?: Record<string, any>,
+    macroRenderedOutput?: Record<string, any>,
+    restrictions?: Record<string, any>,
+    _expandable?: Record<string, string>,
     _links?: {
       webui?: string,
       self?: string,
@@ -228,7 +223,7 @@ await corsair.confluence.api.spaces.list({});
 | `start` | `number` | No | — |
 | `limit` | `number` | No | — |
 | `size` | `number` | No | — |
-| `_links` | `object` | No | — |
+| `_links` | `Record<string, string>` | No | — |
 
 <AccordionGroup>
 <Accordion title="results full type">
@@ -244,19 +239,9 @@ await corsair.confluence.api.spaces.list({});
   status?: string,
   description?: any,
   homepage?: any,
-  _expandable?: {
-  },
-  _links?: {
-  }
+  _expandable?: Record<string, string>,
+  _links?: Record<string, string>
 }[]
-```
-</Accordion>
-
-<Accordion title="_links full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>

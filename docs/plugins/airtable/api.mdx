@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Airtable: every `airtable.api.*` operation with input and output types."
+title: "Airtable API reference"
+sidebarTitle: "API"
+description: "API reference for the Airtable plugin in Corsair: every `airtable.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `airtable.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -72,7 +71,7 @@ await corsair.airtable.api.bases.getSchema({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `baseId` | `string` | Yes | — |
-| `include` | `visibleFieldIds \| fieldIdsInSynced[]` | No | — |
+| `include` | `(visibleFieldIds \| fieldIdsInSynced)[]` | No | — |
 
 
 
@@ -96,8 +95,7 @@ await corsair.airtable.api.bases.getSchema({});
     type: string,
     name: string,
     description?: string,
-    options?: {
-    }
+    options?: Record<string, any>
   }[],
   views: {
     id: string,
@@ -134,18 +132,8 @@ await corsair.airtable.api.records.create({});
 |------|------|----------|-------------|
 | `baseId` | `string` | Yes | — |
 | `tableIdOrName` | `string` | Yes | — |
-| `fields` | `object` | Yes | — |
+| `fields` | `Record<string, any>` | Yes | — |
 | `typecast` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="fields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -162,8 +150,7 @@ await corsair.airtable.api.records.create({});
 {
   id: string,
   createdTime: string,
-  fields: {
-  }
+  fields: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -191,19 +178,9 @@ await corsair.airtable.api.records.createOrUpdate({});
 |------|------|----------|-------------|
 | `baseId` | `string` | Yes | — |
 | `tableIdOrName` | `string` | Yes | — |
-| `fields` | `object` | Yes | — |
+| `fields` | `Record<string, any>` | Yes | — |
 | `fieldsToMergeOn` | `string[]` | Yes | — |
 | `typecast` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="fields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -220,8 +197,7 @@ await corsair.airtable.api.records.createOrUpdate({});
 {
   id: string,
   createdTime: string,
-  fields: {
-  }
+  fields: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -293,17 +269,7 @@ await corsair.airtable.api.records.get({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `createdTime` | `string` | Yes | — |
-| `fields` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="fields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `fields` | `Record<string, any>` | Yes | — |
 
 
 
@@ -367,8 +333,7 @@ await corsair.airtable.api.records.search({});
 {
   id: string,
   createdTime: string,
-  fields: {
-  }
+  fields: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -397,18 +362,8 @@ await corsair.airtable.api.records.update({});
 | `baseId` | `string` | Yes | — |
 | `tableIdOrName` | `string` | Yes | — |
 | `recordId` | `string` | Yes | — |
-| `fields` | `object` | Yes | — |
+| `fields` | `Record<string, any>` | Yes | — |
 | `typecast` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="fields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -425,8 +380,7 @@ await corsair.airtable.api.records.update({});
 {
   id: string,
   createdTime: string,
-  fields: {
-  }
+  fields: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -450,10 +404,25 @@ Get webhook payloads
 await corsair.airtable.api.webhooks.getPayloads({});
 ```
 
-**Input:** `unknown`
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `baseId` | `string` | Yes | — |
+| `webhookId` | `string` | Yes | — |
+| `cursor` | `number` | No | — |
+| `limit` | `number` | No | — |
 
 
-**Output:** `unknown`
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `number` | No | — |
+| `mightHaveMore` | `boolean` | No | — |
+| `payloads` | `any[]` | Yes | — |
+
 
 
 ---

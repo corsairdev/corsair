@@ -1,0 +1,2709 @@
+{
+  "id": "honeyhive",
+  "displayName": "HoneyHive",
+  "description": "AI agent observability and evaluation platform for tracing, evaluating, monitoring, and improving LLM applications.",
+  "npmPackageName": "@corsair-dev/honeyhive",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 49,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": [
+        "api_key",
+        "webhook_signature",
+        "base_url",
+        "data_plane_api_key",
+        "control_plane_api_key"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "honeyhive.api.configurations.create",
+      "shortPath": "configurations.create",
+      "description": "Create a new configuration",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "env",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "user_properties",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "acknowledged",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "insertedId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.configurations.delete",
+      "shortPath": "configurations.delete",
+      "description": "Delete a configuration",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "configId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "acknowledged",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "deletedCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.configurations.list",
+      "shortPath": "configurations.list",
+      "description": "List LLM and pipeline configurations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "env",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "configurations",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.configurations.update",
+      "shortPath": "configurations.update",
+      "description": "Update an existing configuration",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "configId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "env",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "user_properties",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "acknowledged",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "modifiedCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "upsertedId",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "upsertedCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "matchedCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.datasets.addDatapoints",
+      "shortPath": "datasets.addDatapoints",
+      "description": "Add datapoints to a dataset",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dataset_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "mapping",
+            "optional": false,
+            "type": "{ inputs?: string[], history?: string[], ground_truth?: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inserted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "datapoint_ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.datasets.create",
+      "shortPath": "datasets.create",
+      "description": "Create a new dataset in a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "datapoints",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inserted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.datasets.createLegacy",
+      "shortPath": "datasets.createLegacy",
+      "description": "Create a new dataset (legacy)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "datapoints",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inserted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.datasets.delete",
+      "shortPath": "datasets.delete",
+      "description": "Delete a dataset and its datapoints from a project",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dataset_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.datasets.deleteLegacy",
+      "shortPath": "datasets.deleteLegacy",
+      "description": "Delete a dataset (legacy)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dataset_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.datasets.list",
+      "shortPath": "datasets.list",
+      "description": "List datasets in a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dataset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasets",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.datasets.listLegacy",
+      "shortPath": "datasets.listLegacy",
+      "description": "List datasets (legacy)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dataset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasets",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.datasets.removeDatapoint",
+      "shortPath": "datasets.removeDatapoint",
+      "description": "Remove a datapoint from a dataset",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dataset_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datapoint_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dereferenced",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.datasets.update",
+      "shortPath": "datasets.update",
+      "description": "Update a dataset in a project; a datapoints list replaces its whole membership",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dataset_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "datapoints",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.datasets.updateLegacy",
+      "shortPath": "datasets.updateLegacy",
+      "description": "Update a dataset (legacy); a datapoints list replaces its whole membership",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dataset_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "datapoints",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.events.create",
+      "shortPath": "events.create",
+      "description": "Create a new trace event",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_type",
+            "optional": false,
+            "type": "chain | model | tool | session"
+          },
+          {
+            "key": "event_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "session_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "children_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "inputs",
+            "optional": false,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "outputs",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "feedback",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "metrics",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "user_properties",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "event_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.events.createBatch",
+      "shortPath": "events.createBatch",
+      "description": "Create a batch of trace events",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "events",
+            "optional": false,
+            "type": "{ project_id?: string, source?: string, event_name?: string, event_type: chain | model | tool | session, event_id?: string, session_id?: string, parent_id?: string, children_ids?: string[], config?: Record<string, any>, inputs: Record<string, any>, outputs?: Record<string, any>, error?: any, start_time?: number, end_time?: number, duration?: number, metadata?: Record<string, any>, feedback?: Record<string, any>, metrics?: Record<string, any>, user_properties?: Record<string, any> }[]"
+          },
+          {
+            "key": "single_session",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "session_properties",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "event_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "session_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.events.get",
+      "shortPath": "events.get",
+      "description": "Get a trace event by project and event ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.events.getLegacy",
+      "shortPath": "events.getLegacy",
+      "description": "Get a trace event by event ID (legacy)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.events.search",
+      "shortPath": "events.search",
+      "description": "Search trace events within a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ field: string, operator: string, value: any, type?: string | number | boolean | datetime }[]"
+          },
+          {
+            "key": "dateRange",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ignore_order",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "evaluation_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "events",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.events.searchLegacy",
+      "shortPath": "events.searchLegacy",
+      "description": "Search trace events (legacy)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ field: string, operator: string, value: any, type?: string | number | boolean | datetime }[]"
+          },
+          {
+            "key": "dateRange",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ignore_order",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "evaluation_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "events",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.events.update",
+      "shortPath": "events.update",
+      "description": "Update a trace event",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "feedback",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "metrics",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "outputs",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "user_properties",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "children_ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "event_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.experiments.compare",
+      "shortPath": "experiments.compare",
+      "description": "Compare two evaluation runs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "new_run_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "old_run_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "aggregate_function",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "metrics",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "commonDatapoints",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "event_details",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "old_run",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "new_run",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.experiments.compareEvents",
+      "shortPath": "experiments.compareEvents",
+      "description": "Compare events between two evaluation runs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "new_run_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "old_run_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "events",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "totalEvents",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.experiments.createRun",
+      "shortPath": "experiments.createRun",
+      "description": "Create an evaluation run in a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "run_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "dataset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "configuration",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "evaluators",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "session_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "datapoint_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "passing_ranges",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "evaluation",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "run_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.experiments.createRunLegacy",
+      "shortPath": "experiments.createRunLegacy",
+      "description": "Create an evaluation run (legacy)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "run_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "dataset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "configuration",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "evaluators",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "session_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "datapoint_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "passing_ranges",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "evaluation",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "run_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.experiments.deleteRun",
+      "shortPath": "experiments.deleteRun",
+      "description": "Delete an evaluation run",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "run_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.experiments.getMetrics",
+      "shortPath": "experiments.getMetrics",
+      "description": "Get metric events for an evaluation run",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "run_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dateRange",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "events",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "totalEvents",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.experiments.getRun",
+      "shortPath": "experiments.getRun",
+      "description": "Get evaluation run details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "run_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "evaluation",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.experiments.getRunLegacy",
+      "shortPath": "experiments.getRunLegacy",
+      "description": "Get evaluation run details (legacy)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "run_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "evaluation",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.experiments.getRunSchema",
+      "shortPath": "experiments.getRunSchema",
+      "description": "Get event schema for a single run",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "run_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dateRange",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "datasets",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "mappings",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.experiments.getRunsSchema",
+      "shortPath": "experiments.getRunsSchema",
+      "description": "Get event schema across runs in a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dateRange",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "datasets",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "mappings",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.experiments.getSummary",
+      "shortPath": "experiments.getSummary",
+      "description": "Get summary statistics for an evaluation run",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "run_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "aggregate_function",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "passed",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "failed",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "metrics",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "datapoints",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "event_details",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "run_object",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.experiments.listRuns",
+      "shortPath": "experiments.listRuns",
+      "description": "List evaluation runs in a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dataset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "run_ids",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateRange",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "evaluations",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "metrics",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.experiments.listRunsLegacy",
+      "shortPath": "experiments.listRunsLegacy",
+      "description": "List evaluation runs (legacy)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dataset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "run_ids",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateRange",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "evaluations",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "metrics",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.experiments.updateRun",
+      "shortPath": "experiments.updateRun",
+      "description": "Update an evaluation run",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "run_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "event_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "configuration",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "evaluators",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "session_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "datapoint_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "passing_ranges",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "evaluation",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.metrics.create",
+      "shortPath": "metrics.create",
+      "description": "Create a new evaluator metric",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "criteria",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "return_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enabled_in_prod",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sampling_percentage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "model_provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scale",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "threshold",
+            "optional": true,
+            "type": "{ min?: number, max?: number, pass_when?: boolean | number, passing_categories?: string[] } | null"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "{ category: string, score: number | null }[] | null"
+          },
+          {
+            "key": "needs_ground_truth",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "child_metrics",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ filterArray: Record<string, any>[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inserted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "metric_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.metrics.createVersion",
+      "shortPath": "metrics.createVersion",
+      "description": "Create a new version snapshot for a metric",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "metric_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ name: string, type: string, criteria: string }"
+          },
+          {
+            "key": "deploy_immediately",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.metrics.delete",
+      "shortPath": "metrics.delete",
+      "description": "Delete an evaluator metric",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "metric_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.metrics.deployVersion",
+      "shortPath": "metrics.deployVersion",
+      "description": "Deploy a specific version of a metric",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "metric_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version_name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.metrics.list",
+      "shortPath": "metrics.list",
+      "description": "List all metrics and evaluators",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "metrics",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.metrics.listVersions",
+      "shortPath": "metrics.listVersions",
+      "description": "List versions of a metric",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "metric_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.metrics.run",
+      "shortPath": "metrics.run",
+      "description": "Run an evaluator metric on an event",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "metric",
+            "optional": false,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "loading",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "explanation",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.metrics.update",
+      "shortPath": "metrics.update",
+      "description": "Update an evaluator metric",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "metric_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "criteria",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "return_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enabled_in_prod",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sampling_percentage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "model_provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scale",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "threshold",
+            "optional": true,
+            "type": "{ min?: number, max?: number, pass_when?: boolean | number, passing_categories?: string[] } | null"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "{ category: string, score: number | null }[] | null"
+          },
+          {
+            "key": "needs_ground_truth",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "child_metrics",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ filterArray: Record<string, any>[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Create a new project in a workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project_creator",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.projects.delete",
+      "shortPath": "projects.delete",
+      "description": "Delete (archive) a project",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Get details for a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.projects.update",
+      "shortPath": "projects.update",
+      "description": "Update a project name or description",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.sessions.create",
+      "shortPath": "sessions.create",
+      "description": "Start a new session",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "session_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "session_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "inputs",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "outputs",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "user_properties",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "children_ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "session_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "children_ids",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "event_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "event_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "inputs",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "outputs",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "user_properties",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "metrics",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "feedback",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "org_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "honeyhive.api.sessions.createEventBatch",
+      "shortPath": "sessions.createEventBatch",
+      "description": "Add a batch of events to a session",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "events",
+            "optional": false,
+            "type": "{ event_type: chain | model | tool | session, inputs: Record<string, any>, event_name?: string, config?: Record<string, any>, outputs?: Record<string, any>, error?: any, duration?: number, metadata?: Record<string, any>, feedback?: Record<string, any>, metrics?: Record<string, any>, user_properties?: Record<string, any>, start_time?: number, end_time?: number, children_ids?: string[], parent_id?: string, source?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

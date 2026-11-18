@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Xero: every `xero.api.*` operation with input and output types."
+title: "Xero API reference"
+sidebarTitle: "API"
+description: "API reference for the Xero plugin in Corsair: every `xero.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `xero.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -184,26 +183,8 @@ await corsair.xero.api.assets.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
-| `pagination` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="pagination full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `items` | `Record<string, any>[]` | Yes | — |
+| `pagination` | `Record<string, any>` | No | — |
 
 
 
@@ -513,8 +494,7 @@ await corsair.xero.api.budgets.get({});
   Type?: string,
   Description?: string,
   UpdatedDateUTC?: string,
-  BudgetLines?: {
-  }[]
+  BudgetLines?: Record<string, any>[]
 }[]
 ```
 </Accordion>
@@ -988,8 +968,7 @@ await corsair.xero.api.invoices.create({});
     ContactID: string,
     Name?: string
   },
-  LineItems?: {
-  }[],
+  LineItems?: Record<string, any>[],
   UpdatedDateUTC?: string
 }[]
 ```
@@ -1050,8 +1029,7 @@ await corsair.xero.api.invoices.get({});
     ContactID: string,
     Name?: string
   },
-  LineItems?: {
-  }[],
+  LineItems?: Record<string, any>[],
   UpdatedDateUTC?: string
 }[]
 ```
@@ -1120,8 +1098,7 @@ await corsair.xero.api.invoices.list({});
     ContactID: string,
     Name?: string
   },
-  LineItems?: {
-  }[],
+  LineItems?: Record<string, any>[],
   UpdatedDateUTC?: string
 }[]
 ```
@@ -1213,8 +1190,7 @@ await corsair.xero.api.invoices.update({});
     ContactID: string,
     Name?: string
   },
-  LineItems?: {
-  }[],
+  LineItems?: Record<string, any>[],
   UpdatedDateUTC?: string
 }[]
 ```
@@ -1295,10 +1271,8 @@ await corsair.xero.api.items.create({});
   Name?: string,
   Description?: string,
   PurchaseDescription?: string,
-  PurchaseDetails?: {
-  },
-  SalesDetails?: {
-  },
+  PurchaseDetails?: Record<string, any>,
+  SalesDetails?: Record<string, any>,
   IsSold?: boolean,
   IsPurchased?: boolean,
   IsTrackedAsInventory?: boolean,
@@ -1351,10 +1325,8 @@ await corsair.xero.api.items.get({});
   Name?: string,
   Description?: string,
   PurchaseDescription?: string,
-  PurchaseDetails?: {
-  },
-  SalesDetails?: {
-  },
+  PurchaseDetails?: Record<string, any>,
+  SalesDetails?: Record<string, any>,
   IsSold?: boolean,
   IsPurchased?: boolean,
   IsTrackedAsInventory?: boolean,
@@ -1410,10 +1382,8 @@ await corsair.xero.api.items.list({});
   Name?: string,
   Description?: string,
   PurchaseDescription?: string,
-  PurchaseDetails?: {
-  },
-  SalesDetails?: {
-  },
+  PurchaseDetails?: Record<string, any>,
+  SalesDetails?: Record<string, any>,
   IsSold?: boolean,
   IsPurchased?: boolean,
   IsTrackedAsInventory?: boolean,
@@ -1472,8 +1442,7 @@ await corsair.xero.api.journals.list({});
   JournalDate: string,
   JournalNumber: number,
   CreatedDateUTC: string,
-  JournalLines?: {
-  }[]
+  JournalLines?: Record<string, any>[]
 }[]
 ```
 </Accordion>
@@ -1521,8 +1490,7 @@ await corsair.xero.api.manualJournals.get({});
   Narration: string,
   Date?: string,
   Status?: string,
-  Lines?: {
-  }[]
+  Lines?: Record<string, any>[]
 }[]
 ```
 </Accordion>
@@ -1850,7 +1818,7 @@ await corsair.xero.api.projects.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `pagination` | `object` | No | — |
+| `pagination` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -1862,14 +1830,6 @@ await corsair.xero.api.projects.list({});
   contactId?: string,
   status?: string
 }[]
-```
-</Accordion>
-
-<Accordion title="pagination full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -2191,8 +2151,7 @@ await corsair.xero.api.reports.getBalanceSheet({});
   ReportName?: string,
   ReportType?: string,
   ReportDate?: string,
-  Rows?: {
-  }[]
+  Rows?: Record<string, any>[]
 }[]
 ```
 </Accordion>
@@ -2244,8 +2203,7 @@ await corsair.xero.api.reports.getProfitLoss({});
   ReportName?: string,
   ReportType?: string,
   ReportDate?: string,
-  Rows?: {
-  }[]
+  Rows?: Record<string, any>[]
 }[]
 ```
 </Accordion>

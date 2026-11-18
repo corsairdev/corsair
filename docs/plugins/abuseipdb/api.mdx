@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for AbuseIPDB: every `abuseipdb.api.*` operation with input and output types."
+title: "AbuseIPDB API reference"
+sidebarTitle: "API"
+description: "API reference for the AbuseIPDB plugin in Corsair: every `abuseipdb.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `abuseipdb.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -124,7 +123,7 @@ await corsair.abuseipdb.api.block.check({});
 | `minAddress` | `string` | Yes | — |
 | `maxAddress` | `string` | Yes | — |
 | `numPossibleHosts` | `number` | Yes | — |
-| `addressSpaceDesc` | `string` | No | — |
+| `addressSpaceDesc` | `string \| null` | No | — |
 | `reportedAddress` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -177,18 +176,18 @@ await corsair.abuseipdb.api.check.ip({});
 | `ipAddress` | `string` | Yes | — |
 | `isPublic` | `boolean` | Yes | — |
 | `ipVersion` | `number` | Yes | — |
-| `isWhitelisted` | `boolean` | No | — |
+| `isWhitelisted` | `boolean \| null` | Yes | — |
 | `abuseConfidenceScore` | `number` | Yes | — |
-| `countryCode` | `string` | No | — |
-| `countryName` | `string` | No | — |
-| `usageType` | `string` | No | — |
-| `isp` | `string` | No | — |
-| `domain` | `string` | No | — |
+| `countryCode` | `string \| null` | No | — |
+| `countryName` | `string \| null` | No | — |
+| `usageType` | `string \| null` | No | — |
+| `isp` | `string \| null` | No | — |
+| `domain` | `string \| null` | No | — |
 | `hostnames` | `string[]` | Yes | — |
 | `isTor` | `boolean` | Yes | — |
 | `totalReports` | `number` | Yes | — |
 | `numDistinctUsers` | `number` | Yes | — |
-| `lastReportedAt` | `string` | No | — |
+| `lastReportedAt` | `string \| null` | No | — |
 | `reports` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -281,8 +280,8 @@ await corsair.abuseipdb.api.reports.list({});
 | `count` | `number` | Yes | — |
 | `perPage` | `number` | Yes | — |
 | `lastPage` | `number` | Yes | — |
-| `nextPageUrl` | `string` | No | — |
-| `previousPageUrl` | `string` | No | — |
+| `nextPageUrl` | `string \| null` | No | — |
+| `previousPageUrl` | `string \| null` | No | — |
 | `results` | `object[]` | Yes | — |
 
 <AccordionGroup>

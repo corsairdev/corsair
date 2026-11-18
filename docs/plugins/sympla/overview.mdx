@@ -1,0 +1,146 @@
+---
+title: "Sympla plugin"
+sidebarTitle: "Overview"
+description: "Read a Sympla organizer's events, presentations, orders and participants, and check participants in."
+---
+
+Use **Sympla** through Corsair: one client, typed API calls, local DB sync.
+
+Things to know before you call:
+
+- **The token goes in the `s_token` header.** Create it in Sympla under Minha Conta &gt; Integrações &gt; Chave de acesso da API. With no token stored, Corsair raises `AuthMissingError` before any request; a token Sympla rejects comes back as HTTP 401 ("Invalid Token!").
+- **This is Sympla's v1.6.0 Public API.** Lists page with a cursor: pass `pagination.next_cursor` back as `cursor` until it is empty. `page_size` goes up to 200 (500 for participants).
+- **Ids.** `event_id` is the event id hash from `events.list`. Presentations are an event's sessions or dates; orders and participants can be read per event, per presentation or per order.
+- **Dates use a timezone.** `from`, `to` and returned dates are local to `timezone` (Sympla default America/Sao_Paulo). Null fields may be left out of replies.
+- **Personal data.** Orders and participants include buyer and participant names and emails. Corsair keeps them out of its event log; it stores only event ids and names.
+- **Check-ins can't be undone through the API**, so the three check-in operations are `destructive`. A second check-in of the same ticket answers HTTP 400 "Participant has already checked-in."
+
+**What you get:**
+
+- 15 typed API operations
+- 1 synced entity (`events`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/sympla better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/sympla better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/sympla better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/sympla better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { sympla } from '@corsair-dev/sympla';
+
+export const corsair = createCorsair({
+	plugins: [
+		sympla(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Sympla API key before the first call: `pnpm corsair setup --plugin=sympla --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+sympla()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'sympla',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the participants of an event**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.sympla.api.participants.list({ event_id: 'abc123def456', page_size: 100 });
+```
+
+
+**Check a participant in by ticket number**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.sympla.api.participants.checkInByTicketNumber({ event_id: 'abc123def456', ticket_number: '94461180000001' });
+```
+
+
+See the full list on the [API](/plugins/sympla/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.sympla.db.<entity>.search()` and `.list()`: `events`.
+
+See [Database](/plugins/sympla/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/sympla/api">
+    Every `sympla.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/sympla/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

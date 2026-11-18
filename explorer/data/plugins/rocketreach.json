@@ -1,0 +1,779 @@
+{
+  "id": "rocketreach",
+  "displayName": "RocketReach",
+  "description": "Person and company lookup and search, bulk lookup with status polling, and email verification with RocketReach.",
+  "npmPackageName": "@corsair-dev/rocketreach",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 9,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "rocketreach.api.account.get",
+      "shortPath": "account.get",
+      "description": "Read the account state, credit usage per pool and the current rate limits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null",
+            "description": "anonymous, test_user or registered."
+          },
+          {
+            "key": "credit_usage",
+            "optional": true,
+            "type": "{ credit_type?: string | null, allocated?: number | inf | null, used?: number | null, remaining?: number | inf | null }[] | null"
+          },
+          {
+            "key": "rate_limits",
+            "optional": true,
+            "type": "{ action?: string | null, duration?: string | null, limit?: number | null, used?: number | null, remaining?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rocketreach.api.account.universal",
+      "shortPath": "account.universal",
+      "description": "Read the universal-credits account: plan, daily call count and limit, credit usage by action and rate limits. The key RocketReach echoes back is stripped",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "plan",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, lookup_limit?: number | null, export_limit?: number | null } | null"
+          },
+          {
+            "key": "api_key_domain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "daily_api_num_calls",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "daily_api_limit",
+            "optional": true,
+            "type": "string | null",
+            "description": "A numeric string, as RocketReach sends it."
+          },
+          {
+            "key": "credit_usage",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          },
+          {
+            "key": "credit_usage_by_action",
+            "optional": true,
+            "type": "Record<string, JsonValue>[] | null"
+          },
+          {
+            "key": "rate_limits",
+            "optional": true,
+            "type": "{ action?: string | null, duration?: string | null, limit?: number | null, used?: number | null, remaining?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rocketreach.api.company.lookup",
+      "shortPath": "company.lookup",
+      "description": "Look up one company by domain, name, LinkedIn URL, ID or ticker, spending a lookup credit",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string",
+            "description": "Preferred identifier."
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string",
+            "description": "A RocketReach company ID."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedin_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ticker",
+            "optional": true,
+            "type": "string",
+            "description": "A stock ticker."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email_domain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "website_domain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ticker_symbol",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null",
+            "description": "Social links keyed by network."
+          },
+          {
+            "key": "year_founded",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ street?: string | null, city?: string | null, region?: string | null, country?: string | null, postal_code?: string | null } | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fax",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "num_employees",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "revenue",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "funding_investors",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "industry",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sic_codes",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "naics_codes",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "rr_profile_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "industry_keywords",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "techstack",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "industries",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "competitors",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "departments",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          },
+          {
+            "key": "company_growth",
+            "optional": true,
+            "type": "Record<string, JsonValue>[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rocketreach.api.company.search",
+      "shortPath": "company.search",
+      "description": "Search companies by name, domain, industry, size, revenue and other filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "{ name?: string[], domain?: string[], email_domain?: string[], website_url?: string[], industry?: string[], industry_keywords?: string[], employees?: string[], revenue?: string[], total_funding?: string[], publicly_traded?: string[], naics_code?: string[], sic_code?: string[], geo?: string[], location?: string[], techstack?: string[], competitors?: string[], keyword?: string[], link?: string[], phone?: string[] }",
+            "description": "At least one filter."
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "relevance | popularity | score"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: number | null, name?: string | null, email_domain?: string | null, ticker_symbol?: string | null, industry_str?: string | null, city?: string | null, region?: string | null, country_code?: string | null, linkedin_url?: string | null, logo_url?: string | null }[]"
+      }
+    },
+    {
+      "path": "rocketreach.api.email.verify",
+      "shortPath": "email.verify",
+      "description": "Verify whether one address can receive mail, with per-check detail; charges a verification credit, refunded when the answer is unknown or the address is malformed",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "The address to verify."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null",
+            "description": "The address, canonicalized."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "valid, invalid, catchall or unknown. invalid covers a malformed, disposable or risky address."
+          },
+          {
+            "key": "credits_charged",
+            "optional": true,
+            "type": "number | null",
+            "description": "1, or 0 when the result was refunded."
+          },
+          {
+            "key": "mx_record",
+            "optional": true,
+            "type": "string | null",
+            "description": "The domain's primary MX host. Null when it publishes none, so it is not on its own evidence that mail cannot be delivered."
+          },
+          {
+            "key": "checks",
+            "optional": true,
+            "type": "{ format_valid?: boolean | null, domain_valid?: boolean | null, disposable?: boolean | null, catchall?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rocketreach.api.person.bulkLookup",
+      "shortPath": "person.bulkLookup",
+      "description": "Start a bulk lookup of up to 100 people and return the RR-Request-ID to poll with person.checkStatus",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "queries",
+            "optional": false,
+            "type": "{ email?: string, id?: number | string, linkedin_url?: string, name?: string, current_employer?: string, title?: string, phone?: string, npi_number?: number | string, lookup_type?: standard | premium | premium (feeds disabled) | bulk | phone | enrich, return_cached_emails?: boolean }[]",
+            "description": "Between 1 and 100 people."
+          },
+          {
+            "key": "profile_list",
+            "optional": true,
+            "type": "string",
+            "description": "Add the looked-up profiles to this list. Defaults to API Bulk Lookup."
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The RR-Request-ID header, to poll person.checkStatus or match a webhook delivery."
+          }
+        ]
+      }
+    },
+    {
+      "path": "rocketreach.api.person.checkStatus",
+      "shortPath": "person.checkStatus",
+      "description": "Read the current state of one or more profile lookups by profile ID or RR-Request-ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": true,
+            "type": "(number | string)[]",
+            "description": "The profile IDs to check."
+          },
+          {
+            "key": "rr_request_id",
+            "optional": true,
+            "type": "string",
+            "description": "The RR-Request-ID from a lookup or bulk lookup. Takes priority over ids."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: number | null, status?: string | null, profile_list?: { id?: number | null, name?: string | null } | null, name?: string | null, linkedin_url?: string | null, connections?: number | null, links?: Record<string, JsonValue> | null, location?: string | null, city?: string | null, region?: string | null, country?: string | null, country_code?: string | null, birth_year?: number | null, current_title?: string | null, current_employer?: string | null, current_employer_id?: number | null, current_employer_domain?: string | null, current_employer_website?: string | null, current_employer_linkedin_url?: string | null, current_employer_industry?: string | null, current_employer_phone?: { number?: string | null, e164?: string | null, country_code?: string | null, extension?: string | null, type?: string | null, grade?: string | null, recommended?: boolean | null } | null, job_history?: { start_date?: string | null, end_date?: string | null, company?: string | null, company_name?: string | null, company_id?: number | null, company_linkedin_url?: string | null, company_city?: string | null, company_region?: string | null, company_country_code?: string | null, department?: string | null, title?: string | null, highest_level?: string | null, description?: string | null, last_updated?: string | null, sub_department?: string | null, is_current?: boolean | null }[] | null, education?: { major?: string | null, school?: string | null, degree?: string | null, start?: number | null, end?: number | null }[] | null, skills?: string[] | null, npi_data?: Record<string, JsonValue> | null, tags?: string | null, return_cached_emails?: boolean | null, linkedin_url_active?: boolean | null, recommended_email?: string | null, recommended_personal_email?: string | null, recommended_professional_email?: string | null, current_work_email?: string | null, current_personal_email?: string | null, emails?: { email?: string | null, smtp_valid?: string | null, type?: string | null, last_validation_check?: string | null, grade?: string | null }[] | null, phones?: { number?: string | null, e164?: string | null, country_code?: string | null, extension?: string | null, type?: string | null, grade?: string | null, recommended?: boolean | null }[] | null, metadata?: Record<string, JsonValue> | null }[]"
+      }
+    },
+    {
+      "path": "rocketreach.api.person.lookup",
+      "shortPath": "person.lookup",
+      "description": "Look up one person by email, LinkedIn URL, ID, phone, NPI number or name and employer, spending a lookup credit; a status other than complete means poll person.checkStatus",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "An email address."
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string",
+            "description": "A RocketReach profile ID."
+          },
+          {
+            "key": "linkedin_url",
+            "optional": true,
+            "type": "string",
+            "description": "Such as www.linkedin.com/in/jamesgullbrand."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Requires current_employer as well."
+          },
+          {
+            "key": "current_employer",
+            "optional": true,
+            "type": "string",
+            "description": "Requires name as well."
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string",
+            "description": "E.164 or international format."
+          },
+          {
+            "key": "npi_number",
+            "optional": true,
+            "type": "number | string",
+            "description": "For a US healthcare professional."
+          },
+          {
+            "key": "lookup_type",
+            "optional": true,
+            "type": "standard | premium | premium (feeds disabled) | bulk | phone | enrich",
+            "description": "standard is the default."
+          },
+          {
+            "key": "return_cached_emails",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include cached emails in a progress answer. False nulls every email field until the lookup finishes."
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "number",
+            "description": "Post the finished result to this webhook instead of polling."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null",
+            "description": "The RocketReach profile ID."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "complete, progress, searching or not queued. Anything but complete means the answer is not final yet; poll person.checkStatus."
+          },
+          {
+            "key": "profile_list",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null } | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "linkedin_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "connections",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null",
+            "description": "Social links keyed by network."
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "birth_year",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "current_title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "current_employer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "current_employer_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "current_employer_domain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "current_employer_website",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "current_employer_linkedin_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "current_employer_industry",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "current_employer_phone",
+            "optional": true,
+            "type": "{ number?: string | null, e164?: string | null, country_code?: string | null, extension?: string | null, type?: string | null, grade?: string | null, recommended?: boolean | null } | null"
+          },
+          {
+            "key": "job_history",
+            "optional": true,
+            "type": "{ start_date?: string | null, end_date?: string | null, company?: string | null, company_name?: string | null, company_id?: number | null, company_linkedin_url?: string | null, company_city?: string | null, company_region?: string | null, company_country_code?: string | null, department?: string | null, title?: string | null, highest_level?: string | null, description?: string | null, last_updated?: string | null, sub_department?: string | null, is_current?: boolean | null }[] | null"
+          },
+          {
+            "key": "education",
+            "optional": true,
+            "type": "{ major?: string | null, school?: string | null, degree?: string | null, start?: number | null, end?: number | null }[] | null"
+          },
+          {
+            "key": "skills",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "npi_data",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null",
+            "description": "Present for a US healthcare professional."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "return_cached_emails",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True when cached emails were included in this synchronous answer."
+          },
+          {
+            "key": "linkedin_url_active",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "recommended_email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recommended_personal_email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recommended_professional_email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "current_work_email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "current_personal_email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "{ email?: string | null, smtp_valid?: string | null, type?: string | null, last_validation_check?: string | null, grade?: string | null }[] | null"
+          },
+          {
+            "key": "phones",
+            "optional": true,
+            "type": "{ number?: string | null, e164?: string | null, country_code?: string | null, extension?: string | null, type?: string | null, grade?: string | null, recommended?: boolean | null }[] | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rocketreach.api.person.search",
+      "shortPath": "person.search",
+      "description": "Search people by title, employer, skills, school and other filters, returning summaries without contact details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "{ name?: string[], current_title?: string[], previous_title?: string[], current_or_previous_title?: string[], employer?: string[], previous_employer?: string[], company_domain?: string[], company_name?: string[], company_industry?: string[], company_size?: string[], company_revenue?: string[], company_publicly_traded?: string[], company_naics_code?: string[], company_sic_code?: string[], department?: string[], management_levels?: string[], skills?: string[], all_skills?: string[], geo?: string[], country_code?: string[], state?: string[], email?: string[], email_grade?: string, phone?: string[], phone_grade?: string[], contact_method?: string[], linkedin_url?: string[], school?: string[], degree?: string[], major?: string[], years_experience?: string[], keyword?: string, keywords?: string, update_time?: string[] }",
+            "description": "At least one filter."
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number",
+            "description": "1-based result to start at."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 10, maximum 100."
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "relevance | popularity | score",
+            "description": "Defaults to relevance."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: number | null, status?: string | null, name?: string | null, linkedin_url?: string | null, connections?: number | null, links?: Record<string, JsonValue> | null, location?: string | null, city?: string | null, region?: string | null, country?: string | null, country_code?: string | null, birth_year?: number | null, current_title?: string | null, current_employer?: string | null, current_employer_id?: number | null, current_employer_domain?: string | null, current_employer_website?: string | null, current_employer_linkedin_url?: string | null, region_latitude?: number | null, region_longitude?: number | null, teaser?: Record<string, JsonValue> | null, suppressed?: string | null, update_time?: string | null }[]"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

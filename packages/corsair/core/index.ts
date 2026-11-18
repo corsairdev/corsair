@@ -7,7 +7,11 @@ import {
 	CORSAIR_TUNNEL_ZONE,
 } from '../hub/tunnel/constants';
 import { createMissingConfigProxy } from './auth/errors';
-import type { CorsairSingleTenantClient, CorsairTenantWrapper } from './client';
+import type {
+	CorsairSingleTenantClient,
+	CorsairTenantWrapper,
+	WithTenantOptions,
+} from './client';
 import { buildCorsairClient, buildIntegrationKeys } from './client';
 import { buildCloudCorsair, hasCloudBaseUrl } from './cloud';
 import { resolveRootPermissionsConfig } from './config/resolve-root-permissions';
@@ -31,9 +35,11 @@ export type CorsairInternalConfig = {
 	database: CorsairDatabase | undefined;
 	kek: string;
 	multiTenancy: boolean;
+	multiAccount: boolean;
 	permissions?: CorsairPermissionsOptions;
 	manual?: CorsairManualConfig;
 	hub?: HubConfig;
+	encryptDataAtRest: boolean;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -70,6 +76,12 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 	config: CorsairIntegration<Plugins>,
 ): CorsairSingleTenantClient<Plugins> | CorsairTenantWrapper<Plugins> {
+	if (config.multiAccount === true && !config.multiTenancy) {
+		throw new Error(
+			'createCorsair: multiAccount requires multiTenancy: accounts are chosen per tenant with withTenant(tenantId, { accounts })',
+		);
+	}
+
 	if (
 		config.hub?.projectApiKey?.startsWith('ck_cloud_') &&
 		hasCloudBaseUrl(config.hub)
@@ -78,12 +90,13 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 	}
 
 	const resolvedDatabase = config.database
-		? createCorsairDatabase(config.database)
+		? createCorsairDatabase(config.database, { dbTables: config.dbTables })
 		: undefined;
 
 	// Empty kek is tolerated at construction (plugin-only clients, env-less build
 	// steps); it's rejected where used — key access via createMissingConfigProxy,
-	// OAuth state signing/verification in core/auth/state.ts.
+	// OAuth state signing/verification in core/auth/state.ts, and any write while
+	// encryptDataAtRest is on.
 	const kek = config.kek ?? '';
 
 	// Build integration-level keys when database + KEK are configured;
@@ -105,9 +118,16 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 		database: resolvedDatabase,
 		kek,
 		multiTenancy: !!config.multiTenancy,
+		multiAccount: config.multiAccount === true,
 		permissions: rootPermissions,
 		manual: config.manual,
-		hub: config.hub ? resolveHubConfigInput(config.hub) : undefined,
+		hub: config.hub
+			? resolveHubConfigInput({
+					...config.hub,
+					multiAccount: config.multiAccount === true,
+				})
+			: undefined,
+		encryptDataAtRest: config.encryptDataAtRest === true,
 	};
 
 	const permissions = buildPermissionsNamespace(resolvedDatabase);
@@ -116,7 +136,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 	if (config.multiTenancy) {
 		const tenantWrapper = Object.assign(
 			{
-				withTenant: (tenantId: string) => {
+				withTenant: (tenantId: string, options?: WithTenantOptions) => {
 					if (!tenantId) {
 						throw new Error(
 							'corsair.withTenant(tenantId): tenantId must be a non-empty string',
@@ -131,6 +151,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 						manualConfig: config.manual,
 						hubConfig: internalConfig.hub,
 						internalConfig,
+						accounts: options?.accounts ?? {},
 					});
 					return Object.assign(client as object, {
 						[CORSAIR_INTERNAL]: internalConfig,
@@ -294,6 +315,8 @@ function maybeStartTunnel(
 export type { EventLoggingContext } from '../plugins/utils/events';
 // Event logging utilities for plugins
 export { logEvent, logEventFromContext } from '../plugins/utils/events';
+export type { Account } from './account-lookup';
+export { AccountSelectionError } from './account-lookup';
 export type {
 	AccountFieldNames,
 	AccountKeyManagerFor,
@@ -323,6 +346,7 @@ export {
 	getOAuthAccessToken,
 	initializeAccountDEK,
 	initializeIntegrationDEK,
+	OAuthRefreshError,
 	ReconnectRequiredError,
 	reEncryptConfig,
 } from './auth';
@@ -345,10 +369,15 @@ export type {
 export type {
 	CorsairCloudConfig,
 	CorsairCloudInstance,
+	CorsairCloudInstanceHandle,
+	CorsairCloudManage,
 	CorsairCloudRegistry,
 } from './cloud';
 // Cloud surface (corsairCloud)
 export { corsairCloud } from './cloud';
+export type * from './cloud/v1';
+// Corsair Cloud management API: error type and wire shapes
+export { CloudApiError } from './cloud/v1';
 // Connect link utilities
 export type { ResolveConnectLinkResult } from './connect';
 export { resolveConnectLink } from './connect';
@@ -394,17 +423,32 @@ export type {
 	PluginDocsIntrospection,
 } from './inspect';
 export { formatDocSchemaShape, introspectPluginForDocs } from './inspect';
+// The readonly check lives in callPluginDb, not on the entity clients.
+export {
+	callPluginDb,
+	DB_METHOD_RISK,
+	decodeDbArgs,
+	encodeDbArgs,
+} from './management/db';
+// The runtime plane throws this one, so a caller needs it to tell a provider
+// failure from a transport failure. CloudApiError extends it.
+export { ManagementApiError } from './management/errors';
 export type {
+	AccountModes,
 	CorsairPermissionsNamespace,
 	EnforcePermissionOptions,
 	EnforcePermissionResult,
+	ModeScope,
 } from './permissions';
 export {
+	activeMode,
+	assertModeAllows,
 	assertReadonlyAllowed,
 	isReadonlyScopeActive,
 	PermissionRequiredError,
 	ReadonlyForbiddenError,
 	runReadonly,
+	runWithMode,
 } from './permissions';
 // Plugin types
 export type {
@@ -417,6 +461,7 @@ export type {
 	CorsairPluginSubscribe,
 	CorsairPluginSubscribeResult,
 	EndpointHooks,
+	EndpointJob,
 	EndpointMetaEntry,
 	EndpointRiskLevel,
 	KeyBuilderContext,

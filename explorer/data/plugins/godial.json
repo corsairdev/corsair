@@ -1,0 +1,224 @@
+{
+  "id": "godial",
+  "displayName": "GoDial",
+  "description": "List GoDial contact lists and add contacts to a selected list through the documented external API.",
+  "npmPackageName": "@corsair-dev/godial",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 2,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "godial.api.contacts.add",
+      "shortPath": "contacts.add",
+      "description": "Add a contact (lead) to a GoDial list; assignmentMode or accountsId assigns it to an agent for calling",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "secondPhone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "remarks",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "extra",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignmentMode",
+            "optional": true,
+            "type": "default | roundrobin"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{ name: string, value: string }[]"
+          },
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "accountsId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source_marketing",
+            "optional": true,
+            "type": "{ source?: string, medium?: string, campaign?: string, term?: string, content?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "secondPhone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "remarks",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "extra",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "listId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "companyId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "stageId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "called",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "dnc",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "leadScore",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "source_marketing",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "godial.api.lists.list",
+      "shortPath": "lists.list",
+      "description": "List the authenticated GoDial account’s lists",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string | number, name?: string | null, system?: boolean | null, callScript?: string | null, companyId?: string | number | null, teamsId?: string | number | null, indiamart?: { enabled?: boolean | null } | null }[]"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

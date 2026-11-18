@@ -101,7 +101,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -136,12 +136,12 @@
           {
             "key": "customer",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "paid",
@@ -161,22 +161,22 @@
           {
             "key": "payment_intent",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "failure_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "failure_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       }
@@ -227,12 +227,12 @@
           {
             "key": "customer",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "paid",
@@ -252,22 +252,22 @@
           {
             "key": "payment_intent",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "failure_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "failure_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       }
@@ -328,7 +328,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, object: charge, amount: number, currency: string, status: string, customer?: string | null, description?: string | null, paid?: boolean, refunded?: boolean, created?: number, payment_intent?: string | null, failure_code?: string | null, failure_message?: string | null, metadata?: {} }[]"
+            "type": "{ id: string, object: charge, amount: number, currency: string, status: string, customer?: string | null, description?: string | null, paid?: boolean, refunded?: boolean, created?: number, payment_intent?: string | null, failure_code?: string | null, failure_message?: string | null, metadata?: Record<string, string> }[]"
           }
         ]
       }
@@ -354,7 +354,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "receipt_email",
@@ -364,7 +364,7 @@
           {
             "key": "shipping",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -399,12 +399,12 @@
           {
             "key": "customer",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "paid",
@@ -424,22 +424,22 @@
           {
             "key": "payment_intent",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "failure_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "failure_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       }
@@ -495,7 +495,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -515,22 +515,22 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "amount_off",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "percent_off",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "currency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "duration",
@@ -540,12 +540,12 @@
           {
             "key": "duration_in_months",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "max_redemptions",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "times_redeemed",
@@ -570,7 +570,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       }
@@ -621,7 +621,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, object: coupon, name?: string | null, amount_off?: number | null, percent_off?: number | null, currency?: string | null, duration?: string, duration_in_months?: number | null, max_redemptions?: number | null, times_redeemed?: number, valid?: boolean, created?: number, livemode?: boolean, metadata?: {} }[]"
+            "type": "{ id: string, object: coupon, name?: string | null, amount_off?: number | null, percent_off?: number | null, currency?: string | null, duration?: string, duration_in_months?: number | null, max_redemptions?: number | null, times_redeemed?: number, valid?: boolean, created?: number, livemode?: boolean, metadata?: Record<string, string> }[]"
           }
         ]
       }
@@ -657,7 +657,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -677,27 +677,27 @@
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "currency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "balance",
@@ -717,7 +717,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       }
@@ -789,27 +789,27 @@
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "currency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "balance",
@@ -829,7 +829,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       }
@@ -885,7 +885,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, object: customer, email?: string | null, name?: string | null, phone?: string | null, description?: string | null, currency?: string | null, balance?: number, created?: number, livemode?: boolean, metadata?: {} }[]"
+            "type": "{ id: string, object: customer, email?: string | null, name?: string | null, phone?: string | null, description?: string | null, currency?: string | null, balance?: number, created?: number, livemode?: boolean, metadata?: Record<string, string> }[]"
           }
         ]
       }
@@ -931,7 +931,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -966,12 +966,12 @@
           {
             "key": "customer",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created",
@@ -981,27 +981,27 @@
           {
             "key": "payment_method",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "client_secret",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "canceled_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "cancellation_reason",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       }
@@ -1052,12 +1052,12 @@
           {
             "key": "customer",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created",
@@ -1067,27 +1067,27 @@
           {
             "key": "payment_method",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "client_secret",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "canceled_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "cancellation_reason",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       }
@@ -1143,7 +1143,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, object: payment_intent, amount: number, currency: string, status: string, customer?: string | null, description?: string | null, created?: number, payment_method?: string | null, client_secret?: string | null, canceled_at?: number | null, cancellation_reason?: string | null, metadata?: {} }[]"
+            "type": "{ id: string, object: payment_intent, amount: number, currency: string, status: string, customer?: string | null, description?: string | null, created?: number, payment_method?: string | null, client_secret?: string | null, canceled_at?: number | null, cancellation_reason?: string | null, metadata?: Record<string, string> }[]"
           }
         ]
       }
@@ -1189,7 +1189,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -1224,12 +1224,12 @@
           {
             "key": "customer",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created",
@@ -1239,27 +1239,27 @@
           {
             "key": "payment_method",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "client_secret",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "canceled_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "cancellation_reason",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       }
@@ -1305,7 +1305,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -1335,12 +1335,12 @@
           {
             "key": "unit_amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "nickname",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "product",
@@ -1355,7 +1355,7 @@
           {
             "key": "recurring",
             "optional": true,
-            "type": "{ interval: string, interval_count: number }"
+            "type": "{ interval: string, interval_count: number } | null"
           },
           {
             "key": "created",
@@ -1370,7 +1370,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       }
@@ -1441,7 +1441,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, object: price, active?: boolean, currency?: string, unit_amount?: number | null, nickname?: string | null, product?: string, type?: string, recurring?: { interval: string, interval_count: number } | null, created?: number, livemode?: boolean, metadata?: {} }[]"
+            "type": "{ id: string, object: price, active?: boolean, currency?: string, unit_amount?: number | null, nickname?: string | null, product?: string, type?: string, recurring?: { interval: string, interval_count: number } | null, created?: number, livemode?: boolean, metadata?: Record<string, string> }[]"
           }
         ]
       }
@@ -1477,17 +1477,17 @@
           {
             "key": "owner",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "redirect",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "token",
@@ -1517,12 +1517,12 @@
           {
             "key": "amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "currency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -1542,7 +1542,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       }
@@ -1583,12 +1583,12 @@
           {
             "key": "amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "currency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -1608,7 +1608,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       }
@@ -1629,12 +1629,12 @@
           {
             "key": "bank_account",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "pii",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1691,7 +1691,7 @@
           {
             "key": "api_version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created",
@@ -1711,16 +1711,16 @@
           {
             "key": "request",
             "optional": true,
-            "type": "{ id?: string | null, idempotency_key?: string | null }"
+            "type": "{ id?: string | null, idempotency_key?: string | null } | null"
           },
           {
             "key": "data",
             "optional": false,
-            "type": "{ object: { id: string, object: charge, amount: number, currency: string, status: string, customer?: string | null, description?: string | null, paid?: boolean, refunded?: boolean, created?: number, payment_intent?: string | null, failure_code?: string | null, failure_message?: string | null, metadata?: {} } }"
+            "type": "{ object: { id: string, object: charge, amount: number, currency: string, status: string, customer?: string | null, description?: string | null, paid?: boolean, refunded?: boolean, created?: number, payment_intent?: string | null, failure_code?: string | null, failure_message?: string | null, metadata?: Record<string, string> } }"
           }
         ]
       },
-      "responseType": "{ id: string, object: event, api_version?: string | null, created: number, livemode: boolean, type: charge.failed, request?: { id?: string | null, idempotency_key?: string | null } | null, data: { object: { id: string, object: charge, amount: number, currency: string, status: string, customer?: string | null, description?: string | null, paid?: boolean, refunded?: boolean, created?: number, payment_intent?: string | null, failure_code?: string | null, failure_message?: string | null, metadata?: {} } } }",
+      "responseType": "{ id: string, object: event, api_version?: string | null, created: number, livemode: boolean, type: charge.failed, request?: { id?: string | null, idempotency_key?: string | null } | null, data: { object: { id: string, object: charge, amount: number, currency: string, status: string, customer?: string | null, description?: string | null, paid?: boolean, refunded?: boolean, created?: number, payment_intent?: string | null, failure_code?: string | null, failure_message?: string | null, metadata?: Record<string, string> } } }",
       "usageExample": "stripe({\n    webhookHooks: {\n        charge: {\n            failed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -1743,7 +1743,7 @@
           {
             "key": "api_version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created",
@@ -1763,16 +1763,16 @@
           {
             "key": "request",
             "optional": true,
-            "type": "{ id?: string | null, idempotency_key?: string | null }"
+            "type": "{ id?: string | null, idempotency_key?: string | null } | null"
           },
           {
             "key": "data",
             "optional": false,
-            "type": "{ object: { id: string, object: charge, amount: number, currency: string, status: string, customer?: string | null, description?: string | null, paid?: boolean, refunded?: boolean, created?: number, payment_intent?: string | null, failure_code?: string | null, failure_message?: string | null, metadata?: {} } }"
+            "type": "{ object: { id: string, object: charge, amount: number, currency: string, status: string, customer?: string | null, description?: string | null, paid?: boolean, refunded?: boolean, created?: number, payment_intent?: string | null, failure_code?: string | null, failure_message?: string | null, metadata?: Record<string, string> } }"
           }
         ]
       },
-      "responseType": "{ id: string, object: event, api_version?: string | null, created: number, livemode: boolean, type: charge.refunded, request?: { id?: string | null, idempotency_key?: string | null } | null, data: { object: { id: string, object: charge, amount: number, currency: string, status: string, customer?: string | null, description?: string | null, paid?: boolean, refunded?: boolean, created?: number, payment_intent?: string | null, failure_code?: string | null, failure_message?: string | null, metadata?: {} } } }",
+      "responseType": "{ id: string, object: event, api_version?: string | null, created: number, livemode: boolean, type: charge.refunded, request?: { id?: string | null, idempotency_key?: string | null } | null, data: { object: { id: string, object: charge, amount: number, currency: string, status: string, customer?: string | null, description?: string | null, paid?: boolean, refunded?: boolean, created?: number, payment_intent?: string | null, failure_code?: string | null, failure_message?: string | null, metadata?: Record<string, string> } } }",
       "usageExample": "stripe({\n    webhookHooks: {\n        charge: {\n            refunded: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -1795,7 +1795,7 @@
           {
             "key": "api_version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created",
@@ -1815,16 +1815,16 @@
           {
             "key": "request",
             "optional": true,
-            "type": "{ id?: string | null, idempotency_key?: string | null }"
+            "type": "{ id?: string | null, idempotency_key?: string | null } | null"
           },
           {
             "key": "data",
             "optional": false,
-            "type": "{ object: { id: string, object: charge, amount: number, currency: string, status: string, customer?: string | null, description?: string | null, paid?: boolean, refunded?: boolean, created?: number, payment_intent?: string | null, failure_code?: string | null, failure_message?: string | null, metadata?: {} } }"
+            "type": "{ object: { id: string, object: charge, amount: number, currency: string, status: string, customer?: string | null, description?: string | null, paid?: boolean, refunded?: boolean, created?: number, payment_intent?: string | null, failure_code?: string | null, failure_message?: string | null, metadata?: Record<string, string> } }"
           }
         ]
       },
-      "responseType": "{ id: string, object: event, api_version?: string | null, created: number, livemode: boolean, type: charge.succeeded, request?: { id?: string | null, idempotency_key?: string | null } | null, data: { object: { id: string, object: charge, amount: number, currency: string, status: string, customer?: string | null, description?: string | null, paid?: boolean, refunded?: boolean, created?: number, payment_intent?: string | null, failure_code?: string | null, failure_message?: string | null, metadata?: {} } } }",
+      "responseType": "{ id: string, object: event, api_version?: string | null, created: number, livemode: boolean, type: charge.succeeded, request?: { id?: string | null, idempotency_key?: string | null } | null, data: { object: { id: string, object: charge, amount: number, currency: string, status: string, customer?: string | null, description?: string | null, paid?: boolean, refunded?: boolean, created?: number, payment_intent?: string | null, failure_code?: string | null, failure_message?: string | null, metadata?: Record<string, string> } } }",
       "usageExample": "stripe({\n    webhookHooks: {\n        charge: {\n            succeeded: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -1847,7 +1847,7 @@
           {
             "key": "api_version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created",
@@ -1867,16 +1867,16 @@
           {
             "key": "request",
             "optional": true,
-            "type": "{ id?: string | null, idempotency_key?: string | null }"
+            "type": "{ id?: string | null, idempotency_key?: string | null } | null"
           },
           {
             "key": "data",
             "optional": false,
-            "type": "{ object: { id: string, object: coupon, name?: string | null, amount_off?: number | null, percent_off?: number | null, currency?: string | null, duration?: string, duration_in_months?: number | null, max_redemptions?: number | null, times_redeemed?: number, valid?: boolean, created?: number, livemode?: boolean, metadata?: {} } }"
+            "type": "{ object: { id: string, object: coupon, name?: string | null, amount_off?: number | null, percent_off?: number | null, currency?: string | null, duration?: string, duration_in_months?: number | null, max_redemptions?: number | null, times_redeemed?: number, valid?: boolean, created?: number, livemode?: boolean, metadata?: Record<string, string> } }"
           }
         ]
       },
-      "responseType": "{ id: string, object: event, api_version?: string | null, created: number, livemode: boolean, type: coupon.created, request?: { id?: string | null, idempotency_key?: string | null } | null, data: { object: { id: string, object: coupon, name?: string | null, amount_off?: number | null, percent_off?: number | null, currency?: string | null, duration?: string, duration_in_months?: number | null, max_redemptions?: number | null, times_redeemed?: number, valid?: boolean, created?: number, livemode?: boolean, metadata?: {} } } }",
+      "responseType": "{ id: string, object: event, api_version?: string | null, created: number, livemode: boolean, type: coupon.created, request?: { id?: string | null, idempotency_key?: string | null } | null, data: { object: { id: string, object: coupon, name?: string | null, amount_off?: number | null, percent_off?: number | null, currency?: string | null, duration?: string, duration_in_months?: number | null, max_redemptions?: number | null, times_redeemed?: number, valid?: boolean, created?: number, livemode?: boolean, metadata?: Record<string, string> } } }",
       "usageExample": "stripe({\n    webhookHooks: {\n        coupon: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -1899,7 +1899,7 @@
           {
             "key": "api_version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created",
@@ -1919,16 +1919,16 @@
           {
             "key": "request",
             "optional": true,
-            "type": "{ id?: string | null, idempotency_key?: string | null }"
+            "type": "{ id?: string | null, idempotency_key?: string | null } | null"
           },
           {
             "key": "data",
             "optional": false,
-            "type": "{ object: { id: string, object: coupon, name?: string | null, amount_off?: number | null, percent_off?: number | null, currency?: string | null, duration?: string, duration_in_months?: number | null, max_redemptions?: number | null, times_redeemed?: number, valid?: boolean, created?: number, livemode?: boolean, metadata?: {} } }"
+            "type": "{ object: { id: string, object: coupon, name?: string | null, amount_off?: number | null, percent_off?: number | null, currency?: string | null, duration?: string, duration_in_months?: number | null, max_redemptions?: number | null, times_redeemed?: number, valid?: boolean, created?: number, livemode?: boolean, metadata?: Record<string, string> } }"
           }
         ]
       },
-      "responseType": "{ id: string, object: event, api_version?: string | null, created: number, livemode: boolean, type: coupon.deleted, request?: { id?: string | null, idempotency_key?: string | null } | null, data: { object: { id: string, object: coupon, name?: string | null, amount_off?: number | null, percent_off?: number | null, currency?: string | null, duration?: string, duration_in_months?: number | null, max_redemptions?: number | null, times_redeemed?: number, valid?: boolean, created?: number, livemode?: boolean, metadata?: {} } } }",
+      "responseType": "{ id: string, object: event, api_version?: string | null, created: number, livemode: boolean, type: coupon.deleted, request?: { id?: string | null, idempotency_key?: string | null } | null, data: { object: { id: string, object: coupon, name?: string | null, amount_off?: number | null, percent_off?: number | null, currency?: string | null, duration?: string, duration_in_months?: number | null, max_redemptions?: number | null, times_redeemed?: number, valid?: boolean, created?: number, livemode?: boolean, metadata?: Record<string, string> } } }",
       "usageExample": "stripe({\n    webhookHooks: {\n        coupon: {\n            deleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -1951,7 +1951,7 @@
           {
             "key": "api_version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created",
@@ -1971,16 +1971,16 @@
           {
             "key": "request",
             "optional": true,
-            "type": "{ id?: string | null, idempotency_key?: string | null }"
+            "type": "{ id?: string | null, idempotency_key?: string | null } | null"
           },
           {
             "key": "data",
             "optional": false,
-            "type": "{ object: { id: string, object: customer, email?: string | null, name?: string | null, phone?: string | null, description?: string | null, currency?: string | null, balance?: number, created?: number, livemode?: boolean, metadata?: {} } }"
+            "type": "{ object: { id: string, object: customer, email?: string | null, name?: string | null, phone?: string | null, description?: string | null, currency?: string | null, balance?: number, created?: number, livemode?: boolean, metadata?: Record<string, string> } }"
           }
         ]
       },
-      "responseType": "{ id: string, object: event, api_version?: string | null, created: number, livemode: boolean, type: customer.created, request?: { id?: string | null, idempotency_key?: string | null } | null, data: { object: { id: string, object: customer, email?: string | null, name?: string | null, phone?: string | null, description?: string | null, currency?: string | null, balance?: number, created?: number, livemode?: boolean, metadata?: {} } } }",
+      "responseType": "{ id: string, object: event, api_version?: string | null, created: number, livemode: boolean, type: customer.created, request?: { id?: string | null, idempotency_key?: string | null } | null, data: { object: { id: string, object: customer, email?: string | null, name?: string | null, phone?: string | null, description?: string | null, currency?: string | null, balance?: number, created?: number, livemode?: boolean, metadata?: Record<string, string> } } }",
       "usageExample": "stripe({\n    webhookHooks: {\n        customer: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2003,7 +2003,7 @@
           {
             "key": "api_version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created",
@@ -2023,16 +2023,16 @@
           {
             "key": "request",
             "optional": true,
-            "type": "{ id?: string | null, idempotency_key?: string | null }"
+            "type": "{ id?: string | null, idempotency_key?: string | null } | null"
           },
           {
             "key": "data",
             "optional": false,
-            "type": "{ object: { id: string, object: customer, email?: string | null, name?: string | null, phone?: string | null, description?: string | null, currency?: string | null, balance?: number, created?: number, livemode?: boolean, metadata?: {} } }"
+            "type": "{ object: { id: string, object: customer, email?: string | null, name?: string | null, phone?: string | null, description?: string | null, currency?: string | null, balance?: number, created?: number, livemode?: boolean, metadata?: Record<string, string> } }"
           }
         ]
       },
-      "responseType": "{ id: string, object: event, api_version?: string | null, created: number, livemode: boolean, type: customer.deleted, request?: { id?: string | null, idempotency_key?: string | null } | null, data: { object: { id: string, object: customer, email?: string | null, name?: string | null, phone?: string | null, description?: string | null, currency?: string | null, balance?: number, created?: number, livemode?: boolean, metadata?: {} } } }",
+      "responseType": "{ id: string, object: event, api_version?: string | null, created: number, livemode: boolean, type: customer.deleted, request?: { id?: string | null, idempotency_key?: string | null } | null, data: { object: { id: string, object: customer, email?: string | null, name?: string | null, phone?: string | null, description?: string | null, currency?: string | null, balance?: number, created?: number, livemode?: boolean, metadata?: Record<string, string> } } }",
       "usageExample": "stripe({\n    webhookHooks: {\n        customer: {\n            deleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2055,7 +2055,7 @@
           {
             "key": "api_version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created",
@@ -2075,16 +2075,16 @@
           {
             "key": "request",
             "optional": true,
-            "type": "{ id?: string | null, idempotency_key?: string | null }"
+            "type": "{ id?: string | null, idempotency_key?: string | null } | null"
           },
           {
             "key": "data",
             "optional": false,
-            "type": "{ object: { id: string, object: customer, email?: string | null, name?: string | null, phone?: string | null, description?: string | null, currency?: string | null, balance?: number, created?: number, livemode?: boolean, metadata?: {} } }"
+            "type": "{ object: { id: string, object: customer, email?: string | null, name?: string | null, phone?: string | null, description?: string | null, currency?: string | null, balance?: number, created?: number, livemode?: boolean, metadata?: Record<string, string> } }"
           }
         ]
       },
-      "responseType": "{ id: string, object: event, api_version?: string | null, created: number, livemode: boolean, type: customer.updated, request?: { id?: string | null, idempotency_key?: string | null } | null, data: { object: { id: string, object: customer, email?: string | null, name?: string | null, phone?: string | null, description?: string | null, currency?: string | null, balance?: number, created?: number, livemode?: boolean, metadata?: {} } } }",
+      "responseType": "{ id: string, object: event, api_version?: string | null, created: number, livemode: boolean, type: customer.updated, request?: { id?: string | null, idempotency_key?: string | null } | null, data: { object: { id: string, object: customer, email?: string | null, name?: string | null, phone?: string | null, description?: string | null, currency?: string | null, balance?: number, created?: number, livemode?: boolean, metadata?: Record<string, string> } } }",
       "usageExample": "stripe({\n    webhookHooks: {\n        customer: {\n            updated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2107,7 +2107,7 @@
           {
             "key": "api_version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created",
@@ -2127,16 +2127,16 @@
           {
             "key": "request",
             "optional": true,
-            "type": "{ id?: string | null, idempotency_key?: string | null }"
+            "type": "{ id?: string | null, idempotency_key?: string | null } | null"
           },
           {
             "key": "data",
             "optional": false,
-            "type": "{ object: { id: string, object: payment_intent, amount: number, currency: string, status: string, customer?: string | null, description?: string | null, created?: number, payment_method?: string | null, client_secret?: string | null, canceled_at?: number | null, cancellation_reason?: string | null, metadata?: {}, last_payment_error?: { code?: string, message?: string, type?: string } | null } }"
+            "type": "{ object: { id: string, object: payment_intent, amount: number, currency: string, status: string, customer?: string | null, description?: string | null, created?: number, payment_method?: string | null, client_secret?: string | null, canceled_at?: number | null, cancellation_reason?: string | null, metadata?: Record<string, string>, last_payment_error?: { code?: string, message?: string, type?: string } | null } }"
           }
         ]
       },
-      "responseType": "{ id: string, object: event, api_version?: string | null, created: number, livemode: boolean, type: payment_intent.payment_failed, request?: { id?: string | null, idempotency_key?: string | null } | null, data: { object: { id: string, object: payment_intent, amount: number, currency: string, status: string, customer?: string | null, description?: string | null, created?: number, payment_method?: string | null, client_secret?: string | null, canceled_at?: number | null, cancellation_reason?: string | null, metadata?: {}, last_payment_error?: { code?: string, message?: string, type?: string } | null } } }",
+      "responseType": "{ id: string, object: event, api_version?: string | null, created: number, livemode: boolean, type: payment_intent.payment_failed, request?: { id?: string | null, idempotency_key?: string | null } | null, data: { object: { id: string, object: payment_intent, amount: number, currency: string, status: string, customer?: string | null, description?: string | null, created?: number, payment_method?: string | null, client_secret?: string | null, canceled_at?: number | null, cancellation_reason?: string | null, metadata?: Record<string, string>, last_payment_error?: { code?: string, message?: string, type?: string } | null } } }",
       "usageExample": "stripe({\n    webhookHooks: {\n        paymentIntent: {\n            failed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2159,7 +2159,7 @@
           {
             "key": "api_version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created",
@@ -2179,16 +2179,16 @@
           {
             "key": "request",
             "optional": true,
-            "type": "{ id?: string | null, idempotency_key?: string | null }"
+            "type": "{ id?: string | null, idempotency_key?: string | null } | null"
           },
           {
             "key": "data",
             "optional": false,
-            "type": "{ object: { id: string, object: payment_intent, amount: number, currency: string, status: string, customer?: string | null, description?: string | null, created?: number, payment_method?: string | null, client_secret?: string | null, canceled_at?: number | null, cancellation_reason?: string | null, metadata?: {}, last_payment_error?: { code?: string, message?: string, type?: string } | null } }"
+            "type": "{ object: { id: string, object: payment_intent, amount: number, currency: string, status: string, customer?: string | null, description?: string | null, created?: number, payment_method?: string | null, client_secret?: string | null, canceled_at?: number | null, cancellation_reason?: string | null, metadata?: Record<string, string>, last_payment_error?: { code?: string, message?: string, type?: string } | null } }"
           }
         ]
       },
-      "responseType": "{ id: string, object: event, api_version?: string | null, created: number, livemode: boolean, type: payment_intent.succeeded, request?: { id?: string | null, idempotency_key?: string | null } | null, data: { object: { id: string, object: payment_intent, amount: number, currency: string, status: string, customer?: string | null, description?: string | null, created?: number, payment_method?: string | null, client_secret?: string | null, canceled_at?: number | null, cancellation_reason?: string | null, metadata?: {}, last_payment_error?: { code?: string, message?: string, type?: string } | null } } }",
+      "responseType": "{ id: string, object: event, api_version?: string | null, created: number, livemode: boolean, type: payment_intent.succeeded, request?: { id?: string | null, idempotency_key?: string | null } | null, data: { object: { id: string, object: payment_intent, amount: number, currency: string, status: string, customer?: string | null, description?: string | null, created?: number, payment_method?: string | null, client_secret?: string | null, canceled_at?: number | null, cancellation_reason?: string | null, metadata?: Record<string, string>, last_payment_error?: { code?: string, message?: string, type?: string } | null } } }",
       "usageExample": "stripe({\n    webhookHooks: {\n        paymentIntent: {\n            succeeded: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2211,7 +2211,7 @@
           {
             "key": "api_version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created",
@@ -2231,16 +2231,16 @@
           {
             "key": "request",
             "optional": true,
-            "type": "{ id?: string | null, idempotency_key?: string | null }"
+            "type": "{ id?: string | null, idempotency_key?: string | null } | null"
           },
           {
             "key": "data",
             "optional": false,
-            "type": "{ object: {} }"
+            "type": "{ object: Record<string, any> }"
           }
         ]
       },
-      "responseType": "{ id: string, object: event, api_version?: string | null, created: number, livemode: boolean, type: v2.core.event_destination.ping, request?: { id?: string | null, idempotency_key?: string | null } | null, data: { object: {} } }",
+      "responseType": "{ id: string, object: event, api_version?: string | null, created: number, livemode: boolean, type: v2.core.event_destination.ping, request?: { id?: string | null, idempotency_key?: string | null } | null, data: { object: Record<string, any> } }",
       "usageExample": "stripe({\n    webhookHooks: {\n        ping: {\n            ping: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     }
   ],
@@ -2256,6 +2256,11 @@
         },
         {
           "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "object",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

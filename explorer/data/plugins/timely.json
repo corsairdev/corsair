@@ -1,0 +1,3226 @@
+{
+  "id": "timely",
+  "displayName": "Timely",
+  "description": "Log, edit and report time in Timely: time entries, timers, projects, clients, tags, people and signed webhooks.",
+  "npmPackageName": "@corsair-dev/timely",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 36,
+    "webhooks": 12,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "account_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "timely.api.accounts.get",
+      "shortPath": "accounts.get",
+      "description": "Get a Timely workspace (account) by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number | string",
+            "description": "Timely workspace (account) id. Optional: falls back to timely({ accountId }), the stored account_id, then the only workspace the token can reach."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "plan_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "num_users",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "num_projects",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "owner_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "timely.api.accounts.list",
+      "shortPath": "accounts.list",
+      "description": "List the Timely workspaces (accounts) the user can reach",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number | string, name?: string, color?: string | null, plan_name?: string | null, num_users?: number | null, num_projects?: number | null, owner_id?: number | null, created_at?: number | null }[]"
+      }
+    },
+    {
+      "path": "timely.api.clients.create",
+      "shortPath": "clients.create",
+      "description": "Create a client",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number | string",
+            "description": "Timely workspace (account) id. Optional: falls back to timely({ accountId }), the stored account_id, then the only workspace the token can reach."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string",
+            "description": "Your system id for this client"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "timely.api.clients.get",
+      "shortPath": "clients.get",
+      "description": "Get a client by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number | string",
+            "description": "Timely workspace (account) id. Optional: falls back to timely({ accountId }), the stored account_id, then the only workspace the token can reach."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string",
+            "description": "Record id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "timely.api.clients.list",
+      "shortPath": "clients.list",
+      "description": "List clients",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number | string",
+            "description": "Timely workspace (account) id. Optional: falls back to timely({ accountId }), the stored account_id, then the only workspace the token can reach."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "show",
+            "optional": true,
+            "type": "all | active | archived"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number | string, name?: string, color?: string | null, active?: boolean, external_id?: string | null, updated_at?: string | null }[]"
+      }
+    },
+    {
+      "path": "timely.api.clients.update",
+      "shortPath": "clients.update",
+      "description": "Update a client (active: false archives it)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number | string",
+            "description": "Timely workspace (account) id. Optional: falls back to timely({ accountId }), the stored account_id, then the only workspace the token can reach."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string",
+            "description": "Record id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string",
+            "description": "Your system id for this client"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "timely.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Create a project under a client",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number | string",
+            "description": "Timely workspace (account) id. Optional: falls back to timely({ accountId }), the stored account_id, then the only workspace the token can reach."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "rate_type",
+            "optional": false,
+            "type": "project | user | non-billable"
+          },
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "number | string",
+            "description": "Client the project belongs to"
+          },
+          {
+            "key": "hour_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean",
+            "description": "false archives the project"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "budget",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "budget_type",
+            "optional": true,
+            "type": "H | M",
+            "description": "H = hours budget, M = money budget"
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "{ user_id: number | string, hour_rate: number }[]",
+            "description": "People who may log time on the project. On update this replaces the list: anyone left out loses access."
+          },
+          {
+            "key": "team_ids",
+            "optional": true,
+            "type": "(number | string)[]"
+          },
+          {
+            "key": "label_ids",
+            "optional": true,
+            "type": "(number | string)[]"
+          },
+          {
+            "key": "required_notes",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "required_labels",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "rate_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "client",
+            "optional": true,
+            "type": "{ id: number | string, name?: string, color?: string | null, active?: boolean, external_id?: string | null, updated_at?: string | null } | null"
+          },
+          {
+            "key": "budget",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "budget_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hour_rate",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "{ hours?: number, minutes?: number, seconds?: number, formatted?: string, total_hours?: number, total_seconds?: number, total_minutes?: number }"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "timely.api.projects.delete",
+      "shortPath": "projects.delete",
+      "description": "Delete a project",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number | string",
+            "description": "Timely workspace (account) id. Optional: falls back to timely({ accountId }), the stored account_id, then the only workspace the token can reach."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string",
+            "description": "Record id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "timely.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Get a project by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number | string",
+            "description": "Timely workspace (account) id. Optional: falls back to timely({ accountId }), the stored account_id, then the only workspace the token can reach."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string",
+            "description": "Record id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "rate_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "client",
+            "optional": true,
+            "type": "{ id: number | string, name?: string, color?: string | null, active?: boolean, external_id?: string | null, updated_at?: string | null } | null"
+          },
+          {
+            "key": "budget",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "budget_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hour_rate",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "{ hours?: number, minutes?: number, seconds?: number, formatted?: string, total_hours?: number, total_seconds?: number, total_minutes?: number }"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "timely.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List projects",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number | string",
+            "description": "Timely workspace (account) id. Optional: falls back to timely({ accountId }), the stored account_id, then the only workspace the token can reach."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "all | active | archived"
+          },
+          {
+            "key": "relation",
+            "optional": true,
+            "type": "all | assigned | created"
+          },
+          {
+            "key": "updated_after",
+            "optional": true,
+            "type": "string",
+            "description": "Only projects updated after this ISO 8601 timestamp"
+          },
+          {
+            "key": "totals",
+            "optional": true,
+            "type": "boolean",
+            "description": "false skips per-project cost/duration totals (faster)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number | string, account_id?: number | string, name?: string, description?: string | null, color?: string | null, rate_type?: string | null, billable?: boolean, active?: boolean, external_id?: string | null, client?: { id: number | string, name?: string, color?: string | null, active?: boolean, external_id?: string | null, updated_at?: string | null } | null, budget?: number | null, budget_type?: string | null, hour_rate?: number | null, duration?: { hours?: number, minutes?: number, seconds?: number, formatted?: string, total_hours?: number, total_seconds?: number, total_minutes?: number }, created_at?: number | null, updated_at?: number | null }[]"
+      }
+    },
+    {
+      "path": "timely.api.projects.update",
+      "shortPath": "projects.update",
+      "description": "Update a project; passing `users` replaces who may log time on it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number | string",
+            "description": "Timely workspace (account) id. Optional: falls back to timely({ accountId }), the stored account_id, then the only workspace the token can reach."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string",
+            "description": "Record id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rate_type",
+            "optional": true,
+            "type": "project | user | non-billable",
+            "description": "project = one hour_rate for everyone, user = per-user rates in `users`, non-billable"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number | string",
+            "description": "Client the project belongs to (Timely requires one)"
+          },
+          {
+            "key": "hour_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean",
+            "description": "false archives the project"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "budget",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "budget_type",
+            "optional": true,
+            "type": "H | M",
+            "description": "H = hours budget, M = money budget"
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "{ user_id: number | string, hour_rate: number }[]",
+            "description": "People who may log time on the project. On update this replaces the list: anyone left out loses access."
+          },
+          {
+            "key": "team_ids",
+            "optional": true,
+            "type": "(number | string)[]"
+          },
+          {
+            "key": "label_ids",
+            "optional": true,
+            "type": "(number | string)[]"
+          },
+          {
+            "key": "required_notes",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "required_labels",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "rate_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "client",
+            "optional": true,
+            "type": "{ id: number | string, name?: string, color?: string | null, active?: boolean, external_id?: string | null, updated_at?: string | null } | null"
+          },
+          {
+            "key": "budget",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "budget_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hour_rate",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "{ hours?: number, minutes?: number, seconds?: number, formatted?: string, total_hours?: number, total_seconds?: number, total_minutes?: number }"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "timely.api.reports.filter",
+      "shortPath": "reports.filter",
+      "description": "Totals grouped by clients, users, tags, days and teams, or the matching time entries",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number | string",
+            "description": "Timely workspace (account) id. Optional: falls back to timely({ accountId }), the stored account_id, then the only workspace the token can reach."
+          },
+          {
+            "key": "since",
+            "optional": false,
+            "type": "string",
+            "description": "Date as YYYY-MM-DD"
+          },
+          {
+            "key": "until",
+            "optional": false,
+            "type": "string",
+            "description": "Date as YYYY-MM-DD"
+          },
+          {
+            "key": "user_ids",
+            "optional": true,
+            "type": "(number | string)[]"
+          },
+          {
+            "key": "project_ids",
+            "optional": true,
+            "type": "(number | string)[]"
+          },
+          {
+            "key": "client_ids",
+            "optional": true,
+            "type": "(number | string)[]"
+          },
+          {
+            "key": "label_ids",
+            "optional": true,
+            "type": "(number | string)[]"
+          },
+          {
+            "key": "team_ids",
+            "optional": true,
+            "type": "(number | string)[]"
+          },
+          {
+            "key": "state_ids",
+            "optional": true,
+            "type": "(number | string)[]"
+          },
+          {
+            "key": "group_by",
+            "optional": true,
+            "type": "(clients | users | labels | days | teams)[]"
+          },
+          {
+            "key": "scope",
+            "optional": true,
+            "type": "totals | events",
+            "description": "totals (default) returns grouped totals; events returns the matching time entries"
+          },
+          {
+            "key": "billed",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ totals?: Record<string, any>, clients?: Record<string, any>[], users?: Record<string, any>[], labels?: Record<string, any>[], days?: Record<string, any>[], teams?: Record<string, any>[] } | { id: number | string, uid?: string | null, day?: string, note?: string | null, duration?: { hours?: number, minutes?: number, seconds?: number, formatted?: string, total_hours?: number, total_seconds?: number, total_minutes?: number }, estimated_duration?: { hours?: number, minutes?: number, seconds?: number, formatted?: string, total_hours?: number, total_seconds?: number, total_minutes?: number }, from?: string | null, to?: string | null, billable?: boolean, billed?: boolean, locked?: boolean, timer_state?: string | number | null, external_id?: string | null, label_ids?: (number | string)[], user?: { id: number | string, name?: string } | null, project?: { id: number | string, account_id?: number | string, name?: string, description?: string | null, color?: string | null, rate_type?: string | null, billable?: boolean, active?: boolean, external_id?: string | null, client?: { id: number | string, name?: string, color?: string | null, active?: boolean, external_id?: string | null, updated_at?: string | null } | null, budget?: number | null, budget_type?: string | null, hour_rate?: number | null, duration?: { hours?: number, minutes?: number, seconds?: number, formatted?: string, total_hours?: number, total_seconds?: number, total_minutes?: number }, created_at?: number | null, updated_at?: number | null } | null, created_at?: number | string | null, updated_at?: number | string | null }[]"
+      }
+    },
+    {
+      "path": "timely.api.reports.totals",
+      "shortPath": "reports.totals",
+      "description": "Logged time and cost per client and project for a period",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number | string",
+            "description": "Timely workspace (account) id. Optional: falls back to timely({ accountId }), the stored account_id, then the only workspace the token can reach."
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string",
+            "description": "Date as YYYY-MM-DD"
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "string",
+            "description": "Date as YYYY-MM-DD"
+          },
+          {
+            "key": "user_ids",
+            "optional": true,
+            "type": "(number | string)[]"
+          },
+          {
+            "key": "project_ids",
+            "optional": true,
+            "type": "(number | string)[]"
+          },
+          {
+            "key": "client_ids",
+            "optional": true,
+            "type": "(number | string)[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: number | string | null, name?: string | null, duration?: { hours?: number, minutes?: number, seconds?: number, formatted?: string, total_hours?: number, total_seconds?: number, total_minutes?: number }, projects?: Record<string, any>[] }[]"
+      }
+    },
+    {
+      "path": "timely.api.tags.create",
+      "shortPath": "tags.create",
+      "description": "Create a tag",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number | string",
+            "description": "Timely workspace (account) id. Optional: falls back to timely({ accountId }), the stored account_id, then the only workspace the token can reach."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "emoji",
+            "optional": true,
+            "type": "string",
+            "description": "Emoji URL or character"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "number | string",
+            "description": "Parent tag id for a child tag"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "emoji",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sequence",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "children",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "timely.api.tags.delete",
+      "shortPath": "tags.delete",
+      "description": "Delete a tag",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number | string",
+            "description": "Timely workspace (account) id. Optional: falls back to timely({ accountId }), the stored account_id, then the only workspace the token can reach."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string",
+            "description": "Record id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "timely.api.tags.get",
+      "shortPath": "tags.get",
+      "description": "Get a tag by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number | string",
+            "description": "Timely workspace (account) id. Optional: falls back to timely({ accountId }), the stored account_id, then the only workspace the token can reach."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string",
+            "description": "Record id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "emoji",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sequence",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "children",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "timely.api.tags.list",
+      "shortPath": "tags.list",
+      "description": "List tags (labels)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number | string",
+            "description": "Timely workspace (account) id. Optional: falls back to timely({ accountId }), the stored account_id, then the only workspace the token can reach."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "all | active | archived"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "number | string",
+            "description": "Only children of this tag"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number | string, name?: string, parent_id?: number | string | null, emoji?: string | null, active?: boolean, external_id?: string | null, sequence?: number | null, children?: Record<string, any>[] }[]"
+      }
+    },
+    {
+      "path": "timely.api.tags.update",
+      "shortPath": "tags.update",
+      "description": "Update a tag",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number | string",
+            "description": "Timely workspace (account) id. Optional: falls back to timely({ accountId }), the stored account_id, then the only workspace the token can reach."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string",
+            "description": "Record id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emoji",
+            "optional": true,
+            "type": "string",
+            "description": "Emoji URL or character"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "number | string",
+            "description": "Parent tag id for a child tag"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "emoji",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sequence",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "children",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "timely.api.teams.get",
+      "shortPath": "teams.get",
+      "description": "Get a team by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number | string",
+            "description": "Timely workspace (account) id. Optional: falls back to timely({ accountId }), the stored account_id, then the only workspace the token can reach."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string",
+            "description": "Record id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "emoji",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "user_ids",
+            "optional": true,
+            "type": "(number | string)[]"
+          },
+          {
+            "key": "project_ids",
+            "optional": true,
+            "type": "(number | string)[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "timely.api.teams.list",
+      "shortPath": "teams.list",
+      "description": "List teams",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number | string",
+            "description": "Timely workspace (account) id. Optional: falls back to timely({ accountId }), the stored account_id, then the only workspace the token can reach."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number | string, name?: string, color?: string | null, emoji?: string | null, external_id?: string | null, user_ids?: (number | string)[], project_ids?: (number | string)[] }[]"
+      }
+    },
+    {
+      "path": "timely.api.timeEntries.bulk",
+      "shortPath": "timeEntries.bulk",
+      "description": "Create, update and delete up to 100 time entries in one request",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number | string",
+            "description": "Timely workspace (account) id. Optional: falls back to timely({ accountId }), the stored account_id, then the only workspace the token can reach."
+          },
+          {
+            "key": "create",
+            "optional": true,
+            "type": "{ project_id: number | string, day: string, hours?: number, minutes?: number, seconds?: number, from?: string, to?: string, note?: string, user_id?: number | string, billable?: boolean, billed?: boolean, external_id?: string, label_ids?: (number | string)[], estimated_hours?: number, estimated_minutes?: number, forecast_id?: number | string, state_id?: number | string }[]"
+          },
+          {
+            "key": "update",
+            "optional": true,
+            "type": "{ id: number | string, project_id?: number | string, day?: string, hours?: number, minutes?: number, seconds?: number, from?: string, to?: string, note?: string, user_id?: number | string, billable?: boolean, billed?: boolean, external_id?: string, label_ids?: (number | string)[], estimated_hours?: number, estimated_minutes?: number, forecast_id?: number | string, state_id?: number | string }[]"
+          },
+          {
+            "key": "delete",
+            "optional": true,
+            "type": "(number | string)[]",
+            "description": "Time entry ids to delete"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "created_ids",
+            "optional": false,
+            "type": "(number | string)[]"
+          },
+          {
+            "key": "updated_ids",
+            "optional": false,
+            "type": "(number | string)[]"
+          },
+          {
+            "key": "deleted_ids",
+            "optional": false,
+            "type": "(number | string)[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "{ create?: { index?: number, id?: number | string, messages?: string[] }[], update?: { index?: number, id?: number | string, messages?: string[] }[], delete?: { index?: number, id?: number | string, messages?: string[] }[] }"
+          },
+          {
+            "key": "job",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "timely.api.timeEntries.create",
+      "shortPath": "timeEntries.create",
+      "description": "Log time on a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number | string",
+            "description": "Timely workspace (account) id. Optional: falls back to timely({ accountId }), the stored account_id, then the only workspace the token can reach."
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "day",
+            "optional": false,
+            "type": "string",
+            "description": "Date as YYYY-MM-DD"
+          },
+          {
+            "key": "hours",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "minutes",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "Start time HH:MM (24-hour)"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string",
+            "description": "End time HH:MM (24-hour)"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | string",
+            "description": "Log on behalf of this user (admins only); defaults to the connected user"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "billed",
+            "optional": true,
+            "type": "boolean",
+            "description": "true marks the time as invoiced and locks it"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "label_ids",
+            "optional": true,
+            "type": "(number | string)[]",
+            "description": "Tag ids; the project must allow tags"
+          },
+          {
+            "key": "estimated_hours",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "estimated_minutes",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "forecast_id",
+            "optional": true,
+            "type": "number | string",
+            "description": "Task (forecast) id"
+          },
+          {
+            "key": "state_id",
+            "optional": true,
+            "type": "number | string",
+            "description": "Time entry state id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "uid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "day",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "{ hours?: number, minutes?: number, seconds?: number, formatted?: string, total_hours?: number, total_seconds?: number, total_minutes?: number }"
+          },
+          {
+            "key": "estimated_duration",
+            "optional": true,
+            "type": "{ hours?: number, minutes?: number, seconds?: number, formatted?: string, total_hours?: number, total_seconds?: number, total_minutes?: number }"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "billed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "locked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "timer_state",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "label_ids",
+            "optional": true,
+            "type": "(number | string)[]"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id: number | string, name?: string } | null"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "{ id: number | string, account_id?: number | string, name?: string, description?: string | null, color?: string | null, rate_type?: string | null, billable?: boolean, active?: boolean, external_id?: string | null, client?: { id: number | string, name?: string, color?: string | null, active?: boolean, external_id?: string | null, updated_at?: string | null } | null, budget?: number | null, budget_type?: string | null, hour_rate?: number | null, duration?: { hours?: number, minutes?: number, seconds?: number, formatted?: string, total_hours?: number, total_seconds?: number, total_minutes?: number }, created_at?: number | null, updated_at?: number | null } | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "timely.api.timeEntries.delete",
+      "shortPath": "timeEntries.delete",
+      "description": "Delete a time entry",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number | string",
+            "description": "Timely workspace (account) id. Optional: falls back to timely({ accountId }), the stored account_id, then the only workspace the token can reach."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string",
+            "description": "Record id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "timely.api.timeEntries.get",
+      "shortPath": "timeEntries.get",
+      "description": "Get a time entry by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number | string",
+            "description": "Timely workspace (account) id. Optional: falls back to timely({ accountId }), the stored account_id, then the only workspace the token can reach."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string",
+            "description": "Record id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "uid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "day",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "{ hours?: number, minutes?: number, seconds?: number, formatted?: string, total_hours?: number, total_seconds?: number, total_minutes?: number }"
+          },
+          {
+            "key": "estimated_duration",
+            "optional": true,
+            "type": "{ hours?: number, minutes?: number, seconds?: number, formatted?: string, total_hours?: number, total_seconds?: number, total_minutes?: number }"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "billed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "locked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "timer_state",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "label_ids",
+            "optional": true,
+            "type": "(number | string)[]"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id: number | string, name?: string } | null"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "{ id: number | string, account_id?: number | string, name?: string, description?: string | null, color?: string | null, rate_type?: string | null, billable?: boolean, active?: boolean, external_id?: string | null, client?: { id: number | string, name?: string, color?: string | null, active?: boolean, external_id?: string | null, updated_at?: string | null } | null, budget?: number | null, budget_type?: string | null, hour_rate?: number | null, duration?: { hours?: number, minutes?: number, seconds?: number, formatted?: string, total_hours?: number, total_seconds?: number, total_minutes?: number }, created_at?: number | null, updated_at?: number | null } | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "timely.api.timeEntries.list",
+      "shortPath": "timeEntries.list",
+      "description": "List time entries for a day or a since/upto date range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number | string",
+            "description": "Timely workspace (account) id. Optional: falls back to timely({ accountId }), the stored account_id, then the only workspace the token can reach."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string",
+            "description": "First day (inclusive); needs `upto`"
+          },
+          {
+            "key": "upto",
+            "optional": true,
+            "type": "string",
+            "description": "Last day (inclusive); needs `since`"
+          },
+          {
+            "key": "day",
+            "optional": true,
+            "type": "string",
+            "description": "A single day; Timely defaults to today when no range is given"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "hour_ids",
+            "optional": true,
+            "type": "(number | string)[]"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "day | created_at | updated_at"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number | string, uid?: string | null, day?: string, note?: string | null, duration?: { hours?: number, minutes?: number, seconds?: number, formatted?: string, total_hours?: number, total_seconds?: number, total_minutes?: number }, estimated_duration?: { hours?: number, minutes?: number, seconds?: number, formatted?: string, total_hours?: number, total_seconds?: number, total_minutes?: number }, from?: string | null, to?: string | null, billable?: boolean, billed?: boolean, locked?: boolean, timer_state?: string | number | null, external_id?: string | null, label_ids?: (number | string)[], user?: { id: number | string, name?: string } | null, project?: { id: number | string, account_id?: number | string, name?: string, description?: string | null, color?: string | null, rate_type?: string | null, billable?: boolean, active?: boolean, external_id?: string | null, client?: { id: number | string, name?: string, color?: string | null, active?: boolean, external_id?: string | null, updated_at?: string | null } | null, budget?: number | null, budget_type?: string | null, hour_rate?: number | null, duration?: { hours?: number, minutes?: number, seconds?: number, formatted?: string, total_hours?: number, total_seconds?: number, total_minutes?: number }, created_at?: number | null, updated_at?: number | null } | null, created_at?: number | string | null, updated_at?: number | string | null }[]"
+      }
+    },
+    {
+      "path": "timely.api.timeEntries.startTimer",
+      "shortPath": "timeEntries.startTimer",
+      "description": "Start the timer on a time entry",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number | string",
+            "description": "Timely workspace (account) id. Optional: falls back to timely({ accountId }), the stored account_id, then the only workspace the token can reach."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string",
+            "description": "Record id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "uid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "day",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "{ hours?: number, minutes?: number, seconds?: number, formatted?: string, total_hours?: number, total_seconds?: number, total_minutes?: number }"
+          },
+          {
+            "key": "estimated_duration",
+            "optional": true,
+            "type": "{ hours?: number, minutes?: number, seconds?: number, formatted?: string, total_hours?: number, total_seconds?: number, total_minutes?: number }"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "billed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "locked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "timer_state",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "label_ids",
+            "optional": true,
+            "type": "(number | string)[]"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id: number | string, name?: string } | null"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "{ id: number | string, account_id?: number | string, name?: string, description?: string | null, color?: string | null, rate_type?: string | null, billable?: boolean, active?: boolean, external_id?: string | null, client?: { id: number | string, name?: string, color?: string | null, active?: boolean, external_id?: string | null, updated_at?: string | null } | null, budget?: number | null, budget_type?: string | null, hour_rate?: number | null, duration?: { hours?: number, minutes?: number, seconds?: number, formatted?: string, total_hours?: number, total_seconds?: number, total_minutes?: number }, created_at?: number | null, updated_at?: number | null } | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "timely.api.timeEntries.stopTimer",
+      "shortPath": "timeEntries.stopTimer",
+      "description": "Stop the timer on a time entry",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number | string",
+            "description": "Timely workspace (account) id. Optional: falls back to timely({ accountId }), the stored account_id, then the only workspace the token can reach."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string",
+            "description": "Record id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "uid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "day",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "{ hours?: number, minutes?: number, seconds?: number, formatted?: string, total_hours?: number, total_seconds?: number, total_minutes?: number }"
+          },
+          {
+            "key": "estimated_duration",
+            "optional": true,
+            "type": "{ hours?: number, minutes?: number, seconds?: number, formatted?: string, total_hours?: number, total_seconds?: number, total_minutes?: number }"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "billed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "locked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "timer_state",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "label_ids",
+            "optional": true,
+            "type": "(number | string)[]"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id: number | string, name?: string } | null"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "{ id: number | string, account_id?: number | string, name?: string, description?: string | null, color?: string | null, rate_type?: string | null, billable?: boolean, active?: boolean, external_id?: string | null, client?: { id: number | string, name?: string, color?: string | null, active?: boolean, external_id?: string | null, updated_at?: string | null } | null, budget?: number | null, budget_type?: string | null, hour_rate?: number | null, duration?: { hours?: number, minutes?: number, seconds?: number, formatted?: string, total_hours?: number, total_seconds?: number, total_minutes?: number }, created_at?: number | null, updated_at?: number | null } | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "timely.api.timeEntries.update",
+      "shortPath": "timeEntries.update",
+      "description": "Update a time entry",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number | string",
+            "description": "Timely workspace (account) id. Optional: falls back to timely({ accountId }), the stored account_id, then the only workspace the token can reach."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string",
+            "description": "Record id"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "day",
+            "optional": true,
+            "type": "string",
+            "description": "Date as YYYY-MM-DD"
+          },
+          {
+            "key": "hours",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "minutes",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "Start time HH:MM (24-hour)"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string",
+            "description": "End time HH:MM (24-hour)"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | string",
+            "description": "Log on behalf of this user (admins only); defaults to the connected user"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "billed",
+            "optional": true,
+            "type": "boolean",
+            "description": "true marks the time as invoiced and locks it"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "label_ids",
+            "optional": true,
+            "type": "(number | string)[]",
+            "description": "Tag ids; the project must allow tags"
+          },
+          {
+            "key": "estimated_hours",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "estimated_minutes",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "forecast_id",
+            "optional": true,
+            "type": "number | string",
+            "description": "Task (forecast) id"
+          },
+          {
+            "key": "state_id",
+            "optional": true,
+            "type": "number | string",
+            "description": "Time entry state id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "uid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "day",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "{ hours?: number, minutes?: number, seconds?: number, formatted?: string, total_hours?: number, total_seconds?: number, total_minutes?: number }"
+          },
+          {
+            "key": "estimated_duration",
+            "optional": true,
+            "type": "{ hours?: number, minutes?: number, seconds?: number, formatted?: string, total_hours?: number, total_seconds?: number, total_minutes?: number }"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "billed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "locked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "timer_state",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "label_ids",
+            "optional": true,
+            "type": "(number | string)[]"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id: number | string, name?: string } | null"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "{ id: number | string, account_id?: number | string, name?: string, description?: string | null, color?: string | null, rate_type?: string | null, billable?: boolean, active?: boolean, external_id?: string | null, client?: { id: number | string, name?: string, color?: string | null, active?: boolean, external_id?: string | null, updated_at?: string | null } | null, budget?: number | null, budget_type?: string | null, hour_rate?: number | null, duration?: { hours?: number, minutes?: number, seconds?: number, formatted?: string, total_hours?: number, total_seconds?: number, total_minutes?: number }, created_at?: number | null, updated_at?: number | null } | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "timely.api.users.current",
+      "shortPath": "users.current",
+      "description": "Get the connected user in a workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number | string",
+            "description": "Timely workspace (account) id. Optional: falls back to timely({ accountId }), the stored account_id, then the only workspace the token can reach."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "admin",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "time_zone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "timely.api.users.get",
+      "shortPath": "users.get",
+      "description": "Get a person by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number | string",
+            "description": "Timely workspace (account) id. Optional: falls back to timely({ accountId }), the stored account_id, then the only workspace the token can reach."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string",
+            "description": "Record id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "admin",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "time_zone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "timely.api.users.list",
+      "shortPath": "users.list",
+      "description": "List people",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number | string",
+            "description": "Timely workspace (account) id. Optional: falls back to timely({ accountId }), the stored account_id, then the only workspace the token can reach."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "human | agent | all",
+            "description": "Member kind; Timely defaults to human"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "deleted",
+            "description": "deleted lists archived people"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number | string, email?: string, name?: string, active?: boolean, admin?: boolean, kind?: string, external_id?: string | null, time_zone?: string | null, deleted?: boolean }[]"
+      }
+    },
+    {
+      "path": "timely.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Create a signed webhook subscription",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number | string",
+            "description": "Timely workspace (account) id. Optional: falls back to timely({ accountId }), the stored account_id, then the only workspace the token can reach."
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subscriptions",
+            "optional": false,
+            "type": "(hours:created | hours:updated | hours:deleted | projects:created | projects:updated | projects:deleted | labels:created | labels:updated | labels:deleted | forecasts:created | forecasts:updated | forecasts:deleted)[]"
+          },
+          {
+            "key": "secret_token",
+            "optional": false,
+            "type": "string",
+            "description": "Signing secret. Timely sends X-Signature = hex HMAC-SHA256 of the payload; Corsair rejects unsigned deliveries, so store the same value as the account webhook_signature."
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subscriptions",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "secret_token",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "custom_headers",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "timely.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Delete a webhook",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number | string",
+            "description": "Timely workspace (account) id. Optional: falls back to timely({ accountId }), the stored account_id, then the only workspace the token can reach."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string",
+            "description": "Record id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "timely.api.webhooks.get",
+      "shortPath": "webhooks.get",
+      "description": "Get a webhook by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number | string",
+            "description": "Timely workspace (account) id. Optional: falls back to timely({ accountId }), the stored account_id, then the only workspace the token can reach."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string",
+            "description": "Record id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subscriptions",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "secret_token",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "custom_headers",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "timely.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List webhooks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number | string",
+            "description": "Timely workspace (account) id. Optional: falls back to timely({ accountId }), the stored account_id, then the only workspace the token can reach."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number | string, account_id?: number | string, url: string, subscriptions: string[], secret_token?: string | null, active?: boolean, custom_headers?: Record<string, string> | null, created_at?: string | null, updated_at?: string | null }[]"
+      }
+    },
+    {
+      "path": "timely.api.webhooks.update",
+      "shortPath": "webhooks.update",
+      "description": "Update a webhook",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number | string",
+            "description": "Timely workspace (account) id. Optional: falls back to timely({ accountId }), the stored account_id, then the only workspace the token can reach."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string",
+            "description": "Record id"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subscriptions",
+            "optional": true,
+            "type": "(hours:created | hours:updated | hours:deleted | projects:created | projects:updated | projects:deleted | labels:created | labels:updated | labels:deleted | forecasts:created | forecasts:updated | forecasts:deleted)[]"
+          },
+          {
+            "key": "secret_token",
+            "optional": true,
+            "type": "string",
+            "description": "Signing secret. Timely sends X-Signature = hex HMAC-SHA256 of the payload; Corsair rejects unsigned deliveries, so store the same value as the account webhook_signature."
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subscriptions",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "secret_token",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "custom_headers",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "timely.webhooks.projects.created",
+      "shortPath": "projects.created",
+      "description": "A project was created",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{ entity_id: number | string, entity_type: string, entity_path?: string | null, entity_external_id?: string | null, updated_from?: string | null, updated_at?: string | null, status?: string | null, date?: string | null }"
+          }
+        ]
+      },
+      "responseType": "{ event: string, payload: { entity_id: number | string, entity_type: string, entity_path?: string | null, entity_external_id?: string | null, updated_from?: string | null, updated_at?: string | null, status?: string | null, date?: string | null } }",
+      "usageExample": "timely({\n    webhookHooks: {\n        projects: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "timely.webhooks.projects.deleted",
+      "shortPath": "projects.deleted",
+      "description": "A project was deleted",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{ entity_id: number | string, entity_type: string, entity_path?: string | null, entity_external_id?: string | null, updated_from?: string | null, updated_at?: string | null, status?: string | null, date?: string | null }"
+          }
+        ]
+      },
+      "responseType": "{ event: string, payload: { entity_id: number | string, entity_type: string, entity_path?: string | null, entity_external_id?: string | null, updated_from?: string | null, updated_at?: string | null, status?: string | null, date?: string | null } }",
+      "usageExample": "timely({\n    webhookHooks: {\n        projects: {\n            deleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "timely.webhooks.projects.updated",
+      "shortPath": "projects.updated",
+      "description": "A project changed",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{ entity_id: number | string, entity_type: string, entity_path?: string | null, entity_external_id?: string | null, updated_from?: string | null, updated_at?: string | null, status?: string | null, date?: string | null }"
+          }
+        ]
+      },
+      "responseType": "{ event: string, payload: { entity_id: number | string, entity_type: string, entity_path?: string | null, entity_external_id?: string | null, updated_from?: string | null, updated_at?: string | null, status?: string | null, date?: string | null } }",
+      "usageExample": "timely({\n    webhookHooks: {\n        projects: {\n            updated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "timely.webhooks.tags.created",
+      "shortPath": "tags.created",
+      "description": "A tag was created (Timely event labels:created)",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{ entity_id: number | string, entity_type: string, entity_path?: string | null, entity_external_id?: string | null, updated_from?: string | null, updated_at?: string | null, status?: string | null, date?: string | null }"
+          }
+        ]
+      },
+      "responseType": "{ event: string, payload: { entity_id: number | string, entity_type: string, entity_path?: string | null, entity_external_id?: string | null, updated_from?: string | null, updated_at?: string | null, status?: string | null, date?: string | null } }",
+      "usageExample": "timely({\n    webhookHooks: {\n        tags: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "timely.webhooks.tags.deleted",
+      "shortPath": "tags.deleted",
+      "description": "A tag was deleted (Timely event labels:deleted)",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{ entity_id: number | string, entity_type: string, entity_path?: string | null, entity_external_id?: string | null, updated_from?: string | null, updated_at?: string | null, status?: string | null, date?: string | null }"
+          }
+        ]
+      },
+      "responseType": "{ event: string, payload: { entity_id: number | string, entity_type: string, entity_path?: string | null, entity_external_id?: string | null, updated_from?: string | null, updated_at?: string | null, status?: string | null, date?: string | null } }",
+      "usageExample": "timely({\n    webhookHooks: {\n        tags: {\n            deleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "timely.webhooks.tags.updated",
+      "shortPath": "tags.updated",
+      "description": "A tag changed (Timely event labels:updated)",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{ entity_id: number | string, entity_type: string, entity_path?: string | null, entity_external_id?: string | null, updated_from?: string | null, updated_at?: string | null, status?: string | null, date?: string | null }"
+          }
+        ]
+      },
+      "responseType": "{ event: string, payload: { entity_id: number | string, entity_type: string, entity_path?: string | null, entity_external_id?: string | null, updated_from?: string | null, updated_at?: string | null, status?: string | null, date?: string | null } }",
+      "usageExample": "timely({\n    webhookHooks: {\n        tags: {\n            updated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "timely.webhooks.tasks.created",
+      "shortPath": "tasks.created",
+      "description": "A task was created (Timely event forecasts:created)",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{ entity_id: number | string, entity_type: string, entity_path?: string | null, entity_external_id?: string | null, updated_from?: string | null, updated_at?: string | null, status?: string | null, date?: string | null }"
+          }
+        ]
+      },
+      "responseType": "{ event: string, payload: { entity_id: number | string, entity_type: string, entity_path?: string | null, entity_external_id?: string | null, updated_from?: string | null, updated_at?: string | null, status?: string | null, date?: string | null } }",
+      "usageExample": "timely({\n    webhookHooks: {\n        tasks: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "timely.webhooks.tasks.deleted",
+      "shortPath": "tasks.deleted",
+      "description": "A task was deleted (Timely event forecasts:deleted)",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{ entity_id: number | string, entity_type: string, entity_path?: string | null, entity_external_id?: string | null, updated_from?: string | null, updated_at?: string | null, status?: string | null, date?: string | null }"
+          }
+        ]
+      },
+      "responseType": "{ event: string, payload: { entity_id: number | string, entity_type: string, entity_path?: string | null, entity_external_id?: string | null, updated_from?: string | null, updated_at?: string | null, status?: string | null, date?: string | null } }",
+      "usageExample": "timely({\n    webhookHooks: {\n        tasks: {\n            deleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "timely.webhooks.tasks.updated",
+      "shortPath": "tasks.updated",
+      "description": "A task changed (Timely event forecasts:updated)",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{ entity_id: number | string, entity_type: string, entity_path?: string | null, entity_external_id?: string | null, updated_from?: string | null, updated_at?: string | null, status?: string | null, date?: string | null }"
+          }
+        ]
+      },
+      "responseType": "{ event: string, payload: { entity_id: number | string, entity_type: string, entity_path?: string | null, entity_external_id?: string | null, updated_from?: string | null, updated_at?: string | null, status?: string | null, date?: string | null } }",
+      "usageExample": "timely({\n    webhookHooks: {\n        tasks: {\n            updated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "timely.webhooks.timeEntries.created",
+      "shortPath": "timeEntries.created",
+      "description": "A time entry was logged (Timely event hours:created)",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{ entity_id: number | string, entity_type: string, entity_path?: string | null, entity_external_id?: string | null, updated_from?: string | null, updated_at?: string | null, status?: string | null, date?: string | null }"
+          }
+        ]
+      },
+      "responseType": "{ event: string, payload: { entity_id: number | string, entity_type: string, entity_path?: string | null, entity_external_id?: string | null, updated_from?: string | null, updated_at?: string | null, status?: string | null, date?: string | null } }",
+      "usageExample": "timely({\n    webhookHooks: {\n        timeEntries: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "timely.webhooks.timeEntries.deleted",
+      "shortPath": "timeEntries.deleted",
+      "description": "A time entry was deleted (Timely event hours:deleted)",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{ entity_id: number | string, entity_type: string, entity_path?: string | null, entity_external_id?: string | null, updated_from?: string | null, updated_at?: string | null, status?: string | null, date?: string | null }"
+          }
+        ]
+      },
+      "responseType": "{ event: string, payload: { entity_id: number | string, entity_type: string, entity_path?: string | null, entity_external_id?: string | null, updated_from?: string | null, updated_at?: string | null, status?: string | null, date?: string | null } }",
+      "usageExample": "timely({\n    webhookHooks: {\n        timeEntries: {\n            deleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "timely.webhooks.timeEntries.updated",
+      "shortPath": "timeEntries.updated",
+      "description": "A time entry changed (Timely event hours:updated)",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{ entity_id: number | string, entity_type: string, entity_path?: string | null, entity_external_id?: string | null, updated_from?: string | null, updated_at?: string | null, status?: string | null, date?: string | null }"
+          }
+        ]
+      },
+      "responseType": "{ event: string, payload: { entity_id: number | string, entity_type: string, entity_path?: string | null, entity_external_id?: string | null, updated_from?: string | null, updated_at?: string | null, status?: string | null, date?: string | null } }",
+      "usageExample": "timely({\n    webhookHooks: {\n        timeEntries: {\n            updated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": []
+}

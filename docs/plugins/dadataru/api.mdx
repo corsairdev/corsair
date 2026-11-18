@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Dadataru: every `dadataru.api.*` operation with input and output types."
+title: "DaData API reference"
+sidebarTitle: "API"
+description: "API reference for the DaData plugin in Corsair: every `dadataru.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `dadataru.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -35,17 +34,7 @@ await corsair.dadataru.api.clean.address({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `results` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="results full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `results` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -75,17 +64,7 @@ await corsair.dadataru.api.clean.birthdate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `results` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="results full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `results` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -115,17 +94,7 @@ await corsair.dadataru.api.clean.email({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `results` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="results full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `results` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -155,17 +124,7 @@ await corsair.dadataru.api.clean.name({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `results` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="results full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `results` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -195,17 +154,7 @@ await corsair.dadataru.api.clean.passport({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `results` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="results full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `results` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -235,17 +184,7 @@ await corsair.dadataru.api.clean.phone({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `results` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="results full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `results` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -277,17 +216,7 @@ await corsair.dadataru.api.clean.record({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `structure` | `string[]` | Yes | — |
-| `data` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[][]
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>[][]` | Yes | — |
 
 
 
@@ -317,17 +246,7 @@ await corsair.dadataru.api.clean.vehicle({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `results` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="results full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `results` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -370,8 +289,7 @@ await corsair.dadataru.api.find.address({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -416,8 +334,7 @@ await corsair.dadataru.api.find.bank({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -462,8 +379,7 @@ await corsair.dadataru.api.find.carBrand({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -508,8 +424,7 @@ await corsair.dadataru.api.find.companyByEmail({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -554,8 +469,7 @@ await corsair.dadataru.api.find.country({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -600,8 +514,7 @@ await corsair.dadataru.api.find.courtById({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -646,8 +559,7 @@ await corsair.dadataru.api.find.currency({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -692,8 +604,7 @@ await corsair.dadataru.api.find.delivery({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -738,8 +649,7 @@ await corsair.dadataru.api.find.fiasById({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -784,8 +694,7 @@ await corsair.dadataru.api.find.fmsUnit({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -830,8 +739,7 @@ await corsair.dadataru.api.find.fnsUnit({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -876,8 +784,7 @@ await corsair.dadataru.api.find.ftsUnit({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -922,8 +829,7 @@ await corsair.dadataru.api.find.medicalPositionById({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -968,8 +874,7 @@ await corsair.dadataru.api.find.mktu({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1014,8 +919,7 @@ await corsair.dadataru.api.find.okpd2ById({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1060,8 +964,7 @@ await corsair.dadataru.api.find.okpdtrPosition({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1106,8 +1009,7 @@ await corsair.dadataru.api.find.okpdtrProfession({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1152,8 +1054,7 @@ await corsair.dadataru.api.find.oktmoById({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1198,8 +1099,7 @@ await corsair.dadataru.api.find.okved2({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1244,8 +1144,7 @@ await corsair.dadataru.api.find.party({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1290,8 +1189,7 @@ await corsair.dadataru.api.find.partyBy({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1336,8 +1234,7 @@ await corsair.dadataru.api.find.partyKz({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1382,8 +1279,7 @@ await corsair.dadataru.api.find.postalOffice({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1428,8 +1324,7 @@ await corsair.dadataru.api.find.postalUnitById({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1477,8 +1372,7 @@ await corsair.dadataru.api.geolocate.address({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1524,8 +1418,7 @@ await corsair.dadataru.api.geolocate.postalUnit({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1561,17 +1454,7 @@ await corsair.dadataru.api.ipLocate.address({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `location` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="location full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `location` | `Record<string, any> \| null` | Yes | — |
 
 
 
@@ -1619,17 +1502,7 @@ await corsair.dadataru.api.profile.statistics({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1649,17 +1522,7 @@ await corsair.dadataru.api.profile.versions({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1701,8 +1564,7 @@ await corsair.dadataru.api.suggest.address({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1747,8 +1609,7 @@ await corsair.dadataru.api.suggest.bank({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1793,8 +1654,7 @@ await corsair.dadataru.api.suggest.carBrand({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1839,8 +1699,7 @@ await corsair.dadataru.api.suggest.country({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1885,8 +1744,7 @@ await corsair.dadataru.api.suggest.court({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1931,8 +1789,7 @@ await corsair.dadataru.api.suggest.currency({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1977,8 +1834,7 @@ await corsair.dadataru.api.suggest.email({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2023,8 +1879,7 @@ await corsair.dadataru.api.suggest.fias({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2069,8 +1924,7 @@ await corsair.dadataru.api.suggest.fmsUnit({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2115,8 +1969,7 @@ await corsair.dadataru.api.suggest.fnsUnit({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2161,8 +2014,7 @@ await corsair.dadataru.api.suggest.ftsUnit({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2207,8 +2059,7 @@ await corsair.dadataru.api.suggest.medicalPosition({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2253,8 +2104,7 @@ await corsair.dadataru.api.suggest.metro({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2299,8 +2149,7 @@ await corsair.dadataru.api.suggest.mktu({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2345,8 +2194,7 @@ await corsair.dadataru.api.suggest.name({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2391,8 +2239,7 @@ await corsair.dadataru.api.suggest.okpd2({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2437,8 +2284,7 @@ await corsair.dadataru.api.suggest.okpdtrPosition({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2483,8 +2329,7 @@ await corsair.dadataru.api.suggest.okpdtrProfession({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2529,8 +2374,7 @@ await corsair.dadataru.api.suggest.oktmo({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2575,8 +2419,7 @@ await corsair.dadataru.api.suggest.okved2({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2621,8 +2464,7 @@ await corsair.dadataru.api.suggest.party({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2667,8 +2509,7 @@ await corsair.dadataru.api.suggest.partyBy({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2713,8 +2554,7 @@ await corsair.dadataru.api.suggest.partyKz({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2759,8 +2599,7 @@ await corsair.dadataru.api.suggest.postalOffice({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2805,8 +2644,7 @@ await corsair.dadataru.api.suggest.postalUnit({});
 {
   value: string,
   unrestricted_value: string,
-  data: {
-  }
+  data: Record<string, any>
 }[]
 ```
 </Accordion>

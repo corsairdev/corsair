@@ -1,0 +1,22 @@
+displayName: Keenable
+domain: keenable.ai
+description: Web search and page-fetch API for AI agents, with realtime and deep retrieval modes.
+
+examples:
+  read:
+    path: search.post
+    title: Search the web
+    args:
+      query: typescript best practices
+      max_results: 5
+
+apiExamples:
+  search.post:
+    args:
+      query: typescript best practices
+      max_results: 5
+      published_after: 30d
+  fetch.get:
+    args:
+      url: https://example.com
+      max_chars: 20000

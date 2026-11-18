@@ -69,7 +69,7 @@
           {
             "key": "uris",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -152,7 +152,7 @@
           {
             "key": "results",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "status",
@@ -196,7 +196,7 @@
           {
             "key": "places",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -235,7 +235,7 @@
           {
             "key": "results",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "status",
@@ -273,7 +273,7 @@
           {
             "key": "results",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "status",
@@ -323,7 +323,7 @@
           {
             "key": "results",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "status",
@@ -367,7 +367,7 @@
           {
             "key": "results",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "status",
@@ -412,13 +412,13 @@
           {
             "key": "cellTowers",
             "optional": true,
-            "type": "{}[]",
+            "type": "Record<string, any>[]",
             "description": "Cell tower objects."
           },
           {
             "key": "wifiAccessPoints",
             "optional": true,
-            "type": "{}[]",
+            "type": "Record<string, any>[]",
             "description": "WiFi access point objects."
           }
         ]
@@ -456,7 +456,7 @@
           {
             "key": "locationBias",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Location bias area."
           },
           {
@@ -485,7 +485,7 @@
           {
             "key": "suggestions",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -539,7 +539,7 @@
           {
             "key": "location",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "rating",
@@ -623,7 +623,7 @@
           {
             "key": "locationRestriction",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Center circle restriction."
           }
         ]
@@ -634,7 +634,7 @@
           {
             "key": "places",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -662,7 +662,7 @@
           {
             "key": "locationBias",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Location bias circle or rectangle."
           },
           {
@@ -691,7 +691,7 @@
           {
             "key": "places",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -707,13 +707,13 @@
           {
             "key": "origins",
             "optional": false,
-            "type": "{}[]",
+            "type": "Record<string, any>[]",
             "description": "List of origin waypoints."
           },
           {
             "key": "destinations",
             "optional": false,
-            "type": "{}[]",
+            "type": "Record<string, any>[]",
             "description": "List of destination waypoints."
           },
           {
@@ -752,7 +752,7 @@
           {
             "key": "status",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "condition",
@@ -828,7 +828,7 @@
           {
             "key": "rows",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "status",
@@ -884,7 +884,7 @@
           {
             "key": "routes",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "status",
@@ -905,13 +905,13 @@
           {
             "key": "origin",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Origin waypoint object."
           },
           {
             "key": "destination",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Destination waypoint object."
           },
           {
@@ -934,7 +934,7 @@
           {
             "key": "routes",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1168,7 +1168,7 @@
           {
             "key": "asset",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "geometricError",
@@ -1178,7 +1178,7 @@
           {
             "key": "root",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }

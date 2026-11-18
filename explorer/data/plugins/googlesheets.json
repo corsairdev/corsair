@@ -156,29 +156,14 @@
             "type": "string"
           },
           {
-            "key": "totalUpdatedRows",
+            "key": "tableRange",
             "optional": true,
-            "type": "number"
+            "type": "string"
           },
           {
-            "key": "totalUpdatedColumns",
+            "key": "updates",
             "optional": true,
-            "type": "number"
-          },
-          {
-            "key": "totalUpdatedCells",
-            "optional": true,
-            "type": "number"
-          },
-          {
-            "key": "totalUpdatedSheets",
-            "optional": true,
-            "type": "number"
-          },
-          {
-            "key": "responses",
-            "optional": true,
-            "type": "{ range?: string, majorDimension?: ROWS | COLUMNS | DIMENSION_UNSPECIFIED, values?: (string | number | boolean | null)[][] }[]"
+            "type": "{ spreadsheetId?: string, updatedRange?: string, updatedRows?: number, updatedColumns?: number, updatedCells?: number, updatedData?: { range?: string, majorDimension?: ROWS | COLUMNS | DIMENSION_UNSPECIFIED, values?: (string | number | boolean | null)[][] } }"
           }
         ]
       }
