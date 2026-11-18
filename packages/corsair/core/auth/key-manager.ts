@@ -425,12 +425,14 @@ export function createAccountKeyManager<T extends AuthTypes>(
 		getIntegration,
 
 		getAccount: () => {
-			// Concurrent callers share the read in flight now; a settled read is
-			// never reused, so a rotated DEK or token is seen by the next call.
-			accountRead ??= readAccount().finally(() => {
-				accountRead = undefined;
+			// Concurrent callers share the read in flight; a settled read is never
+			// reused, so a rotated DEK or token is seen by the next call.
+			if (accountRead) return accountRead;
+			const read = readAccount().finally(() => {
+				if (accountRead === read) accountRead = undefined;
 			});
-			return accountRead;
+			accountRead = read;
+			return read;
 		},
 
 		updateAccount: async (data) => {
@@ -607,6 +609,7 @@ export function createAccountKeyManager<T extends AuthTypes>(
 						.where('id', '=', account.id)
 						.execute();
 				});
+				accountRead = undefined;
 			} else {
 				await ctx.updateAccount({
 					config: newConfig,

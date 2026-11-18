@@ -20,6 +20,7 @@ import {
 	createAccountKeyManager,
 	createIntegrationKeyManager,
 } from '../auth/key-manager';
+import { singleFlight } from '../auth/single-flight';
 import type {
 	AccountKeyManagerFor,
 	IntegrationKeyManagerFor,
@@ -349,15 +350,10 @@ function createAccountIdResolver(
 		return cachedAccountId;
 	};
 
-	// Concurrent calls share the revalidation in flight now; a settled answer is
+	// Concurrent calls share the revalidation in flight; a settled answer is
 	// never reused, so a rebound row is caught on the next call.
-	let inflight: Promise<string> | undefined;
-	return () => {
-		inflight ??= resolve().finally(() => {
-			inflight = undefined;
-		});
-		return inflight;
-	};
+	const flights = {};
+	return () => singleFlight(flights, 'account', resolve);
 }
 
 /**

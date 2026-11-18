@@ -212,7 +212,7 @@ async function reportPluginConnectionStatusFromBindingAsync(input: {
 	// connection is unchanged (e.g. a refused refresh, then a disconnect, both
 	// report verified: false while `connected` flips), and credentials can
 	// change in another process, so an in-memory invalidation would miss it.
-	// Overlapping calls share the read in flight now (never a settled one).
+	// Overlapping calls share the read in flight (never a settled one).
 	const inflightKey = connectionKey(
 		input.hub,
 		effectiveTenantId,
