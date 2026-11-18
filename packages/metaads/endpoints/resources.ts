@@ -80,17 +80,26 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-// Remove Meta's credential-bearing paging URL while preserving only safe cursor metadata.
-function normalizePaging(response: unknown): unknown {
-	if (!isRecord(response) || !isRecord(response.paging)) return response;
-	const paging = response.paging;
-	return {
-		...response,
-		paging: {
-			...(isRecord(paging.cursors) ? { cursors: paging.cursors } : {}),
-			hasNextPage: typeof paging.next === 'string',
-		},
-	};
+// 'unknown' because raw Graph API JSON and nested edge objects are untrusted before output schema parsing.
+function normalizePaging(value: unknown): unknown {
+	if (Array.isArray(value)) {
+		return value.map(normalizePaging);
+	}
+	if (!isRecord(value)) {
+		return value;
+	}
+	const result: Record<string, unknown> = {};
+	for (const [key, val] of Object.entries(value)) {
+		if (key === 'paging' && isRecord(val)) {
+			result.paging = {
+				...(isRecord(val.cursors) ? { cursors: normalizePaging(val.cursors) } : {}),
+				hasNextPage: typeof val.next === 'string',
+			};
+		} else {
+			result[key] = normalizePaging(val);
+		}
+	}
+	return result;
 }
 
 // `unknown` is needed for documented nested JSON such as targeting and creative references.

@@ -323,7 +323,7 @@ await corsair.metaads.api.ads.copy({ adId: '120000000000003' });
 | `adSetId` | `string` | No | — |
 | `renameOptions` | `object` | No | — |
 
-Creates a copy with status_option fixed to PAUSED. Creative overrides and arbitrary ad-set changes are not exposed; the non-idempotent write is not retried.
+Creates a copy with status_option fixed to PAUSED. Creative overrides are not exposed; optionally pass adSetId to choose a parent ad set. The non-idempotent write is not retried.
 
 <AccordionGroup>
 <Accordion title="renameOptions full type">

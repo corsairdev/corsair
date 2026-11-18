@@ -1117,6 +1117,36 @@ describe('Meta Ads operations', () => {
 		});
 	});
 
+	it('strips credential-bearing paging URLs from nested expanded edge results', async () => {
+		const next =
+			'https://graph.facebook.com/v27.0/act_123/campaigns?after=cursor&access_token=nested_secret';
+		mockedRequest.mockResolvedValue({
+			id: 'act_123',
+			name: 'Test Account',
+			campaigns: {
+				data: [{ id: 'campaign-1' }],
+				paging: { cursors: { after: 'cursor-2' }, next },
+			},
+		});
+
+		const result = await Accounts.get(ctx, {
+			accountId: '123',
+			fields: 'id,name,campaigns.limit(1){id}',
+		});
+
+		expect(JSON.stringify(result)).not.toContain(next);
+		expect(JSON.stringify(result)).not.toContain('nested_secret');
+		// `unknown` because expanded edge response shapes are dynamic open records before assertion.
+		const nested = (result as Record<string, unknown>).campaigns as Record<
+			string,
+			unknown
+		>;
+		expect(nested.paging).toEqual({
+			cursors: { after: 'cursor-2' },
+			hasNextPage: true,
+		});
+	});
+
 	it('accepts a caller-owned idempotency key only for supported create operations', async () => {
 		mockedRequest.mockResolvedValue(createResponse);
 		await Campaigns.create(ctx, {
