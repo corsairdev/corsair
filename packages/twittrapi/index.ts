@@ -47,7 +47,11 @@ import {
 
 export type TwittrApiContext = CorsairPluginContext<
 	typeof TwittrApiSchema,
-	TwittrApiPluginOptions
+	TwittrApiPluginOptions,
+	// Endpoints are not passed: they reference this context, which would make
+	// the type circular.
+	undefined,
+	typeof twittrApiAuthConfig
 >;
 
 export type TwittrApiKeyBuilderContext =
@@ -606,7 +610,8 @@ export type BaseTwittrApiPlugin<T extends TwittrApiPluginOptions> =
 		typeof twittrApiEndpointsNested,
 		typeof twittrApiWebhooksNested,
 		T,
-		typeof defaultAuthType
+		typeof defaultAuthType,
+		typeof twittrApiAuthConfig
 	>;
 
 export type InternalTwittrApiPlugin =
