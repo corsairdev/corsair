@@ -108,12 +108,54 @@ describe('Productboard plugin schema', () => {
 		).toBe(true);
 		expect(
 			ProductboardNoteCreateBodySchema.safeParse({
+				data: {
+					type: 'textNote',
+					fields: { name: 'Note with relationships' },
+					relationships: [
+						{
+							type: 'customer',
+							target: {
+								id: '123e4567-e89b-12d3-a456-426614174000',
+								type: 'user',
+							},
+						},
+						{
+							type: 'link',
+							target: {
+								id: '223e4567-e89b-12d3-a456-426614174001',
+								type: 'link',
+							},
+						},
+					],
+				},
+			}).success,
+		).toBe(true);
+		expect(
+			ProductboardNoteCreateBodySchema.safeParse({
 				data: { fields: { name: 'Missing note type' } },
 			}).success,
 		).toBe(false);
 		expect(
 			ProductboardNoteCreateBodySchema.safeParse({
 				data: { type: 'textNote', fields: { content: 'No name' } },
+			}).success,
+		).toBe(false);
+		expect(
+			ProductboardNoteCreateBodySchema.safeParse({
+				data: {
+					type: 'textNote',
+					fields: { name: 'Strict relationship item' },
+					relationships: [
+						{
+							type: 'link',
+							target: {
+								id: '223e4567-e89b-12d3-a456-426614174001',
+								type: 'link',
+								unexpected: true,
+							},
+						},
+					],
+				},
 			}).success,
 		).toBe(false);
 	});

@@ -63,6 +63,38 @@ const ProductboardNoteFieldsSchema = z
 	.object({ name: z.string().min(1) })
 	.catchall(ProductboardJsonSchema);
 
+const ProductboardNoteCustomerTargetSchema = z.union([
+	z
+		.object({
+			id: z.string().uuid(),
+			type: z.enum(['user', 'company']),
+		})
+		.strict(),
+	z
+		.object({
+			email: z.string().email(),
+			type: z.literal('user'),
+		})
+		.strict(),
+]);
+
+const ProductboardNoteRelationshipSchema = z.discriminatedUnion('type', [
+	z
+		.object({
+			type: z.literal('customer'),
+			target: ProductboardNoteCustomerTargetSchema,
+		})
+		.strict(),
+	z
+		.object({
+			type: z.literal('link'),
+			target: z
+				.object({ id: z.string().uuid(), type: z.literal('link') })
+				.strict(),
+		})
+		.strict(),
+]);
+
 export const ProductboardNoteCreateBodySchema = z
 	.object({
 		data: z
@@ -70,7 +102,7 @@ export const ProductboardNoteCreateBodySchema = z
 				type: z.string().min(1),
 				fields: ProductboardNoteFieldsSchema,
 				metadata: ProductboardJsonObjectSchema.optional(),
-				relationships: ProductboardJsonObjectSchema.optional(),
+				relationships: z.array(ProductboardNoteRelationshipSchema).optional(),
 			})
 			.strict(),
 	})

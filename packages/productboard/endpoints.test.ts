@@ -257,7 +257,19 @@ function inputFor(
 		if (operation.name === 'notes.search')
 			data = { search: { query: 'synthetic' } };
 		if (operation.name === 'notes.create')
-			data = { type: 'textNote', fields: { name: 'Synthetic note' } };
+			data = {
+				type: 'textNote',
+				fields: { name: 'Synthetic note' },
+				relationships: [
+					{
+						type: 'customer',
+						target: {
+							id: '123e4567-e89b-12d3-a456-426614174000',
+							type: 'user',
+						},
+					},
+				],
+			};
 		if (operation.name === 'notes.update')
 			data = { fields: { name: 'Updated synthetic note' } };
 		if (operation.name === 'notes.relationships.create')
