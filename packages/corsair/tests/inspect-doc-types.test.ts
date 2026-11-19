@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import type { DocSchemaFieldRow } from '../core/inspect';
-import { introspectPluginForDocs } from '../core/inspect';
+import { getSchema, introspectPluginForDocs } from '../core/inspect';
 import type { CorsairPlugin } from '../core/plugins';
 
 const noop = async () => ({});
@@ -191,6 +191,15 @@ describe('docs introspection types', () => {
 			optional: true,
 			description: 'Count',
 		});
+	});
+
+	it('get_schema shows defaulted and prefaulted inputs as optional, like the docs', () => {
+		// Review on #2629 (Greptile): getSchema rendered inputs as outputs.
+		const text = getSchema([plugin], 'doctypes.things.get');
+		expect(text).toContain('pageSize?: number  // Defaults to 50.');
+		expect(text).toContain('first?: number  // Page size. Defaults to 10.');
+		// Outputs keep a defaulted field required.
+		expect(text).toMatch(/output [^]*\n\s+limit: number/);
 	});
 
 	it('keeps | null on a nullish object that has a description', () => {

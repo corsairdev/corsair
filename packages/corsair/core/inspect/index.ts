@@ -1125,7 +1125,9 @@ export function getSchema(
 
 				if (schemas?.input) {
 					parts.push(
-						`input ${formatDocSchemaShape(zodToDocSchemaShape(schemas.input))}`,
+						// 'input': a `.default()`/`.prefault()` field can be left out, and
+						// the agent should see it as optional with its default, as the docs do.
+						`input ${formatDocSchemaShape(zodToDocSchemaShape(schemas.input, 'input'))}`,
 					);
 				}
 				if (schemas?.output) {
