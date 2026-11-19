@@ -195,6 +195,33 @@ describe('googledrive files.export', () => {
 		expect(contentCalls()).toHaveLength(0);
 	});
 
+	it('refuses an unexportable Google type even when a format is named', async () => {
+		serve(
+			{ name: 'Survey', mimeType: 'application/vnd.google-apps.form' },
+			PDF,
+			'application/pdf',
+		);
+		await expect(
+			exportFile(ctx, { fileId: 'form-1', mimeType: 'application/pdf' }),
+		).rejects.toThrow(/cannot export/);
+		expect(contentCalls()).toHaveLength(0);
+	});
+
+	it('refuses a Vids file, which Drive does not export', async () => {
+		serve(
+			{ name: 'Launch video', mimeType: 'application/vnd.google-apps.vid' },
+			PDF,
+			'video/mp4',
+		);
+		await expect(exportFile(ctx, { fileId: 'vid-1' })).rejects.toThrow(
+			/does not export Google Vids/,
+		);
+		await expect(
+			exportFile(ctx, { fileId: 'vid-1', mimeType: 'video/mp4' }),
+		).rejects.toThrow(/does not export Google Vids/);
+		expect(contentCalls()).toHaveLength(0);
+	});
+
 	it('takes only a fileId and an optional format', () => {
 		expect(
 			GoogleDriveEndpointInputSchemas.filesExport.parse({ fileId: 'x' }),

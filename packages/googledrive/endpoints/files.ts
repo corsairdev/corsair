@@ -281,8 +281,11 @@ const DEFAULT_EXPORT_TYPES: Record<string, string> = {
 	'application/vnd.google-apps.drawing': 'image/png',
 	'application/vnd.google-apps.script':
 		'application/vnd.google-apps.script+json',
-	'application/vnd.google-apps.vid': 'video/mp4',
 };
+
+// Drive gives a Vids file only through files.download's long-running operation
+// (POST /files/{id}/download, then polling), not through export.
+const VIDS_TYPE = 'application/vnd.google-apps.vid';
 
 // Drive's export formats and their extensions, from
 // developers.google.com/workspace/drive/api/guides/ref-export-formats.
@@ -387,12 +390,20 @@ export const exportFile: GoogleDriveEndpoints['filesExport'] = async (
 			`This file is not a Google Docs, Sheets, Slides or Drawings file (${sourceType || 'unknown type'}). Use files.download to get it as it is.`,
 		);
 	}
-	const exportType = input.mimeType ?? DEFAULT_EXPORT_TYPES[sourceType];
-	if (!exportType) {
+	// Checked before the format, so a named mimeType doesn't send a Form or a
+	// Site on to Drive.
+	if (sourceType === VIDS_TYPE) {
 		throw new Error(
-			`Drive cannot export a ${sourceType} file. Docs, Sheets, Slides, Drawings, Apps Script and Vids files can be exported.`,
+			'Drive does not export Google Vids files, and this plugin cannot download them yet.',
 		);
 	}
+	const defaultType = DEFAULT_EXPORT_TYPES[sourceType];
+	if (!defaultType) {
+		throw new Error(
+			`Drive cannot export a ${sourceType} file. Docs, Sheets, Slides, Drawings and Apps Script files can be exported.`,
+		);
+	}
+	const exportType = input.mimeType ?? defaultType;
 
 	const { bytes, contentType } =
 		await makeAuthenticatedGoogleDriveRequest<BinaryResponse>(
