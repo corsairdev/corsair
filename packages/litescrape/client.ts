@@ -163,6 +163,7 @@ const REDACTED = '[REDACTED]';
  * handlers and core's retries read (the same rebuild the encodian and e2b clients do).
  */
 function withoutRequestData(error: ApiError): ApiError {
+	const body = withoutEchoedInput(error.body);
 	return new ApiError(
 		{
 			...error.request,
@@ -173,9 +174,9 @@ function withoutRequestData(error: ApiError): ApiError {
 			ok: false,
 			status: error.status,
 			statusText: error.statusText,
-			body: withoutEchoedInput(error.body),
+			body,
 		},
-		error.message,
+		safeMessage(error, body),
 		{
 			retryAfter: error.retryAfter,
 			rateLimitReset: error.rateLimitReset,
@@ -183,6 +184,33 @@ function withoutRequestData(error: ApiError): ApiError {
 			rateLimitLimit: error.rateLimitLimit,
 		},
 	);
+}
+
+/**
+ * Core builds the message from the whole response body when a status is
+ * outside its fixed list and the body has no `message`/`error`/`detail`, and
+ * uses a FastAPI `detail` list as-is, so an echoed input could ride in the
+ * message. The message is rebuilt instead: Litescrape's own `error` text (a
+ * fixed sentence per `error_code`) or `message`, else the status text, plus the
+ * `error_code` the error handlers' text fallbacks match on. The serialized
+ * body never goes in.
+ */
+// `unknown` is necessary because the scrubbed body is whatever JSON (or text) the API sent.
+function safeMessage(error: ApiError, body: unknown): string {
+	const fields =
+		typeof body === 'object' && body !== null && !Array.isArray(body)
+			? (body as { error?: unknown; message?: unknown; error_code?: unknown })
+			: {};
+	const text =
+		typeof fields.error === 'string'
+			? fields.error
+			: typeof fields.message === 'string'
+				? fields.message
+				: error.statusText || `HTTP ${error.status}`;
+	return typeof fields.error_code === 'string' &&
+		!text.includes(fields.error_code)
+		? `${text} (${fields.error_code})`
+		: text;
 }
 
 // `unknown` is necessary because an error body is whatever JSON (or text) the API sent.

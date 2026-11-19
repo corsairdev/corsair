@@ -153,6 +153,68 @@ describe('makeLitescrapeRequest', () => {
 		expect(errorHandlers.BAD_REQUEST_ERROR.match(thrown)).toBe(true);
 	});
 
+	it('never builds the message from an echoed input', async () => {
+		// Review on #2627 (CodeRabbit): core puts the whole body in the message
+		// for a 422 whose body has only a details list.
+		const echoed = 'session=secret-cookie';
+		mockRequest.mockRejectedValue(
+			new ApiError(
+				{ method: 'POST', url: '/api/web/fetch', body: { url: 'x' } },
+				{
+					url: 'https://api.litescrape.com/api/web/fetch',
+					ok: false,
+					status: 422,
+					statusText: 'Unprocessable Entity',
+					body: { details: [{ input: echoed }] },
+				},
+				`Generic Error: status: 422; status text: Unprocessable Entity; body: {"details":[{"input":"${echoed}"}]}`,
+			),
+		);
+
+		const thrown = (await makeLitescrapeRequest(
+			'/api/web/fetch',
+			'ls_live_test',
+			{ method: 'POST', body: { url: 'x' } },
+		).catch((error: Error) => error)) as ApiError;
+
+		expect(thrown.status).toBe(422);
+		expect(thrown.message).not.toContain('secret-cookie');
+		expect(JSON.stringify(thrown.body)).not.toContain('secret-cookie');
+		expect(thrown.message).toBe('Unprocessable Entity');
+	});
+
+	it("uses Litescrape's error text and code for the message", async () => {
+		mockRequest.mockRejectedValue(
+			new ApiError(
+				{ method: 'POST', url: '/api/bing/search', body: { q: 'x' } },
+				{
+					url: 'https://api.litescrape.com/api/bing/search',
+					ok: false,
+					status: 400,
+					statusText: 'Bad Request',
+					body: {
+						error: 'Request parameters did not match the endpoint contract.',
+						error_code: 'invalid_request',
+						details: [{ message: 'engine must be bing' }],
+						billed: false,
+					},
+				},
+				'Bad Request',
+			),
+		);
+
+		const thrown = (await makeLitescrapeRequest(
+			'/api/bing/search',
+			'ls_live_test',
+			{ method: 'POST', body: { q: 'x' } },
+		).catch((error: Error) => error)) as ApiError;
+
+		expect(thrown.message).toBe(
+			'Request parameters did not match the endpoint contract. (invalid_request)',
+		);
+		expect(errorHandlers.BAD_REQUEST_ERROR.match(thrown)).toBe(true);
+	});
+
 	it('waits the call budget plus 5 s, in whole milliseconds', async () => {
 		mockRequest.mockResolvedValue({});
 		await makeLitescrapeRequest('/api/web/fetch', 'ls_live_test', {

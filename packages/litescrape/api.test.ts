@@ -117,7 +117,10 @@ live('Litescrape live API', () => {
 				: SAMPLE;
 	const outages: string[] = [];
 
-	it.each(ids)(
+	// A LITESCRAPE_LIVE_ONLY list of keys operations leaves no data operations;
+	// it.each([]) would register a failing test, so skip the table then.
+	const dataTable = ids.length > 0 ? it.each(ids) : null;
+	dataTable?.(
 		'%s returns a response that matches its schema',
 		async (id) => {
 			const args = docs.apiExamples[id]?.args;
