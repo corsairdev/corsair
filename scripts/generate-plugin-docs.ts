@@ -30,7 +30,12 @@ import type {
 } from '../packages/corsair/core/inspect/index.ts';
 import { introspectPluginForDocs } from '../packages/corsair/core/inspect/index.ts';
 import type { CorsairPlugin } from '../packages/corsair/core/plugins/index.ts';
-import { topLevelUnionMembers, valueMatchesDocType } from './doc-type-match.ts';
+import {
+	fieldSchemaCheck,
+	topLevelUnionMembers,
+	valueMatchesDocType,
+	zodObjectFields,
+} from './doc-type-match.ts';
 import { escapeMdxText } from './mdx-escape.ts';
 
 /** Optional per-plugin overrides for the doc generator (next to package.json). */
@@ -598,6 +603,8 @@ function validateExampleArgsAgainstInput(
 	args: Record<string, unknown>,
 	input: DocSchemaShape,
 	label: string,
+	// unknown: the plugin's zod input schema, read structurally; undefined when it has none.
+	zodInput?: unknown,
 ): string[] {
 	const errors: string[] = [];
 	if (input.kind === 'inline') {
@@ -616,6 +623,7 @@ function validateExampleArgsAgainstInput(
 	}
 
 	const fieldMap = new Map(input.fields.map((f) => [f.key, f]));
+	const zodFields = zodObjectFields(zodInput);
 	for (const [key, value] of Object.entries(args)) {
 		const field = fieldMap.get(key);
 		if (!field) {
@@ -625,6 +633,18 @@ function validateExampleArgsAgainstInput(
 					.sort()
 					.join(', ') || '(none)';
 			errors.push(`${label}: unknown arg "${key}" — valid keys: ${known}`);
+			continue;
+		}
+		// The plugin's own schema decides when there is one: the rendered type
+		// loses whether an enum member was the string '1' or the number 1.
+		const fieldSchema = zodFields?.[key];
+		if (fieldSchema) {
+			const issue = fieldSchemaCheck(fieldSchema, value);
+			if (issue) {
+				errors.push(
+					`${label}: arg "${key}" has value ${JSON.stringify(value)}, which its schema rejects (${issue}); expected type \`${field.type}\``,
+				);
+			}
 			continue;
 		}
 		if (!valueMatchesDocType(value, field.type)) {
@@ -645,9 +665,13 @@ function validatePluginDocsConfig(
 	data: PluginDocsIntrospection,
 	pluginId: string,
 	authTypes: string[],
+	// unknown: the plugin's endpointSchemas, keyed by short path, read structurally.
+	endpointSchemas?: Record<string, { input?: unknown } | undefined>,
 ): string[] {
 	const errors: string[] = [];
 	const prefix = `plugin-docs.yaml`;
+	const zodInputFor = (shortPath: string) =>
+		endpointSchemas?.[shortPath]?.input;
 
 	const recommended = docsConfig.recommendedAuth?.trim();
 	if (recommended && authTypes.length > 0 && !authTypes.includes(recommended)) {
@@ -675,6 +699,7 @@ function validatePluginDocsConfig(
 					call.args,
 					ep.input,
 					`${prefix}: ${kind} (${call.path})`,
+					zodInputFor(ep.shortPath),
 				),
 			);
 		}
@@ -713,6 +738,7 @@ function validatePluginDocsConfig(
 						args,
 						ep.input,
 						`${prefix}: apiExamples.${shortPath}`,
+						zodInputFor(ep.shortPath),
 					),
 				);
 			}
@@ -2098,6 +2124,9 @@ async function generatePluginDocsForEntry(
 		docData,
 		pluginId,
 		authTypes,
+		plugin.endpointSchemas as
+			| Record<string, { input?: unknown } | undefined>
+			| undefined,
 	);
 	if (configErrors.length > 0) {
 		return {

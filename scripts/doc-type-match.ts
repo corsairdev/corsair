@@ -40,11 +40,9 @@ export function valueMatchesDocType(value: unknown, typeStr: string): boolean {
 		return true;
 	}
 	// Enum members render unquoted (`newestFirst | ratingHigh | null`), so a
-	// scalar that equals one of the members matches, but only a member of its
-	// own kind: a string matches word members, a number matches numeric ones,
-	// a boolean `true`/`false`. So "10" doesn't match `10 | 25` and "false"
-	// doesn't match `false`. Type names and structural members (`JsonValue[]`,
-	// `{ … }`) never match a scalar.
+	// scalar that equals one of the members matches: a number only numeric
+	// members, a boolean only `true`/`false`. Type names and structural members
+	// (`JsonValue[]`, `{ … }`) never match a scalar.
 	if (enumMemberMatches(value, topLevelUnionMembers(t))) {
 		return true;
 	}
@@ -90,10 +88,94 @@ function enumMemberMatches(value: unknown, members: string[]): boolean {
 	}
 	if (typeof value !== 'string') return false;
 	if (PRIMITIVE_TYPE_NAMES.has(value)) return false;
-	if (NUMERIC_MEMBER.test(value) || value === 'true' || value === 'false') {
-		return false;
-	}
+	// A rendered member doesn't say whether `1` was the string '1' or the
+	// number 1 (z.enum(['HIGH', 'LOW', '1', '0']) renders `HIGH | LOW | 1 | 0`),
+	// so a string may match any word member here. The generator checks
+	// examples against the plugin's own zod schema first (fieldSchemaCheck),
+	// which knows the kind; this text match is only the fallback.
 	return members.some(
 		(member) => member === value && !STRUCTURAL_MEMBER.test(member),
 	);
+}
+
+// `unknown` here and below: zod schemas are read structurally (this script
+// doesn't import zod), and example values are any yaml value.
+type ZodLike = {
+	safeParse: (value: unknown) => {
+		success: boolean;
+		error?: { issues?: { code?: string; message?: string }[] };
+	};
+};
+
+function isZodLike(value: unknown): value is ZodLike {
+	return (
+		typeof value === 'object' &&
+		value !== null &&
+		typeof (value as { safeParse?: unknown }).safeParse === 'function'
+	);
+}
+
+/**
+ * The field schemas of an object input, looking through the wrappers an input
+ * may sit in (optional, default, pipe, lazy). Undefined when the input is not
+ * an object schema.
+ */
+export function zodObjectFields(
+	schema: unknown,
+): Record<string, ZodLike> | undefined {
+	let current: unknown = schema;
+	for (let depth = 0; depth < 8 && isZodLike(current); depth++) {
+		const node = current as {
+			shape?: unknown;
+			_def?: Record<string, unknown>;
+			def?: Record<string, unknown>;
+		};
+		const def = node._def ?? node.def ?? {};
+		const shape =
+			node.shape ??
+			(typeof def.shape === 'function'
+				? (def.shape as () => unknown)()
+				: def.shape);
+		if (shape && typeof shape === 'object') {
+			return shape as Record<string, ZodLike>;
+		}
+		current =
+			def.innerType ??
+			def.in ??
+			def.schema ??
+			(typeof def.getter === 'function'
+				? (def.getter as () => unknown)()
+				: undefined);
+	}
+	return undefined;
+}
+
+// zod issue codes that mean the value is the wrong kind, not merely a
+// placeholder that breaks a length, format or range rule.
+const KIND_ISSUES = new Set([
+	'invalid_type',
+	'invalid_value',
+	'invalid_enum_value',
+	'invalid_literal',
+	'invalid_union',
+]);
+
+/**
+ * Checks one example arg against the field's real schema, which knows whether
+ * an enum member is the string '1' or the number 1. Only kind problems count
+ * (wrong type, not an enum or literal member): docs examples use placeholders
+ * such as "<130-132 character signature>" that a length or format rule would
+ * reject. Returns the first such issue, or undefined.
+ */
+export function fieldSchemaCheck(
+	field: ZodLike,
+	value: unknown,
+): string | undefined {
+	const result = field.safeParse(value);
+	if (result.success) return undefined;
+	const issue = result.error?.issues?.find(
+		(candidate) =>
+			candidate.code !== undefined && KIND_ISSUES.has(candidate.code),
+	);
+	return issue ? (issue.message ?? 'rejected by its schema') : undefined;
 }
