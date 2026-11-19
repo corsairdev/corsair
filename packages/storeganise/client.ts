@@ -152,12 +152,21 @@ export async function makeStoreganiseRequest(
 		// and drop its fields.
 		if (error instanceof StoreganiseAPIError) throw error;
 		if (error instanceof ApiError) {
+			// Rebuilt without the cause, per PLUGIN_PR_RULES R8: the cause
+			// retains request bodies (unit-rental custom fields carry access
+			// codes), and status and retryAfter stay on the rebuilt error for
+			// the handlers.
 			const detail = describeStoreganiseError(error.body, error.message);
 			throw new StoreganiseAPIError(
 				error.status === undefined
 					? detail
 					: `Storeganise ${error.status}: ${detail}`,
-				{ cause: error, status: error.status, body: error.body, method },
+				{
+					status: error.status,
+					body: error.body,
+					retryAfter: error.retryAfter,
+					method,
+				},
 			);
 		}
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.

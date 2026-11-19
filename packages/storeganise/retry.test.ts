@@ -14,9 +14,7 @@ async function createClient() {
 	const testDb = createTestDatabase();
 	await createIntegrationAndAccount(testDb.db, 'storeganise', 'default');
 	const corsair = createCorsair({
-		plugins: [
-			storeganise({ key: 'sg-test-key', businessCode: 'spaceup' }),
-		],
+		plugins: [storeganise({ key: 'sg-test-key', businessCode: 'spaceup' })],
 		database: testDb.db,
 		kek: process.env.CORSAIR_KEK ?? '0123456789abcdef0123456789abcdef',
 	});
@@ -26,7 +24,11 @@ async function createClient() {
 let fetchMock: jest.SpyInstance;
 
 // unknown: response bodies are arbitrary JSON; each test passes its own.
-function respond(body: unknown, status = 200, headers: Record<string, string> = {}) {
+function respond(
+	body: unknown,
+	status = 200,
+	headers: Record<string, string> = {},
+) {
 	fetchMock.mockResolvedValueOnce(
 		new Response(JSON.stringify(body), {
 			status,
@@ -52,9 +54,13 @@ describe('retries through createCorsair', () => {
 	it('fails fast on a 429 instead of replaying on guesswork', async () => {
 		const { corsair, testDb } = await createClient();
 		try {
-			respond({ error: { type: 'TooManyRequests', message: 'Slow down' } }, 429, {
-				'Retry-After': '1',
-			});
+			respond(
+				{ error: { type: 'TooManyRequests', message: 'Slow down' } },
+				429,
+				{
+					'Retry-After': '1',
+				},
+			);
 
 			await expect(
 				corsair.storeganise.api.units.list({}),

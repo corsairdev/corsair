@@ -6,7 +6,6 @@ import type {
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
@@ -37,7 +36,6 @@ import {
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 import { StoreganiseSchema } from './schema';
 import { event } from './webhooks';
-import type { StoreganiseWebhookEventPayload } from './webhooks/types';
 import {
 	matchStoreganiseWebhook,
 	StoreganiseEventSchema,
@@ -91,15 +89,9 @@ export type StoreganiseEndpoints = {
 	[K in keyof StoreganiseEndpointOutputs]: StoreganiseEndpoint<K>;
 };
 
-type StoreganiseWebhook = CorsairWebhook<
-	StoreganiseContext,
-	StoreganiseWebhookEventPayload,
-	StoreganiseWebhookEventPayload
+export type StoreganiseBoundWebhooks = BindWebhooks<
+	typeof storeganiseWebhooksNested
 >;
-
-export type StoreganiseBoundWebhooks = BindWebhooks<{
-	event: StoreganiseWebhook;
-}>;
 
 const storeganiseEndpointsNested = {
 	settings: {

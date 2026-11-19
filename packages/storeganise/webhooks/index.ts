@@ -10,6 +10,18 @@ import {
 
 type LogFields = Record<string, string | number | boolean | undefined>;
 
+/**
+ * Storeganise expects a 200 answer within 30 seconds and retries twice more
+ * before marking the related job failed, so logging must not hold the
+ * acknowledgment past that deadline. A late insert still lands; the handler
+ * just stops waiting for it.
+ */
+const LOG_WAIT_MS = 5_000;
+
+function logWait(): Promise<void> {
+	return new Promise((resolve) => setTimeout(resolve, LOG_WAIT_MS));
+}
+
 // A logging failure does not fail the delivery.
 async function safeLog(
 	ctx: StoreganiseContext,
@@ -71,11 +83,14 @@ export const event: CorsairWebhook<
 			};
 		}
 
-		await safeLog(ctx, 'storeganise.webhook.event', {
-			type: parsed.data.type,
-			deliveryId: parsed.data.id,
-			created: parsed.data.created,
-		});
+		await Promise.race([
+			safeLog(ctx, 'storeganise.webhook.event', {
+				type: parsed.data.type,
+				deliveryId: parsed.data.id,
+				created: parsed.data.created,
+			}),
+			logWait(),
+		]);
 
 		return { success: true, data: parsed.data };
 	},

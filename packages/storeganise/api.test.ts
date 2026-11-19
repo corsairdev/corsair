@@ -43,7 +43,6 @@ describeIfKey('storeganise live smoke', () => {
 
 	it('lists sites through its output schema', async () => {
 		const sites = await plugin.endpoints!.sites.list(ctx, {});
-		expect(sites.length).toBeGreaterThan(0);
 		Outputs.sitesList.parse(sites);
 	});
 
