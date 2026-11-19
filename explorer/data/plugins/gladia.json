@@ -419,6 +419,16 @@
       "shortPath": "preRecorded.initiateTranscription",
       "description": "Start a pre-recorded transcription job",
       "riskLevel": "write",
+      "job": {
+        "idPath": "id",
+        "status": {
+          "op": "preRecorded.getJob",
+          "idArg": "id",
+          "statusPath": "status",
+          "done": ["done"],
+          "failed": ["error"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
