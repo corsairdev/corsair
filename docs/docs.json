@@ -1211,14 +1211,6 @@
                 ]
               },
               {
-                "group": "Cert Spotter",
-                "pages": [
-                  "plugins/certspotter/overview",
-                  "plugins/certspotter/api",
-                  "plugins/certspotter/database"
-                ]
-              },
-              {
                 "group": "Chaser",
                 "pages": [
                   "plugins/chaser/overview",
@@ -3666,6 +3658,14 @@
                 ]
               },
               {
+                "group": "Monday MCP",
+                "pages": [
+                  "plugins/mondaymcp/overview",
+                  "plugins/mondaymcp/api",
+                  "plugins/mondaymcp/database"
+                ]
+              },
+              {
                 "group": "Monday.com",
                 "pages": [
                   "plugins/monday/overview",
@@ -5032,6 +5032,14 @@
                   "plugins/square/overview",
                   "plugins/square/api",
                   "plugins/square/database"
+                ]
+              },
+              {
+                "group": "SSLMate Cert Spotter",
+                "pages": [
+                  "plugins/certspotter/overview",
+                  "plugins/certspotter/api",
+                  "plugins/certspotter/database"
                 ]
               },
               {
