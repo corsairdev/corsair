@@ -1,3 +1,4 @@
+import { FileInputSchema } from 'corsair/http';
 import { z } from 'zod';
 
 // The Google Photos Library API is read through paging tokens and written
@@ -255,9 +256,8 @@ const AlbumsCreateInputSchema = z
 		title: z
 			.string()
 			.min(1)
-			.describe(
-				'The album name, at most 500 characters. The only writable field',
-			),
+			.max(500)
+			.describe('The album name, at most 500 characters'),
 	})
 	.strict();
 
@@ -270,7 +270,7 @@ const AlbumsCreateInputSchema = z
 const AlbumsUpdateInputSchema = z
 	.object({
 		albumId,
-		title: z.string().min(1),
+		title: z.string().min(1).max(500).describe('At most 500 characters'),
 	})
 	.strict();
 
@@ -455,37 +455,39 @@ const MediaItemsUpdateInputSchema = z
 		mediaItemId,
 		description: z
 			.string()
+			.max(999)
 			.describe(
-				'The new description. The only field the API lets an update change',
+				'The new description, under 1000 characters. The only field the API lets an update change',
 			),
 	})
 	.strict();
 
 /**
  * The bytes are uploaded separately, which returns a token; batchCreate turns
- * tokens into media items. 50 per call is the documented maximum.
+ * tokens into media items. 50 per call is the documented maximum. The file
+ * follows core's file convention: a public URL, `{ url }`, or `{ base64 }`, each
+ * with an optional filename and contentType.
  */
 const NewMediaItemSchema = z
 	.object({
+		file: FileInputSchema.describe(
+			'The photo or video: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}. Up to 200 MB. The contentType (e.g. image/jpeg, video/mp4) is sent to Google as the upload type; without one Google detects it',
+		),
 		fileName: z
 			.string()
 			.min(1)
+			.max(255)
+			.nullish()
 			.describe(
-				'The file name shown in Google Photos, including its extension, e.g. `beach.jpg`',
+				"The file name shown in Google Photos, with its extension, e.g. `beach.jpg`. Defaults to the file input's filename or the name in its URL",
 			),
-		contentType: z
+		description: z
 			.string()
-			.min(1)
+			.max(999)
+			.nullish()
 			.describe(
-				'The MIME type of the bytes: `image/jpeg`, `image/png`, `video/mp4` and so on. Uploading needs it in `X-Goog-Upload-Content-Type`',
+				'Shown in the item info in Google Photos; under 1000 characters, text written by the user',
 			),
-		bytes: z
-			.string()
-			.min(1)
-			.describe(
-				'The file bytes, base64-encoded. The endpoint decodes them and uploads the raw bytes',
-			),
-		description: z.string().nullish(),
 	})
 	.strict();
 

@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import { resolveFileInput } from 'corsair/http';
 import type { GooglePhotosEndpoints } from '..';
 import { makeGooglePhotosRequest, segment, uploadMediaBytes } from '../client';
 import { call, rowCount } from './call';
@@ -128,13 +129,17 @@ export const update: GooglePhotosEndpoints['mediaItemsUpdate'] = async (
 		}),
 	);
 
+/** Google's photo limit; larger videos need a resumable upload, which this plugin does not do. */
+const UPLOAD_MAX_BYTES = 200 * 1024 * 1024;
+
 /**
  * The two-step create. The bytes go to `/uploads` first, which returns a token
  * as plain text; batchCreate then turns up to 50 tokens into media items.
  *
  * One call does both steps, so it either creates the items or reports which
  * upload failed. The upload is deliberately not replayed: a token is spent by
- * the create, so a retry would need a fresh upload.
+ * the create, so a retry would need a fresh upload. A token that was uploaded
+ * but never created expires after a day and creates nothing.
  */
 export const create: GooglePhotosEndpoints['mediaItemsCreate'] = async (
 	ctx,
@@ -142,21 +147,29 @@ export const create: GooglePhotosEndpoints['mediaItemsCreate'] = async (
 ) => {
 	const parsed = Inputs.mediaItemsCreate.parse(rawInput ?? {});
 
-	// Uploads run in sequence: the API guide asks callers not to run write calls
-	// for one user in parallel.
+	// One file at a time, so at most one file's bytes are held in memory. The
+	// guide allows parallel byte uploads; only batchCreate must not run in
+	// parallel for one user, and it runs once below.
 	const newMediaItems: Array<{
 		description?: string;
 		simpleMediaItem: { uploadToken: string; fileName: string };
 	}> = [];
 	for (const item of parsed.newMediaItems) {
+		const file = await resolveFileInput(item.file, {
+			maxBytes: UPLOAD_MAX_BYTES,
+			fallbackName: 'upload',
+		});
 		const uploadToken = await uploadMediaBytes(
 			ctx.key,
-			Buffer.from(item.bytes, 'base64'),
-			item.contentType,
+			file.bytes,
+			file.contentType,
 		);
 		newMediaItems.push({
 			...(item.description ? { description: item.description } : {}),
-			simpleMediaItem: { uploadToken, fileName: item.fileName },
+			simpleMediaItem: {
+				uploadToken,
+				fileName: item.fileName ?? file.filename,
+			},
 		});
 	}
 

@@ -13,7 +13,7 @@ overviewNote: |
 
   Things to know before you call:
 
-  - **Uploading is two steps, done here in one call.** `mediaItems.create` posts the bytes to `/uploads`, reads back an upload token, then sends up to 50 tokens to `mediaItems:batchCreate`. Bytes are passed base64-encoded with their MIME type.
+  - **Uploading is two steps, done here in one call.** `mediaItems.create` posts the bytes to `/uploads`, reads back an upload token, then sends up to 50 tokens to `mediaItems:batchCreate`. Each `file` is a public URL, `{ url }` or `{ base64 }`, with an optional `filename` and `contentType`, up to 200 MB. A partial failure answers 207 with a status per item, so check each `newMediaItemResults[].status`.
   - **Uploads count toward the user's storage past 25MB.** Google asks an app to tell the user this.
   - **Google asks for a different request shape per list.** Albums default to 20 per page and cap at 50; media items default to 25 and cap at 100. Both are paginated with `nextPageToken`.
   - **`filters` and `albumId` cannot be combined.** The API answers 400, so the plugin refuses it before the request.
@@ -68,10 +68,10 @@ apiExamples:
   mediaItems.update:
     call: "{ mediaItemId: 'AbCdEf123', description: 'Sunset over the bay' }"
   mediaItems.create:
-    call: "{ newMediaItems: [{ fileName: 'beach.jpg', contentType: 'image/jpeg', bytes: '<base64>' }] }"
+    call: "{ newMediaItems: [{ file: { url: 'https://example.com/beach.jpg', contentType: 'image/jpeg' }, description: 'Beach day' }] }"
 apiNotes:
   albums.list: 'Only albums this app created are readable; the wide-read scope was removed in 2025.'
   albums.update: 'Sends PATCH with the `title` mask, the only field the API documents as writable.'
   mediaItems.search: 'Send `albumId` or `filters`, never both; the API answers 400 for that combination.'
-  mediaItems.create: 'Bytes are base64. The endpoint uploads them, then creates up to 50 items from the returned tokens.'
+  mediaItems.create: 'Each file is a public URL or base64 (up to 200 MB). The endpoint uploads them, then creates up to 50 items from the returned tokens; a failed item carries a status code.'
   mediaItems.batchGet: 'Each requested id gets an entry, and a failed id carries a status instead of an item.'

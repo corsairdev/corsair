@@ -118,26 +118,30 @@ export async function makeGooglePhotosRequest(
  * than JSON.
  *
  * The guide documents three headers: `Content-type: application/octet-stream`,
- * `X-Goog-Upload-Content-Type` with the real MIME type, and
+ * `X-Goog-Upload-Content-Type` with the real MIME type (recommended), and
  * `X-Goog-Upload-Protocol: raw`. A successful upload answers the token as plain
  * text with a 200, so the body is read as text here instead of through the JSON
  * client.
  */
 export async function uploadMediaBytes(
 	token: string,
-	bytes: Uint8Array | string,
+	bytes: Uint8Array,
 	contentType: string,
 ): Promise<string> {
 	const url = GOOGLE_PHOTOS_UPLOAD_URL;
+	// The guide marks X-Goog-Upload-Content-Type as recommended. A generic
+	// octet-stream says nothing, so it is left out and Google detects the type.
+	const knownType =
+		contentType && contentType.toLowerCase() !== 'application/octet-stream';
 	const requestInit: RequestInit = {
 		method: 'POST',
 		headers: {
 			Authorization: `Bearer ${token}`,
 			'Content-Type': 'application/octet-stream',
-			'X-Goog-Upload-Content-Type': contentType,
+			...(knownType ? { 'X-Goog-Upload-Content-Type': contentType } : {}),
 			'X-Goog-Upload-Protocol': 'raw',
 		},
-		body: bytes,
+		body: new Uint8Array(bytes),
 		signal: AbortSignal.timeout(120_000),
 	};
 

@@ -115,7 +115,13 @@ describe('response parsing', () => {
 
 		const result = await endpoints.mediaItems.create(makeCtx(), {
 			newMediaItems: [
-				{ fileName: 'a.jpg', contentType: 'image/jpeg', bytes: 'aGk=' },
+				{
+					file: {
+						base64: 'aGk=',
+						filename: 'a.jpg',
+						contentType: 'image/jpeg',
+					},
+				},
 			],
 		});
 
@@ -268,7 +274,13 @@ describe('Google error envelopes', () => {
 		const error = await failure(
 			endpoints.mediaItems.create(makeCtx(), {
 				newMediaItems: [
-					{ fileName: 'a.jpg', contentType: 'image/jpeg', bytes: 'aGk=' },
+					{
+						file: {
+							base64: 'aGk=',
+							filename: 'a.jpg',
+							contentType: 'image/jpeg',
+						},
+					},
 				],
 			}),
 		);
@@ -296,7 +308,13 @@ describe('Google error envelopes', () => {
 		const error = await failure(
 			endpoints.mediaItems.create(makeCtx(), {
 				newMediaItems: [
-					{ fileName: 'a.jpg', contentType: 'image/jpeg', bytes: 'aGk=' },
+					{
+						file: {
+							base64: 'aGk=',
+							filename: 'a.jpg',
+							contentType: 'image/jpeg',
+						},
+					},
 				],
 			}),
 		);
@@ -313,7 +331,13 @@ describe('Google error envelopes', () => {
 		const error = await failure(
 			endpoints.mediaItems.create(makeCtx(), {
 				newMediaItems: [
-					{ fileName: 'a.jpg', contentType: 'image/jpeg', bytes: 'aGk=' },
+					{
+						file: {
+							base64: 'aGk=',
+							filename: 'a.jpg',
+							contentType: 'image/jpeg',
+						},
+					},
 				],
 			}),
 		);

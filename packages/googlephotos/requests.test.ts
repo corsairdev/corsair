@@ -340,9 +340,11 @@ describe('mediaItems.create', () => {
 		const result = await endpoints.mediaItems.create(makeCtx(), {
 			newMediaItems: [
 				{
-					fileName: 'beach.jpg',
-					contentType: 'image/jpeg',
-					bytes: Buffer.from('hello').toString('base64'),
+					file: {
+						base64: Buffer.from('hello').toString('base64'),
+						filename: 'beach.jpg',
+						contentType: 'image/jpeg',
+					},
 				},
 			],
 		});
@@ -376,13 +378,108 @@ describe('mediaItems.create', () => {
 		expect(result.newMediaItemResults).toHaveLength(1);
 	});
 
+	it('sends the decoded bytes, not the base64 text', async () => {
+		mockFetch(tokenResponse('tok'));
+		mockFetch(jsonResponse({ newMediaItemResults: [{}] }));
+
+		await endpoints.mediaItems.create(makeCtx(), {
+			newMediaItems: [
+				{
+					file: {
+						base64: Buffer.from('hello').toString('base64'),
+						filename: 'a.png',
+						contentType: 'image/png',
+					},
+				},
+			],
+		});
+
+		const sent = callAt(0).init.body as Uint8Array;
+		expect(Buffer.from(sent).toString()).toBe('hello');
+	});
+
+	it('lets fileName override the file input name and sends the description', async () => {
+		mockFetch(tokenResponse('tok'));
+		mockFetch(jsonResponse({ newMediaItemResults: [{}] }));
+
+		await endpoints.mediaItems.create(makeCtx(), {
+			newMediaItems: [
+				{
+					file: {
+						base64: 'aGk=',
+						filename: 'raw.bin',
+						contentType: 'image/png',
+					},
+					fileName: 'sunset.png',
+					description: 'Sunset',
+				},
+			],
+		});
+
+		// unknown: parsed JSON, read by key.
+		const body = JSON.parse(String(callAt(1).init.body)) as Record<
+			string,
+			unknown
+		>;
+		expect(body.newMediaItems).toEqual([
+			{
+				description: 'Sunset',
+				simpleMediaItem: { uploadToken: 'tok', fileName: 'sunset.png' },
+			},
+		]);
+	});
+
+	it('leaves out the upload type when the file has no specific one', async () => {
+		mockFetch(tokenResponse('tok'));
+		mockFetch(jsonResponse({ newMediaItemResults: [{}] }));
+
+		await endpoints.mediaItems.create(makeCtx(), {
+			newMediaItems: [{ file: { base64: 'aGk=', filename: 'unknown.bin' } }],
+		});
+
+		// No contentType resolves to application/octet-stream, which tells
+		// Google nothing, so the header is omitted and Google detects the type.
+		const headers = new Headers(callAt(0).init.headers);
+		expect(headers.get('x-goog-upload-content-type')).toBeNull();
+		expect(headers.get('content-type')).toBe('application/octet-stream');
+	});
+
+	it('refuses invalid base64 before any upload', async () => {
+		await expect(
+			endpoints.mediaItems.create(makeCtx(), {
+				newMediaItems: [{ file: { base64: '***', filename: 'a.png' } }],
+			}),
+		).rejects.toThrow(/base64/);
+		expect(globalThis.fetch).not.toHaveBeenCalled();
+	});
+
+	it('refuses a description of 1000 characters, which Google rejects', async () => {
+		await expect(
+			endpoints.mediaItems.create(makeCtx(), {
+				newMediaItems: [
+					{
+						file: { base64: 'aGk=', filename: 'a.png' },
+						description: 'x'.repeat(1000),
+					},
+				],
+			}),
+		).rejects.toMatchObject({ name: 'ZodError' });
+		expect(globalThis.fetch).not.toHaveBeenCalled();
+	});
+
 	it('adds an album and a position when asked', async () => {
 		mockFetch(tokenResponse('tok'));
 		mockFetch(jsonResponse({ newMediaItemResults: [{}] }));
 
 		await endpoints.mediaItems.create(makeCtx(), {
 			newMediaItems: [
-				{ fileName: 'a.jpg', contentType: 'image/jpeg', bytes: 'aGk=' },
+				{
+					file: {
+						base64: 'aGk=',
+						filename: 'a.jpg',
+						contentType: 'image/jpeg',
+					},
+				},
 			],
 			albumId: 'album-1',
 			albumPosition: { position: 'FIRST_IN_ALBUM' },
@@ -401,9 +498,11 @@ describe('mediaItems.create', () => {
 		await expect(
 			endpoints.mediaItems.create(makeCtx(), {
 				newMediaItems: Array.from({ length: 51 }, (_, index) => ({
-					fileName: `f${index}.jpg`,
-					contentType: 'image/jpeg',
-					bytes: 'aGk=',
+					file: {
+						base64: 'aGk=',
+						filename: `f${index}.jpg`,
+						contentType: 'image/jpeg',
+					},
 				})),
 			}),
 		).rejects.toMatchObject({ name: 'ZodError' });
@@ -416,7 +515,13 @@ describe('mediaItems.create', () => {
 		await expect(
 			endpoints.mediaItems.create(makeCtx(), {
 				newMediaItems: [
-					{ fileName: 'a.jpg', contentType: 'image/jpeg', bytes: 'aGk=' },
+					{
+						file: {
+							base64: 'aGk=',
+							filename: 'a.jpg',
+							contentType: 'image/jpeg',
+						},
+					},
 				],
 			}),
 		).rejects.toThrow(/empty body/);
