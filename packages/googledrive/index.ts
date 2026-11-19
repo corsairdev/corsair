@@ -66,6 +66,7 @@ export type GoogleDriveEndpoints = {
 	filesCopy: GoogleDriveEndpoint<'filesCopy'>;
 	filesMove: GoogleDriveEndpoint<'filesMove'>;
 	filesDownload: GoogleDriveEndpoint<'filesDownload'>;
+	filesExport: GoogleDriveEndpoint<'filesExport'>;
 	filesShare: GoogleDriveEndpoint<'filesShare'>;
 	foldersCreate: GoogleDriveEndpoint<'foldersCreate'>;
 	foldersGet: GoogleDriveEndpoint<'foldersGet'>;
@@ -113,6 +114,7 @@ const googleDriveEndpointsNested = {
 		copy: FilesEndpoints.copy,
 		move: FilesEndpoints.move,
 		download: FilesEndpoints.download,
+		export: FilesEndpoints.export,
 		share: FilesEndpoints.share,
 	},
 	folders: {
@@ -173,6 +175,10 @@ export const googledriveEndpointSchemas = {
 	'files.download': {
 		input: GoogleDriveEndpointInputSchemas.filesDownload,
 		output: GoogleDriveEndpointOutputSchemas.filesDownload,
+	},
+	'files.export': {
+		input: GoogleDriveEndpointInputSchemas.filesExport,
+		output: GoogleDriveEndpointOutputSchemas.filesExport,
 	},
 	'files.share': {
 		input: GoogleDriveEndpointInputSchemas.filesShare,
@@ -300,7 +306,12 @@ const googleDriveEndpointMeta = {
 	'files.download': {
 		riskLevel: 'read',
 		description:
-			'Download a file. A text file comes back as text, any other file as base64, up to about 700 KB; size and type are always returned. Google Docs, Sheets and Slides cannot be downloaded this way.',
+			"Download a file with its name, type and size. Up to about 700 KB the content comes back inline: a text file as text, any other file as base64. A larger file comes back with fileId, where the host saved it (on Corsair, a Files id to pass to another app or read with files.read_text), or with contentOmitted when the host keeps no files. Google Docs, Sheets and Slides can't be downloaded; use files.export.",
+	},
+	'files.export': {
+		riskLevel: 'read',
+		description:
+			'Export a Google Docs, Sheets, Slides or Drawings file to a regular format: Markdown for Docs, CSV (first sheet only) for Sheets, PDF for Slides and PNG for Drawings unless mimeType names another, such as docx, xlsx or pptx. Drive exports up to 10 MB. The result comes back like files.download: inline up to about 700 KB, otherwise as fileId where the host saved it, or with contentOmitted.',
 	},
 	'files.share': {
 		riskLevel: 'write',
