@@ -325,6 +325,7 @@ export const BaseProviders = [
 	'googleanalytics',
 	'googlebigquery',
 	'googlecalendar',
+	'googlephotos',
 	'googleclassroom',
 	'googlecloudvision',
 	'googlecontacts',
@@ -1062,6 +1063,7 @@ export const ProviderDisplayNames = {
 	googleanalytics: 'Google Analytics',
 	googlebigquery: 'Google BigQuery',
 	googlecalendar: 'Google Calendar',
+	googlephotos: 'Google Photos',
 	googleclassroom: 'Google Classroom',
 	googlecloudvision: 'Google Cloud Vision',
 	googlecontacts: 'Google Contacts',
@@ -1806,6 +1808,7 @@ export type AllProviders =
 	| 'googleanalytics'
 	| 'googlebigquery'
 	| 'googlecalendar'
+	| 'googlephotos'
 	| 'googleclassroom'
 	| 'googlecloudvision'
 	| 'googlecontacts'
