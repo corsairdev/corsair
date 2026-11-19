@@ -148,6 +148,71 @@ describe('locations', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
+	it('rejects a duplicate field/operator filter pair', async () => {
+		respond(listPage);
+
+		await expect(
+			invoke(Locations.list, {
+				projectId: 'PROJECT_ID',
+				filters: [
+					{ field: 'name', op: 'ne', value: 'Warehouse A' },
+					{ field: 'name', op: 'ne', value: 'Warehouse B' },
+				],
+			}),
+		).rejects.toThrow('Duplicate name[ne] filter');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('rejects an impossible calendar date on a rule create', async () => {
+		respond({ data: rule }, 201);
+
+		await expect(
+			invoke(SpecialHours.create, {
+				projectId: 'PROJECT_ID',
+				name: 'Bad date',
+				start_date: '2026-02-30',
+				hours: 'closed',
+				applies_to: { type: 'all' },
+			}),
+		).rejects.toThrow('real calendar date');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('accepts a leap day', async () => {
+		respond({ data: rule }, 201);
+
+		await invoke(SpecialHours.create, {
+			projectId: 'PROJECT_ID',
+			name: 'Leap day',
+			start_date: '2028-02-29',
+			hours: 'closed',
+			applies_to: { type: 'all' },
+		});
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+	});
+
+	it('rejects a partial week that pads with an unrecognized key', async () => {
+		respond({ data: location, geocoding });
+
+		await expect(
+			invoke(Locations.create, {
+				projectId: 'PROJECT_ID',
+				name: 'Padded Week',
+				city: 'Seattle',
+				hours: {
+					mon: '09:00-17:00',
+					tue: '09:00-17:00',
+					wed: '09:00-17:00',
+					thu: '09:00-17:00',
+					fri: '09:00-17:00',
+					sat: '10:00-14:00',
+					extra: 'nonsense',
+				} as never,
+			}),
+		).rejects.toThrow('all seven days');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('rejects a limit above the documented 100', async () => {
 		respond(listPage);
 

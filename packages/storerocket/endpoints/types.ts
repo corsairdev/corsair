@@ -14,7 +14,34 @@ const recordId = z.string().min(1);
 
 // "Project and location IDs are the public IDs returned by the API. Keep
 // them as strings."
-const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Expected YYYY-MM-DD');
+// unknown: the date parts arrive as strings until split narrows them.
+export function isCalendarDate(value: string): boolean {
+	const [year, month, day] = value.split('-').map(Number);
+	if (!year || !month || !day || month < 1 || month > 12 || day < 1) {
+		return false;
+	}
+	const leap = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+	const daysInMonth = [
+		31,
+		leap ? 29 : 28,
+		31,
+		30,
+		31,
+		30,
+		31,
+		31,
+		30,
+		31,
+		30,
+		31,
+	];
+	return day <= daysInMonth[month - 1]!;
+}
+
+const isoDate = z
+	.string()
+	.regex(/^\d{4}-\d{2}-\d{2}$/, 'Expected YYYY-MM-DD')
+	.refine(isCalendarDate, 'Expected a real calendar date');
 
 const coordinate = z.number().min(-90).max(90);
 // unknown: the longitude bound differs from latitude, so a second constant
@@ -236,6 +263,13 @@ const HoursWriteSchema = z
 		fri: WeekdayValue.optional(),
 		sat: WeekdayValue.optional(),
 		sun: WeekdayValue.optional(),
+		monday: WeekdayValue.optional(),
+		tuesday: WeekdayValue.optional(),
+		wednesday: WeekdayValue.optional(),
+		thursday: WeekdayValue.optional(),
+		friday: WeekdayValue.optional(),
+		saturday: WeekdayValue.optional(),
+		sunday: WeekdayValue.optional(),
 	})
 	.loose();
 
@@ -246,16 +280,28 @@ export type StorerocketHoursWrite = z.infer<typeof HoursWriteSchema>;
  * valid and leaves hours unchanged. Counts a day once whether it is spelled
  * with the short or the full name.
  */
+const WEEKDAY_ALIASES: Record<string, string> = {
+	mon: 'mon',
+	monday: 'mon',
+	tue: 'tue',
+	tuesday: 'tue',
+	wed: 'wed',
+	wednesday: 'wed',
+	thu: 'thu',
+	thursday: 'thu',
+	fri: 'fri',
+	friday: 'fri',
+	sat: 'sat',
+	saturday: 'sat',
+	sun: 'sun',
+	sunday: 'sun',
+};
+
 export function countHoursDays(hours: StorerocketHoursWrite): number {
-	const names = Object.keys(hours).filter((key) => key !== 'name');
 	const days = new Set<string>();
-	for (const key of names) {
-		const short = key.slice(0, 3).toLowerCase();
-		days.add(
-			WEEKDAYS.includes(short as (typeof WEEKDAYS)[number])
-				? short
-				: key.toLowerCase(),
-		);
+	for (const key of Object.keys(hours)) {
+		const canonical = WEEKDAY_ALIASES[key.toLowerCase()];
+		if (canonical) days.add(canonical);
 	}
 	return days.size;
 }
@@ -373,7 +419,19 @@ const LocationsListInputSchema = z
 		filters: z.array(ListFilterSchema).max(20).optional(),
 	})
 	.superRefine((input, ctx) => {
+		const seen = new Set<string>();
 		for (const filter of input.filters ?? []) {
+			// Two accepted pairs of the same field/operator would serialize to
+			// one query key and silently lose the first value.
+			const pair = `${filter.field}[${filter.op}]`;
+			if (seen.has(pair)) {
+				ctx.addIssue({
+					code: z.ZodIssueCode.custom,
+					message: `Duplicate ${pair} filter; a repeated pair would lose the first value`,
+					path: ['filters'],
+				});
+			}
+			seen.add(pair);
 			if (!isSupportedFilter(filter.field, filter.op)) {
 				ctx.addIssue({
 					code: z.ZodIssueCode.custom,

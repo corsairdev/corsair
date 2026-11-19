@@ -1,4 +1,5 @@
 import type { StorerocketEndpoints } from '..';
+import { describeStorerocketError, StorerocketAPIError } from '../client';
 import { call } from './call';
 import {
 	StorerocketEndpointInputSchemas as Inputs,
@@ -106,7 +107,17 @@ export const remove: StorerocketEndpoints['specialHoursDelete'] = (
 			path: `/projects/${encodeURIComponent(projectId)}/special-hours/${encodeURIComponent(ruleId)}`,
 		}),
 		{
-			shape: (_raw, parsed) => ({ id: parsed.ruleId, success: true }),
+			// The documented delete answers a 204 with no body. Anything else
+			// must not be read as success, so an unexpected body fails loudly
+			// with the provider's own error text when there is one.
+			shape: (raw, parsed) => {
+				if (raw !== undefined && raw !== null && raw !== '') {
+					throw new StorerocketAPIError(
+						`Storerocket special-hours delete: unexpected body ${describeStorerocketError(raw, String(raw))}`,
+					);
+				}
+				return { id: parsed.ruleId, success: true };
+			},
 			log: () => ({ deleted: true }),
 		},
 	);

@@ -79,7 +79,14 @@ Name and city are required. Omit hours or send hours: &#123;&#125; for a coming-
   thu?: string | null,
   fri?: string | null,
   sat?: string | null,
-  sun?: string | null
+  sun?: string | null,
+  monday?: string | null,
+  tuesday?: string | null,
+  wednesday?: string | null,
+  thursday?: string | null,
+  friday?: string | null,
+  saturday?: string | null,
+  sunday?: string | null
 } | null
 ```
 </Accordion>
@@ -290,7 +297,7 @@ List locations with filters, include flags and pagination
 **Risk:** `read`
 
 ```ts
-await corsair.storerocket.api.locations.list(api.locations.list({ projectId: "PROJECT_ID", limit: 25, includeHours: true, filters: [{ field: "city", op: "eq", value: "Seattle" }] }));
+await corsair.storerocket.api.locations.list({ projectId: "PROJECT_ID", limit: 25, includeHours: true, filters: [{ field: "city", op: "eq", value: "Seattle" }] });
 ```
 
 **Input**
@@ -482,7 +489,14 @@ PUT keeps the existing contract: supplied fields and callsToAction replace their
   thu?: string | null,
   fri?: string | null,
   sat?: string | null,
-  sun?: string | null
+  sun?: string | null,
+  monday?: string | null,
+  tuesday?: string | null,
+  wednesday?: string | null,
+  thursday?: string | null,
+  friday?: string | null,
+  saturday?: string | null,
+  sunday?: string | null
 } | null
 ```
 </Accordion>
@@ -627,7 +641,14 @@ PATCH keeps everything you leave out. Send null to clear a field, hours: null to
   thu?: string | null,
   fri?: string | null,
   sat?: string | null,
-  sun?: string | null
+  sun?: string | null,
+  monday?: string | null,
+  tuesday?: string | null,
+  wednesday?: string | null,
+  thursday?: string | null,
+  friday?: string | null,
+  saturday?: string | null,
+  sunday?: string | null
 } | null
 ```
 </Accordion>
@@ -762,7 +783,7 @@ Create a special-hours rule, with an optional idempotency key
 **Risk:** `write`
 
 ```ts
-await corsair.storerocket.api.specialHours.create(api.specialHours.create({ projectId: "PROJECT_ID", name: "Thanksgiving", holiday_key: "US:thanksgiving-day", start_date: "2026-11-26", hours: "closed", repeats_yearly: true, applies_to: { type: "countries", values: ["US"] }, idempotencyKey: "thanksgiving-2026-us" }));
+await corsair.storerocket.api.specialHours.create({ projectId: "PROJECT_ID", name: "Thanksgiving", holiday_key: "US:thanksgiving-day", start_date: "2026-11-26", hours: "closed", repeats_yearly: true, applies_to: { type: "countries", values: ["US"] }, idempotencyKey: "thanksgiving-2026-us" });
 ```
 
 **Input**
@@ -950,7 +971,7 @@ List the holiday and special-hours rules of a project
 **Risk:** `read`
 
 ```ts
-await corsair.storerocket.api.specialHours.list({});
+await corsair.storerocket.api.specialHours.list({ projectId: 'PROJECT_ID' });
 ```
 
 **Input**

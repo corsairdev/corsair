@@ -34,8 +34,8 @@ apiExamples:
   projects.list: {}
   locations.list:
     call: >-
-      api.locations.list({ projectId: "PROJECT_ID", limit: 25, includeHours:
-      true, filters: [{ field: "city", op: "eq", value: "Seattle" }] })
+      { projectId: "PROJECT_ID", limit: 25, includeHours: true, filters:
+      [{ field: "city", op: "eq", value: "Seattle" }] }
   locations.get:
     args:
       projectId: PROJECT_ID
@@ -63,18 +63,19 @@ apiExamples:
     args:
       projectId: PROJECT_ID
       locationId: LOCATION_ID
-  specialHours.list: {}
+  specialHours.list:
+    args:
+      projectId: PROJECT_ID
   specialHours.get:
     args:
       projectId: PROJECT_ID
       ruleId: k4ZqP0mE7d
   specialHours.create:
     call: >-
-      api.specialHours.create({ projectId: "PROJECT_ID", name:
-      "Thanksgiving", holiday_key: "US:thanksgiving-day", start_date:
-      "2026-11-26", hours: "closed", repeats_yearly: true, applies_to: {
-      type: "countries", values: ["US"] }, idempotencyKey:
-      "thanksgiving-2026-us" })
+      { projectId: "PROJECT_ID", name: "Thanksgiving", holiday_key:
+      "US:thanksgiving-day", start_date: "2026-11-26", hours: "closed",
+      repeats_yearly: true, applies_to: { type: "countries", values: ["US"]
+      }, idempotencyKey: "thanksgiving-2026-us" }
   specialHours.update:
     args:
       projectId: PROJECT_ID
