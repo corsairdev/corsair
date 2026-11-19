@@ -1,0 +1,2123 @@
+---
+title: "Stormboard API reference"
+sidebarTitle: "API"
+description: "API reference for the Stormboard plugin in Corsair: every `stormboard.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Chat
+
+### create
+
+`chat.create`
+
+Post a chat message to a Storm
+
+**Risk:** `write`
+
+```ts
+await corsair.stormboard.api.chat.create({ stormId: 1234, message: 'Example Chat Message 1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stormId` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  isnew?: boolean | null,
+  storm?: number | null,
+  user?: {
+    id?: number | string | null,
+    name?: string | null
+  } | null,
+  created?: string | null,
+  msg?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`chat.list`
+
+List a Storm's chat messages
+
+**Risk:** `read`
+
+```ts
+await corsair.stormboard.api.chat.list({ stormId: 1234 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stormId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messages` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  isnew?: boolean | null,
+  storm?: number | null,
+  user?: {
+    id?: number | string | null,
+    name?: string | null
+  } | null,
+  created?: string | null,
+  msg?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUnread
+
+`chat.listUnread`
+
+List a Storm's unread chat messages
+
+**Risk:** `read`
+
+```ts
+await corsair.stormboard.api.chat.listUnread({ stormId: 1234 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stormId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messages` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  isnew?: boolean | null,
+  storm?: number | null,
+  user?: {
+    id?: number | string | null,
+    name?: string | null
+  } | null,
+  created?: string | null,
+  msg?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### markAllRead
+
+`chat.markAllRead`
+
+Mark a Storm's chat messages as read
+
+**Risk:** `write`
+
+```ts
+await corsair.stormboard.api.chat.markAllRead({ stormId: 1234 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stormId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `number \| string` | Yes | — |
+
+
+
+---
+
+## Folders
+
+### list
+
+`folders.list`
+
+List a team's folders
+
+**Risk:** `read`
+
+```ts
+await corsair.stormboard.api.folders.list({ teamId: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Ideas
+
+### addVote
+
+`ideas.addVote`
+
+Add a vote to an idea
+
+**Risk:** `write`
+
+```ts
+await corsair.stormboard.api.ideas.addVote({ ideaId: 1000000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ideaId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| number` | Yes | — |
+| `id` | `number \| string \| null` | No | — |
+| `idea` | `object \| null` | No | — |
+| `storm` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="idea full type">
+
+```ts
+{
+  totalvotes?: number | null,
+  myvotes?: number | string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="storm full type">
+
+```ts
+{
+  id?: number | string | null,
+  title?: string | null,
+  votesremaining?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`ideas.create`
+
+Create an idea on a Storm
+
+**Risk:** `write`
+
+```ts
+await corsair.stormboard.api.ideas.create({ stormid: 49999, data: 'This is an idea. Like it?' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stormid` | `number` | Yes | — |
+| `type` | `string` | No | — |
+| `data` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `color` | `string` | No | — |
+| `shape` | `string` | No | — |
+| `sectionindex` | `string` | No | — |
+| `x` | `number` | No | — |
+| `y` | `number` | No | — |
+| `lock` | `0 \| 1` | No | — |
+
+Stormboard assigns the id; the answer carries it as &#123;"message": "idea created", "id": 10000001&#125;. The color and shape values have API defaults (yellow, standard) and the docs name no closed list, so they pass through as strings.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| number` | Yes | — |
+| `id` | `number \| string \| null` | No | — |
+
+
+
+---
+
+### createComment
+
+`ideas.createComment`
+
+Comment on an idea
+
+**Risk:** `write`
+
+```ts
+await corsair.stormboard.api.ideas.createComment({ ideaId: 1000000, comment: 'My awesome comment' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ideaId` | `number` | Yes | — |
+| `comment` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| number` | Yes | — |
+| `comment` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="comment full type">
+
+```ts
+{
+  id?: number | null,
+  comment?: string | null,
+  created?: string | null,
+  user?: {
+    id?: number | string | null,
+    name?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createConnector
+
+`ideas.createConnector`
+
+Draw a line connector between two ideas
+
+**Risk:** `write`
+
+```ts
+await corsair.stormboard.api.ideas.createConnector({ from_idea_id: 1000, to_idea_id: 1001, label: 'Depends On' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from_idea_id` | `number` | Yes | — |
+| `to_idea_id` | `number` | Yes | — |
+| `label` | `string` | No | — |
+| `color` | `string` | No | — |
+| `to_end_type` | `string` | No | — |
+| `from_end_type` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `from` | `number \| null` | No | — |
+| `to` | `number \| null` | No | — |
+| `label` | `string \| null` | No | — |
+| `style` | `object \| null` | No | — |
+| `points` | `unknown[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="style full type">
+
+```ts
+{
+  color?: string | null,
+  fromEndType?: string | null,
+  toEndType?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`ideas.delete`
+
+Delete an idea
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.stormboard.api.ideas.delete({ ideaId: 1000000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ideaId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| number` | Yes | — |
+| `id` | `number \| string \| null` | No | — |
+
+
+
+---
+
+### deleteComment
+
+`ideas.deleteComment`
+
+Delete a comment on an idea
+
+**Risk:** `write`
+
+```ts
+await corsair.stormboard.api.ideas.deleteComment({ ideaId: 1000000, commentId: 1234 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ideaId` | `number` | Yes | — |
+| `commentId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| number` | Yes | — |
+| `id` | `number \| string \| null` | No | — |
+
+
+
+---
+
+### deleteConnector
+
+`ideas.deleteConnector`
+
+Delete a line connector
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.stormboard.api.ideas.deleteConnector({ connectorId: 9999 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connectorId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| number` | Yes | — |
+| `id` | `number \| string \| null` | No | — |
+
+
+
+---
+
+### deleteConnectorBetween
+
+`ideas.deleteConnectorBetween`
+
+Delete the connector between two ideas
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.stormboard.api.ideas.deleteConnectorBetween({ from_idea_id: 1000, to_idea_id: 1001 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from_idea_id` | `number` | Yes | — |
+| `to_idea_id` | `number` | Yes | — |
+
+The documented delete-between route takes the two idea ids as request parameters, which travel as query parameters on a DELETE.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| number` | Yes | — |
+| `id` | `number \| string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`ideas.get`
+
+Read one idea
+
+**Risk:** `read`
+
+```ts
+await corsair.stormboard.api.ideas.get({ ideaId: 1000000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ideaId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `idea` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="idea full type">
+
+```ts
+{
+  id?: number | null,
+  storm?: {
+    id?: number | null,
+    title?: string | null
+  } | null,
+  x?: number | null,
+  y?: number | null,
+  z?: number | null,
+  color?: string | null,
+  lock?: number | null,
+  comments?: number | null,
+  votes?: number | null,
+  type?: string | null,
+  data?: {
+    text?: string | null,
+    name?: string | null
+  } | null,
+  task?: Record<string, unknown> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listComments
+
+`ideas.listComments`
+
+List the comments on an idea
+
+**Risk:** `read`
+
+```ts
+await corsair.stormboard.api.ideas.listComments(api.ideas.listComments({ ideaId: 1000000, order: "asc" }));
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ideaId` | `number` | Yes | — |
+| `order` | `asc \| desc` | No | — |
+| `avatars` | `0 \| 1` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comments` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="comments full type">
+
+```ts
+{
+  id?: number | null,
+  comment?: string | null,
+  created?: string | null,
+  user?: {
+    id?: number | string | null,
+    name?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeVote
+
+`ideas.removeVote`
+
+Remove a vote from an idea
+
+**Risk:** `write`
+
+```ts
+await corsair.stormboard.api.ideas.removeVote({ ideaId: 1000000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ideaId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| number` | Yes | — |
+| `id` | `number \| string \| null` | No | — |
+| `idea` | `object \| null` | No | — |
+| `storm` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="idea full type">
+
+```ts
+{
+  totalvotes?: number | null,
+  myvotes?: number | string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="storm full type">
+
+```ts
+{
+  id?: number | string | null,
+  title?: string | null,
+  votesremaining?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`ideas.update`
+
+Update an idea's text, position and style
+
+**Risk:** `write`
+
+```ts
+await corsair.stormboard.api.ideas.update({ ideaId: 10000001, data: 'Updated idea text' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ideaId` | `number` | Yes | — |
+| `type` | `string` | No | — |
+| `data` | `string` | Yes | — |
+| `color` | `string` | No | — |
+| `shape` | `string` | No | — |
+| `x` | `number` | No | — |
+| `y` | `number` | No | — |
+| `lock` | `0 \| 1` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| number` | Yes | — |
+| `id` | `number \| string \| null` | No | — |
+
+
+
+---
+
+### updateComment
+
+`ideas.updateComment`
+
+Edit a comment on an idea
+
+**Risk:** `write`
+
+```ts
+await corsair.stormboard.api.ideas.updateComment({ ideaId: 1000000, commentId: 1234, comment: 'Edited comment' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ideaId` | `number` | Yes | — |
+| `commentId` | `number` | Yes | — |
+| `comment` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| number` | Yes | — |
+| `id` | `number \| string \| null` | No | — |
+
+
+
+---
+
+### updateConnector
+
+`ideas.updateConnector`
+
+Update a line connector's label and style
+
+**Risk:** `write`
+
+```ts
+await corsair.stormboard.api.ideas.updateConnector({ connectorId: 9999, label: 'Depended On' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connectorId` | `number` | Yes | — |
+| `label` | `string` | No | — |
+| `color` | `string` | No | — |
+| `to_end_type` | `string` | No | — |
+| `from_end_type` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `from` | `number \| null` | No | — |
+| `to` | `number \| null` | No | — |
+| `label` | `string \| null` | No | — |
+| `style` | `object \| null` | No | — |
+| `points` | `unknown[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="style full type">
+
+```ts
+{
+  color?: string | null,
+  fromEndType?: string | null,
+  toEndType?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateTask
+
+`ideas.updateTask`
+
+Update an idea's task assignment and dates
+
+**Risk:** `write`
+
+```ts
+await corsair.stormboard.api.ideas.updateTask({ ideaId: 1000000, assigned_to: 1, date_due: '2020-01-01' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ideaId` | `number` | Yes | — |
+| `assigned_to` | `number` | No | — |
+| `date_due` | `string` | No | An ISO 8601 date; dates without a timezone are read as UTC. |
+| `date_completed` | `string` | No | An ISO 8601 date; dates without a timezone are read as UTC. |
+| `notify` | `0 \| 1` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="task full type">
+
+```ts
+{
+  assignees?: {
+    id?: number | string | null,
+    name?: string | null
+  }[] | null,
+  date?: {
+    due?: string | null,
+    completed?: string | null
+  } | null,
+  status?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Storms
+
+### acceptInvite
+
+`storms.acceptInvite`
+
+Accept a Storm invite for the token holder
+
+**Risk:** `write`
+
+```ts
+await corsair.stormboard.api.storms.acceptInvite({ stormId: 49999 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stormId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| number` | Yes | — |
+| `id` | `number \| string \| null` | No | — |
+
+
+
+---
+
+### close
+
+`storms.close`
+
+Close a Storm; reopening restores it
+
+**Risk:** `write`
+
+```ts
+await corsair.stormboard.api.storms.close({ stormId: 49999 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stormId` | `number` | Yes | — |
+
+Closing answers &#123;"message": "Storm closed"&#125; and can be undone with api.storms.reopen, so it is registered as a write rather than a delete.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| number` | Yes | — |
+| `id` | `number \| string \| null` | No | — |
+
+
+
+---
+
+### create
+
+`storms.create`
+
+Create a Storm
+
+**Risk:** `write`
+
+```ts
+await corsair.stormboard.api.storms.create({ plan: 'Team', title: 'Sprint Planning', description: 'Weekly sprint board' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `plan` | `string` | Yes | The Storm plan; the docs name no closed list, so any plan string is passed through. |
+| `title` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `template` | `number` | No | — |
+| `votesperuser` | `number` | No | — |
+| `avatars` | `0 \| 1` | No | — |
+| `ideacreator` | `0 \| 1` | No | — |
+| `team_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| number` | Yes | — |
+| `id` | `number \| string \| null` | No | — |
+
+
+
+---
+
+### declineInvite
+
+`storms.declineInvite`
+
+Decline a Storm invite for the token holder
+
+**Risk:** `write`
+
+```ts
+await corsair.stormboard.api.storms.declineInvite({ stormId: 49999 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stormId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| number` | Yes | — |
+| `id` | `number \| string \| null` | No | — |
+
+
+
+---
+
+### duplicate
+
+`storms.duplicate`
+
+Duplicate a Storm
+
+**Risk:** `write`
+
+```ts
+await corsair.stormboard.api.storms.duplicate({ stormId: 49999, stormname: 'My Copied Storm' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stormId` | `number` | Yes | — |
+| `stormname` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| number` | Yes | — |
+| `id` | `number \| string \| null` | No | — |
+
+
+
+---
+
+### favorite
+
+`storms.favorite`
+
+Star a Storm
+
+**Risk:** `write`
+
+```ts
+await corsair.stormboard.api.storms.favorite({ stormId: 49999 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stormId` | `number` | Yes | — |
+
+The favorite and unfavorite toggles carry no documented response example, so their output schema accepts any JSON object.
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`storms.get`
+
+Read one Storm's details
+
+**Risk:** `read`
+
+```ts
+await corsair.stormboard.api.storms.get({ stormId: 49999 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stormId` | `number` | Yes | — |
+| `thumbnail` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `storm` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="storm full type">
+
+```ts
+{
+  id?: number | null,
+  key?: string | null,
+  title?: string | null,
+  description?: string | null,
+  admin?: number | null,
+  favorite?: number | null,
+  palette?: string | null,
+  closed?: boolean | null,
+  team?: {
+    id?: number | null
+  } | null,
+  activity?: number | null,
+  votesperuser?: number | null,
+  votesperadmin?: number | null,
+  avatars?: number | null,
+  ideacreator?: number | null,
+  chatlocked?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getAccess
+
+`storms.getAccess`
+
+Read the token holder's access to a Storm
+
+**Risk:** `read`
+
+```ts
+await corsair.stormboard.api.storms.getAccess({ stormId: 49999 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stormId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `administrator` | `boolean \| null` | No | — |
+| `type` | `string \| null` | No | — |
+
+
+
+---
+
+### getTemplate
+
+`storms.getTemplate`
+
+Read a Storm's template sections
+
+**Risk:** `read`
+
+```ts
+await corsair.stormboard.api.storms.getTemplate({ stormId: 49999 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stormId` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### invite
+
+`storms.invite`
+
+Invite participants to a Storm by email
+
+**Risk:** `write`
+
+```ts
+await corsair.stormboard.api.storms.invite(api.storms.invite({ stormId: 49999, participants: ["yoda@jedicouncil.com"], type: "contributor" }));
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stormId` | `number` | Yes | — |
+| `participants` | `string[]` | Yes | Email addresses of the participants to invite. |
+| `message` | `string` | No | — |
+| `type` | `contributor \| admin \| viewer` | No | The access the invite grants; the API defaults to contributor. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| number` | Yes | — |
+| `invited` | `number \| null` | No | — |
+
+
+
+---
+
+### join
+
+`storms.join`
+
+Join a Storm with its key
+
+**Risk:** `write`
+
+```ts
+await corsair.stormboard.api.storms.join({ stormid: 49999, stormkey: 'piece335' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stormid` | `number` | Yes | — |
+| `stormkey` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| number` | Yes | — |
+| `id` | `number \| string \| null` | No | — |
+
+
+
+---
+
+### leave
+
+`storms.leave`
+
+Leave a Storm
+
+**Risk:** `write`
+
+```ts
+await corsair.stormboard.api.storms.leave({ stormId: 49999 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stormId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| number` | Yes | — |
+| `id` | `number \| string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`storms.list`
+
+List your Storms with search, ordering and paging
+
+**Risk:** `read`
+
+```ts
+await corsair.stormboard.api.storms.list(api.storms.list({ status: "active", order: "activity", results: 50 }));
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team` | `number` | No | — |
+| `folder` | `number` | No | — |
+| `needle` | `string` | No | — |
+| `status` | `active \| closed` | No | Filter by Storm state; the API defaults to active. |
+| `start` | `number` | No | — |
+| `order` | `activity \| created \| title` | No | Sort order; the API defaults to activity. |
+| `results` | `number` | No | — |
+
+The list read pages with start and results and answers hasmore plus the storms array; walk it by advancing start until hasmore is false. Filters combine: team, folder and needle narrow the result, and the documented status values are active and closed.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hasmore` | `boolean \| null` | No | — |
+| `storms` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="storms full type">
+
+```ts
+{
+  id?: number | null,
+  key?: string | null,
+  title?: string | null,
+  description?: string | null,
+  admin?: number | null,
+  favorite?: number | null,
+  palette?: string | null,
+  closed?: boolean | null,
+  team?: {
+    id?: number | null
+  } | null,
+  activity?: number | null,
+  votesperuser?: number | null,
+  votesperadmin?: number | null,
+  avatars?: number | null,
+  ideacreator?: number | null,
+  chatlocked?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listConnectors
+
+`storms.listConnectors`
+
+List the line connectors in a Storm
+
+**Risk:** `read`
+
+```ts
+await corsair.stormboard.api.storms.listConnectors({ stormId: 49999 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stormId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connectors` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="connectors full type">
+
+```ts
+{
+  id?: number | null,
+  from?: number | null,
+  to?: number | null,
+  label?: string | null,
+  style?: {
+    color?: string | null,
+    fromEndType?: string | null,
+    toEndType?: string | null
+  } | null,
+  points?: unknown[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listIdeas
+
+`storms.listIdeas`
+
+List a Storm's ideas, optionally filtered by last modified date
+
+**Risk:** `read`
+
+```ts
+await corsair.stormboard.api.storms.listIdeas({ stormId: 49999, lastModifiedMin: '2024-01-01T00:00:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stormId` | `number` | Yes | — |
+| `lastModifiedMin` | `string` | No | An ISO 8601 date; dates without a timezone are read as UTC. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ideas` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="ideas full type">
+
+```ts
+{
+  id?: number | null,
+  storm?: {
+    id?: number | null,
+    title?: string | null
+  } | null,
+  x?: number | null,
+  y?: number | null,
+  z?: number | null,
+  color?: string | null,
+  lock?: number | null,
+  comments?: number | null,
+  votes?: number | null,
+  type?: string | null,
+  data?: {
+    text?: string | null,
+    name?: string | null
+  } | null,
+  task?: Record<string, unknown> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listInvites
+
+`storms.listInvites`
+
+List your Storm invites
+
+**Risk:** `read`
+
+```ts
+await corsair.stormboard.api.storms.listInvites({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team` | `number` | No | — |
+| `needle` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hasmore` | `boolean \| null` | No | — |
+| `storms` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="storms full type">
+
+```ts
+{
+  id?: number | null,
+  key?: string | null,
+  title?: string | null,
+  description?: string | null,
+  admin?: number | null,
+  favorite?: number | null,
+  palette?: string | null,
+  closed?: boolean | null,
+  team?: {
+    id?: number | null
+  } | null,
+  activity?: number | null,
+  votesperuser?: number | null,
+  votesperadmin?: number | null,
+  avatars?: number | null,
+  ideacreator?: number | null,
+  chatlocked?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUsers
+
+`storms.listUsers`
+
+List a Storm's participants with their activity
+
+**Risk:** `read`
+
+```ts
+await corsair.stormboard.api.storms.listUsers({ stormId: 49999 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stormId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  firstname?: string | null,
+  lastname?: string | null,
+  email?: string | null,
+  ideas?: number | null,
+  comments?: number | null,
+  votes?: number | null,
+  lastactivity?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reopen
+
+`storms.reopen`
+
+Re-open a closed Storm
+
+**Risk:** `write`
+
+```ts
+await corsair.stormboard.api.storms.reopen({ stormId: 49999 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stormId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| number` | Yes | — |
+| `id` | `number \| string \| null` | No | — |
+
+
+
+---
+
+### unfavorite
+
+`storms.unfavorite`
+
+Remove a Storm's star
+
+**Risk:** `write`
+
+```ts
+await corsair.stormboard.api.storms.unfavorite({ stormId: 49999 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stormId` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`storms.update`
+
+Update a Storm's title, description and settings
+
+**Risk:** `write`
+
+```ts
+await corsair.stormboard.api.storms.update({ stormId: 49999, title: 'My New Storm Title' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stormId` | `number` | Yes | — |
+| `title` | `string` | No | — |
+| `description` | `string \| null` | No | — |
+| `template` | `number \| null` | No | — |
+| `votesperuser` | `number` | No | — |
+| `avatars` | `0 \| 1` | No | — |
+| `ideacreator` | `0 \| 1` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| number` | Yes | — |
+| `id` | `number \| string \| null` | No | — |
+
+
+
+---
+
+### updateLegend
+
+`storms.updateLegend`
+
+Set the color labels of a Storm's legend
+
+**Risk:** `write`
+
+```ts
+await corsair.stormboard.api.storms.updateLegend({
+	stormId: 49999,
+	color: { yellow: 'General Tasks', pink: 'High Priority' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stormId` | `number` | Yes | — |
+| `color` | `Record<string, string>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| number` | Yes | — |
+| `id` | `number \| string \| null` | No | — |
+
+
+
+---
+
+### updateSection
+
+`storms.updateSection`
+
+Update one section of a Storm
+
+**Risk:** `write`
+
+```ts
+await corsair.stormboard.api.storms.updateSection({ stormId: 49999, sectionIndex: 1, name: 'New Section Title' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stormId` | `number` | Yes | — |
+| `sectionIndex` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `character` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| number` | Yes | — |
+| `id` | `number \| string \| null` | No | — |
+
+
+
+---
+
+## Tags
+
+### createForIdea
+
+`tags.createForIdea`
+
+Set tag data on an idea
+
+**Risk:** `write`
+
+```ts
+await corsair.stormboard.api.tags.createForIdea({
+	ideaId: 1000000,
+	data: { Owner: 'John Smith' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ideaId` | `number` | Yes | — |
+| `data` | `Record<string, string>` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createForStorm
+
+`tags.createForStorm`
+
+Create a tag in a Storm
+
+**Risk:** `write`
+
+```ts
+await corsair.stormboard.api.tags.createForStorm({ stormId: 49999, name: 'Integration ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stormId` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getForIdea
+
+`tags.getForIdea`
+
+Read the tag data of an idea
+
+**Risk:** `read`
+
+```ts
+await corsair.stormboard.api.tags.getForIdea({ ideaId: 1000000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ideaId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, string>` | Yes | — |
+
+
+
+---
+
+### listForStorm
+
+`tags.listForStorm`
+
+List the tags in a Storm
+
+**Risk:** `read`
+
+```ts
+await corsair.stormboard.api.tags.listForStorm({ stormId: 49999 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stormId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tags` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  type?: string | null,
+  status?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### create
+
+`users.create`
+
+Create a Stormboard user and return its API key
+
+**Risk:** `write`
+
+```ts
+await corsair.stormboard.api.users.create({
+	firstname: 'James',
+	lastname: 'Dean',
+	email: 'james.dean@fake.com',
+	username: 'james.dean',
+	password: 'example-password',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `firstname` | `string` | Yes | — |
+| `lastname` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `username` | `string` | Yes | — |
+| `password` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| number` | Yes | — |
+| `id` | `number \| string \| null` | No | — |
+| `api_key` | `string \| null` | No | — |
+
+
+
+---
+
+### getAuth
+
+`users.getAuth`
+
+Read the account API keys with their creation dates
+
+**Risk:** `read`
+
+```ts
+await corsair.stormboard.api.users.getAuth({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `auth` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="auth full type">
+
+```ts
+{
+  key?: string | null,
+  created?: string | null,
+  expires?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getProfile
+
+`users.getProfile`
+
+Read the profile behind the token
+
+**Risk:** `read`
+
+```ts
+await corsair.stormboard.api.users.getProfile({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profile` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="profile full type">
+
+```ts
+{
+  auth?: {
+    api_key?: string | null
+  } | null,
+  id?: number | null,
+  firstname?: string | null,
+  lastname?: string | null,
+  username?: string | null,
+  email?: string | null,
+  plan?: string | null,
+  team?: {
+    id?: string | null,
+    name?: string | null
+  } | null,
+  notifications?: {
+    dailyemail?: string | null,
+    newstormuser?: string | null,
+    newsletter?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### test
+
+`users.test`
+
+Check that the token authenticates
+
+**Risk:** `read`
+
+```ts
+await corsair.stormboard.api.users.test({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| number \| null` | No | — |
+| `status` | `number \| null` | No | — |
+
+
+
+---
+
+### updateNotifications
+
+`users.updateNotifications`
+
+Update the account notification settings
+
+**Risk:** `write`
+
+```ts
+await corsair.stormboard.api.users.updateNotifications({ dailyemail: 0, newsletter: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dailyemail` | `number` | No | 1 turns the notification on, 0 turns it off. |
+| `newstormuser` | `number` | No | 1 turns the notification on, 0 turns it off. |
+| `newsletter` | `number` | No | 1 turns the notification on, 0 turns it off. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| number` | Yes | — |
+| `id` | `number \| string \| null` | No | — |
+
+
+
+---
+
+### updateProfile
+
+`users.updateProfile`
+
+Update the profile behind the token
+
+**Risk:** `write`
+
+```ts
+await corsair.stormboard.api.users.updateProfile({ firstname: 'James' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `firstname` | `string` | No | — |
+| `lastname` | `string` | No | — |
+| `email` | `string` | No | — |
+| `username` | `string` | No | — |
+| `password` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| number` | Yes | — |
+| `id` | `number \| string \| null` | No | — |
+
+
+
+---
+
+### verify
+
+`users.verify`
+
+Verify a Stormboard account with its verification code
+
+**Risk:** `write`
+
+```ts
+await corsair.stormboard.api.users.verify({ code: 'ABC123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| number` | Yes | — |
+| `id` | `number \| string \| null` | No | — |
+
+
+
+---
+

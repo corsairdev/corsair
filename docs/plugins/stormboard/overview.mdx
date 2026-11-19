@@ -1,0 +1,129 @@
+---
+title: "Stormboard plugin"
+sidebarTitle: "Overview"
+description: "Stormboard turns unstructured collaboration into data-rich workspaces. This plugin manages storms and ideas with comments, votes, connectors, tags and tasks, handles chat and invitations, and reads the account profile behind the token."
+---
+
+Use **Stormboard** through Corsair: one client, typed API calls.
+
+The API key sits on the API tab of the Stormboard account (stormboard.com/users/account#api) and authenticates with the X-API-Key header. Some operations need an active team subscription; the docs mark each route's availability (Public, Team Members, Team Owners). The API uses standard rate-limiting headers (RateLimit-Limit, RateLimit-Remaining, RateLimit-Reset) and answers 429 when the period quota is spent, which this plugin waits out before retrying. The two documented /templates routes answer an HTML 404 on the live API, so they are left out of this plugin; a team's template list is reachable through api.folders.list. Response examples mix numeric and string ids across routes, so id fields accept both.
+
+**What you get:**
+
+- 53 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/stormboard better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/stormboard better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/stormboard better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/stormboard better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { stormboard } from '@corsair-dev/stormboard';
+
+export const corsair = createCorsair({
+	plugins: [
+		stormboard(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Stormboard API key before the first call: `pnpm corsair setup --plugin=stormboard --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+stormboard()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'stormboard',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List your Storms**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.stormboard.api.storms.list({});
+```
+
+
+**Create an idea on a Storm**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.stormboard.api.ideas.create({});
+```
+
+
+See the full list on the [API](/plugins/stormboard/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/stormboard/api">
+    Every `stormboard.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
