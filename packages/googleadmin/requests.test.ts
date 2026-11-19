@@ -3,10 +3,13 @@ jest.mock('corsair/core', () => {
 	return { ...actual, logEventFromContext: jest.fn().mockResolvedValue('evt') };
 });
 
+import { ApiError } from 'corsair/http';
 import {
 	BASE,
+	currentFetch,
 	emptyResponse,
 	endpoints,
+	googleError,
 	installFetchMock,
 	jsonResponse,
 	lastCall,
@@ -137,6 +140,95 @@ describe('users', () => {
 			orgUnitPath: '/engineering',
 			changePasswordAtNextLogin: true,
 		});
+	});
+
+	it('accepts a crypt SHA-512 hash longer than the plain-password limit', async () => {
+		// $6$ + 16-character salt + $ + 86-character digest = 106 characters.
+		const hash = `$6$${'s'.repeat(16)}$${'h'.repeat(86)}`;
+		expect(hash).toHaveLength(106);
+		mockFetch(jsonResponse(user));
+		mockFetch(jsonResponse(user));
+
+		await endpoints.users.insert(makeCtx(), {
+			primaryEmail: 'ada@example.com',
+			name: { givenName: 'Ada', familyName: 'Lovelace' },
+			password: hash,
+			hashFunction: 'crypt',
+		});
+		await endpoints.users.update(makeCtx(), {
+			userKey: 'ada@example.com',
+			password: hash,
+			hashFunction: 'crypt',
+		});
+
+		const calls = currentFetch().mock.calls;
+		expect(JSON.parse(calls[0]![1].body).password).toBe(hash);
+		expect(JSON.parse(calls[1]![1].body).password).toBe(hash);
+	});
+
+	it('refuses a plain password over 100 characters on insert and update', async () => {
+		await expect(
+			endpoints.users.insert(makeCtx(), {
+				primaryEmail: 'ada@example.com',
+				name: { givenName: 'Ada', familyName: 'Lovelace' },
+				password: 'p'.repeat(101),
+			}),
+		).rejects.toMatchObject({ name: 'ZodError' });
+		await expect(
+			endpoints.users.update(makeCtx(), {
+				userKey: 'ada@example.com',
+				password: 'p'.repeat(101),
+			}),
+		).rejects.toMatchObject({ name: 'ZodError' });
+		expect(globalThis.fetch).not.toHaveBeenCalled();
+	});
+
+	it('changes only the given name when update sends a partial name', async () => {
+		mockFetch(
+			jsonResponse({
+				...user,
+				name: { givenName: 'Liz', familyName: 'Lovelace' },
+			}),
+		);
+
+		await endpoints.users.update(makeCtx(), {
+			userKey: 'ada@example.com',
+			name: { givenName: 'Liz' },
+		});
+
+		expect(sentBody()).toEqual({ name: { givenName: 'Liz' } });
+	});
+
+	it('keeps the password out of the ApiError a failed create throws', async () => {
+		mockFetch(
+			googleError(403, 'PERMISSION_DENIED', 'forbidden', 'Not Authorized'),
+		);
+
+		const error = await endpoints.users
+			.insert(makeCtx(), {
+				primaryEmail: 'ada@example.com',
+				name: { givenName: 'Ada', familyName: 'Lovelace' },
+				password: 'correct-horse-battery',
+			})
+			.catch((caught: Error) => caught);
+
+		// Still core's ApiError with its status, so the handlers and the OAuth
+		// refresh keep working.
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).status).toBe(403);
+		expect(JSON.stringify((error as ApiError).request)).not.toContain(
+			'correct-horse-battery',
+		);
+		expect(
+			((error as ApiError).request.body as { password: string }).password,
+		).toBe('[REDACTED]');
+	});
+
+	it('refuses a user list with neither customer nor domain', async () => {
+		await expect(
+			endpoints.users.list(makeCtx(), { maxResults: 10 }),
+		).rejects.toMatchObject({ name: 'ZodError' });
+		expect(globalThis.fetch).not.toHaveBeenCalled();
 	});
 
 	it('updates a user with a PUT and the key only in the path', async () => {
@@ -293,6 +385,21 @@ describe('users', () => {
 });
 
 describe('groups', () => {
+	it('refuses a group list with no customer, domain or userKey', async () => {
+		await expect(endpoints.groups.list(makeCtx(), {})).rejects.toMatchObject({
+			name: 'ZodError',
+		});
+		expect(globalThis.fetch).not.toHaveBeenCalled();
+	});
+
+	it('lists the groups of one user without a customer', async () => {
+		mockFetch(jsonResponse({ groups: [group] }));
+
+		await endpoints.groups.list(makeCtx(), { userKey: 'ada@example.com' });
+
+		expect(queryOf(lastCall().url).get('userKey')).toBe('ada@example.com');
+	});
+
 	it('lists groups with the domain and paging parameters', async () => {
 		mockFetch(jsonResponse({ groups: [group] }));
 
@@ -485,6 +592,51 @@ describe('members', () => {
 			`${BASE}/groups/eng%40example.com/members/ada%40example.com`,
 		);
 		expect(sentBody()).toEqual({ role: 'OWNER' });
+	});
+
+	it('changes the delivery preference with a PUT, keeping the current role', async () => {
+		// members.patch does not take delivery_settings, so the plugin reads the
+		// role and sends it back with the new preference on the PUT.
+		mockFetch(jsonResponse({ ...member, role: 'MANAGER' }));
+		mockFetch(
+			jsonResponse({ ...member, role: 'MANAGER', delivery_settings: 'NONE' }),
+		);
+
+		const result = await endpoints.members.update(makeCtx(), {
+			groupKey: 'eng@example.com',
+			memberKey: 'ada@example.com',
+			delivery_settings: 'NONE',
+		});
+
+		const calls = currentFetch().mock.calls;
+		expect(calls).toHaveLength(2);
+		const url = `${BASE}/groups/eng%40example.com/members/ada%40example.com`;
+		expect(String(calls[0]![0])).toBe(url);
+		expect(calls[0]![1].method).toBe('GET');
+		expect(String(calls[1]![0])).toBe(url);
+		expect(calls[1]![1].method).toBe('PUT');
+		expect(JSON.parse(calls[1]![1].body)).toEqual({
+			role: 'MANAGER',
+			delivery_settings: 'NONE',
+		});
+		expect(result.delivery_settings).toBe('NONE');
+	});
+
+	it('sends role and delivery preference in one PUT when both are given', async () => {
+		mockFetch(
+			jsonResponse({ ...member, role: 'OWNER', delivery_settings: 'DIGEST' }),
+		);
+
+		await endpoints.members.update(makeCtx(), {
+			groupKey: 'eng@example.com',
+			memberKey: 'ada@example.com',
+			role: 'OWNER',
+			delivery_settings: 'DIGEST',
+		});
+
+		expect(currentFetch().mock.calls).toHaveLength(1);
+		expect(lastCall().init.method).toBe('PUT');
+		expect(sentBody()).toEqual({ role: 'OWNER', delivery_settings: 'DIGEST' });
 	});
 
 	it('removes a member', async () => {

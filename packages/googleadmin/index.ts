@@ -31,7 +31,7 @@ import {
 	GoogleAdminEndpointInputSchemas,
 	GoogleAdminEndpointOutputSchemas,
 } from './endpoints/types';
-import { errorHandlers } from './error-handlers';
+import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 import { GoogleAdminSchema } from './schema';
 
 export type GoogleAdminPluginOptions = {
@@ -298,10 +298,12 @@ const googleAdminEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Read one user by email, alias or ID',
 	},
+	// Destructive because it spends money: on a flexible Google Workspace plan
+	// every new user is a billed licence.
 	'users.insert': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Create a user account with an initial password; a conflicting unmanaged account can be invited instead of created',
+			'Create a user account with an initial password. On a flexible Workspace plan the new user is a billed licence',
 	},
 	'users.update': {
 		riskLevel: 'write',
@@ -323,8 +325,10 @@ const googleAdminEndpointMeta = {
 		description:
 			'Grant or revoke super administrator on a user. The caller cannot revoke its own last admin right',
 	},
+	// Destructive: the user's sessions end at once and cannot be restored; they
+	// have to sign in again on every device.
 	'users.signOut': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Sign a user out of all web and device sessions, clearing their sign-in cookies',
 	},
@@ -505,9 +509,10 @@ export function googleadmin<const T extends GoogleAdminPluginOptions>(
 				// Groups, group aliases and memberships.
 				'https://www.googleapis.com/auth/admin.directory.group',
 				'https://www.googleapis.com/auth/admin.directory.orgunit',
-				// Domains and domain aliases.
-				'https://www.googleapis.com/auth/admin.directory.domain',
-				'https://www.googleapis.com/auth/admin.directory.customer',
+				// Domains, domain aliases and the customer record are only read, so
+				// the read-only scopes are enough.
+				'https://www.googleapis.com/auth/admin.directory.domain.readonly',
+				'https://www.googleapis.com/auth/admin.directory.customer.readonly',
 			],
 			authParams: { access_type: 'offline', prompt: 'consent' },
 		},
@@ -518,7 +523,9 @@ export function googleadmin<const T extends GoogleAdminPluginOptions>(
 		endpointSchemas: googleAdminEndpointSchemas,
 		webhookSchemas: {},
 		pluginWebhookMatcher: () => false,
-		errorHandlers: { ...errorHandlers, ...options.errorHandlers },
+		// The caller's handlers are checked before the built-in ones, so a custom
+		// handler for a status a built-in already covers still runs.
+		errorHandlers: mergeErrorHandlers(errorHandlers, options.errorHandlers),
 		// The token always comes from the stored OAuth connection. The Directory
 		// API has no key auth: every call must be made as a signed-in
 		// administrator, and a service account needs domain-wide delegation.

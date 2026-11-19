@@ -67,6 +67,46 @@ export function isRateLimitReason(reason: string | undefined): boolean {
 	return reason !== undefined && RATE_LIMIT_REASONS.has(reason);
 }
 
+/** Reasons Google uses for a quota that is spent for the day. */
+const EXHAUSTED_QUOTA_REASONS = new Set([
+	'dailyLimitExceeded',
+	'dailyLimitExceededUnreg',
+	'limitExceeded',
+]);
+
+/**
+ * The top-level `error.message` of Google's envelope.
+ *
+ * unknown: an error body is untyped until narrowed, as in readErrorReason.
+ */
+function readErrorMessage(
+	body: unknown, // unknown: an error body is untyped until narrowed below.
+): string | undefined {
+	if (body === null || typeof body !== 'object') return undefined;
+	const error = (body as { error?: unknown }).error; // unknown: envelope member.
+	if (error === null || typeof error !== 'object') return undefined;
+	const message = (error as { message?: unknown }).message; // unknown: message field.
+	return typeof message === 'string' ? message : undefined;
+}
+
+/**
+ * True when a 403 or 429 reports a quota that is spent for the day. Newer
+ * Google front ends answer those with a 429 whose message names the "per day"
+ * quota, so the status alone cannot tell them from a throughput limit. No
+ * backoff can refill a daily quota, so these are never retried.
+ *
+ * unknown: a caught value can be anything at runtime.
+ */
+export function isExhaustedQuota(
+	error: unknown, // unknown: a caught value can be anything at runtime.
+): boolean {
+	if (!(error instanceof ApiError)) return false;
+	if (error.status !== 403 && error.status !== 429) return false;
+	const reason = readErrorReason(error.body);
+	if (reason !== undefined && EXHAUSTED_QUOTA_REASONS.has(reason)) return true;
+	return /per day/i.test(readErrorMessage(error.body) ?? '');
+}
+
 /**
  * The reason code on a failure, for the error handlers to match.
  *
@@ -154,7 +194,7 @@ export async function makeGoogleAdminRequest(
 			rateLimitConfig: GOOGLE_ADMIN_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof ApiError) throw error;
+		if (error instanceof ApiError) throw redactPassword(error);
 		// DOMException (a timeout or abort) can fail `instanceof Error` across
 		// realms, so both are accepted.
 		if (error instanceof Error || error instanceof DOMException) {
@@ -166,6 +206,32 @@ export async function makeGoogleAdminRequest(
 			new Error('Unknown'),
 		);
 	}
+}
+
+/**
+ * core's ApiError keeps the request body it sent, and users.insert and
+ * users.update send the account password in it. The password is replaced in
+ * place, so the caller still gets the same ApiError with its status and
+ * retryAfter (R8).
+ */
+function redactPassword(error: ApiError): ApiError {
+	const body = error.request.body;
+	if (
+		body === null ||
+		typeof body !== 'object' ||
+		!('password' in body) ||
+		(body as { password?: unknown }).password == null // unknown: caller input.
+	) {
+		return error;
+	}
+	// `request` is readonly in the type only; replacing it keeps the instance.
+	Object.defineProperty(error, 'request', {
+		value: { ...error.request, body: { ...body, password: '[REDACTED]' } },
+		enumerable: true,
+		configurable: true,
+		writable: false,
+	});
+	return error;
 }
 
 /** Encodes one path segment: user, group, member and alias keys can be emails. */

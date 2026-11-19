@@ -490,7 +490,17 @@ const UsersListInputSchema = z
 			),
 		viewType,
 	})
-	.strict();
+	.strict()
+	.superRefine((value, ctx) => {
+		// Google answers 400 when neither is sent; failing here says why.
+		if (!value.customer && !value.domain) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['customer'],
+				message: 'Send customer (`my_customer` for your own account) or domain',
+			});
+		}
+	});
 
 const UsersGetInputSchema = z
 	.object({
@@ -510,29 +520,51 @@ const UserNameInputSchema = z
 	.object({
 		givenName: z.string().describe('First name, at most 60 characters'),
 		familyName: z.string().describe('Last name, at most 60 characters'),
+		displayName: z.string().nullish().describe('At most 256 characters'),
+	})
+	.strict();
+
+/**
+ * users.update keeps the name parts it is not sent, so either part can be
+ * changed alone; Google's update guide changes `givenName` by itself.
+ */
+const UserNameUpdateInputSchema = z
+	.object({
+		givenName: z
+			.string()
+			.optional()
+			.describe('First name, at most 60 characters'),
+		familyName: z
+			.string()
+			.optional()
+			.describe('Last name, at most 60 characters'),
+		displayName: z.string().nullish().describe('At most 256 characters'),
 	})
 	.strict();
 
 /** The hashes users.insert accepts as `hashFunction`. */
 export const USER_HASH_FUNCTIONS = ['MD5', 'SHA-1', 'crypt'] as const;
 
-const PasswordInputSchema = z
-	.object({
-		password: z
-			.string()
-			.min(8)
-			.max(100)
-			.describe(
-				'The account password, 8 to 100 characters. Never returned by the API',
-			),
-		hashFunction: z
-			.enum(USER_HASH_FUNCTIONS)
-			.nullish()
-			.describe(
-				'Set when `password` is already a hex-encoded hash; `crypt` also accepts $5$ and $6$ prefixes',
-			),
-	})
-	.strict();
+/**
+ * The 8 to 100 character rule is for a plain password. A hash is checked by
+ * Google instead: a SHA-512 crypt hash with a 16-character salt is already 106
+ * characters, so the plain-text limit would refuse a valid one.
+ */
+function checkPasswordLength(
+	value: { password?: string | null; hashFunction?: string | null },
+	ctx: z.RefinementCtx,
+): void {
+	if (value.password == null || value.hashFunction) return;
+	const { length } = value.password;
+	if (length < 8 || length > 100) {
+		ctx.addIssue({
+			code: 'custom',
+			path: ['password'],
+			message:
+				'A plain password must be 8 to 100 characters; set hashFunction to send a hash',
+		});
+	}
+}
 
 /**
  * users.insert takes the full User resource. Only the fields Google documents
@@ -547,12 +579,16 @@ const UsersInsertInputSchema = z
 		name: UserNameInputSchema,
 		password: z
 			.string()
-			.min(8)
-			.max(100)
+			.min(1)
 			.describe(
 				'Required. Either the plain password (8 to 100 characters) or a hash when hashFunction is set',
 			),
-		hashFunction: z.enum(USER_HASH_FUNCTIONS).nullish(),
+		hashFunction: z
+			.enum(USER_HASH_FUNCTIONS)
+			.nullish()
+			.describe(
+				'Set when `password` is already a hash: hex for MD5 and SHA-1; `crypt` takes DES, $1$, $5$ and $6$ hashes',
+			),
 		orgUnitPath: z
 			.string()
 			.nullish()
@@ -590,7 +626,8 @@ const UsersInsertInputSchema = z
 			.record(z.string(), z.record(z.string(), z.unknown())) // unknown: values are open.
 			.nullish(),
 	})
-	.strict();
+	.strict()
+	.superRefine(checkPasswordLength);
 
 /**
  * users.update is a PUT with patch semantics: absent fields are preserved and a
@@ -610,15 +647,16 @@ const UsersUpdateInputSchema = z
 			.string()
 			.nullish()
 			.describe('Renaming can take up to 10 minutes to propagate'),
-		name: UserNameInputSchema.nullish().describe(
-			'Required in full when set: Google requires both givenName and familyName, so a partial name is refused rather than clearing one',
+		name: UserNameUpdateInputSchema.nullish().describe(
+			'Only the name parts that are sent change; the others keep their value',
 		),
 		password: z
 			.string()
-			.min(8)
-			.max(100)
+			.min(1)
 			.nullish()
-			.describe('Optional on update. Setting it changes the password'),
+			.describe(
+				'Optional on update. Setting it changes the password: plain text of 8 to 100 characters, or a hash when hashFunction is set',
+			),
 		hashFunction: z.enum(USER_HASH_FUNCTIONS).nullish(),
 		orgUnitPath: z.string().nullish(),
 		includeInGlobalAddressList: z.boolean().nullish(),
@@ -648,7 +686,8 @@ const UsersUpdateInputSchema = z
 			.record(z.string(), z.record(z.string(), z.unknown())) // unknown: values are open.
 			.nullish(),
 	})
-	.strict();
+	.strict()
+	.superRefine(checkPasswordLength);
 
 const UsersDeleteInputSchema = z
 	.object({
@@ -776,11 +815,25 @@ const GroupsListInputSchema = z
 			.describe(
 				'1 to 200. 200 is both the default and the maximum, per the limits page',
 			),
-		pageToken: z.string().nullish(),
+		pageToken: z
+			.string()
+			.nullish()
+			.describe('nextPageToken from a previous page'),
 		orderBy: z.enum(['email']).nullish().describe('The only documented value'),
 		sortOrder,
 	})
-	.strict();
+	.strict()
+	.superRefine((value, ctx) => {
+		// groups.list needs one of the three to know which groups to list.
+		if (!value.customer && !value.domain && !value.userKey) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['customer'],
+				message:
+					'Send customer (`my_customer` for your own account), domain or userKey',
+			});
+		}
+	});
 
 const GroupsGetInputSchema = z.object({ groupKey: z.string() }).strict();
 

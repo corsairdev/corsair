@@ -52,6 +52,23 @@ describe('googleadmin plugin definition', () => {
 		expect(Object.keys(googleAdminAuthConfig)).toEqual(['oauth_2']);
 	});
 
+	it('asks for read-only scopes on the resources it only reads', () => {
+		const scopes = plugin.oauthConfig?.scopes ?? [];
+
+		expect(scopes).toContain(
+			'https://www.googleapis.com/auth/admin.directory.domain.readonly',
+		);
+		expect(scopes).toContain(
+			'https://www.googleapis.com/auth/admin.directory.customer.readonly',
+		);
+		expect(scopes).not.toContain(
+			'https://www.googleapis.com/auth/admin.directory.domain',
+		);
+		expect(scopes).not.toContain(
+			'https://www.googleapis.com/auth/admin.directory.customer',
+		);
+	});
+
 	it('declares no extra account fields', () => {
 		// The tokens are all this plugin needs; an unfilled extra field would
 		// mark every connection as partial.
@@ -130,8 +147,12 @@ describe('googleadmin plugin definition', () => {
 			'orgUnits.delete',
 			'users.aliases.delete',
 			'users.delete',
+			// A new user on a flexible plan is a billed licence.
+			'users.insert',
 			'users.makeAdmin',
 			'users.photos.delete',
+			// Ended sessions cannot be restored.
+			'users.signOut',
 		]);
 		// A deleted user is recoverable through users.undelete while Google keeps
 		// the account in the trash, so it is destructive but not irreversible.

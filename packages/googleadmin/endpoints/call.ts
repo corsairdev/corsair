@@ -19,11 +19,14 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	operation: { event: string; input: Input; output: Output },
 	// unknown: raw caller input, parsed below by the operation's input schema.
 	rawInput: unknown, // unknown: the operation's input schema validates it below.
-	toRequest: (parsed: z.output<Input>) => GoogleAdminRequest,
+	// A promise when the request needs a lookup first, as members.update does.
+	toRequest: (
+		parsed: z.output<Input>,
+	) => GoogleAdminRequest | Promise<GoogleAdminRequest>,
 	lookup?: (result: z.output<Output>) => LogFields,
 ): Promise<z.output<Output>> {
 	const parsed = operation.input.parse(rawInput ?? {});
-	const raw = await makeGoogleAdminRequest(ctx.key, toRequest(parsed));
+	const raw = await makeGoogleAdminRequest(ctx.key, await toRequest(parsed));
 	const result = operation.output.parse(raw);
 
 	await logEventFromContext(

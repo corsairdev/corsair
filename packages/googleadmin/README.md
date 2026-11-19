@@ -40,13 +40,13 @@ pnpm add @corsair-dev/googleadmin
 | `users.aliases.list` | `googleadmin.api.users.aliases.list` | `read` | List a user's alias email addresses |
 | `users.delete` | `googleadmin.api.users.delete` | `destructive` | Delete a user account. The account stays recoverable through users.undelete while it is in the trash |
 | `users.get` | `googleadmin.api.users.get` | `read` | Read one user by email, alias or ID |
-| `users.insert` | `googleadmin.api.users.insert` | `write` | Create a user account with an initial password; a conflicting unmanaged account can be invited instead of created |
+| `users.insert` | `googleadmin.api.users.insert` | `destructive` | Create a user account with an initial password. On a flexible Workspace plan the new user is a billed licence |
 | `users.list` | `googleadmin.api.users.list` | `read` | List users in the account or one domain, with Google's search query and paging |
 | `users.makeAdmin` | `googleadmin.api.users.makeAdmin` | `destructive` | Grant or revoke super administrator on a user. The caller cannot revoke its own last admin right |
 | `users.photos.delete` | `googleadmin.api.users.photos.delete` | `destructive` | Remove a user's profile photo |
 | `users.photos.get` | `googleadmin.api.users.photos.get` | `read` | Read a user's profile photo as base64 bytes |
 | `users.photos.update` | `googleadmin.api.users.photos.update` | `write` | Replace a user's profile photo |
-| `users.signOut` | `googleadmin.api.users.signOut` | `write` | Sign a user out of all web and device sessions, clearing their sign-in cookies |
+| `users.signOut` | `googleadmin.api.users.signOut` | `destructive` | Sign a user out of all web and device sessions, clearing their sign-in cookies |
 | `users.undelete` | `googleadmin.api.users.undelete` | `write` | Restore a deleted user by ID and optionally set the organizational unit it returns to |
 | `users.update` | `googleadmin.api.users.update` | `write` | Update a user: name, password, suspension, archival, groups of profile fields and custom schemas |
 

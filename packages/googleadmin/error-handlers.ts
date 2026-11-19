@@ -2,6 +2,7 @@ import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import {
 	GoogleAdminTransportError,
+	isExhaustedQuota,
 	isRateLimitReason,
 	readFailureReason,
 } from './client';
@@ -22,8 +23,9 @@ function statusOf(error: Error): number | undefined {
  * - `429` and `403 userRateLimitExceeded` / `quotaExceeded` are throughput
  *   limits. Google's guide asks for exponential backoff, and sends no
  *   Retry-After, so the delay comes from the retry strategy.
- * - `403 dailyLimitExceeded` and `403 limitExceeded` are exhausted quotas for
- *   the day. Retrying cannot fix them, so they are reported immediately.
+ * - `403 dailyLimitExceeded` / `limitExceeded`, and a 403 or 429 whose message
+ *   names a "per day" quota, are exhausted quotas for the day. Retrying cannot
+ *   fix them, so they are reported immediately.
  * - `401` is an expired or revoked token. Core refreshes once and retries, so
  *   nothing more belongs here.
  * - `409` on users.insert is a duplicate or an unresolved conflicting account;
@@ -32,7 +34,17 @@ function statusOf(error: Error): number | undefined {
  *   retried users.insert would create a second account.
  */
 export const errorHandlers = {
-	// 429, and the two 403 reasons Google documents as "retry with backoff".
+	// A 403 or 429 that names a quota spent for the day. Checked first so it is
+	// never retried: waiting out a backoff cannot refill a daily quota.
+	QUOTA_ERROR: {
+		match: (error: Error) => isExhaustedQuota(error),
+		handler: async () => ({ maxRetries: 0 }),
+	},
+
+	// 429, and the 403 reasons Google documents as "retry with backoff". The
+	// client turns core's own 429 retries off, so these retries are the only
+	// ones. Google sends no Retry-After today; if it starts to, the delay it
+	// asks for is used instead of the backoff.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
 			const status = statusOf(error);
@@ -40,21 +52,16 @@ export const errorHandlers = {
 			if (status !== 403) return false;
 			return isRateLimitReason(readFailureReason(error));
 		},
-		handler: async () => ({
-			maxRetries: 3,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
-	},
-
-	// A 403 that names an exhausted daily quota. Checked before PERMISSION_ERROR
-	// so it is not retried, and placed before nothing else: only RATE_LIMIT_ERROR
-	// could also match a 403, and it requires a retryable reason.
-	QUOTA_ERROR: {
-		match: (error: Error) =>
-			statusOf(error) === 403 &&
-			(readFailureReason(error) === 'dailyLimitExceeded' ||
-				readFailureReason(error) === 'limitExceeded'),
-		handler: async () => ({ maxRetries: 0 }),
+		handler: async (error: Error) => {
+			const retryAfter = apiError(error)?.retryAfter;
+			return {
+				maxRetries: 3,
+				retryStrategy: 'exponential_backoff' as const,
+				...(retryAfter && retryAfter > 0
+					? { headersRetryAfterMs: retryAfter }
+					: {}),
+			};
+		},
 	},
 
 	AUTH_ERROR: {

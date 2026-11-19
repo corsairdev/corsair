@@ -1,5 +1,5 @@
 import type { GoogleAdminEndpoints } from '..';
-import { segment } from '../client';
+import { makeGoogleAdminRequest, segment } from '../client';
 import { call, pageCount } from './call';
 import {
 	GoogleAdminEndpointInputSchemas as Inputs,
@@ -97,9 +97,11 @@ export const insert: GoogleAdminEndpoints['membersInsert'] = async (
 	);
 
 /**
- * members.patch is the documented patch-semantics method, so changing a role
- * alone does not reset the delivery preference. The docs note the delivery
- * preference is honoured by `insert`, `update` and `get`.
+ * A role change alone goes through members.patch, which keeps the delivery
+ * preference. Google documents `delivery_settings` only on insert, update and
+ * get, so a delivery change goes through the PUT members.update instead. That
+ * PUT replaces the membership, so when no role is given the current one is
+ * read first and sent back unchanged.
  */
 export const update: GoogleAdminEndpoints['membersUpdate'] = async (
 	ctx,
@@ -113,16 +115,29 @@ export const update: GoogleAdminEndpoints['membersUpdate'] = async (
 			output: Outputs.membersUpdate,
 		},
 		rawInput,
-		(input) => ({
-			method: 'PATCH',
-			path: `/groups/${segment(input.groupKey)}/members/${segment(input.memberKey)}`,
-			body: {
-				...(input.role ? { role: input.role } : {}),
-				...(input.delivery_settings
-					? { delivery_settings: input.delivery_settings }
-					: {}),
-			},
-		}),
+		async (input) => {
+			const path = `/groups/${segment(input.groupKey)}/members/${segment(input.memberKey)}`;
+			if (!input.delivery_settings) {
+				return {
+					method: 'PATCH',
+					path,
+					body: input.role ? { role: input.role } : {},
+				};
+			}
+			const role =
+				input.role ??
+				Outputs.membersGet.parse(
+					await makeGoogleAdminRequest(ctx.key, { method: 'GET', path }),
+				).role;
+			return {
+				method: 'PUT',
+				path,
+				body: {
+					...(role ? { role } : {}),
+					delivery_settings: input.delivery_settings,
+				},
+			};
+		},
 	);
 
 export const remove: GoogleAdminEndpoints['membersDelete'] = async (

@@ -106,6 +106,60 @@ describe('rate limits', () => {
 		expect(strategy.maxRetries).toBe(0);
 	});
 
+	it('waits as long as a Retry-After asks when Google sends one', async () => {
+		const limited = new ApiError(
+			{ method: 'POST', url: '/groups' },
+			{ url: '/groups', ok: false, status: 429, statusText: 'x', body: {} },
+			'Too Many Requests',
+			{ retryAfter: 7_000 },
+		);
+
+		const strategy = await handlerFor(limited);
+
+		expect(strategy.maxRetries).toBe(3);
+		expect(strategy.headersRetryAfterMs).toBe(7_000);
+	});
+
+	it('leaves the backoff alone when there is no Retry-After', async () => {
+		const strategy = await handlerFor(apiError(429));
+
+		expect(strategy.headersRetryAfterMs).toBeUndefined();
+	});
+
+	it('does not retry a 429 whose reason is a spent daily quota', async () => {
+		const strategy = await handlerFor(
+			apiError(429, { reason: 'dailyLimitExceeded' }),
+		);
+
+		expect(strategy.maxRetries).toBe(0);
+	});
+
+	it('does not retry a 429 whose message names a per-day quota', async () => {
+		const spent = new ApiError(
+			{ method: 'GET', url: '/users' },
+			{
+				url: '/users',
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: {
+					error: {
+						code: 429,
+						status: 'RESOURCE_EXHAUSTED',
+						message:
+							"Quota exceeded for quota metric 'Queries' and limit 'Queries per day' of service 'admin.googleapis.com'",
+						errors: [{ reason: 'rateLimitExceeded', domain: 'global' }],
+					},
+				},
+			},
+			'Too Many Requests',
+		);
+
+		const strategy = await handlerFor(spent);
+
+		expect(strategy.maxRetries).toBe(0);
+	});
+
 	it('does not retry a 403 with no reason at all', async () => {
 		const strategy = await handlerFor(apiError(403));
 
@@ -231,6 +285,26 @@ describe('transport and server failures', () => {
 
 		expect(names.at(-1)).toBe('DEFAULT');
 		expect(names.indexOf('QUOTA_ERROR')).toBeLessThan(names.indexOf('DEFAULT'));
+	});
+
+	it('runs a caller handler registered through googleadmin() before a builtin that also matches', async () => {
+		const plugin = googleadmin({
+			errorHandlers: {
+				CUSTOM_503: {
+					match: (error: Error) =>
+						error instanceof ApiError && error.status === 503,
+					handler: async () => ({ maxRetries: 7 }),
+				},
+			},
+		});
+
+		// SERVER_ERROR also matches a 503; the caller's handler must win.
+		const strategy = await handlerFor(
+			apiError(503, { method: 'GET' }),
+			plugin.errorHandlers ?? {},
+		);
+
+		expect(strategy.maxRetries).toBe(7);
 	});
 
 	it('lets a caller handler take a status no builtin covers', async () => {
