@@ -1,3 +1,4 @@
+import { FileOutputSchema } from 'corsair/http';
 import { z } from 'zod';
 
 const VideoObjectSchema = z.object({
@@ -101,9 +102,8 @@ export const VideosDownloadInputSchema = z.object({
 });
 export type VideosDownloadInput = z.infer<typeof VideosDownloadInputSchema>;
 
-export const VideosDownloadResponseSchema = z.object({
+export const VideosDownloadResponseSchema = FileOutputSchema.extend({
 	videoId: z.string(),
-	contentBase64: z.string(),
 });
 export type VideosDownloadResponse = z.infer<
 	typeof VideosDownloadResponseSchema

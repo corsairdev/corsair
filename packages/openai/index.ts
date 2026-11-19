@@ -889,7 +889,8 @@ const openaiEndpointMeta = {
 	'files.delete': { riskLevel: 'destructive', description: 'Delete a file' },
 	'files.downloadContent': {
 		riskLevel: 'read',
-		description: 'Download the contents of a file',
+		description:
+			'Download the contents of a file. On Corsair up to about 700 KB comes back inline and a larger file comes back as fileId, a Files id; without a host that keeps files the content comes back inline up to 100 MB, or contentOmitted.',
 	},
 	'assistants.create': {
 		riskLevel: 'write',
@@ -1019,7 +1020,8 @@ const openaiEndpointMeta = {
 	},
 	'audio.createSpeech': {
 		riskLevel: 'write',
-		description: 'Generate spoken audio from text',
+		description:
+			'Generate spoken audio from text. On Corsair the audio comes back as audioBase64 up to about 700 KB and a longer clip comes back as fileId, a Files id; without a host that keeps files audioBase64 holds up to 100 MB, or contentOmitted is set.',
 	},
 	'audio.createTranscription': {
 		riskLevel: 'write',
@@ -1059,7 +1061,8 @@ const openaiEndpointMeta = {
 	},
 	'videos.download': {
 		riskLevel: 'read',
-		description: 'Download the rendered content of a video',
+		description:
+			'Download the rendered content of a video. On Corsair up to about 700 KB comes back inline and a larger file comes back as fileId, a Files id; without a host that keeps files the content comes back inline up to 100 MB, or contentOmitted.',
 	},
 	'realtime.createCall': {
 		riskLevel: 'write',
@@ -1125,7 +1128,8 @@ const openaiEndpointMeta = {
 	},
 	'containerFiles.retrieveContent': {
 		riskLevel: 'read',
-		description: 'Download the contents of a container file',
+		description:
+			'Download the contents of a container file. On Corsair up to about 700 KB comes back inline and a larger file comes back as fileId, a Files id; without a host that keeps files the content comes back inline up to 100 MB, or contentOmitted.',
 	},
 	'containerFiles.delete': {
 		riskLevel: 'destructive',

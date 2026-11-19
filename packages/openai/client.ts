@@ -156,10 +156,42 @@ export async function uploadOpenaiFile<T>(
  * File content downloads (e.g. GET /files/{id}/content) return raw bytes, not JSON —
  * fetch directly instead of going through the JSON-oriented request() helper.
  */
+/**
+ * Most bytes a download returns inline to a caller without a host. A host that
+ * keeps files (setFileSink) caps it at its own limit and gets a `fileId` instead.
+ */
+export const DOWNLOAD_MAX_BYTES = 100_000_000;
+
+export type OpenaiDownload = {
+	bytes: Uint8Array;
+	contentType: string | null;
+	filename?: string;
+};
+
+/**
+ * The file name a Content-Disposition header offers, if any (RFC 6266):
+ * `filename*=UTF-8''…` first, then a quoted `filename="…"`, then a bare token.
+ */
+export function dispositionFilename(header: string | null): string | undefined {
+	if (!header) return undefined;
+	const extended = /filename\*\s*=\s*[^']*'[^']*'([^;\s]+)/i.exec(header);
+	if (extended?.[1]) {
+		try {
+			const name = decodeURIComponent(extended[1]);
+			if (name) return name;
+		} catch {
+			// A malformed percent-escape: fall back to the plain parameter.
+		}
+	}
+	const quoted = /filename\s*=\s*"((?:[^"\\]|\\.)*)"/i.exec(header);
+	if (quoted) return quoted[1]?.replace(/\\(.)/g, '$1') || undefined;
+	return /filename\s*=\s*([^;\s]+)/i.exec(header)?.[1] || undefined;
+}
+
 export async function downloadOpenaiFile(
 	endpoint: string,
 	apiKey: string,
-): Promise<ArrayBuffer> {
+): Promise<OpenaiDownload> {
 	const response = await fetch(buildUrl(endpoint), {
 		method: 'GET',
 		headers: { Authorization: `Bearer ${apiKey}` },
@@ -170,7 +202,14 @@ export async function downloadOpenaiFile(
 		throwFromFetchResponse(response, text);
 	}
 
-	return response.arrayBuffer();
+	const filename = dispositionFilename(
+		response.headers.get('content-disposition'),
+	);
+	return {
+		bytes: new Uint8Array(await response.arrayBuffer()),
+		contentType: response.headers.get('content-type'),
+		...(filename ? { filename } : {}),
+	};
 }
 
 /**
