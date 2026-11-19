@@ -1,0 +1,63 @@
+import type { CorsairErrorHandler } from 'corsair/core';
+import { StoreganiseAPIError } from './client';
+
+function statusOf(error: Error): number | undefined {
+	return error instanceof StoreganiseAPIError ? error.status : undefined;
+}
+
+// Storeganise documents no rate-limit contract for the API, so no
+// RATE_LIMIT_ERROR handler is built and the transport does not retry
+// either (client.ts pins maxRetries: 0): a 429 fails immediately instead
+// of being replayed on guesswork.
+// Documented statuses: 401 Unauthorized, 400 validation errors ("See the
+// errors object in the response for more info").
+// https://help.storeganise.com/article/331-system-error-list
+export const errorHandlers = {
+	// 401: a wrong or missing API key ("Not authorized" under type
+	// "Unauthorized"), verified live on every admin route without a key.
+	AUTH_ERROR: {
+		match: (error: Error) => statusOf(error) === 401,
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	// 400 invalid input and 404 unknown resource. A retry sends the same
+	// request.
+	VALIDATION_ERROR: {
+		match: (error: Error) => {
+			const status = statusOf(error);
+			return error.name === 'ZodError' || status === 400 || status === 404;
+		},
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	// Only reads are replayed: a retry of the one documented write
+	// (unit-rentals custom fields) would run twice with no documented
+	// idempotency contract.
+	SERVER_ERROR: {
+		match: (error: Error) =>
+			error instanceof StoreganiseAPIError &&
+			error.method === 'GET' &&
+			(error.status ?? 0) >= 500,
+		handler: async () => ({
+			maxRetries: 2,
+			retryStrategy: 'exponential_backoff' as const,
+		}),
+	},
+	DEFAULT: {
+		match: () => true,
+		handler: async () => ({ maxRetries: 0 }),
+	},
+} satisfies CorsairErrorHandler;
+
+// Handlers match in key order and DEFAULT matches everything, so it stays
+// last even when the caller adds or overrides handlers.
+export function mergeErrorHandlers(
+	builtin: CorsairErrorHandler,
+	user: CorsairErrorHandler | undefined,
+): CorsairErrorHandler {
+	if (!user) return builtin;
+	const { DEFAULT: builtinDefault, ...builtinRest } = builtin;
+	const { DEFAULT: userDefault, ...userRest } = user;
+	const fallback = userDefault ?? builtinDefault;
+	return fallback
+		? { ...builtinRest, ...userRest, DEFAULT: fallback }
+		: { ...builtinRest, ...userRest };
+}
