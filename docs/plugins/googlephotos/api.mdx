@@ -97,7 +97,7 @@ await corsair.googlephotos.api.albums.batchAddMediaItems({ albumId: 'ABcDeFgHiJk
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `albumId` | `string` | Yes | An album id from albums.create or albums.list |
-| `mediaItemIds` | `string[]` | Yes | 1 to 50 ids per call |
+| `mediaItemIds` | `string[]` | Yes | 1 to 50 distinct ids per call |
 
 
 
@@ -123,7 +123,7 @@ await corsair.googlephotos.api.albums.batchRemoveMediaItems({ albumId: 'ABcDeFgH
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `albumId` | `string` | Yes | An album id from albums.create or albums.list |
-| `mediaItemIds` | `string[]` | Yes | 1 to 50 ids per call |
+| `mediaItemIds` | `string[]` | Yes | 1 to 50 distinct ids per call |
 
 
 
@@ -148,7 +148,7 @@ await corsair.googlephotos.api.albums.create({ title: 'Holiday 2026' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `title` | `string` | Yes | The album name, at most 500 characters. The only writable field |
+| `title` | `string` | Yes | The album name, at most 500 characters |
 
 
 
@@ -192,7 +192,7 @@ await corsair.googlephotos.api.albums.create({ title: 'Holiday 2026' });
 
 `albums.get`
 
-Read one album
+Read one album this app created
 
 **Risk:** `read`
 
@@ -248,7 +248,7 @@ await corsair.googlephotos.api.albums.get({ albumId: 'ABcDeFgHiJkLmNoP' });
 
 `albums.list`
 
-List the account's albums. Without a scope Google removed in 2025, only app-created albums are readable
+List the albums this app created; since March 2025 the API reads nothing else
 
 **Risk:** `read`
 
@@ -262,7 +262,7 @@ await corsair.googlephotos.api.albums.list({ pageSize: 20 });
 |------|------|----------|-------------|
 | `pageSize` | `number \| null` | No | 1 to 50. The API default is 20 |
 | `pageToken` | `string \| null` | No | nextPageToken from a previous page of the same call |
-| `excludeNonAppCreatedData` | `boolean \| null` | No | Leave out albums the app did not create. Reads of the user's whole library need a scope Google removed in April 2025, so this is effectively the only data a current scope can see |
+| `excludeNonAppCreatedData` | `boolean \| null` | No | Leave out albums the app did not create. Reads of the user's whole library need a scope Google removed in March 2025, so this is effectively the only data a current scope can see |
 
 Only albums this app created are readable; the wide-read scope was removed in 2025.
 
@@ -311,7 +311,7 @@ Only albums this app created are readable; the wide-read scope was removed in 20
 
 `albums.update`
 
-Rename an album; the title is the only field the API lets an update change
+Rename an app-created album (sends the title update mask)
 
 **Risk:** `write`
 
@@ -324,7 +324,7 @@ await corsair.googlephotos.api.albums.update({ albumId: 'ABcDeFgHiJkLmNoP', titl
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `albumId` | `string` | Yes | An album id from albums.create or albums.list |
-| `title` | `string` | Yes | — |
+| `title` | `string` | Yes | At most 500 characters |
 
 Sends PATCH with the `title` mask, the only field the API documents as writable.
 
@@ -372,7 +372,7 @@ Sends PATCH with the `title` mask, the only field the API documents as writable.
 
 `mediaItems.batchGet`
 
-Read up to one page of media items by id, with a per-id status
+Read up to 50 app-created media items by id, with a per-id status
 
 **Risk:** `read`
 
@@ -384,7 +384,7 @@ await corsair.googlephotos.api.mediaItems.batchGet({ mediaItemIds: ['AbCdEf123',
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `mediaItemIds` | `string[]` | Yes | The ids to read in one call |
+| `mediaItemIds` | `string[]` | Yes | 1 to 50 distinct ids to read in one call |
 
 Each requested id gets an entry, and a failed id carries a status instead of an item.
 
@@ -429,7 +429,7 @@ Each requested id gets an entry, and a failed id carries a status instead of an 
         cameraMake?: string | null,
         cameraModel?: string | null,
         fps?: number | null,
-        status?: UNSPECIFIED | PROCESSING | READY | FAILED | null
+        status?: string | null
       } | null
     } | null,
     contributorInfo?: {
@@ -455,7 +455,7 @@ Upload bytes and create up to 50 media items, optionally in an album; uploads co
 **Risk:** `write`
 
 ```ts
-await corsair.googlephotos.api.mediaItems.create({ newMediaItems: [{ fileName: 'beach.jpg', contentType: 'image/jpeg', bytes: '<base64>' }] });
+await corsair.googlephotos.api.mediaItems.create({ newMediaItems: [{ file: { url: 'https://example.com/beach.jpg', contentType: 'image/jpeg' }, description: 'Beach day' }] });
 ```
 
 **Input**
@@ -466,16 +466,23 @@ await corsair.googlephotos.api.mediaItems.create({ newMediaItems: [{ fileName: '
 | `albumId` | `string \| null` | No | Also add the items to this album, which must be app-created |
 | `albumPosition` | `object \| null` | No | — |
 
-Bytes are base64. The endpoint uploads them, then creates up to 50 items from the returned tokens.
+Each file is a public URL or base64 (up to 200 MB). The endpoint uploads them, then creates up to 50 items from the returned tokens; a failed item carries a status code.
 
 <AccordionGroup>
 <Accordion title="newMediaItems full type">
 
 ```ts
 {
-  fileName: string,
-  contentType: string,
-  bytes: string,
+  file: string | {
+    url: string,
+    filename?: string,
+    contentType?: string
+  } | {
+    base64: string,
+    filename?: string,
+    contentType?: string
+  },
+  fileName?: string | null,
   description?: string | null
 }[]
 ```
@@ -535,7 +542,7 @@ Bytes are base64. The endpoint uploads them, then creates up to 50 items from th
         cameraMake?: string | null,
         cameraModel?: string | null,
         fps?: number | null,
-        status?: UNSPECIFIED | PROCESSING | READY | FAILED | null
+        status?: string | null
       } | null
     } | null,
     contributorInfo?: {
@@ -556,7 +563,7 @@ Bytes are base64. The endpoint uploads them, then creates up to 50 items from th
 
 `mediaItems.get`
 
-Read one media item
+Read one media item this app created
 
 **Risk:** `read`
 
@@ -581,7 +588,7 @@ await corsair.googlephotos.api.mediaItems.get({ mediaItemId: 'AbCdEf123' });
 | `mimeType` | `string \| null` | No | e.g. `image/jpeg` |
 | `description` | `string \| null` | No | — |
 | `productUrl` | `string \| null` | No | A Google Photos link the user can open when signed in |
-| `baseUrl` | `string \| null` | No | A prefix for the bytes. A size parameter must be appended before it can be fetched; see the media.bytes helper |
+| `baseUrl` | `string \| null` | No | A prefix for the bytes, valid for 60 minutes. A parameter must be appended before it can be fetched (`=d` for photo bytes, `=dv` for video bytes, `=w<w>-h<h>` for a scaled copy); the exported mediaBytesUrl helper builds it |
 | `mediaMetadata` | `object \| null` | No | — |
 | `contributorInfo` | `object \| null` | No | — |
 
@@ -605,7 +612,7 @@ await corsair.googlephotos.api.mediaItems.get({ mediaItemId: 'AbCdEf123' });
     cameraMake?: string | null,
     cameraModel?: string | null,
     fps?: number | null,
-    status?: UNSPECIFIED | PROCESSING | READY | FAILED | null
+    status?: string | null
   } | null
 } | null
 ```
@@ -630,7 +637,7 @@ await corsair.googlephotos.api.mediaItems.get({ mediaItemId: 'AbCdEf123' });
 
 `mediaItems.list`
 
-List the library in the order Google returns it, 25 by default
+List the media items this app created, 25 per page by default
 
 **Risk:** `read`
 
@@ -681,7 +688,7 @@ await corsair.googlephotos.api.mediaItems.list({ pageSize: 25 });
       cameraMake?: string | null,
       cameraModel?: string | null,
       fps?: number | null,
-      status?: UNSPECIFIED | PROCESSING | READY | FAILED | null
+      status?: string | null
     } | null
   } | null,
   contributorInfo?: {
@@ -701,7 +708,7 @@ await corsair.googlephotos.api.mediaItems.list({ pageSize: 25 });
 
 `mediaItems.search`
 
-Search the library with date, content, feature and media-type filters, or list one album
+Search the media items this app created with date, content, feature and media-type filters, or list one app-created album
 
 **Risk:** `read`
 
@@ -715,7 +722,7 @@ await corsair.googlephotos.api.mediaItems.search({ albumId: 'ABcDeFgHiJkLmNoP', 
 |------|------|----------|-------------|
 | `albumId` | `string \| null` | No | Search inside one album. Cannot be combined with filters |
 | `filters` | `object \| null` | No | — |
-| `orderBy` | `MediaMetadata.creation_time desc \| MediaMetadata.creation_time \| null` | No | Only usable with a date filter. `desc` is newest first, which is also the default |
+| `orderBy` | `MediaMetadata.creation_time desc \| MediaMetadata.creation_time \| null` | No | Only usable with a date filter, and not with content, media type or feature filters. `desc` is newest first, which is also the default |
 | `pageSize` | `number \| null` | No | 1 to 100. The API default is 25 |
 | `pageToken` | `string \| null` | No | nextPageToken from a previous page of the same call |
 
@@ -798,7 +805,7 @@ Send `albumId` or `filters`, never both; the API answers 400 for that combinatio
       cameraMake?: string | null,
       cameraModel?: string | null,
       fps?: number | null,
-      status?: UNSPECIFIED | PROCESSING | READY | FAILED | null
+      status?: string | null
     } | null
   } | null,
   contributorInfo?: {
@@ -818,7 +825,7 @@ Send `albumId` or `filters`, never both; the API answers 400 for that combinatio
 
 `mediaItems.update`
 
-Change a media item's description, the only editable field
+Change an app-created media item's description, the only editable field
 
 **Risk:** `write`
 
@@ -831,7 +838,7 @@ await corsair.googlephotos.api.mediaItems.update({ mediaItemId: 'AbCdEf123', des
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `mediaItemId` | `string` | Yes | A media item id from a search or a batchCreate result |
-| `description` | `string` | Yes | The new description. The only field the API lets an update change |
+| `description` | `string` | Yes | The new description, under 1000 characters. The only field the API lets an update change |
 
 
 
@@ -844,7 +851,7 @@ await corsair.googlephotos.api.mediaItems.update({ mediaItemId: 'AbCdEf123', des
 | `mimeType` | `string \| null` | No | e.g. `image/jpeg` |
 | `description` | `string \| null` | No | — |
 | `productUrl` | `string \| null` | No | A Google Photos link the user can open when signed in |
-| `baseUrl` | `string \| null` | No | A prefix for the bytes. A size parameter must be appended before it can be fetched; see the media.bytes helper |
+| `baseUrl` | `string \| null` | No | A prefix for the bytes, valid for 60 minutes. A parameter must be appended before it can be fetched (`=d` for photo bytes, `=dv` for video bytes, `=w<w>-h<h>` for a scaled copy); the exported mediaBytesUrl helper builds it |
 | `mediaMetadata` | `object \| null` | No | — |
 | `contributorInfo` | `object \| null` | No | — |
 
@@ -868,7 +875,7 @@ await corsair.googlephotos.api.mediaItems.update({ mediaItemId: 'AbCdEf123', des
     cameraMake?: string | null,
     cameraModel?: string | null,
     fps?: number | null,
-    status?: UNSPECIFIED | PROCESSING | READY | FAILED | null
+    status?: string | null
   } | null
 } | null
 ```
