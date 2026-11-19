@@ -4,7 +4,7 @@ import type {
 	OpenAPIConfig,
 	RateLimitConfig,
 } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class LitescrapeAPIError extends Error {
 	constructor(
@@ -48,11 +48,15 @@ export async function tryGetStoredKey(
 }
 
 /**
- * LiteScrape REST gateway. Every endpoint is a `GET` under `/api` and takes
+ * LiteScrape REST gateway. Every data endpoint takes a `GET` query or a JSON `POST` body under `/api` and takes
  * `Authorization: Bearer <key>` (keys look like `ls_live_...`). Reference:
  * https://litescrape.com/docs/reference and https://litescrape.com/docs.
  */
 export const LITESCRAPE_API_BASE = 'https://api.litescrape.com';
+
+/** The longest `timeout` the API accepts, in seconds. */
+export const LITESCRAPE_MAX_BUDGET_SECONDS = 90;
+const CLIENT_TIMEOUT_MARGIN_SECONDS = 5;
 
 /**
  * The transport's own retry loop is disabled (`maxRetries: 0`) so the plugin's
@@ -82,11 +86,14 @@ export async function makeLitescrapeRequest<T>(
 		// Bodies are endpoint-specific JSON (already validated by the zod
 		// input schemas before send), so the shared transport stays generic
 		// over a JSON record instead of a closed per-endpoint union.
+		// `unknown` is necessary because bodies are endpoint-specific JSON, validated by each endpoint's input schema before send.
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
+		/** Litescrape's own budget for the call, in seconds (the `timeout` query field). */
+		budgetSeconds?: number;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, budgetSeconds } = options;
 
 	// LiteScrape authenticates every public endpoint with a bearer key
 	// (https://litescrape.com/docs/reference). An empty key means no
@@ -103,6 +110,16 @@ export async function makeLitescrapeRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
+		// Scrapes routinely take longer than the transport's 20 s default; the
+		// API stops a call at its `timeout` (90 s at most), so wait that long
+		// plus a margin for the response to arrive.
+		// Whole milliseconds: AbortSignal.timeout rejects a fractional delay,
+		// and `timeout` may be fractional (10.0005).
+		TIMEOUT: Math.ceil(
+			((budgetSeconds ?? LITESCRAPE_MAX_BUDGET_SECONDS) +
+				CLIENT_TIMEOUT_MARGIN_SECONDS) *
+				1000,
+		),
 		HEADERS: {
 			'Content-Type': 'application/json',
 			Authorization: `Bearer ${apiKey}`,
@@ -125,11 +142,92 @@ export async function makeLitescrapeRequest<T>(
 			rateLimitConfig: TRANSPORT_RETRY_CONFIG,
 		});
 	} catch (error) {
-		// ApiError carries the provider status and retryAfter the error
-		// handlers route on, so it must reach them untouched.
+		if (error instanceof ApiError) {
+			throw withoutRequestData(error);
+		}
 		if (error instanceof Error) {
 			throw error;
 		}
 		throw new LitescrapeAPIError('Unknown error');
 	}
+}
+
+const REDACTED = '[REDACTED]';
+
+/**
+ * Core keeps the sent body on `ApiError.request` and only scrubs the URL and
+ * query. A Litescrape body is user content: search terms, URLs, session
+ * cookies (`set_cookies`), injected scripts. A validation error can also echo
+ * the rejected value back (`details[].input` / FastAPI's `detail[].input`). This rebuilds the error without
+ * either, keeping the status, message and rate-limit fields the error
+ * handlers and core's retries read (the same rebuild the encodian and e2b clients do).
+ */
+function withoutRequestData(error: ApiError): ApiError {
+	const body = withoutEchoedInput(error.body);
+	return new ApiError(
+		{
+			...error.request,
+			body: error.request.body === undefined ? undefined : REDACTED,
+		},
+		{
+			url: error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body,
+		},
+		safeMessage(error, body),
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
+}
+
+/**
+ * Core builds the message from the whole response body when a status is
+ * outside its fixed list and the body has no `message`/`error`/`detail`, and
+ * uses a FastAPI `detail` list as-is, so an echoed input could ride in the
+ * message. The message is rebuilt instead: Litescrape's own `error` text (a
+ * fixed sentence per `error_code`) or `message`, else the status text, plus the
+ * `error_code` the error handlers' text fallbacks match on. The serialized
+ * body never goes in.
+ */
+// `unknown` is necessary because the scrubbed body is whatever JSON (or text) the API sent.
+function safeMessage(error: ApiError, body: unknown): string {
+	const fields =
+		typeof body === 'object' && body !== null && !Array.isArray(body)
+			? (body as { error?: unknown; message?: unknown; error_code?: unknown })
+			: {};
+	const text =
+		typeof fields.error === 'string'
+			? fields.error
+			: typeof fields.message === 'string'
+				? fields.message
+				: error.statusText || `HTTP ${error.status}`;
+	return typeof fields.error_code === 'string' &&
+		!text.includes(fields.error_code)
+		? `${text} (${fields.error_code})`
+		: text;
+}
+
+// `unknown` is necessary because an error body is whatever JSON (or text) the API sent.
+function withoutEchoedInput(body: unknown): unknown {
+	if (typeof body !== 'object' || body === null || Array.isArray(body)) {
+		return body;
+	}
+	// `unknown` is necessary because error lists (`details` from Litescrape, `detail` from FastAPI) have no fixed item shape.
+	const result: Record<string, unknown> = { ...body };
+	for (const key of ['detail', 'details']) {
+		const list = result[key];
+		if (!Array.isArray(list)) continue;
+		result[key] = list.map((item) =>
+			typeof item === 'object' && item !== null
+				? { ...item, input: undefined, ctx: undefined }
+				: item,
+		);
+	}
+	return result;
 }
