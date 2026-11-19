@@ -108,7 +108,6 @@ describe('media items', () => {
 					ranges: [{ startDate: { year: 2024, month: 1, day: 1 } }],
 				},
 			},
-			orderBy: 'MediaMetadata.creation_time desc',
 			pageSize: 100,
 		});
 
@@ -121,11 +120,69 @@ describe('media items', () => {
 					ranges: [{ startDate: { year: 2024, month: 1, day: 1 } }],
 				},
 			},
-			orderBy: 'MediaMetadata.creation_time desc',
 			pageSize: 100,
 		});
 		expect(result.mediaItems).toHaveLength(1);
 	});
+
+	it('sends orderBy with a date filter and includeArchivedMedia', async () => {
+		mockFetch(jsonResponse({ mediaItems: [] }));
+
+		await endpoints.mediaItems.search(makeCtx(), {
+			filters: {
+				dateFilter: { dates: [{ year: 2024, month: 6, day: 1 }] },
+				includeArchivedMedia: true,
+			},
+			orderBy: 'MediaMetadata.creation_time desc',
+		});
+
+		expect(sentBody()).toMatchObject({
+			orderBy: 'MediaMetadata.creation_time desc',
+		});
+	});
+
+	it('refuses orderBy with a media type filter, which the API does not support', async () => {
+		await expect(
+			endpoints.mediaItems.search(makeCtx(), {
+				filters: {
+					mediaTypeFilter: { mediaTypes: ['PHOTO'] },
+					dateFilter: { dates: [{ year: 2024, month: 6, day: 1 }] },
+				},
+				orderBy: 'MediaMetadata.creation_time desc',
+			}),
+		).rejects.toMatchObject({ name: 'ZodError' });
+		expect(globalThis.fetch).not.toHaveBeenCalled();
+	});
+
+	it.each([
+		['a whole month', { year: 2026, month: 11, day: 0 }],
+		['a whole year', { year: 2026, month: 0, day: 0 }],
+		['the same day every year', { year: 0, month: 7, day: 4 }],
+	])('accepts zero date parts for %s', async (_label, date) => {
+		mockFetch(jsonResponse({ mediaItems: [] }));
+
+		await endpoints.mediaItems.search(makeCtx(), {
+			filters: { dateFilter: { dates: [date] } },
+		});
+
+		expect(sentBody()).toEqual({ filters: { dateFilter: { dates: [date] } } });
+	});
+
+	it.each([
+		['every part zero', { year: 0, month: 0, day: 0 }],
+		['only the month zero', { year: 2026, month: 0, day: 4 }],
+		['day and year zero', { year: 0, month: 7, day: 0 }],
+	])(
+		'refuses a date with %s, which the type does not support',
+		async (_label, date) => {
+			await expect(
+				endpoints.mediaItems.search(makeCtx(), {
+					filters: { dateFilter: { dates: [date] } },
+				}),
+			).rejects.toMatchObject({ name: 'ZodError' });
+			expect(globalThis.fetch).not.toHaveBeenCalled();
+		},
+	);
 
 	it('searches inside an album by albumId alone', async () => {
 		mockFetch(jsonResponse({ mediaItems: [] }));

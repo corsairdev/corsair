@@ -50,14 +50,42 @@ const pageToken = z
 	.nullish()
 	.describe('nextPageToken from a previous page of the same call');
 
-/** A google.type.Date: every part is optional, and an absent part is a wildcard. */
+/**
+ * A google.type.Date. A zero part is a wildcard: `day: 0` matches a whole month,
+ * `month: 0, day: 0` a whole year, and `year: 0` the same day every year. The
+ * type documents three combinations as unsupported: all parts zero, only the
+ * month zero, and both day and year zero. An omitted part counts as zero.
+ */
 const GoogleDateSchema = z
 	.object({
-		year: z.number().int().nullish(),
-		month: z.number().int().min(1).max(12).nullish(),
-		day: z.number().int().min(1).max(31).nullish(),
+		year: z.number().int().min(0).max(9999).nullish(),
+		month: z.number().int().min(0).max(12).nullish(),
+		day: z.number().int().min(0).max(31).nullish(),
 	})
-	.strict();
+	.strict()
+	.superRefine((value, ctx) => {
+		const year = value.year ?? 0;
+		const month = value.month ?? 0;
+		const day = value.day ?? 0;
+		if (year === 0 && month === 0 && day === 0) {
+			ctx.addIssue({
+				code: 'custom',
+				message: 'A date needs at least one non-zero part',
+			});
+		} else if (month === 0 && day !== 0) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['month'],
+				message: 'A day needs a month; set day to 0 to match a whole year',
+			});
+		} else if (year === 0 && day === 0) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['day'],
+				message: 'Without a year, a date needs both a month and a day',
+			});
+		}
+	});
 
 // ── resources ───────────────────────────────────────────────────────────────
 
@@ -358,7 +386,7 @@ const MediaItemsSearchInputSchema = z
 			.enum(['MediaMetadata.creation_time desc', 'MediaMetadata.creation_time'])
 			.nullish()
 			.describe(
-				'Only usable with a date filter. `desc` is newest first, which is also the default',
+				'Only usable with a date filter, and not with content, media type or feature filters. `desc` is newest first, which is also the default',
 			),
 		pageSize: mediaItemPageSize,
 		pageToken,
@@ -378,6 +406,23 @@ const MediaItemsSearchInputSchema = z
 				code: 'custom',
 				path: ['orderBy'],
 				message: 'orderBy only works with a date filter',
+			});
+		}
+		// The orderBy reference: besides the date filter, only
+		// includeArchivedMedia and excludeNonAppCreatedData may be set with it.
+		const filters = value.filters;
+		if (
+			value.orderBy &&
+			filters &&
+			(filters.contentFilter ||
+				filters.mediaTypeFilter ||
+				filters.featureFilter)
+		) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['orderBy'],
+				message:
+					'orderBy cannot be combined with content, media type or feature filters',
 			});
 		}
 	});
