@@ -231,7 +231,7 @@ const WmxSiteSchema = z
 			.string()
 			.nullish()
 			.describe(
-				'What this credential may do on the property: `siteOwner`, `siteFullUser`, `siteRestrictedUser` or `siteUnverifiedUser`. Only owners and full users can read its data',
+				'What this credential may do on the property: `siteOwner`, `siteFullUser`, `siteRestrictedUser` or `siteUnverifiedUser`. Owners and full users can manage it, restricted users can view most data including Performance, and unverified users can read nothing',
 			),
 	})
 	.loose();

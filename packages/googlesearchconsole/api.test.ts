@@ -183,16 +183,26 @@ describeLive('googlesearchconsole live API', () => {
 			const feedpath = `${host}corsair-live-test-sitemap.xml`;
 			const listed = (await sitemapsList(ctx, { siteUrl })).sitemap ?? [];
 			if (listed.some((entry) => entry.path === feedpath)) {
-				throw new Error(`${feedpath} is already listed; not touching it`);
+				throw new Error('The test sitemap is already listed; not touching it');
 			}
 
-			await sitemapsSubmit(ctx, { siteUrl, feedpath });
-			const after = (await sitemapsList(ctx, { siteUrl })).sitemap ?? [];
-			expect(after.some((entry) => entry.path === feedpath)).toBe(true);
+			let removed = false;
+			try {
+				await sitemapsSubmit(ctx, { siteUrl, feedpath });
+				const after = (await sitemapsList(ctx, { siteUrl })).sitemap ?? [];
+				expect(after.some((entry) => entry.path === feedpath)).toBe(true);
 
-			await sitemapsRemove(ctx, { siteUrl, feedpath });
-			const gone = (await sitemapsList(ctx, { siteUrl })).sitemap ?? [];
-			expect(gone.some((entry) => entry.path === feedpath)).toBe(false);
+				await sitemapsRemove(ctx, { siteUrl, feedpath });
+				removed = true;
+				const gone = (await sitemapsList(ctx, { siteUrl })).sitemap ?? [];
+				expect(gone.some((entry) => entry.path === feedpath)).toBe(false);
+			} finally {
+				// A failed check must not leave the entry behind; a failed cleanup
+				// must not hide the original failure.
+				if (!removed) {
+					await sitemapsRemove(ctx, { siteUrl, feedpath }).catch(() => {});
+				}
+			}
 		},
 	);
 
@@ -206,16 +216,25 @@ describeLive('googlesearchconsole live API', () => {
 			const property = `${host}corsair-live-test/`;
 			const before = (await sitesList(ctx, {})).siteEntry ?? [];
 			if (before.some((entry) => entry.siteUrl === property)) {
-				throw new Error(`${property} already exists; not touching it`);
+				throw new Error('The test property already exists; not touching it');
 			}
 
-			await sitesAdd(ctx, { siteUrl: property });
-			const added = await sitesGet(ctx, { siteUrl: property });
-			expect(added.siteUrl).toBe(property);
+			let removed = false;
+			try {
+				await sitesAdd(ctx, { siteUrl: property });
+				const added = await sitesGet(ctx, { siteUrl: property });
+				expect(added.siteUrl).toBe(property);
 
-			await sitesRemove(ctx, { siteUrl: property });
-			const after = (await sitesList(ctx, {})).siteEntry ?? [];
-			expect(after.some((entry) => entry.siteUrl === property)).toBe(false);
+				await sitesRemove(ctx, { siteUrl: property });
+				removed = true;
+				const after = (await sitesList(ctx, {})).siteEntry ?? [];
+				expect(after.some((entry) => entry.siteUrl === property)).toBe(false);
+			} finally {
+				// Same as above: clean up after a failed check, keep its error.
+				if (!removed) {
+					await sitesRemove(ctx, { siteUrl: property }).catch(() => {});
+				}
+			}
 		},
 	);
 });

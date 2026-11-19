@@ -340,7 +340,7 @@ await corsair.googlesearchconsole.api.sites.get({ siteUrl: 'https://example.com/
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `siteUrl` | `string \| null` | No | — |
-| `permissionLevel` | `string \| null` | No | What this credential may do on the property: `siteOwner`, `siteFullUser`, `siteRestrictedUser` or `siteUnverifiedUser`. Only owners and full users can read its data |
+| `permissionLevel` | `string \| null` | No | What this credential may do on the property: `siteOwner`, `siteFullUser`, `siteRestrictedUser` or `siteUnverifiedUser`. Owners and full users can manage it, restricted users can view most data including Performance, and unverified users can read nothing |
 
 
 
