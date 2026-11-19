@@ -7,7 +7,12 @@ import { googlephotos } from './index';
 /** An ApiError shaped the way core's request() throws one. */
 function apiError(
 	status: number,
-	options: { method?: 'GET' | 'POST'; retryAfter?: number } = {},
+	options: {
+		method?: 'GET' | 'POST';
+		retryAfter?: number;
+		// unknown: a test can send any error envelope shape.
+		body?: unknown;
+	} = {},
 ): ApiError {
 	return new ApiError(
 		{ method: options.method ?? 'GET', url: '/albums' },
@@ -16,7 +21,9 @@ function apiError(
 			ok: false,
 			status,
 			statusText: 'failed',
-			body: { error: { code: status, message: 'failed', status: 'FAILED' } },
+			body: options.body ?? {
+				error: { code: status, message: 'failed', status: 'FAILED' },
+			},
 		},
 		'failed',
 		options.retryAfter === undefined
@@ -59,10 +66,100 @@ describe('rate limits', () => {
 		expect(strategy.headersRetryAfterMs).toBe(30_000);
 	});
 
-	it('lets a Retry-After header override the floor', async () => {
+	it('waits for a Retry-After longer than the floor', async () => {
+		const strategy = await handlerFor(apiError(429, { retryAfter: 120_000 }));
+
+		expect(strategy.headersRetryAfterMs).toBe(120_000);
+	});
+
+	it('keeps the 30 second floor when Retry-After is shorter', async () => {
 		const strategy = await handlerFor(apiError(429, { retryAfter: 5_000 }));
 
-		expect(strategy.headersRetryAfterMs).toBe(5_000);
+		expect(strategy.headersRetryAfterMs).toBe(30_000);
+	});
+
+	it('does not retry a 429 whose ErrorInfo names a per-day quota', async () => {
+		const strategy = await handlerFor(
+			apiError(429, {
+				method: 'POST',
+				body: {
+					error: {
+						code: 429,
+						message: 'Quota exceeded',
+						status: 'RESOURCE_EXHAUSTED',
+						details: [
+							{
+								'@type': 'type.googleapis.com/google.rpc.ErrorInfo',
+								reason: 'RATE_LIMIT_EXCEEDED',
+								domain: 'googleapis.com',
+								metadata: {
+									quota_limit: 'ApiCallsPerDayPerProject',
+									quota_metric: 'photoslibrary.googleapis.com/all_requests',
+									service: 'photoslibrary.googleapis.com',
+								},
+							},
+						],
+					},
+				},
+			}),
+		);
+
+		expect(strategy.maxRetries).toBe(0);
+	});
+
+	it('does not retry a 429 whose QuotaFailure names a daily quota', async () => {
+		const strategy = await handlerFor(
+			apiError(429, {
+				body: {
+					error: {
+						code: 429,
+						status: 'RESOURCE_EXHAUSTED',
+						details: [
+							{
+								'@type': 'type.googleapis.com/google.rpc.QuotaFailure',
+								violations: [{ quotaId: 'AllRequestsPerDayPerProject' }],
+							},
+						],
+					},
+				},
+			}),
+		);
+
+		expect(strategy.maxRetries).toBe(0);
+	});
+
+	it('does not retry a legacy dailyLimitExceeded 429', async () => {
+		const strategy = await handlerFor(
+			apiError(429, {
+				body: {
+					error: { code: 429, errors: [{ reason: 'dailyLimitExceeded' }] },
+				},
+			}),
+		);
+
+		expect(strategy.maxRetries).toBe(0);
+	});
+
+	it('still retries a 429 whose quota is per minute', async () => {
+		const strategy = await handlerFor(
+			apiError(429, {
+				body: {
+					error: {
+						code: 429,
+						status: 'RESOURCE_EXHAUSTED',
+						details: [
+							{
+								'@type': 'type.googleapis.com/google.rpc.ErrorInfo',
+								reason: 'RATE_LIMIT_EXCEEDED',
+								metadata: { quota_limit: 'ApiCallsPerMinutePerUser' },
+							},
+						],
+					},
+				},
+			}),
+		);
+
+		expect(strategy.maxRetries).toBe(2);
 	});
 });
 

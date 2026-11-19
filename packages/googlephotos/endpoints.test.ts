@@ -4,7 +4,7 @@ jest.mock('corsair/core', () => {
 });
 
 import { ApiError } from 'corsair/http';
-import { mediaBytesUrl } from './client';
+import { mediaBytesUrl, retryAfterMs } from './client';
 import {
 	album,
 	endpoints,
@@ -240,6 +240,34 @@ describe('Google error envelopes', () => {
 		expect(error.message).toContain('invalid argument');
 	});
 
+	it('carries an upload Retry-After into the error, in milliseconds', async () => {
+		mockFetch(
+			jsonResponse(
+				{
+					error: {
+						code: 429,
+						message: 'slow down',
+						status: 'RESOURCE_EXHAUSTED',
+					},
+				},
+				{ status: 429, headers: { 'Retry-After': '120' } },
+			),
+		);
+
+		const error = await failure(
+			endpoints.mediaItems.create(makeCtx(), {
+				newMediaItems: [
+					{ fileName: 'a.jpg', contentType: 'image/jpeg', bytes: 'aGk=' },
+				],
+			}),
+		);
+
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) throw error;
+		expect(error.status).toBe(429);
+		expect(error.retryAfter).toBe(120_000);
+	});
+
 	it('reports an upload failure with a text body as text', async () => {
 		mockFetch(new Response('upstream unavailable', { status: 503 }));
 
@@ -279,5 +307,23 @@ describe('album and item fixtures', () => {
 
 		expect(result.mediaMetadata?.width).toBe('4032');
 		expect(result.baseUrl).toContain('googleusercontent.com');
+	});
+});
+
+describe('Retry-After parsing', () => {
+	it('reads delay-seconds', () => {
+		expect(retryAfterMs('45')).toBe(45_000);
+	});
+
+	it('reads an HTTP date as the time left until it', () => {
+		const at = new Date(Date.now() + 90_000).toUTCString();
+		const ms = retryAfterMs(at) ?? 0;
+		expect(ms).toBeGreaterThan(80_000);
+		expect(ms).toBeLessThanOrEqual(90_000);
+	});
+
+	it('ignores a missing or unreadable header', () => {
+		expect(retryAfterMs(null)).toBeUndefined();
+		expect(retryAfterMs('soon')).toBeUndefined();
 	});
 });

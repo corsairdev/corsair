@@ -157,6 +157,7 @@ export async function uploadMediaBytes(
 		// rest of the API, so core's ApiError is built from it for the handlers.
 		const text = await response.text().catch(() => '');
 		const parsed = parseJsonOrUndefined(text);
+		const retryAfter = retryAfterMs(response.headers.get('retry-after'));
 		throw new ApiError(
 			{ method: 'POST', url },
 			{
@@ -167,6 +168,9 @@ export async function uploadMediaBytes(
 				body: parsed ?? text,
 			},
 			readErrorMessage(parsed) ?? (response.statusText || 'Upload failed'),
+			// core's request() reads Retry-After for JSON calls; this fetch has to
+			// carry it itself so the 429 handler waits as long as Google asked.
+			retryAfter === undefined ? undefined : { retryAfter },
 		);
 	}
 
@@ -177,6 +181,19 @@ export async function uploadMediaBytes(
 		);
 	}
 	return uploadToken;
+}
+
+/**
+ * A Retry-After header in milliseconds: either delay-seconds or an HTTP date.
+ * Undefined when it is missing or unreadable.
+ */
+export function retryAfterMs(header: string | null): number | undefined {
+	if (!header) return undefined;
+	const trimmed = header.trim();
+	if (/^\d+$/.test(trimmed)) return Number(trimmed) * 1000;
+	const at = Date.parse(trimmed);
+	if (Number.isNaN(at)) return undefined;
+	return Math.max(0, at - Date.now());
 }
 
 /**
