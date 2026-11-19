@@ -3944,6 +3944,14 @@
                 ]
               },
               {
+                "group": "OpenSEO",
+                "pages": [
+                  "plugins/openseo/overview",
+                  "plugins/openseo/api",
+                  "plugins/openseo/database"
+                ]
+              },
+              {
                 "group": "OpenWeatherMap",
                 "pages": [
                   "plugins/openweathermap/overview",

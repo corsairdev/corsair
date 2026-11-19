@@ -476,6 +476,7 @@ export const BaseProviders = [
 	'opengraph',
 	'openrouter',
 	'opensea',
+	'openseo',
 	'openweathermap',
 	'orbit',
 	'oura',
@@ -1210,6 +1211,7 @@ export const ProviderDisplayNames = {
 	opengraph: 'OpenGraph.io',
 	openrouter: 'OpenRouter',
 	opensea: 'OpenSea',
+	openseo: 'OpenSEO',
 	openweathermap: 'OpenWeatherMap',
 	orbit: 'Orbit',
 	oura: 'Oura',
@@ -1951,6 +1953,7 @@ export type AllProviders =
 	| 'opengraph'
 	| 'openrouter'
 	| 'opensea'
+	| 'openseo'
 	| 'openweathermap'
 	| 'orbit'
 	| 'oura'
