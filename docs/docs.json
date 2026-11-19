@@ -5059,6 +5059,15 @@
                 ]
               },
               {
+                "group": "Stannp",
+                "pages": [
+                  "plugins/stannp/overview",
+                  "plugins/stannp/api",
+                  "plugins/stannp/database",
+                  "plugins/stannp/webhooks"
+                ]
+              },
+              {
                 "group": "Starton",
                 "pages": [
                   "plugins/starton/overview",
