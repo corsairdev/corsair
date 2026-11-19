@@ -9794,5 +9794,11 @@
         "title": "A file sink sets the inline limit and can keep every file"
       }
     ]
+  },
+  {
+    "date": "2026-11-19",
+    "package": "cloud",
+    "version": "0.2.13",
+    "changes": []
   }
 ]
