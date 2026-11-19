@@ -9620,5 +9620,21 @@
         "title": "Read zod .prefault() like .default(); get_schema renders inputs as inputs"
       }
     ]
+  },
+  {
+    "date": "2026-11-19",
+    "package": "@corsair-dev/litescrape",
+    "dir": "packages/litescrape",
+    "name": "LiteScrape",
+    "version": "0.1.1",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2627,
+        "title": "All 200 Litescrape data endpoints from the OpenAPI spec"
+      }
+    ]
   }
 ]
