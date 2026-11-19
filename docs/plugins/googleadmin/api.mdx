@@ -2255,7 +2255,7 @@ Replace a user's profile photo
 **Risk:** `write`
 
 ```ts
-await corsair.googleadmin.api.users.photos.update({ userKey: 'ada@example.com', photoData: 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=', mimeType: 'image/png' });
+await corsair.googleadmin.api.users.photos.update({ userKey: 'ada@example.com', photoData: 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII.', mimeType: 'image/png' });
 ```
 
 **Input**
@@ -2266,7 +2266,7 @@ await corsair.googleadmin.api.users.photos.update({ userKey: 'ada@example.com', 
 | `photoData` | `string` | Yes | Base64-encoded image bytes |
 | `mimeType` | `string \| null` | No | `image/jpeg` or `image/png`; the API infers it when omitted |
 
-`photoData` is web-safe base64 (`-` and `_` in place of `+` and `/`) of a JPEG or PNG.
+`photoData` is Google's web-safe base64 of a JPEG or PNG: `-` and `_` in place of `+` and `/`, and `.` (not `=`) for padding.
 
 
 

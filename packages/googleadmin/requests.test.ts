@@ -219,9 +219,28 @@ describe('users', () => {
 		expect(JSON.stringify((error as ApiError).request)).not.toContain(
 			'correct-horse-battery',
 		);
-		expect(
-			((error as ApiError).request.body as { password: string }).password,
-		).toBe('[REDACTED]');
+		expect((error as ApiError).request.body).toBe('[REDACTED]');
+	});
+
+	it('keeps member emails out of the ApiError body and path', async () => {
+		mockFetch(googleError(404, 'NOT_FOUND', 'notFound', 'Resource Not Found'));
+
+		const error = (await endpoints.members
+			.insert(makeCtx(), {
+				groupKey: 'team@example.com',
+				email: 'ada@example.com',
+				role: 'MEMBER',
+			})
+			// `unknown` is necessary because a rejected promise carries no type; the cast below narrows it.
+			.catch((caught: unknown) => caught)) as ApiError;
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error.status).toBe(404);
+		const retained = JSON.stringify({ request: error.request, url: error.url });
+		expect(retained).not.toContain('ada@example.com');
+		expect(retained).not.toContain('team%40example.com');
+		expect(retained).not.toContain('team@example.com');
+		expect(error.url).toContain('/members');
 	});
 
 	it('refuses a user list with neither customer nor domain', async () => {

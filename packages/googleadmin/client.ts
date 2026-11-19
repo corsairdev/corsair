@@ -194,7 +194,7 @@ export async function makeGoogleAdminRequest(
 			rateLimitConfig: GOOGLE_ADMIN_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof ApiError) throw redactPassword(error);
+		if (error instanceof ApiError) throw redactRequestData(error);
 		// DOMException (a timeout or abort) can fail `instanceof Error` across
 		// realms, so both are accepted.
 		if (error instanceof Error || error instanceof DOMException) {
@@ -209,24 +209,39 @@ export async function makeGoogleAdminRequest(
 }
 
 /**
- * core's ApiError keeps the request body it sent, and users.insert and
- * users.update send the account password in it. The password is replaced in
- * place, so the caller still gets the same ApiError with its status and
- * retryAfter (R8).
+ * core's ApiError keeps the request it sent: the body (a password on
+ * users.insert / users.update, a member email on members.insert) and the URL,
+ * whose path carries user, group and member keys that are often emails. Core
+ * scrubs only query parameters, so the retained error drops the body and
+ * replaces every path segment that holds an email. The same ApiError instance
+ * is kept, with its status and retryAfter, so the handlers and core's OAuth
+ * refresh still see them (R8). The outgoing request is not touched.
  */
-function redactPassword(error: ApiError): ApiError {
-	const body = error.request.body;
-	if (
-		body === null ||
-		typeof body !== 'object' ||
-		!('password' in body) ||
-		(body as { password?: unknown }).password == null // unknown: caller input.
-	) {
-		return error;
-	}
-	// `request` is readonly in the type only; replacing it keeps the instance.
+const REDACTED = '[REDACTED]';
+
+function redactPath(url: string): string {
+	const [path = '', ...rest] = url.split('?');
+	const scrubbed = path
+		.split('/')
+		.map((part) => (/@|%40/i.test(part) ? REDACTED : part))
+		.join('/');
+	return rest.length > 0 ? `${scrubbed}?${rest.join('?')}` : scrubbed;
+}
+
+function redactRequestData(error: ApiError): ApiError {
+	// `request` and `url` are readonly in the type only; replacing them keeps the instance.
 	Object.defineProperty(error, 'request', {
-		value: { ...error.request, body: { ...body, password: '[REDACTED]' } },
+		value: {
+			...error.request,
+			url: redactPath(error.request.url),
+			body: error.request.body === undefined ? undefined : REDACTED,
+		},
+		enumerable: true,
+		configurable: true,
+		writable: false,
+	});
+	Object.defineProperty(error, 'url', {
+		value: redactPath(error.url),
 		enumerable: true,
 		configurable: true,
 		writable: false,

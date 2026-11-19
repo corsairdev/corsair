@@ -302,7 +302,11 @@ describeWrites('googleadmin live API: throwaway writes', () => {
 					}
 				},
 				async () => {
-					if (groupId) await api.groups.delete(ctx, { groupKey: groupId });
+					// If the insert failed after Google created the group (a lost or
+					// unparsable response), groupId is unset. The address is unique to
+					// this run and was checked free before the insert, so whatever sits
+					// there now came from this run: delete by address. A 404 is fine.
+					await api.groups.delete(ctx, { groupKey: groupId ?? email });
 				},
 			]);
 		}
@@ -322,7 +326,6 @@ describeWrites('googleadmin live API: throwaway writes', () => {
 			),
 		).toBe(false);
 
-		let created = false;
 		try {
 			const unit = await api.orgUnits.insert(ctx, {
 				customerId: CUSTOMER,
@@ -330,7 +333,6 @@ describeWrites('googleadmin live API: throwaway writes', () => {
 				parentOrgUnitPath: '/',
 				description: 'Corsair live test, deleted by the same run',
 			});
-			created = true;
 			expect(unit.orgUnitPath).toBe(`/${name}`);
 
 			const updated = await eventually(() =>
@@ -350,12 +352,13 @@ describeWrites('googleadmin live API: throwaway writes', () => {
 		} finally {
 			await cleanUp([
 				async () => {
-					if (created) {
-						await api.orgUnits.delete(ctx, {
-							customerId: CUSTOMER,
-							orgUnitPath: name,
-						});
-					}
+					// Same reasoning: the path is unique to this run and was checked
+					// free first, so delete it even when the insert's reply was lost.
+					// A 404 means nothing was created.
+					await api.orgUnits.delete(ctx, {
+						customerId: CUSTOMER,
+						orgUnitPath: name,
+					});
 				},
 			]);
 		}
