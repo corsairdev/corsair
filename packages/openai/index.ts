@@ -879,7 +879,8 @@ const openaiEndpointMeta = {
 	},
 	'files.upload': {
 		riskLevel: 'write',
-		description: 'Upload a file to OpenAI',
+		description:
+			'Upload a file to OpenAI. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'files.list': { riskLevel: 'read', description: 'List uploaded files' },
 	'files.retrieve': {
@@ -1025,11 +1026,13 @@ const openaiEndpointMeta = {
 	},
 	'audio.createTranscription': {
 		riskLevel: 'write',
-		description: 'Transcribe audio into text',
+		description:
+			'Transcribe audio into text. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'audio.createTranslation': {
 		riskLevel: 'write',
-		description: 'Translate audio into English text',
+		description:
+			'Translate audio into English text. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'images.create': {
 		riskLevel: 'write',
@@ -1037,15 +1040,18 @@ const openaiEndpointMeta = {
 	},
 	'images.createEdit': {
 		riskLevel: 'write',
-		description: 'Edit an image given a prompt and mask',
+		description:
+			'Edit an image given a prompt and mask. Takes the image and mask as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'images.createVariation': {
 		riskLevel: 'write',
-		description: 'Create variations of an image',
+		description:
+			'Create variations of an image. Takes the image as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'videos.create': {
 		riskLevel: 'write',
-		description: 'Generate a video from a prompt',
+		description:
+			'Generate a video from a prompt. Takes an optional inputReference image or video as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 		job: VIDEO_JOB,
 	},
 	'videos.list': { riskLevel: 'read', description: 'List generated videos' },
@@ -1094,7 +1100,8 @@ const openaiEndpointMeta = {
 	},
 	'skills.create': {
 		riskLevel: 'write',
-		description: 'Upload a skill',
+		description:
+			'Upload a skill. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'skills.list': { riskLevel: 'read', description: 'List skills' },
 	'skills.delete': {
@@ -1116,7 +1123,8 @@ const openaiEndpointMeta = {
 	},
 	'containerFiles.create': {
 		riskLevel: 'write',
-		description: 'Add a file to a container',
+		description:
+			'Add a file to a container, by fileId or as a new upload. Takes the upload as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'containerFiles.list': {
 		riskLevel: 'read',
@@ -1295,7 +1303,8 @@ const openaiEndpointMeta = {
 	},
 	'uploads.addPart': {
 		riskLevel: 'write',
-		description: 'Add a part of file data to an upload',
+		description:
+			'Add a part of file data to an upload. Takes the part as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'uploads.complete': {
 		riskLevel: 'write',

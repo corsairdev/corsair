@@ -1,4 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
+import type { FileInput } from 'corsair/http';
+import { resolveFileInput } from 'corsair/http';
 import type { z } from 'zod';
 import type { SpotlightrContext } from '..';
 import type { SpotlightrRequest } from '../client';
@@ -16,7 +18,10 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	operation: { event: string; input: Input; output: Output },
 	// unknown: parsed below by the operation's input schema.
 	rawInput: unknown,
-	toRequest: (parsed: z.output<Input>) => SpotlightrRequest,
+	// May be async, so a file given as a link or base64 is resolved first.
+	toRequest: (
+		parsed: z.output<Input>,
+	) => SpotlightrRequest | Promise<SpotlightrRequest>,
 	options: {
 		// unknown: raw is the response body; the output schema validates what
 		// this returns.
@@ -25,7 +30,7 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	} = {},
 ): Promise<z.output<Output>> {
 	const parsed = operation.input.parse(rawInput ?? {});
-	const raw = await makeSpotlightrRequest(ctx.key, toRequest(parsed));
+	const raw = await makeSpotlightrRequest(ctx.key, await toRequest(parsed));
 	const result = operation.output.parse(
 		options.shape ? options.shape(raw, parsed) : raw,
 	);
@@ -47,4 +52,18 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 export function flag(value: boolean | undefined): 1 | 0 | undefined {
 	if (value === undefined) return undefined;
 	return value ? 1 : 0;
+}
+
+/**
+ * The file to upload. A Blob is sent as it was given; a link or base64 is
+ * fetched or decoded here. Spotlightr documents no upload limit, so a link is
+ * held to core's default 25 MB, downloaded into memory within core's 30 s
+ * timeout.
+ */
+export async function uploadFile(
+	file: FileInput,
+	fallbackName: string,
+): Promise<Blob> {
+	if (file instanceof Blob) return file;
+	return (await resolveFileInput(file, { fallbackName })).file;
 }

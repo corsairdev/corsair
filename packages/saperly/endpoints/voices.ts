@@ -1,7 +1,9 @@
+import { resolveFileInput } from 'corsair/http';
 import type { SaperlyEndpoints } from '../index';
 import { callSaperly, idempotencyHeaders } from './call';
 import {
 	CreateCustomVoiceInputSchema,
+	CreateCustomVoiceRequestSchema,
 	CustomVoiceSchema,
 	SaperlyEndpointInputSchemas,
 	SaperlyEndpointOutputSchemas,
@@ -46,12 +48,20 @@ export const createCustom: SaperlyEndpoints['createCustomVoice'] = async (
 	ctx,
 	input,
 ) => {
+	const given = CreateCustomVoiceInputSchema.parse(input);
+	// A link or base64 becomes the sample here; a Blob is sent as it was given.
+	// Saperly documents no size limit, so core's 25 MB download cap applies.
+	const audio =
+		given.audio instanceof Blob
+			? given.audio
+			: (await resolveFileInput(given.audio, { fallbackName: 'voice-sample' }))
+					.file;
 	return callSaperly(
 		ctx,
 		'saperly.customVoices.create',
-		CreateCustomVoiceInputSchema,
+		CreateCustomVoiceRequestSchema,
 		CustomVoiceSchema,
-		input,
+		{ ...given, audio },
 		(body) => ({
 			method: 'POST',
 			url: '/custom-voices',

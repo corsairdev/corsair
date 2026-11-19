@@ -4,6 +4,7 @@ import {
 	DOWNLOAD_MAX_BYTES,
 	downloadOpenaiFile,
 	makeOpenaiRequest,
+	OPENAI_UPLOAD_MAX_BYTES,
 	uploadOpenaiFile,
 } from '../client';
 import type { OpenaiEndpoints } from '../index';
@@ -19,6 +20,7 @@ export const upload: OpenaiEndpoints['filesUpload'] = async (ctx, input) => {
 		file: input.file,
 		fileName: input.fileName,
 		fields: { purpose: input.purpose },
+		maxBytes: OPENAI_UPLOAD_MAX_BYTES.file,
 	});
 
 	await logEventFromContext(

@@ -1,3 +1,5 @@
+import type { FileInput } from 'corsair/http';
+import { resolveFileInput } from 'corsair/http';
 import type { AltTextAiContext } from '../index';
 import type { AltTextAiImage } from './types';
 
@@ -9,6 +11,32 @@ export function toCsvUploadFile(file: Blob): File {
 	return new File([file], 'bulk.csv', {
 		type: file.type || 'text/csv',
 	});
+}
+
+// Types a server sends when it doesn't say what a file is.
+const GENERIC_TYPES = new Set([
+	'application/octet-stream',
+	'binary/octet-stream',
+]);
+
+/**
+ * The CSV to upload, from a Blob or from a link or base64. A Blob goes through
+ * toCsvUploadFile as before. A linked or base64 file keeps its own name, with
+ * `.csv` added when it lacks it, or is called bulk.csv when it has none (a link
+ * ending in a bare id), and is typed text/csv when the server sent only a
+ * generic type. AltText.ai documents no size limit for the CSV, so core's
+ * default download cap applies.
+ */
+export async function toBulkCsvFile(input: FileInput): Promise<File> {
+	if (input instanceof Blob) return toCsvUploadFile(input);
+	const resolved = await resolveFileInput(input, { fallbackName: 'bulk.csv' });
+	const name = /\.csv$/i.test(resolved.filename)
+		? resolved.filename
+		: `${resolved.filename}.csv`;
+	const type = GENERIC_TYPES.has(resolved.contentType.toLowerCase())
+		? 'text/csv'
+		: resolved.contentType;
+	return new File([resolved.bytes], name, { type });
 }
 
 export function toImageDbRecord(image: AltTextAiImage) {

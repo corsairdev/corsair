@@ -1,3 +1,4 @@
+import { FileInputSchema } from 'corsair/http';
 import { z } from 'zod';
 
 export const AltTextAiImageSchema = z
@@ -159,7 +160,11 @@ export const SearchImagesResponseSchema = z
 export type SearchImagesResponse = z.infer<typeof SearchImagesResponseSchema>;
 
 export const BulkCreateInputSchema = z.object({
-	file: z.instanceof(Blob).describe('CSV file with image URLs to process'),
+	file: z
+		.union([FileInputSchema, z.instanceof(Blob)])
+		.describe(
+			'The CSV of image URLs to process: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…).',
+		),
 	email: z
 		.string()
 		.email()

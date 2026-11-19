@@ -161,8 +161,21 @@ describe('Conversion Tools endpoint input and output schemas', () => {
 		expect(
 			FilesUploadInputSchema.safeParse({ file: new Blob(['xml']) }).success,
 		).toBe(true);
+		// A string is a link to the file now (the endpoint refuses one that is
+		// not a public URL); an unknown file shape or an empty string is refused.
 		expect(
-			FilesUploadInputSchema.safeParse({ file: 'input.xml' }).success,
+			FilesUploadInputSchema.safeParse({
+				file: 'https://files.example.com/input.xml',
+			}).success,
+		).toBe(true);
+		expect(
+			FilesUploadInputSchema.safeParse({
+				file: { base64: 'eG1s', filename: 'input.xml' },
+			}).success,
+		).toBe(true);
+		expect(FilesUploadInputSchema.safeParse({ file: '' }).success).toBe(false);
+		expect(
+			FilesUploadInputSchema.safeParse({ file: { path: 'input.xml' } }).success,
 		).toBe(false);
 		expect(
 			FilesUploadResponseSchema.safeParse({ error: null, file_id: FILE_ID })

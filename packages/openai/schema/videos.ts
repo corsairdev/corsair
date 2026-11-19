@@ -1,5 +1,6 @@
 import { FileOutputSchema } from 'corsair/http';
 import { z } from 'zod';
+import { openaiFileInput } from './file-input';
 
 const VideoObjectSchema = z.object({
 	id: z.string(),
@@ -24,7 +25,9 @@ export const VideosCreateInputSchema = z
 		model: z.string().optional(),
 		size: z.string().optional(),
 		seconds: z.string().optional(),
-		inputReference: z.union([z.instanceof(Blob), z.string()]).optional(),
+		inputReference: openaiFileInput(
+			'An image or video to start the video from',
+		).optional(),
 		inputReferenceFileName: z.string().optional(),
 	})
 	.superRefine((value, ctx) => {
