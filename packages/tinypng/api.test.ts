@@ -1,5 +1,6 @@
 import type { CorsairEndpoint } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
+import { FILE_OUTPUT_MAX_BYTES, setFileSink } from 'corsair/http';
 import { AzureBlobError, TinypngAPIError } from './client';
 import { Account, Images } from './endpoints';
 import type { TinypngContext } from './index';
@@ -231,8 +232,30 @@ describe('images.output', () => {
 			width: 530,
 			height: 300,
 			compressionCount: 7,
+			byteLength: 4,
+			filename: '2xnsp7jn34e5.png',
 			base64: 'iVBORw==',
 		});
+	});
+
+	it('hands a host that keeps files a large image, which comes back as its fileId', async () => {
+		const big = Buffer.alloc(FILE_OUTPUT_MAX_BYTES + 1, 7);
+		respond(200, big, { 'Content-Type': 'image/png', 'Image-Width': '4000' });
+		setFileSink(() => () => 'held_1');
+		try {
+			const result = await call(Images.output, { imageId: '2xnsp7jn34e5' });
+			expect(result).toMatchObject({
+				imageId: '2xnsp7jn34e5',
+				contentType: 'image/png',
+				size: big.byteLength,
+				byteLength: big.byteLength,
+				filename: '2xnsp7jn34e5.png',
+				fileId: 'held_1',
+			});
+			expect(result.base64).toBeUndefined();
+		} finally {
+			setFileSink(() => undefined);
+		}
 	});
 
 	it('rejects an image id that is not a Tinify output id', async () => {
@@ -275,6 +298,8 @@ describe('images.transform', () => {
 			width: 150,
 			height: 85,
 			compressionCount: 9,
+			byteLength: 4,
+			filename: '2xnsp7jn34e5.webp',
 			base64: 'iVBORw==',
 		});
 	});

@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import { toFileOutput } from 'corsair/http';
 import { makeSlackbotRequest, SlackbotAPIError } from '../client';
 import type { SlackbotEndpoints } from '../index';
 import type { SlackbotEndpointOutputs } from './types';
@@ -473,11 +474,20 @@ export const download: SlackbotEndpoints['filesDownload'] = async (
 		'completed',
 	);
 
+	const contentType = response.headers.get('content-type') ?? undefined;
+	// The file keeps its own key, content; the rest is core's file output, so a
+	// host that keeps files gets a fileId for a large file instead.
+	const { contentBase64, ...file } = toFileOutput(
+		new Uint8Array(buffer),
+		contentType ?? metadata.file?.mimetype,
+		{ filename: metadata.file?.name, maxBytes, text: false },
+	);
 	return {
 		ok: true,
 		file: metadata.file,
-		content: buffer.toString('base64'),
-		content_type: response.headers.get('content-type') ?? undefined,
+		...file,
+		...(contentBase64 ? { content: contentBase64 } : {}),
+		content_type: contentType,
 		byte_size: buffer.byteLength,
 	};
 };

@@ -1,3 +1,4 @@
+import { FileOutputSchema } from 'corsair/http';
 import { z } from 'zod';
 
 // Inputs use WaiverFile's own parameter names. Outputs are `.loose()` and their
@@ -514,13 +515,20 @@ export type WaiversPdfInput = z.infer<typeof WaiversPdfInputSchema>;
 /**
  * The PDF, base64-encoded so it survives a JSON payload, with its real length.
  */
-const WaiversPdfResponseSchema = z.object({
+const WaiversPdfResponseSchema = FileOutputSchema.omit({
+	contentBase64: true,
+	text: true,
+}).extend({
 	waiverID: z.string(),
-	contentType: z.string(),
 	/** The real byte length of the file that was received. */
 	bytes: z.number(),
 	/** The file itself, base64-encoded, so it survives a JSON payload. */
-	content: z.string().describe('Base64. Decode it to get the PDF bytes.'),
+	content: z
+		.string()
+		.optional()
+		.describe(
+			'Base64. Decode it to get the PDF bytes. Missing when contentOmitted is set or the host kept the file (fileId).',
+		),
 });
 
 export type WaiversPdfResponse = z.infer<typeof WaiversPdfResponseSchema>;

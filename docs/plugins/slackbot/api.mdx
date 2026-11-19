@@ -1726,7 +1726,7 @@ await corsair.slackbot.api.files.delete({});
 
 `files.download`
 
-Download the contents of a Slack file
+Download a Slack file. On Corsair up to about 700 KB comes back inline as content and a larger file comes back as fileId, a Files id; without a host that keeps files the content comes back inline up to max_bytes.
 
 **Risk:** `read`
 
@@ -1753,7 +1753,12 @@ await corsair.slackbot.api.files.download({});
 | `needed` | `string` | No | — |
 | `provided` | `string` | No | — |
 | `file` | `object` | No | — |
-| `content` | `string` | Yes | — |
+| `contentType` | `string` | Yes | Media type of the file, for example application/pdf. |
+| `byteLength` | `number` | Yes | Size of the file in bytes. |
+| `filename` | `string` | No | The file name, when known. |
+| `contentOmitted` | `not_requested \| over_limit` | No | Set when the content was left out: the caller did not ask for it, or the file was over the limit. |
+| `fileId` | `string` | No | Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
+| `content` | `string` | No | The file, base64-encoded. Missing when contentOmitted is set or the host kept the file (fileId). |
 | `content_type` | `string` | No | — |
 | `byte_size` | `number` | Yes | — |
 

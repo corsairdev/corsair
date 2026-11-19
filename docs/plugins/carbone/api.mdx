@@ -215,7 +215,7 @@ await corsair.carbone.api.templates.delete({ templateId: 'tmpl_1234567890abcdef'
 
 `templates.download`
 
-Tool to download a template from Carbone by template ID. Use when you need to retrieve the original template file.
+Tool to download a template from Carbone by template ID. Use when you need to retrieve the original template file. On Corsair up to about 700 KB comes back inline as content and a larger file comes back as fileId, a Files id.
 
 **Risk:** `read`
 
@@ -235,8 +235,13 @@ await corsair.carbone.api.templates.download({ templateId: 'tmpl_1234567890abcde
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `contentType` | `string` | Yes | Media type of the file, for example application/pdf. |
+| `byteLength` | `number` | Yes | Size of the file in bytes. |
+| `filename` | `string` | No | The file name, when known. |
+| `contentOmitted` | `not_requested \| over_limit` | No | Set when the content was left out: the caller did not ask for it, or the file was over the limit. |
+| `fileId` | `string` | No | Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
 | `templateId` | `string` | Yes | ID of the downloaded template |
-| `content` | `string` | Yes | Base64-encoded binary content of the retrieved template file |
+| `content` | `string` | No | Base64-encoded content of the template file. Missing when contentOmitted is set or the host kept the file (fileId). |
 | `success` | `boolean` | Yes | Indicates if template download was successful |
 
 

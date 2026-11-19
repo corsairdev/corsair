@@ -1,3 +1,4 @@
+import { toFileOutput } from 'corsair/http';
 import type { TinyFishEndpoints } from '..';
 import {
 	makeTinyFishRawRequest,
@@ -227,6 +228,12 @@ export const cancelRuns: TinyFishEndpoints['cancelRuns'] = async (
 	);
 };
 
+/**
+ * Most bytes of a screenshot returned inline to a caller without a host. A host
+ * that keeps files (setFileSink) caps it at its own limit and gets a fileId.
+ */
+const SCREENSHOT_MAX_BYTES = 100_000_000;
+
 export const getStepScreenshot: TinyFishEndpoints['getStepScreenshot'] = async (
 	ctx,
 	input,
@@ -250,9 +257,20 @@ export const getStepScreenshot: TinyFishEndpoints['getStepScreenshot'] = async (
 					{ method: 'GET' },
 				);
 			}
-			return {
+			// The image keeps its own key, base64; the rest is core's file output,
+			// so a host that keeps files gets a fileId for a large screenshot.
+			const { contentBase64, ...file } = toFileOutput(
+				new Uint8Array(bytes),
 				contentType,
-				base64: bytes.toString('base64'),
+				{
+					filename: `${validated.runId}-${validated.stepId}.jpg`,
+					maxBytes: SCREENSHOT_MAX_BYTES,
+					text: false,
+				},
+			);
+			return {
+				...file,
+				...(contentBase64 ? { base64: contentBase64 } : {}),
 				sizeBytes: bytes.byteLength,
 			};
 		},

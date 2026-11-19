@@ -335,7 +335,7 @@ const waiverFileEndpointMeta = {
 	'waivers.pdf': {
 		riskLevel: 'read',
 		description:
-			'Download a signed waiver as a PDF, returned base64-encoded in `content` with its byte length',
+			'Download a signed waiver as a PDF. On Corsair up to about 700 KB comes back base64-encoded in `content` and a larger PDF comes back as fileId, a Files id; without a host that keeps files it comes back in `content`.',
 	},
 	'forms.active': {
 		riskLevel: 'read',

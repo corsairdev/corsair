@@ -1,3 +1,4 @@
+import { FileOutputSchema } from 'corsair/http';
 import { z } from 'zod';
 import type {
 	BatchUpdateResponse,
@@ -439,10 +440,17 @@ const PlaintextResultSchema = z.object({
 	tabTitle: z.string().optional(),
 });
 
-const ExportResultSchema = z.object({
-	fileId: z.string(),
+const ExportResultSchema = FileOutputSchema.omit({
+	contentBase64: true,
+	text: true,
+}).extend({
 	mimeType: z.string(),
-	data: z.string(),
+	data: z
+		.string()
+		.optional()
+		.describe(
+			'The PDF, base64-encoded. Missing when contentOmitted is set or the host kept the file (fileId).',
+		),
 });
 
 export const GoogleDocsEndpointOutputSchemas = {

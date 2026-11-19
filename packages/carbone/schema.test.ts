@@ -140,6 +140,8 @@ describe('Carbone endpoint schemas', () => {
 
 		const output = CarboneEndpointOutputSchemas.downloadTemplate.parse({
 			templateId: 'tmpl_123',
+			contentType: 'application/octet-stream',
+			byteLength: 4,
 			content: 'UEsDBA==',
 			success: true,
 		});

@@ -1,3 +1,4 @@
+import { FileOutputSchema } from 'corsair/http';
 import { z } from 'zod';
 
 /** Search, Fetch and Research accept the same three result domains. */
@@ -676,9 +677,18 @@ export type GetStepScreenshotInput = z.infer<
 	typeof GetStepScreenshotInputSchema
 >;
 
-export const GetStepScreenshotResponseSchema = z.object({
+export const GetStepScreenshotResponseSchema = FileOutputSchema.omit({
+	contentBase64: true,
+	text: true,
+}).extend({
 	contentType: z.string().min(1),
-	base64: z.string().min(1),
+	base64: z
+		.string()
+		.min(1)
+		.optional()
+		.describe(
+			'The screenshot, base64-encoded. Missing when contentOmitted is set or the host kept the file (fileId).',
+		),
 	sizeBytes: z.number().int().min(1),
 });
 

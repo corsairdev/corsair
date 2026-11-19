@@ -1,3 +1,4 @@
+import { FileOutputSchema } from 'corsair/http';
 import { z } from 'zod';
 
 // Accounts
@@ -2735,9 +2736,17 @@ export const GetFileContentInputSchema = z.object({
 });
 export type GetFileContentInput = z.infer<typeof GetFileContentInputSchema>;
 
-export const GetFileContentResponseSchema = z
-	.object({
-		content: z.string(),
+export const GetFileContentResponseSchema = FileOutputSchema.omit({
+	contentBase64: true,
+	text: true,
+})
+	.extend({
+		content: z
+			.string()
+			.optional()
+			.describe(
+				'The file, base64-encoded. Missing when contentOmitted is set or the host kept the file (fileId).',
+			),
 	})
 	.passthrough();
 export type GetFileContentResponse = z.infer<

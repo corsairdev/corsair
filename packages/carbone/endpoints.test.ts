@@ -17,10 +17,14 @@ jest.mock('corsair/http', () => {
 		}
 	}
 
+	// The real file output helper, so downloads are shaped as in production.
+	const { toFileOutput, FileOutputSchema } = jest.requireActual('corsair/http');
 	return {
 		// unknown: mock captures arbitrary call args without inventing a closed tuple
 		request: (...args: unknown[]) => mockRequest(...args),
 		ApiError,
+		toFileOutput,
+		FileOutputSchema,
 	};
 });
 
@@ -191,6 +195,33 @@ describe('Carbone endpoints execution', () => {
 			);
 		});
 
+		it('downloadTemplate hands a host that keeps files a large template, which comes back as its fileId', async () => {
+			const http = jest.requireActual('corsair/http');
+			const big = Buffer.alloc(http.FILE_OUTPUT_MAX_BYTES + 1, 7);
+			jest.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
+				ok: true,
+				arrayBuffer: async () => big,
+				// unknown: test/fixture cast; production types are Zod-validated
+			} as unknown as Response);
+			http.setFileSink(() => () => 'held_1');
+			try {
+				const res = await TemplatesEndpoints.downloadTemplate(
+					createMockContext(),
+					{ templateId: 'tmpl_big' },
+				);
+				expect(res).toMatchObject({
+					templateId: 'tmpl_big',
+					byteLength: big.byteLength,
+					filename: 'tmpl_big',
+					fileId: 'held_1',
+					success: true,
+				});
+				expect(res.content).toBeUndefined();
+			} finally {
+				http.setFileSink(() => undefined);
+			}
+		});
+
 		it('downloadTemplate performs authenticated request and returns template content', async () => {
 			const expectedBuffer = Buffer.from([0x50, 0x4b, 0x03, 0x04, 0xff, 0x00]);
 			const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
@@ -206,6 +237,11 @@ describe('Carbone endpoints execution', () => {
 
 			expect(res.templateId).toBe('tmpl_12345');
 			expect(res.content).toBe(expectedBuffer.toString('base64'));
+			expect(res).toMatchObject({
+				contentType: 'application/octet-stream',
+				byteLength: expectedBuffer.byteLength,
+				filename: 'tmpl_12345',
+			});
 			expect(res.success).toBe(true);
 			expect(fetchMock).toHaveBeenCalledWith(
 				'https://api.carbone.io/template/tmpl_12345',

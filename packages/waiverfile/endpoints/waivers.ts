@@ -1,3 +1,4 @@
+import { toFileOutput } from 'corsair/http';
 import type { WaiverFileEndpoints } from '..';
 import { call, download } from './call';
 import { countFrom, xmlSingleWaiver, xmlWaivers } from './shape';
@@ -248,6 +249,12 @@ export const dataCount: WaiverFileEndpoints['waiversDataCount'] = (
  * directly and hands them back base64-encoded with their real length. A caller can
  * write `Buffer.from(result.content, 'base64')` to a file.
  */
+/**
+ * Most bytes of a PDF returned inline to a caller without a host. A host that
+ * keeps files (setFileSink) caps it at its own limit and gets a fileId instead.
+ */
+const PDF_MAX_BYTES = 100_000_000;
+
 export const pdf: WaiverFileEndpoints['waiversPdf'] = (ctx, input) =>
 	download(
 		ctx,
@@ -262,13 +269,26 @@ export const pdf: WaiverFileEndpoints['waiversPdf'] = (ctx, input) =>
 			query: { waiverID },
 		}),
 		{
-			shape: (file, parsed) => ({
-				waiverID: parsed.waiverID,
-				contentType: file.contentType,
-				// The length of the bytes actually received, not a decoded string.
-				bytes: file.bytes.byteLength,
-				content: file.bytes.toString('base64'),
-			}),
+			shape: (file, parsed) => {
+				// The PDF keeps its own key, content; the rest is core's file output,
+				// so a host that keeps files gets a fileId for a large PDF instead.
+				const { contentBase64, ...output } = toFileOutput(
+					new Uint8Array(file.bytes),
+					file.contentType,
+					{
+						filename: `waiver-${parsed.waiverID}.pdf`,
+						maxBytes: PDF_MAX_BYTES,
+						text: false,
+					},
+				);
+				return {
+					waiverID: parsed.waiverID,
+					...output,
+					// The length of the bytes actually received, not a decoded string.
+					bytes: file.bytes.byteLength,
+					...(contentBase64 ? { content: contentBase64 } : {}),
+				};
+			},
 			log: (parsed, result) => ({
 				waiverID: parsed.waiverID,
 				bytes: result.bytes,
