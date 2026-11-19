@@ -162,6 +162,45 @@ describe('media base URLs', () => {
 		);
 	});
 
+	it('appends =dv to download a video passed as a media item', () => {
+		expect(
+			mediaBytesUrl(
+				{ baseUrl: 'https://lh3/v', mimeType: 'video/mp4' },
+				{ download: true },
+			),
+		).toBe('https://lh3/v=dv');
+	});
+
+	it('detects a video from its metadata when the MIME type is missing', () => {
+		expect(
+			mediaBytesUrl(
+				{ baseUrl: 'https://lh3/v', mediaMetadata: { video: { fps: 30 } } },
+				{ download: true },
+			),
+		).toBe('https://lh3/v=dv');
+	});
+
+	it('appends =dv for a bare video base URL marked as a video', () => {
+		expect(
+			mediaBytesUrl('https://lh3/v', { download: true, video: true }),
+		).toBe('https://lh3/v=dv');
+	});
+
+	it('keeps =d for a photo passed as a media item', () => {
+		expect(
+			mediaBytesUrl(
+				{ baseUrl: 'https://lh3/p', mimeType: 'image/png' },
+				{ download: true },
+			),
+		).toBe('https://lh3/p=d');
+	});
+
+	it('refuses a media item with no baseUrl', () => {
+		expect(() =>
+			mediaBytesUrl({ mimeType: 'image/png' }, { download: true }),
+		).toThrow(/no baseUrl/);
+	});
+
 	it('appends the width and height', () => {
 		expect(mediaBytesUrl('https://lh3/x', { width: 2048, height: 1024 })).toBe(
 			'https://lh3/x=w2048-h1024',

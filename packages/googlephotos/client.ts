@@ -230,16 +230,23 @@ function readErrorMessage(
 }
 
 /**
- * A base URL is not usable as it is: the docs say a size parameter must be
- * appended before the bytes can be fetched.
+ * A base URL is not usable as it is: the docs say a parameter must be appended
+ * before the bytes can be fetched, and a base URL stops working 60 minutes
+ * after the read that returned it.
  *
- * `=d` downloads the original bytes without the location metadata. `=w<width>
- * -h<height>` returns a scaled copy, and `-c` crops it to exactly those
- * dimensions.
+ * `=d` downloads a photo's original bytes without the location metadata, and
+ * `=dv` downloads a video's bytes (`=d` on a video is outside the documented
+ * contract). `=w<width>-h<height>` returns a scaled copy (a thumbnail for a
+ * video), and `-c` crops it to exactly those dimensions.
  */
 export type MediaBaseUrlOptions = {
 	/** Download the original bytes instead of a scaled copy. */
 	download?: boolean;
+	/**
+	 * The item is a video, so a download uses `=dv`. Read from the item itself
+	 * when a media item is passed; needed only with a bare base URL string.
+	 */
+	video?: boolean;
 	/** Requested width in pixels; must be paired with a height. */
 	width?: number;
 	/** Requested height in pixels; must be paired with a width. */
@@ -248,12 +255,40 @@ export type MediaBaseUrlOptions = {
 	crop?: boolean;
 };
 
-/** Builds the fetchable URL for a media item's bytes from its `baseUrl`. */
+/** The parts of a media item mediaBytesUrl reads. */
+export type MediaBaseUrlItem = {
+	baseUrl?: string | null;
+	mimeType?: string | null;
+	// unknown: only its presence marks the item as a video.
+	mediaMetadata?: { video?: unknown } | null;
+};
+
+function isVideoItem(item: MediaBaseUrlItem): boolean {
+	if (item.mimeType?.toLowerCase().startsWith('video/')) return true;
+	return (
+		item.mediaMetadata?.video !== undefined &&
+		item.mediaMetadata?.video !== null
+	);
+}
+
+/**
+ * Builds the fetchable URL for a media item's bytes. Pass the media item from
+ * a read so a video download gets `=dv`, or a bare `baseUrl` with
+ * `video: true` for a video.
+ */
 export function mediaBytesUrl(
-	baseUrl: string,
+	itemOrBaseUrl: string | MediaBaseUrlItem,
 	options: MediaBaseUrlOptions = {},
 ): string {
-	if (options.download) return `${baseUrl}=d`;
+	const baseUrl =
+		typeof itemOrBaseUrl === 'string' ? itemOrBaseUrl : itemOrBaseUrl.baseUrl;
+	if (!baseUrl) {
+		throw new Error('The media item has no baseUrl');
+	}
+	const video =
+		options.video ??
+		(typeof itemOrBaseUrl === 'string' ? false : isVideoItem(itemOrBaseUrl));
+	if (options.download) return `${baseUrl}=${video ? 'dv' : 'd'}`;
 	const { width, height, crop } = options;
 	if (width === undefined && height === undefined) {
 		throw new Error(

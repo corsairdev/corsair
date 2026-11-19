@@ -130,7 +130,7 @@ const MediaItemSchema = z
 			.string()
 			.nullish()
 			.describe(
-				'A prefix for the bytes. A size parameter must be appended before it can be fetched; see the media.bytes helper',
+				'A prefix for the bytes, valid for 60 minutes. A parameter must be appended before it can be fetched (`=d` for photo bytes, `=dv` for video bytes, `=w<w>-h<h>` for a scaled copy); the exported mediaBytesUrl helper builds it',
 			),
 		mediaMetadata: MediaMetadataSchema.nullish(),
 		contributorInfo: ContributorInfoSchema.nullish(),

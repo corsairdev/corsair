@@ -18,7 +18,7 @@ overviewNote: |
   - **Google asks for a different request shape per list.** Albums default to 20 per page and cap at 50; media items default to 25 and cap at 100. Both are paginated with `nextPageToken`.
   - **`filters` and `albumId` cannot be combined.** The API answers 400, so the plugin refuses it before the request.
   - **`orderBy` only works with a date filter.** The two accepted values are `MediaMetadata.creation_time desc` (newest first, the default) and `MediaMetadata.creation_time`.
-  - **A base URL is not fetchable.** A size parameter must be appended: `=d` for the original bytes, or `=w<width>-h<height>` for a scaled copy with an optional `-c` to crop. `mediaBytesUrl` builds it.
+  - **A base URL is not fetchable, and it expires.** A parameter must be appended: `=d` for a photo's original bytes, `=dv` for a video's bytes, or `=w<width>-h<height>` for a scaled copy (a thumbnail for a video) with an optional `-c` to crop. A base URL works for 60 minutes after the read that returned it. `mediaBytesUrl(item, options)` builds the URL and picks `=dv` when the item is a video.
   - **A description is the only thing an update can change**, on both an album (title) and a media item (description), and the plugin sends exactly that mask.
   - **A 429 needs at least 30 seconds before a retry.** That is the upload guide's rule. The plugin waits 30 seconds, or longer when Google's `Retry-After` asks for more. A 429 that reports the spent daily quota (10,000 requests per project per day) is not retried, since no wait within the call can clear it.
   - **No service accounts.** Google states the Library API does not support them, so every call is made as a signed-in user.

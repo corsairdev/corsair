@@ -266,7 +266,7 @@ export function googlephotos<const T extends GooglePhotosPluginOptions>(
 	} satisfies InternalGooglePhotosPlugin;
 }
 
-export type { MediaBaseUrlOptions } from './client';
+export type { MediaBaseUrlItem, MediaBaseUrlOptions } from './client';
 export { mediaBytesUrl } from './client';
 export type {
 	GooglePhotosEndpointInputs,
