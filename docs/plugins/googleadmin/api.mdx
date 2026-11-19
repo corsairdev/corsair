@@ -465,7 +465,7 @@ await corsair.googleadmin.api.groups.list({ customer: 'my_customer', maxResults:
 | `userKey` | `string \| null` | No | List only the groups this user belongs to. Cannot be combined with customer |
 | `query` | `string \| null` | No | Search clauses such as `name:engineering` or `email:eng*` |
 | `maxResults` | `number \| null` | No | 1 to 200. 200 is both the default and the maximum, per the limits page |
-| `pageToken` | `string \| null` | No | — |
+| `pageToken` | `string \| null` | No | nextPageToken from a previous page |
 | `orderBy` | `email \| null` | No | The only documented value |
 | `sortOrder` | `ASCENDING \| DESCENDING \| null` | No | — |
 
@@ -764,7 +764,7 @@ await corsair.googleadmin.api.members.update({ groupKey: 'engineering@example.co
 | `role` | `OWNER \| MANAGER \| MEMBER \| null` | No | — |
 | `delivery_settings` | `ALL_MAIL \| DAILY \| DIGEST \| DISABLED \| NONE \| null` | No | — |
 
-Sends PATCH, so an omitted delivery preference keeps its value.
+A role change alone sends PATCH. A delivery preference change sends the PUT, reading the current role first when none is given.
 
 
 
@@ -1424,9 +1424,9 @@ A `customFieldMask` is only read when `projection` is `custom`.
 
 `users.insert`
 
-Create a user account with an initial password; a conflicting unmanaged account can be invited instead of created
+Create a user account with an initial password. On a flexible Workspace plan the new user is a billed licence
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.googleadmin.api.users.insert({ primaryEmail: 'ada@example.com', name: { givenName: 'Ada', familyName: 'Lovelace' }, password: 'change-me-now', orgUnitPath: '/engineering' });
@@ -1439,7 +1439,7 @@ await corsair.googleadmin.api.users.insert({ primaryEmail: 'ada@example.com', na
 | `primaryEmail` | `string` | Yes | Required. Unique, and not an alias of another user |
 | `name` | `object` | Yes | — |
 | `password` | `string` | Yes | Required. Either the plain password (8 to 100 characters) or a hash when hashFunction is set |
-| `hashFunction` | `MD5 \| SHA-1 \| crypt \| null` | No | — |
+| `hashFunction` | `MD5 \| SHA-1 \| crypt \| null` | No | Set when `password` is already a hash: hex for MD5 and SHA-1; `crypt` takes DES, $1$, $5$ and $6$ hashes |
 | `orgUnitPath` | `string \| null` | No | Full path of the parent organizational unit, `/` for the top level |
 | `includeInGlobalAddressList` | `boolean \| null` | No | — |
 | `changePasswordAtNextLogin` | `boolean \| null` | No | — |
@@ -1466,13 +1466,16 @@ await corsair.googleadmin.api.users.insert({ primaryEmail: 'ada@example.com', na
 | `sshPublicKeys` | `object[] \| null` | No | — |
 | `customSchemas` | `Record<string, Record<string, any>> \| null` | No | — |
 
+A plain `password` is 8 to 100 characters. With `hashFunction` set it is a hash, which can be longer.
+
 <AccordionGroup>
 <Accordion title="name full type">
 
 ```ts
 {
   givenName: string,
-  familyName: string
+  familyName: string,
+  displayName?: string | null
 }
 ```
 </Accordion>
@@ -2252,7 +2255,7 @@ Replace a user's profile photo
 **Risk:** `write`
 
 ```ts
-await corsair.googleadmin.api.users.photos.update({ userKey: 'ada@example.com', photoData: 'iVBORw0KGgo=', mimeType: 'image/png' });
+await corsair.googleadmin.api.users.photos.update({ userKey: 'ada@example.com', photoData: 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=', mimeType: 'image/png' });
 ```
 
 **Input**
@@ -2262,6 +2265,8 @@ await corsair.googleadmin.api.users.photos.update({ userKey: 'ada@example.com', 
 | `userKey` | `string` | Yes | — |
 | `photoData` | `string` | Yes | Base64-encoded image bytes |
 | `mimeType` | `string \| null` | No | `image/jpeg` or `image/png`; the API infers it when omitted |
+
+`photoData` is web-safe base64 (`-` and `_` in place of `+` and `/`) of a JPEG or PNG.
 
 
 
@@ -2288,7 +2293,7 @@ await corsair.googleadmin.api.users.photos.update({ userKey: 'ada@example.com', 
 
 Sign a user out of all web and device sessions, clearing their sign-in cookies
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.googleadmin.api.users.signOut({ userKey: 'ada@example.com' });
@@ -2353,8 +2358,8 @@ await corsair.googleadmin.api.users.update({ userKey: 'ada@example.com', suspend
 |------|------|----------|-------------|
 | `userKey` | `string` | Yes | Primary email, alias email, or unique user ID |
 | `primaryEmail` | `string \| null` | No | Renaming can take up to 10 minutes to propagate |
-| `name` | `object \| null` | No | Required in full when set: Google requires both givenName and familyName, so a partial name is refused rather than clearing one |
-| `password` | `string \| null` | No | Optional on update. Setting it changes the password |
+| `name` | `object \| null` | No | Only the name parts that are sent change; the others keep their value |
+| `password` | `string \| null` | No | Optional on update. Setting it changes the password: plain text of 8 to 100 characters, or a hash when hashFunction is set |
 | `hashFunction` | `MD5 \| SHA-1 \| crypt \| null` | No | — |
 | `orgUnitPath` | `string \| null` | No | — |
 | `includeInGlobalAddressList` | `boolean \| null` | No | — |
@@ -2388,8 +2393,9 @@ Absent fields keep their value; a field sent as null is cleared.
 
 ```ts
 {
-  givenName: string,
-  familyName: string
+  givenName?: string,
+  familyName?: string,
+  displayName?: string | null
 } | null
 ```
 </Accordion>

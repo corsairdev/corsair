@@ -9,15 +9,16 @@ overviewNote: |
 
   Things to know before you call:
 
-  - **Every list is paginated, and two of them cap page size.** Users accept 1 to 500 per page (default 100). Groups and group members accept 1 to 200, which is also their default. Domain and organizational unit lists take no page size at all. Pass `nextPageToken` back as `pageToken`.
+  - **Three lists are paginated.** `users.list` accepts 1 to 500 per page (default 100); `groups.list` and `members.list` accept 1 to 200, which is also their default. Pass `nextPageToken` back as `pageToken`. The other lists (`domains.list`, `domains.aliases.list`, `orgUnits.list`, and the user and group alias lists) return everything in one response and take no page token.
   - **A page token expires after three days** on the user list. Re-run the first page rather than retrying an expired token.
   - **`userKey` and `groupKey` are emails, aliases or IDs.** They travel in the URL path, so the plugin encodes them.
   - **`users.undelete` takes the immutable user ID only**, not an email address. A delete keeps the account recoverable this way, so `users.delete` is destructive but not irreversible.
   - **A rename can take up to 10 minutes to reach every service.** Changing `primaryEmail` returns success long before every Google product sees the new address.
   - **A user that was just created can refuse a follow-up call** with a 409 until Google's backends finish propagating. The docs name this as "User creation is not complete"; retrying that call later is the documented fix.
-  - **Rate limits arrive in two shapes.** A 429 is the per-account concurrency limit and cannot be raised. A 403 with reason `userRateLimitExceeded` (2,400 queries per minute per user per project by default) or `quotaExceeded` is a throughput limit, and Google's guidance for both is exponential backoff. A 403 with `dailyLimitExceeded` or `limitExceeded` is an exhausted day quota, which no retry can refill. The plugin retries the first group and reports the second.
+  - **Rate limits arrive in two shapes.** A 429 is the per-account concurrency limit and cannot be raised. A 403 with reason `userRateLimitExceeded` (2,400 queries per minute per user per project by default) or `quotaExceeded` is a throughput limit, and Google's guidance for both is exponential backoff. A 403 with `dailyLimitExceeded` or `limitExceeded`, or a 403 or 429 whose message names a per-day quota, is an exhausted day quota, which no retry can refill. The plugin retries the first group and reports the second.
   - **`showDeleted` is a string, not a boolean.** Google types it that way; the plugin keeps Google's type so `true` arrives as `"true"`.
-  - **Updates are patch-style.** `users.update` uses the PUT that Google documents as patch-semantics for users, so absent fields are preserved and a field sent as `null` is cleared. Groups, members and organizational units go through PATCH, which is the method their docs give patch semantics to.
+  - **Updates are patch-style.** `users.update` uses the PUT that Google documents as patch-semantics for users, so absent fields are preserved and a field sent as `null` is cleared; a `name` with only `givenName` changes only the first name. Groups and organizational units go through PATCH. `members.update` uses PATCH for a role change and the PUT for a delivery preference change, because Google takes `delivery_settings` only on insert, update and get.
+  - **Creating a user can cost money.** On a flexible Google Workspace plan every new user is a billed licence, so `users.insert` is marked destructive.
   - **Repeated fields are replaced, not merged.** For a user's `emails`, `phones` or `organizations`, send every item with the value it should end up with. Sending one email address leaves exactly that one.
   - **No inbound webhooks.** The Directory API pushes changes to a callback URL a tenant hosts, so this plugin registers no webhook route.
 references:
@@ -66,7 +67,7 @@ apiExamples:
   users.photos.get:
     call: "{ userKey: 'ada@example.com' }"
   users.photos.update:
-    call: "{ userKey: 'ada@example.com', photoData: 'iVBORw0KGgo=', mimeType: 'image/png' }"
+    call: "{ userKey: 'ada@example.com', photoData: 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=', mimeType: 'image/png' }"
   users.photos.delete:
     call: "{ userKey: 'ada@example.com' }"
   groups.list:
@@ -120,7 +121,9 @@ apiNotes:
   users.get: 'A `customFieldMask` is only read when `projection` is `custom`.'
   users.update: 'Absent fields keep their value; a field sent as null is cleared.'
   groups.update: 'Sends PATCH, so an omitted field keeps its value.'
-  members.update: 'Sends PATCH, so an omitted delivery preference keeps its value.'
+  members.update: 'A role change alone sends PATCH. A delivery preference change sends the PUT, reading the current role first when none is given.'
+  users.photos.update: '`photoData` is web-safe base64 (`-` and `_` in place of `+` and `/`) of a JPEG or PNG.'
+  users.insert: 'A plain `password` is 8 to 100 characters. With `hashFunction` set it is a hash, which can be longer.'
   users.undelete: 'Takes the immutable user ID. An email address answers 404.'
   users.makeAdmin: 'A caller cannot revoke its own last super admin right.'
   members.list: '`roles` takes a comma-separated subset of `OWNER`, `MANAGER` and `MEMBER`.'
