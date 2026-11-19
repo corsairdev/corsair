@@ -98,12 +98,20 @@ function enumMemberMatches(value: unknown, members: string[]): boolean {
 	);
 }
 
+// A zod issue as this file reads it. An `invalid_union` issue carries one
+// issue list per branch in `errors` (zod 4).
+type ZodIssueLike = {
+	code?: string;
+	message?: string;
+	errors?: ZodIssueLike[][];
+};
+
 // `unknown` here and below: zod schemas are read structurally (this script
 // doesn't import zod), and example values are any yaml value.
 type ZodLike = {
 	safeParse: (value: unknown) => {
 		success: boolean;
-		error?: { issues?: { code?: string; message?: string }[] };
+		error?: { issues?: ZodIssueLike[] };
 	};
 };
 
@@ -157,8 +165,22 @@ const KIND_ISSUES = new Set([
 	'invalid_value',
 	'invalid_enum_value',
 	'invalid_literal',
-	'invalid_union',
 ]);
+
+/**
+ * True when the issue says the value is the wrong kind. A union is the wrong
+ * kind only when every branch is: `z.union([z.string().length(130),
+ * z.string().length(132)])` fails a short placeholder on length in both
+ * branches, which zod still reports as `invalid_union`.
+ */
+function isKindIssue(issue: ZodIssueLike): boolean {
+	if (issue.code === 'invalid_union') {
+		const branches = issue.errors ?? [];
+		if (branches.length === 0) return true;
+		return branches.every((branch) => branch.some(isKindIssue));
+	}
+	return issue.code !== undefined && KIND_ISSUES.has(issue.code);
+}
 
 /**
  * Checks one example arg against the field's real schema, which knows whether
@@ -173,9 +195,6 @@ export function fieldSchemaCheck(
 ): string | undefined {
 	const result = field.safeParse(value);
 	if (result.success) return undefined;
-	const issue = result.error?.issues?.find(
-		(candidate) =>
-			candidate.code !== undefined && KIND_ISSUES.has(candidate.code),
-	);
+	const issue = result.error?.issues?.find(isKindIssue);
 	return issue ? (issue.message ?? 'rejected by its schema') : undefined;
 }

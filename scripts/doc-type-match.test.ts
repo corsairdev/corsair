@@ -103,6 +103,45 @@ test('placeholder text that only breaks a length or format rule passes', () => {
 	assert.equal(fieldSchemaCheck(minLength, 42), 'Expected string');
 });
 
+test('a union is the wrong kind only when every branch is', () => {
+	// Review on #2626 (CodeRabbit): z.union([z.string().length(130),
+	// z.string().length(132)]) reports a short placeholder as invalid_union.
+	const lengthOnly = (code: string) => ({
+		safeParse: () => ({
+			success: false,
+			error: {
+				issues: [
+					{
+						code: 'invalid_union',
+						message: 'Invalid input',
+						errors: [[{ code }], [{ code }]],
+					},
+				],
+			},
+		}),
+	});
+	assert.equal(fieldSchemaCheck(lengthOnly('too_small'), ''), undefined);
+	assert.equal(
+		fieldSchemaCheck(lengthOnly('invalid_type'), 42),
+		'Invalid input',
+	);
+	const mixed = {
+		safeParse: () => ({
+			success: false,
+			error: {
+				issues: [
+					{
+						code: 'invalid_union',
+						message: 'Invalid input',
+						errors: [[{ code: 'invalid_type' }], [{ code: 'too_small' }]],
+					},
+				],
+			},
+		}),
+	};
+	assert.equal(fieldSchemaCheck(mixed, 'short'), undefined);
+});
+
 test('finds the object fields through optional, pipe and lazy wrappers', () => {
 	const state = literalEnum(['HIGH', 'LOW', '1', '0']);
 	const object = { safeParse: () => ({ success: true }), shape: { state } };
