@@ -13,7 +13,7 @@ import { z } from 'zod';
 // upload headers, the 50-item batch limit and the 30 second 429 delay;
 // https://developers.google.com/photos/library/guides/apply-filters for the
 // filter shape and the orderBy values; and
-// https://developers.google.com/photos/support/updates for the April 2025 scope
+// https://developers.google.com/photos/support/updates for the March 2025 scope
 // change, which is why there is no shared-album operation in this plugin.
 
 // ── shared ──────────────────────────────────────────────────────────────────
@@ -108,23 +108,19 @@ const PhotoMetadataSchema = z
 	})
 	.loose();
 
-const VideoStatusValues = [
-	'UNSPECIFIED',
-	'PROCESSING',
-	'READY',
-	'FAILED',
-] as const;
-
 const VideoMetadataSchema = z
 	.object({
 		cameraMake: z.string().nullish(),
 		cameraModel: z.string().nullish(),
 		fps: z.number().nullish(),
+		// An open string: the discovery document lists UNSPECIFIED, PROCESSING,
+		// READY and FAILED, but a closed enum would fail the whole read if Google
+		// sent another value.
 		status: z
-			.enum(VideoStatusValues)
+			.string()
 			.nullish()
 			.describe(
-				'A new upload is PROCESSING first and READY once Google has finished with it',
+				'UNSPECIFIED, PROCESSING, READY or FAILED. A new upload is PROCESSING first and READY once Google has finished with it',
 			),
 	})
 	.loose();
@@ -175,7 +171,7 @@ const SharedAlbumOptionsSchema = z
 
 /**
  * Shared-album info. The API can no longer share, unshare, join or list shared
- * albums after the April 2025 change, but an album the app created earlier can
+ * albums after the March 2025 change, but an album the app created earlier can
  * still carry this field, so it is read rather than dropped.
  */
 const ShareInfoSchema = z
@@ -244,7 +240,7 @@ const AlbumsListInputSchema = z
 			.boolean()
 			.nullish()
 			.describe(
-				"Leave out albums the app did not create. Reads of the user's whole library need a scope Google removed in April 2025, so this is effectively the only data a current scope can see",
+				"Leave out albums the app did not create. Reads of the user's whole library need a scope Google removed in March 2025, so this is effectively the only data a current scope can see",
 			),
 	})
 	.strict();

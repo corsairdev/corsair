@@ -69,7 +69,7 @@ describe('response parsing', () => {
 		expect(error.name).toBe('ZodError');
 	});
 
-	it('rejects an unknown video status rather than passing it through', async () => {
+	it('keeps an undocumented video status instead of failing the read', async () => {
 		mockFetch(
 			jsonResponse({
 				...mediaItem,
@@ -77,11 +77,11 @@ describe('response parsing', () => {
 			}),
 		);
 
-		const error = await failure(
-			endpoints.mediaItems.get(makeCtx(), { mediaItemId: 'item-1' }),
-		);
+		const result = await endpoints.mediaItems.get(makeCtx(), {
+			mediaItemId: 'item-1',
+		});
 
-		expect(error.name).toBe('ZodError');
+		expect(result.mediaMetadata?.video?.status).toBe('TRANSCODING');
 	});
 
 	it('keeps undocumented extra fields on a media item', async () => {

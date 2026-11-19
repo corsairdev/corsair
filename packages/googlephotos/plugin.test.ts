@@ -50,7 +50,7 @@ describe('googlephotos plugin definition', () => {
 		expect(Object.keys(googlePhotosAuthConfig)).toEqual(['oauth_2']);
 	});
 
-	it('requests only the scopes that survived the April 2025 change', () => {
+	it('requests only the scopes that survived the March 2025 change', () => {
 		// The removed scopes would make the connect fail, so this is a real
 		// correctness check, not a formatting one.
 		expect(plugin.oauthConfig?.scopes).toEqual([
@@ -95,7 +95,7 @@ describe('googlephotos plugin definition', () => {
 			'mediaItems.search',
 			'mediaItems.update',
 		]);
-		// The API removed these in April 2025; exposing them would be a route
+		// The API removed these in March 2025; exposing them would be a route
 		// that always fails.
 		expect(paths).not.toContain('albums.share');
 		expect(paths).not.toContain('albums.unshare');

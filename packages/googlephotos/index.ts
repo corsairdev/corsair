@@ -32,7 +32,7 @@ export type GooglePhotosPluginOptions = {
 };
 
 /**
- * Two scopes, because the April 2025 change split the API in two: appending
+ * Three scopes, because the March 2025 change split the API in two: appending
  * needs `appendonly`, and reading or editing what the app created needs
  * `readonly.appcreateddata` and `edit.appcreateddata`. The old broad
  * `photoslibrary`, `photoslibrary.readonly` and `photoslibrary.sharing` scopes
@@ -147,17 +147,19 @@ const googlePhotosEndpointMeta = {
 	'albums.list': {
 		riskLevel: 'read',
 		description:
-			"List the account's albums. Without a scope Google removed in 2025, only app-created albums are readable",
+			'List the albums this app created; since March 2025 the API reads nothing else',
 	},
-	'albums.get': { riskLevel: 'read', description: 'Read one album' },
+	'albums.get': {
+		riskLevel: 'read',
+		description: 'Read one album this app created',
+	},
 	'albums.create': {
 		riskLevel: 'write',
 		description: 'Create an album with a title',
 	},
 	'albums.update': {
 		riskLevel: 'write',
-		description:
-			'Rename an album; the title is the only field the API lets an update change',
+		description: 'Rename an app-created album (sends the title update mask)',
 	},
 	'albums.addEnrichment': {
 		riskLevel: 'write',
@@ -176,22 +178,26 @@ const googlePhotosEndpointMeta = {
 	'mediaItems.search': {
 		riskLevel: 'read',
 		description:
-			'Search the library with date, content, feature and media-type filters, or list one album',
+			'Search the media items this app created with date, content, feature and media-type filters, or list one app-created album',
 	},
 	'mediaItems.list': {
 		riskLevel: 'read',
 		description:
-			'List the library in the order Google returns it, 25 by default',
+			'List the media items this app created, 25 per page by default',
 	},
-	'mediaItems.get': { riskLevel: 'read', description: 'Read one media item' },
+	'mediaItems.get': {
+		riskLevel: 'read',
+		description: 'Read one media item this app created',
+	},
 	'mediaItems.batchGet': {
 		riskLevel: 'read',
 		description:
-			'Read up to one page of media items by id, with a per-id status',
+			'Read up to 50 app-created media items by id, with a per-id status',
 	},
 	'mediaItems.update': {
 		riskLevel: 'write',
-		description: "Change a media item's description, the only editable field",
+		description:
+			"Change an app-created media item's description, the only editable field",
 	},
 	'mediaItems.create': {
 		riskLevel: 'write',

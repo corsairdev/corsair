@@ -98,7 +98,7 @@ export const errorHandlers = {
 		handler: async () => ({ maxRetries: 0 }),
 	},
 
-	// 403 is a missing scope or no access to that album or item. The April 2025
+	// 403 is a missing scope or no access to that album or item. The March 2025
 	// change means a read can fail this way even with valid credentials.
 	PERMISSION_ERROR: {
 		match: (error: Error) => statusOf(error) === 403,
