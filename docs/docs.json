@@ -5067,6 +5067,14 @@
                 ]
               },
               {
+                "group": "StatusCake",
+                "pages": [
+                  "plugins/statuscake/overview",
+                  "plugins/statuscake/api",
+                  "plugins/statuscake/database"
+                ]
+              },
+              {
                 "group": "Stormglass",
                 "pages": [
                   "plugins/stormglass/overview",
