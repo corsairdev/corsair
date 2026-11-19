@@ -1,6 +1,7 @@
 import crypto from 'node:crypto';
 import { bindEndpointsRecursively } from '../core/endpoints/bind';
 import type { CorsairPlugin, EndpointMetaEntry } from '../core/plugins';
+import * as orm from '../db/kysely/orm';
 import type { HubConfig } from '../hub/types';
 import { createTestDatabase } from './setup-db';
 
@@ -11,6 +12,7 @@ const hub: HubConfig = {
 	instanceKey: 'main',
 };
 
+// unknown: a fixture with only the fields bind reads, not a full CorsairPlugin.
 const plugin = {
 	id: 'reducto',
 	options: { authType: 'managed_pricing' as const },
@@ -20,10 +22,12 @@ const META: Record<string, EndpointMetaEntry> = {
 	'parse.parse': { riskLevel: 'read' },
 };
 
+// unknown: the fake endpoint takes and returns whatever each test hands it.
 type Api = { parse: { parse: (args: unknown) => Promise<unknown> } };
 
 const test = createTestDatabase();
 
+// unknown: bind fills the tree with the endpoint's own types, which this fake does not declare.
 function bind(run: () => Promise<unknown>, database = test.database): Api {
 	const tree: Record<string, unknown> = {};
 	bindEndpointsRecursively({
@@ -44,6 +48,7 @@ function bind(run: () => Promise<unknown>, database = test.database): Api {
 }
 
 // Hub hands out one idempotency key per call unless `fixedKey` pins it.
+// unknown: failed_when is free-form JSON the hub sends back.
 function mockHub(failedWhen?: Record<string, unknown>) {
 	const keys: string[] = [];
 	jest.spyOn(globalThis, 'fetch').mockImplementation(async (input, init) => {
@@ -131,9 +136,38 @@ describe('a managed-pricing call', () => {
 		expect(data.operation).toBe('parse.parse');
 	});
 
+	it('measures the size in UTF-8 bytes, so a multi-byte result over the cap is truncated', async () => {
+		mockHub();
+		// 100K "€" is ~100K UTF-16 units but ~300 KB of UTF-8.
+		await bind(async () => ({ blob: '€'.repeat(100 * 1024) })).parse.parse({});
+
+		const data = JSON.parse(String((await saved())[0]?.data));
+		expect(data.truncated).toBe(true);
+		expect(data.result).toBeUndefined();
+	});
+
+	it('returns the answer when the save hangs', async () => {
+		mockHub();
+		const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+		// unknown: a stand-in client with only the upsert the save calls.
+		jest.spyOn(orm, 'createKyselyEntityClient').mockReturnValue({
+			upsertByEntityId: () => new Promise(() => {}),
+		} as unknown as ReturnType<typeof orm.createKyselyEntityClient>);
+
+		const started = Date.now();
+		await expect(
+			bind(async () => ({ ok: true })).parse.parse({}),
+		).resolves.toEqual({
+			ok: true,
+		});
+		expect(Date.now() - started).toBeLessThan(2_000);
+		expect(warn).toHaveBeenCalled();
+	});
+
 	it('is not failed by a save error', async () => {
 		mockHub();
 		const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+		// unknown: a database whose only method throws, not a full CorsairDatabase.
 		const broken = {
 			db: {
 				selectFrom: () => {
