@@ -97,7 +97,9 @@ export const batchGet: GooglePhotosEndpoints['mediaItemsBatchGet'] = async (
 		(input) => ({
 			method: 'GET',
 			path: '/mediaItems:batchGet',
-			query: { mediaItemIds: input.mediaItemIds.join(',') },
+			// Google reads repeated `mediaItemIds` parameters; core's serializer
+			// sends one per array entry. A comma-joined string would be one id.
+			query: { mediaItemIds: input.mediaItemIds },
 		}),
 		(result) => rowCount(result.mediaItemResults),
 	);

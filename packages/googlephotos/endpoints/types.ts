@@ -391,12 +391,17 @@ const MediaItemsListInputSchema = z
 
 const MediaItemsGetInputSchema = z.object({ mediaItemId }).strict();
 
+/** Google refuses an empty list, a repeated id, or more than 50 ids. */
+const uniqueIds = (ids: string[]) => new Set(ids).size === ids.length;
+
 const MediaItemsBatchGetInputSchema = z
 	.object({
 		mediaItemIds: z
 			.array(z.string().min(1))
 			.min(1)
-			.describe('The ids to read in one call'),
+			.max(50)
+			.refine(uniqueIds, 'mediaItemIds must not repeat an id')
+			.describe('1 to 50 distinct ids to read in one call'),
 	})
 	.strict();
 
@@ -554,7 +559,8 @@ const AlbumMediaItemsInputSchema = z
 			.array(z.string().min(1))
 			.min(1)
 			.max(50)
-			.describe('1 to 50 ids per call'),
+			.refine(uniqueIds, 'mediaItemIds must not repeat an id')
+			.describe('1 to 50 distinct ids per call'),
 	})
 	.strict();
 

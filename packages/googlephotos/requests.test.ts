@@ -204,7 +204,7 @@ describe('media items', () => {
 		expect(result.filename).toBe('beach.jpg');
 	});
 
-	it('batch-gets items by comma-joined ids', async () => {
+	it('batch-gets items with one mediaItemIds parameter per id', async () => {
 		mockFetch(
 			jsonResponse({
 				mediaItemResults: [
@@ -218,11 +218,41 @@ describe('media items', () => {
 			mediaItemIds: ['item-1', 'item-2'],
 		});
 
-		expect(new URL(lastCall().url).searchParams.get('mediaItemIds')).toBe(
-			'item-1,item-2',
+		expect(new URL(lastCall().url).searchParams.getAll('mediaItemIds')).toEqual(
+			['item-1', 'item-2'],
 		);
 		// A failed id keeps its status rather than disappearing.
 		expect(result.mediaItemResults[1]?.status?.code).toBe(5);
+	});
+
+	it('sends a single batchGet id as one parameter', async () => {
+		mockFetch(jsonResponse({ mediaItemResults: [{ mediaItem }] }));
+
+		await endpoints.mediaItems.batchGet(makeCtx(), {
+			mediaItemIds: ['item-1'],
+		});
+
+		expect(new URL(lastCall().url).searchParams.getAll('mediaItemIds')).toEqual(
+			['item-1'],
+		);
+	});
+
+	it('refuses more than 50 batchGet ids, the documented maximum', async () => {
+		await expect(
+			endpoints.mediaItems.batchGet(makeCtx(), {
+				mediaItemIds: Array.from({ length: 51 }, (_, index) => `id-${index}`),
+			}),
+		).rejects.toMatchObject({ name: 'ZodError' });
+		expect(globalThis.fetch).not.toHaveBeenCalled();
+	});
+
+	it('refuses a repeated batchGet id, which Google rejects', async () => {
+		await expect(
+			endpoints.mediaItems.batchGet(makeCtx(), {
+				mediaItemIds: ['item-1', 'item-1'],
+			}),
+		).rejects.toMatchObject({ name: 'ZodError' });
+		expect(globalThis.fetch).not.toHaveBeenCalled();
 	});
 
 	it('updates a description with the description mask', async () => {

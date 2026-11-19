@@ -25,9 +25,10 @@ const GOOGLE_PHOTOS_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	headerNames: { retryAfter: 'retry-after' },
 };
 
+/** An array value is sent as one repeated parameter per entry. */
 export type GooglePhotosQuery = Record<
 	string,
-	string | number | boolean | undefined
+	string | number | boolean | string[] | undefined
 >;
 
 export type GooglePhotosRequest = {
