@@ -2689,6 +2689,14 @@
                 ]
               },
               {
+                "group": "Google Ads",
+                "pages": [
+                  "plugins/googleads/overview",
+                  "plugins/googleads/api",
+                  "plugins/googleads/database"
+                ]
+              },
+              {
                 "group": "Google Analytics",
                 "pages": [
                   "plugins/googleanalytics/overview",
