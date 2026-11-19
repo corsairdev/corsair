@@ -168,10 +168,24 @@ export type OpenaiDownload = {
 	filename?: string;
 };
 
-/** The file name a Content-Disposition header offers, if any. */
-function dispositionFilename(header: string | null): string | undefined {
-	const match = /filename="?([^";]+)"?/i.exec(header ?? '');
-	return match?.[1]?.trim() || undefined;
+/**
+ * The file name a Content-Disposition header offers, if any (RFC 6266):
+ * `filename*=UTF-8''…` first, then a quoted `filename="…"`, then a bare token.
+ */
+export function dispositionFilename(header: string | null): string | undefined {
+	if (!header) return undefined;
+	const extended = /filename\*\s*=\s*[^']*'[^']*'([^;\s]+)/i.exec(header);
+	if (extended?.[1]) {
+		try {
+			const name = decodeURIComponent(extended[1]);
+			if (name) return name;
+		} catch {
+			// A malformed percent-escape: fall back to the plain parameter.
+		}
+	}
+	const quoted = /filename\s*=\s*"((?:[^"\\]|\\.)*)"/i.exec(header);
+	if (quoted) return quoted[1]?.replace(/\\(.)/g, '$1') || undefined;
+	return /filename\s*=\s*([^;\s]+)/i.exec(header)?.[1] || undefined;
 }
 
 export async function downloadOpenaiFile(

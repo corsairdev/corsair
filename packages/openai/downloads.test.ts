@@ -1,3 +1,4 @@
+import { dispositionFilename } from './client';
 import { createSpeech } from './endpoints/audio';
 import { retrieveFileContent } from './endpoints/containers';
 import { downloadContent } from './endpoints/files';
@@ -120,5 +121,37 @@ describe('openai downloads return a file output', () => {
 		);
 		expect(asked[0]).toMatchObject({ method: 'POST' });
 		expect(asked[0]?.url).toContain('/audio/speech');
+	});
+});
+
+describe('dispositionFilename', () => {
+	it('reads quoted, extended and bare file names', () => {
+		expect(
+			dispositionFilename('attachment; filename="report;2026.jsonl"'),
+		).toBe('report;2026.jsonl');
+		expect(
+			dispositionFilename("attachment; filename*=UTF-8''r%C3%A9sum%C3%A9.pdf"),
+		).toBe('résumé.pdf');
+		expect(
+			dispositionFilename(
+				'attachment; filename="fallback.pdf"; filename*=UTF-8\'\'real%20name.pdf',
+			),
+		).toBe('real name.pdf');
+		expect(dispositionFilename('attachment; filename=out.jsonl')).toBe(
+			'out.jsonl',
+		);
+		expect(
+			dispositionFilename('attachment; filename="a \\"quoted\\" name.txt"'),
+		).toBe('a "quoted" name.txt');
+	});
+
+	it('falls back on a broken escape, and gives nothing without a name', () => {
+		expect(
+			dispositionFilename(
+				'attachment; filename="plain.csv"; filename*=UTF-8\'\'bad%E0%A4',
+			),
+		).toBe('plain.csv');
+		expect(dispositionFilename('attachment')).toBeUndefined();
+		expect(dispositionFilename(null)).toBeUndefined();
 	});
 });
