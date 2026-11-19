@@ -190,8 +190,23 @@ export async function callOpenseoTool(
 		.map((part) => part.text)
 		.join('\n');
 	if (result.isError) {
-		const message = describe(text, 'OpenSEO tool call failed');
-		const code = /^[A-Z][A-Z_]+$/.test(message) ? message : undefined;
+		// AI visibility tools also return the error as structuredContent
+		// ({ status: 'error', code, message }); its code is kept when present.
+		const structured =
+			typeof result.structuredContent === 'object' &&
+			result.structuredContent !== null
+				? (result.structuredContent as { code?: unknown; message?: unknown })
+				: {};
+		const message = describe(
+			typeof structured.message === 'string' ? structured.message : text,
+			'OpenSEO tool call failed',
+		);
+		const code =
+			typeof structured.code === 'string'
+				? structured.code
+				: /^[A-Z][A-Z_]+$/.test(message)
+					? message
+					: undefined;
 		throw new OpenseoAPIError(message, code);
 	}
 	if (result.structuredContent === undefined) {

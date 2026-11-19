@@ -18,7 +18,10 @@ function isRecord(value: unknown): value is JsonSchemaDocument {
  * `response` parses what OpenSEO sends: every field is optional and nullable,
  * enums are open and unknown fields pass through, so a field the server adds
  * or leaves out doesn't fail a read. Types the schema declares (string,
- * number, array, object) are still checked.
+ * integer, number, array, object) are still checked. A `const` stays exact and
+ * a required `const` field stays required: OpenSEO uses them to tell the
+ * branches of a result apart (`ok: true` rows against `ok: false` rows), so a
+ * row must match its own branch instead of slipping through the other one.
  */
 type SchemaMode = 'request' | 'response';
 
@@ -98,7 +101,7 @@ function numberSchema(
 	strict: boolean,
 ): z.ZodType {
 	let schema = z.number();
-	if (strict && integer) schema = schema.int();
+	if (integer) schema = schema.int();
 	if (strict && typeof value.minimum === 'number') {
 		schema = schema.min(value.minimum);
 	}
@@ -110,6 +113,9 @@ function numberSchema(
 	}
 	if (strict && typeof value.exclusiveMaximum === 'number') {
 		schema = schema.lt(value.exclusiveMaximum);
+	}
+	if (strict && typeof value.multipleOf === 'number') {
+		schema = schema.multipleOf(value.multipleOf);
 	}
 	return schema;
 }
@@ -155,9 +161,7 @@ function schemaFromJsonSchema(value: unknown, mode: SchemaMode): z.ZodType {
 
 	let schema: z.ZodType;
 	if ('const' in value) {
-		schema = strict
-			? z.literal(value.const as string | number | boolean)
-			: openScalarSchema(type, [value.const]);
+		schema = z.literal(value.const as string | number | boolean);
 	} else if (Array.isArray(value.enum)) {
 		schema = strict
 			? enumSchema(value.enum)
@@ -190,12 +194,14 @@ function schemaFromJsonSchema(value: unknown, mode: SchemaMode): z.ZodType {
 		const shape: Record<string, z.ZodType> = {};
 		for (const [name, property] of Object.entries(properties)) {
 			const propertySchema = schemaFromJsonSchema(property, mode);
-			shape[name] =
-				strict && required.includes(name)
-					? propertySchema
-					: strict
-						? propertySchema.optional()
-						: propertySchema.nullish();
+			const keepRequired =
+				required.includes(name) &&
+				(strict || (isRecord(property) && 'const' in property));
+			shape[name] = keepRequired
+				? propertySchema
+				: strict
+					? propertySchema.optional()
+					: propertySchema.nullish();
 		}
 		const objectSchema = z.object(shape);
 		if (strict && value.additionalProperties === false) {

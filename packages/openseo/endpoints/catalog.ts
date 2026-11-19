@@ -248,8 +248,8 @@ export const openseoEndpointSchemas = {
 >;
 
 // A lookup that only spends OpenSEO credits is a metered read (R8). Deletes, public
-// sharing, IndexNow submissions and anything that starts or schedules a paid check
-// are destructive.
+// sharing, IndexNow submissions, paid model generation and anything that starts or
+// schedules a paid check are destructive.
 export const openseoEndpointMeta = {
 	'account.whoami': {
 		riskLevel: 'read',
@@ -267,7 +267,7 @@ export const openseoEndpointMeta = {
 			'Estimate the cost of AI visibility checks without running them',
 	},
 	'aiVisibility.explorePrompt': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description:
 			'Ask a prompt in ChatGPT, Claude, Gemini or Perplexity and see answers, citations and brand mentions',
 	},
@@ -277,7 +277,7 @@ export const openseoEndpointMeta = {
 			'Export stored AI visibility observations as a CSV or JSON download link',
 	},
 	'aiVisibility.generatePrompts': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description:
 			'Generate topic and prompt suggestions for AI visibility tracking',
 	},
@@ -490,7 +490,7 @@ export const openseoEndpointMeta = {
 		description: 'List projects with their ID, name, domain and default market',
 	},
 	'projects.researchWebsite': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description:
 			"Research a project's website to draft its brand, overview, competitors and prompt topics",
 	},

@@ -441,7 +441,7 @@ export type OpenseoKeywordsResearchOutput = {
 	results?: Array<
 		| {
 				seed?: string | null;
-				ok?: OpenseoJsonValue | null;
+				ok: true;
 				rowCount?: number | null;
 				source?: string | null;
 				usedFallback?: boolean | null;
@@ -450,7 +450,7 @@ export type OpenseoKeywordsResearchOutput = {
 		  }
 		| {
 				seed?: string | null;
-				ok?: OpenseoJsonValue | null;
+				ok: false;
 				error?: string | null;
 				[key: string]: OpenseoJsonValue | undefined;
 		  }
@@ -779,7 +779,7 @@ export type OpenseoSerpResultsOutput = {
 	results?: Array<
 		| {
 				keyword?: string | null;
-				ok?: OpenseoJsonValue | null;
+				ok: true;
 				locationCode?: number | null;
 				languageCode?: string | null;
 				locationName?: string | null;
@@ -799,7 +799,7 @@ export type OpenseoSerpResultsOutput = {
 		  }
 		| {
 				keyword?: string | null;
-				ok?: OpenseoJsonValue | null;
+				ok: false;
 				error?: string | null;
 				[key: string]: OpenseoJsonValue | undefined;
 		  }
@@ -1335,7 +1335,7 @@ export type OpenseoAiVisibilityExplorePromptOutput = {
 	fetchedAt?: string | null;
 	results?: Array<
 		| {
-				status?: string | null;
+				status: 'success';
 				model?: string | null;
 				modelName?: string | null;
 				text?: string | null;
@@ -1354,7 +1354,7 @@ export type OpenseoAiVisibilityExplorePromptOutput = {
 				[key: string]: OpenseoJsonValue | undefined;
 		  }
 		| {
-				status?: string | null;
+				status: 'error';
 				model?: string | null;
 				errorCode?: string | null;
 				message?: string | null;
@@ -1541,7 +1541,7 @@ export type OpenseoAiVisibilityEstimateCostOutput = {
 		scheduleInterval?: string | null;
 		checksPerMonth?: number | null;
 		monthlyCostUsd?: number | null;
-		currency?: string | null;
+		currency: 'USD';
 		warnings?: Array<string> | null;
 		[key: string]: OpenseoJsonValue | undefined;
 	} | null;
@@ -3616,7 +3616,7 @@ export type OpenseoSiteAuditsDeleteInput = {
 
 export type OpenseoSiteAuditsDeleteOutput = {
 	auditId?: string | null;
-	deleted?: OpenseoJsonValue | null;
+	deleted: true;
 	meta?: {
 		url?: string | null;
 		projectId?: string | null;
@@ -3747,7 +3747,7 @@ export type OpenseoReportsDeleteInput = {
 
 export type OpenseoReportsDeleteOutput = {
 	reportId?: string | null;
-	deleted?: OpenseoJsonValue | null;
+	deleted: true;
 	meta?: {
 		url?: string | null;
 		projectId?: string | null;
@@ -3816,7 +3816,7 @@ export type OpenseoReportsDeleteTemplateInput = {
 
 export type OpenseoReportsDeleteTemplateOutput = {
 	templateId?: string | null;
-	deleted?: OpenseoJsonValue | null;
+	deleted: true;
 	meta?: {
 		url?: string | null;
 		projectId?: string | null;

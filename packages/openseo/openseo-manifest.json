@@ -2192,7 +2192,8 @@
             "description": "How many Google results to read per keyword — a multiple of 10 from 10 to 100, default 10 (page 1). Merging the reads usually returns more sites than this. Google has no offset, so a deeper read re-fetches the top too: each additional 10 adds ~3.5 credits per keyword. Only raise it when you need ranks past page 1.",
             "type": "integer",
             "minimum": 10,
-            "maximum": 100
+            "maximum": 100,
+            "multipleOf": 10
           },
           "finalUrls": {
             "description": "Set true to get each result's page URL instead of a google.com/goto redirect. The search then takes a few minutes instead of seconds: the first call starts it and answers that it is still running, and the same call again 2-3 minutes later returns the results at no extra charge. For batch jobs, not while someone waits. Costs about half the credits.",
@@ -6936,7 +6937,8 @@
             "description": "Number of Google results to inspect. Defaults to 40.",
             "type": "integer",
             "minimum": 10,
-            "maximum": 100
+            "maximum": 100,
+            "multipleOf": 10
           },
           "scheduleInterval": {
             "description": "Check schedule. Defaults to manual so creating a tracker cannot cause future credit spend. Scheduled checks may use credits later.",

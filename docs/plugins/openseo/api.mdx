@@ -190,7 +190,7 @@ await corsair.openseo.api.aiVisibility.estimateCost({ projectId: '6f1c2a9e-3b7d-
   scheduleInterval?: string | null,
   checksPerMonth?: number | null,
   monthlyCostUsd?: number | null,
-  currency?: string | null,
+  currency: USD,
   warnings?: string[] | null
 } | null
 ```
@@ -220,7 +220,7 @@ await corsair.openseo.api.aiVisibility.estimateCost({ projectId: '6f1c2a9e-3b7d-
 
 Ask a prompt in ChatGPT, Claude, Gemini or Perplexity and see answers, citations and brand mentions
 
-**Risk:** `read`
+**Risk:** `destructive`
 
 ```ts
 await corsair.openseo.api.aiVisibility.explorePrompt({
@@ -260,7 +260,7 @@ await corsair.openseo.api.aiVisibility.explorePrompt({
 ```ts
 (
   {
-    status?: string | null,
+    status: success,
     model?: string | null,
     modelName?: string | null | null,
     text?: string | null,
@@ -276,7 +276,7 @@ await corsair.openseo.api.aiVisibility.explorePrompt({
     webSearch?: boolean | null,
     webSearchCountryCode?: string | null | null
   } | {
-    status?: string | null,
+    status: error,
     model?: string | null,
     errorCode?: string | null,
     message?: string | null
@@ -381,7 +381,7 @@ await corsair.openseo.api.aiVisibility.export({ projectId: '6f1c2a9e-3b7d-4e58-9
 
 Generate topic and prompt suggestions for AI visibility tracking
 
-**Risk:** `read`
+**Risk:** `destructive`
 
 ```ts
 await corsair.openseo.api.aiVisibility.generatePrompts({
@@ -1591,7 +1591,7 @@ List a domain's or page's individual backlinks with anchors and authority, pagin
 await corsair.openseo.api.backlinks.list({
 	projectId: '6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31',
 	target: 'bluebottlecoffee.com',
-	pageSize: 25,
+	pageSize: 50,
 	sortField: 'rank',
 	sortOrder: 'desc',
 });
@@ -3688,7 +3688,7 @@ await corsair.openseo.api.keywords.research({
 (
   {
     seed?: string | null,
-    ok?: boolean | null,
+    ok: true,
     rowCount?: number | null,
     source?: string | null,
     usedFallback?: boolean | null,
@@ -3696,7 +3696,7 @@ await corsair.openseo.api.keywords.research({
     }[] | null
   } | {
     seed?: string | null,
-    ok?: boolean | null,
+    ok: false,
     error?: string | null
   }
 )[] | null
@@ -4774,7 +4774,7 @@ await corsair.openseo.api.projects.list({});
 
 Research a project's website to draft its brand, overview, competitors and prompt topics
 
-**Risk:** `read`
+**Risk:** `destructive`
 
 ```ts
 await corsair.openseo.api.projects.researchWebsite({ projectId: '6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31', website: 'https://acmecoffee.com' });
@@ -5673,7 +5673,7 @@ await corsair.openseo.api.reports.delete({ projectId: '6f1c2a9e-3b7d-4e58-9a14-2
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `reportId` | `string \| null` | No | — |
-| `deleted` | `boolean \| null` | No | — |
+| `deleted` | `true` | Yes | — |
 | `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -5721,7 +5721,7 @@ await corsair.openseo.api.reports.deleteTemplate({ projectId: '6f1c2a9e-3b7d-4e5
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `templateId` | `string \| null` | No | — |
-| `deleted` | `boolean \| null` | No | — |
+| `deleted` | `true` | Yes | — |
 | `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -5928,7 +5928,7 @@ await corsair.openseo.api.reports.save({
 	projectId: '6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31',
 	title: 'November SEO check-in',
 	summary: 'Organic clicks up 12%; three pages lost their snippets.',
-	html: '<h1>November SEO check-in</h1><p>Organic clicks up 12%.</p>',
+	html: '<!doctype html><html><head><meta charset="utf-8"><title>November SEO check-in</title></head><body><h1>November SEO check-in</h1><p>Organic clicks up 12%.</p></body></html>',
 });
 ```
 
@@ -6632,7 +6632,7 @@ await corsair.openseo.api.serp.results({
 (
   {
     keyword?: string | null,
-    ok?: boolean | null,
+    ok: true,
     locationCode?: number | null,
     languageCode?: string | null,
     locationName?: string | null,
@@ -6649,7 +6649,7 @@ await corsair.openseo.api.serp.results({
     }[] | null
   } | {
     keyword?: string | null,
-    ok?: boolean | null,
+    ok: false,
     error?: string | null
   }
 )[] | null
@@ -6760,7 +6760,7 @@ await corsair.openseo.api.siteAudits.delete({ projectId: '6f1c2a9e-3b7d-4e58-9a1
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `auditId` | `string \| null` | No | — |
-| `deleted` | `boolean \| null` | No | — |
+| `deleted` | `true` | Yes | — |
 | `meta` | `object \| null` | No | — |
 
 <AccordionGroup>

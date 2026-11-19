@@ -25,14 +25,16 @@ is stateless for API keys, so there is no session handshake.
 
 Inputs follow the tool input schemas (required fields, enums, limits). Results
 are the tool's `structuredContent`; every field may be missing or `null`, and
-unknown fields pass through. A tool error (`isError`) throws `OpenseoAPIError`
+unknown fields pass through. A required `const` (the `ok` or `status` that
+tells a success row from an error row) stays exact and required. A tool error (`isError`) throws `OpenseoAPIError`
 with OpenSEO's text, such as `NOT_FOUND` or `INSUFFICIENT_CREDITS`.
 
 Research lookups spend OpenSEO credits and stay `read` risk. Deletes, public
-report sharing, IndexNow submissions and anything that starts or schedules a
-paid check (`rankTracking.run`, `aiVisibility.runCheck`,
-`aiVisibility.setSchedule`, `aiVisibility.completeResearchSetup`) are
-`destructive`.
+report sharing, IndexNow submissions, paid model generation
+(`aiVisibility.explorePrompt`, `aiVisibility.generatePrompts`,
+`projects.researchWebsite`) and anything that starts or schedules a paid check
+(`rankTracking.run`, `aiVisibility.runCheck`, `aiVisibility.setSchedule`,
+`aiVisibility.completeResearchSetup`) are `destructive`.
 
 ## Endpoints
 
@@ -41,9 +43,9 @@ paid check (`rankTracking.run`, `aiVisibility.runCheck`,
 | `account.whoami` | `openseo.api.account.whoami` | `read` | Get the connected OpenSEO account, token scopes and remaining credits |
 | `aiVisibility.completeResearchSetup` | `openseo.api.aiVisibility.completeResearchSetup` | `destructive` | Set up Prompt Research keywords for a project (can turn on weekly paid AI checks) |
 | `aiVisibility.estimateCost` | `openseo.api.aiVisibility.estimateCost` | `read` | Estimate the cost of AI visibility checks without running them |
-| `aiVisibility.explorePrompt` | `openseo.api.aiVisibility.explorePrompt` | `read` | Ask a prompt in ChatGPT, Claude, Gemini or Perplexity and see answers, citations and brand mentions |
+| `aiVisibility.explorePrompt` | `openseo.api.aiVisibility.explorePrompt` | `destructive` | Ask a prompt in ChatGPT, Claude, Gemini or Perplexity and see answers, citations and brand mentions |
 | `aiVisibility.export` | `openseo.api.aiVisibility.export` | `read` | Export stored AI visibility observations as a CSV or JSON download link |
-| `aiVisibility.generatePrompts` | `openseo.api.aiVisibility.generatePrompts` | `read` | Generate topic and prompt suggestions for AI visibility tracking |
+| `aiVisibility.generatePrompts` | `openseo.api.aiVisibility.generatePrompts` | `destructive` | Generate topic and prompt suggestions for AI visibility tracking |
 | `aiVisibility.getAnswer` | `openseo.api.aiVisibility.getAnswer` | `read` | Get one stored AI answer with its prompt, mentions and citations |
 | `aiVisibility.getResults` | `openseo.api.aiVisibility.getResults` | `read` | Get how often the brand and competitors appear in AI answers for a run |
 | `aiVisibility.getRun` | `openseo.api.aiVisibility.getRun` | `read` | Get the progress of an AI visibility check |
@@ -89,7 +91,7 @@ paid check (`rankTracking.run`, `aiVisibility.runCheck`,
 | `projects.create` | `openseo.api.projects.create` | `write` | Create a project with a name and optional domain and market |
 | `projects.getContext` | `openseo.api.projects.getContext` | `read` | Get a project's shared memory: overview, goal, positioning, competitors and key pages |
 | `projects.list` | `openseo.api.projects.list` | `read` | List projects with their ID, name, domain and default market |
-| `projects.researchWebsite` | `openseo.api.projects.researchWebsite` | `read` | Research a project's website to draft its brand, overview, competitors and prompt topics |
+| `projects.researchWebsite` | `openseo.api.projects.researchWebsite` | `destructive` | Research a project's website to draft its brand, overview, competitors and prompt topics |
 | `projects.saveWebsiteSetup` | `openseo.api.projects.saveWebsiteSetup` | `write` | Save a drafted website setup (brand, overview, competitors, topics) to a project |
 | `projects.updateContext` | `openseo.api.projects.updateContext` | `write` | Add, edit or delete entries in a project's shared memory |
 | `rankTracking.addKeywords` | `openseo.api.rankTracking.addKeywords` | `write` | Add keywords to a rank tracker |

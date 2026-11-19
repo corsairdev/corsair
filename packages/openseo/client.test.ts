@@ -15,6 +15,10 @@ jest.mock('corsair/http', () => {
 
 const mockRequest = jest.mocked(request);
 
+// A rejected promise's value has no static type; each test casts the result
+// to the error class it expects, so `unknown` is necessary here.
+const caught = (error: unknown) => error;
+
 // `unknown` is necessary because the mocked transport returns whatever the test sets as the reply body.
 function reply(result: unknown) {
 	return (
@@ -61,6 +65,7 @@ describe('callOpenseoTool', () => {
 	});
 
 	it('reads a reply sent as an SSE stream', async () => {
+		// `unknown` is necessary because the mocked transport returns raw SSE text here, not the typed reply.
 		(mockRequest as unknown as jest.Mock<Promise<unknown>>).mockImplementation(
 			async (_config, options) => {
 				const id = (options as { body: { id: number } }).body.id;
@@ -80,10 +85,31 @@ describe('callOpenseoTool', () => {
 			'get_project_context',
 			{ projectId: 'x' },
 			'oseo_test',
-		).catch((e: unknown) => e);
+		).catch(caught);
 		expect(error).toBeInstanceOf(OpenseoAPIError);
 		expect((error as OpenseoAPIError).message).toBe('NOT_FOUND');
 		expect((error as OpenseoAPIError).code).toBe('NOT_FOUND');
+	});
+
+	it('keeps the code of a structured AI visibility error', async () => {
+		reply({
+			result: {
+				isError: true,
+				content: [{ type: 'text', text: 'Not enough credits. Top up.' }],
+				structuredContent: {
+					status: 'error',
+					code: 'INSUFFICIENT_CREDITS',
+					message: 'Not enough credits.',
+				},
+			},
+		});
+		const error = (await callOpenseoTool(
+			'run_ai_visibility_check',
+			{},
+			'oseo_test',
+		).catch(caught)) as OpenseoAPIError;
+		expect(error.message).toBe('Not enough credits.');
+		expect(error.code).toBe('INSUFFICIENT_CREDITS');
 	});
 
 	it('keeps a sentence error without a code', async () => {
@@ -102,7 +128,7 @@ describe('callOpenseoTool', () => {
 			'get_project_context',
 			{},
 			'oseo_test',
-		).catch((e: unknown) => e)) as OpenseoAPIError;
+		).catch(caught)) as OpenseoAPIError;
 		expect(error.message).toBe(
 			'Input validation error: projectId: Invalid input',
 		);
@@ -112,7 +138,7 @@ describe('callOpenseoTool', () => {
 	it('throws OpenseoAPIError for a JSON-RPC error', async () => {
 		reply({ error: { code: -32602, message: 'Tool nope not found' } });
 		const error = (await callOpenseoTool('nope', {}, 'oseo_test').catch(
-			(e: unknown) => e,
+			caught,
 		)) as OpenseoAPIError;
 		expect(error).toBeInstanceOf(OpenseoAPIError);
 		expect(error.message).toBe('Tool nope not found');
@@ -156,7 +182,7 @@ describe('callOpenseoTool', () => {
 			'get_keyword_metrics',
 			{ keywords: ['secret'] },
 			'oseo_test',
-		).catch((e: unknown) => e)) as ApiError;
+		).catch(caught)) as ApiError;
 		expect(error).toBeInstanceOf(ApiError);
 		expect(error.status).toBe(429);
 		expect(error.retryAfter).toBe(2000);

@@ -97,7 +97,7 @@ describe('Openseo endpoint registry', () => {
 			'domains.overview',
 			'backlinks.list',
 			'local.rankGrid',
-			'aiVisibility.explorePrompt',
+			'aiVisibility.researchPrompts',
 			'searchConsole.performance',
 		] as const) {
 			expect(openseoEndpointMeta[id].riskLevel).toBe('read');
@@ -116,7 +116,7 @@ describe('Openseo endpoint registry', () => {
 		}
 	});
 
-	it('marks deletes, paid checks, schedules, sharing and IndexNow destructive', () => {
+	it('marks deletes, paid checks and generation, schedules, sharing and IndexNow destructive', () => {
 		const destructive = Object.entries(openseoEndpointMeta)
 			.filter(([, meta]) => meta.riskLevel === 'destructive')
 			.map(([id]) => id)
@@ -124,10 +124,13 @@ describe('Openseo endpoint registry', () => {
 		expect(destructive).toEqual(
 			[
 				'aiVisibility.completeResearchSetup',
+				'aiVisibility.explorePrompt',
+				'aiVisibility.generatePrompts',
 				'aiVisibility.runCheck',
 				'aiVisibility.setSchedule',
 				'indexNow.submitUrls',
 				'keywords.removeSaved',
+				'projects.researchWebsite',
 				'rankTracking.removeKeywords',
 				'rankTracking.run',
 				'reports.delete',
@@ -139,6 +142,9 @@ describe('Openseo endpoint registry', () => {
 		expect(openseoEndpointMeta['siteAudits.delete']).toMatchObject({
 			irreversible: true,
 		});
+		expect(
+			openseoEndpointMeta['aiVisibility.explorePrompt'],
+		).not.toHaveProperty('irreversible');
 	});
 
 	it('builds schemas lazily through getters on the schema entries', () => {
@@ -200,6 +206,14 @@ describe('request schemas', () => {
 				seeds: [{ seed: 'x', locationCode: 2840.5 }],
 			}).success,
 		).toBe(false);
+	});
+
+	it('keeps multipleOf (SERP depth is a multiple of 10)', () => {
+		const serp = getOpenseoInputSchema('serp.results');
+		const base = { projectId: PROJECT, queries: [{ keyword: 'coffee' }] };
+		expect(serp.safeParse({ ...base, depth: 20 }).success).toBe(true);
+		expect(serp.safeParse({ ...base, depth: 15 }).success).toBe(false);
+		expect(serp.safeParse({ ...base, depth: 110 }).success).toBe(false);
 	});
 
 	it('keeps closed enums', () => {
@@ -295,6 +309,39 @@ describe('response schemas', () => {
 		expect(whoami().safeParse({ mode: 'hosted' }).success).toBe(true);
 		expect(whoami().safeParse({ mode: 'new-mode' }).success).toBe(true);
 		expect(whoami().safeParse({ mode: 3 }).success).toBe(false);
+	});
+
+	it('checks integers in responses too', () => {
+		const run = getOpenseoOutputSchema('aiVisibility.getRun');
+		const ok = run.safeParse({ status: 'success', data: { pending: 1 } });
+		const bad = run.safeParse({ status: 'success', data: { pending: 1.5 } });
+		expect(ok.error?.issues ?? []).toEqual([]);
+		expect(bad.success).toBe(false);
+	});
+
+	it('matches each result row to its own branch by its const discriminator', () => {
+		const serp = getOpenseoOutputSchema('serp.results');
+		const okRow = { keyword: 'coffee', ok: true, items: [] };
+		const errorRow = { keyword: 'coffee', ok: false, error: 'UPSTREAM' };
+		expect(serp.safeParse({ results: [okRow, errorRow] }).success).toBe(true);
+		// A success row with a wrongly typed field can't pass as an error row.
+		expect(
+			serp.safeParse({ results: [{ ...okRow, items: 'not-an-array' }] })
+				.success,
+		).toBe(false);
+		// The discriminator is required: a row without it matches neither branch.
+		expect(
+			serp.safeParse({ results: [{ keyword: 'coffee', items: [] }] }).success,
+		).toBe(false);
+		const research = getOpenseoOutputSchema('keywords.research');
+		expect(
+			research.safeParse({ results: [{ seed: 'x', ok: true, rows: 'bad' }] })
+				.success,
+		).toBe(false);
+		expect(
+			research.safeParse({ results: [{ seed: 'x', ok: false, error: 'E' }] })
+				.success,
+		).toBe(true);
 	});
 
 	it('parses the live list_projects shape and passes unknown fields through', () => {

@@ -1,5 +1,6 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
+import { OpenseoAPIError } from './client';
 
 // OpenSEO answers HTTP errors only for the key (401 `invalid_api_key`, 403
 // `account_access_revoked`) and rate limits (429 `rate_limited` /
@@ -11,7 +12,9 @@ import { ApiError } from 'corsair/http';
 // (honouring Retry-After), and most tools spend credits, so a failed call is
 // never replayed blindly.
 function text(error: Error): string {
-	return error.message.toLowerCase();
+	// A structured AI visibility error keeps its code apart from its sentence.
+	const code = error instanceof OpenseoAPIError ? (error.code ?? '') : '';
+	return `${error.message} ${code}`.toLowerCase();
 }
 
 export const errorHandlers = {
@@ -52,7 +55,9 @@ export const errorHandlers = {
 				msg.includes('invalid_api_key') ||
 				msg.includes('account_access_revoked') ||
 				msg.includes('unauthorized') ||
-				msg === 'forbidden'
+				// OpenSEO's bare FORBIDDEN code; not any sentence that says "forbidden".
+				(error instanceof OpenseoAPIError &&
+					(error.code === 'FORBIDDEN' || error.message === 'FORBIDDEN'))
 			);
 		},
 		handler: async () => ({ maxRetries: 0 }),

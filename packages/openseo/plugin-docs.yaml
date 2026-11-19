@@ -46,7 +46,7 @@ apiExamples:
   aiVisibility.updateResearchKeywords:
     args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "add": ["coffee subscription"], "remove": ["coffee pods"]}
   backlinks.list:
-    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "target": "bluebottlecoffee.com", "pageSize": 25, "sortField": "rank", "sortOrder": "desc"}
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "target": "bluebottlecoffee.com", "pageSize": 50, "sortField": "rank", "sortOrder": "desc"}
   backlinks.overview:
     args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "target": "bluebottlecoffee.com"}
   domains.keywords:
@@ -146,7 +146,7 @@ apiExamples:
   reports.listTemplates:
     args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31"}
   reports.save:
-    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "title": "November SEO check-in", "summary": "Organic clicks up 12%; three pages lost their snippets.", "html": "<h1>November SEO check-in</h1><p>Organic clicks up 12%.</p>"}
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "title": "November SEO check-in", "summary": "Organic clicks up 12%; three pages lost their snippets.", "html": "<!doctype html><html><head><meta charset=\"utf-8\"><title>November SEO check-in</title></head><body><h1>November SEO check-in</h1><p>Organic clicks up 12%.</p></body></html>"}
   reports.saveTemplate:
     args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "name": "Monthly client check-in", "description": "One-page monthly summary for the client.", "instructions": "Start with organic clicks and conversions, then the top three wins and the top three fixes."}
   reports.setSharing:

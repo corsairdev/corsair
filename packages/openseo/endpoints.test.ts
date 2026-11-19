@@ -59,6 +59,23 @@ function endpointFor(id: string): AnyEndpoint {
 	return endpoint;
 }
 
+// A result needs its required `const` fields (`deleted: true`); every other
+// response field is optional. Built from the operation's output schema.
+// `unknown` is necessary because const values are JSON scalars of any type.
+function requiredConsts(id: string): Record<string, unknown> {
+	const output = openseoOperations.find((operation) => operation.id === id)
+		?.output as {
+		required?: string[];
+		properties?: Record<string, { const?: unknown }>;
+	};
+	const result: Record<string, unknown> = {};
+	for (const name of output.required ?? []) {
+		const property = output.properties?.[name];
+		if (property && 'const' in property) result[name] = property.const;
+	}
+	return result;
+}
+
 beforeEach(() => {
 	mockedCall.mockReset();
 	mockedLogEvent.mockReset();
@@ -70,6 +87,7 @@ describe('every operation', () => {
 		async (id, tool) => {
 			const args = docs.apiExamples[id]?.args;
 			mockedCall.mockResolvedValue({
+				...requiredConsts(id),
 				meta: { creditsCharged: 0 },
 				zzUnknownField: 'kept',
 			});
@@ -112,6 +130,13 @@ describe('validation', () => {
 		await endpointFor('projects.create')(ctx, input);
 		expect(mockedCall.mock.calls[0]?.[1]).toEqual(input);
 		expect(mockedCall.mock.calls[0]?.[1]).not.toBe(input);
+	});
+
+	it('fails a delete result without its required deleted: true', async () => {
+		mockedCall.mockResolvedValue({});
+		await expect(
+			endpointFor('reports.delete')(ctx, { projectId: 'p', reportId: 'r' }),
+		).rejects.toThrow();
 	});
 
 	it('fails a result that breaks its output schema', async () => {
