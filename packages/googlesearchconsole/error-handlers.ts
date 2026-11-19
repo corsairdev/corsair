@@ -11,6 +11,19 @@ function statusOf(error: Error): number | undefined {
 }
 
 /**
+ * Google words a per-day quota refusal as "Quota exceeded for quota metric
+ * '…' and limit '… per day …'" (reason `rateLimitExceeded` or `quotaExceeded`).
+ * The message and the error body are both checked, since either may carry it.
+ */
+function isDailyQuotaError(error: Error): boolean {
+	const body = apiError(error)?.body;
+	const text = `${error.message} ${
+		typeof body === 'string' ? body : JSON.stringify(body ?? '')
+	}`.toLowerCase();
+	return /per day|per-day|daily|queries per day|quota.*day/.test(text);
+}
+
+/**
  * Search Console shares Google's error model, and its limits page documents the
  * two ways a call is refused for load:
  * https://developers.google.com/webmaster-tools/limits
@@ -26,12 +39,19 @@ function statusOf(error: Error): number | undefined {
  *   filter or a date range in the wrong order.
  */
 export const errorHandlers = {
+	// A 429 that reports an exhausted daily quota can't succeed before the
+	// quota resets, so it is not retried (R8). Otherwise Google's Retry-After,
+	// when sent, sets the wait.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => statusOf(error) === 429,
-		handler: async () => ({
-			maxRetries: 3,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		handler: async (error: Error) => {
+			if (isDailyQuotaError(error)) return { maxRetries: 0 };
+			return {
+				maxRetries: 3,
+				retryStrategy: 'exponential_backoff' as const,
+				headersRetryAfterMs: apiError(error)?.retryAfter,
+			};
+		},
 	},
 
 	// 403: no access to the property, or the credential is not verified on it.

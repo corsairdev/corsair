@@ -34,7 +34,7 @@ describe('request shape', () => {
 	it('lists sites with a GET and no body', async () => {
 		mockFetch(
 			jsonResponse({
-				siteEntry: [{ siteUrl: PROPERTY, permissionLevel: 'SITE_OWNER' }],
+				siteEntry: [{ siteUrl: PROPERTY, permissionLevel: 'siteOwner' }],
 			}),
 		);
 
@@ -45,7 +45,7 @@ describe('request shape', () => {
 			'https://searchconsole.googleapis.com/webmasters/v3/sites',
 		);
 		expect(lastCall().init.body).toBeUndefined();
-		expect(result.siteEntry?.[0]?.permissionLevel).toBe('SITE_OWNER');
+		expect(result.siteEntry?.[0]?.permissionLevel).toBe('siteOwner');
 	});
 
 	it('reads one site with the property encoded into the path', async () => {
@@ -177,13 +177,53 @@ describe('searchanalytics.query', () => {
 });
 
 describe('sitemaps', () => {
+	it('parses the sites and sitemaps responses Google actually sends (live 11-19)', async () => {
+		// Captured from the live API: the v3 methods answer camelCase values.
+		mockFetch(
+			jsonResponse({
+				siteEntry: [
+					{ siteUrl: 'sc-domain:example.com', permissionLevel: 'siteOwner' },
+					{ siteUrl: 'https://example.com/', permissionLevel: 'siteFullUser' },
+				],
+			}),
+		);
+		const sites = await endpoints.sites.list(makeCtx(), {});
+		expect(sites.siteEntry?.map((entry) => entry.permissionLevel)).toEqual([
+			'siteOwner',
+			'siteFullUser',
+		]);
+
+		mockFetch(
+			jsonResponse({
+				sitemap: [
+					{
+						path: FEED,
+						lastSubmitted: '2026-11-16T08:11:53.248Z',
+						isPending: false,
+						isSitemapsIndex: false,
+						type: 'sitemap',
+						lastDownloaded: '2026-11-18T10:37:44.047Z',
+						warnings: '0',
+						errors: '0',
+						contents: [{ type: 'web', submitted: '3', indexed: '0' }],
+					},
+				],
+			}),
+		);
+		const sitemaps = await endpoints.sitemaps.list(makeCtx(), {
+			siteUrl: PROPERTY,
+		});
+		expect(sitemaps.sitemap?.[0]?.type).toBe('sitemap');
+		expect(sitemaps.sitemap?.[0]?.contents?.[0]?.type).toBe('web');
+	});
+
 	it('lists sitemaps for a property', async () => {
 		mockFetch(
 			jsonResponse({
 				sitemap: [
 					{
 						path: FEED,
-						type: 'SITEMAP',
+						type: 'sitemap',
 						errors: '0',
 						warnings: '2',
 						isPending: false,
@@ -219,7 +259,7 @@ describe('sitemaps', () => {
 	});
 
 	it('reads one sitemap, with its URL encoded as a path segment', async () => {
-		mockFetch(jsonResponse({ path: FEED, type: 'SITEMAP' }));
+		mockFetch(jsonResponse({ path: FEED, type: 'sitemap' }));
 
 		await endpoints.sitemaps.get(makeCtx(), {
 			siteUrl: PROPERTY,

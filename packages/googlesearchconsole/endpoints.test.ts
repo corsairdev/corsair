@@ -65,15 +65,21 @@ describe('response parsing', () => {
 		expect(error.name).toBe('ZodError');
 	});
 
-	it('rejects an unknown permission level on a site', async () => {
+	it('keeps a permission level Google adds later, but checks its type', async () => {
 		mockFetch(
 			jsonResponse({
-				siteEntry: [{ siteUrl: PROPERTY, permissionLevel: 'OWNER' }],
+				siteEntry: [{ siteUrl: PROPERTY, permissionLevel: 'siteNewLevel' }],
 			}),
 		);
+		const page = await endpoints.sites.list(makeCtx(), {});
+		expect(page.siteEntry?.[0]?.permissionLevel).toBe('siteNewLevel');
 
+		mockFetch(
+			jsonResponse({
+				siteEntry: [{ siteUrl: PROPERTY, permissionLevel: 3 }],
+			}),
+		);
 		const error = await failure(endpoints.sites.list(makeCtx(), {}));
-
 		expect(error.name).toBe('ZodError');
 	});
 

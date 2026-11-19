@@ -62,7 +62,7 @@ function respond(
 
 const sites = {
 	siteEntry: [
-		{ siteUrl: 'https://example.com/', permissionLevel: 'SITE_OWNER' },
+		{ siteUrl: 'https://example.com/', permissionLevel: 'siteOwner' },
 	],
 };
 

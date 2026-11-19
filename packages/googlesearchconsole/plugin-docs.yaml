@@ -34,7 +34,7 @@ examples:
       startDate: "2026-10-01"
       endDate: "2026-10-31"
       dimensions:
-        - query
+        - QUERY
   write:
     path: sitemaps.submit
     title: Submit a sitemap

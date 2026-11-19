@@ -224,17 +224,14 @@ const SearchAnalyticsQueryOutputSchema = z.object({
 const WmxSiteSchema = z
 	.object({
 		siteUrl: z.string().nullish(),
+		// The v3 API answers camelCase (`siteOwner`), not the discovery
+		// document's SITE_OWNER; checked live 11-19. Open, so a level Google
+		// adds later still parses.
 		permissionLevel: z
-			.enum([
-				'SITE_PERMISSION_LEVEL_UNSPECIFIED',
-				'SITE_OWNER',
-				'SITE_FULL_USER',
-				'SITE_RESTRICTED_USER',
-				'SITE_UNVERIFIED_USER',
-			])
+			.string()
 			.nullish()
 			.describe(
-				'What this credential may do on the property. Only a level above UNVERIFIED can read its data',
+				'What this credential may do on the property: `siteOwner`, `siteFullUser`, `siteRestrictedUser` or `siteUnverifiedUser`. Only owners and full users can read its data',
 			),
 	})
 	.loose();
@@ -272,19 +269,13 @@ const feedpath = z
 
 const WmxSitemapContentSchema = z
 	.object({
+		// camelCase on the wire (`web`), checked live 11-19.
 		type: z
-			.enum([
-				'WEB',
-				'IMAGE',
-				'VIDEO',
-				'NEWS',
-				'MOBILE',
-				'ANDROID_APP',
-				'PATTERN',
-				'IOS_APP',
-				'DATA_FEED_ELEMENT',
-			])
-			.nullish(),
+			.string()
+			.nullish()
+			.describe(
+				'`web`, `image`, `video`, `news`, `mobile`, `androidApp`, `iosApp` or `pattern`',
+			),
 		submitted: z
 			.string()
 			.nullish()
@@ -306,17 +297,13 @@ const WmxSitemapSchema = z
 			.boolean()
 			.nullish()
 			.describe('True when this sitemap is a collection of other sitemaps'),
+		// camelCase on the wire (`sitemap`), checked live 11-19.
 		type: z
-			.enum([
-				'NOT_SITEMAP',
-				'URL_LIST',
-				'SITEMAP',
-				'RSS_FEED',
-				'ATOM_FEED',
-				'PATTERN_SITEMAP',
-				'OCEANFRONT',
-			])
-			.nullish(),
+			.string()
+			.nullish()
+			.describe(
+				'`sitemap`, `rssFeed`, `atomFeed`, `urlList`, `patternSitemap` or `notSitemap`',
+			),
 		warnings: z.string().nullish().describe('int64 as a string'),
 		errors: z.string().nullish().describe('int64 as a string'),
 		contents: z.array(WmxSitemapContentSchema).nullish(),

@@ -7,8 +7,13 @@ import { googlesearchconsole } from './index';
 /** An ApiError shaped the way core's request() throws one. */
 function apiError(
 	status: number,
-	options: { method?: 'GET' | 'POST' | 'PUT' | 'DELETE' } = {},
+	options: {
+		method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+		message?: string;
+		retryAfter?: number;
+	} = {},
 ): ApiError {
+	const message = options.message ?? 'failed';
 	return new ApiError(
 		{ method: options.method ?? 'GET', url: '/sites' },
 		{
@@ -16,9 +21,12 @@ function apiError(
 			ok: false,
 			status,
 			statusText: 'failed',
-			body: { error: { code: status, message: 'failed', status: 'FAILED' } },
+			body: { error: { code: status, message, status: 'FAILED' } },
 		},
-		'failed',
+		message,
+		options.retryAfter === undefined
+			? undefined
+			: { retryAfter: options.retryAfter },
 	);
 }
 
@@ -53,6 +61,23 @@ describe('rate limits', () => {
 
 		expect(strategy.maxRetries).toBe(3);
 		expect(strategy.retryStrategy).toBe('exponential_backoff');
+	});
+
+	it("waits Google's Retry-After when it sends one", async () => {
+		const strategy = await handlerFor(apiError(429, { retryAfter: 60_000 }));
+
+		expect(strategy.headersRetryAfterMs).toBe(60_000);
+	});
+
+	it('does not retry a 429 for an exhausted daily quota', async () => {
+		const strategy = await handlerFor(
+			apiError(429, {
+				message:
+					"Quota exceeded for quota metric 'Queries' and limit 'Queries per day' of service 'searchconsole.googleapis.com'",
+			}),
+		);
+
+		expect(strategy.maxRetries).toBe(0);
 	});
 });
 

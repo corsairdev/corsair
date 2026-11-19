@@ -7,14 +7,30 @@
  * it the suite calls sites.list and picks the first property whose permission
  * level is not UNVERIFIED.
  *
- * Read-only: sites.list, one analytics query over a two-day window, and a
- * sitemaps list. URL inspection is left out because it has its own 2,000 per
- * day quota, and a smoke test should not spend part of it.
+ * Default run, read-only: sites.list and sites.get, one analytics query over a
+ * two-day window, sitemaps.list and sitemaps.get, and one URL inspection (its
+ * quota is 2,000 a day per site, so one call is fine).
+ *
+ * GSC_LIVE_WRITES=1 adds the writes, on throwaway entries the test creates
+ * itself and removes again: sitemaps.submit + delete on a made-up sitemap URL,
+ * and sites.add + delete on a made-up URL-prefix property under the site. Each
+ * refuses to run if its entry already exists, so a real one is never removed.
  */
 import { query as analyticsQuery } from './endpoints/search-analytics';
-import { list as sitemapsList } from './endpoints/sitemaps';
-import { list as sitesList } from './endpoints/sites';
+import {
+	get as sitemapsGet,
+	list as sitemapsList,
+	remove as sitemapsRemove,
+	submit as sitemapsSubmit,
+} from './endpoints/sitemaps';
+import {
+	add as sitesAdd,
+	get as sitesGet,
+	list as sitesList,
+	remove as sitesRemove,
+} from './endpoints/sites';
 import { GoogleSearchConsoleEndpointOutputSchemas } from './endpoints/types';
+import { inspect as urlInspect } from './endpoints/url-inspection';
 
 jest.mock('corsair/core', () => ({
 	...jest.requireActual('corsair/core'),
@@ -24,6 +40,7 @@ jest.mock('corsair/core', () => ({
 const TOKEN = process.env.GOOGLE_SEARCH_CONSOLE_ACCESS_TOKEN?.trim();
 const SITE = process.env.GOOGLE_SEARCH_CONSOLE_SITE?.trim();
 const describeLive = TOKEN ? describe : describe.skip;
+const liveWrite = TOKEN && process.env.GSC_LIVE_WRITES === '1' ? it : it.skip;
 
 if (!TOKEN) {
 	console.warn(
@@ -38,11 +55,10 @@ const ctx = { key: TOKEN ?? '' } as unknown as Parameters<typeof sitesList>[0];
 async function resolveSite(): Promise<string> {
 	if (SITE) return SITE;
 	const page = await sitesList(ctx, {});
-	const verified = (page.siteEntry ?? []).find(
-		(entry) =>
-			entry.permissionLevel &&
-			entry.permissionLevel !== 'SITE_UNVERIFIED_USER' &&
-			entry.permissionLevel !== 'SITE_PERMISSION_LEVEL_UNSPECIFIED',
+	const verified = (page.siteEntry ?? []).find((entry) =>
+		['siteowner', 'sitefulluser'].includes(
+			(entry.permissionLevel ?? '').replace(/_/g, '').toLowerCase(),
+		),
 	);
 	if (!verified?.siteUrl) {
 		throw new Error(
@@ -126,4 +142,80 @@ describeLive('googlesearchconsole live API', () => {
 			}
 		}
 	});
+
+	it('sites.get returns the property', async () => {
+		const siteUrl = await resolveSite();
+
+		const site = await sitesGet(ctx, { siteUrl });
+
+		expect(site.siteUrl).toBe(siteUrl);
+		expect(typeof site.permissionLevel).toBe('string');
+	});
+
+	it('sitemaps.get returns one listed sitemap', async () => {
+		const siteUrl = await resolveSite();
+		const first = (await sitemapsList(ctx, { siteUrl })).sitemap?.[0]?.path;
+		if (!first) return; // A property with no sitemap has nothing to read.
+
+		const sitemap = await sitemapsGet(ctx, { siteUrl, feedpath: first });
+
+		expect(sitemap.path).toBe(first);
+	});
+
+	it('urlInspection.inspect reports the index state of the home page', async () => {
+		const siteUrl = await resolveSite();
+		const home = siteUrl.startsWith('sc-domain:')
+			? `https://${siteUrl.slice('sc-domain:'.length)}/`
+			: siteUrl;
+
+		const result = await urlInspect(ctx, { siteUrl, inspectionUrl: home });
+
+		expect(result.inspectionResult?.indexStatusResult).toBeDefined();
+	});
+
+	liveWrite(
+		'sitemaps.submit then sitemaps.delete a throwaway sitemap URL',
+		async () => {
+			const siteUrl = await resolveSite();
+			const host = siteUrl.startsWith('sc-domain:')
+				? `https://${siteUrl.slice('sc-domain:'.length)}/`
+				: siteUrl;
+			const feedpath = `${host}corsair-live-test-sitemap.xml`;
+			const listed = (await sitemapsList(ctx, { siteUrl })).sitemap ?? [];
+			if (listed.some((entry) => entry.path === feedpath)) {
+				throw new Error(`${feedpath} is already listed; not touching it`);
+			}
+
+			await sitemapsSubmit(ctx, { siteUrl, feedpath });
+			const after = (await sitemapsList(ctx, { siteUrl })).sitemap ?? [];
+			expect(after.some((entry) => entry.path === feedpath)).toBe(true);
+
+			await sitemapsRemove(ctx, { siteUrl, feedpath });
+			const gone = (await sitemapsList(ctx, { siteUrl })).sitemap ?? [];
+			expect(gone.some((entry) => entry.path === feedpath)).toBe(false);
+		},
+	);
+
+	liveWrite(
+		'sites.add then sites.delete a throwaway URL-prefix property',
+		async () => {
+			const siteUrl = await resolveSite();
+			const host = siteUrl.startsWith('sc-domain:')
+				? `https://${siteUrl.slice('sc-domain:'.length)}/`
+				: siteUrl;
+			const property = `${host}corsair-live-test/`;
+			const before = (await sitesList(ctx, {})).siteEntry ?? [];
+			if (before.some((entry) => entry.siteUrl === property)) {
+				throw new Error(`${property} already exists; not touching it`);
+			}
+
+			await sitesAdd(ctx, { siteUrl: property });
+			const added = await sitesGet(ctx, { siteUrl: property });
+			expect(added.siteUrl).toBe(property);
+
+			await sitesRemove(ctx, { siteUrl: property });
+			const after = (await sitesList(ctx, {})).siteEntry ?? [];
+			expect(after.some((entry) => entry.siteUrl === property)).toBe(false);
+		},
+	);
 });

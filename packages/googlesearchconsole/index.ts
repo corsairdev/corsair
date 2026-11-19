@@ -158,7 +158,7 @@ const googleSearchConsoleEndpointMeta = {
 	'sites.delete': {
 		riskLevel: 'destructive',
 		description:
-			'Remove a property from the account, which also drops its Search Console data. It can be added back only after being verified again',
+			"Remove a property from this account's Search Console property list. Other owners keep it, and it can usually be re-added without verifying again",
 	},
 	'sitemaps.list': {
 		riskLevel: 'read',
@@ -177,7 +177,7 @@ const googleSearchConsoleEndpointMeta = {
 	'sitemaps.delete': {
 		riskLevel: 'destructive',
 		description:
-			'Remove a sitemap from the property, which stops Google using it to discover pages',
+			"Remove a sitemap from the property's Sitemaps report. Google may still crawl the sitemap and the URLs it already found",
 	},
 	'urlInspection.inspect': {
 		riskLevel: 'read',
