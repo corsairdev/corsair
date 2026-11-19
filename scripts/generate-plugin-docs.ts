@@ -30,6 +30,12 @@ import type {
 } from '../packages/corsair/core/inspect/index.ts';
 import { introspectPluginForDocs } from '../packages/corsair/core/inspect/index.ts';
 import type { CorsairPlugin } from '../packages/corsair/core/plugins/index.ts';
+import {
+	fieldSchemaCheck,
+	topLevelUnionMembers,
+	valueMatchesDocType,
+	zodObjectFields,
+} from './doc-type-match.ts';
 import { escapeMdxText } from './mdx-escape.ts';
 
 /** Optional per-plugin overrides for the doc generator (next to package.json). */
@@ -571,43 +577,6 @@ function findWebhookByShortPath(
 	);
 }
 
-/** Loose check that a yaml example value matches a docs type string (e.g. `string`, `boolean`). */
-// unknown: yaml examples parse to any JSON-like value; the checks below narrow it.
-function valueMatchesDocType(value: unknown, typeStr: string): boolean {
-	const t = typeStr.trim();
-	// Any JSON value, and `any`, accept every example, but only when the whole
-	// type (or one of its top-level members) is that. `JsonValue[]` still needs
-	// an array and `Record<string, JsonValue>` an object.
-	if (topLevelUnionMembers(t).some((m) => m === 'JsonValue' || m === 'any')) {
-		return true;
-	}
-	if (value === null) {
-		return /\bnull\b/.test(t) || t.includes('| null') || t.endsWith('null');
-	}
-	if (typeof value === 'boolean') return /\bboolean\b/.test(t);
-	if (typeof value === 'number') return /\bnumber\b/.test(t);
-	if (typeof value === 'string') {
-		return (
-			/\bstring\b/.test(t) ||
-			t.includes("'") ||
-			t.includes('"') ||
-			t.startsWith('`')
-		);
-	}
-	if (Array.isArray(value)) {
-		return t.includes('[]') || /\bArray</.test(t);
-	}
-	if (typeof value === 'object') {
-		return (
-			t.includes('{') ||
-			t === 'object' ||
-			/\bRecord</.test(t) ||
-			t === 'unknown'
-		);
-	}
-	return false;
-}
-
 function valueMatchesDbFilterType(
 	value: unknown,
 	type: 'string' | 'number' | 'boolean' | 'date',
@@ -634,6 +603,8 @@ function validateExampleArgsAgainstInput(
 	args: Record<string, unknown>,
 	input: DocSchemaShape,
 	label: string,
+	// unknown: the plugin's zod input schema, read structurally; undefined when it has none.
+	zodInput?: unknown,
 ): string[] {
 	const errors: string[] = [];
 	if (input.kind === 'inline') {
@@ -652,6 +623,7 @@ function validateExampleArgsAgainstInput(
 	}
 
 	const fieldMap = new Map(input.fields.map((f) => [f.key, f]));
+	const zodFields = zodObjectFields(zodInput);
 	for (const [key, value] of Object.entries(args)) {
 		const field = fieldMap.get(key);
 		if (!field) {
@@ -661,6 +633,18 @@ function validateExampleArgsAgainstInput(
 					.sort()
 					.join(', ') || '(none)';
 			errors.push(`${label}: unknown arg "${key}" — valid keys: ${known}`);
+			continue;
+		}
+		// The plugin's own schema decides when there is one: the rendered type
+		// loses whether an enum member was the string '1' or the number 1.
+		const fieldSchema = zodFields?.[key];
+		if (fieldSchema) {
+			const issue = fieldSchemaCheck(fieldSchema, value);
+			if (issue) {
+				errors.push(
+					`${label}: arg "${key}" has value ${JSON.stringify(value)}, which its schema rejects (${issue}); expected type \`${field.type}\``,
+				);
+			}
 			continue;
 		}
 		if (!valueMatchesDocType(value, field.type)) {
@@ -681,9 +665,13 @@ function validatePluginDocsConfig(
 	data: PluginDocsIntrospection,
 	pluginId: string,
 	authTypes: string[],
+	// unknown: the plugin's endpointSchemas, keyed by short path, read structurally.
+	endpointSchemas?: Record<string, { input?: unknown } | undefined>,
 ): string[] {
 	const errors: string[] = [];
 	const prefix = `plugin-docs.yaml`;
+	const zodInputFor = (shortPath: string) =>
+		endpointSchemas?.[shortPath]?.input;
 
 	const recommended = docsConfig.recommendedAuth?.trim();
 	if (recommended && authTypes.length > 0 && !authTypes.includes(recommended)) {
@@ -711,6 +699,7 @@ function validatePluginDocsConfig(
 					call.args,
 					ep.input,
 					`${prefix}: ${kind} (${call.path})`,
+					zodInputFor(ep.shortPath),
 				),
 			);
 		}
@@ -749,6 +738,7 @@ function validatePluginDocsConfig(
 						args,
 						ep.input,
 						`${prefix}: apiExamples.${shortPath}`,
+						zodInputFor(ep.shortPath),
 					),
 				);
 			}
@@ -1389,24 +1379,6 @@ function isObjectLikeType(type: string): boolean {
 	return type.includes('{');
 }
 
-/** Splits a type on its top-level `|` (not inside `{}`, `()`, `[]` or `<>`). */
-function topLevelUnionMembers(type: string): string[] {
-	const members: string[] = [];
-	let depth = 0;
-	let start = 0;
-	for (let i = 0; i < type.length; i++) {
-		const ch = type[i];
-		if (ch === '{' || ch === '(' || ch === '[' || ch === '<') depth++;
-		else if (ch === '}' || ch === ')' || ch === ']' || ch === '>') depth--;
-		else if (ch === '|' && depth === 0) {
-			members.push(type.slice(start, i).trim());
-			start = i + 1;
-		}
-	}
-	members.push(type.slice(start).trim());
-	return members;
-}
-
 /**
  * Table "Type" column: primitives stay literal; object shapes become `object` /
  * `object[]`, member by member, so `{ … } | null` reads `object | null`.
@@ -1981,7 +1953,8 @@ function pluginNavEntryMatches(entry: unknown, pluginId: string): boolean {
 /**
  * Lists `plugins/<pluginId>/*.mdx` and updates `docs/docs.json` so the Mintlify sidebar
  * includes every page in Overview → Get credentials (if present) → API → Database → Webhooks → …
- * order, nested under the plugin display name. Re-sorts plugin groups alphabetically by display name.
+ * order, nested under the plugin display name. A new plugin goes in at its alphabetical place by
+ * display name; other plugins' entries are left where they are.
  */
 function syncPluginDocsJson(
 	repoRoot: string,
@@ -2034,23 +2007,23 @@ function syncPluginDocsJson(
 			? pagePaths[0]!
 			: { group: displayGroupTitle, pages: pagePaths };
 
+	// Touch only this plugin's entry. Re-sorting the whole list moved other
+	// plugins' groups (2Captcha, Raisely) on every run, so a docs PR for one
+	// plugin showed hundreds of unrelated docs.json lines.
 	const idx = pages.findIndex((e) => pluginNavEntryMatches(e, pluginId));
 	if (idx !== -1) {
 		pages[idx] = newEntry;
 	} else {
-		pages.push(newEntry);
+		const key = pluginNavGroupSortKey(newEntry);
+		const at = pages.findIndex(
+			(e) =>
+				pluginNavGroupSortKey(e).localeCompare(key, undefined, {
+					sensitivity: 'base',
+					numeric: true,
+				}) > 0,
+		);
+		pages.splice(at === -1 ? pages.length : at, 0, newEntry);
 	}
-
-	pages.sort((a, b) =>
-		pluginNavGroupSortKey(a).localeCompare(
-			pluginNavGroupSortKey(b),
-			undefined,
-			{
-				sensitivity: 'base',
-				numeric: true,
-			},
-		),
-	);
 
 	if (JSON.stringify(pages) === originalPluginPagesJson) {
 		return;
@@ -2151,6 +2124,9 @@ async function generatePluginDocsForEntry(
 		docData,
 		pluginId,
 		authTypes,
+		plugin.endpointSchemas as
+			| Record<string, { input?: unknown } | undefined>
+			| undefined,
 	);
 	if (configErrors.length > 0) {
 		return {
