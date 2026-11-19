@@ -36,6 +36,7 @@ import {
 	valueMatchesDocType,
 	zodObjectFields,
 } from './doc-type-match.ts';
+import { navInsertIndex } from './docs-nav-order.ts';
 import { escapeMdxText } from './mdx-escape.ts';
 
 /** Optional per-plugin overrides for the doc generator (next to package.json). */
@@ -2014,15 +2015,14 @@ function syncPluginDocsJson(
 	if (idx !== -1) {
 		pages[idx] = newEntry;
 	} else {
-		const key = pluginNavGroupSortKey(newEntry);
-		const at = pages.findIndex(
-			(e) =>
-				pluginNavGroupSortKey(e).localeCompare(key, undefined, {
-					sensitivity: 'base',
-					numeric: true,
-				}) > 0,
+		pages.splice(
+			navInsertIndex(
+				pages.map(pluginNavGroupSortKey),
+				pluginNavGroupSortKey(newEntry),
+			),
+			0,
+			newEntry,
 		);
-		pages.splice(at === -1 ? pages.length : at, 0, newEntry);
 	}
 
 	if (JSON.stringify(pages) === originalPluginPagesJson) {
