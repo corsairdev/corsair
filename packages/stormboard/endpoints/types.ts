@@ -16,11 +16,39 @@ const bool = z.boolean().nullish();
 const positiveInt = z.number().int().positive();
 const nonNegInt = z.number().int().min(0);
 
+// unknown: the date parts arrive as strings until split narrows them.
+function isCalendarDate(value: string): boolean {
+	const [year, month, day] = value.split('-').map(Number);
+	if (!year || !month || !day || month < 1 || month > 12 || day < 1) {
+		return false;
+	}
+	const leap = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+	const daysInMonth = [
+		31,
+		leap ? 29 : 28,
+		31,
+		30,
+		31,
+		30,
+		31,
+		31,
+		30,
+		31,
+		30,
+		31,
+	];
+	return day <= daysInMonth[month - 1]!;
+}
+
 const isoDate = z
 	.string()
 	.regex(
 		/^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:?\d{2}))?$/,
 		'Expected an ISO 8601 date',
+	)
+	.refine(
+		(value) => isCalendarDate(value.slice(0, 10)),
+		'Expected a real calendar date',
 	)
 	.describe('An ISO 8601 date; dates without a timezone are read as UTC.');
 

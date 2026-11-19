@@ -90,7 +90,7 @@ const riskLevels: Record<string, string> = {
 	'storms.updateSection': 'write',
 	'storms.close': 'write',
 	'storms.reopen': 'write',
-	'storms.invite': 'write',
+	'storms.invite': 'destructive',
 	'storms.acceptInvite': 'write',
 	'storms.declineInvite': 'write',
 	'storms.join': 'write',

@@ -1,6 +1,4 @@
-import {
-	StormboardEndpointOutputSchemas as Outputs,
-} from './endpoints/types';
+import { StormboardEndpointOutputSchemas as Outputs } from './endpoints/types';
 import { stormboard } from './index';
 
 /**

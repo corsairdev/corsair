@@ -609,7 +609,7 @@ List the comments on an idea
 **Risk:** `read`
 
 ```ts
-await corsair.stormboard.api.ideas.listComments(api.ideas.listComments({ ideaId: 1000000, order: "asc" }));
+await corsair.stormboard.api.ideas.listComments({ ideaId: 1000000, order: "asc" });
 ```
 
 **Input**
@@ -1193,12 +1193,12 @@ await corsair.stormboard.api.storms.getTemplate({ stormId: 49999 });
 
 `storms.invite`
 
-Invite participants to a Storm by email
+Invite participants to a Storm by email; sends mail that cannot be recalled
 
-**Risk:** `write`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.stormboard.api.storms.invite(api.storms.invite({ stormId: 49999, participants: ["yoda@jedicouncil.com"], type: "contributor" }));
+await corsair.stormboard.api.storms.invite({ stormId: 49999, participants: ["yoda@jedicouncil.com"], type: "contributor" });
 ```
 
 **Input**
@@ -1295,7 +1295,7 @@ List your Storms with search, ordering and paging
 **Risk:** `read`
 
 ```ts
-await corsair.stormboard.api.storms.list(api.storms.list({ status: "active", order: "activity", results: 50 }));
+await corsair.stormboard.api.storms.list({ status: "active", order: "activity", results: 50 });
 ```
 
 **Input**

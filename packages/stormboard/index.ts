@@ -430,8 +430,10 @@ const stormboardEndpointMeta = {
 		description: 'Re-open a closed Storm',
 	},
 	'storms.invite': {
-		riskLevel: 'write',
-		description: 'Invite participants to a Storm by email',
+		riskLevel: 'destructive',
+		description:
+			'Invite participants to a Storm by email; sends mail that cannot be recalled',
+		irreversible: true,
 	},
 	'storms.acceptInvite': {
 		riskLevel: 'write',

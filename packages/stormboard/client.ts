@@ -140,12 +140,21 @@ export async function makeStormboardRequest(
 		// and drop its fields.
 		if (error instanceof StormboardAPIError) throw error;
 		if (error instanceof ApiError) {
+			// Rebuilt without the cause, per PLUGIN_PR_RULES R8: the cause
+			// retains request bodies (profiles and invites carry personal
+			// data), and status and retryAfter stay on the rebuilt error for
+			// the handlers.
 			const detail = describeStormboardError(error.body, error.message);
 			throw new StormboardAPIError(
 				error.status === undefined
 					? detail
 					: `Stormboard ${error.status}: ${detail}`,
-				{ cause: error, status: error.status, body: error.body, method },
+				{
+					status: error.status,
+					body: error.body,
+					retryAfter: error.retryAfter,
+					method,
+				},
 			);
 		}
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.

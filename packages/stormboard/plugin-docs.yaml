@@ -83,8 +83,7 @@ apiExamples:
     args:
       stormId: 49999
   storms.list:
-    call: >-
-      api.storms.list({ status: "active", order: "activity", results: 50 })
+    call: '{ status: "active", order: "activity", results: 50 }'
   storms.listInvites: {}
   storms.listConnectors:
     args:
@@ -97,8 +96,8 @@ apiExamples:
       stormId: 49999
   storms.invite:
     call: >-
-      api.storms.invite({ stormId: 49999, participants:
-      ["yoda@jedicouncil.com"], type: "contributor" })
+      { stormId: 49999, participants: ["yoda@jedicouncil.com"], type:
+      "contributor" }
   storms.acceptInvite:
     args:
       stormId: 49999
@@ -156,7 +155,7 @@ apiExamples:
       ideaId: 1000000
       commentId: 1234
   ideas.listComments:
-    call: 'api.ideas.listComments({ ideaId: 1000000, order: "asc" })'
+    call: '{ ideaId: 1000000, order: "asc" }'
   ideas.createConnector:
     args:
       from_idea_id: 1000
