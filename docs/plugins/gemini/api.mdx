@@ -550,7 +550,7 @@ await corsair.gemini.api.videos.getVideosOperation({});
 
 `videos.waitForVideo`
 
-Poll a Veo video generation operation until it completes and return the generated video
+Poll a Veo video generation operation until it completes and return the generated video. Up to about 700 KB comes back inline; a larger video comes back with fileId where the host saved it (on Corsair a Files id), or contentOmitted.
 
 **Risk:** `write`
 
@@ -583,8 +583,14 @@ await corsair.gemini.api.videos.waitForVideo({});
 ```ts
 {
   video_file?: {
-    mimeType: string,
-    contentBase64: string
+    contentBase64?: string,
+    text?: string,
+    contentType: string,
+    byteLength: number,
+    filename?: string,
+    contentOmitted?: not_requested | over_limit,
+    fileId?: string,
+    mimeType: string
   }
 }
 ```

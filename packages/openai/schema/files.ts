@@ -1,3 +1,4 @@
+import { FileOutputSchema } from 'corsair/http';
 import { z } from 'zod';
 
 export const FilePurposeSchema = z.enum([
@@ -78,10 +79,7 @@ export type FilesDownloadContentInput = z.infer<
 	typeof FilesDownloadContentInputSchema
 >;
 
-export const FilesDownloadContentResponseSchema = z.object({
-	fileId: z.string(),
-	contentBase64: z.string(),
-});
+export const FilesDownloadContentResponseSchema = FileOutputSchema;
 export type FilesDownloadContentResponse = z.infer<
 	typeof FilesDownloadContentResponseSchema
 >;

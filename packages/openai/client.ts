@@ -156,10 +156,28 @@ export async function uploadOpenaiFile<T>(
  * File content downloads (e.g. GET /files/{id}/content) return raw bytes, not JSON —
  * fetch directly instead of going through the JSON-oriented request() helper.
  */
+/**
+ * Most bytes a download returns inline to a caller without a host. A host that
+ * keeps files (setFileSink) caps it at its own limit and gets a `fileId` instead.
+ */
+export const DOWNLOAD_MAX_BYTES = 100_000_000;
+
+export type OpenaiDownload = {
+	bytes: Uint8Array;
+	contentType: string | null;
+	filename?: string;
+};
+
+/** The file name a Content-Disposition header offers, if any. */
+function dispositionFilename(header: string | null): string | undefined {
+	const match = /filename="?([^";]+)"?/i.exec(header ?? '');
+	return match?.[1]?.trim() || undefined;
+}
+
 export async function downloadOpenaiFile(
 	endpoint: string,
 	apiKey: string,
-): Promise<ArrayBuffer> {
+): Promise<OpenaiDownload> {
 	const response = await fetch(buildUrl(endpoint), {
 		method: 'GET',
 		headers: { Authorization: `Bearer ${apiKey}` },
@@ -170,7 +188,14 @@ export async function downloadOpenaiFile(
 		throwFromFetchResponse(response, text);
 	}
 
-	return response.arrayBuffer();
+	const filename = dispositionFilename(
+		response.headers.get('content-disposition'),
+	);
+	return {
+		bytes: new Uint8Array(await response.arrayBuffer()),
+		contentType: response.headers.get('content-type'),
+		...(filename ? { filename } : {}),
+	};
 }
 
 /**

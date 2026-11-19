@@ -175,7 +175,7 @@ const geminiEndpointMeta = {
 	'videos.waitForVideo': {
 		riskLevel: 'write',
 		description:
-			'Poll a Veo video generation operation until it completes and return the generated video',
+			'Poll a Veo video generation operation until it completes and return the generated video. Up to about 700 KB comes back inline; a larger video comes back with fileId where the host saved it (on Corsair a Files id), or contentOmitted.',
 	},
 	'models.listModels': {
 		riskLevel: 'read',

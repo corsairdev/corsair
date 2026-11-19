@@ -1,3 +1,4 @@
+import { FileOutputSchema } from 'corsair/http';
 import { z } from 'zod';
 
 export const AudioCreateSpeechInputSchema = z.object({
@@ -14,8 +15,16 @@ export type AudioCreateSpeechInput = z.infer<
 	typeof AudioCreateSpeechInputSchema
 >;
 
-export const AudioCreateSpeechResponseSchema = z.object({
-	audioBase64: z.string(),
+export const AudioCreateSpeechResponseSchema = FileOutputSchema.omit({
+	contentBase64: true,
+	text: true,
+}).extend({
+	audioBase64: z
+		.string()
+		.optional()
+		.describe(
+			'The audio, base64-encoded. Missing when contentOmitted is set or the host kept the file (fileId).',
+		),
 	format: z.string(),
 });
 export type AudioCreateSpeechResponse = z.infer<
