@@ -90,6 +90,18 @@ const FilesDownloadInputSchema = z.object({
 	acknowledgeAbuse: z.boolean().optional(),
 });
 
+const FilesExportInputSchema = z.object({
+	fileId: z
+		.string()
+		.describe('The Google Docs, Sheets, Slides or Drawings file.'),
+	mimeType: z
+		.string()
+		.optional()
+		.describe(
+			'The format to export to, for example application/pdf or application/vnd.openxmlformats-officedocument.wordprocessingml.document. Defaults to Markdown for Docs, CSV (first sheet only) for Sheets, PDF for Slides and PNG for Drawings.',
+		),
+});
+
 const FilesShareInputSchema = z.object({
 	fileId: z.string(),
 	type: z.enum(['user', 'group', 'domain', 'anyone']).optional(),
@@ -248,6 +260,7 @@ export const GoogleDriveEndpointInputSchemas = {
 	filesCopy: FilesCopyInputSchema,
 	filesMove: FilesMoveInputSchema,
 	filesDownload: FilesDownloadInputSchema,
+	filesExport: FilesExportInputSchema,
 	filesShare: FilesShareInputSchema,
 	foldersCreate: FoldersCreateInputSchema,
 	foldersGet: FoldersGetInputSchema,
@@ -376,6 +389,7 @@ export const GoogleDriveEndpointOutputSchemas = {
 	filesCopy: FileSchema,
 	filesMove: FileSchema,
 	filesDownload: FileOutputSchema,
+	filesExport: FileOutputSchema,
 	filesShare: PermissionSchema,
 	foldersCreate: FileSchema,
 	foldersGet: FileSchema,
@@ -401,6 +415,7 @@ export type GoogleDriveEndpointOutputs = {
 	filesCopy: File;
 	filesMove: File;
 	filesDownload: FileOutput;
+	filesExport: FileOutput;
 	filesShare: Permission;
 	foldersCreate: File;
 	foldersGet: File;
