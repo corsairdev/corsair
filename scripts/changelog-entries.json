@@ -9881,5 +9881,23 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-19",
+    "package": "@corsair-dev/googleads",
+    "dir": "packages/googleads",
+    "name": "Google Ads",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-19",
+    "package": "@corsair-dev/googlesearchconsole",
+    "dir": "packages/googlesearchconsole",
+    "name": "Google Search Console",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
