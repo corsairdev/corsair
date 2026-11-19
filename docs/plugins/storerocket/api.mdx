@@ -1,0 +1,1139 @@
+---
+title: "Storerocket API reference"
+sidebarTitle: "API"
+description: "API reference for the Storerocket plugin in Corsair: every `storerocket.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Locations
+
+### create
+
+`locations.create`
+
+Create a location; name and city are required
+
+**Risk:** `write`
+
+```ts
+await corsair.storerocket.api.locations.create({
+	projectId: 'PROJECT_ID',
+	name: 'Downtown Store',
+	city: 'Seattle',
+	phone: '555-0101',
+	lat: 47.6062,
+	lng: -122.3321,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `city` | `string` | Yes | — |
+| `slug` | `string` | No | Location slug. |
+| `address` | `string \| null` | No | — |
+| `address_line_1` | `string \| null` | No | — |
+| `address_line_2` | `string \| null` | No | — |
+| `display_address` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `postcode` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `lat` | `number \| null` | No | — |
+| `lng` | `number \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `timezone` | `string \| null` | No | — |
+| `location_type` | `string \| null` | No | Name of a location type in the project; null restores the default. |
+| `marker_id` | `number \| null` | No | Integer ID of a marker in the project; null restores the default. |
+| `cover` | `string \| null` | No | Image URL or the project stored image name; null clears the cover. |
+| `visible` | `boolean` | No | — |
+| `hours` | `object \| null` | No | — |
+| `filters` | `string[] \| null` | No | Filter names; replaces the list, [] or null clears it. |
+| `fields` | `Record<string, unknown> \| null` | No | Named custom fields, such as &#123;"Manager":"Sam"&#125;; a null value removes the attachment. |
+| `callsToAction` | `Record<string, unknown> \| null` | No | Named calls to action, such as &#123;"Book":"https://example.com/book"&#125;; a null value removes the attachment. |
+| `facebook` | `string \| null` | No | — |
+| `instagram` | `string \| null` | No | — |
+| `twitter` | `string \| null` | No | — |
+| `yelp` | `string \| null` | No | — |
+| `youtube` | `string \| null` | No | — |
+| `tiktok` | `string \| null` | No | — |
+
+Name and city are required. Omit hours or send hours: &#123;&#125; for a coming-soon location; a nonempty hours object must include all seven days. Sending both coordinates avoids depending on the geocoder; check the geocoding object in the response, whose status says whether the address was found, only roughly matched, not found, or queued.
+
+<AccordionGroup>
+<Accordion title="hours full type">
+
+```ts
+{
+  name?: string,
+  mon?: string | null,
+  tue?: string | null,
+  wed?: string | null,
+  thu?: string | null,
+  fri?: string | null,
+  sat?: string | null,
+  sun?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `geocoding` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  slug?: string | null,
+  visible?: boolean | null,
+  address?: string | null,
+  address_line_1?: string | null,
+  address_line_2?: string | null,
+  display_address?: string | null,
+  city?: string | null,
+  state?: string | null,
+  postcode?: string | null,
+  country?: string | null,
+  lat?: number | null,
+  lng?: number | null,
+  phone?: string | null,
+  email?: string | null,
+  url?: string | null,
+  timezone?: string | null,
+  location_type?: string | null,
+  marker_id?: number | null,
+  marker_url?: string | null,
+  cover_image_url?: string | null,
+  hours?: {
+    name?: string | null,
+    mon?: string | null,
+    tue?: string | null,
+    wed?: string | null,
+    thu?: string | null,
+    fri?: string | null,
+    sat?: string | null,
+    sun?: string | null
+  } | null,
+  filters?: unknown[] | null,
+  fields?: {
+    id?: string | null,
+    name?: string | null,
+    value?: unknown | null
+  }[] | null,
+  callsToAction?: {
+    id?: string | null,
+    title?: string | null,
+    value?: string | null
+  }[] | null
+}
+```
+</Accordion>
+
+<Accordion title="geocoding full type">
+
+```ts
+{
+  status: found | approximate | not_found | unavailable | queued,
+  match?: address | road | place | postcode | city | region | country | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`locations.delete`
+
+Delete a location from a project
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.storerocket.api.locations.delete({ projectId: 'PROJECT_ID', locationId: 'LOCATION_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `locationId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`locations.get`
+
+Read one location and its optional attached information
+
+**Risk:** `read`
+
+```ts
+await corsair.storerocket.api.locations.get({ projectId: 'PROJECT_ID', locationId: 'LOCATION_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `locationId` | `string` | Yes | — |
+| `includeHours` | `boolean` | No | — |
+| `includeSpecialHours` | `boolean` | No | — |
+| `includeFilters` | `boolean` | No | — |
+| `includeFields` | `boolean` | No | — |
+| `includeCallsToAction` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  slug?: string | null,
+  visible?: boolean | null,
+  address?: string | null,
+  address_line_1?: string | null,
+  address_line_2?: string | null,
+  display_address?: string | null,
+  city?: string | null,
+  state?: string | null,
+  postcode?: string | null,
+  country?: string | null,
+  lat?: number | null,
+  lng?: number | null,
+  phone?: string | null,
+  email?: string | null,
+  url?: string | null,
+  timezone?: string | null,
+  location_type?: string | null,
+  marker_id?: number | null,
+  marker_url?: string | null,
+  cover_image_url?: string | null,
+  hours?: {
+    name?: string | null,
+    mon?: string | null,
+    tue?: string | null,
+    wed?: string | null,
+    thu?: string | null,
+    fri?: string | null,
+    sat?: string | null,
+    sun?: string | null
+  } | null,
+  filters?: unknown[] | null,
+  fields?: {
+    id?: string | null,
+    name?: string | null,
+    value?: unknown | null
+  }[] | null,
+  callsToAction?: {
+    id?: string | null,
+    title?: string | null,
+    value?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`locations.list`
+
+List locations with filters, include flags and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.storerocket.api.locations.list(api.locations.list({ projectId: "PROJECT_ID", limit: 25, includeHours: true, filters: [{ field: "city", op: "eq", value: "Seattle" }] }));
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | Page size from 1 to 100; the API defaults to 15. |
+| `includeHours` | `boolean` | No | — |
+| `includeSpecialHours` | `boolean` | No | — |
+| `includeFilters` | `boolean` | No | — |
+| `includeFields` | `boolean` | No | — |
+| `includeCallsToAction` | `boolean` | No | — |
+| `filters` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  field: name | address | city | state | country | postalCode,
+  op: eq | ne | like,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object \| null` | No | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  slug?: string | null,
+  visible?: boolean | null,
+  address?: string | null,
+  address_line_1?: string | null,
+  address_line_2?: string | null,
+  display_address?: string | null,
+  city?: string | null,
+  state?: string | null,
+  postcode?: string | null,
+  country?: string | null,
+  lat?: number | null,
+  lng?: number | null,
+  phone?: string | null,
+  email?: string | null,
+  url?: string | null,
+  timezone?: string | null,
+  location_type?: string | null,
+  marker_id?: number | null,
+  marker_url?: string | null,
+  cover_image_url?: string | null,
+  hours?: {
+    name?: string | null,
+    mon?: string | null,
+    tue?: string | null,
+    wed?: string | null,
+    thu?: string | null,
+    fri?: string | null,
+    sat?: string | null,
+    sun?: string | null
+  } | null,
+  filters?: unknown[] | null,
+  fields?: {
+    id?: string | null,
+    name?: string | null,
+    value?: unknown | null
+  }[] | null,
+  callsToAction?: {
+    id?: string | null,
+    title?: string | null,
+    value?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number | null,
+  from?: number | null,
+  last_page?: number | null,
+  path?: string | null,
+  per_page?: number | null,
+  to?: number | null,
+  total?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### replace
+
+`locations.replace`
+
+Replace a location with the PUT contract; omitted markers and types reset to defaults
+
+**Risk:** `write`
+
+```ts
+await corsair.storerocket.api.locations.replace({
+	projectId: 'PROJECT_ID',
+	locationId: 'LOCATION_ID',
+	name: 'Downtown Store',
+	city: 'Seattle',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `locationId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `city` | `string` | Yes | — |
+| `slug` | `string` | No | Location slug. |
+| `address` | `string \| null` | No | — |
+| `address_line_1` | `string \| null` | No | — |
+| `address_line_2` | `string \| null` | No | — |
+| `display_address` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `postcode` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `lat` | `number \| null` | No | — |
+| `lng` | `number \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `timezone` | `string \| null` | No | — |
+| `location_type` | `string \| null` | No | Name of a location type in the project; null restores the default. |
+| `marker_id` | `number \| null` | No | Integer ID of a marker in the project; null restores the default. |
+| `cover` | `string \| null` | No | Image URL or the project stored image name; null clears the cover. |
+| `visible` | `boolean` | No | — |
+| `hours` | `object \| null` | No | — |
+| `filters` | `string[] \| null` | No | Filter names; replaces the list, [] or null clears it. |
+| `fields` | `Record<string, unknown> \| null` | No | Named custom fields, such as &#123;"Manager":"Sam"&#125;; a null value removes the attachment. |
+| `callsToAction` | `Record<string, unknown> \| null` | No | Named calls to action, such as &#123;"Book":"https://example.com/book"&#125;; a null value removes the attachment. |
+| `facebook` | `string \| null` | No | — |
+| `instagram` | `string \| null` | No | — |
+| `twitter` | `string \| null` | No | — |
+| `yelp` | `string \| null` | No | — |
+| `youtube` | `string \| null` | No | — |
+| `tiktok` | `string \| null` | No | — |
+
+PUT keeps the existing contract: supplied fields and callsToAction replace their attachments, omitted marker and type selections reset to project defaults, and a nonempty hours object replaces the whole week. Use PATCH when you want to preserve everything you leave out.
+
+<AccordionGroup>
+<Accordion title="hours full type">
+
+```ts
+{
+  name?: string,
+  mon?: string | null,
+  tue?: string | null,
+  wed?: string | null,
+  thu?: string | null,
+  fri?: string | null,
+  sat?: string | null,
+  sun?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `geocoding` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  slug?: string | null,
+  visible?: boolean | null,
+  address?: string | null,
+  address_line_1?: string | null,
+  address_line_2?: string | null,
+  display_address?: string | null,
+  city?: string | null,
+  state?: string | null,
+  postcode?: string | null,
+  country?: string | null,
+  lat?: number | null,
+  lng?: number | null,
+  phone?: string | null,
+  email?: string | null,
+  url?: string | null,
+  timezone?: string | null,
+  location_type?: string | null,
+  marker_id?: number | null,
+  marker_url?: string | null,
+  cover_image_url?: string | null,
+  hours?: {
+    name?: string | null,
+    mon?: string | null,
+    tue?: string | null,
+    wed?: string | null,
+    thu?: string | null,
+    fri?: string | null,
+    sat?: string | null,
+    sun?: string | null
+  } | null,
+  filters?: unknown[] | null,
+  fields?: {
+    id?: string | null,
+    name?: string | null,
+    value?: unknown | null
+  }[] | null,
+  callsToAction?: {
+    id?: string | null,
+    title?: string | null,
+    value?: string | null
+  }[] | null
+}
+```
+</Accordion>
+
+<Accordion title="geocoding full type">
+
+```ts
+{
+  status: found | approximate | not_found | unavailable | queued,
+  match?: address | road | place | postcode | city | region | country | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`locations.update`
+
+Update selected location fields; omissions keep their saved values
+
+**Risk:** `write`
+
+```ts
+await corsair.storerocket.api.locations.update({ projectId: 'PROJECT_ID', locationId: 'LOCATION_ID', phone: '555-0101' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `locationId` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `slug` | `string` | No | Location slug. |
+| `address` | `string \| null` | No | — |
+| `address_line_1` | `string \| null` | No | — |
+| `address_line_2` | `string \| null` | No | — |
+| `display_address` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `postcode` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `lat` | `number \| null` | No | — |
+| `lng` | `number \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `timezone` | `string \| null` | No | — |
+| `location_type` | `string \| null` | No | Name of a location type in the project; null restores the default. |
+| `marker_id` | `number \| null` | No | Integer ID of a marker in the project; null restores the default. |
+| `cover` | `string \| null` | No | Image URL or the project stored image name; null clears the cover. |
+| `visible` | `boolean` | No | — |
+| `hours` | `object \| null` | No | — |
+| `filters` | `string[] \| null` | No | Filter names; replaces the list, [] or null clears it. |
+| `fields` | `Record<string, unknown> \| null` | No | Named custom fields, such as &#123;"Manager":"Sam"&#125;; a null value removes the attachment. |
+| `callsToAction` | `Record<string, unknown> \| null` | No | Named calls to action, such as &#123;"Book":"https://example.com/book"&#125;; a null value removes the attachment. |
+| `facebook` | `string \| null` | No | — |
+| `instagram` | `string \| null` | No | — |
+| `twitter` | `string \| null` | No | — |
+| `yelp` | `string \| null` | No | — |
+| `youtube` | `string \| null` | No | — |
+| `tiktok` | `string \| null` | No | — |
+
+PATCH keeps everything you leave out. Send null to clear a field, hours: null to remove the schedule, a null value in fields or callsToAction to remove that attachment, and marker_id or location_type null to restore the project default. Invalid input saves no part of the update.
+
+<AccordionGroup>
+<Accordion title="hours full type">
+
+```ts
+{
+  name?: string,
+  mon?: string | null,
+  tue?: string | null,
+  wed?: string | null,
+  thu?: string | null,
+  fri?: string | null,
+  sat?: string | null,
+  sun?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `geocoding` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  slug?: string | null,
+  visible?: boolean | null,
+  address?: string | null,
+  address_line_1?: string | null,
+  address_line_2?: string | null,
+  display_address?: string | null,
+  city?: string | null,
+  state?: string | null,
+  postcode?: string | null,
+  country?: string | null,
+  lat?: number | null,
+  lng?: number | null,
+  phone?: string | null,
+  email?: string | null,
+  url?: string | null,
+  timezone?: string | null,
+  location_type?: string | null,
+  marker_id?: number | null,
+  marker_url?: string | null,
+  cover_image_url?: string | null,
+  hours?: {
+    name?: string | null,
+    mon?: string | null,
+    tue?: string | null,
+    wed?: string | null,
+    thu?: string | null,
+    fri?: string | null,
+    sat?: string | null,
+    sun?: string | null
+  } | null,
+  filters?: unknown[] | null,
+  fields?: {
+    id?: string | null,
+    name?: string | null,
+    value?: unknown | null
+  }[] | null,
+  callsToAction?: {
+    id?: string | null,
+    title?: string | null,
+    value?: string | null
+  }[] | null
+}
+```
+</Accordion>
+
+<Accordion title="geocoding full type">
+
+```ts
+{
+  status: found | approximate | not_found | unavailable | queued,
+  match?: address | road | place | postcode | city | region | country | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Projects
+
+### list
+
+`projects.list`
+
+List the projects the token can access
+
+**Risk:** `read`
+
+```ts
+await corsair.storerocket.api.projects.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  locations?: number | null,
+  status?: string | null,
+  plan?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Special Hours
+
+### create
+
+`specialHours.create`
+
+Create a special-hours rule, with an optional idempotency key
+
+**Risk:** `write`
+
+```ts
+await corsair.storerocket.api.specialHours.create(api.specialHours.create({ projectId: "PROJECT_ID", name: "Thanksgiving", holiday_key: "US:thanksgiving-day", start_date: "2026-11-26", hours: "closed", repeats_yearly: true, applies_to: { type: "countries", values: ["US"] }, idempotencyKey: "thanksgiving-2026-us" }));
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `start_date` | `string` | Yes | — |
+| `end_date` | `string` | No | — |
+| `until_further_notice` | `boolean` | No | — |
+| `hours` | `closed \| regular \| open_24_hours \| object[]` | Yes | — |
+| `repeats_yearly` | `boolean` | No | — |
+| `holiday_key` | `string` | No | Stable holiday identifier such as US:thanksgiving-day; needed for repeats_yearly. |
+| `holiday_region` | `string` | No | Where a repeating holiday date is read, e.g. AU-QLD. |
+| `note` | `string \| null` | No | — |
+| `applies_to` | `object` | Yes | — |
+| `idempotencyKey` | `string` | No | Sent as the Idempotency-Key header; the same key with the same body replays the first answer. |
+
+Requires name, start_date, hours and applies_to; a missing end_date means the same day, and until_further_notice takes no end_date. The hours value is "closed", "regular", "open_24_hours", or up to six &#123;opens, closes&#125; ranges. repeats_yearly needs a yearly holiday_key on a single day. The same Idempotency-Key with the same body replays the first answer; with a different body it answers 409.
+
+<AccordionGroup>
+<Accordion title="hours full type">
+
+```ts
+closed | regular | open_24_hours | {
+  opens: string,
+  closes: string
+}[]
+```
+</Accordion>
+
+<Accordion title="applies_to full type">
+
+```ts
+{
+  type: all | countries | regions | filters | locations,
+  values?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  holiday_key?: string | null,
+  holiday_region?: string | null,
+  start_date?: string | null,
+  end_date?: string | null,
+  until_further_notice?: boolean | null,
+  hours?: closed | regular | open_24_hours | {
+    opens: string,
+    closes: string
+  }[] | null,
+  repeats_yearly?: boolean | null,
+  note?: string | null,
+  applies_to?: {
+    type: all | countries | regions | filters | locations,
+    values?: string[] | null
+  } | null,
+  source?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`specialHours.delete`
+
+Delete a special-hours rule; locations fall back to weekly hours
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.storerocket.api.specialHours.delete({ projectId: 'PROJECT_ID', ruleId: 'k4ZqP0mE7d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `ruleId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`specialHours.get`
+
+Read one special-hours rule
+
+**Risk:** `read`
+
+```ts
+await corsair.storerocket.api.specialHours.get({ projectId: 'PROJECT_ID', ruleId: 'k4ZqP0mE7d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `ruleId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  holiday_key?: string | null,
+  holiday_region?: string | null,
+  start_date?: string | null,
+  end_date?: string | null,
+  until_further_notice?: boolean | null,
+  hours?: closed | regular | open_24_hours | {
+    opens: string,
+    closes: string
+  }[] | null,
+  repeats_yearly?: boolean | null,
+  note?: string | null,
+  applies_to?: {
+    type: all | countries | regions | filters | locations,
+    values?: string[] | null
+  } | null,
+  source?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`specialHours.list`
+
+List the holiday and special-hours rules of a project
+
+**Risk:** `read`
+
+```ts
+await corsair.storerocket.api.specialHours.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  holiday_key?: string | null,
+  holiday_region?: string | null,
+  start_date?: string | null,
+  end_date?: string | null,
+  until_further_notice?: boolean | null,
+  hours?: closed | regular | open_24_hours | {
+    opens: string,
+    closes: string
+  }[] | null,
+  repeats_yearly?: boolean | null,
+  note?: string | null,
+  applies_to?: {
+    type: all | countries | regions | filters | locations,
+    values?: string[] | null
+  } | null,
+  source?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`specialHours.update`
+
+Change selected fields of a special-hours rule
+
+**Risk:** `write`
+
+```ts
+await corsair.storerocket.api.specialHours.update({ projectId: 'PROJECT_ID', ruleId: 'k4ZqP0mE7d', note: 'Visitor centre closed for renovation' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `ruleId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `start_date` | `string` | No | — |
+| `end_date` | `string \| null` | No | — |
+| `until_further_notice` | `boolean` | No | — |
+| `hours` | `closed \| regular \| open_24_hours \| object[]` | No | — |
+| `repeats_yearly` | `boolean` | No | — |
+| `holiday_key` | `string \| null` | No | — |
+| `holiday_region` | `string \| null` | No | — |
+| `note` | `string \| null` | No | — |
+| `applies_to` | `object` | No | — |
+| `idempotencyKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="hours full type">
+
+```ts
+closed | regular | open_24_hours | {
+  opens: string,
+  closes: string
+}[]
+```
+</Accordion>
+
+<Accordion title="applies_to full type">
+
+```ts
+{
+  type: all | countries | regions | filters | locations,
+  values?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  holiday_key?: string | null,
+  holiday_region?: string | null,
+  start_date?: string | null,
+  end_date?: string | null,
+  until_further_notice?: boolean | null,
+  hours?: closed | regular | open_24_hours | {
+    opens: string,
+    closes: string
+  }[] | null,
+  repeats_yearly?: boolean | null,
+  note?: string | null,
+  applies_to?: {
+    type: all | countries | regions | filters | locations,
+    values?: string[] | null
+  } | null,
+  source?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### get
+
+`users.get`
+
+Read the profile associated with the token
+
+**Risk:** `read`
+
+```ts
+await corsair.storerocket.api.users.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  email?: string | null,
+  company?: string | null,
+  profile_photo_url?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
