@@ -146,6 +146,28 @@ describe('a managed-pricing call', () => {
 		expect(data.result).toBeUndefined();
 	});
 
+	it('stores the result as it was returned, even if the caller changes it after', async () => {
+		mockHub();
+		jest.spyOn(console, 'warn').mockImplementation(() => {});
+		let stored = '';
+		// unknown: a stand-in client that writes after the save stops waiting.
+		jest.spyOn(orm, 'createKyselyEntityClient').mockReturnValue({
+			upsertByEntityId: (_id: string, data: unknown) =>
+				new Promise<void>((resolve) =>
+					setTimeout(() => {
+						stored = JSON.stringify(data);
+						resolve();
+					}, 1_500),
+				),
+		} as unknown as ReturnType<typeof orm.createKyselyEntityClient>);
+
+		const answer = await bind(async () => ({ n: 1 })).parse.parse({});
+		(answer as { n: number }).n = 2;
+		await new Promise((r) => setTimeout(r, 700));
+
+		expect(JSON.parse(stored).result).toEqual({ n: 1 });
+	});
+
 	it('returns the answer when the save hangs', async () => {
 		mockHub();
 		const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});

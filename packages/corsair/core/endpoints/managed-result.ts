@@ -7,6 +7,7 @@ const MAX_RESULT_BYTES = 256 * 1024;
 // The call has already succeeded; a stalled write may not hold its answer or usage report longer than this.
 const SAVE_WAIT_MS = 1_000;
 
+// unknown: a result is whatever the provider returned; its shape differs per operation.
 const schema = z.record(z.string(), z.unknown());
 
 /**
@@ -27,22 +28,25 @@ export async function saveManagedResult(input: {
 }): Promise<void> {
 	const { database, getAccountId } = input;
 	if (!database || !getAccountId) return;
+	// unknown: a save can throw values that are not an Error.
 	const warn = (err: unknown) =>
 		console.warn(
 			`[corsair] could not save the result of ${input.operation}: ${err instanceof Error ? err.message : String(err)}`,
 		);
 	let timer: ReturnType<typeof setTimeout> | undefined;
 	try {
+		// Copies, so a write still running after the wait never sees the caller change them.
 		const base = {
 			operation: input.operation,
-			args: input.args,
+			args: snapshot(input.args),
 			at: new Date().toISOString(),
 		};
-		const json = JSON.stringify(input.result) ?? '';
+		const json = JSON.stringify(input.result);
 		const data =
+			json !== undefined &&
 			new TextEncoder().encode(json).length > MAX_RESULT_BYTES
 				? { ...base, truncated: true }
-				: { ...base, result: input.result };
+				: { ...base, result: json === undefined ? null : JSON.parse(json) };
 		const write = createKyselyEntityClient(
 			database.db,
 			getAccountId,
@@ -70,3 +74,9 @@ export async function saveManagedResult(input: {
 		clearTimeout(timer);
 	}
 }
+
+// unknown: any JSON-shaped value the caller passed.
+const snapshot = (value: unknown): unknown => {
+	const json = JSON.stringify(value);
+	return json === undefined ? null : JSON.parse(json);
+};
