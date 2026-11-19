@@ -2774,6 +2774,14 @@
                 ]
               },
               {
+                "group": "Google Search Console",
+                "pages": [
+                  "plugins/googlesearchconsole/overview",
+                  "plugins/googlesearchconsole/api",
+                  "plugins/googlesearchconsole/database"
+                ]
+              },
+              {
                 "group": "Google Sheets",
                 "pages": [
                   "plugins/googlesheets/overview",
