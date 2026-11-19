@@ -71,7 +71,7 @@ apiExamples:
     call: "{ newMediaItems: [{ file: { url: 'https://example.com/beach.jpg', contentType: 'image/jpeg' }, description: 'Beach day' }] }"
 apiNotes:
   albums.list: 'Only albums this app created are readable; the wide-read scope was removed in 2025.'
-  albums.update: 'Sends PATCH with the `title` mask, the only field the API documents as writable.'
+  albums.update: 'Sends PATCH with the `title` mask. The API also accepts `coverPhotoMediaItemId`, which this plugin does not expose yet.'
   mediaItems.search: 'Send `albumId` or `filters`, never both; the API answers 400 for that combination.'
   mediaItems.create: 'Each file is a public URL or base64 (up to 200 MB). The endpoint uploads them, then creates up to 50 items from the returned tokens; a failed item carries a status code.'
   mediaItems.batchGet: 'Each requested id gets an entry, and a failed id carries a status instead of an item.'

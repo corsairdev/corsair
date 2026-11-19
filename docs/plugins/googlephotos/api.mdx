@@ -326,7 +326,7 @@ await corsair.googlephotos.api.albums.update({ albumId: 'ABcDeFgHiJkLmNoP', titl
 | `albumId` | `string` | Yes | An album id from albums.create or albums.list |
 | `title` | `string` | Yes | At most 500 characters |
 
-Sends PATCH with the `title` mask, the only field the API documents as writable.
+Sends PATCH with the `title` mask. The API also accepts `coverPhotoMediaItemId`, which this plugin does not expose yet.
 
 
 

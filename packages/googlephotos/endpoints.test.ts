@@ -257,6 +257,40 @@ describe('Google error envelopes', () => {
 		}
 	});
 
+	it('refuses a file name over 255 characters before uploading any bytes', async () => {
+		mockFetch(jsonResponse({}));
+
+		const error = await failure(
+			endpoints.mediaItems.create(makeCtx(), {
+				newMediaItems: [
+					{ file: { base64: 'aGk=', filename: `${'x'.repeat(252)}.jpg` } },
+				],
+			}),
+		);
+
+		expect(error.message).toContain('255');
+		expect(globalThis.fetch).not.toHaveBeenCalled();
+	});
+
+	it('takes a short fileName override when the source name is too long', async () => {
+		mockFetch(jsonResponse({}));
+
+		const error = await failure(
+			endpoints.mediaItems.create(makeCtx(), {
+				newMediaItems: [
+					{
+						file: { base64: 'aGk=', filename: `${'x'.repeat(300)}.jpg` },
+						fileName: 'short.jpg',
+					},
+				],
+			}),
+		);
+
+		// It got past the name check and reached the upload request.
+		expect(error.message).not.toContain('255');
+		expect(globalThis.fetch).toHaveBeenCalled();
+	});
+
 	it('reports an upload failure with the provider status', async () => {
 		mockFetch(
 			jsonResponse(

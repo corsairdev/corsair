@@ -159,6 +159,15 @@ export const create: GooglePhotosEndpoints['mediaItemsCreate'] = async (
 			maxBytes: UPLOAD_MAX_BYTES,
 			fallbackName: 'upload',
 		});
+		// Google caps the file name (extension included) at 255 characters. The
+		// explicit override is limited by the input schema; a name taken from
+		// the file itself is checked here, before any bytes are uploaded.
+		const fileName = item.fileName ?? file.filename;
+		if (fileName.length > 255) {
+			throw new Error(
+				`The file name is ${fileName.length} characters; Google's limit is 255. Pass a shorter fileName.`,
+			);
+		}
 		const uploadToken = await uploadMediaBytes(
 			ctx.key,
 			file.bytes,
@@ -168,7 +177,7 @@ export const create: GooglePhotosEndpoints['mediaItemsCreate'] = async (
 			...(item.description ? { description: item.description } : {}),
 			simpleMediaItem: {
 				uploadToken,
-				fileName: item.fileName ?? file.filename,
+				fileName,
 			},
 		});
 	}

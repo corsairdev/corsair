@@ -111,13 +111,33 @@ describeLive('googlephotos live API', () => {
 
 	let albumId = '';
 	let mediaItemId = '';
+	// The album and the uploaded item are made once here, so any single test
+	// can run on its own (jest -t) without depending on another test's state.
+	let createdAlbum: Awaited<ReturnType<typeof albumsCreate>>;
+	let createdItems: Awaited<ReturnType<typeof mediaItemsCreate>>;
 
-	it('albums.create makes an app-created album', async () => {
-		const album = await albumsCreate(ctx, { title: LABEL });
+	beforeAll(async () => {
+		createdAlbum = await albumsCreate(ctx, { title: LABEL });
+		albumId = createdAlbum.id;
+		createdItems = await mediaItemsCreate(ctx, {
+			newMediaItems: [
+				{
+					file: {
+						base64: tinyPng().toString('base64'),
+						filename: 'corsair-live-test.png',
+						contentType: 'image/png',
+					},
+					description: 'corsair-live-test upload',
+				},
+			],
+			albumId,
+		});
+		mediaItemId = createdItems.newMediaItemResults[0]?.mediaItem?.id ?? '';
+	}, 120_000);
 
-		expect(typeof album.id).toBe('string');
-		expect(album.title).toBe(LABEL);
-		albumId = album.id;
+	it('albums.create makes an app-created album', () => {
+		expect(typeof createdAlbum.id).toBe('string');
+		expect(createdAlbum.title).toBe(LABEL);
 	});
 
 	it('albums.get reads it back', async () => {
@@ -163,26 +183,11 @@ describeLive('googlephotos live API', () => {
 		expect(typeof result.enrichmentItem?.id).toBe('string');
 	});
 
-	it('mediaItems.create uploads a PNG and creates it in the album', async () => {
-		const result = await mediaItemsCreate(ctx, {
-			newMediaItems: [
-				{
-					file: {
-						base64: tinyPng().toString('base64'),
-						filename: 'corsair-live-test.png',
-						contentType: 'image/png',
-					},
-					description: 'corsair-live-test upload',
-				},
-			],
-			albumId,
-		});
-
-		expect(result.newMediaItemResults).toHaveLength(1);
-		const [entry] = result.newMediaItemResults;
+	it('mediaItems.create uploads a PNG and creates it in the album', () => {
+		expect(createdItems.newMediaItemResults).toHaveLength(1);
+		const [entry] = createdItems.newMediaItemResults;
 		expect(isFailureStatus(entry?.status)).toBe(false);
 		expect(typeof entry?.mediaItem?.id).toBe('string');
-		mediaItemId = entry?.mediaItem?.id ?? '';
 	});
 
 	it('mediaItems.get reads the new item, with int64 sizes as strings', async () => {
@@ -251,20 +256,17 @@ describeLive('googlephotos live API', () => {
 		expect(item.description).toBe('corsair-live-test (edited)');
 	});
 
-	it('albums.batchRemoveMediaItems takes the item out of the album', async () => {
+	it('albums.batchRemoveMediaItems takes the item out and batchAddMediaItems puts it back', async () => {
+		// One test, so the item is always restored to the album it started in.
 		await batchRemoveMediaItems(ctx, { albumId, mediaItemIds: [mediaItemId] });
-
-		const page = await mediaItemsSearch(ctx, { albumId, pageSize: 100 });
-		expect((page.mediaItems ?? []).map((item) => item.id)).not.toContain(
+		const removed = await mediaItemsSearch(ctx, { albumId, pageSize: 100 });
+		expect((removed.mediaItems ?? []).map((item) => item.id)).not.toContain(
 			mediaItemId,
 		);
-	});
 
-	it('albums.batchAddMediaItems puts it back', async () => {
 		await batchAddMediaItems(ctx, { albumId, mediaItemIds: [mediaItemId] });
-
-		const page = await mediaItemsSearch(ctx, { albumId, pageSize: 100 });
-		expect((page.mediaItems ?? []).map((item) => item.id)).toContain(
+		const restored = await mediaItemsSearch(ctx, { albumId, pageSize: 100 });
+		expect((restored.mediaItems ?? []).map((item) => item.id)).toContain(
 			mediaItemId,
 		);
 	});
