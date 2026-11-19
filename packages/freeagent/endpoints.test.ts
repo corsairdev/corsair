@@ -817,8 +817,42 @@ const wireCases: readonly WireCase[] = [
 		method: 'PUT',
 		pathAndQuery: '/v2/bank_transaction_explanations/1',
 		body: { bank_transaction_explanation: { description: 'Updated' } },
-		response: null,
-		expected: undefined,
+		response: {
+			bank_transaction_explanation: {
+				bank_transaction: 'https://api.freeagent.com/v2/bank_transactions/8',
+				bank_account: 'https://api.freeagent.com/v2/bank_accounts/1',
+				dated_on: '2019-05-01',
+				description: 'harness end-to-end e-business',
+				category: 'https://api.freeagent.com/v2/categories/285',
+				gross_value: '-730.0',
+				project: 'https://api.freeagent.com/v2/projects/1',
+				rebill_type: 'price',
+				rebill_factor: '800',
+				updated_at: '2020-02-06T11:08:28.000Z',
+				sales_tax_status: 'TAXABLE',
+				sales_tax_rate: '20.0',
+				sales_tax_value: '-28.33',
+				is_deletable: true,
+			},
+		},
+		expected: {
+			bank_transaction_explanation: {
+				bank_transaction: 'https://api.freeagent.com/v2/bank_transactions/8',
+				bank_account: 'https://api.freeagent.com/v2/bank_accounts/1',
+				dated_on: '2019-05-01',
+				description: 'harness end-to-end e-business',
+				category: 'https://api.freeagent.com/v2/categories/285',
+				gross_value: '-730.0',
+				project: 'https://api.freeagent.com/v2/projects/1',
+				rebill_type: 'price',
+				rebill_factor: '800',
+				updated_at: '2020-02-06T11:08:28.000Z',
+				sales_tax_status: 'TAXABLE',
+				sales_tax_rate: '20.0',
+				sales_tax_value: '-28.33',
+				is_deletable: true,
+			},
+		},
 	},
 	{
 		name: 'bankTransactionExplanations.delete',
@@ -891,6 +925,66 @@ const wireCases: readonly WireCase[] = [
 		response: { attachments: [] },
 		expected: { attachments: [] },
 		apiVersion: '2026-09-01',
+	},
+	{
+		name: 'accountLocks.list',
+		handler: AccountingEndpoints.accountLocks.list,
+		input: {},
+		method: 'GET',
+		pathAndQuery: '/v2/account_locks',
+		body: undefined,
+		response: {
+			account_locks: [
+				{
+					locked_to_date: '2024-03-31',
+					user_lock: true,
+					locked_by_description: 'Nathan Barley',
+					locked_by_url: 'https://api.freeagent.com/v2/users/1',
+				},
+				{
+					locked_to_date: '2023-12-31',
+					locked_by_description: 'Accounting Year End 2023/23',
+				},
+			],
+			earliest_lock_date: '2024-01-01',
+			latest_lock_date: '2024-12-31',
+		},
+		expected: {
+			account_locks: [
+				{
+					locked_to_date: '2024-03-31',
+					user_lock: true,
+					locked_by_description: 'Nathan Barley',
+					locked_by_url: 'https://api.freeagent.com/v2/users/1',
+				},
+				{
+					locked_to_date: '2023-12-31',
+					locked_by_description: 'Accounting Year End 2023/23',
+				},
+			],
+			earliest_lock_date: '2024-01-01',
+			latest_lock_date: '2024-12-31',
+		},
+	},
+	{
+		name: 'accountLocks.update',
+		handler: AccountingEndpoints.accountLocks.update,
+		input: { account_lock: { locked_to_date: '2024-12-31' } },
+		method: 'PUT',
+		pathAndQuery: '/v2/account_locks',
+		body: { account_lock: { locked_to_date: '2024-12-31' } },
+		response: null,
+		expected: undefined,
+	},
+	{
+		name: 'accountLocks.delete',
+		handler: AccountingEndpoints.accountLocks.delete,
+		input: {},
+		method: 'DELETE',
+		pathAndQuery: '/v2/account_locks',
+		body: undefined,
+		response: null,
+		expected: undefined,
 	},
 	{
 		name: 'categories.list',
@@ -1287,41 +1381,79 @@ const wireCases: readonly WireCase[] = [
 		name: 'journalSets.update',
 		handler: AccountingEndpoints.journalSets.update,
 		input: {
-			id: '1',
+			id: '37',
 			journal_set: {
+				dated_on: '2014-01-18',
+				description: 'Journal Set for 2014-01-18',
 				journal_entries: [
 					{
-						category: 'https://api.freeagent.com/v2/categories/001',
-						debit_value: '10.0',
+						url: 'https://api.freeagent.com/v2/journal_sets/37/journal_entries/17',
+						_destroy: true,
 					},
 					{
-						category: 'https://api.freeagent.com/v2/categories/002',
-						debit_value: '-10.0',
+						url: 'https://api.freeagent.com/v2/journal_sets/37/journal_entries/18',
+						debit_value: '-20.0',
+					},
+					{
+						category: 'https://api.freeagent.com/v2/categories/001',
+						debit_value: '-20.0',
 					},
 				],
 			},
 		},
 		method: 'PUT',
-		pathAndQuery: '/v2/journal_sets/1',
+		pathAndQuery: '/v2/journal_sets/37',
 		body: {
 			journal_set: {
+				dated_on: '2014-01-18',
+				description: 'Journal Set for 2014-01-18',
 				journal_entries: [
 					{
-						category: 'https://api.freeagent.com/v2/categories/001',
-						debit_value: '10.0',
+						url: 'https://api.freeagent.com/v2/journal_sets/37/journal_entries/17',
+						_destroy: true,
 					},
 					{
-						category: 'https://api.freeagent.com/v2/categories/002',
-						debit_value: '-10.0',
+						url: 'https://api.freeagent.com/v2/journal_sets/37/journal_entries/18',
+						debit_value: '-20.0',
+					},
+					{
+						category: 'https://api.freeagent.com/v2/categories/001',
+						debit_value: '-20.0',
 					},
 				],
 			},
 		},
 		response: {
-			journal_set: { description: 'Adjustment', journal_entries: [] },
+			journal_set: {
+				url: 'https://api.freeagent.com/v2/journal_sets/37',
+				dated_on: '2014-01-18',
+				description: 'Journal Set for 2014-01-18',
+				updated_at: '2020-02-06T11:08:28.000Z',
+				tag: 'MYAPPTAG',
+				journal_entries: [
+					{
+						url: 'https://api.freeagent.com/v2/journal_sets/37/journal_entries/18',
+						category: 'https://api.freeagent.com/v2/categories/001',
+						debit_value: '-20.0',
+					},
+				],
+			},
 		},
 		expected: {
-			journal_set: { description: 'Adjustment', journal_entries: [] },
+			journal_set: {
+				url: 'https://api.freeagent.com/v2/journal_sets/37',
+				dated_on: '2014-01-18',
+				description: 'Journal Set for 2014-01-18',
+				updated_at: '2020-02-06T11:08:28.000Z',
+				tag: 'MYAPPTAG',
+				journal_entries: [
+					{
+						url: 'https://api.freeagent.com/v2/journal_sets/37/journal_entries/18',
+						category: 'https://api.freeagent.com/v2/categories/001',
+						debit_value: '-20.0',
+					},
+				],
+			},
 		},
 	},
 	{
@@ -3236,7 +3368,7 @@ const wireCases: readonly WireCase[] = [
 				last_name: 'User',
 				role: 'Employee',
 				opening_mileage: 0,
-				send_invitation: false,
+				send_invitation: true,
 			},
 		},
 		method: 'POST',
@@ -3248,7 +3380,7 @@ const wireCases: readonly WireCase[] = [
 				last_name: 'User',
 				role: 'Employee',
 				opening_mileage: 0,
-				send_invitation: false,
+				send_invitation: true,
 			},
 		},
 		response: {
@@ -3626,7 +3758,7 @@ describe('FreeAgent endpoint registry and wire contracts', () => {
 		}
 	});
 
-	it('marks financial document actions with their documented write risks', () => {
+	it('marks irreversible actions with destructive risk metadata', () => {
 		expect(plugin.endpointMeta?.['invoices.sendEmail']?.riskLevel).toBe(
 			'destructive',
 		);
@@ -3648,6 +3780,28 @@ describe('FreeAgent endpoint registry and wire contracts', () => {
 		);
 		expect(plugin.endpointMeta?.['recurringInvoices.get']?.riskLevel).toBe(
 			'read',
+		);
+		expect(
+			plugin.endpointMeta?.['bankTransactionExplanations.updateAttachments']
+				?.riskLevel,
+		).toBe('destructive');
+		expect(plugin.endpointMeta?.['creditNotes.update']?.riskLevel).toBe(
+			'destructive',
+		);
+		expect(plugin.endpointMeta?.['bills.update']?.riskLevel).toBe(
+			'destructive',
+		);
+		expect(plugin.endpointMeta?.['users.create']?.riskLevel).toBe(
+			'destructive',
+		);
+		expect(plugin.endpointMeta?.['journalSets.update']?.riskLevel).toBe(
+			'destructive',
+		);
+		expect(plugin.endpointMeta?.['accountLocks.update']?.riskLevel).toBe(
+			'write',
+		);
+		expect(plugin.endpointMeta?.['accountLocks.delete']?.riskLevel).toBe(
+			'destructive',
 		);
 	});
 });

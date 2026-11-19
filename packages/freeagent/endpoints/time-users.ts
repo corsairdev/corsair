@@ -568,7 +568,7 @@ export const TimeUserEndpointMeta = {
 		description: 'Get the currently active user profile',
 	},
 	'users.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Create a company user and optionally send an invitation',
 	},
 	'users.update': { riskLevel: 'write', description: 'Update a company user' },

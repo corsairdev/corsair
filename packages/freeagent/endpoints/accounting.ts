@@ -15,6 +15,29 @@ const Pagination = z.object({
 	total_count: z.string().regex(/^\d+$/).nullable(),
 });
 
+const AccountLock = z
+	.object({
+		locked_to_date: z.string().date(),
+		user_lock: z.literal(true).optional(),
+		locked_by_description: z.string().optional(),
+		locked_by_url: z.string().url().optional(),
+	})
+	.strict();
+const AccountLocksListInput = z.object({}).strict();
+const AccountLocksListOutput = z
+	.object({
+		account_locks: z.array(AccountLock),
+		earliest_lock_date: z.string().date().optional(),
+		latest_lock_date: z.string().date().optional(),
+	})
+	.strict();
+const AccountLocksUpdateInput = z
+	.object({
+		account_lock: z.object({ locked_to_date: z.string().date() }).strict(),
+	})
+	.strict();
+const AccountLocksDeleteInput = z.object({}).strict();
+
 const Category = z
 	.object({
 		url: z.string().url().optional(),
@@ -382,6 +405,11 @@ const JournalEntryInput = z
 		contact: z.string().url().optional(),
 	})
 	.strict();
+const JournalEntryUpdate = z.union([
+	z.object({ url: z.string().url(), _destroy: z.literal(true) }).strict(),
+	JournalEntryInput.partial().extend({ url: z.string().url() }).strict(),
+	JournalEntryInput,
+]);
 const JournalSet = z
 	.object({
 		url: z.string().url().optional(),
@@ -449,9 +477,35 @@ const JournalSetBodyInput = z
 	.strict();
 const JournalSetBodyOutput = JournalSetGetOutput;
 const JournalSetUpdateInput = z
-	.object({ id: z.string().min(1), journal_set: JournalSetFields })
+	.object({
+		id: z.string().min(1),
+		journal_set: z
+			.object({
+				dated_on: z.string().date().optional(),
+				description: z.string().min(1).optional(),
+				tag: z.string().optional(),
+				journal_entries: z.array(JournalEntryUpdate).optional(),
+			})
+			.strict(),
+	})
 	.strict();
 const JournalSetDeleteInput = JournalSetGetInput;
+
+const AccountLocks = {
+	list: defineOperation(AccountLocksListInput, AccountLocksListOutput, {
+		method: 'GET',
+		path: () => '/v2/account_locks',
+	}),
+	update: defineOperation(AccountLocksUpdateInput, EmptyResponse, {
+		method: 'PUT',
+		path: () => '/v2/account_locks',
+		body: (input) => ({ account_lock: input.account_lock }),
+	}),
+	delete: defineOperation(AccountLocksDeleteInput, EmptyResponse, {
+		method: 'DELETE',
+		path: () => '/v2/account_locks',
+	}),
+};
 
 const Categories = {
 	list: defineOperation(CategoryListInput, CategoryListOutput, {
@@ -586,6 +640,7 @@ const JournalSets = {
 };
 
 export const AccountingEndpoints = {
+	accountLocks: AccountLocks,
 	categories: Categories,
 	balanceSheet: BalanceSheets,
 	cis: Cis,
@@ -594,6 +649,18 @@ export const AccountingEndpoints = {
 } as const;
 
 export const AccountingEndpointSchemas = {
+	'accountLocks.list': {
+		input: AccountLocksListInput,
+		output: AccountLocksListOutput,
+	},
+	'accountLocks.update': {
+		input: AccountLocksUpdateInput,
+		output: EmptyResponse,
+	},
+	'accountLocks.delete': {
+		input: AccountLocksDeleteInput,
+		output: EmptyResponse,
+	},
 	'categories.list': { input: CategoryListInput, output: CategoryListOutput },
 	'categories.get': { input: CategoryGetInput, output: CategoryEnvelope },
 	'categories.create': { input: CategoryCreateInput, output: CategoryEnvelope },
@@ -652,6 +719,18 @@ export const AccountingEndpointSchemas = {
 } as const;
 
 export const AccountingEndpointMeta = {
+	'accountLocks.list': {
+		riskLevel: 'read',
+		description: 'List company account locks and user-lock date bounds',
+	},
+	'accountLocks.update': {
+		riskLevel: 'write',
+		description: 'Create or update the user account lock date',
+	},
+	'accountLocks.delete': {
+		riskLevel: 'destructive',
+		description: 'Remove the user account lock',
+	},
 	'categories.list': {
 		riskLevel: 'read',
 		description: 'List company accounting categories and subaccounts',
@@ -734,8 +813,8 @@ export const AccountingEndpointMeta = {
 		description: 'Create a balanced journal set',
 	},
 	'journalSets.update': {
-		riskLevel: 'write',
-		description: 'Update a journal set',
+		riskLevel: 'destructive',
+		description: 'Update a journal set, including irreversible entry deletion',
 	},
 	'journalSets.delete': {
 		riskLevel: 'destructive',

@@ -152,6 +152,9 @@ const BankTransactionExplanation = z
 		tracking_groups: z.array(TrackingGroupAssignment).optional(),
 	})
 	.passthrough();
+const BankTransactionExplanationOutput = z
+	.object({ bank_transaction_explanation: BankTransactionExplanation })
+	.passthrough();
 // The provider adds nested explanations and versioned attachment fields to transaction responses.
 const BankTransaction = z
 	.object({
@@ -516,9 +519,7 @@ const BankTransactionExplanations = {
 	}),
 	get: defineOperation(
 		z.object({ id: z.string().min(1) }).strict(),
-		z
-			.object({ bank_transaction_explanation: BankTransactionExplanation })
-			.passthrough(),
+		BankTransactionExplanationOutput,
 		{
 			method: 'GET',
 			path: (input) =>
@@ -527,9 +528,7 @@ const BankTransactionExplanations = {
 	),
 	create: defineOperation(
 		ExplanationCreateInput,
-		z
-			.object({ bank_transaction_explanation: BankTransactionExplanation })
-			.passthrough(),
+		BankTransactionExplanationOutput,
 		{
 			method: 'POST',
 			path: () => '/v2/bank_transaction_explanations',
@@ -540,7 +539,7 @@ const BankTransactionExplanations = {
 		z
 			.object({ id: z.string().min(1), explanation: ExplanationUpdateInput })
 			.strict(),
-		EmptyResponse,
+		BankTransactionExplanationOutput,
 		{
 			method: 'PUT',
 			path: (input) =>
@@ -718,21 +717,17 @@ export const BankingEndpointSchemas = {
 	},
 	'bankTransactionExplanations.get': {
 		input: z.object({ id: z.string().min(1) }).strict(),
-		output: z
-			.object({ bank_transaction_explanation: BankTransactionExplanation })
-			.passthrough(),
+		output: BankTransactionExplanationOutput,
 	},
 	'bankTransactionExplanations.create': {
 		input: ExplanationCreateInput,
-		output: z
-			.object({ bank_transaction_explanation: BankTransactionExplanation })
-			.passthrough(),
+		output: BankTransactionExplanationOutput,
 	},
 	'bankTransactionExplanations.update': {
 		input: z
 			.object({ id: z.string().min(1), explanation: ExplanationUpdateInput })
 			.strict(),
-		output: EmptyResponse,
+		output: BankTransactionExplanationOutput,
 	},
 	'bankTransactionExplanations.delete': {
 		input: z.object({ id: z.string().min(1) }).strict(),
@@ -839,7 +834,7 @@ export const BankingEndpointMeta = {
 		description: 'Add up to ten explanation attachments in one call',
 	},
 	'bankTransactionExplanations.updateAttachments': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Update, add, or remove explanation attachments',
 	},
 	'bankTransactionExplanations.deleteAttachments': {

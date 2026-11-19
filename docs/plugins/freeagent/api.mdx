@@ -8,6 +8,133 @@ description: "API reference for the FreeAgent plugin in Corsair: every `freeagen
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
 </Info>
 
+## Account Locks
+
+### delete
+
+`accountLocks.delete`
+
+Remove the user account lock
+
+**Risk:** `destructive`
+
+```ts
+await corsair.freeagent.api.accountLocks.delete({});
+```
+
+**Input:** _empty object_
+
+Requires Full Access. Deletes only the user account lock; other listed locks are read-only through this API.
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`accountLocks.list`
+
+List company account locks and user-lock date bounds
+
+**Risk:** `read`
+
+```ts
+await corsair.freeagent.api.accountLocks.list({});
+```
+
+**Input:** _empty object_
+
+Requires Full Access. Lists user and resource locks. If earliest_lock_date is absent, a user account lock cannot be set.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_locks` | `object[]` | Yes | — |
+| `earliest_lock_date` | `string` | No | — |
+| `latest_lock_date` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="account_locks full type">
+
+```ts
+{
+  locked_to_date: string,
+  user_lock?: true,
+  locked_by_description?: string,
+  locked_by_url?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`accountLocks.update`
+
+Create or update the user account lock date
+
+**Risk:** `write`
+
+```ts
+await corsair.freeagent.api.accountLocks.update({
+	account_lock: { locked_to_date: '2024-12-31' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_lock` | `object` | Yes | — |
+
+Requires Full Access. Sets or updates only the user account lock; choose a locked_to_date within the bounds returned by accountLocks.list.
+
+<AccordionGroup>
+<Accordion title="account_lock full type">
+
+```ts
+{
+  locked_to_date: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
 ## Attachments
 
 ### delete
@@ -1361,17 +1488,86 @@ await corsair.freeagent.api.bankTransactionExplanations.update({
 
 
 
-**Output:** `object \| undefined`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bank_transaction_explanation` | `object` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="bank_transaction_explanation full type">
 
 ```ts
 {
-} | undefined
+  url?: string,
+  bank_account?: string,
+  bank_transaction?: string,
+  type?: string,
+  ec_status?: string,
+  place_of_supply?: string,
+  dated_on?: string,
+  gross_value?: string | number,
+  sales_tax_rate?: string | number,
+  second_sales_tax_rate?: string | number,
+  sales_tax_value?: string | number,
+  second_sales_tax_value?: string | number,
+  sales_tax_status?: string,
+  second_sales_tax_status?: string,
+  description?: string,
+  category?: string,
+  cheque_number?: string,
+  attachments?: {
+    url: string
+  }[],
+  attachment?: {
+    url: string,
+    content_src?: string,
+    content_src_medium?: string,
+    content_src_small?: string,
+    expires_at?: string,
+    content_type?: string,
+    file_name?: string,
+    file_size?: number,
+    description?: string
+  },
+  marked_for_review?: boolean,
+  is_money_in?: boolean,
+  is_money_out?: boolean,
+  is_money_paid_to_user?: boolean,
+  is_locked?: boolean,
+  locked_attributes?: string[],
+  locked_reason?: string,
+  is_deletable?: boolean,
+  project?: string,
+  rebill_type?: cost | markup | price,
+  rebill_factor?: string | number,
+  receipt_reference?: string,
+  paid_invoice?: string,
+  paid_bill?: string,
+  paid_user?: string,
+  transfer_bank_account?: string,
+  stock_item?: string,
+  stock_altering_quantity?: string | number,
+  capital_asset?: string,
+  asset_life_years?: string | number,
+  disposed_asset?: string,
+  property?: string,
+  direct_contact?: string,
+  tracking_groups?: {
+    url: string,
+    name: string,
+    status: active | hidden,
+    labels: {
+      url: string,
+      name: string,
+      status: active | hidden
+    }[]
+  }[]
+}
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -1382,7 +1578,7 @@ await corsair.freeagent.api.bankTransactionExplanations.update({
 
 Update, add, or remove explanation attachments
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.freeagent.api.bankTransactionExplanations.updateAttachments({
@@ -2312,9 +2508,9 @@ await corsair.freeagent.api.bills.list({
 
 `bills.update`
 
-Update a bill and its identified bill items
+Update a bill; updates can delete identified bill items
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.freeagent.api.bills.update({
@@ -2331,6 +2527,8 @@ await corsair.freeagent.api.bills.update({
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `bill` | `object` | Yes | — |
+
+Existing bill items can be deleted with their URL and _destroy: 1. This operation is classified as destructive because item deletion cannot be undone.
 
 <AccordionGroup>
 <Accordion title="bill full type">
@@ -5602,9 +5800,9 @@ await corsair.freeagent.api.creditNotes.sendEmail({
 
 `creditNotes.update`
 
-Update credit note fields and line items
+Update credit note fields and items, including irreversible item deletion
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.freeagent.api.creditNotes.update({
@@ -5621,6 +5819,8 @@ await corsair.freeagent.api.creditNotes.update({
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `credit_note` | `object` | Yes | — |
+
+Existing credit note items can be deleted with their id and _destroy: 1. This operation is classified as destructive because item deletion cannot be undone.
 
 <AccordionGroup>
 <Accordion title="credit_note full type">
@@ -6851,7 +7051,7 @@ await corsair.freeagent.api.estimates.updateItem({
 
 `expenses.batchCreate`
 
-Create expenses atomically in one documented batch request
+Create expenses in a batch; verify ambiguous outcomes before retrying
 
 **Risk:** `write`
 
@@ -6879,7 +7079,7 @@ await corsair.freeagent.api.expenses.batchCreate({
 |------|------|----------|-------------|
 | `expenses` | `object[]` | Yes | — |
 
-The first-party API forum confirms a 201 response containing one expense per submitted item in order, and atomic failure with no partial creation.
+The first-party API forum confirms a 201 response containing one expense per submitted item in order. One observed 422 validation failure created no records; this does not establish whether an ambiguous timeout or lost response committed. Check for the submitted expenses before retrying an ambiguous failure.
 
 <AccordionGroup>
 <Accordion title="expenses full type">
@@ -10190,15 +10390,15 @@ await corsair.freeagent.api.journalSets.openingBalances({});
 
 `journalSets.update`
 
-Update a journal set
+Update a journal set, including irreversible entry deletion
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.freeagent.api.journalSets.update({
 	id: '1',
 	journal_set: {
-		journal_entries: [{ category: 'https://api.freeagent.com/v2/categories/001', debit_value: '10.0' }, { category: 'https://api.freeagent.com/v2/categories/002', debit_value: '-10.0' }],
+		journal_entries: [{ url: 'https://api.freeagent.com/v2/journal_sets/37/journal_entries/17', _destroy: true }, { url: 'https://api.freeagent.com/v2/journal_sets/37/journal_entries/18', debit_value: '-20.0' }, { category: 'https://api.freeagent.com/v2/categories/001', debit_value: '-20.0' }],
 	},
 });
 ```
@@ -10210,6 +10410,8 @@ await corsair.freeagent.api.journalSets.update({
 | `id` | `string` | Yes | — |
 | `journal_set` | `object` | Yes | — |
 
+Updates can omit unchanged journal-set fields. Existing journal entries are updated by URL, deleted with _destroy: true, or added without a URL. Creation remains a separate operation that requires at least two entries. This update is destructive because entry deletion cannot be undone through this API.
+
 <AccordionGroup>
 <Accordion title="journal_set full type">
 
@@ -10218,18 +10420,35 @@ await corsair.freeagent.api.journalSets.update({
   dated_on?: string,
   description?: string,
   tag?: string,
-  journal_entries: {
-    category: string,
-    debit_value: string | number,
-    description?: string,
-    capital_asset_type?: string,
-    user?: string,
-    stock_item?: string,
-    stock_altering_quantity?: number,
-    bank_account?: string,
-    property?: string,
-    contact?: string
-  }[]
+  journal_entries?: (
+    {
+      url: string,
+      _destroy: true
+    } | {
+      category?: string,
+      debit_value?: string | number,
+      description?: string,
+      capital_asset_type?: string,
+      user?: string,
+      stock_item?: string,
+      stock_altering_quantity?: number,
+      bank_account?: string,
+      property?: string,
+      contact?: string,
+      url: string
+    } | {
+      category: string,
+      debit_value: string | number,
+      description?: string,
+      capital_asset_type?: string,
+      user?: string,
+      stock_item?: string,
+      stock_altering_quantity?: number,
+      bank_account?: string,
+      property?: string,
+      contact?: string
+    }
+  )[]
 }
 ```
 </Accordion>
@@ -13491,7 +13710,7 @@ Hidden groups and labels are omitted by default. Use include_hidden, order_by, a
 
 Create a company user and optionally send an invitation
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.freeagent.api.users.create({
@@ -13511,6 +13730,8 @@ await corsair.freeagent.api.users.create({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `user` | `object` | Yes | — |
+
+Requires user-management access. When send_invitation is true, FreeAgent sends a password setup invitation; this operation is classified as destructive.
 
 <AccordionGroup>
 <Accordion title="user full type">

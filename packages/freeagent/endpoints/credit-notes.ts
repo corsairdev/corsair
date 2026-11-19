@@ -473,8 +473,9 @@ export const CreditNoteEndpointMeta = {
 		description: 'Create a draft credit note',
 	},
 	'creditNotes.update': {
-		riskLevel: 'write',
-		description: 'Update credit note fields and line items',
+		riskLevel: 'destructive',
+		description:
+			'Update credit note fields and items, including irreversible item deletion',
 	},
 	'creditNotes.delete': {
 		riskLevel: 'destructive',

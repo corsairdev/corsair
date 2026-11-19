@@ -418,7 +418,7 @@ const ExpenseCreateFields = ExpenseFields.extend({
 	}
 });
 const ExpenseCreateInput = z.object({ expense: ExpenseCreateFields }).strict();
-// FreeAgent's API forum documents the batch response envelope, input order, and all-or-nothing failures.
+// The sandbox report confirms ordered success results and no creation after one observed 422; ambiguous transport failures may still have committed.
 const ExpenseBatchCreateInput = z
 	.object({ expenses: z.array(ExpenseCreateFields).min(1) })
 	.strict();
@@ -603,8 +603,8 @@ export const ExpensesBillsEndpointMeta = {
 		description: 'Create a bill with documented bill items',
 	},
 	'bills.update': {
-		riskLevel: 'write',
-		description: 'Update a bill and its identified bill items',
+		riskLevel: 'destructive',
+		description: 'Update a bill; updates can delete identified bill items',
 	},
 	'bills.delete': { riskLevel: 'destructive', description: 'Delete a bill' },
 	'expenses.list': {
@@ -621,7 +621,8 @@ export const ExpensesBillsEndpointMeta = {
 	},
 	'expenses.batchCreate': {
 		riskLevel: 'write',
-		description: 'Create expenses atomically in one documented batch request',
+		description:
+			'Create expenses in a batch; verify ambiguous outcomes before retrying',
 	},
 	'expenses.update': {
 		riskLevel: 'write',

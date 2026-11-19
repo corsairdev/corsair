@@ -14,6 +14,13 @@ examples:
         organisation_name: Example Ltd
 apiExamples:
   {
+      "accountLocks.list":  {},
+      "accountLocks.update":  {
+                                 "account_lock":  {
+                                                      "locked_to_date":  "2024-12-31"
+                                                  }
+                             },
+      "accountLocks.delete":  {},
       "company.get":  {
 
                       },
@@ -394,19 +401,23 @@ apiExamples:
                                                  }
                              },
       "journalSets.update":  {
-                                 "id":  "1",
-                                 "journal_set":  {
-                                                     "journal_entries":  [
-                                                                             {
-                                                                                 "category":  "https://api.freeagent.com/v2/categories/001",
-                                                                                 "debit_value":  "10.0"
-                                                                             },
-                                                                             {
-                                                                                 "category":  "https://api.freeagent.com/v2/categories/002",
-                                                                                 "debit_value":  "-10.0"
-                                                                             }
-                                                                         ]
-                                                 }
+                                  "id":  "1",
+                                  "journal_set":  {
+                                                      "journal_entries":  [
+                                                                              {
+                                                                                  "url":  "https://api.freeagent.com/v2/journal_sets/37/journal_entries/17",
+                                                                                  "_destroy":  true
+                                                                              },
+                                                                              {
+                                                                                  "url":  "https://api.freeagent.com/v2/journal_sets/37/journal_entries/18",
+                                                                                  "debit_value":  "-20.0"
+                                                                              },
+                                                                              {
+                                                                                  "category":  "https://api.freeagent.com/v2/categories/001",
+                                                                                  "debit_value":  "-20.0"
+                                                                              }
+                                                                          ]
+                                              }
                              },
       "journalSets.delete":  {
                                  "id":  "1"
@@ -1051,6 +1062,17 @@ apiNotes:
   trackingGroups.list: >-
     Hidden groups and labels are omitted by default. Use include_hidden, order_by,
     and reverse as documented; collection pagination uses page and per_page.
+  journalSets.update: >-
+    Updates can omit unchanged journal-set fields. Existing journal entries are
+    updated by URL, deleted with _destroy: true, or added without a URL. Creation
+    remains a separate operation that requires at least two entries. This update
+    is destructive because entry deletion cannot be undone through this API.
+  bills.update: >-
+    Existing bill items can be deleted with their URL and _destroy: 1. This
+    operation is classified as destructive because item deletion cannot be undone.
+  creditNotes.update: >-
+    Existing credit note items can be deleted with their id and _destroy: 1. This
+    operation is classified as destructive because item deletion cannot be undone.
   invoices.update: >-
     payment_methods accepts the five keys documented on the invoice API. Invalid
     options may be omitted by FreeAgent in responses; stripe and gocardless_preauth
@@ -1066,7 +1088,22 @@ apiNotes:
     documented _destroy: "true" form.
   expenses.batchCreate: >-
     The first-party API forum confirms a 201 response containing one expense per
-    submitted item in order, and atomic failure with no partial creation.
+    submitted item in order. One observed 422 validation failure created no
+    records; this does not establish whether an ambiguous timeout or lost response
+    committed. Check for the submitted expenses before retrying an ambiguous
+    failure.
+  accountLocks.list: >-
+    Requires Full Access. Lists user and resource locks. If earliest_lock_date is
+    absent, a user account lock cannot be set.
+  accountLocks.update: >-
+    Requires Full Access. Sets or updates only the user account lock; choose a
+    locked_to_date within the bounds returned by accountLocks.list.
+  accountLocks.delete: >-
+    Requires Full Access. Deletes only the user account lock; other listed locks
+    are read-only through this API.
+  users.create: >-
+    Requires user-management access. When send_invitation is true, FreeAgent sends
+    a password setup invitation; this operation is classified as destructive.
   timeslips.create: >-
     This operation creates one timeslip. The API docs also show a batch request
     mode, but do not document its response envelope, so that mode is not exposed.

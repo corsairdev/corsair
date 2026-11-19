@@ -334,6 +334,96 @@ describe('FreeAgent schemas', () => {
 		).toBe(true);
 	});
 
+	it('validates Account Locks and distinct journal-set create/update shapes', () => {
+		expect(
+			AccountingEndpointSchemas['accountLocks.list'].output.safeParse({
+				account_locks: [
+					{
+						locked_to_date: '2024-03-31',
+						user_lock: true,
+						locked_by_description: 'Nathan Barley',
+						locked_by_url: 'https://api.freeagent.com/v2/users/1',
+					},
+					{
+						locked_to_date: '2023-12-31',
+						locked_by_description: 'Accounting Year End 2023/23',
+					},
+				],
+				earliest_lock_date: '2024-01-01',
+				latest_lock_date: '2024-12-31',
+			}).success,
+		).toBe(true);
+		expect(
+			AccountingEndpointSchemas['accountLocks.list'].output.safeParse({
+				account_locks: [{ locked_to_date: '2024-02-30' }],
+			}).success,
+		).toBe(false);
+		expect(
+			AccountingEndpointSchemas['accountLocks.update'].input.safeParse({
+				account_lock: { locked_to_date: '2024-12-31' },
+			}).success,
+		).toBe(true);
+		expect(
+			AccountingEndpointSchemas['accountLocks.update'].input.safeParse({
+				account_lock: { locked_to_date: '2024-12-31', user_lock: true },
+			}).success,
+		).toBe(false);
+
+		expect(
+			AccountingEndpointSchemas['journalSets.update'].input.safeParse({
+				id: '37',
+				journal_set: {
+					journal_entries: [
+						{
+							url: 'https://api.freeagent.com/v2/journal_sets/37/journal_entries/18',
+							debit_value: '-20.0',
+						},
+					],
+				},
+			}).success,
+		).toBe(true);
+		expect(
+			AccountingEndpointSchemas['journalSets.update'].input.safeParse({
+				id: '37',
+				journal_set: {
+					journal_entries: [
+						{
+							url: 'https://api.freeagent.com/v2/journal_sets/37/journal_entries/17',
+							_destroy: true,
+						},
+					],
+				},
+			}).success,
+		).toBe(true);
+		expect(
+			AccountingEndpointSchemas['journalSets.update'].input.safeParse({
+				id: '37',
+				journal_set: {
+					journal_entries: [
+						{
+							category: 'https://api.freeagent.com/v2/categories/001',
+							debit_value: '-20.0',
+						},
+					],
+				},
+			}).success,
+		).toBe(true);
+		expect(
+			AccountingEndpointSchemas['journalSets.create'].input.safeParse({
+				journal_set: {
+					dated_on: '2026-10-01',
+					description: 'Single entry is invalid on create',
+					journal_entries: [
+						{
+							category: 'https://api.freeagent.com/v2/categories/001',
+							debit_value: '10.0',
+						},
+					],
+				},
+			}).success,
+		).toBe(false);
+	});
+
 	it('validates note parent selection, price items, and tax resource inputs', () => {
 		expect(
 			CatalogEndpointSchemas['notes.list'].input.safeParse({

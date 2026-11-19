@@ -4,7 +4,7 @@ FreeAgent's company API integration for Corsair. The API uses OAuth 2.0 bearer a
 
 ## Coverage summary
 
-The plugin has **202 registered Corsair operation handlers**: the verified route operations in the matrix below plus a distinct batch-create mode for expenses on `POST /v2/expenses`. The official inventory contains **202 resource/method/version rows**: **201 implemented and mocked-wire-tested**, plus one unresolved Tasks delete entry. The Tasks page publishes `DELETE /v2/users/:id`, the same path as Users delete; this PR does not guess that it deletes a task. The plugin does implement `users.delete` for that documented Users operation. Coverage remains partial; the README does not claim complete FreeAgent API coverage.
+The plugin has **205 registered Corsair operation handlers**: the verified route operations in the matrix below plus a distinct batch-create mode for expenses on `POST /v2/expenses`. The official inventory contains **205 resource/method/version rows**: **204 implemented and mocked-wire-tested**, plus one unresolved Tasks delete entry. The Tasks page publishes `DELETE /v2/users/:id`, the same path as Users delete; this PR does not guess that it deletes a task. The plugin does implement `users.delete` for that documented Users operation. Coverage remains partial; the README does not claim complete FreeAgent API coverage.
 
 Every registered operation has strict input validation, a response schema, risk metadata, and a wire test that checks method, host, path, query/body placement, auth headers, and output parsing. Collection operations that expose pagination return `pagination.link` and the decimal-string `pagination.total_count` from the provider headers. The five test files cover schema rejection before network access, 429/`Retry-After`, OAuth refresh behavior, and error propagation.
 
@@ -12,7 +12,7 @@ Invoice creation and duplication return Draft invoices. Payment, email, state ch
 
 Bank Transaction Explanation attachment operations use `X-Api-Version: 2026-09-01`, as required by the versioned official documentation. Other calls omit the optional version header and use FreeAgent's current default. Bank statement import supports the documented JSON transaction-array request; multipart file-upload mode is excluded.
 
-FreeAgent's first-party [batch-expense discussion](https://api-discuss.freeagent.com/t/batch-create-expenses-and-estimate-status-inconsistencies/6753) documents that batch expense creation returns one response record per request item in order, and that failures are atomic. That evidence is reflected by `expenses.batchCreate`. The Timeslips page documents a JSON batch request but gives neither a batch response example nor a status/envelope contract; the official Changes page and API forum search did not provide a correction, so batch timeslip mode remains unresolved rather than guessed. The same first-party discussion documents estimate creation status anomalies: callers should create as `Draft` and use transitions, and should move a non-Draft estimate back to Draft before deleting it.
+FreeAgent's first-party [batch-expense discussion](https://api-discuss.freeagent.com/t/batch-create-expenses-and-estimate-status-inconsistencies/6753) reports a `201` response with one result per item in submission order and one observed `422` validation failure that created neither item. It does not establish whether a batch committed when the response is lost or times out. Before retrying an ambiguous batch failure, check whether the submitted expenses already exist. That evidence is reflected by `expenses.batchCreate`. The Timeslips page documents a JSON batch request but gives neither a batch response example nor a status/envelope contract; the official Changes page and API forum search did not provide a correction, so batch timeslip mode remains unresolved rather than guessed. The same first-party discussion documents estimate creation status anomalies: callers should create as `Draft` and use transitions, and should move a non-Draft estimate back to Draft before deleting it.
 
 ## Pagination, limits, and errors
 
@@ -20,7 +20,7 @@ FreeAgent documents 25 items per page by default and a maximum `per_page` of 100
 
 All implemented requests use JSON over HTTPS, OAuth 2.0 bearer tokens, and the required `User-Agent`. FreeAgent supports XML as an alternate encoding of the same routes; this plugin uses JSON only. No global provider error envelope is invented because the official docs do not specify one.
 
-Corsair core's current `ApiError` implementation still retains a failed request body in its request diagnostics. Per R8, this plugin passes `ApiError` through unchanged so status, `Retry-After`, and OAuth-refresh behavior are preserved. The core-level request-body redaction gap is out of this plugin's R1 scope and is reported separately. The plugin itself does not log request/response bodies or customer records.
+Corsair core's current `ApiError` implementation still retains a failed request body in its request diagnostics. Per R8, this plugin passes `ApiError` through unchanged so status, `Retry-After`, and OAuth-refresh behavior are preserved. The shared request configuration exposes no plugin-scoped pre-construction body-redaction hook, so fixing the gap requires a core transport change and remains outside this plugin's R1 scope. The plugin itself does not log request/response bodies or customer records.
 
 <!-- ROUTE_MATRIX_START -->
 
@@ -30,6 +30,9 @@ The inventory below reconciles each method/path/version shown by the official re
 
 | Resource page | Method | Path | API version | Coverage | Official source |
 | --- | --- | --- | --- | --- | --- |
+| `account_locks` | GET | `/v2/account_locks` | default | Implemented | [official docs](https://dev.freeagent.com/docs/account_locks) |
+| `account_locks` | PUT | `/v2/account_locks` | default | Implemented | [official docs](https://dev.freeagent.com/docs/account_locks) |
+| `account_locks` | DELETE | `/v2/account_locks` | default | Implemented | [official docs](https://dev.freeagent.com/docs/account_locks) |
 | `attachments` | DELETE | `/v2/attachments/:id` | default | Implemented | [official docs](https://dev.freeagent.com/docs/attachments) |
 | `attachments` | GET | `/v2/attachments/:id` | default | Implemented | [official docs](https://dev.freeagent.com/docs/attachments) |
 | `balance_sheet` | GET | `/v2/accounting/balance_sheet` | default | Implemented | [official docs](https://dev.freeagent.com/docs/balance_sheet) |
@@ -233,14 +236,15 @@ The inventory below reconciles each method/path/version shown by the official re
 | `vat_returns` | PUT | `/v2/vat_returns/:period_ends_on/payments/:payment_date/mark_as_paid` | default | Implemented | [official docs](https://dev.freeagent.com/docs/vat_returns) |
 | `vat_returns` | PUT | `/v2/vat_returns/:period_ends_on/payments/:payment_date/mark_as_unpaid` | default | Implemented | [official docs](https://dev.freeagent.com/docs/vat_returns) |
 
-**Counts:** 202 official route/resource entries are indexed here (198 from the documentation index, plus four operations at API version `2026-09-01`). 201 entries are implemented and tested; one Tasks-resource delete operation is unresolved. The Users resource independently documents the same `DELETE /v2/users/:id` path, which is implemented only as `users.delete`.
+**Counts:** 205 official route/resource entries are indexed here (201 from the documentation index, plus four operations at API version `2026-09-01`). 204 entries are implemented and tested; one Tasks-resource delete operation is unresolved. The Users resource independently documents the same `DELETE /v2/users/:id` path, which is implemented only as `users.delete`.
 
 <!-- ROUTE_MATRIX_END -->
 
 ## Explicit exclusions and unresolved contract details
 
 - **Tasks delete:** unresolved. The official [Tasks page](https://dev.freeagent.com/docs/tasks) shows `DELETE /v2/users/:id`, and the [Users page](https://dev.freeagent.com/docs/users) documents that exact same method and path as deleting a user. The current [Changes page](https://dev.freeagent.com/docs/changes) and [Versioning page](https://dev.freeagent.com/docs/versioning) provide no corrected Tasks route or Tasks-specific version contract; no first-party OpenAPI contract or forum correction was found. Because the target resource is ambiguous, no `tasks.delete` operation is guessed. The documented Users delete operation is implemented as `users.delete`.
-- **Expenses batch-create mode:** implemented as `expenses.batchCreate`. The API discussion forum confirms a 201 response with one returned expense per input, in order, and atomic failure behavior.
+- **Account Locks:** implemented as `accountLocks.list`, `accountLocks.update`, and `accountLocks.delete`. The official page requires Full Access; only the user account lock can be set or deleted, while other listed locks are read-only. `earliest_lock_date` can be absent, in which case a user lock cannot be set.
+- **Expenses batch-create mode:** implemented as `expenses.batchCreate`. The first-party API discussion reports a `201` result per submitted item in order and one observed `422` validation rejection that created no records. That does not prove whether a request committed if its response is lost or times out; callers should check for already-created expenses before retrying an ambiguous failure.
 - **Timeslips batch-create mode:** unresolved. The official [Timeslips page](https://dev.freeagent.com/docs/timeslips) documents an array request under `timeslips` but stops without a batch response example, status code, or response envelope. The single-record `timeslip` response does not establish the batch contract; single-timeslip create is implemented, and batch mode is withheld.
 - **Bill/expense recurrence:** the input schemas enforce the values published on the respective [Bills](https://dev.freeagent.com/docs/bills) and [Expenses](https://dev.freeagent.com/docs/expenses) pages: Weekly, Two Weekly, Four Weekly, Two Monthly, Quarterly, Biannually, Annually, and 2-Yearly. No Monthly support is claimed for Bills or Expenses because their current docs do not list it. The separate [Recurring Invoices](https://dev.freeagent.com/docs/recurring_invoices) page lists Monthly for a different resource and field.
 - **Accountancy Practice API:** excluded. Its official contract requires a practice-enabled OAuth app and client `X-Subdomain` scoping, distinct from company-account OAuth.
@@ -254,6 +258,7 @@ All endpoint tests use mocked transport. **No live FreeAgent API call is claimed
 ## Sources and evidence
 
 - [Official API index](https://dev.freeagent.com/docs)
+- [Account Locks](https://dev.freeagent.com/docs/account_locks)
 - [Introduction (formats, pagination, rate limits)](https://dev.freeagent.com/docs/introduction)
 - [Email Addresses](https://dev.freeagent.com/docs/email_addresses)
 - [Recurring Invoices](https://dev.freeagent.com/docs/recurring_invoices)
