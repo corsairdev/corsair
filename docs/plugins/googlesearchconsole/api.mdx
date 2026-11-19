@@ -105,7 +105,7 @@ Page with `startRow`; there is no page token. Results are sorted by clicks, desc
 
 `sitemaps.delete`
 
-Remove a sitemap from the property, which stops Google using it to discover pages
+Remove a sitemap from the property's Sitemaps report. Google may still crawl the sitemap and the URLs it already found
 
 **Risk:** `destructive`
 
@@ -157,7 +157,7 @@ await corsair.googlesearchconsole.api.sitemaps.get({ siteUrl: 'https://example.c
 | `lastDownloaded` | `string \| null` | No | RFC 3339 |
 | `isPending` | `boolean \| null` | No | — |
 | `isSitemapsIndex` | `boolean \| null` | No | True when this sitemap is a collection of other sitemaps |
-| `type` | `NOT_SITEMAP \| URL_LIST \| SITEMAP \| RSS_FEED \| ATOM_FEED \| PATTERN_SITEMAP \| OCEANFRONT \| null` | No | — |
+| `type` | `string \| null` | No | `sitemap`, `rssFeed`, `atomFeed`, `urlList`, `patternSitemap` or `notSitemap` |
 | `warnings` | `string \| null` | No | int64 as a string |
 | `errors` | `string \| null` | No | int64 as a string |
 | `contents` | `object[] \| null` | No | — |
@@ -167,7 +167,7 @@ await corsair.googlesearchconsole.api.sitemaps.get({ siteUrl: 'https://example.c
 
 ```ts
 {
-  type?: WEB | IMAGE | VIDEO | NEWS | MOBILE | ANDROID_APP | PATTERN | IOS_APP | DATA_FEED_ELEMENT | null,
+  type?: string | null,
   submitted?: string | null,
   indexed?: string | null
 }[] | null
@@ -216,11 +216,11 @@ await corsair.googlesearchconsole.api.sitemaps.list({ siteUrl: 'https://example.
   lastDownloaded?: string | null,
   isPending?: boolean | null,
   isSitemapsIndex?: boolean | null,
-  type?: NOT_SITEMAP | URL_LIST | SITEMAP | RSS_FEED | ATOM_FEED | PATTERN_SITEMAP | OCEANFRONT | null,
+  type?: string | null,
   warnings?: string | null,
   errors?: string | null,
   contents?: {
-    type?: WEB | IMAGE | VIDEO | NEWS | MOBILE | ANDROID_APP | PATTERN | IOS_APP | DATA_FEED_ELEMENT | null,
+    type?: string | null,
     submitted?: string | null,
     indexed?: string | null
   }[] | null
@@ -294,7 +294,7 @@ Adds a property the account already controls. It does not verify ownership.
 
 `sites.delete`
 
-Remove a property from the account, which also drops its Search Console data. It can be added back only after being verified again
+Remove a property from this account's Search Console property list. Other owners keep it, and it can usually be re-added without verifying again
 
 **Risk:** `destructive`
 
@@ -340,7 +340,7 @@ await corsair.googlesearchconsole.api.sites.get({ siteUrl: 'https://example.com/
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `siteUrl` | `string \| null` | No | — |
-| `permissionLevel` | `SITE_PERMISSION_LEVEL_UNSPECIFIED \| SITE_OWNER \| SITE_FULL_USER \| SITE_RESTRICTED_USER \| SITE_UNVERIFIED_USER \| null` | No | What this credential may do on the property. Only a level above UNVERIFIED can read its data |
+| `permissionLevel` | `string \| null` | No | What this credential may do on the property: `siteOwner`, `siteFullUser`, `siteRestrictedUser` or `siteUnverifiedUser`. Only owners and full users can read its data |
 
 
 
@@ -373,7 +373,7 @@ await corsair.googlesearchconsole.api.sites.list({});
 ```ts
 {
   siteUrl?: string | null,
-  permissionLevel?: SITE_PERMISSION_LEVEL_UNSPECIFIED | SITE_OWNER | SITE_FULL_USER | SITE_RESTRICTED_USER | SITE_UNVERIFIED_USER | null
+  permissionLevel?: string | null
 }[] | null
 ```
 </Accordion>
