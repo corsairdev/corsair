@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-18T09:25:47.767Z",
-  "corsairVersion": "0.2.7",
+  "generatedAt": "2026-11-19T06:48:59.251Z",
+  "corsairVersion": "0.2.11",
   "catalogVersion": 2,
   "plugins": [
     {
@@ -6040,14 +6040,14 @@
     {
       "id": "litescrape",
       "displayName": "LiteScrape",
-      "description": "Search, maps, reviews and web-data scraping API (Google, Bing, DuckDuckGo, Apple, Yelp, Tripadvisor and app stores).",
+      "description": "Web data API with 200 read operations across 70 sites: Google, Bing, Brave, Yahoo, Baidu, Naver and Yandex search; Google, Apple, Bing and DuckDuckGo maps and reviews; Amazon, Walmart, eBay and other shops; TikTok, Instagram, X, YouTube, LinkedIn and Reddit; job boards; real estate; and web page fetch and screenshots.",
       "npmPackageName": "@corsair-dev/litescrape",
       "authTypes": [
         "api_key"
       ],
       "defaultAuthType": "api_key",
       "counts": {
-        "api": 36,
+        "api": 202,
         "webhooks": 0,
         "db": 0
       }
@@ -90099,7 +90099,7 @@
       "pluginId": "gemini",
       "kind": "api",
       "shortPath": "videos.getVideosOperation",
-      "haystack": "videos.getvideosoperation gemini.api.videos.getvideosoperation (deprecated — use videos.waitforvideo) check the status of a veo video generation operation read"
+      "haystack": "videos.getvideosoperation gemini.api.videos.getvideosoperation where a veo video generation stands: state running, succeeded or failed. videos.waitforvideo waits for it and returns the file read"
     },
     {
       "pluginId": "gemini",
@@ -117092,6 +117092,66 @@
     {
       "pluginId": "litescrape",
       "kind": "api",
+      "shortPath": "airbnb.search",
+      "haystack": "airbnb.search litescrape.api.airbnb.search search airbnb stays by destination and dates read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "aliexpress.product",
+      "haystack": "aliexpress.product litescrape.api.aliexpress.product get an aliexpress product's details and price (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "aliexpress.search",
+      "haystack": "aliexpress.search litescrape.api.aliexpress.search search aliexpress products with prices (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "allkeyshop.product",
+      "haystack": "allkeyshop.product litescrape.api.allkeyshop.product get allkeyshop product details, prices, and available offers read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "allkeyshop.search",
+      "haystack": "allkeyshop.search litescrape.api.allkeyshop.search search allkeyshop products with prices and product links read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "amazon.autocomplete",
+      "haystack": "amazon.autocomplete litescrape.api.amazon.autocomplete get amazon search suggestions for a prefix and department (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "amazon.product",
+      "haystack": "amazon.product litescrape.api.amazon.product get an amazon product page, with optional seller offers (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "amazon.search",
+      "haystack": "amazon.search litescrape.api.amazon.search search amazon products (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "apartments.property",
+      "haystack": "apartments.property litescrape.api.apartments.property get an apartments.com property by url (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "apartments.search",
+      "haystack": "apartments.search litescrape.api.apartments.search search apartments.com listings from a search url (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
       "shortPath": "appleAppStore.product",
       "haystack": "appleappstore.product litescrape.api.appleappstore.product get an apple app store product page with version history and privacy labels (alpha) read"
     },
@@ -117122,14 +117182,116 @@
     {
       "pluginId": "litescrape",
       "kind": "api",
+      "shortPath": "ashby.search",
+      "haystack": "ashby.search litescrape.api.ashby.search search jobs on a company's ashby job board read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "baidu.search",
+      "haystack": "baidu.search litescrape.api.baidu.search get baidu search results as json read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "bestbuy.product",
+      "haystack": "bestbuy.product litescrape.api.bestbuy.product get a best buy product's details, price and availability (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "bestbuy.search",
+      "haystack": "bestbuy.search litescrape.api.bestbuy.search search best buy products with prices and availability (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "bing.autocomplete",
+      "haystack": "bing.autocomplete litescrape.api.bing.autocomplete get bing search suggestions for a partial query, with entity details when bing shows them read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "bing.images",
+      "haystack": "bing.images litescrape.api.bing.images search bing images with size, color, date and license filters read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
       "shortPath": "bing.maps",
       "haystack": "bing.maps litescrape.api.bing.maps get bing maps listings by query or one place by id read"
     },
     {
       "pluginId": "litescrape",
       "kind": "api",
+      "shortPath": "bing.product",
+      "haystack": "bing.product litescrape.api.bing.product get a bing shopping product's details using its product token read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
       "shortPath": "bing.search",
       "haystack": "bing.search litescrape.api.bing.search search bing for organic results, knowledge cards and rich modules read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "bing.shopping",
+      "haystack": "bing.shopping litescrape.api.bing.shopping search bing shopping products read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "bluesky.followers",
+      "haystack": "bluesky.followers litescrape.api.bluesky.followers list the public followers of a bluesky account read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "bluesky.posts",
+      "haystack": "bluesky.posts litescrape.api.bluesky.posts read public posts from a bluesky account with pagination read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "bluesky.profile",
+      "haystack": "bluesky.profile litescrape.api.bluesky.profile get a public bluesky profile and follower counts read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "booking.detail",
+      "haystack": "booking.detail litescrape.api.booking.detail get property photos, facilities, policies, review summaries, guest questions, and a quote for selected dates and guests read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "booking.rooms",
+      "haystack": "booking.rooms litescrape.api.booking.rooms get room types and available rate options for a property stay, including capacity, beds, facilities, prices, and cancellation terms read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "booking.search",
+      "haystack": "booking.search litescrape.api.booking.search search accommodations by destination and stay, with locations, prices, rate terms, ratings, and room configurations read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "brave.aiMode",
+      "haystack": "brave.aimode litescrape.api.brave.aimode get brave ai answers with citations read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "brave.search",
+      "haystack": "brave.search litescrape.api.brave.search get brave web search results read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "copilot.chat",
+      "haystack": "copilot.chat litescrape.api.copilot.chat text completions through microsoft copilot (alpha) read"
     },
     {
       "pluginId": "litescrape",
@@ -117142,6 +117304,132 @@
       "kind": "api",
       "shortPath": "duckduckgo.search",
       "haystack": "duckduckgo.search litescrape.api.duckduckgo.search search duckduckgo for organic results with region and safe-search controls read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "ebay.product",
+      "haystack": "ebay.product litescrape.api.ebay.product get an ebay listing by item id read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "ebay.search",
+      "haystack": "ebay.search litescrape.api.ebay.search search ebay listings by keyword or category read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "ebay.seller",
+      "haystack": "ebay.seller litescrape.api.ebay.seller get an ebay seller's profile and listings read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "etsy.product",
+      "haystack": "etsy.product litescrape.api.etsy.product get an etsy listing's details and price (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "etsy.search",
+      "haystack": "etsy.search litescrape.api.etsy.search search etsy listings with prices (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "eventbrite.search",
+      "haystack": "eventbrite.search litescrape.api.eventbrite.search search eventbrite events by location and keyword read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "facebook.hashtagPosts",
+      "haystack": "facebook.hashtagposts litescrape.api.facebook.hashtagposts get public facebook posts for a hashtag (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "facebook.marketplaceBrowse",
+      "haystack": "facebook.marketplacebrowse litescrape.api.facebook.marketplacebrowse browse or search facebook marketplace listings by city (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "facebook.pagePosts",
+      "haystack": "facebook.pageposts litescrape.api.facebook.pageposts get recent public posts from a facebook page (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "facebook.post",
+      "haystack": "facebook.post litescrape.api.facebook.post get a public facebook post by its url (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "facebook.reel",
+      "haystack": "facebook.reel litescrape.api.facebook.reel get a public facebook reel by its url (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "facebook.searchPages",
+      "haystack": "facebook.searchpages litescrape.api.facebook.searchpages search public facebook pages by name (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "facebook.searchProfiles",
+      "haystack": "facebook.searchprofiles litescrape.api.facebook.searchprofiles search public facebook profiles by name (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "farmavazquez.product",
+      "haystack": "farmavazquez.product litescrape.api.farmavazquez.product get farmavázquez product details, prices, and available offers read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "farmavazquez.search",
+      "haystack": "farmavazquez.search litescrape.api.farmavazquez.search search farmavázquez products with prices and product links read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "github.issues",
+      "haystack": "github.issues litescrape.api.github.issues list repository issues and pull requests with their authors and labels read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "github.releases",
+      "haystack": "github.releases litescrape.api.github.releases list repository releases and downloadable assets read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "github.repository",
+      "haystack": "github.repository litescrape.api.github.repository get repository details, stars, forks, topics, and activity dates read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "github.search",
+      "haystack": "github.search litescrape.api.github.search search public github repositories by keywords and qualifiers read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "github.user",
+      "haystack": "github.user litescrape.api.github.user get a public github user or organization profile read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "glassdoor.search",
+      "haystack": "glassdoor.search litescrape.api.glassdoor.search search glassdoor jobs by keyword and location, with salary, seniority and remote filters read"
     },
     {
       "pluginId": "litescrape",
@@ -117164,8 +117452,62 @@
     {
       "pluginId": "litescrape",
       "kind": "api",
+      "shortPath": "google.autocomplete",
+      "haystack": "google.autocomplete litescrape.api.google.autocomplete get search suggestions for a partial query read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "google.flights",
+      "haystack": "google.flights litescrape.api.google.flights search flights with passenger fares, multiple airports, airline logos, emissions, price insights, compatible return itineraries and booking links read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "google.gemini",
+      "haystack": "google.gemini litescrape.api.google.gemini get a completed text reply from gemini read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "google.images",
+      "haystack": "google.images litescrape.api.google.images search google images. embedded images may use an x-raw-image:/// reference in original instead of an http url; thumbnail remains an http image url read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "google.jobs",
+      "haystack": "google.jobs litescrape.api.google.jobs search google jobs listings by query and location, including descriptions and application links when available read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
       "shortPath": "google.local",
       "haystack": "google.local litescrape.api.google.local get google local results with rating, reviews, category, address and place ids read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "google.news",
+      "haystack": "google.news litescrape.api.google.news find recent news articles by topic, language, and country read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "google.patents",
+      "haystack": "google.patents litescrape.api.google.patents search patent publications by query, patent office, status, and publication date read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "google.reverseImageSearch",
+      "haystack": "google.reverseimagesearch litescrape.api.google.reverseimagesearch find visually similar images and pages using an image url read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "google.scholar",
+      "haystack": "google.scholar litescrape.api.google.scholar search scholarly articles with publication details, citation counts, and full-text links read"
     },
     {
       "pluginId": "litescrape",
@@ -117182,8 +117524,20 @@
     {
       "pluginId": "litescrape",
       "kind": "api",
+      "shortPath": "google.shoppingMerchantUrls",
+      "haystack": "google.shoppingmerchanturls litescrape.api.google.shoppingmerchanturls get direct merchant urls for google shopping offers read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
       "shortPath": "google.shoppingProduct",
       "haystack": "google.shoppingproduct litescrape.api.google.shoppingproduct get one google shopping product page with every merchant offer and specification read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "google.trends",
+      "haystack": "google.trends litescrape.api.google.trends get currently trending searches and related news by country read"
     },
     {
       "pluginId": "litescrape",
@@ -117194,8 +117548,20 @@
     {
       "pluginId": "litescrape",
       "kind": "api",
+      "shortPath": "googleMaps.menu",
+      "haystack": "googlemaps.menu litescrape.api.googlemaps.menu get a restaurant's menu, prices, booking links, and opening hours read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
       "shortPath": "googleMaps.photoMeta",
       "haystack": "googlemaps.photometa litescrape.api.googlemaps.photometa get the place, contributor and date of a google maps photo read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "googleMaps.photos",
+      "haystack": "googlemaps.photos litescrape.api.googlemaps.photos list a place's photos and videos, including only the ones its owner posted read"
     },
     {
       "pluginId": "litescrape",
@@ -117260,8 +117626,470 @@
     {
       "pluginId": "litescrape",
       "kind": "api",
+      "shortPath": "greenhouse.job",
+      "haystack": "greenhouse.job litescrape.api.greenhouse.job get a public greenhouse job description, departments, published pay ranges, and application questions read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "greenhouse.jobs",
+      "haystack": "greenhouse.jobs litescrape.api.greenhouse.jobs list public employer jobs and filter by title or location read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "hackernews.item",
+      "haystack": "hackernews.item litescrape.api.hackernews.item get a hacker news story, comment, job, or poll by id read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "hackernews.stories",
+      "haystack": "hackernews.stories litescrape.api.hackernews.stories get ranked hacker news stories with scores and discussion ids read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "hackernews.user",
+      "haystack": "hackernews.user litescrape.api.hackernews.user get a public hacker news profile and recent submitted item ids read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "homedepot.product",
+      "haystack": "homedepot.product litescrape.api.homedepot.product get a home depot product's details, price and availability (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "homedepot.search",
+      "haystack": "homedepot.search litescrape.api.homedepot.search search home depot products with prices and availability (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "homes.property",
+      "haystack": "homes.property litescrape.api.homes.property get a homes.com property by url (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "homes.search",
+      "haystack": "homes.search litescrape.api.homes.search search homes.com listings from a search url (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "idealo.product",
+      "haystack": "idealo.product litescrape.api.idealo.product get idealo italy product details, prices, and available offers read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "idealo.search",
+      "haystack": "idealo.search litescrape.api.idealo.search search idealo italy products with prices and product links read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "ikea.product",
+      "haystack": "ikea.product litescrape.api.ikea.product get an ikea product's details, price and availability (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "ikea.search",
+      "haystack": "ikea.search litescrape.api.ikea.search search ikea products with prices and availability (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "indeed.search",
+      "haystack": "indeed.search litescrape.api.indeed.search search indeed jobs by keyword and location, with salary, experience and remote filters read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "instagram.embed",
+      "haystack": "instagram.embed litescrape.api.instagram.embed retrieve public instagram embed data (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "instagram.post",
+      "haystack": "instagram.post litescrape.api.instagram.post retrieve public instagram post data (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "instagram.posts",
+      "haystack": "instagram.posts litescrape.api.instagram.posts retrieve public instagram posts data (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "instagram.profile",
+      "haystack": "instagram.profile litescrape.api.instagram.profile retrieve public instagram profile data (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "instagram.profilePostCount",
+      "haystack": "instagram.profilepostcount litescrape.api.instagram.profilepostcount retrieve public instagram profile post count data (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "instagram.searchPopular",
+      "haystack": "instagram.searchpopular litescrape.api.instagram.searchpopular get popular instagram posts for a search topic (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
       "shortPath": "keys.status",
       "haystack": "keys.status litescrape.api.keys.status get litescrape key status, remaining calls and concurrency limit read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "keys.usage",
+      "haystack": "keys.usage litescrape.api.keys.usage get call usage for the key over the last 24 hours to 90 days read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "kroger.product",
+      "haystack": "kroger.product litescrape.api.kroger.product get a kroger product's details, price and availability (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "kroger.search",
+      "haystack": "kroger.search litescrape.api.kroger.search search kroger products with prices and availability (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "levels.search",
+      "haystack": "levels.search litescrape.api.levels.search search levels.fyi jobs by company, location, level and pay read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "lever.jobs",
+      "haystack": "lever.jobs litescrape.api.lever.jobs page through an employer's public jobs, descriptions, and application links read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "linkedin.company",
+      "haystack": "linkedin.company litescrape.api.linkedin.company read public company profiles with follower and employee counts, office locations, and similar companies read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "linkedin.companyPosts",
+      "haystack": "linkedin.companyposts litescrape.api.linkedin.companyposts read recent public company posts and reposts with reaction and comment counts, authors, and media read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "linkedin.job",
+      "haystack": "linkedin.job litescrape.api.linkedin.job get a public linkedin job description, employment details, published salary, and applicant count read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "linkedin.jobs",
+      "haystack": "linkedin.jobs litescrape.api.linkedin.jobs search public linkedin job listings by keywords, location, and workplace type read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "naturitas.product",
+      "haystack": "naturitas.product litescrape.api.naturitas.product get naturitas product details, prices, pack discounts, ratings, and categories read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "naturitas.search",
+      "haystack": "naturitas.search litescrape.api.naturitas.search search naturitas products with prices, discounts, ratings, and product links read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "naver.aiOverview",
+      "haystack": "naver.aioverview litescrape.api.naver.aioverview get naver ai briefing answers with citations read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "naver.search",
+      "haystack": "naver.search litescrape.api.naver.search search naver web, news, video and image results read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "npm.package",
+      "haystack": "npm.package litescrape.api.npm.package get an npm package version and its dependencies read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "npm.search",
+      "haystack": "npm.search litescrape.api.npm.search search npm packages by keywords and qualifiers read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "pinterest.profile",
+      "haystack": "pinterest.profile litescrape.api.pinterest.profile get a public pinterest profile, biography, and follower counts read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "producthunt.launches",
+      "haystack": "producthunt.launches litescrape.api.producthunt.launches read today's public launches with product names, links, and taglines read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "pypi.project",
+      "haystack": "pypi.project litescrape.api.pypi.project get python package metadata and release files from pypi read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "realtor.property",
+      "haystack": "realtor.property litescrape.api.realtor.property get a realtor.com property by url (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "realtor.search",
+      "haystack": "realtor.search litescrape.api.realtor.search search realtor.com listings from a search url (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "reddit.post",
+      "haystack": "reddit.post litescrape.api.reddit.post get a public reddit post and available discussion comments read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "reddit.search",
+      "haystack": "reddit.search litescrape.api.reddit.search search public reddit posts by keywords, sort order, and time range read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "reddit.subredditPosts",
+      "haystack": "reddit.subredditposts litescrape.api.reddit.subredditposts read public posts from a subreddit with pagination read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "redfin.property",
+      "haystack": "redfin.property litescrape.api.redfin.property get a redfin property by listing url read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "redfin.search",
+      "haystack": "redfin.search litescrape.api.redfin.search search redfin homes for sale or recently sold read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "remoteok.jobs",
+      "haystack": "remoteok.jobs litescrape.api.remoteok.jobs find remote jobs by keywords and tags read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "shopify.products",
+      "haystack": "shopify.products litescrape.api.shopify.products page through published product catalogs with variants, prices, and availability read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "soundcloud.track",
+      "haystack": "soundcloud.track litescrape.api.soundcloud.track read public track metadata, duration, and available engagement counts read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "spotify.item",
+      "haystack": "spotify.item litescrape.api.spotify.item read public track, album, artist, and playlist metadata and available track lists read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "sprouts.product",
+      "haystack": "sprouts.product litescrape.api.sprouts.product get a sprouts product's details, price and availability (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "sprouts.search",
+      "haystack": "sprouts.search litescrape.api.sprouts.search search sprouts products with prices and availability (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "stackoverflow.answers",
+      "haystack": "stackoverflow.answers litescrape.api.stackoverflow.answers read answers to a stack overflow question with pagination read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "stackoverflow.comments",
+      "haystack": "stackoverflow.comments litescrape.api.stackoverflow.comments read comments on a stack overflow question with pagination read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "stackoverflow.question",
+      "haystack": "stackoverflow.question litescrape.api.stackoverflow.question get a stack overflow question, its text, tags, and statistics read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "stackoverflow.search",
+      "haystack": "stackoverflow.search litescrape.api.stackoverflow.search search stack overflow questions by keywords and tags read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "steam.app",
+      "haystack": "steam.app litescrape.api.steam.app get steam app details, descriptions, publishers, and regional prices read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "steam.search",
+      "haystack": "steam.search litescrape.api.steam.search find steam games and software with regional pricing read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "substack.posts",
+      "haystack": "substack.posts litescrape.api.substack.posts page through public publication archives with titles, dates, and engagement counts read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "target.product",
+      "haystack": "target.product litescrape.api.target.product get a product sold by the us retailer target, with its details, price and availability (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "target.search",
+      "haystack": "target.search litescrape.api.target.search search products sold by the us retailer target, with prices and availability (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "telegram.posts",
+      "haystack": "telegram.posts litescrape.api.telegram.posts read public channel posts with dates, text, and displayed view counts read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "tiktok.collectionVideos",
+      "haystack": "tiktok.collectionvideos litescrape.api.tiktok.collectionvideos page through posts saved in a public tiktok collection (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "tiktok.commentReplies",
+      "haystack": "tiktok.commentreplies litescrape.api.tiktok.commentreplies page through replies to a tiktok comment (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "tiktok.comments",
+      "haystack": "tiktok.comments litescrape.api.tiktok.comments page through public comments on a tiktok post (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "tiktok.followers",
+      "haystack": "tiktok.followers litescrape.api.tiktok.followers page through public followers of a tiktok user (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "tiktok.following",
+      "haystack": "tiktok.following litescrape.api.tiktok.following page through the public accounts a tiktok user follows (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "tiktok.live",
+      "haystack": "tiktok.live litescrape.api.tiktok.live get a tiktok live room's status and metrics (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "tiktok.profile",
+      "haystack": "tiktok.profile litescrape.api.tiktok.profile get public tiktok profile fields and statistics by handle or numeric user id (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "tiktok.profileVideos",
+      "haystack": "tiktok.profilevideos litescrape.api.tiktok.profilevideos page through posts from a public tiktok profile by handle or numeric user id (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "tiktok.searchHashtag",
+      "haystack": "tiktok.searchhashtag litescrape.api.tiktok.searchhashtag resolve a public hashtag and page through its posts (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "tiktok.searchSuggestions",
+      "haystack": "tiktok.searchsuggestions litescrape.api.tiktok.searchsuggestions get public tiktok autocomplete suggestions in order (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "tiktok.song",
+      "haystack": "tiktok.song litescrape.api.tiktok.song get a tiktok sound's details and usage count (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "tiktok.songVideos",
+      "haystack": "tiktok.songvideos litescrape.api.tiktok.songvideos page through tiktok posts that use a sound (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "tiktok.transcript",
+      "haystack": "tiktok.transcript litescrape.api.tiktok.transcript get public tiktok captions with timed segments (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "tiktok.trendingFeed",
+      "haystack": "tiktok.trendingfeed litescrape.api.tiktok.trendingfeed get tiktok's trending feed (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "tiktok.userLive",
+      "haystack": "tiktok.userlive litescrape.api.tiktok.userlive get a tiktok user's live status and room metadata (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "tiktok.video",
+      "haystack": "tiktok.video litescrape.api.tiktok.video get a tiktok video or photo post with its media and metrics (alpha) read"
     },
     {
       "pluginId": "litescrape",
@@ -117284,6 +118112,30 @@
     {
       "pluginId": "litescrape",
       "kind": "api",
+      "shortPath": "walmart.product",
+      "haystack": "walmart.product litescrape.api.walmart.product get a walmart product's details, price and availability (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "walmart.search",
+      "haystack": "walmart.search litescrape.api.walmart.search search walmart products with prices and availability (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "wayfair.product",
+      "haystack": "wayfair.product litescrape.api.wayfair.product get a wayfair product's details, price and availability (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "wayfair.search",
+      "haystack": "wayfair.search litescrape.api.wayfair.search search wayfair products with prices and availability (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
       "shortPath": "web.fetch",
       "haystack": "web.fetch litescrape.api.web.fetch render a public web page and return it as markdown, html or text (alpha) read"
     },
@@ -117291,7 +118143,103 @@
       "pluginId": "litescrape",
       "kind": "api",
       "shortPath": "web.screenshot",
-      "haystack": "web.screenshot litescrape.api.web.screenshot capture a web page screenshot as a png download url (alpha) read"
+      "haystack": "web.screenshot litescrape.api.web.screenshot capture a web page screenshot, returned as base64 png data in screenshot_base64 (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "wholefoods.product",
+      "haystack": "wholefoods.product litescrape.api.wholefoods.product get a whole foods product's details, price and availability (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "wholefoods.search",
+      "haystack": "wholefoods.search litescrape.api.wholefoods.search search whole foods products with prices and availability (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "wikipedia.article",
+      "haystack": "wikipedia.article litescrape.api.wikipedia.article get the text of a wikipedia article in a selected language read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "wikipedia.search",
+      "haystack": "wikipedia.search litescrape.api.wikipedia.search search wikipedia articles in a selected language read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "workday.jobs",
+      "haystack": "workday.jobs litescrape.api.workday.jobs search an employer's workday career board with result totals and pagination read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "x.community",
+      "haystack": "x.community litescrape.api.x.community get x community details, including its creator, member count and rules (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "x.communityPosts",
+      "haystack": "x.communityposts litescrape.api.x.communityposts get posts from an x community, including authors, engagement and media (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "x.post",
+      "haystack": "x.post litescrape.api.x.post get an x post with its text, author, engagement counts and media (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "x.profile",
+      "haystack": "x.profile litescrape.api.x.profile get a public x profile, including its bio, follower counts and profile images (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "x.userPosts",
+      "haystack": "x.userposts litescrape.api.x.userposts get posts from an x user (alpha) read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "yahoo.financeHistory",
+      "haystack": "yahoo.financehistory litescrape.api.yahoo.financehistory read daily, weekly, or monthly prices and volume for a market symbol read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "yahoo.images",
+      "haystack": "yahoo.images litescrape.api.yahoo.images search yahoo images read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "yahoo.search",
+      "haystack": "yahoo.search litescrape.api.yahoo.search get yahoo web search results read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "yandex.images",
+      "haystack": "yandex.images litescrape.api.yandex.images search yandex images, including reverse image search read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "yandex.search",
+      "haystack": "yandex.search litescrape.api.yandex.search get yandex web search results read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "yelp.place",
+      "haystack": "yelp.place litescrape.api.yelp.place get a yelp business's details and menu read"
     },
     {
       "pluginId": "litescrape",
@@ -117304,6 +118252,54 @@
       "kind": "api",
       "shortPath": "yelp.search",
       "haystack": "yelp.search litescrape.api.yelp.search search yelp businesses with rating, reviews, categories and filters read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "youtube.channel",
+      "haystack": "youtube.channel litescrape.api.youtube.channel get a youtube channel's profile, videos, shorts, playlists and posts read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "youtube.comments",
+      "haystack": "youtube.comments litescrape.api.youtube.comments read public youtube video comments with pagination read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "youtube.search",
+      "haystack": "youtube.search litescrape.api.youtube.search search youtube videos, channels, playlists and shorts read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "youtube.video",
+      "haystack": "youtube.video litescrape.api.youtube.video get a public youtube video title, description, channel, and view count read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "zillow.locations",
+      "haystack": "zillow.locations litescrape.api.zillow.locations get zillow region and address suggestions read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "zillow.property",
+      "haystack": "zillow.property litescrape.api.zillow.property get a zillow property by id or url read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "zillow.search",
+      "haystack": "zillow.search litescrape.api.zillow.search search zillow homes for sale, for rent or recently sold read"
+    },
+    {
+      "pluginId": "litescrape",
+      "kind": "api",
+      "shortPath": "ziprecruiter.search",
+      "haystack": "ziprecruiter.search litescrape.api.ziprecruiter.search search ziprecruiter jobs in the us and canada by keyword and location read"
     },
     {
       "pluginId": "livesession",

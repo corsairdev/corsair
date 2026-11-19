@@ -261,6 +261,16 @@
       "shortPath": "videos.generateVideos",
       "description": "Generate a text-to-video clip using a Veo model; returns an operation name for status tracking",
       "riskLevel": "write",
+      "job": {
+        "idPath": "operationName",
+        "status": {
+          "op": "videos.getVideosOperation",
+          "idArg": "operationName",
+          "statusPath": "state",
+          "done": ["SUCCEEDED"],
+          "failed": ["FAILED"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
@@ -308,7 +318,7 @@
     {
       "path": "gemini.api.videos.getVideosOperation",
       "shortPath": "videos.getVideosOperation",
-      "description": "(Deprecated — use videos.waitForVideo) Check the status of a Veo video generation operation",
+      "description": "Where a Veo video generation stands: state RUNNING, SUCCEEDED or FAILED. videos.waitForVideo waits for it and returns the file",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -348,6 +358,12 @@
             "key": "response",
             "optional": true,
             "type": "{ generateVideoResponse?: { generatedSamples?: { video?: { uri?: string } }[] } }"
+          },
+          {
+            "key": "state",
+            "optional": false,
+            "type": "RUNNING | SUCCEEDED | FAILED",
+            "description": "RUNNING until the operation is done; then SUCCEEDED with a generated video, or FAILED with an error or no video"
           }
         ]
       }

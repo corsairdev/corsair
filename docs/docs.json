@@ -1211,14 +1211,6 @@
                 ]
               },
               {
-                "group": "Cert Spotter",
-                "pages": [
-                  "plugins/certspotter/overview",
-                  "plugins/certspotter/api",
-                  "plugins/certspotter/database"
-                ]
-              },
-              {
                 "group": "Chaser",
                 "pages": [
                   "plugins/chaser/overview",
@@ -2697,6 +2689,14 @@
                 ]
               },
               {
+                "group": "Google Ads",
+                "pages": [
+                  "plugins/googleads/overview",
+                  "plugins/googleads/api",
+                  "plugins/googleads/database"
+                ]
+              },
+              {
                 "group": "Google Analytics",
                 "pages": [
                   "plugins/googleanalytics/overview",
@@ -2787,6 +2787,14 @@
                   "plugins/googlephotos/overview",
                   "plugins/googlephotos/api",
                   "plugins/googlephotos/database"
+                ]
+              },
+              {
+                "group": "Google Search Console",
+                "pages": [
+                  "plugins/googlesearchconsole/overview",
+                  "plugins/googlesearchconsole/api",
+                  "plugins/googlesearchconsole/database"
                 ]
               },
               {
@@ -3674,6 +3682,14 @@
                 ]
               },
               {
+                "group": "Monday MCP",
+                "pages": [
+                  "plugins/mondaymcp/overview",
+                  "plugins/mondaymcp/api",
+                  "plugins/mondaymcp/database"
+                ]
+              },
+              {
                 "group": "Monday.com",
                 "pages": [
                   "plugins/monday/overview",
@@ -3949,6 +3965,14 @@
                   "plugins/opensea/overview",
                   "plugins/opensea/api",
                   "plugins/opensea/database"
+                ]
+              },
+              {
+                "group": "OpenSEO",
+                "pages": [
+                  "plugins/openseo/overview",
+                  "plugins/openseo/api",
+                  "plugins/openseo/database"
                 ]
               },
               {
@@ -5040,6 +5064,14 @@
                   "plugins/square/overview",
                   "plugins/square/api",
                   "plugins/square/database"
+                ]
+              },
+              {
+                "group": "SSLMate Cert Spotter",
+                "pages": [
+                  "plugins/certspotter/overview",
+                  "plugins/certspotter/api",
+                  "plugins/certspotter/database"
                 ]
               },
               {

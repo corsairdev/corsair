@@ -82,10 +82,10 @@ the PR's plugin scope. Nothing is ever auto-merged.
 Each of these came up as a review finding on five or more plugin PRs. R7 still applies; these add what it doesn't say.
 
 - **Credentials.** Endpoints and the client use `ctx.key`, the key the binder resolved after hooks and the per-tenant lookup, never `options.key` or `ctx.options`.
-- **Errors.** Let core's `ApiError` through unchanged. Its `status` and `retryAfter` are what the 429 handler matches and what core reads to refresh an OAuth token after a 401; a wrapper error hides both.
+- **Errors.** Let core's `ApiError` through unchanged. Its `status` and `retryAfter` are what the 429 handler matches and what core reads to refresh an OAuth token after a 401; a wrapper error hides both. The one exception: a plugin may rebuild the `ApiError` to strip request data the provider echoes back in its error body (a key, a token, a customer's details), keeping the same `status` and `retryAfter`.
 - **Retries.** Core's `request()` already retries a 429 three times, honouring `Retry-After`, so a plugin's 429 handler returns `maxRetries: 0` rather than retrying again. Where a plugin does retry a 429 itself, any method is fine (the provider refused the request before running it), except a 429 that reports an exhausted daily or monthly quota. A 5xx or a network error is retried only for reads and operations marked `replayable`, because a write may already have landed.
 - **Response schemas.** Build them from the provider's documented response, documented nulls and empty arrays included. Don't replace a malformed response with a default value or a made-up success.
-- **Risk levels.** An operation that sends a message, spends money or credits, or can't be undone is `destructive`.
+- **Risk levels.** An operation that sends a message, buys something, starts a paid generation job, or can't be undone is `destructive`. A metered read stays `read`: a lookup, search or scrape whose only cost is a call against the account's quota or prepaid credits (an enrichment lookup, a SERP query, a scrape).
 - **Secrets and personal data.** Keep keys, tokens, email addresses, exact coordinates and customer data out of error messages, log lines and event payloads.
 - **Live tests.** `api.test.ts` skips when its credentials are missing, and prints the skip warning from that same check.
 
@@ -99,4 +99,5 @@ Review bots have raised these on many plugin PRs. They are settled, so a plugin 
 - Generator-wide output in the generated `docs/plugins/<plugin>/**` pages: type strings that show string literals without quotes or `z.unknown()` as `any`, the shared setup text, and the shared example snippets. They come from the generator, and a fix there changes every page at once. Wrong content that comes from the plugin itself (its `plugin-docs.yaml`, descriptions, schemas) is still a finding.
 - The `corsair` peer range `>=0.1.0` in a plugin's `package.json`, which the release tooling owns.
 - Risk levels set per input rather than per operation.
+- A metered read (a lookup, search or scrape that only spends quota or prepaid credits) marked `read`. See R8, Risk levels.
 - On a plugin PR, checks that belong to core and apply to every plugin: the encryption-key (`kek`) check when `encryptDataAtRest` is on, the order of core's root `DEFAULT` error handler, and redaction of approval arguments. A PR that changes `packages/corsair` itself is reviewed on them as usual.

@@ -294,7 +294,7 @@ export const FileOutputSchema = z.object({
 		.string()
 		.optional()
 		.describe(
-			'Where the host saved the file, in place of its content, when it was over the limit. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text.',
+			'Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text.',
 		),
 });
 
@@ -315,15 +315,35 @@ export type FileSink = (file: {
 	filename?: string;
 }) => string | null | undefined;
 
+export type FileSinkOptions = {
+	/**
+	 * Most bytes the host returns inline. A larger file goes to the sink even
+	 * when the endpoint passed a higher `maxBytes`, which then applies only
+	 * where no sink is set. Defaults to FILE_OUTPUT_MAX_BYTES.
+	 */
+	inlineMaxBytes?: number;
+	/**
+	 * Offer the sink every file, not only those over the limit. A file that
+	 * fits comes back with its content and, when the sink keeps it, its `fileId`.
+	 */
+	everyFile?: boolean;
+};
+
 let currentSink: () => FileSink | undefined = () => undefined;
+let sinkOptions: FileSinkOptions = {};
 
 /**
  * For a host: how toFileOutput finds the sink for the operation it is running
  * in, usually an AsyncLocalStorage's getStore. Core keeps no async context of
  * its own, so this module stays free of Node-only imports.
  */
-export function setFileSink(find: () => FileSink | undefined): void {
+export function setFileSink(
+	find: () => FileSink | undefined,
+	options: FileSinkOptions = {},
+): void {
+	checkByteLimit(options.inlineMaxBytes);
 	currentSink = find;
+	sinkOptions = options;
 }
 
 // Media types that hold text besides text/*. The +json and +xml suffixes count too.
@@ -428,6 +448,8 @@ function asUtf8(bytes: Uint8Array): string | undefined {
  * asked for and fits `maxBytes`; the size and type are always reported, so a
  * caller that got no content still knows what it would be. Over the limit, a
  * host's sink (setFileSink) may keep the file and the output carries its `fileId`.
+ * With a sink set, the limit is also capped at the host's `inlineMaxBytes`, so
+ * an endpoint can pass a generous `maxBytes` for callers without a host.
  *
  * A text file in UTF-8 comes back as `text` instead of base64, so a caller can
  * read a CSV or JSON file as it is. A file served as application/octet-stream
@@ -454,16 +476,24 @@ export function toFileOutput(
 	if (options.includeContent === false) {
 		return { ...base, contentOmitted: 'not_requested' };
 	}
-	if (bytes.byteLength > (options.maxBytes ?? FILE_OUTPUT_MAX_BYTES)) {
-		const fileId = currentSink()?.({ ...base, bytes });
+	const sink = currentSink();
+	const hostLimit = sinkOptions.inlineMaxBytes ?? FILE_OUTPUT_MAX_BYTES;
+	const limit = sink
+		? Math.min(options.maxBytes ?? hostLimit, hostLimit)
+		: (options.maxBytes ?? FILE_OUTPUT_MAX_BYTES);
+	if (bytes.byteLength > limit) {
+		const fileId = sink?.({ ...base, bytes });
 		return fileId
 			? { ...base, fileId }
 			: { ...base, contentOmitted: 'over_limit' };
 	}
+	const fileId =
+		sink && sinkOptions.everyFile ? sink({ ...base, bytes }) : null;
+	const kept = fileId ? { ...base, fileId } : base;
 	const text =
 		options.text !== false && holdsText(base.contentType, options.filename)
 			? asUtf8(bytes)
 			: undefined;
-	if (text !== undefined) return { ...base, text };
-	return { ...base, contentBase64: Buffer.from(bytes).toString('base64') };
+	if (text !== undefined) return { ...kept, text };
+	return { ...kept, contentBase64: Buffer.from(bytes).toString('base64') };
 }
