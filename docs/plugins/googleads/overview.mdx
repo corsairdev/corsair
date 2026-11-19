@@ -14,9 +14,11 @@ Things to know before you call:
 
 - **A developer token is not optional.** Without one, Google answers a `HeaderError` even when the OAuth token is valid.
 - **Customer IDs are digits.** Google rejects a hyphenated ID with `CLIENT_CUSTOMER_ID_INVALID`, so the plugin removes the hyphens for you.
-- **`search` pages at 10,000 rows.** Pass `nextPageToken` back as `pageToken`. `searchStream` returns everything in one response, as a JSON array of chunks that the plugin flattens into one `results` list.
+- **`search` pages at a fixed 10,000 rows.** There is no `pageSize` (Google removed it in v17 and answers `PAGE_SIZE_NOT_SUPPORTED`). Pass `nextPageToken` back as `pageToken`. `searchStream` returns everything in one response, as a JSON array of chunks that the plugin flattens into one `results` list.
 - **Money is micros, sent as strings.** `5000000` is 5.00 in the account currency. The plugin keeps Google's string type so no precision is lost.
 - **An update needs `updateMask`.** Google ignores an update without one. The plugin makes it required.
+- **Spending operations are `destructive`.** `campaigns.create` (a new campaign defaults to `ENABLED`), `campaigns.update`, `adGroups.update`, `campaignBudgets.update` and `reporting.mutate` can start or change spend, so they need approval wherever destructive calls do. Every mutate takes `validateOnly: true` to check a request without applying it.
+- **New campaigns declare EU political advertising.** `campaigns.create` requires `containsEuPoliticalAdvertising`; Google refuses a new campaign without it.
 - **A remove is a status change to `REMOVED`.** The row stays and its metrics stay readable, but the campaign cannot be brought back; the plugin marks `campaigns.remove` irreversible.
 - **`customers.update` takes a single operation and answers a single `result`.** It is the one mutate that is not a batch, and only the tracking fields are writable.
 - **Errors branch on the canonical status first.** `429` is a quota rejection, `403` a permission problem, `400` a bad request. The specific reason is a `GoogleAdsFailure` detail, which the plugin keeps on the error body.

@@ -68,18 +68,22 @@ await corsair.googleads.api.adGroups.create({ customerId: '1234567890', adGroup:
 
 ```ts
 {
-  errors?: {
-    errorCode?: Record<string, string> | null,
-    message?: string | null,
-    trigger?: Record<string, any> | null,
-    location?: {
-      fieldPathElements?: {
-        fieldName?: string | null,
-        index?: number | null
-      }[] | null
-    } | null
-  }[] | null,
-  requestId?: string | null
+  code?: number | null,
+  message?: string | null,
+  details?: {
+    errors?: {
+      errorCode?: Record<string, string> | null,
+      message?: string | null,
+      trigger?: Record<string, any> | null,
+      location?: {
+        fieldPathElements?: {
+          fieldName?: string | null,
+          index?: number | null
+        }[] | null
+      } | null
+    }[] | null,
+    requestId?: string | null
+  }[] | null
 } | null
 ```
 </Accordion>
@@ -93,9 +97,9 @@ await corsair.googleads.api.adGroups.create({ customerId: '1234567890', adGroup:
 
 `adGroups.update`
 
-Change an ad group's name, status or default CPC bid; updateMask names the fields that change
+Change an ad group's name, status or default CPC bid, which can change spend; updateMask names the fields that change
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.googleads.api.adGroups.update({ customerId: '1234567890', adGroupId: '222', adGroup: { status: 'PAUSED' }, updateMask: 'status' });
@@ -147,18 +151,22 @@ await corsair.googleads.api.adGroups.update({ customerId: '1234567890', adGroupI
 
 ```ts
 {
-  errors?: {
-    errorCode?: Record<string, string> | null,
-    message?: string | null,
-    trigger?: Record<string, any> | null,
-    location?: {
-      fieldPathElements?: {
-        fieldName?: string | null,
-        index?: number | null
-      }[] | null
-    } | null
-  }[] | null,
-  requestId?: string | null
+  code?: number | null,
+  message?: string | null,
+  details?: {
+    errors?: {
+      errorCode?: Record<string, string> | null,
+      message?: string | null,
+      trigger?: Record<string, any> | null,
+      location?: {
+        fieldPathElements?: {
+          fieldName?: string | null,
+          index?: number | null
+        }[] | null
+      } | null
+    }[] | null,
+    requestId?: string | null
+  }[] | null
 } | null
 ```
 </Accordion>
@@ -227,18 +235,22 @@ await corsair.googleads.api.campaignBudgets.create({ customerId: '1234567890', c
 
 ```ts
 {
-  errors?: {
-    errorCode?: Record<string, string> | null,
-    message?: string | null,
-    trigger?: Record<string, any> | null,
-    location?: {
-      fieldPathElements?: {
-        fieldName?: string | null,
-        index?: number | null
-      }[] | null
-    } | null
-  }[] | null,
-  requestId?: string | null
+  code?: number | null,
+  message?: string | null,
+  details?: {
+    errors?: {
+      errorCode?: Record<string, string> | null,
+      message?: string | null,
+      trigger?: Record<string, any> | null,
+      location?: {
+        fieldPathElements?: {
+          fieldName?: string | null,
+          index?: number | null
+        }[] | null
+      } | null
+    }[] | null,
+    requestId?: string | null
+  }[] | null
 } | null
 ```
 </Accordion>
@@ -254,7 +266,7 @@ await corsair.googleads.api.campaignBudgets.create({ customerId: '1234567890', c
 
 Change a budget amount or name, which changes how much the campaigns using it can spend
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.googleads.api.campaignBudgets.update({ customerId: '1234567890', campaignBudgetId: '789', campaignBudget: { amountMicros: '7500000' }, updateMask: 'amountMicros' });
@@ -308,18 +320,22 @@ Amounts are micros as strings: `5000000` is 5.00 in the account currency.
 
 ```ts
 {
-  errors?: {
-    errorCode?: Record<string, string> | null,
-    message?: string | null,
-    trigger?: Record<string, any> | null,
-    location?: {
-      fieldPathElements?: {
-        fieldName?: string | null,
-        index?: number | null
-      }[] | null
-    } | null
-  }[] | null,
-  requestId?: string | null
+  code?: number | null,
+  message?: string | null,
+  details?: {
+    errors?: {
+      errorCode?: Record<string, string> | null,
+      message?: string | null,
+      trigger?: Record<string, any> | null,
+      location?: {
+        fieldPathElements?: {
+          fieldName?: string | null,
+          index?: number | null
+        }[] | null
+      } | null
+    }[] | null,
+    requestId?: string | null
+  }[] | null
 } | null
 ```
 </Accordion>
@@ -335,12 +351,12 @@ Amounts are micros as strings: `5000000` is 5.00 in the account currency.
 
 `campaigns.create`
 
-Create a campaign that starts serving unless status is PAUSED, against an existing budget
+Create a campaign that starts serving and spending unless status is PAUSED, against an existing budget
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
-await corsair.googleads.api.campaigns.create({ customerId: '1234567890', campaign: { name: 'Search - Brand', advertisingChannelType: 'SEARCH', campaignBudget: 'customers/1234567890/campaignBudgets/789', manualCpc: {} } });
+await corsair.googleads.api.campaigns.create({ customerId: '1234567890', campaign: { name: 'Search - Brand', advertisingChannelType: 'SEARCH', campaignBudget: 'customers/1234567890/campaignBudgets/789', containsEuPoliticalAdvertising: 'DOES_NOT_CONTAIN_EU_POLITICAL_ADVERTISING', status: 'PAUSED', manualCpc: {} } });
 ```
 
 **Input**
@@ -351,7 +367,7 @@ await corsair.googleads.api.campaigns.create({ customerId: '1234567890', campaig
 | `campaign` | `object` | Yes | — |
 | `validateOnly` | `boolean \| null` | No | Validate the request without applying it: Google returns only errors, never results |
 
-Requires a bidding strategy: `manualCpc: {}` or `targetSpend: {}`, not both.
+Requires a bidding strategy (`manualCpc: {}` or `targetSpend: {}`, not both) and `containsEuPoliticalAdvertising`. Send `status: PAUSED` to create it without serving.
 
 <AccordionGroup>
 <Accordion title="campaign full type">
@@ -362,6 +378,7 @@ Requires a bidding strategy: `manualCpc: {}` or `targetSpend: {}`, not both.
   status?: UNSPECIFIED | UNKNOWN | ENABLED | PAUSED | REMOVED | null,
   advertisingChannelType: SEARCH | DISPLAY | SHOPPING | VIDEO | MULTI_CHANNEL | LOCAL | SMART | PERFORMANCE_MAX | LOCAL_SERVICES | TRAVEL | DEMAND_GEN,
   campaignBudget: string,
+  containsEuPoliticalAdvertising: CONTAINS_EU_POLITICAL_ADVERTISING | DOES_NOT_CONTAIN_EU_POLITICAL_ADVERTISING,
   startDateTime?: string | null,
   endDateTime?: string | null,
   networkSettings?: {
@@ -403,18 +420,22 @@ Requires a bidding strategy: `manualCpc: {}` or `targetSpend: {}`, not both.
 
 ```ts
 {
-  errors?: {
-    errorCode?: Record<string, string> | null,
-    message?: string | null,
-    trigger?: Record<string, any> | null,
-    location?: {
-      fieldPathElements?: {
-        fieldName?: string | null,
-        index?: number | null
-      }[] | null
-    } | null
-  }[] | null,
-  requestId?: string | null
+  code?: number | null,
+  message?: string | null,
+  details?: {
+    errors?: {
+      errorCode?: Record<string, string> | null,
+      message?: string | null,
+      trigger?: Record<string, any> | null,
+      location?: {
+        fieldPathElements?: {
+          fieldName?: string | null,
+          index?: number | null
+        }[] | null
+      } | null
+    }[] | null,
+    requestId?: string | null
+  }[] | null
 } | null
 ```
 </Accordion>
@@ -469,18 +490,22 @@ Sets the status to REMOVED. The row and its metrics stay, but the campaign canno
 
 ```ts
 {
-  errors?: {
-    errorCode?: Record<string, string> | null,
-    message?: string | null,
-    trigger?: Record<string, any> | null,
-    location?: {
-      fieldPathElements?: {
-        fieldName?: string | null,
-        index?: number | null
-      }[] | null
-    } | null
-  }[] | null,
-  requestId?: string | null
+  code?: number | null,
+  message?: string | null,
+  details?: {
+    errors?: {
+      errorCode?: Record<string, string> | null,
+      message?: string | null,
+      trigger?: Record<string, any> | null,
+      location?: {
+        fieldPathElements?: {
+          fieldName?: string | null,
+          index?: number | null
+        }[] | null
+      } | null
+    }[] | null,
+    requestId?: string | null
+  }[] | null
 } | null
 ```
 </Accordion>
@@ -494,9 +519,9 @@ Sets the status to REMOVED. The row and its metrics stay, but the campaign canno
 
 `campaigns.update`
 
-Change a campaign's name, status or dates; updateMask names the fields that change
+Change a campaign's name, status or dates; enabling it starts spending. updateMask names the fields that change
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.googleads.api.campaigns.update({ customerId: '1234567890', campaignId: '111', campaign: { status: 'PAUSED' }, updateMask: 'status' });
@@ -519,6 +544,7 @@ await corsair.googleads.api.campaigns.update({ customerId: '1234567890', campaig
 {
   name?: string | null,
   status?: UNSPECIFIED | UNKNOWN | ENABLED | PAUSED | REMOVED | null,
+  containsEuPoliticalAdvertising?: CONTAINS_EU_POLITICAL_ADVERTISING | DOES_NOT_CONTAIN_EU_POLITICAL_ADVERTISING | null,
   startDateTime?: string | null,
   endDateTime?: string | null
 }
@@ -549,18 +575,22 @@ await corsair.googleads.api.campaigns.update({ customerId: '1234567890', campaig
 
 ```ts
 {
-  errors?: {
-    errorCode?: Record<string, string> | null,
-    message?: string | null,
-    trigger?: Record<string, any> | null,
-    location?: {
-      fieldPathElements?: {
-        fieldName?: string | null,
-        index?: number | null
-      }[] | null
-    } | null
-  }[] | null,
-  requestId?: string | null
+  code?: number | null,
+  message?: string | null,
+  details?: {
+    errors?: {
+      errorCode?: Record<string, string> | null,
+      message?: string | null,
+      trigger?: Record<string, any> | null,
+      location?: {
+        fieldPathElements?: {
+          fieldName?: string | null,
+          index?: number | null
+        }[] | null
+      } | null
+    }[] | null,
+    requestId?: string | null
+  }[] | null
 } | null
 ```
 </Accordion>
@@ -654,7 +684,7 @@ Search the queryable fields, which is how a caller finds what a GAQL statement m
 **Risk:** `read`
 
 ```ts
-await corsair.googleads.api.googleAdsFields.search({ query: "SELECT name FROM google_ads_field WHERE name = 'campaign.id'" });
+await corsair.googleads.api.googleAdsFields.search({ query: "SELECT name, category, selectable WHERE name = 'campaign.id'" });
 ```
 
 **Input**
@@ -662,10 +692,10 @@ await corsair.googleads.api.googleAdsFields.search({ query: "SELECT name FROM go
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `query` | `string` | Yes | A Google Ads Query Language statement, e.g. `SELECT campaign.id, campaign.name FROM campaign WHERE campaign.status = 'ENABLED'` |
-| `pageSize` | `number \| null` | No | 1 to 10,000 rows. Omitted, Google chooses |
+| `pageSize` | `number \| null` | No | 1 to 10,000 fields. Omitted, Google chooses |
 | `pageToken` | `string \| null` | No | nextPageToken from a previous page of the same query |
 
-Takes no customer path; it lists the fields any GAQL statement may select.
+Takes no customer path and no FROM clause; it lists the fields any GAQL statement may select.
 
 
 
@@ -712,7 +742,7 @@ Takes no customer path; it lists the fields any GAQL statement may select.
 
 Mutate any entity in one call: each entry names its own operation, and removing is permanent for that entity
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.googleads.api.reporting.mutate({ customerId: '1234567890', mutateOperations: [{ campaignOperation: { update: { resourceName: 'customers/1234567890/campaigns/111', status: 'PAUSED' }, updateMask: 'status' } }] });
@@ -728,7 +758,7 @@ await corsair.googleads.api.reporting.mutate({ customerId: '1234567890', mutateO
 | `validateOnly` | `boolean \| null` | No | Validate the request without applying it: Google returns only errors, never results |
 | `responseContentType` | `UNSPECIFIED \| RESOURCE_NAME_ONLY \| MUTABLE_RESOURCE \| null` | No | `MUTABLE_RESOURCE` returns the changed resource; the default returns only the resource name |
 
-Each entry names its own entity operation, e.g. `{ campaignOperation: { remove } }`. `partialFailure` lets the good entries land.
+Each entry names its own entity operation, e.g. `{ campaignOperation: { remove } }`, and the answer is `mutateOperationResponses`, one per entry, e.g. `{ campaignResult: { resourceName } }`. `partialFailure` lets the good entries land.
 
 
 
@@ -736,16 +766,16 @@ Each entry names its own entity operation, e.g. `{ campaignOperation: { remove }
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `results` | `object[] \| null` | No | One result per operation, in order, each naming the resource |
+| `mutateOperationResponses` | `object[] \| null` | No | One entry per operation, in order, keyed by entity, e.g. `{ campaignResult: { resourceName } }` |
 | `partialFailureError` | `object \| null` | No | Present when partialFailure was set and some operations failed |
 
 <AccordionGroup>
-<Accordion title="results full type">
+<Accordion title="mutateOperationResponses full type">
 
 ```ts
-{
+Record<string, {
   resourceName?: string | null
-}[] | null
+}>[] | null
 ```
 </Accordion>
 
@@ -753,18 +783,22 @@ Each entry names its own entity operation, e.g. `{ campaignOperation: { remove }
 
 ```ts
 {
-  errors?: {
-    errorCode?: Record<string, string> | null,
-    message?: string | null,
-    trigger?: Record<string, any> | null,
-    location?: {
-      fieldPathElements?: {
-        fieldName?: string | null,
-        index?: number | null
-      }[] | null
-    } | null
-  }[] | null,
-  requestId?: string | null
+  code?: number | null,
+  message?: string | null,
+  details?: {
+    errors?: {
+      errorCode?: Record<string, string> | null,
+      message?: string | null,
+      trigger?: Record<string, any> | null,
+      location?: {
+        fieldPathElements?: {
+          fieldName?: string | null,
+          index?: number | null
+        }[] | null
+      } | null
+    }[] | null,
+    requestId?: string | null
+  }[] | null
 } | null
 ```
 </Accordion>
@@ -792,11 +826,10 @@ await corsair.googleads.api.reporting.search({ customerId: '1234567890', query: 
 |------|------|----------|-------------|
 | `customerId` | `string` | Yes | The account's customer ID, e.g. `1234567890`. A hyphenated `123-456-7890` is accepted and the hyphens are removed, which is what the docs ask |
 | `query` | `string` | Yes | A Google Ads Query Language statement, e.g. `SELECT campaign.id, campaign.name FROM campaign WHERE campaign.status = 'ENABLED'` |
-| `pageSize` | `number \| null` | No | 1 to 10,000 rows. Omitted, Google chooses |
 | `pageToken` | `string \| null` | No | nextPageToken from a previous page of the same query |
 | `validateOnly` | `boolean \| null` | No | Validate the request without applying it: Google returns only errors, never results |
 
-Pages at 10,000 rows; pass `nextPageToken` back as `pageToken`.
+Pages at a fixed 10,000 rows (no `pageSize`); pass `nextPageToken` back as `pageToken`.
 
 
 
@@ -832,7 +865,6 @@ await corsair.googleads.api.reporting.searchStream({ customerId: '1234567890', q
 |------|------|----------|-------------|
 | `customerId` | `string` | Yes | The account's customer ID, e.g. `1234567890`. A hyphenated `123-456-7890` is accepted and the hyphens are removed, which is what the docs ask |
 | `query` | `string` | Yes | A Google Ads Query Language statement, e.g. `SELECT campaign.id, campaign.name FROM campaign WHERE campaign.status = 'ENABLED'` |
-| `validateOnly` | `boolean \| null` | No | Validate the request without applying it: Google returns only errors, never results |
 
 No paging. The response is an array of chunks, which the plugin flattens into one `results` list.
 
@@ -844,6 +876,7 @@ No paging. The response is an array of chunks, which the plugin flattens into on
 |------|------|----------|-------------|
 | `results` | `Record<string, any>[]` | Yes | — |
 | `fieldMask` | `string \| null` | No | — |
+| `requestId` | `string \| null` | No | — |
 | `queryResourceConsumption` | `string \| null` | No | — |
 
 
