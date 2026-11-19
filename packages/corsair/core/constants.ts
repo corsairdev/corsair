@@ -616,6 +616,7 @@ export const BaseProviders = [
 	'stackai',
 	'stackexchange',
 	'starton',
+	'storeganise',
 	'stormglass',
 	'strava',
 	'streamtime',
@@ -1354,6 +1355,7 @@ export const ProviderDisplayNames = {
 	stackai: 'StackAI',
 	stackexchange: 'Stack Exchange',
 	starton: 'Starton',
+	storeganise: 'Storeganise',
 	stormglass: 'Stormglass',
 	strava: 'Strava',
 	streamtime: 'Streamtime',
@@ -2099,6 +2101,7 @@ export type AllProviders =
 	| 'stackai'
 	| 'stackexchange'
 	| 'starton'
+	| 'storeganise'
 	| 'stormglass'
 	| 'strava'
 	| 'streamtime'
