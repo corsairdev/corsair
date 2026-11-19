@@ -1,0 +1,556 @@
+---
+title: "Storeganise API reference"
+sidebarTitle: "API"
+description: "API reference for the Storeganise plugin in Corsair: every `storeganise.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Addons
+
+### get
+
+`addons.get`
+
+Read one add-on record with its operator credentials
+
+**Risk:** `read`
+
+```ts
+await corsair.storeganise.api.addons.get({ addonId: '5bf540e8d986a91cd713affe' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `addonId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `customFields` | `Record<string, unknown> \| null` | No | — |
+
+
+
+---
+
+### list
+
+`addons.list`
+
+List the add-ons installed on the account
+
+**Risk:** `read`
+
+```ts
+await corsair.storeganise.api.addons.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  customFields?: Record<string, unknown> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Invoices
+
+### list
+
+`invoices.list`
+
+List invoices, filtered by update time or fetched in batches of ids
+
+**Risk:** `read`
+
+```ts
+await corsair.storeganise.api.invoices.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `updatedAfter` | `string` | No | Only records updated at or after this UTC time, formatted as YYYY-MM-DDTHH:MM:SS.000Z. |
+| `ids` | `string[]` | No | Up to 50 record ids, sent comma-separated in one call. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Jobs
+
+### get
+
+`jobs.get`
+
+Read one job by the id a webhook delivery carries
+
+**Risk:** `read`
+
+```ts
+await corsair.storeganise.api.jobs.get({ jobId: '5bf540e8d986a91cd713affe' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `result` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  siteId?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Settings
+
+### get
+
+`settings.get`
+
+Read the business settings, including the webhook secret
+
+**Risk:** `read`
+
+```ts
+await corsair.storeganise.api.settings.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+## Sites
+
+### get
+
+`sites.get`
+
+Read one storage site by id or code
+
+**Risk:** `read`
+
+```ts
+await corsair.storeganise.api.sites.get({ siteIdOrCode: 'central' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteIdOrCode` | `string` | Yes | Site id or site code, e.g. "central". |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `customFields` | `Record<string, unknown> \| null` | No | — |
+
+
+
+---
+
+### list
+
+`sites.list`
+
+List storage sites, optionally filtered by a search term
+
+**Risk:** `read`
+
+```ts
+await corsair.storeganise.api.sites.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | Search filter, including custom fields, e.g. "customField:foo". |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  customFields?: Record<string, unknown> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Unit Rentals
+
+### get
+
+`unitRentals.get`
+
+Read one unit rental, embedding its unit, owner and custom fields
+
+**Risk:** `read`
+
+```ts
+await corsair.storeganise.api.unitRentals.get({ unitRentalId: '5bf540e8d986a91cd713affe', include: 'unit,owner,customFields' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `unitRentalId` | `string` | Yes | — |
+| `include` | `string` | No | Comma-separated related records to embed, e.g. "unit,owner,customFields". |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `unit` | `object \| null` | No | — |
+| `owner` | `object \| null` | No | — |
+| `customFields` | `Record<string, unknown> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="unit full type">
+
+```ts
+{
+  id: string,
+  siteId?: string | null,
+  typeId?: string | null,
+  name?: string | null,
+  length?: number | null,
+  width?: number | null,
+  height?: number | null,
+  measure?: string | null,
+  floor?: string | null,
+  defaultDeposit?: number | null,
+  defaultPrice?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="owner full type">
+
+```ts
+{
+  id: string,
+  email?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`unitRentals.list`
+
+List unit rentals in batches of ids, embedding related records
+
+**Risk:** `read`
+
+```ts
+await corsair.storeganise.api.unitRentals.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | No | Up to 50 record ids, sent comma-separated in one call. |
+| `include` | `string` | No | Comma-separated related records to embed, e.g. "unit,owner,customFields". |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  unit?: {
+    id: string,
+    siteId?: string | null,
+    typeId?: string | null,
+    name?: string | null,
+    length?: number | null,
+    width?: number | null,
+    height?: number | null,
+    measure?: string | null,
+    floor?: string | null,
+    defaultDeposit?: number | null,
+    defaultPrice?: number | null
+  } | null,
+  owner?: {
+    id: string,
+    email?: string | null
+  } | null,
+  customFields?: Record<string, unknown> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`unitRentals.update`
+
+Set custom fields on a unit rental, such as access codes
+
+**Risk:** `write`
+
+```ts
+await corsair.storeganise.api.unitRentals.update({
+	unitRentalId: '5bf540e8d986a91cd713affe',
+	customFields: { myAC_accessCode: '482913' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `unitRentalId` | `string` | Yes | — |
+| `customFields` | `Record<string, unknown>` | Yes | — |
+
+The only documented write. Sets custom fields on one rental, which is how access-control integrations store access codes and overlock flags under prefixed keys such as myAC_accessCode or myAC_overlocked.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `unit` | `object \| null` | No | — |
+| `owner` | `object \| null` | No | — |
+| `customFields` | `Record<string, unknown> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="unit full type">
+
+```ts
+{
+  id: string,
+  siteId?: string | null,
+  typeId?: string | null,
+  name?: string | null,
+  length?: number | null,
+  width?: number | null,
+  height?: number | null,
+  measure?: string | null,
+  floor?: string | null,
+  defaultDeposit?: number | null,
+  defaultPrice?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="owner full type">
+
+```ts
+{
+  id: string,
+  email?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Units
+
+### list
+
+`units.list`
+
+List storage units with dimensions and default prices
+
+**Risk:** `read`
+
+```ts
+await corsair.storeganise.api.units.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  siteId?: string | null,
+  typeId?: string | null,
+  name?: string | null,
+  length?: number | null,
+  width?: number | null,
+  height?: number | null,
+  measure?: string | null,
+  floor?: string | null,
+  defaultDeposit?: number | null,
+  defaultPrice?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Users
+
+### get
+
+`users.get`
+
+Read one user by id or email address
+
+**Risk:** `read`
+
+```ts
+await corsair.storeganise.api.users.get({ userIdOrEmail: 'john@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userIdOrEmail` | `string` | Yes | User id or email address. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`users.list`
+
+List users, filtered by update time or fetched in batches of ids
+
+**Risk:** `read`
+
+```ts
+await corsair.storeganise.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `updatedAfter` | `string` | No | Only records updated at or after this UTC time, formatted as YYYY-MM-DDTHH:MM:SS.000Z. |
+| `ids` | `string[]` | No | Up to 50 record ids, sent comma-separated in one call. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  email?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
