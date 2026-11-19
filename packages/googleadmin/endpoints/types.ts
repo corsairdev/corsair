@@ -941,9 +941,27 @@ const MembersUpdateInputSchema = z
 		groupKey: z.string(),
 		memberKey: z.string(),
 		role: z.enum(MEMBER_ROLES).nullish(),
-		delivery_settings: z.enum(MEMBER_DELIVERY_SETTINGS).nullish(),
+		delivery_settings: z
+			.enum(MEMBER_DELIVERY_SETTINGS)
+			.nullish()
+			.describe(
+				'Needs `role` too: Google takes a delivery change only through the PUT update, which replaces the role as well',
+			),
 	})
-	.strict();
+	.strict()
+	.superRefine((value, ctx) => {
+		// The plugin does not read the current role and send it back: an admin
+		// could change the role between that read and the PUT, and the PUT
+		// would silently restore the old one.
+		if (value.delivery_settings && !value.role) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['role'],
+				message:
+					'Pass role with delivery_settings: the PUT that changes delivery replaces the role too',
+			});
+		}
+	});
 
 const MembersDeleteInputSchema = z
 	.object({ groupKey: z.string(), memberKey: z.string() })

@@ -121,7 +121,7 @@ apiNotes:
   users.get: 'A `customFieldMask` is only read when `projection` is `custom`.'
   users.update: 'Absent fields keep their value; a field sent as null is cleared.'
   groups.update: 'Sends PATCH, so an omitted field keeps its value.'
-  members.update: 'A role change alone sends PATCH. A delivery preference change sends the PUT, reading the current role first when none is given.'
+  members.update: 'A role change alone sends PATCH. A delivery preference change sends the PUT, which replaces the role too, so pass `role` with `delivery_settings`.'
   users.photos.update: '`photoData` is Google''s web-safe base64 of a JPEG or PNG: `-` and `_` in place of `+` and `/`, and `.` (not `=`) for padding.'
   users.insert: 'A plain `password` is 8 to 100 characters. With `hashFunction` set it is a hash, which can be longer.'
   users.undelete: 'Takes the immutable user ID. An email address answers 404.'

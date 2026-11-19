@@ -613,32 +613,35 @@ describe('members', () => {
 		expect(sentBody()).toEqual({ role: 'OWNER' });
 	});
 
-	it('changes the delivery preference with a PUT, keeping the current role', async () => {
-		// members.patch does not take delivery_settings, so the plugin reads the
-		// role and sends it back with the new preference on the PUT.
-		mockFetch(jsonResponse({ ...member, role: 'MANAGER' }));
+	it('refuses a delivery change without a role instead of reading and re-sending it', async () => {
+		// The PUT that carries delivery_settings replaces the role too. Reading the
+		// current role and sending it back could undo a role change made in
+		// between, so the caller must say which role to keep.
+		await expect(
+			endpoints.members.update(makeCtx(), {
+				groupKey: 'eng@example.com',
+				memberKey: 'ada@example.com',
+				delivery_settings: 'NONE',
+			}),
+		).rejects.toMatchObject({ name: 'ZodError' });
+		expect(globalThis.fetch).not.toHaveBeenCalled();
+	});
+
+	it("keeps an email sent in the query out of a failed request's error", async () => {
 		mockFetch(
-			jsonResponse({ ...member, role: 'MANAGER', delivery_settings: 'NONE' }),
+			googleError(403, 'PERMISSION_DENIED', 'forbidden', 'Not Authorized'),
 		);
 
-		const result = await endpoints.members.update(makeCtx(), {
-			groupKey: 'eng@example.com',
-			memberKey: 'ada@example.com',
-			delivery_settings: 'NONE',
-		});
+		const error = (await endpoints.groups
+			.list(makeCtx(), { userKey: 'ada@example.com' })
+			// `unknown` is necessary because a rejected promise carries no type; the cast below narrows it.
+			.catch((caught: unknown) => caught)) as ApiError;
 
-		const calls = currentFetch().mock.calls;
-		expect(calls).toHaveLength(2);
-		const url = `${BASE}/groups/eng%40example.com/members/ada%40example.com`;
-		expect(String(calls[0]![0])).toBe(url);
-		expect(calls[0]![1].method).toBe('GET');
-		expect(String(calls[1]![0])).toBe(url);
-		expect(calls[1]![1].method).toBe('PUT');
-		expect(JSON.parse(calls[1]![1].body)).toEqual({
-			role: 'MANAGER',
-			delivery_settings: 'NONE',
-		});
-		expect(result.delivery_settings).toBe('NONE');
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error.status).toBe(403);
+		const retained = JSON.stringify({ request: error.request, url: error.url });
+		expect(retained).not.toContain('ada@example.com');
+		expect(retained).not.toContain('ada%40example.com');
 	});
 
 	it('sends role and delivery preference in one PUT when both are given', async () => {

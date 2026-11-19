@@ -219,13 +219,37 @@ export async function makeGoogleAdminRequest(
  */
 const REDACTED = '[REDACTED]';
 
+const HAS_EMAIL = /@|%40/i;
+
+/** Replaces email-bearing path segments and query values (e.g. groups.list's userKey). */
 function redactPath(url: string): string {
 	const [path = '', ...rest] = url.split('?');
 	const scrubbed = path
 		.split('/')
-		.map((part) => (/@|%40/i.test(part) ? REDACTED : part))
+		.map((part) => (HAS_EMAIL.test(part) ? REDACTED : part))
 		.join('/');
-	return rest.length > 0 ? `${scrubbed}?${rest.join('?')}` : scrubbed;
+	if (rest.length === 0) return scrubbed;
+	const query = rest
+		.join('?')
+		.split('&')
+		.map((pair) => {
+			const [name = '', ...value] = pair.split('=');
+			return HAS_EMAIL.test(value.join('=')) ? `${name}=${REDACTED}` : pair;
+		})
+		.join('&');
+	return `${scrubbed}?${query}`;
+}
+
+function redactQuery(
+	query: Record<string, unknown> | undefined, // unknown: core's query values are any JSON scalar or list.
+): Record<string, unknown> | undefined {
+	if (!query) return query;
+	return Object.fromEntries(
+		Object.entries(query).map(([name, value]) => [
+			name,
+			typeof value === 'string' && HAS_EMAIL.test(value) ? REDACTED : value,
+		]),
+	);
 }
 
 function redactRequestData(error: ApiError): ApiError {
@@ -234,6 +258,7 @@ function redactRequestData(error: ApiError): ApiError {
 		value: {
 			...error.request,
 			url: redactPath(error.request.url),
+			query: redactQuery(error.request.query),
 			body: error.request.body === undefined ? undefined : REDACTED,
 		},
 		enumerable: true,

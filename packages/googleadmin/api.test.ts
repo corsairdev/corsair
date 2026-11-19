@@ -273,10 +273,11 @@ describeWrites('googleadmin live API: throwaway writes', () => {
 				});
 				expect(has.isMember).toBe(true);
 
-				// A delivery change goes through the PUT and keeps the role.
+				// A delivery change goes through the PUT, which takes the role too.
 				const changed = await api.members.update(ctx, {
 					groupKey: key,
 					memberKey: memberEmail,
+					role: 'MEMBER',
 					delivery_settings: 'DIGEST',
 				});
 				expect(changed.role).toBe('MEMBER');

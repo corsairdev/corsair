@@ -1,5 +1,5 @@
 import type { GoogleAdminEndpoints } from '..';
-import { makeGoogleAdminRequest, segment } from '../client';
+import { segment } from '../client';
 import { call, pageCount } from './call';
 import {
 	GoogleAdminEndpointInputSchemas as Inputs,
@@ -100,8 +100,9 @@ export const insert: GoogleAdminEndpoints['membersInsert'] = async (
  * A role change alone goes through members.patch, which keeps the delivery
  * preference. Google documents `delivery_settings` only on insert, update and
  * get, so a delivery change goes through the PUT members.update instead. That
- * PUT replaces the membership, so when no role is given the current one is
- * read first and sent back unchanged.
+ * PUT replaces the membership, so the input schema requires `role` alongside
+ * `delivery_settings` rather than reading the current role and sending it
+ * back (which could undo a role change made in between).
  */
 export const update: GoogleAdminEndpoints['membersUpdate'] = async (
 	ctx,
@@ -115,7 +116,7 @@ export const update: GoogleAdminEndpoints['membersUpdate'] = async (
 			output: Outputs.membersUpdate,
 		},
 		rawInput,
-		async (input) => {
+		(input) => {
 			const path = `/groups/${segment(input.groupKey)}/members/${segment(input.memberKey)}`;
 			if (!input.delivery_settings) {
 				return {
@@ -124,18 +125,10 @@ export const update: GoogleAdminEndpoints['membersUpdate'] = async (
 					body: input.role ? { role: input.role } : {},
 				};
 			}
-			const role =
-				input.role ??
-				Outputs.membersGet.parse(
-					await makeGoogleAdminRequest(ctx.key, { method: 'GET', path }),
-				).role;
 			return {
 				method: 'PUT',
 				path,
-				body: {
-					...(role ? { role } : {}),
-					delivery_settings: input.delivery_settings,
-				},
+				body: { role: input.role, delivery_settings: input.delivery_settings },
 			};
 		},
 	);

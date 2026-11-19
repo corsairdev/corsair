@@ -762,9 +762,9 @@ await corsair.googleadmin.api.members.update({ groupKey: 'engineering@example.co
 | `groupKey` | `string` | Yes | — |
 | `memberKey` | `string` | Yes | — |
 | `role` | `OWNER \| MANAGER \| MEMBER \| null` | No | — |
-| `delivery_settings` | `ALL_MAIL \| DAILY \| DIGEST \| DISABLED \| NONE \| null` | No | — |
+| `delivery_settings` | `ALL_MAIL \| DAILY \| DIGEST \| DISABLED \| NONE \| null` | No | Needs `role` too: Google takes a delivery change only through the PUT update, which replaces the role as well |
 
-A role change alone sends PATCH. A delivery preference change sends the PUT, reading the current role first when none is given.
+A role change alone sends PATCH. A delivery preference change sends the PUT, which replaces the role too, so pass `role` with `delivery_settings`.
 
 
 
