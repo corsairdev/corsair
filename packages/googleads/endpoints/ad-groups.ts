@@ -1,27 +1,10 @@
 import type { GoogleAdsEndpoints } from '..';
-import { customerPathId } from '../client';
+import { customerPathId, entityResourceName } from '../client';
 import { call } from './call';
 import {
 	GoogleAdsEndpointInputSchemas as Inputs,
 	GoogleAdsEndpointOutputSchemas as Outputs,
 } from './types';
-
-function adGroupResourceName(customerId: string, adGroupId: string): string {
-	if (adGroupId.startsWith('customers/')) {
-		if (!/^customers\/\d+\/adGroups\/[^/]+$/.test(adGroupId)) {
-			throw new Error(
-				`Invalid ad group resource name "${adGroupId}": expected customers/<id>/adGroups/<id>`,
-			);
-		}
-		return adGroupId;
-	}
-	if (!/^\d+$/.test(adGroupId)) {
-		throw new Error(
-			`Invalid ad group id "${adGroupId}": expected digits or a full resource name`,
-		);
-	}
-	return `customers/${customerId}/adGroups/${adGroupId}`;
-}
 
 export const create: GoogleAdsEndpoints['adGroupsCreate'] = async (
 	ctx,
@@ -68,7 +51,11 @@ export const update: GoogleAdsEndpoints['adGroupsUpdate'] = async (
 					operations: [
 						{
 							update: {
-								resourceName: adGroupResourceName(customer, input.adGroupId),
+								resourceName: entityResourceName(
+									customer,
+									input.adGroupId,
+									'adGroups',
+								),
 								...input.adGroup,
 							},
 							updateMask: input.updateMask,

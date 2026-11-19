@@ -1,28 +1,10 @@
 import type { GoogleAdsEndpoints } from '..';
-import { customerPathId } from '../client';
+import { customerPathId, entityResourceName } from '../client';
 import { call } from './call';
 import {
 	GoogleAdsEndpointInputSchemas as Inputs,
 	GoogleAdsEndpointOutputSchemas as Outputs,
 } from './types';
-
-/** A campaign budget id is the bare number or the full resource name. */
-function budgetResourceName(customerId: string, budgetId: string): string {
-	if (budgetId.startsWith('customers/')) {
-		if (!/^customers\/\d+\/campaignBudgets\/[^/]+$/.test(budgetId)) {
-			throw new Error(
-				`Invalid campaign budget resource name "${budgetId}": expected customers/<id>/campaignBudgets/<id>`,
-			);
-		}
-		return budgetId;
-	}
-	if (!/^\d+$/.test(budgetId)) {
-		throw new Error(
-			`Invalid campaign budget id "${budgetId}": expected digits or a full resource name`,
-		);
-	}
-	return `customers/${customerId}/campaignBudgets/${budgetId}`;
-}
 
 export const create: GoogleAdsEndpoints['campaignBudgetsCreate'] = async (
 	ctx,
@@ -72,9 +54,10 @@ export const update: GoogleAdsEndpoints['campaignBudgetsUpdate'] = async (
 					operations: [
 						{
 							update: {
-								resourceName: budgetResourceName(
+								resourceName: entityResourceName(
 									customer,
 									input.campaignBudgetId,
+									'campaignBudgets',
 								),
 								...input.campaignBudget,
 							},

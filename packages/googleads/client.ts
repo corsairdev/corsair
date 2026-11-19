@@ -108,6 +108,7 @@ export async function makeGoogleAdsRequest(
 		mediaType: method === 'GET' ? undefined : 'application/json',
 	};
 
+	const isRead = isReadRequest(method, path);
 	try {
 		// unknown: the response body is checked by the caller's output schema.
 		return await request<unknown>(requestConfig, requestOptions, {
@@ -117,14 +118,33 @@ export async function makeGoogleAdsRequest(
 		if (error instanceof ApiError) throw error;
 		// DOMException can fail `instanceof Error` across realms.
 		if (error instanceof Error || error instanceof DOMException) {
-			throw new GoogleAdsTransportError(error.message, method === 'GET', error);
+			throw new GoogleAdsTransportError(error.message, isRead, error);
 		}
 		throw new GoogleAdsTransportError(
 			'Unknown transport failure',
-			method === 'GET',
+			isRead,
 			new Error('Unknown'),
 		);
 	}
+}
+
+/**
+ * The POST methods that only read. Google Ads sends a GAQL query in the body,
+ * so `googleAds:search`, `googleAds:searchStream` and `googleAdsFields:search`
+ * are POSTs that change nothing and are safe to repeat. Every other POST is a
+ * mutate.
+ */
+const READ_ONLY_POST_SUFFIXES = [
+	'/googleAds:search',
+	'/googleAds:searchStream',
+	'/googleAdsFields:search',
+] as const;
+
+/** Whether a request only reads, so a 5xx or a dropped connection may be replayed. */
+export function isReadRequest(method: string, path: string): boolean {
+	if (method.toUpperCase() === 'GET') return true;
+	const bare = path.split('?')[0] ?? path;
+	return READ_ONLY_POST_SUFFIXES.some((suffix) => bare.endsWith(suffix));
 }
 
 /**
@@ -135,9 +155,37 @@ export async function makeGoogleAdsRequest(
 export function customerPathId(customerId: string): string {
 	const digits = customerId.replace(/-/g, '').trim();
 	if (!/^\d+$/.test(digits)) {
+		// The value itself is account data, so the message names only the format.
 		throw new Error(
-			`Invalid Google Ads customer ID "${customerId}": expected digits, optionally hyphenated`,
+			'Invalid Google Ads customer ID: expected digits, optionally hyphenated',
 		);
 	}
 	return digits;
+}
+
+/**
+ * Builds the resource name an update or remove takes, from either the bare id
+ * or the full resource name, e.g. `customers/1/campaigns/2`. The supplied value
+ * is account data, so an error names only the expected format.
+ */
+export function entityResourceName(
+	customerId: string,
+	id: string,
+	collection: 'campaigns' | 'campaignBudgets' | 'adGroups',
+): string {
+	if (id.startsWith('customers/')) {
+		const pattern = new RegExp(`^customers/\\d+/${collection}/\\d+$`);
+		if (!pattern.test(id)) {
+			throw new Error(
+				`Invalid ${collection} resource name: expected customers/<id>/${collection}/<id>`,
+			);
+		}
+		return id;
+	}
+	if (!/^\d+$/.test(id)) {
+		throw new Error(
+			`Invalid ${collection} id: expected digits or a full resource name`,
+		);
+	}
+	return `customers/${customerId}/${collection}/${id}`;
 }

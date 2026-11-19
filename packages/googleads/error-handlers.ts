@@ -1,6 +1,6 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
-import { GoogleAdsTransportError } from './client';
+import { GoogleAdsTransportError, isReadRequest } from './client';
 
 function apiError(error: Error): ApiError | undefined {
 	return error instanceof ApiError ? error : undefined;
@@ -10,12 +10,68 @@ function statusOf(error: Error): number | undefined {
 	return apiError(error)?.status;
 }
 
+/** Whether the failed request only read, so replaying it cannot apply a change twice. */
+function failedRead(error: Error): boolean {
+	const request = apiError(error)?.request;
+	return request ? isReadRequest(request.method, request.url) : false;
+}
+
+/**
+ * QuotaError codes that a retry within seconds cannot clear. `RESOURCE_EXHAUSTED`
+ * is the daily operations quota (the per-second limits answer
+ * `RESOURCE_TEMPORARILY_EXHAUSTED`), the long-term query cap lasts for hours,
+ * and the other two need a person to act.
+ * https://developers.google.com/google-ads/api/reference/rpc/v26/QuotaErrorEnum.QuotaError
+ */
+const NON_RETRYABLE_QUOTA_ERRORS = new Set([
+	'RESOURCE_EXHAUSTED',
+	'EXCESSIVE_LONG_TERM_QUERY_RESOURCE_CONSUMPTION',
+	'ACCESS_PROHIBITED',
+	'PAYMENTS_PROFILE_ACTIVATION_RATE_LIMIT_EXCEEDED',
+]);
+
+/** A wait longer than this means the quota resets later than a retry loop should hold a call. */
+const MAX_RETRY_DELAY_MS = 60_000;
+
+type QuotaDetails = { codes: string[]; retryDelayMs?: number };
+
+/**
+ * Reads the QuotaError codes and the `quotaErrorDetails.retryDelay` (a protobuf
+ * Duration such as `"30s"`) from the GoogleAdsFailure detail of a 429 body.
+ * Only codes and the delay are read; messages and triggers stay on the body.
+ */
+function quotaDetails(error: ApiError): QuotaDetails {
+	const codes: string[] = [];
+	let retryDelayMs: number | undefined;
+	// unknown: ApiError.body is the provider's JSON, narrowed step by step below.
+	const details: unknown = error.body?.error?.details;
+	if (!Array.isArray(details)) return { codes };
+	for (const detail of details) {
+		// unknown: one google.rpc.Status detail; only GoogleAdsFailure has `errors`.
+		const failures: unknown = detail?.errors;
+		if (!Array.isArray(failures)) continue;
+		for (const failure of failures) {
+			const code = failure?.errorCode?.quotaError;
+			if (typeof code === 'string') codes.push(code);
+			const delay = failure?.details?.quotaErrorDetails?.retryDelay;
+			const match =
+				typeof delay === 'string' ? /^(\d+(?:\.\d+)?)s$/.exec(delay) : null;
+			if (match?.[1]) {
+				const ms = Math.ceil(Number(match[1]) * 1000);
+				retryDelayMs = Math.max(retryDelayMs ?? 0, ms);
+			}
+		}
+	}
+	return { codes, retryDelayMs };
+}
+
 /**
  * The Google Ads error model, from
  * https://developers.google.com/google-ads/api/docs/best-practices/understand-api-errors:
  *
- * - `429` is `RESOURCE_EXHAUSTED`: the quota or an overloaded system. Google
- *   asks for exponential backoff, and sends no Retry-After.
+ * - `429` is `RESOURCE_EXHAUSTED`: a quota or an overloaded system. The
+ *   QuotaError code in the GoogleAdsFailure detail says which quota; Google
+ *   asks for exponential backoff with jitter, and sends no Retry-After header.
  * - `503` is `UNAVAILABLE`, documented as a transient condition that is highly
  *   recommended to retry. `504` is `DEADLINE_EXCEEDED`, also described as
  *   transient.
@@ -30,16 +86,32 @@ function statusOf(error: Error): number | undefined {
  *   retry grants permission.
  *
  * Every write is a POST, and a search is a POST that is safe to repeat, so the
- * endpoint's risk level is what decides a replay, not the HTTP method.
+ * request path decides a replay (isReadRequest), not the HTTP method.
  */
 export const errorHandlers = {
-	// 429 RESOURCE_EXHAUSTED, and the two transient server codes the docs name.
+	// 429 is RESOURCE_EXHAUSTED for every quota, so the GoogleAdsFailure detail
+	// decides: the per-second limits are retried with backoff, the daily quota
+	// is not, because nothing changes until it resets. The plugin owns these
+	// retries (client.ts turns core's off), so a wait Google names is forwarded.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => statusOf(error) === 429,
-		handler: async () => ({
-			maxRetries: 3,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		handler: async (error: Error) => {
+			const failed = apiError(error);
+			if (!failed) return { maxRetries: 0 };
+			const { codes, retryDelayMs } = quotaDetails(failed);
+			const waitMs = retryDelayMs ?? failed.retryAfter;
+			if (
+				codes.some((code) => NON_RETRYABLE_QUOTA_ERRORS.has(code)) ||
+				(waitMs !== undefined && waitMs > MAX_RETRY_DELAY_MS)
+			) {
+				return { maxRetries: 0 };
+			}
+			return {
+				maxRetries: 3,
+				retryStrategy: 'exponential_backoff_jitter' as const,
+				...(waitMs ? { headersRetryAfterMs: waitMs } : {}),
+			};
+		},
 	},
 
 	AUTH_ERROR: {
@@ -77,7 +149,7 @@ export const errorHandlers = {
 			return status === 503 || status === 504;
 		},
 		handler: async (error: Error) => ({
-			maxRetries: apiError(error)?.request.method === 'GET' ? 2 : 0,
+			maxRetries: failedRead(error) ? 2 : 0,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
@@ -87,7 +159,7 @@ export const errorHandlers = {
 	SERVER_ERROR: {
 		match: (error: Error) => (statusOf(error) ?? 0) >= 500,
 		handler: async (error: Error) => ({
-			maxRetries: apiError(error)?.request.method === 'GET' ? 2 : 0,
+			maxRetries: failedRead(error) ? 2 : 0,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},

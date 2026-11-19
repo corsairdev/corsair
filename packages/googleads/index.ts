@@ -168,20 +168,24 @@ const googleAdsEndpointMeta = {
 		description:
 			'Run a query and read the whole result set in one response, without paging',
 	},
+	// Destructive: one call can remove any entity, enable a campaign or change a
+	// budget, and core cannot read the risk from the operation list.
 	'reporting.mutate': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Mutate any entity in one call: each entry names its own operation, and removing is permanent for that entity',
 	},
+	// Destructive: a new campaign defaults to ENABLED and starts spending.
 	'campaigns.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Create a campaign that starts serving unless status is PAUSED, against an existing budget',
+			'Create a campaign that starts serving and spending unless status is PAUSED, against an existing budget',
 	},
+	// Destructive: setting status to ENABLED starts spending.
 	'campaigns.update': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			"Change a campaign's name, status or dates; updateMask names the fields that change",
+			"Change a campaign's name, status or dates; enabling it starts spending. updateMask names the fields that change",
 	},
 	'campaigns.remove': {
 		riskLevel: 'destructive',
@@ -193,8 +197,9 @@ const googleAdsEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Create a campaign budget in micros of the account currency',
 	},
+	// Destructive: the amount is what the campaigns using the budget may spend.
 	'campaignBudgets.update': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Change a budget amount or name, which changes how much the campaigns using it can spend',
 	},
@@ -202,10 +207,11 @@ const googleAdsEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Create an ad group inside an existing campaign',
 	},
+	// Destructive: re-enabling an ad group or raising its bid changes spend.
 	'adGroups.update': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			"Change an ad group's name, status or default CPC bid; updateMask names the fields that change",
+			"Change an ad group's name, status or default CPC bid, which can change spend; updateMask names the fields that change",
 	},
 	'customers.update': {
 		riskLevel: 'write',

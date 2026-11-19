@@ -117,6 +117,95 @@ describe('googleads through the bound client', () => {
 		}
 	});
 
+	it('does not retry a 429 for the exhausted daily quota', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			respond(
+				{
+					error: {
+						code: 429,
+						message: 'quota',
+						status: 'RESOURCE_EXHAUSTED',
+						details: [
+							{
+								'@type':
+									'type.googleapis.com/google.ads.googleads.v26.errors.GoogleAdsFailure',
+								errors: [{ errorCode: { quotaError: 'RESOURCE_EXHAUSTED' } }],
+							},
+						],
+					},
+				},
+				429,
+			);
+
+			await expect(
+				corsair.googleads.api.reporting.search({
+					customerId: '1234567890',
+					query,
+				}),
+			).rejects.toMatchObject({ status: 429 });
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('retries a 503 on a search, which is a POST that only reads', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			respond(
+				{ error: { code: 503, message: 'unavailable', status: 'UNAVAILABLE' } },
+				503,
+			);
+			respond(rows);
+
+			const result = await corsair.googleads.api.reporting.search({
+				customerId: '1234567890',
+				query,
+			});
+
+			expect(result.results).toHaveLength(1);
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('retries a dropped connection on a search', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
+			respond(rows);
+
+			const result = await corsair.googleads.api.reporting.search({
+				customerId: '1234567890',
+				query,
+			});
+
+			expect(result.results).toHaveLength(1);
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('does not replay a mutate after a dropped connection', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
+
+			await expect(
+				corsair.googleads.api.campaignBudgets.create({
+					customerId: '1234567890',
+					campaignBudget: { name: 'B', amountMicros: '1000000' },
+				}),
+			).rejects.toBeDefined();
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
 	it('does not replay a mutate after a 5xx, which may have landed', async () => {
 		const { corsair, testDb } = await createClient();
 		try {
@@ -132,6 +221,8 @@ describe('googleads through the bound client', () => {
 						name: 'New',
 						advertisingChannelType: 'SEARCH',
 						campaignBudget: 'customers/1234567890/campaignBudgets/1',
+						containsEuPoliticalAdvertising:
+							'DOES_NOT_CONTAIN_EU_POLITICAL_ADVERTISING',
 						manualCpc: {},
 					},
 				}),
@@ -148,8 +239,7 @@ describe('googleads through the bound client', () => {
 			await expect(
 				corsair.googleads.api.reporting.search({
 					customerId: '1234567890',
-					query,
-					pageSize: 10_001,
+					query: '',
 				}),
 			).rejects.toBeDefined();
 			expect(fetchMock).not.toHaveBeenCalled();

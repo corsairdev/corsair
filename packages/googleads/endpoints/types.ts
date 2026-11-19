@@ -34,8 +34,9 @@ const query = z
 	);
 
 /**
- * `Search` pages at 10,000 rows and rejects a larger page size. Omitted, Google
- * chooses the page size.
+ * Page size for `googleAdsFields:search` only. `googleAds:search` dropped
+ * configurable page sizes in v17: it pages at a fixed 10,000 rows and answers
+ * `PAGE_SIZE_NOT_SUPPORTED` when one is sent, so its input has no such field.
  */
 const pageSize = z
 	.number()
@@ -43,7 +44,7 @@ const pageSize = z
 	.min(1)
 	.max(10_000)
 	.nullish()
-	.describe('1 to 10,000 rows. Omitted, Google chooses');
+	.describe('1 to 10,000 fields. Omitted, Google chooses');
 
 const pageToken = z
 	.string()
@@ -52,7 +53,7 @@ const pageToken = z
 
 /**
  * `validate_only` runs the request through Google's checks without applying it.
- * The docs give it to both search and mutate.
+ * `googleAds:search` and every mutate take it; `googleAds:searchStream` does not.
  */
 const validateOnly = z
 	.boolean()
@@ -75,17 +76,16 @@ const SearchInputSchema = z
 	.object({
 		customerId,
 		query,
-		pageSize,
 		pageToken,
 		validateOnly,
 	})
 	.strict();
 
+/** `SearchGoogleAdsStreamRequest` has no page token and no validate-only mode. */
 const SearchStreamInputSchema = z
 	.object({
 		customerId,
 		query,
-		validateOnly,
 	})
 	.strict();
 
@@ -126,6 +126,30 @@ const SearchOutputSchema = z.object({
 });
 
 /**
+ * One element of the `searchStream` array: a `SearchGoogleAdsStreamResponse`.
+ * `results` is absent on a batch with no rows. An `error` element is how the
+ * REST transport reports a failure after the stream started; the endpoint
+ * turns it into a thrown error rather than a short result.
+ */
+export const SearchStreamChunkSchema = z
+	.object({
+		results: z.array(GoogleAdsRowSchema).nullish(),
+		fieldMask: z.string().nullish(),
+		requestId: z.string().nullish(),
+		queryResourceConsumption: z.string().nullish(),
+		error: z
+			.object({
+				code: z.number().nullish(),
+				status: z.string().nullish(),
+			})
+			.loose()
+			.nullish(),
+	})
+	.loose();
+
+export const SearchStreamChunksSchema = z.array(SearchStreamChunkSchema);
+
+/**
  * `searchStream` answers a JSON array with one element per batch of results,
  * not a single object, and there is no page token. The endpoint flattens the
  * array into one `results` list.
@@ -133,6 +157,7 @@ const SearchOutputSchema = z.object({
 const SearchStreamOutputSchema = z.object({
 	results: z.array(GoogleAdsRowSchema),
 	fieldMask: z.string().nullish(),
+	requestId: z.string().nullish(),
 	queryResourceConsumption: z.string().nullish(),
 });
 
@@ -252,7 +277,7 @@ const GoogleAdsFailureSchema = z
 								'One key naming the error group, e.g. `{ campaignError: "DUPLICATE_CAMPAIGN_NAME" }`',
 							),
 						message: z.string().nullish(),
-						trigger: z.record(z.string(), z.unknown()).nullish(), // unknown: echo.
+						trigger: z.record(z.string(), z.unknown()).nullish(), // unknown: a Value echo of the offending input.
 						location: z
 							.object({
 								fieldPathElements: z
@@ -273,6 +298,19 @@ const GoogleAdsFailureSchema = z
 	})
 	.loose();
 
+/**
+ * `partialFailureError` is a `google.rpc.Status`: a code and message, with the
+ * GoogleAdsFailure (one error per failed operation, located by
+ * `operations[index]`) inside `details`.
+ */
+const PartialFailureStatusSchema = z
+	.object({
+		code: z.number().nullish(),
+		message: z.string().nullish(),
+		details: z.array(GoogleAdsFailureSchema).nullish(),
+	})
+	.loose();
+
 const MutateOutputSchema = z.object({
 	results: z
 		.array(
@@ -284,12 +322,36 @@ const MutateOutputSchema = z.object({
 		)
 		.nullish()
 		.describe('One result per operation, in order, each naming the resource'),
-	partialFailureError: GoogleAdsFailureSchema.nullish().describe(
+	partialFailureError: PartialFailureStatusSchema.nullish().describe(
 		'Present when partialFailure was set and some operations failed',
 	),
 });
 
-const googleAdsServiceMutateOutput = MutateOutputSchema;
+/**
+ * `googleAds:mutate` answers `mutateOperationResponses`, one per operation in
+ * order. Each is a oneof keyed by entity, e.g. `{ campaignResult: {
+ * resourceName } }`, carrying the resource itself under its entity name when
+ * `responseContentType` is `MUTABLE_RESOURCE`. A validate-only call answers
+ * none.
+ */
+const GoogleAdsServiceMutateOutputSchema = z.object({
+	mutateOperationResponses: z
+		.array(
+			z.record(
+				z.string(),
+				z.object({ resourceName: z.string().nullish() }).loose(),
+			),
+		)
+		.nullish()
+		.describe(
+			'One entry per operation, in order, keyed by entity, e.g. `{ campaignResult: { resourceName } }`',
+		),
+	partialFailureError: PartialFailureStatusSchema.nullish().describe(
+		'Present when partialFailure was set and some operations failed',
+	),
+});
+
+const googleAdsServiceMutateOutput = GoogleAdsServiceMutateOutputSchema;
 
 /**
  * `customers:mutate` takes ONE `operation` and answers ONE `result`, unlike
@@ -315,6 +377,22 @@ const CampaignStatusValues = [
 ] as const;
 
 const CampaignStatusSchema = z.enum(CampaignStatusValues);
+
+/**
+ * The EU political advertising self-declaration. Google requires it on a new
+ * campaign unless the campaign already targets a non-EU location, which a
+ * create here cannot do, and blocks campaign mutates on an account with an
+ * undeclared campaign.
+ * https://developers.google.com/google-ads/api/docs/api-policy/eu-par
+ */
+const EuPoliticalAdvertisingSchema = z
+	.enum([
+		'CONTAINS_EU_POLITICAL_ADVERTISING',
+		'DOES_NOT_CONTAIN_EU_POLITICAL_ADVERTISING',
+	])
+	.describe(
+		'Whether the campaign carries EU political advertising. Most campaigns send `DOES_NOT_CONTAIN_EU_POLITICAL_ADVERTISING`',
+	);
 
 /** The advertising channel values campaign create accepts. */
 export const ADVERTISING_CHANNEL_TYPES = [
@@ -348,6 +426,7 @@ const CampaignCreateSchema = z
 		campaignBudget: resourceName.describe(
 			'The budget resource name, e.g. `customers/1234567890/campaignBudgets/789`',
 		),
+		containsEuPoliticalAdvertising: EuPoliticalAdvertisingSchema,
 		startDateTime: z
 			.string()
 			.nullish()
@@ -407,6 +486,7 @@ const CampaignUpdateSchema = z
 		status: CampaignStatusSchema.nullish().describe(
 			'`REMOVED` is how a campaign is deleted; use campaigns.remove for that',
 		),
+		containsEuPoliticalAdvertising: EuPoliticalAdvertisingSchema.nullish(),
 		startDateTime: z.string().nullish(),
 		endDateTime: z.string().nullish(),
 	})
@@ -534,7 +614,7 @@ export const AD_GROUP_TYPES = [
 	'SMART_CAMPAIGN',
 	'VIDEO_RESPONSIVE',
 	'DISPLAY_SMART_CAMPAIGN',
-];
+] as const;
 
 const AdGroupCreateSchema = z
 	.object({

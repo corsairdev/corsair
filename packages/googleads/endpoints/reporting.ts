@@ -4,11 +4,32 @@ import { call, rowCount } from './call';
 import {
 	GoogleAdsEndpointInputSchemas as Inputs,
 	GoogleAdsEndpointOutputSchemas as Outputs,
+	SearchStreamChunksSchema,
 } from './types';
 
 /**
- * `googleAds:search` takes the query in the body and pages at 10,000 rows. It
- * is a POST because the query does not fit a URL safely, not because it writes.
+ * A failure Google reported inside a `searchStream` body after the stream had
+ * started. It carries the canonical code and status only; the message can echo
+ * the query, so it stays out.
+ */
+export class GoogleAdsStreamError extends Error {
+	readonly code: number | undefined;
+	readonly status: string | undefined;
+
+	constructor(code: number | undefined, status: string | undefined) {
+		super(
+			`Google Ads searchStream failed partway${status ? `: ${status}` : ''}`,
+		);
+		this.name = 'GoogleAdsStreamError';
+		this.code = code;
+		this.status = status;
+	}
+}
+
+/**
+ * `googleAds:search` takes the query in the body and pages at a fixed 10,000
+ * rows (v17 removed `pageSize`). It is a POST because the query does not fit a
+ * URL safely, not because it writes.
  */
 export const search: GoogleAdsEndpoints['search'] = async (ctx, rawInput) =>
 	call(
@@ -20,9 +41,6 @@ export const search: GoogleAdsEndpoints['search'] = async (ctx, rawInput) =>
 			path: `/customers/${customerPathId(input.customerId)}/googleAds:search`,
 			body: {
 				query: input.query,
-				...(input.pageSize === undefined || input.pageSize === null
-					? {}
-					: { pageSize: input.pageSize }),
 				...(input.pageToken ? { pageToken: input.pageToken } : {}),
 				...(input.validateOnly ? { validateOnly: true } : {}),
 			},
@@ -49,38 +67,31 @@ export const searchStream: GoogleAdsEndpoints['searchStream'] = async (
 		(input) => ({
 			method: 'POST',
 			path: `/customers/${customerPathId(input.customerId)}/googleAds:searchStream`,
-			body: {
-				query: input.query,
-				...(input.validateOnly ? { validateOnly: true } : {}),
-			},
+			body: { query: input.query },
 		}),
 		{
-			// The array is flattened here, before the output schema parses it, so
-			// the schema and the documented shape stay one object.
+			// Each chunk is validated before the array is flattened, so a
+			// malformed chunk fails the call instead of reading as zero rows.
 			shape: (raw) => {
-				// unknown: the stream body is an untyped JSON array.
-				const chunks = Array.isArray(raw) ? raw : [raw];
-				// unknown: a row has no static shape; the output schema checks it.
-				const results: unknown[] = [];
+				const chunks = SearchStreamChunksSchema.parse(raw);
+				const results: Record<string, unknown>[] = []; // unknown: row fields per query.
 				let fieldMask: string | undefined;
+				let requestId: string | undefined;
 				let queryResourceConsumption: string | undefined;
 				for (const chunk of chunks) {
-					if (chunk === null || typeof chunk !== 'object') continue;
-					// unknown: one chunk's members until each is checked below.
-					const part = chunk as {
-						results?: unknown; // unknown: checked with Array.isArray.
-						fieldMask?: unknown; // unknown: checked with typeof.
-						queryResourceConsumption?: unknown; // unknown: checked with typeof.
-					};
-					if (Array.isArray(part.results)) results.push(...part.results);
-					if (typeof part.fieldMask === 'string') {
-						fieldMask ??= part.fieldMask;
+					if (chunk.error) {
+						throw new GoogleAdsStreamError(
+							chunk.error.code ?? undefined,
+							chunk.error.status ?? undefined,
+						);
 					}
-					if (typeof part.queryResourceConsumption === 'string') {
-						queryResourceConsumption ??= part.queryResourceConsumption;
-					}
+					if (chunk.results) results.push(...chunk.results);
+					fieldMask ??= chunk.fieldMask ?? undefined;
+					requestId ??= chunk.requestId ?? undefined;
+					queryResourceConsumption ??=
+						chunk.queryResourceConsumption ?? undefined;
 				}
-				return { results, fieldMask, queryResourceConsumption };
+				return { results, fieldMask, requestId, queryResourceConsumption };
 			},
 			log: (result) => rowCount(result.results),
 		},
@@ -108,5 +119,9 @@ export const mutate: GoogleAdsEndpoints['mutate'] = async (ctx, rawInput) =>
 					: {}),
 			},
 		}),
-		{ log: (result) => ({ operations: result.results?.length ?? 0 }) },
+		{
+			log: (result) => ({
+				operations: result.mutateOperationResponses?.length ?? 0,
+			}),
+		},
 	);

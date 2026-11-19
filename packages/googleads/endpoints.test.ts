@@ -84,6 +84,67 @@ describe('response parsing', () => {
 		expect(error.name).toBe('ZodError');
 	});
 
+	it.each([
+		['a chunk whose results are not an array', [{ results: {} }]],
+		['a chunk that is not an object', [{ results: [] }, 'oops']],
+		['a body that is not an array', { results: [] }],
+	])('rejects a searchStream with %s', async (_label, body) => {
+		// R8: a malformed stream must fail, not read as a successful empty report.
+		mockFetch(jsonResponse(body));
+
+		const error = await failure(
+			endpoints.reporting.searchStream(makeCtx(), {
+				customerId: '1234567890',
+				query,
+			}),
+		);
+
+		expect(error.name).toBe('ZodError');
+	});
+
+	it('keeps valid searchStream chunks that carry no rows', async () => {
+		mockFetch(
+			jsonResponse([
+				{ fieldMask: 'campaign.id', requestId: 'req-1' },
+				{ results: [{ campaign: { id: '1' } }] },
+			]),
+		);
+
+		const result = await endpoints.reporting.searchStream(makeCtx(), {
+			customerId: '1234567890',
+			query,
+		});
+
+		expect(result.results).toEqual([{ campaign: { id: '1' } }]);
+		expect(result.requestId).toBe('req-1');
+	});
+
+	it('fails a searchStream that reports an error partway, without the message', async () => {
+		mockFetch(
+			jsonResponse([
+				{ results: [{ campaign: { id: '1' } }] },
+				{
+					error: {
+						code: 400,
+						status: 'INVALID_ARGUMENT',
+						message: "Error in query near 'secret_campaign_name'",
+					},
+				},
+			]),
+		);
+
+		const error = await failure(
+			endpoints.reporting.searchStream(makeCtx(), {
+				customerId: '1234567890',
+				query,
+			}),
+		);
+
+		expect(error.name).toBe('GoogleAdsStreamError');
+		expect(error.message).toContain('INVALID_ARGUMENT');
+		expect(error.message).not.toContain('secret_campaign_name');
+	});
+
 	it('rejects a mutate response whose results are not objects', async () => {
 		mockFetch(jsonResponse({ results: ['customers/1/campaigns/2'] }));
 
@@ -98,17 +159,27 @@ describe('response parsing', () => {
 	});
 
 	it('keeps a partial failure instead of reporting success', async () => {
+		// partialFailureError is a google.rpc.Status with the GoogleAdsFailure in
+		// its details, which is the documented MutateCampaignsResponse shape.
 		mockFetch(
 			jsonResponse({
 				results: [{}],
 				partialFailureError: {
-					errors: [
+					code: 3,
+					message: 'Multiple errors in details',
+					details: [
 						{
-							errorCode: { campaignError: 'DUPLICATE_CAMPAIGN_NAME' },
-							message: 'The campaign name is already in use',
+							'@type':
+								'type.googleapis.com/google.ads.googleads.v26.errors.GoogleAdsFailure',
+							errors: [
+								{
+									errorCode: { campaignError: 'DUPLICATE_CAMPAIGN_NAME' },
+									message: 'The campaign name is already in use',
+								},
+							],
+							requestId: 'req-1',
 						},
 					],
-					requestId: 'req-1',
 				},
 			}),
 		);
@@ -119,11 +190,16 @@ describe('response parsing', () => {
 				name: 'Duplicate',
 				advertisingChannelType: 'SEARCH',
 				campaignBudget: 'customers/1/campaignBudgets/2',
+				containsEuPoliticalAdvertising:
+					'DOES_NOT_CONTAIN_EU_POLITICAL_ADVERTISING',
 				manualCpc: {},
 			},
 		});
 
-		expect(result.partialFailureError?.errors?.[0]?.errorCode).toEqual({
+		expect(result.partialFailureError?.code).toBe(3);
+		expect(
+			result.partialFailureError?.details?.[0]?.errors?.[0]?.errorCode,
+		).toEqual({
 			campaignError: 'DUPLICATE_CAMPAIGN_NAME',
 		});
 	});
@@ -149,6 +225,8 @@ describe('refused input, before any request', () => {
 					// The enum refuses this at the type level too.
 					advertisingChannelType: 'BANNER' as never,
 					campaignBudget: 'customers/1/campaignBudgets/2',
+					containsEuPoliticalAdvertising:
+						'DOES_NOT_CONTAIN_EU_POLITICAL_ADVERTISING',
 					manualCpc: {},
 				},
 			}),
@@ -183,13 +261,42 @@ describe('refused input, before any request', () => {
 		).toBe(false);
 	});
 
-	it('rejects a customer id that is not digits', async () => {
-		await expect(
+	it('rejects a customer id that is not digits, without echoing it', async () => {
+		const error = await failure(
 			endpoints.reporting.search(makeCtx(), {
-				customerId: 'not-an-id',
+				customerId: 'acct-secret-id',
 				query,
 			}),
-		).rejects.toThrow(/Invalid Google Ads customer ID/);
+		);
+
+		expect(error.message).toMatch(/Invalid Google Ads customer ID/);
+		expect(error.message).not.toContain('acct-secret-id');
+		expect(globalThis.fetch).not.toHaveBeenCalled();
+	});
+
+	it('refuses a campaign create without the EU political advertising declaration', async () => {
+		await expect(
+			endpoints.campaigns.create(makeCtx(), {
+				customerId: '1234567890',
+				campaign: {
+					name: 'Undeclared',
+					advertisingChannelType: 'SEARCH',
+					campaignBudget: 'customers/1/campaignBudgets/2',
+					manualCpc: {},
+				} as never,
+			}),
+		).rejects.toMatchObject({ name: 'ZodError' });
+		expect(globalThis.fetch).not.toHaveBeenCalled();
+	});
+
+	it('refuses pageSize on reporting.search, which v26 answers PAGE_SIZE_NOT_SUPPORTED', async () => {
+		await expect(
+			endpoints.reporting.search(makeCtx(), {
+				customerId: '1234567890',
+				query,
+				pageSize: 500,
+			} as never),
+		).rejects.toMatchObject({ name: 'ZodError' });
 		expect(globalThis.fetch).not.toHaveBeenCalled();
 	});
 });

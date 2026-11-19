@@ -1,5 +1,5 @@
 import type { GoogleAdsEndpoints } from '..';
-import { customerPathId } from '../client';
+import { customerPathId, entityResourceName } from '../client';
 import { call } from './call';
 import {
 	GoogleAdsEndpointInputSchemas as Inputs,
@@ -29,27 +29,6 @@ export const create: GoogleAdsEndpoints['campaignsCreate'] = async (
 		{ log: (result) => ({ operations: result.results?.length ?? 0 }) },
 	);
 
-/**
- * A campaign id is either the bare number or its full resource name, and the
- * API takes only the resource name in `update` and `remove`.
- */
-function campaignResourceName(customerId: string, campaignId: string): string {
-	if (campaignId.startsWith('customers/')) {
-		if (!/^customers\/\d+\/campaigns\/[^/]+$/.test(campaignId)) {
-			throw new Error(
-				`Invalid campaign resource name "${campaignId}": expected customers/<id>/campaigns/<id>`,
-			);
-		}
-		return campaignId;
-	}
-	if (!/^\d+$/.test(campaignId)) {
-		throw new Error(
-			`Invalid campaign id "${campaignId}": expected digits or a full resource name`,
-		);
-	}
-	return `customers/${customerId}/campaigns/${campaignId}`;
-}
-
 export const update: GoogleAdsEndpoints['campaignsUpdate'] = async (
 	ctx,
 	rawInput,
@@ -71,7 +50,11 @@ export const update: GoogleAdsEndpoints['campaignsUpdate'] = async (
 					operations: [
 						{
 							update: {
-								resourceName: campaignResourceName(customer, input.campaignId),
+								resourceName: entityResourceName(
+									customer,
+									input.campaignId,
+									'campaigns',
+								),
 								...input.campaign,
 							},
 							updateMask: input.updateMask,
@@ -108,7 +91,11 @@ export const remove: GoogleAdsEndpoints['campaignsRemove'] = async (
 				body: {
 					operations: [
 						{
-							remove: campaignResourceName(customer, input.campaignId),
+							remove: entityResourceName(
+								customer,
+								input.campaignId,
+								'campaigns',
+							),
 						},
 					],
 					...(input.validateOnly ? { validateOnly: true } : {}),

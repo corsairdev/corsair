@@ -63,6 +63,31 @@ describe('request headers', () => {
 		expect(sentHeader('login-customer-id')).toBe('9999999999');
 	});
 
+	it('strips hyphens from a stored login customer id', async () => {
+		mockFetch(jsonResponse({ results: [row] }));
+
+		await endpoints.reporting.search(
+			makeCtx({ loginCustomerId: '999-999-9999' }),
+			{
+				customerId: '1234567890',
+				query: 'SELECT campaign.id FROM campaign',
+			},
+		);
+
+		expect(sentHeader('login-customer-id')).toBe('9999999999');
+	});
+
+	it('omits login-customer-id when none is stored', async () => {
+		mockFetch(jsonResponse({ results: [row] }));
+
+		await endpoints.reporting.search(makeCtx({ loginCustomerId: null }), {
+			customerId: '1234567890',
+			query: 'SELECT campaign.id FROM campaign',
+		});
+
+		expect(sentHeader('login-customer-id')).toBeNull();
+	});
+
 	it('refuses to send a call with no developer token', async () => {
 		await expect(
 			endpoints.reporting.search(makeCtxWithoutDeveloperToken(), {
@@ -81,16 +106,17 @@ describe('reporting.search', () => {
 		const result = await endpoints.reporting.search(makeCtx(), {
 			customerId: '1234567890',
 			query: 'SELECT campaign.id FROM campaign',
-			pageSize: 500,
+			pageToken: 'next',
 		});
 
 		expect(lastCall().init.method).toBe('POST');
 		expect(lastCall().url).toBe(
 			`${BASE}/customers/1234567890/googleAds:search`,
 		);
+		// No pageSize: v26 pages at a fixed 10,000 rows.
 		expect(sentBody()).toEqual({
 			query: 'SELECT campaign.id FROM campaign',
-			pageSize: 500,
+			pageToken: 'next',
 		});
 		expect(result.results).toHaveLength(1);
 	});
@@ -135,13 +161,13 @@ describe('reporting.search', () => {
 		});
 	});
 
-	it('rejects a page size above the documented 10,000 rows', async () => {
+	it('rejects a page size, which v26 no longer accepts', async () => {
 		await expect(
 			endpoints.reporting.search(makeCtx(), {
 				customerId: '1234567890',
 				query: 'SELECT campaign.id FROM campaign',
-				pageSize: 10_001,
-			}),
+				pageSize: 10_000,
+			} as never),
 		).rejects.toMatchObject({ name: 'ZodError' });
 		expect(globalThis.fetch).not.toHaveBeenCalled();
 	});
@@ -164,6 +190,8 @@ describe('reporting.searchStream', () => {
 		expect(lastCall().url).toBe(
 			`${BASE}/customers/1234567890/googleAds:searchStream`,
 		);
+		// SearchGoogleAdsStreamRequest has no validateOnly or paging fields.
+		expect(sentBody()).toEqual({ query: 'SELECT campaign.id FROM campaign' });
 		expect(result.results).toHaveLength(2);
 		expect(result.fieldMask).toBe('campaign.id');
 	});
@@ -190,6 +218,8 @@ describe('campaigns', () => {
 				name: 'Search - Brand',
 				advertisingChannelType: 'SEARCH',
 				campaignBudget: 'customers/1234567890/campaignBudgets/789',
+				containsEuPoliticalAdvertising:
+					'DOES_NOT_CONTAIN_EU_POLITICAL_ADVERTISING',
 				manualCpc: {},
 			},
 		});
@@ -204,6 +234,8 @@ describe('campaigns', () => {
 						name: 'Search - Brand',
 						advertisingChannelType: 'SEARCH',
 						campaignBudget: 'customers/1234567890/campaignBudgets/789',
+						containsEuPoliticalAdvertising:
+							'DOES_NOT_CONTAIN_EU_POLITICAL_ADVERTISING',
 						manualCpc: {},
 					},
 				},
@@ -219,6 +251,8 @@ describe('campaigns', () => {
 					name: 'No strategy',
 					advertisingChannelType: 'SEARCH',
 					campaignBudget: 'customers/1234567890/campaignBudgets/789',
+					containsEuPoliticalAdvertising:
+						'DOES_NOT_CONTAIN_EU_POLITICAL_ADVERTISING',
 				},
 			}),
 		).rejects.toMatchObject({ name: 'ZodError' });
@@ -232,6 +266,8 @@ describe('campaigns', () => {
 					name: 'Two strategies',
 					advertisingChannelType: 'SEARCH',
 					campaignBudget: 'customers/1234567890/campaignBudgets/789',
+					containsEuPoliticalAdvertising:
+						'DOES_NOT_CONTAIN_EU_POLITICAL_ADVERTISING',
 					manualCpc: {},
 					targetSpend: {},
 				},
@@ -306,14 +342,27 @@ describe('campaigns', () => {
 		});
 	});
 
-	it('rejects a badly formed campaign resource name', async () => {
-		await expect(
-			endpoints.campaigns.remove(makeCtx(), {
-				customerId: '1234567890',
-				campaignId: 'customers/1234567890/adGroups/1',
-			}),
-		).rejects.toThrow(/Invalid campaign resource name/);
+	it('rejects a badly formed campaign resource name without echoing it', async () => {
+		const attempt = endpoints.campaigns.remove(makeCtx(), {
+			customerId: '1234567890',
+			campaignId: 'customers/1234567890/adGroups/1',
+		});
+
+		await expect(attempt).rejects.toThrow(/Invalid campaigns resource name/);
+		await expect(attempt).rejects.not.toThrow(/1234567890/);
 		expect(globalThis.fetch).not.toHaveBeenCalled();
+	});
+
+	it('rejects a bad campaign id without echoing it', async () => {
+		const attempt = endpoints.campaigns.update(makeCtx(), {
+			customerId: '1234567890',
+			campaignId: 'brand-campaign',
+			campaign: { status: 'PAUSED' },
+			updateMask: 'status',
+		});
+
+		await expect(attempt).rejects.toThrow(/Invalid campaigns id/);
+		await expect(attempt).rejects.not.toThrow(/brand-campaign/);
 	});
 });
 
@@ -465,18 +514,30 @@ describe('googleAdsFields', () => {
 		mockFetch(jsonResponse({ results: [{ name: 'campaign.id' }] }));
 
 		const result = await endpoints.googleAdsFields.search(makeCtx(), {
-			query: "SELECT name FROM google_ads_field WHERE name = 'campaign.id'",
+			// GoogleAdsFieldService queries take no FROM clause.
+			query: "SELECT name WHERE name = 'campaign.id'",
+			pageSize: 50,
 		});
 
 		expect(lastCall().url).toBe(`${BASE}/googleAdsFields:search`);
+		expect(sentBody()).toEqual({
+			query: "SELECT name WHERE name = 'campaign.id'",
+			pageSize: 50,
+		});
 		expect(result.results).toHaveLength(1);
 	});
 });
 
 describe('reporting.mutate', () => {
 	it('passes several entity operations in one mutateOperations array', async () => {
+		// MutateGoogleAdsResponse: one oneof entry per operation, keyed by entity.
 		mockFetch(
-			jsonResponse({ results: [{ resourceName: 'a' }, { resourceName: 'b' }] }),
+			jsonResponse({
+				mutateOperationResponses: [
+					{ campaignResult: { resourceName: 'customers/1/campaigns/2' } },
+					{ adGroupResult: { resourceName: 'customers/1/adGroups/3' } },
+				],
+			}),
 		);
 
 		const result = await endpoints.reporting.mutate(makeCtx(), {
@@ -498,7 +559,61 @@ describe('reporting.mutate', () => {
 			],
 			partialFailure: true,
 		});
-		expect(result.results).toHaveLength(2);
+		expect(result.mutateOperationResponses).toEqual([
+			{ campaignResult: { resourceName: 'customers/1/campaigns/2' } },
+			{ adGroupResult: { resourceName: 'customers/1/adGroups/3' } },
+		]);
+	});
+
+	it('keeps the mutated resource when MUTABLE_RESOURCE is asked for', async () => {
+		mockFetch(
+			jsonResponse({
+				mutateOperationResponses: [
+					{
+						campaignResult: {
+							resourceName: 'customers/1/campaigns/2',
+							campaign: { status: 'PAUSED' },
+						},
+					},
+				],
+			}),
+		);
+
+		const result = await endpoints.reporting.mutate(makeCtx(), {
+			customerId: '1234567890',
+			mutateOperations: [
+				{
+					campaignOperation: {
+						update: {
+							resourceName: 'customers/1/campaigns/2',
+							status: 'PAUSED',
+						},
+						updateMask: 'status',
+					},
+				},
+			],
+			responseContentType: 'MUTABLE_RESOURCE',
+		});
+
+		expect(result.mutateOperationResponses?.[0]?.campaignResult).toEqual({
+			resourceName: 'customers/1/campaigns/2',
+			campaign: { status: 'PAUSED' },
+		});
+	});
+
+	it('accepts the empty answer of a validate-only mutate', async () => {
+		mockFetch(jsonResponse({}));
+
+		const result = await endpoints.reporting.mutate(makeCtx(), {
+			customerId: '1234567890',
+			mutateOperations: [
+				{ campaignOperation: { remove: 'customers/1/campaigns/2' } },
+			],
+			validateOnly: true,
+		});
+
+		expect(sentBody()).toMatchObject({ validateOnly: true });
+		expect(result.mutateOperationResponses ?? []).toEqual([]);
 	});
 
 	it('refuses an empty operation list', async () => {

@@ -126,6 +126,25 @@ describe('googleads plugin definition', () => {
 		]);
 	});
 
+	it('marks every operation that can spend money or remove an entity destructive', () => {
+		const destructive = Object.entries(meta)
+			.filter(([, entry]) => entry.riskLevel === 'destructive')
+			.map(([name]) => name)
+			.sort();
+
+		// reporting.mutate can remove or enable anything; a new campaign defaults
+		// to ENABLED; enabling a campaign or ad group, raising a bid or changing
+		// a budget amount all change what the account spends.
+		expect(destructive).toEqual([
+			'adGroups.update',
+			'campaignBudgets.update',
+			'campaigns.create',
+			'campaigns.remove',
+			'campaigns.update',
+			'reporting.mutate',
+		]);
+	});
+
 	it('describes every operation', () => {
 		for (const entry of Object.values(meta)) {
 			expect((entry.description ?? '').length).toBeGreaterThan(10);

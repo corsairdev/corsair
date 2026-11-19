@@ -9,7 +9,13 @@ export const BASE = `https://googleads.googleapis.com/${VERSION}`;
  * A context the endpoints read: `key` is the OAuth token, and the integration
  * credentials supply the developer token.
  */
-export function makeCtx(): GoogleAdsContext {
+export function makeCtx(
+	options: { loginCustomerId?: string | null } = {},
+): GoogleAdsContext {
+	const loginCustomerId =
+		options.loginCustomerId === undefined
+			? '9999999999'
+			: options.loginCustomerId;
 	// unknown: the endpoints read only `key` and the two integration fields.
 	return {
 		key: 'test-token',
@@ -19,7 +25,7 @@ export function makeCtx(): GoogleAdsContext {
 				client_secret: 'client-secret',
 				redirect_url: null,
 				developer_token: 'dev-token',
-				login_customer_id: '9999999999',
+				login_customer_id: loginCustomerId,
 			}),
 		},
 	} as unknown as GoogleAdsContext; // unknown: a partial manager by design.
@@ -78,8 +84,12 @@ export function jsonResponse(
 	});
 }
 
+/** The most recent fetch, so a test that sends two requests checks the second. */
 export function lastCall(): { url: string; init: RequestInit } {
-	const [url, init] = currentFetch().mock.calls[0]!;
+	const calls = currentFetch().mock.calls;
+	const last = calls.at(-1);
+	if (!last) throw new Error('No fetch call was recorded');
+	const [url, init] = last;
 	return { url: String(url), init: init! };
 }
 
@@ -89,7 +99,6 @@ export function sentHeader(name: string): string | null {
 
 /** The JSON body of the last request, as a plain record. */
 export const sentBody = (): Record<string, unknown> => {
-	// unknown: parsed JSON.
 	// unknown: parsed JSON.
 	const body = lastCall().init.body;
 	if (typeof body !== 'string') {

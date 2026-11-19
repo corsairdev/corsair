@@ -2,7 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import type { GoogleAdsContext } from '..';
 import type { GoogleAdsRequest } from '../client';
-import { makeGoogleAdsRequest } from '../client';
+import { customerPathId, makeGoogleAdsRequest } from '../client';
 
 type LogFields = Record<string, string | number | boolean | undefined>;
 
@@ -21,9 +21,12 @@ export async function clientConfig(
 			'The Google Ads developer token is missing. Store it on the integration as `developer_token`',
 		);
 	}
+	// The header takes digits only, like a path id, so a stored
+	// `123-456-7890` is normalised the same way.
+	const storedLogin = credentials.login_customer_id?.trim();
 	return {
 		developerToken,
-		loginCustomerId: credentials.login_customer_id || undefined,
+		loginCustomerId: storedLogin ? customerPathId(storedLogin) : undefined,
 	};
 }
 
