@@ -1,0 +1,53 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+# `pnpm validate:plugins` fails until the TODO is replaced.
+displayName: "Perigon"
+description: "Perigon is a news intelligence API over a large article index. This plugin searches articles (one result per published URL), lists story clusters, journalists and resolved people and company entities, and reads the account's usage and limits."
+domain: perigon.io
+recommendedAuth: api_key
+overviewNote: >
+  Authenticate with the API key from the Developers section of your Perigon
+  account; the plugin sends it in the x-api-key header (the docs also allow
+  a query parameter and a Bearer header — the header keeps the key out of
+  URLs). Every route here is a GET.
+
+  Articles API returns one result per published article URL; Stories API
+  returns clustered narratives. The limits endpoint is free to poll — it
+  does not count against your quota — and reports requestsUsed, requestLimit
+  and resetAt. Article body text may be truncated on some plans; check
+  articleContentTruncation in limits.get.
+
+  Filters are documented across the Search & Filtering pages (query logic,
+  dates, sources, topics, sentiment, deduplication); this plugin exposes the
+  common family. Monitors, Social (X, Reddit, LinkedIn), vector search and
+  the summarizer are documented by Perigon but not part of this plugin.
+
+  Every operation is described in the official docs:
+  https://perigon.io/docs/api/authentication
+examples:
+  read:
+    path: articles.list
+    title: Search articles
+    args:
+      q: 'climate AND policy'
+      from: '2025-11-01'
+      size: 25
+apiExamples:
+  articles.list:
+    call: '{ q: "climate AND policy", topic: "Business", sentiment: "negative", from: "2025-11-01", size: 25 }'
+  stories.list:
+    call: '{ q: "semiconductor", sortBy: "date" }'
+  journalists.list:
+    call: '{ source: "Example News" }'
+  people.list:
+    call: '{ q: "John Smith" }'
+  companies.list:
+    call: '{ q: "Example Corp" }'
+  limits.get:
+    call: '{}'
+apiNotes:
+  articles.list: 'One result per published article URL. Sentiment accepts positive, negative or neutral. Content may be plan-truncated; limits.get reports articleContentTruncation.'
+  stories.list: 'Clustered narratives; use clusterId from an article to reach its story.'
+  journalists.list: 'Accepts a name query and a publisher filter.'
+  people.list: 'Resolved person entities with mention counts.'
+  companies.list: 'Resolved company entities with mention counts.'
+  limits.get: 'Free to poll and not rate-limited; reports requestsUsed, requestLimit (null means unlimited), maxPageSize and resetAt.'

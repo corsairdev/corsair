@@ -1,0 +1,391 @@
+---
+title: "Perigon API reference"
+sidebarTitle: "API"
+description: "API reference for the Perigon plugin in Corsair: every `perigon.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Articles
+
+### list
+
+`articles.list`
+
+Search news articles: one result per published URL, filterable by query, topic, source, dates and sentiment
+
+**Risk:** `read`
+
+```ts
+await corsair.perigon.api.articles.list({ q: "climate AND policy", topic: "Business", sentiment: "negative", from: "2025-11-01", size: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | Keyword or boolean query across titles, URLs, descriptions and body |
+| `title` | `string` | No | Query scoped to titles |
+| `from` | `string` | No | Published from this date (YYYY-MM-DD or ISO) |
+| `to` | `string` | No | Published to this date |
+| `topic` | `string` | No | Topic filter, e.g. Tech, Business |
+| `source` | `string` | No | Publisher name filter |
+| `sourceUrl` | `string` | No | Publisher home URL filter |
+| `country` | `string` | No | Country filter (ISO code or name) |
+| `language` | `string` | No | Language filter (ISO code) |
+| `sentiment` | `positive \| negative \| neutral` | No | Sentiment filter |
+| `removeDuplicate` | `boolean` | No | Collapse reprints and duplicates |
+| `page` | `number` | No | Page number |
+| `size` | `number` | No | Results per page, within the plan maxPageSize |
+| `sortBy` | `date \| relevance \| source \| topic` | No | Result ordering |
+
+One result per published article URL. Sentiment accepts positive, negative or neutral. Content may be plan-truncated; limits.get reports articleContentTruncation.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `articles` | `object[]` | Yes | Articles on this page |
+| `pagination` | `object` | Yes | Pagination metadata |
+
+<AccordionGroup>
+<Accordion title="articles full type">
+
+```ts
+{
+  id?: string | null,
+  url?: string | null,
+  title?: string | null,
+  description?: string | null,
+  content?: string | null,
+  imageUrl?: string | null,
+  publishedAt?: string | null,
+  source?: string | null,
+  topic?: string | null,
+  sourceUrl?: string | null,
+  clusterId?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number | null,
+  size?: number | null,
+  totalElements?: number | null,
+  totalPages?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Companies
+
+### list
+
+`companies.list`
+
+Search resolved company entities
+
+**Risk:** `read`
+
+```ts
+await corsair.perigon.api.companies.list({ q: "Example Corp" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | Company name query |
+| `page` | `number` | No | Page number |
+| `size` | `number` | No | Results per page |
+
+Resolved company entities with mention counts.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `companies` | `object[]` | Yes | Companies on this page |
+| `pagination` | `object` | Yes | Pagination metadata |
+
+<AccordionGroup>
+<Accordion title="companies full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  mentions?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number | null,
+  size?: number | null,
+  totalElements?: number | null,
+  totalPages?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Journalists
+
+### list
+
+`journalists.list`
+
+Search the journalist directory by name or publisher
+
+**Risk:** `read`
+
+```ts
+await corsair.perigon.api.journalists.list({ source: "Example News" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | Journalist name query |
+| `source` | `string` | No | Publisher filter |
+| `page` | `number` | No | Page number |
+| `size` | `number` | No | Results per page |
+
+Accepts a name query and a publisher filter.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `journalists` | `object[]` | Yes | Journalists on this page |
+| `pagination` | `object` | Yes | Pagination metadata |
+
+<AccordionGroup>
+<Accordion title="journalists full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  source?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number | null,
+  size?: number | null,
+  totalElements?: number | null,
+  totalPages?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Limits
+
+### get
+
+`limits.get`
+
+Read account usage and limits; free to poll and not rate-limited
+
+**Risk:** `read`
+
+```ts
+await corsair.perigon.api.limits.get({});
+```
+
+**Input:** _empty object_
+
+Free to poll and not rate-limited; reports requestsUsed, requestLimit (null means unlimited), maxPageSize and resetAt.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationName` | `string \| null` | No | Account or organization name |
+| `requestsUsed` | `number \| null` | No | Billable requests used this period |
+| `requestLimit` | `number \| null` | No | Maximum billable requests; null means unlimited |
+| `maxPageSize` | `number \| null` | No | Largest page size the plan allows |
+| `paginationLimit` | `number \| null` | No | Maximum results you can page through |
+| `articleContentTruncation` | `number \| null` | No | Character limit applied to article content; null means no truncation |
+| `since` | `string \| null` | No | Start of the current usage period |
+| `lastMadeAt` | `string \| null` | No | Timestamp of the most recent billable request |
+| `resetAt` | `string \| null` | No | When the request counter resets |
+
+
+
+---
+
+## People
+
+### list
+
+`people.list`
+
+Search resolved person entities
+
+**Risk:** `read`
+
+```ts
+await corsair.perigon.api.people.list({ q: "John Smith" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | Person name query |
+| `page` | `number` | No | Page number |
+| `size` | `number` | No | Results per page |
+
+Resolved person entities with mention counts.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `people` | `object[]` | Yes | People on this page |
+| `pagination` | `object` | Yes | Pagination metadata |
+
+<AccordionGroup>
+<Accordion title="people full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  mentions?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number | null,
+  size?: number | null,
+  totalElements?: number | null,
+  totalPages?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Stories
+
+### list
+
+`stories.list`
+
+List story clusters: one narrative across many articles
+
+**Risk:** `read`
+
+```ts
+await corsair.perigon.api.stories.list({ q: "semiconductor", sortBy: "date" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | Keyword or boolean query across titles, URLs, descriptions and body |
+| `title` | `string` | No | Query scoped to titles |
+| `from` | `string` | No | Published from this date (YYYY-MM-DD or ISO) |
+| `to` | `string` | No | Published to this date |
+| `topic` | `string` | No | Topic filter, e.g. Tech, Business |
+| `source` | `string` | No | Publisher name filter |
+| `sourceUrl` | `string` | No | Publisher home URL filter |
+| `country` | `string` | No | Country filter (ISO code or name) |
+| `language` | `string` | No | Language filter (ISO code) |
+| `sentiment` | `positive \| negative \| neutral` | No | Sentiment filter |
+| `removeDuplicate` | `boolean` | No | Collapse reprints and duplicates |
+| `page` | `number` | No | Page number |
+| `size` | `number` | No | Results per page, within the plan maxPageSize |
+| `sortBy` | `date \| relevance \| source \| topic` | No | Result ordering |
+
+Clustered narratives; use clusterId from an article to reach its story.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stories` | `object[]` | Yes | Stories on this page |
+| `pagination` | `object` | Yes | Pagination metadata |
+
+<AccordionGroup>
+<Accordion title="stories full type">
+
+```ts
+{
+  id?: string | null,
+  title?: string | null,
+  summary?: string | null,
+  articleCount?: number | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number | null,
+  size?: number | null,
+  totalElements?: number | null,
+  totalPages?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
