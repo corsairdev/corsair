@@ -4087,6 +4087,14 @@
                 ]
               },
               {
+                "group": "Parsera",
+                "pages": [
+                  "plugins/parsera/overview",
+                  "plugins/parsera/api",
+                  "plugins/parsera/database"
+                ]
+              },
+              {
                 "group": "Parseur",
                 "pages": [
                   "plugins/parseur/overview",
