@@ -599,7 +599,25 @@ const PagespeedHistoryInputSchema = z.object({
 
 const PagespeedListResponseSchema = pagedList(PagespeedTestSchema);
 const PagespeedGetResponseSchema = singleData(PagespeedTestSchema);
-const PagespeedHistoryResponseSchema = recordList(PagespeedHistoryResultSchema);
+// Pagespeed history also answers metadata.aggregates: min, max and avg of
+// loadtime, filesize and requests over the window.
+const PagespeedHistoryResponseSchema = recordList(
+	PagespeedHistoryResultSchema,
+).extend({
+	metadata: z
+		.object({
+			aggregates: z
+				// unknown: each metric holds min/max/avg numbers; kept open so a
+				// metric the API adds still reaches the caller.
+				.record(z.string(), z.record(z.string(), z.unknown()))
+				.nullish()
+				.describe(
+					'Per metric (loadtime, filesize, requests): min, max and avg over the window.',
+				),
+		})
+		.loose()
+		.nullish(),
+});
 
 // ── ssl ───────────────────────────────────────────────────────────────────
 

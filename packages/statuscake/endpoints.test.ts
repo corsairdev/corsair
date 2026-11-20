@@ -435,6 +435,20 @@ describe('pagespeed', () => {
 			query: { limit: '100' },
 		});
 	});
+
+	it('history keeps the documented metadata.aggregates', async () => {
+		const aggregates = {
+			loadtime: { min: 300, max: 900, avg: 450 },
+			filesize: { min: 1000, max: 1200, avg: 1100 },
+			requests: { min: 10, max: 12, avg: 11 },
+		};
+		respond({ ...pagespeedHistoryPage, metadata: { aggregates } });
+
+		const result = (await invoke(Pagespeed.history, {
+			test_id: '123456',
+		})) as { metadata?: { aggregates?: unknown } };
+		expect(result.metadata?.aggregates).toEqual(aggregates);
+	});
 });
 
 describe('ssl', () => {
