@@ -10779,5 +10779,23 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-20",
+    "package": "@corsair-dev/stannp",
+    "dir": "packages/stannp",
+    "name": "Stannp",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-20",
+    "package": "@corsair-dev/statuscake",
+    "dir": "packages/statuscake",
+    "name": "StatusCake",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
