@@ -1,3 +1,4 @@
+import { FileOutputSchema } from 'corsair/http';
 import { z } from 'zod';
 import * as Compute from './schemas/compute';
 import * as Iam from './schemas/iam';
@@ -751,11 +752,11 @@ const SandboxFilesDownloadInputSchema = z.object({
 			"Only honored in data centers with 'Accept-Ranges: bytes'; format 'bytes=<start>-<end>'.",
 		),
 });
-const SandboxFilesDownloadResponseSchema = z.object({
+const SandboxFilesDownloadResponseSchema = FileOutputSchema.omit({
+	text: true,
+}).extend({
 	path: z.string(),
-	contentType: z.string(),
 	size: z.number().int(),
-	contentBase64: z.string(),
 });
 
 const SandboxFilesUploadInputSchema = z.object({

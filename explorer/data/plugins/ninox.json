@@ -1,0 +1,952 @@
+{
+  "id": "ninox",
+  "displayName": "Ninox",
+  "description": "Read a Ninox workspace and its modules, create and delete tables and fields, read, create, update, upsert and delete records with a row-level change feed, list views, and run Ninox script.",
+  "npmPackageName": "@corsair-dev/ninox",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 19,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "ninox.api.fields.create",
+      "shortPath": "fields.create",
+      "description": "Add a field to a table: text, number, choice, date, reference and the other Ninox types",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "The workspace id, twelve lowercase letters or digits."
+          },
+          {
+            "key": "moduleName",
+            "optional": false,
+            "type": "string",
+            "description": "The module name, as it appears in the workspace."
+          },
+          {
+            "key": "tableName",
+            "optional": false,
+            "type": "string",
+            "description": "The table name, as it appears in the module."
+          },
+          {
+            "key": "field",
+            "optional": false,
+            "type": "{ name: string, labels: Record<string, string>, type: string | html | number | boolean | choice | dchoice | multi | dmulti | file | date | timestamp | time | appointment | reference | reverse | function | color | icon, required?: boolean, unique?: boolean, variant?: string, options?: any, refTableName?: string, expression?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "field",
+            "optional": false,
+            "type": "{ name?: string | null, type?: string | null, required?: boolean | null, unique?: boolean | null, canRead?: string | null, canWrite?: string | null, binding?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ninox.api.fields.delete",
+      "shortPath": "fields.delete",
+      "description": "Delete a field and the value every record held in it",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "The workspace id, twelve lowercase letters or digits."
+          },
+          {
+            "key": "moduleName",
+            "optional": false,
+            "type": "string",
+            "description": "The module name, as it appears in the workspace."
+          },
+          {
+            "key": "tableName",
+            "optional": false,
+            "type": "string",
+            "description": "The table name, as it appears in the module."
+          },
+          {
+            "key": "fieldName",
+            "optional": false,
+            "type": "string",
+            "description": "The internal field name."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ninox.api.fields.list",
+      "shortPath": "fields.list",
+      "description": "List a table’s field names and types, which decide what a record write may set",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "The workspace id, twelve lowercase letters or digits."
+          },
+          {
+            "key": "moduleName",
+            "optional": false,
+            "type": "string",
+            "description": "The module name, as it appears in the workspace."
+          },
+          {
+            "key": "tableName",
+            "optional": false,
+            "type": "string",
+            "description": "The table name, as it appears in the module."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Most rows to return, 1 to 100."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to skip. Starts at 0."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "{ name?: string | null, type?: string | null, required?: boolean | null, unique?: boolean | null, canRead?: string | null, canWrite?: string | null, binding?: string | null }[]"
+          },
+          {
+            "key": "page_info",
+            "optional": true,
+            "type": "{ has_more?: boolean | null, limit?: number | null, offset?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ninox.api.modules.get",
+      "shortPath": "modules.get",
+      "description": "Read one module (app) by its internal name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "The workspace id, twelve lowercase letters or digits."
+          },
+          {
+            "key": "moduleName",
+            "optional": false,
+            "type": "string",
+            "description": "The module name, as it appears in the workspace."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "module",
+            "optional": false,
+            "type": "{ moduleId?: string | null, name?: string | null, labels?: Record<string, any> | null, description?: string | null, afterOpen?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ninox.api.modules.list",
+      "shortPath": "modules.list",
+      "description": "List the workspace’s modules, paged by limit and offset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "The workspace id, twelve lowercase letters or digits."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Most rows to return, 1 to 100."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to skip. Starts at 0."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "modules",
+            "optional": false,
+            "type": "{ moduleId?: string | null, name?: string | null, labels?: Record<string, any> | null, description?: string | null, afterOpen?: string | null }[]"
+          },
+          {
+            "key": "page_info",
+            "optional": true,
+            "type": "{ has_more?: boolean | null, limit?: number | null, offset?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ninox.api.records.changes",
+      "shortPath": "records.changes",
+      "description": "Poll a table’s row-level change feed since a timestamp, which needs history tracking enabled on that table",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "The workspace id, twelve lowercase letters or digits."
+          },
+          {
+            "key": "moduleName",
+            "optional": false,
+            "type": "string",
+            "description": "The module name, as it appears in the workspace."
+          },
+          {
+            "key": "tableName",
+            "optional": false,
+            "type": "string",
+            "description": "The table name, as it appears in the module."
+          },
+          {
+            "key": "since",
+            "optional": false,
+            "type": "string",
+            "description": "Return changes at or after this instant. Only tables with history tracking enabled answer; others return 400."
+          },
+          {
+            "key": "asOf",
+            "optional": true,
+            "type": "string",
+            "description": "The first page's meta.asOf, when paging through one poll so the window stays fixed."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Most rows to return, 1 to 100."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to skip. Starts at 0."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "changes",
+            "optional": false,
+            "type": "{ id?: string | null, changeType?: string | null, changedAt?: string | null }[]"
+          },
+          {
+            "key": "asOf",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass as `since` on the next poll to avoid a gap or a repeat."
+          },
+          {
+            "key": "page_info",
+            "optional": true,
+            "type": "{ has_more?: boolean | null, limit?: number | null, offset?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ninox.api.records.create",
+      "shortPath": "records.create",
+      "description": "Create rows in one transaction, so a single bad record rolls the whole batch back",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "The workspace id, twelve lowercase letters or digits."
+          },
+          {
+            "key": "moduleName",
+            "optional": false,
+            "type": "string",
+            "description": "The module name, as it appears in the workspace."
+          },
+          {
+            "key": "tableName",
+            "optional": false,
+            "type": "string",
+            "description": "The table name, as it appears in the module."
+          },
+          {
+            "key": "records",
+            "optional": false,
+            "type": "Record<string, string | number | boolean | null | (string | number)[]>[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ninox.api.records.delete",
+      "shortPath": "records.delete",
+      "description": "Delete rows in one transaction, rolling the whole set back if any id is wrong; there is no restore call",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "The workspace id, twelve lowercase letters or digits."
+          },
+          {
+            "key": "moduleName",
+            "optional": false,
+            "type": "string",
+            "description": "The module name, as it appears in the workspace."
+          },
+          {
+            "key": "tableName",
+            "optional": false,
+            "type": "string",
+            "description": "The table name, as it appears in the module."
+          },
+          {
+            "key": "recordIds",
+            "optional": false,
+            "type": "number[]",
+            "description": "Records to delete. Ninox deletes them in one transaction and rolls the whole set back if any id is wrong."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deletedIds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ninox.api.records.get",
+      "shortPath": "records.get",
+      "description": "Read one row by id, which is the only way to fetch a known record because the id is not filterable",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "The workspace id, twelve lowercase letters or digits."
+          },
+          {
+            "key": "moduleName",
+            "optional": false,
+            "type": "string",
+            "description": "The module name, as it appears in the workspace."
+          },
+          {
+            "key": "tableName",
+            "optional": false,
+            "type": "string",
+            "description": "The table name, as it appears in the module."
+          },
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "number",
+            "description": "The numeric record id."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "Record<string, string | number | boolean | null | (string | number)[]> | null",
+            "description": "Field name to value. Ninox accepts a date, timestamp or appointment as an ISO 8601 string or a Unix millisecond value, and a choice or multi field as an option id or label."
+          }
+        ]
+      }
+    },
+    {
+      "path": "ninox.api.records.list",
+      "shortPath": "records.list",
+      "description": "Read rows from a table with a field filter, sort order and offset paging; only columns the table marks filterable are accepted",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "The workspace id, twelve lowercase letters or digits."
+          },
+          {
+            "key": "moduleName",
+            "optional": false,
+            "type": "string",
+            "description": "The module name, as it appears in the workspace."
+          },
+          {
+            "key": "tableName",
+            "optional": false,
+            "type": "string",
+            "description": "The table name, as it appears in the module."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only these field names, sent comma-separated."
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string",
+            "description": "A JSON object of field name to value, e.g. {\"email\":\"a@b.com\"}. A filter on a choice field takes an option id or a label."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated field names; prefix one with - for descending."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Most rows to return, 1 to 100."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to skip. Starts at 0."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rows",
+            "optional": false,
+            "type": "{ id?: string | null, values?: Record<string, string | number | boolean | null | (string | number)[]> | null }[]"
+          },
+          {
+            "key": "page_info",
+            "optional": true,
+            "type": "{ has_more?: boolean | null, limit?: number | null, offset?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ninox.api.records.update",
+      "shortPath": "records.update",
+      "description": "Update rows in one transaction, optionally rejecting a write when a field no longer holds the value the caller read",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "The workspace id, twelve lowercase letters or digits."
+          },
+          {
+            "key": "moduleName",
+            "optional": false,
+            "type": "string",
+            "description": "The module name, as it appears in the workspace."
+          },
+          {
+            "key": "tableName",
+            "optional": false,
+            "type": "string",
+            "description": "The table name, as it appears in the module."
+          },
+          {
+            "key": "override",
+            "optional": true,
+            "type": "boolean",
+            "description": "Write the values even when one no longer matches its _expected entry, instead of answering 409."
+          },
+          {
+            "key": "records",
+            "optional": false,
+            "type": "{ id: number, _expected?: Record<string, string | number | boolean | null | (string | number)[]> }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "updatedIds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ninox.api.records.upsert",
+      "shortPath": "records.upsert",
+      "description": "Create or update rows matched by one unique field, refusing an ambiguous match rather than picking a row",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "The workspace id, twelve lowercase letters or digits."
+          },
+          {
+            "key": "moduleName",
+            "optional": false,
+            "type": "string",
+            "description": "The module name, as it appears in the workspace."
+          },
+          {
+            "key": "tableName",
+            "optional": false,
+            "type": "string",
+            "description": "The table name, as it appears in the module."
+          },
+          {
+            "key": "matchField",
+            "optional": false,
+            "type": "string",
+            "description": "The unique field to match on. Ninox refuses a field not marked unique, and a non-unique match answers 409."
+          },
+          {
+            "key": "records",
+            "optional": false,
+            "type": "Record<string, string | number | boolean | null | (string | number)[]>[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "createdIds",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "updatedIds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ninox.api.scripts.execute",
+      "shortPath": "scripts.execute",
+      "description": "Run Ninox script in a module and return its result; a script can change or delete records",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "The workspace id, twelve lowercase letters or digits."
+          },
+          {
+            "key": "moduleName",
+            "optional": false,
+            "type": "string",
+            "description": "The module the script runs in; `do as database` stays inside it."
+          },
+          {
+            "key": "script",
+            "optional": false,
+            "type": "string",
+            "description": "Ninox script, e.g. count(select customers)."
+          },
+          {
+            "key": "tableName",
+            "optional": true,
+            "type": "string",
+            "description": "The table name, as it appears in the module."
+          },
+          {
+            "key": "rowId",
+            "optional": true,
+            "type": "number",
+            "description": "A record the script runs against (as `this`)."
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "wait | background",
+            "description": "wait (default) answers the result when the script ends in time; background answers the run at once."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "run",
+            "optional": true,
+            "type": "{ id?: string | null, status?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ninox.api.tables.create",
+      "shortPath": "tables.create",
+      "description": "Create a table in a module; add its fields with fields.create",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "The workspace id, twelve lowercase letters or digits."
+          },
+          {
+            "key": "moduleName",
+            "optional": false,
+            "type": "string",
+            "description": "The module name, as it appears in the workspace."
+          },
+          {
+            "key": "table",
+            "optional": false,
+            "type": "{ name: string, labels: Record<string, string>, hasFiles?: boolean, hasHistory?: boolean, isHidden?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "table",
+            "optional": false,
+            "type": "{ name?: string | null, description?: string | null, canCreate?: string | null, canDelete?: string | null, fields?: { name?: string | null, type?: string | null, required?: boolean | null, unique?: boolean | null, canRead?: string | null, canWrite?: string | null, binding?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ninox.api.tables.delete",
+      "shortPath": "tables.delete",
+      "description": "Delete a table and every record in it",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "The workspace id, twelve lowercase letters or digits."
+          },
+          {
+            "key": "moduleName",
+            "optional": false,
+            "type": "string",
+            "description": "The module name, as it appears in the workspace."
+          },
+          {
+            "key": "tableName",
+            "optional": false,
+            "type": "string",
+            "description": "The table name, as it appears in the module."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ninox.api.tables.get",
+      "shortPath": "tables.get",
+      "description": "Read one table with all of its field definitions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "The workspace id, twelve lowercase letters or digits."
+          },
+          {
+            "key": "moduleName",
+            "optional": false,
+            "type": "string",
+            "description": "The module name, as it appears in the workspace."
+          },
+          {
+            "key": "tableName",
+            "optional": false,
+            "type": "string",
+            "description": "The table name, as it appears in the module."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "table",
+            "optional": false,
+            "type": "{ name?: string | null, description?: string | null, canCreate?: string | null, canDelete?: string | null, fields?: { name?: string | null, type?: string | null, required?: boolean | null, unique?: boolean | null, canRead?: string | null, canWrite?: string | null, binding?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ninox.api.tables.list",
+      "shortPath": "tables.list",
+      "description": "List the tables inside one module",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "The workspace id, twelve lowercase letters or digits."
+          },
+          {
+            "key": "moduleName",
+            "optional": false,
+            "type": "string",
+            "description": "The module name, as it appears in the workspace."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Most rows to return, 1 to 100."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to skip. Starts at 0."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tables",
+            "optional": false,
+            "type": "{ name?: string | null, description?: string | null, canCreate?: string | null, canDelete?: string | null }[]"
+          },
+          {
+            "key": "page_info",
+            "optional": true,
+            "type": "{ has_more?: boolean | null, limit?: number | null, offset?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ninox.api.views.list",
+      "shortPath": "views.list",
+      "description": "List a table's saved views",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "The workspace id, twelve lowercase letters or digits."
+          },
+          {
+            "key": "moduleName",
+            "optional": false,
+            "type": "string",
+            "description": "The module name, as it appears in the workspace."
+          },
+          {
+            "key": "tableName",
+            "optional": false,
+            "type": "string",
+            "description": "The table name, as it appears in the module."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "views",
+            "optional": false,
+            "type": "{ id?: string | number | null, name?: string | null, type?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ninox.api.workspace.get",
+      "shortPath": "workspace.get",
+      "description": "Read the workspace and the modules in it",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "The workspace id, twelve lowercase letters or digits."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "modules",
+            "optional": false,
+            "type": "{ moduleId?: string | null, name?: string | null, labels?: Record<string, any> | null, description?: string | null, afterOpen?: string | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

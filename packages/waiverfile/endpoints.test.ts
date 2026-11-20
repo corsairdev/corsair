@@ -327,7 +327,9 @@ describe('waivers', () => {
 		expect(result.waiverID).toBe(waiverID);
 		expect(result.contentType).toBe('application/pdf');
 		expect(result.bytes).toBe(Buffer.byteLength(pdf, 'utf8'));
-		expect(Buffer.from(result.content, 'base64').toString('utf8')).toBe(pdf);
+		expect(Buffer.from(result.content ?? '', 'base64').toString('utf8')).toBe(
+			pdf,
+		);
 	});
 
 	it('preserves binary bytes that are not valid UTF-8', async () => {
@@ -344,7 +346,36 @@ describe('waivers', () => {
 		const result = await invoke(Waivers.pdf, { waiverID });
 
 		expect(result.bytes).toBe(binary.byteLength);
-		expect(Buffer.from(result.content, 'base64').equals(binary)).toBe(true);
+		expect(Buffer.from(result.content ?? '', 'base64').equals(binary)).toBe(
+			true,
+		);
+	});
+
+	it('names the PDF after the waiver, and hands a large one to a host that keeps files', async () => {
+		const http =
+			jest.requireActual<typeof import('corsair/http')>('corsair/http');
+		const big = Buffer.alloc(http.FILE_OUTPUT_MAX_BYTES + 1, 7);
+		fetchMock.mockResolvedValueOnce(
+			new Response(big, {
+				status: 200,
+				headers: { 'Content-Type': 'application/pdf' },
+			}),
+		);
+		http.setFileSink(() => () => 'held_1');
+		try {
+			const result = await invoke(Waivers.pdf, { waiverID });
+			expect(result).toMatchObject({
+				waiverID,
+				contentType: 'application/pdf',
+				bytes: big.byteLength,
+				byteLength: big.byteLength,
+				filename: `waiver-${waiverID}.pdf`,
+				fileId: 'held_1',
+			});
+			expect(result.content).toBeUndefined();
+		} finally {
+			http.setFileSink(() => undefined);
+		}
 	});
 
 	it('gives the PDF download a deadline', async () => {

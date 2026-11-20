@@ -41,6 +41,8 @@ export type HubConfigInput = {
 	 * to Hub. Leave unset elsewhere.
 	 */
 	runtimeProofKey?: string;
+	/** Set from `createCorsair({ multiAccount })`; gates the capability header. */
+	multiAccount?: boolean;
 };
 
 /**
@@ -71,6 +73,7 @@ export type HubConfig = {
 	 * to Hub. Leave unset elsewhere.
 	 */
 	runtimeProofKey?: string;
+	multiAccount?: boolean;
 };
 
 export type HubConnectSessionInput = {

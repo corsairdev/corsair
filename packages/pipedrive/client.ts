@@ -1,0 +1,127 @@
+import { AuthMissingError } from 'corsair/core';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
+
+export const PIPEDRIVE_API_BASE = 'https://api.pipedrive.com/api/v2';
+export const PIPEDRIVE_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	// Error handlers own 429 retries so daily-budget exhaustion is not replayed.
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 0,
+	backoffMultiplier: 1,
+	headerNames: {
+		// Pipedrive documents this as the remaining burst-window reset duration.
+		retryAfter: 'x-ratelimit-reset',
+		remaining: 'x-ratelimit-remaining',
+		limit: 'x-ratelimit-limit',
+	},
+};
+
+type PipedriveAuthType = 'api_key' | 'oauth_2';
+
+export async function makePipedriveRequest<T>(
+	endpoint: string,
+	apiKey: string,
+	authType: PipedriveAuthType,
+	options: {
+		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// `unknown` because endpoint-specific bodies are Zod-validated before transport.
+		body?: Record<string, unknown> | FormData;
+		query?: Record<string, string | number | boolean | undefined>;
+	} = {},
+): Promise<T> {
+	if (!apiKey) throw new AuthMissingError('pipedrive', authType);
+
+	const { method = 'GET', body, query } = options;
+	const config: OpenAPIConfig = {
+		BASE: PIPEDRIVE_API_BASE,
+		VERSION: '2.0.0',
+		WITH_CREDENTIALS: false,
+		CREDENTIALS: 'omit',
+		...(authType === 'oauth_2' ? { TOKEN: apiKey } : {}),
+		HEADERS: {
+			...(body instanceof FormData
+				? {}
+				: { 'Content-Type': 'application/json' }),
+			...(authType === 'api_key' ? { 'x-api-token': apiKey } : {}),
+		},
+	};
+	const requestOptions: ApiRequestOptions = {
+		method,
+		url: endpoint,
+		body:
+			method === 'POST' || method === 'PUT' || method === 'PATCH'
+				? body
+				: undefined,
+		...(body instanceof FormData
+			? {}
+			: { mediaType: 'application/json; charset=utf-8' }),
+		query,
+	};
+	try {
+		return await request<T>(config, requestOptions, {
+			rateLimitConfig: PIPEDRIVE_RATE_LIMIT_CONFIG,
+		});
+	} catch (error: unknown) {
+		// `unknown` is required because transport failures may be non-Error rejection values.
+		// Core's ApiError keeps the sent body (binary image or JSON with customer
+		// fields); rebuild it without the body so that data stays out of errors.
+		if (body !== undefined && error instanceof ApiError) {
+			const { body: _binaryBody, ...safeRequest } = error.request;
+			void _binaryBody;
+			throw new ApiError(
+				safeRequest,
+				{
+					url: error.url,
+					ok: false,
+					status: error.status,
+					statusText: error.statusText,
+					body: error.body,
+				},
+				error.message,
+				{
+					retryAfter: error.retryAfter,
+					rateLimitReset: error.rateLimitReset,
+					rateLimitRemaining: error.rateLimitRemaining,
+					rateLimitLimit: error.rateLimitLimit,
+				},
+			);
+		}
+		throw error;
+	}
+}
+
+type RefreshableContext = {
+	key: string;
+	_refreshAuth?: () => Promise<string>;
+};
+
+/**
+ * Core refreshes an OAuth token after a 401 only for reads. Every Pipedrive
+ * endpoint sends a single request, so a write that got a 401 can refresh the
+ * token once and send that request again without repeating anything that landed.
+ */
+export function withOAuthRetry<C extends { key: string }, I, O>(
+	endpoint: (ctx: C, input: I) => Promise<O>,
+): (ctx: C, input: I) => Promise<O> {
+	return async (ctx, input) => {
+		try {
+			return await endpoint(ctx, input);
+		} catch (error: unknown) {
+			// `unknown`: transport failures may reject with non-Error values.
+			const refresh = (ctx as RefreshableContext)._refreshAuth;
+			if (
+				!(error instanceof ApiError && error.status === 401) ||
+				typeof refresh !== 'function'
+			) {
+				throw error;
+			}
+			const freshKey = await refresh();
+			return await endpoint({ ...ctx, key: freshKey }, input);
+		}
+	};
+}

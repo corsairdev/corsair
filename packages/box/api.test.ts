@@ -1,9 +1,9 @@
 import 'dotenv/config';
 import { makeBoxRequest, makeBoxUploadRequest } from './client';
+import { download } from './endpoints/files';
 import type {
 	FilesCopyResponse,
 	FilesDeleteResponse,
-	FilesDownloadResponse,
 	FilesGetResponse,
 	FilesSearchResponse,
 	FilesShareResponse,
@@ -16,6 +16,11 @@ import type {
 	FoldersUpdateResponse,
 } from './endpoints/types';
 import { BoxEndpointOutputSchemas } from './endpoints/types';
+import type { BoxContext } from './index';
+
+// Only logEventFromContext is used by the download endpoint; loading the real
+// module pulls in core's ESM build, which this package's Jest can't parse.
+jest.mock('corsair/core', () => ({ logEventFromContext: jest.fn() }));
 
 const TEST_TOKEN = process.env.BOX_ACCESS_TOKEN!;
 let TEST_FILE_ID: string | undefined;
@@ -123,19 +128,54 @@ describe('Box API Type Tests', () => {
 			BoxEndpointOutputSchemas.filesCopy.parse(response);
 		});
 
-		it('filesDownload returns correct type', async () => {
-			if (!TEST_FILE_ID) {
-				console.warn('Skipping filesDownload test — no file found');
-				return;
-			}
-
-			const response = await makeBoxRequest<FilesDownloadResponse>(
-				`files/${TEST_FILE_ID}/content`,
-				TEST_TOKEN,
-				{ method: 'GET' },
+		// Through the endpoint an agent calls: a file with bytes that aren't
+		// UTF-8 must come back exactly, and a CSV must come back as text.
+		it('files.download returns a binary file byte for byte and a CSV as text', async () => {
+			const pdf = new Uint8Array([
+				0x25, 0x50, 0x44, 0x46, 0x2d, 0x31, 0x2e, 0x34, 0x0a, 0xff, 0xfe, 0x00,
+				0x80, 0xc3, 0x28,
+			]);
+			const csv = 'id,name\n1,Zoë\n';
+			const upload = async (fileName: string, content: Uint8Array) => {
+				const response = await makeBoxUploadRequest<FilesUploadResponse>(
+					'files/content',
+					TEST_TOKEN,
+					{
+						attributes: { name: fileName, parent: { id: '0' } },
+						content,
+						fileName,
+					},
+				);
+				const id = response.entries?.[0]?.id;
+				if (!id) throw new Error('Box upload returned no file id');
+				return id;
+			};
+			const stamp = Date.now();
+			const pdfId = await upload(`corsair-download-test-${stamp}.pdf`, pdf);
+			const csvId = await upload(
+				`corsair-download-test-${stamp}.csv`,
+				new TextEncoder().encode(csv),
 			);
-
-			BoxEndpointOutputSchemas.filesDownload.parse(response);
+			try {
+				// unknown: the endpoint reads only ctx.key, not a full plugin context.
+				const ctx = { key: TEST_TOKEN } as unknown as BoxContext;
+				const gotPdf = await download(ctx, { file_id: pdfId });
+				expect(BoxEndpointOutputSchemas.filesDownload.parse(gotPdf)).toEqual(
+					gotPdf,
+				);
+				expect(gotPdf.byteLength).toBe(pdf.byteLength);
+				expect(Buffer.from(gotPdf.contentBase64 ?? '', 'base64')).toEqual(
+					Buffer.from(pdf),
+				);
+				const gotCsv = await download(ctx, { file_id: csvId });
+				expect(gotCsv.text).toBe(csv);
+			} finally {
+				for (const id of [pdfId, csvId]) {
+					await makeBoxRequest(`files/${id}`, TEST_TOKEN, {
+						method: 'DELETE',
+					}).catch(() => undefined);
+				}
+			}
 		});
 
 		it('filesDelete returns correct type', async () => {

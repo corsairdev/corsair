@@ -1,3 +1,4 @@
+import { FileInputSchema } from 'corsair/http';
 import { z } from 'zod';
 
 // ---------------------------------------------------------------------------
@@ -155,8 +156,17 @@ function base64ImageIsValid(value: string): boolean {
 	return payload !== undefined && payload.length % 4 === 0;
 }
 
-function blobUploadIsTyped(input: { file?: Blob; filetype?: string }): boolean {
-	if (input.file === undefined || input.filetype !== undefined) {
+// A link or base64 is checked once it is resolved (see endpoints/parse.ts), so
+// only a Blob given directly is checked here.
+function blobUploadIsTyped(input: {
+	file?: Blob | z.infer<typeof FileInputSchema>;
+	filetype?: string;
+}): boolean {
+	if (
+		input.file === undefined ||
+		!(input.file instanceof Blob) ||
+		input.filetype !== undefined
+	) {
 		return true;
 	}
 	if (
@@ -166,7 +176,12 @@ function blobUploadIsTyped(input: { file?: Blob; filetype?: string }): boolean {
 	) {
 		return true;
 	}
-	return TYPED_BLOB_MIMES.has(input.file.type.toLowerCase());
+	return isTypedMime(input.file.type);
+}
+
+/** Whether OCR.space can tell the file type from this media type alone. */
+export function isTypedMime(type: string): boolean {
+	return TYPED_BLOB_MIMES.has(type.toLowerCase());
 }
 
 const UNTYPED_BLOB_MESSAGE =
@@ -197,14 +212,16 @@ export const ParseImageUrlResponseSchema = OcrResponseSchema;
 export const ParseInputSchema = z
 	.object({
 		url: z.url().optional(),
-		// Prefer a `File` over a bare `Blob`: multipart uploads carry the
-		// filename, and OCR.space uses the extension to detect the file type. A
-		// `Blob` is sent without one, so pair it with an explicit `filetype`.
-		//
-		// Note: `z.instanceof()` carries no JSON Schema representation, so this
-		// field surfaces as `unknown` in generated introspection and docs. The
-		// binary payload cannot be expressed in JSON Schema either way.
-		file: z.instanceof(Blob).optional(),
+		// A link or base64 is fetched or decoded and uploaded as a file. From
+		// TypeScript, prefer a `File` over a bare `Blob`: multipart uploads carry
+		// the filename, and OCR.space uses the extension to detect the file type.
+		// A `Blob` is sent without one, so pair it with an explicit `filetype`.
+		file: z
+			.union([FileInputSchema, z.instanceof(Blob)])
+			.optional()
+			.describe(
+				'The image or PDF to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Set filetype when neither its name nor its type says what it is.',
+			),
 		// The provider requires the data URI prefix, e.g.
 		// "data:image/png;base64,iVBORw0KGgo..."
 		base64Image: z

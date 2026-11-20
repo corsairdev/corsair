@@ -155,7 +155,8 @@ const alttextaiEndpointMeta = {
 	},
 	'images.bulkCreate': {
 		riskLevel: 'write',
-		description: 'Upload a CSV of image URLs for batch alt text generation',
+		description:
+			'Upload a CSV of image URLs for batch alt text generation. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'images.pageScrape': {
 		riskLevel: 'write',

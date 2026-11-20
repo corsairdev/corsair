@@ -1,4 +1,5 @@
 import type { CorsairInternalConfig } from '..';
+import { AccountSelectionError } from '../account-lookup';
 import { AuthMissingError } from '../auth/errors/auth-missing';
 import {
 	PermissionRequiredError,
@@ -10,6 +11,8 @@ export type ResolveCallInput = {
 	plugin: string;
 	op: string;
 	tenant?: string;
+	account?: string;
+	// Unvalidated request input; each op validates its own args.
 	args?: unknown;
 };
 
@@ -63,8 +66,28 @@ const providerError = (providerStatus: number, body: unknown) =>
 		{ providerStatus, body },
 	);
 
+/**
+ * The optional `account` a caller binds, from a body or query value.
+ * Present means a non-empty string, as on disconnect.
+ */
+export function parseAccount(raw: unknown): string | undefined {
+	if (raw === undefined) return undefined;
+	if (typeof raw !== 'string' || !raw.trim()) {
+		throw badRequest('account must be a non-empty string');
+	}
+	return raw.trim();
+}
+
 function normalizeCallError(err: unknown, plugin: string): ManagementApiError {
 	if (err instanceof ManagementApiError) return err;
+	if (err instanceof AccountSelectionError && err.code !== 'account_limit') {
+		return new ManagementApiError(
+			err.code === 'account_required' ? 400 : 404,
+			err.code,
+			err.message,
+			{ accounts: err.accounts },
+		);
+	}
 	if (err instanceof AuthMissingError)
 		return notConnected(err.pluginId || plugin);
 	if (err instanceof ReadonlyForbiddenError)
@@ -85,12 +108,11 @@ function normalizeCallError(err: unknown, plugin: string): ManagementApiError {
 	return new ManagementApiError(500, 'internal_error', 'Internal error');
 }
 
-// Per-(corsair instance, tenant) client cache: concurrent same-tenant calls
-// share ONE client → ONE key-manager → ONE refresh single-flight store, so a
-// burst can't double-refresh and stale-write the rotating refresh_token.
+// Per-(corsair instance, tenant) client cache: building a client imports
+// plugins and provisions, so calls reuse one. Token refreshes are single-flighted
+// per account in the key manager, not by this cache.
 const clientCacheByCorsair = new WeakMap<object, Map<string, unknown>>();
-// In-flight op count per tenant — a client with active work is never evicted,
-// so the LRU can't split a tenant's refresh single-flight (see resolveCall).
+// In-flight op count per tenant: a client with active work is never evicted.
 const inFlightByCorsair = new WeakMap<object, Map<string, number>>();
 // LRU cap — the URL tenant is unbounded in cardinality, so evict the
 // least-recently-used IDLE client past this size. Hot/in-flight tenants keep
@@ -140,27 +162,46 @@ export function resolveTenantClient(
 	corsair: unknown,
 	internal: CorsairInternalConfig,
 	tenant: string | undefined,
-): { client: unknown; tenantId?: string } {
-	if (!internal.multiTenancy) return { client: corsair };
+	bind?: { plugin: string; account?: string },
+): { client: unknown; tenantId?: string; cacheKey?: string } {
+	if (!internal.multiTenancy) {
+		if (bind?.account !== undefined) {
+			throw badRequest('account requires multiTenancy');
+		}
+		return { client: corsair };
+	}
 	const tenantId = typeof tenant === 'string' ? tenant.trim() : '';
 	if (!tenantId) {
 		throw badRequest('tenant is required for a multi-tenant runtime', {
 			missingFields: ['tenant'],
 		});
 	}
+	const account = bind?.account;
+	// JSON-encoded so a tenant containing the separator cannot alias a bound key.
+	const cacheKey = account
+		? JSON.stringify([tenantId, bind.plugin, account])
+		: JSON.stringify([tenantId]);
 	const cache = mapFor(clientCacheByCorsair, corsair as object);
-	const cached = cache.get(tenantId);
+	const cached = cache.get(cacheKey);
 	if (cached) {
-		cache.delete(tenantId); // LRU: move to most-recently-used
-		cache.set(tenantId, cached);
-		return { client: cached, tenantId };
+		cache.delete(cacheKey);
+		cache.set(cacheKey, cached);
+		return { client: cached, tenantId, cacheKey };
 	}
-	const client = (corsair as { withTenant: (t: string) => unknown }).withTenant(
-		tenantId,
-	);
-	cache.set(tenantId, client);
-	evictIdle(corsair as object, cache, tenantId);
-	return { client, tenantId };
+	// The client's generic type isn't known here; withTenant is on every instance.
+	const withTenant = (
+		corsair as {
+			withTenant: (t: string, o?: unknown) => unknown;
+		}
+	).withTenant;
+	const client = account
+		? withTenant.call(corsair, tenantId, {
+				accounts: { [bind.plugin]: account },
+			})
+		: withTenant.call(corsair, tenantId);
+	cache.set(cacheKey, client);
+	evictIdle(corsair as object, cache, cacheKey);
+	return { client, tenantId, cacheKey };
 }
 
 function walkToBoundFn(apiTree: unknown, op: string): Function | null {
@@ -217,30 +258,31 @@ export function listRegisteredOps(
 export async function withTenantClient<T>(
 	corsair: unknown,
 	internal: CorsairInternalConfig,
-	input: { plugin: string; tenant?: string },
+	input: { plugin: string; tenant?: string; account?: string },
 	fn: (client: unknown) => Promise<T> | T,
 ): Promise<T> {
 	if (!internal.plugins.some((p) => p.id === input.plugin))
 		throw unknownPlugin(input.plugin);
-	const { client, tenantId } = resolveTenantClient(
+	const { client, tenantId, cacheKey } = resolveTenantClient(
 		corsair,
 		internal,
 		input.tenant,
+		{ plugin: input.plugin, account: input.account },
 	);
 	const inFlight = tenantId
 		? mapFor(inFlightByCorsair, corsair as object)
 		: null;
-	if (inFlight && tenantId)
-		inFlight.set(tenantId, (inFlight.get(tenantId) ?? 0) + 1);
+	if (inFlight && cacheKey)
+		inFlight.set(cacheKey, (inFlight.get(cacheKey) ?? 0) + 1);
 	try {
 		return await fn(client);
 	} catch (err) {
 		throw normalizeCallError(err, input.plugin);
 	} finally {
-		if (inFlight && tenantId) {
-			const n = (inFlight.get(tenantId) ?? 1) - 1;
-			if (n <= 0) inFlight.delete(tenantId);
-			else inFlight.set(tenantId, n);
+		if (inFlight && cacheKey) {
+			const n = (inFlight.get(cacheKey) ?? 1) - 1;
+			if (n <= 0) inFlight.delete(cacheKey);
+			else inFlight.set(cacheKey, n);
 		}
 	}
 }
@@ -248,14 +290,21 @@ export async function withTenantClient<T>(
 export async function resolveCall(
 	corsair: unknown,
 	internal: CorsairInternalConfig,
-	{ plugin, op, tenant, args }: ResolveCallInput,
+	{ plugin, op, tenant, account, args }: ResolveCallInput,
 ): Promise<unknown> {
-	return withTenantClient(corsair, internal, { plugin, tenant }, (client) => {
-		const pluginNs = (client as Record<string, unknown>)[plugin] as
-			| { api?: unknown }
-			| undefined;
-		const fn = walkToBoundFn(pluginNs?.api, op);
-		if (!fn) throw unknownOp(plugin, op);
-		return fn(args ?? {});
-	});
+	return withTenantClient(
+		corsair,
+		internal,
+		{ plugin, tenant, account },
+		(client) => {
+			// The client's plugin namespaces are keyed by plugin id; the id was
+			// checked against internal.plugins in withTenantClient.
+			const pluginNs = (client as Record<string, unknown>)[plugin] as
+				| { api?: unknown }
+				| undefined;
+			const fn = walkToBoundFn(pluginNs?.api, op);
+			if (!fn) throw unknownOp(plugin, op);
+			return fn(args ?? {});
+		},
+	);
 }

@@ -1431,7 +1431,8 @@ export const cloudinaryOperations: CloudinaryOperation[] = [
 		uploadResourceType: 'image',
 		bodyKind: 'multipart',
 		riskLevel: 'write',
-		description: 'Upload media asset',
+		description:
+			'Upload media asset. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 		key: 'uploadAsset',
 		group: 'asset',
 	},
@@ -1444,7 +1445,8 @@ export const cloudinaryOperations: CloudinaryOperation[] = [
 		uploadResourceType: 'auto',
 		bodyKind: 'multipart',
 		riskLevel: 'write',
-		description: 'Upload with auto resource type detection',
+		description:
+			'Upload with auto resource type detection. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 		key: 'uploadFileAutoDetect',
 		group: 'file',
 	},
@@ -1458,7 +1460,7 @@ export const cloudinaryOperations: CloudinaryOperation[] = [
 		bodyKind: 'multipart',
 		riskLevel: 'write',
 		description:
-			'Upload a file chunk for large uploads (requires content_range and x_unique_upload_id)',
+			'Upload a file chunk for large uploads (requires content_range and x_unique_upload_id). Takes the chunk as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 		key: 'uploadChunk',
 		group: 'chunk',
 	},

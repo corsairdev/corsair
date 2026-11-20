@@ -1,4 +1,5 @@
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
+import { FILE_OUTPUT_MAX_BYTES, setFileSink } from 'corsair/http';
 import { GmicloudAPIError } from './client';
 import { errorHandlers } from './error-handlers';
 import { gmicloud } from './index';
@@ -521,8 +522,38 @@ describe('sandbox files', () => {
 			path: '/home/user/out.png',
 			contentType: 'image/png',
 			size: 6,
+			byteLength: 6,
+			filename: 'out.png',
 			contentBase64: 'iVBORwD/',
 		});
+	});
+
+	it('download hands a host that keeps files a large file, which comes back as its fileId', async () => {
+		const big = new Uint8Array(FILE_OUTPUT_MAX_BYTES + 1).fill(7);
+		fetchMock.mockImplementation(
+			async () =>
+				new Response(big, {
+					status: 200,
+					headers: { 'Content-Type': 'application/zip' },
+				}),
+		);
+		setFileSink(() => () => 'held_1');
+		try {
+			const result = await endpoint('sandboxFiles.download')(createContext(), {
+				...target,
+				path: '/home/user/build.zip',
+			});
+			expect(result).toEqual({
+				path: '/home/user/build.zip',
+				contentType: 'application/zip',
+				size: big.byteLength,
+				byteLength: big.byteLength,
+				filename: 'build.zip',
+				fileId: 'held_1',
+			});
+		} finally {
+			setFileSink(() => undefined);
+		}
 	});
 
 	it('download maps an error body to GmicloudAPIError', async () => {

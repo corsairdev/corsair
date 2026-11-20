@@ -277,7 +277,7 @@ export function LugIntroSection() {
 					</span>
 					<span>Works in Claude, ChatGPT, Cursor and any MCP client</span>
 					<span aria-hidden>·</span>
-					<span>400+ apps</span>
+					<span>700+ apps</span>
 					<span aria-hidden>·</span>
 					<span>Approvals before anything risky</span>
 				</p>

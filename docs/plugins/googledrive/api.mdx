@@ -64,6 +64,7 @@ await corsair.googledrive.api.files.copy({});
 | `modifiedByMe` | `boolean` | No | — |
 | `shared` | `boolean` | No | — |
 | `ownedByMe` | `boolean` | No | — |
+| `owners` | `object[]` | No | — |
 | `permissionIds` | `string[]` | No | — |
 | `hasAugmentedPermissions` | `boolean` | No | — |
 | `folderColorRgb` | `string` | No | — |
@@ -78,6 +79,22 @@ await corsair.googledrive.api.files.copy({});
 | `resourceKey` | `string` | No | — |
 | `sha1Checksum` | `string` | No | — |
 | `sha256Checksum` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="owners full type">
+
+```ts
+{
+  kind?: string,
+  displayName?: string,
+  photoLink?: string,
+  me?: boolean,
+  permissionId?: string,
+  emailAddress?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -137,6 +154,7 @@ await corsair.googledrive.api.files.createFromText({});
 | `modifiedByMe` | `boolean` | No | — |
 | `shared` | `boolean` | No | — |
 | `ownedByMe` | `boolean` | No | — |
+| `owners` | `object[]` | No | — |
 | `permissionIds` | `string[]` | No | — |
 | `hasAugmentedPermissions` | `boolean` | No | — |
 | `folderColorRgb` | `string` | No | — |
@@ -151,6 +169,22 @@ await corsair.googledrive.api.files.createFromText({});
 | `resourceKey` | `string` | No | — |
 | `sha1Checksum` | `string` | No | — |
 | `sha256Checksum` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="owners full type">
+
+```ts
+{
+  kind?: string,
+  displayName?: string,
+  photoLink?: string,
+  me?: boolean,
+  permissionId?: string,
+  emailAddress?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -187,7 +221,7 @@ await corsair.googledrive.api.files.delete({});
 
 `files.download`
 
-Download the content of a file
+Download a file with its name, type and size. Up to about 700 KB the content comes back inline: a text file as text, any other file as base64. A larger file comes back with fileId, where the host saved it (on Corsair, a Files id to pass to another app or read with files.read_text), or with contentOmitted when the host keeps no files. Google Docs, Sheets and Slides can't be downloaded; use files.export.
 
 **Risk:** `read`
 
@@ -204,7 +238,91 @@ await corsair.googledrive.api.files.download({});
 
 
 
-**Output:** `any`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentBase64` | `string` | No | The file, base64-encoded. Missing when the file came back as text or contentOmitted is set. |
+| `text` | `string` | No | The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8. |
+| `contentType` | `string` | Yes | Media type of the file, for example application/pdf. |
+| `byteLength` | `number` | Yes | Size of the file in bytes. |
+| `filename` | `string` | No | The file name, when known. |
+| `contentOmitted` | `not_requested \| over_limit` | No | Set when the content was left out: the caller did not ask for it, or the file was over the limit. |
+| `fileId` | `string` | No | Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
+
+
+
+---
+
+### export
+
+`files.export`
+
+Export a Google Docs, Sheets, Slides or Drawings file to a regular format: Markdown for Docs, CSV (first sheet only) for Sheets, PDF for Slides and PNG for Drawings unless mimeType names another, such as docx, xlsx or pptx. Drive exports up to 10 MB. The result comes back like files.download: inline up to about 700 KB, otherwise as fileId where the host saved it, or with contentOmitted.
+
+**Risk:** `read`
+
+```ts
+await corsair.googledrive.api.files.export({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | The Google Docs, Sheets, Slides or Drawings file. |
+| `mimeType` | `string` | No | The format to export to, for example application/pdf or application/vnd.openxmlformats-officedocument.wordprocessingml.document. Defaults to Markdown for Docs, CSV (first sheet only) for Sheets, PDF for Slides and PNG for Drawings. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentBase64` | `string` | No | The file, base64-encoded. Missing when the file came back as text or contentOmitted is set. |
+| `text` | `string` | No | The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8. |
+| `contentType` | `string` | Yes | Media type of the file, for example application/pdf. |
+| `byteLength` | `number` | Yes | Size of the file in bytes. |
+| `filename` | `string` | No | The file name, when known. |
+| `contentOmitted` | `not_requested \| over_limit` | No | Set when the content was left out: the caller did not ask for it, or the file was over the limit. |
+| `fileId` | `string` | No | Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
+
+
+
+---
+
+### exportText
+
+`files.exportText`
+
+Get the plain text of a Google Doc across all of its tabs and store it
+
+**Risk:** `read`
+
+```ts
+await corsair.googledrive.api.files.exportText({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `mimeType` | `string` | No | — |
+| `createdTime` | `string` | No | — |
+| `modifiedTime` | `string` | No | — |
+| `webViewLink` | `string` | No | — |
+| `text` | `string` | Yes | — |
+
 
 
 ---
@@ -230,6 +348,7 @@ await corsair.googledrive.api.files.get({});
 | `supportsAllDrives` | `boolean` | No | — |
 | `supportsTeamDrives` | `boolean` | No | — |
 | `includePermissionsForView` | `string` | No | — |
+| `fields` | `string` | No | — |
 
 
 
@@ -263,6 +382,7 @@ await corsair.googledrive.api.files.get({});
 | `modifiedByMe` | `boolean` | No | — |
 | `shared` | `boolean` | No | — |
 | `ownedByMe` | `boolean` | No | — |
+| `owners` | `object[]` | No | — |
 | `permissionIds` | `string[]` | No | — |
 | `hasAugmentedPermissions` | `boolean` | No | — |
 | `folderColorRgb` | `string` | No | — |
@@ -277,6 +397,22 @@ await corsair.googledrive.api.files.get({});
 | `resourceKey` | `string` | No | — |
 | `sha1Checksum` | `string` | No | — |
 | `sha256Checksum` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="owners full type">
+
+```ts
+{
+  kind?: string,
+  displayName?: string,
+  photoLink?: string,
+  me?: boolean,
+  permissionId?: string,
+  emailAddress?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -310,6 +446,7 @@ await corsair.googledrive.api.files.list({});
 | `supportsAllDrives` | `boolean` | No | — |
 | `supportsTeamDrives` | `boolean` | No | — |
 | `teamDriveId` | `string` | No | — |
+| `fields` | `string` | No | — |
 
 
 
@@ -353,6 +490,14 @@ await corsair.googledrive.api.files.list({});
   modifiedByMe?: boolean,
   shared?: boolean,
   ownedByMe?: boolean,
+  owners?: {
+    kind?: string,
+    displayName?: string,
+    photoLink?: string,
+    me?: boolean,
+    permissionId?: string,
+    emailAddress?: string
+  }[],
   permissionIds?: string[],
   hasAugmentedPermissions?: boolean,
   folderColorRgb?: string,
@@ -430,6 +575,7 @@ await corsair.googledrive.api.files.move({});
 | `modifiedByMe` | `boolean` | No | — |
 | `shared` | `boolean` | No | — |
 | `ownedByMe` | `boolean` | No | — |
+| `owners` | `object[]` | No | — |
 | `permissionIds` | `string[]` | No | — |
 | `hasAugmentedPermissions` | `boolean` | No | — |
 | `folderColorRgb` | `string` | No | — |
@@ -444,6 +590,22 @@ await corsair.googledrive.api.files.move({});
 | `resourceKey` | `string` | No | — |
 | `sha1Checksum` | `string` | No | — |
 | `sha256Checksum` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="owners full type">
+
+```ts
+{
+  kind?: string,
+  displayName?: string,
+  photoLink?: string,
+  me?: boolean,
+  permissionId?: string,
+  emailAddress?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -563,6 +725,7 @@ await corsair.googledrive.api.files.update({});
 | `modifiedByMe` | `boolean` | No | — |
 | `shared` | `boolean` | No | — |
 | `ownedByMe` | `boolean` | No | — |
+| `owners` | `object[]` | No | — |
 | `permissionIds` | `string[]` | No | — |
 | `hasAugmentedPermissions` | `boolean` | No | — |
 | `folderColorRgb` | `string` | No | — |
@@ -577,6 +740,22 @@ await corsair.googledrive.api.files.update({});
 | `resourceKey` | `string` | No | — |
 | `sha1Checksum` | `string` | No | — |
 | `sha256Checksum` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="owners full type">
+
+```ts
+{
+  kind?: string,
+  displayName?: string,
+  photoLink?: string,
+  me?: boolean,
+  permissionId?: string,
+  emailAddress?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -635,6 +814,7 @@ await corsair.googledrive.api.files.upload({});
 | `modifiedByMe` | `boolean` | No | — |
 | `shared` | `boolean` | No | — |
 | `ownedByMe` | `boolean` | No | — |
+| `owners` | `object[]` | No | — |
 | `permissionIds` | `string[]` | No | — |
 | `hasAugmentedPermissions` | `boolean` | No | — |
 | `folderColorRgb` | `string` | No | — |
@@ -649,6 +829,22 @@ await corsair.googledrive.api.files.upload({});
 | `resourceKey` | `string` | No | — |
 | `sha1Checksum` | `string` | No | — |
 | `sha256Checksum` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="owners full type">
+
+```ts
+{
+  kind?: string,
+  displayName?: string,
+  photoLink?: string,
+  me?: boolean,
+  permissionId?: string,
+  emailAddress?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -708,6 +904,7 @@ await corsair.googledrive.api.folders.create({});
 | `modifiedByMe` | `boolean` | No | — |
 | `shared` | `boolean` | No | — |
 | `ownedByMe` | `boolean` | No | — |
+| `owners` | `object[]` | No | — |
 | `permissionIds` | `string[]` | No | — |
 | `hasAugmentedPermissions` | `boolean` | No | — |
 | `folderColorRgb` | `string` | No | — |
@@ -722,6 +919,22 @@ await corsair.googledrive.api.folders.create({});
 | `resourceKey` | `string` | No | — |
 | `sha1Checksum` | `string` | No | — |
 | `sha256Checksum` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="owners full type">
+
+```ts
+{
+  kind?: string,
+  displayName?: string,
+  photoLink?: string,
+  me?: boolean,
+  permissionId?: string,
+  emailAddress?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -807,6 +1020,7 @@ await corsair.googledrive.api.folders.get({});
 | `modifiedByMe` | `boolean` | No | — |
 | `shared` | `boolean` | No | — |
 | `ownedByMe` | `boolean` | No | — |
+| `owners` | `object[]` | No | — |
 | `permissionIds` | `string[]` | No | — |
 | `hasAugmentedPermissions` | `boolean` | No | — |
 | `folderColorRgb` | `string` | No | — |
@@ -821,6 +1035,22 @@ await corsair.googledrive.api.folders.get({});
 | `resourceKey` | `string` | No | — |
 | `sha1Checksum` | `string` | No | — |
 | `sha256Checksum` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="owners full type">
+
+```ts
+{
+  kind?: string,
+  displayName?: string,
+  photoLink?: string,
+  me?: boolean,
+  permissionId?: string,
+  emailAddress?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -897,6 +1127,14 @@ await corsair.googledrive.api.folders.list({});
   modifiedByMe?: boolean,
   shared?: boolean,
   ownedByMe?: boolean,
+  owners?: {
+    kind?: string,
+    displayName?: string,
+    photoLink?: string,
+    me?: boolean,
+    permissionId?: string,
+    emailAddress?: string
+  }[],
   permissionIds?: string[],
   hasAugmentedPermissions?: boolean,
   folderColorRgb?: string,
@@ -1046,6 +1284,14 @@ await corsair.googledrive.api.search.filesAndFolders({});
   modifiedByMe?: boolean,
   shared?: boolean,
   ownedByMe?: boolean,
+  owners?: {
+    kind?: string,
+    displayName?: string,
+    photoLink?: string,
+    me?: boolean,
+    permissionId?: string,
+    emailAddress?: string
+  }[],
   permissionIds?: string[],
   hasAugmentedPermissions?: boolean,
   folderColorRgb?: string,

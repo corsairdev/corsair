@@ -488,7 +488,8 @@ const saperlyEndpointMeta = {
 	},
 	'customVoices.create': {
 		riskLevel: 'write',
-		description: 'Upload a custom voice sample',
+		description:
+			'Upload a custom voice sample. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'customVoices.get': {
 		riskLevel: 'read',

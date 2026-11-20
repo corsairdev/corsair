@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next';
 
 import { getAllPosts } from '@/lib/blog';
 import { getComboCanonicalUrls } from '@/lib/combined-integrations';
+import { COMPARE_SLUGS } from '@/lib/compare-pages';
 import { USE_CASES } from '@/lib/use-cases';
 import { getCatalogIntegrationIds } from '@/server/catalog-integration-cache';
 
@@ -32,11 +33,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 			changeFrequency: 'monthly',
 			priority: 0.5,
 		},
-		{
-			url: 'https://corsair.dev/compare/nango',
-			changeFrequency: 'monthly',
+		...COMPARE_SLUGS.map((slug) => ({
+			url: `https://corsair.dev/compare/${slug}`,
+			changeFrequency: 'monthly' as const,
 			priority: 0.7,
-		},
+		})),
 		{
 			url: 'https://corsair.dev/integrations',
 			changeFrequency: 'weekly',

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { openaiFileInput } from './file-input';
 import { FilePurposeSchema } from './files';
 
 const UploadPartObjectSchema = z.object({
@@ -47,7 +48,7 @@ export type UploadsCreateResponse = z.infer<typeof UploadsCreateResponseSchema>;
 
 export const UploadsAddPartInputSchema = z.object({
 	uploadId: z.string(),
-	data: z.union([z.instanceof(Blob), z.string()]),
+	data: openaiFileInput('This part of the file, up to 64 MB'),
 	fileName: z.string(),
 });
 export type UploadsAddPartInput = z.infer<typeof UploadsAddPartInputSchema>;

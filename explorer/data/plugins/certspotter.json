@@ -1,0 +1,95 @@
+{
+  "id": "certspotter",
+  "displayName": "SSLMate Cert Spotter",
+  "description": "Search Certificate Transparency logs for a domain's certificates, and follow the stream of new issuances.",
+  "npmPackageName": "@corsair-dev/certspotter",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 2,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "certspotter.api.firehose.list",
+      "shortPath": "firehose.list",
+      "description": "Read the continuous stream of new issuances across every log; requires a Firehose subscription and a cursor to continue from",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Return issuances discovered after this ID; omit to start from about an hour ago"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "(dns_names | issuer | issuer.website | issuer.caa_domains | issuer.operator | issuer.pubkey_der | issuer.name_der | pubkey | pubkey_der | revocation | problem_reporting | cert_der)[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, tbs_sha256: string, cert_sha256: string, pubkey_sha256: string, not_before: string, not_after: string, revoked?: boolean | null, dns_names?: string[] | null, pubkey_der?: string | null, pubkey?: { type?: string | null, bit_length?: number | null, curve?: string | null } | null, issuer?: { friendly_name?: string | null, website?: string | null, caa_domains?: string[] | null, operator?: { name?: string | null, website?: string | null } | null, pubkey_sha256?: string | null, pubkey_der?: string | null, name?: string | null, name_der?: string | null } | null, revocation?: { time?: string | null, reason?: number | null, checked_at?: string | null } | null, problem_reporting?: string | null, cert_der?: string | null }[]"
+      }
+    },
+    {
+      "path": "certspotter.api.issuances.list",
+      "shortPath": "issuances.list",
+      "description": "List the unexpired certificate issuances for a domain, newest last, with an `after` cursor for paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "Registered domain or a name under it, e.g. \"example.com\" or \"www.example.com\"; a bare TLD is rejected"
+          },
+          {
+            "key": "include_subdomains",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also return issuances valid for sub-domains; default false"
+          },
+          {
+            "key": "match_wildcards",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also return wildcard matches, e.g. *.example.com; default false"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Return issuances discovered after this ID; take `id` from the last result of the previous page"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "(dns_names | issuer | issuer.website | issuer.caa_domains | issuer.operator | issuer.pubkey_der | issuer.name_der | pubkey | pubkey_der | revocation | problem_reporting | cert_der)[]",
+            "description": "Extra fields to include; repeated as one `expand` per value"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, tbs_sha256: string, cert_sha256: string, pubkey_sha256: string, not_before: string, not_after: string, revoked?: boolean | null, dns_names?: string[] | null, pubkey_der?: string | null, pubkey?: { type?: string | null, bit_length?: number | null, curve?: string | null } | null, issuer?: { friendly_name?: string | null, website?: string | null, caa_domains?: string[] | null, operator?: { name?: string | null, website?: string | null } | null, pubkey_sha256?: string | null, pubkey_der?: string | null, name?: string | null, name_der?: string | null } | null, revocation?: { time?: string | null, reason?: number | null, checked_at?: string | null } | null, problem_reporting?: string | null, cert_der?: string | null }[]"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
