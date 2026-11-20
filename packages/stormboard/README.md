@@ -22,7 +22,7 @@ pnpm add @corsair-dev/stormboard
 | `ideas.createComment` | `stormboard.api.ideas.createComment` | `write` | Comment on an idea |
 | `ideas.createConnector` | `stormboard.api.ideas.createConnector` | `write` | Draw a line connector between two ideas |
 | `ideas.delete` | `stormboard.api.ideas.delete` | `destructive` | Delete an idea |
-| `ideas.deleteComment` | `stormboard.api.ideas.deleteComment` | `write` | Delete a comment on an idea |
+| `ideas.deleteComment` | `stormboard.api.ideas.deleteComment` | `destructive` | Delete a comment on an idea |
 | `ideas.deleteConnector` | `stormboard.api.ideas.deleteConnector` | `destructive` | Delete a line connector |
 | `ideas.deleteConnectorBetween` | `stormboard.api.ideas.deleteConnectorBetween` | `destructive` | Delete the connector between two ideas |
 | `ideas.get` | `stormboard.api.ideas.get` | `read` | Read one idea |
@@ -41,7 +41,7 @@ pnpm add @corsair-dev/stormboard
 | `storms.get` | `stormboard.api.storms.get` | `read` | Read one Storm's details |
 | `storms.getAccess` | `stormboard.api.storms.getAccess` | `read` | Read the token holder's access to a Storm |
 | `storms.getTemplate` | `stormboard.api.storms.getTemplate` | `read` | Read a Storm's template sections |
-| `storms.invite` | `stormboard.api.storms.invite` | `write` | Invite participants to a Storm by email |
+| `storms.invite` | `stormboard.api.storms.invite` | `destructive` | Invite participants to a Storm by email; sends mail that cannot be recalled |
 | `storms.join` | `stormboard.api.storms.join` | `write` | Join a Storm with its key |
 | `storms.leave` | `stormboard.api.storms.leave` | `write` | Leave a Storm |
 | `storms.list` | `stormboard.api.storms.list` | `read` | List your Storms with search, ordering and paging |
@@ -58,7 +58,7 @@ pnpm add @corsair-dev/stormboard
 | `tags.createForStorm` | `stormboard.api.tags.createForStorm` | `write` | Create a tag in a Storm |
 | `tags.getForIdea` | `stormboard.api.tags.getForIdea` | `read` | Read the tag data of an idea |
 | `tags.listForStorm` | `stormboard.api.tags.listForStorm` | `read` | List the tags in a Storm |
-| `users.create` | `stormboard.api.users.create` | `write` | Create a Stormboard user and return its API key |
+| `users.create` | `stormboard.api.users.create` | `destructive` | Create a Stormboard user, which emails them a verification code, and return its API key |
 | `users.getAuth` | `stormboard.api.users.getAuth` | `read` | Read the account API keys with their creation dates |
 | `users.getProfile` | `stormboard.api.users.getProfile` | `read` | Read the profile behind the token |
 | `users.test` | `stormboard.api.users.test` | `read` | Check that the token authenticates |
