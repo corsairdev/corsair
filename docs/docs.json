@@ -3285,6 +3285,14 @@
                 ]
               },
               {
+                "group": "Kernel",
+                "pages": [
+                  "plugins/kernel/overview",
+                  "plugins/kernel/api",
+                  "plugins/kernel/database"
+                ]
+              },
+              {
                 "group": "Keyword",
                 "pages": [
                   "plugins/keyword/overview",
