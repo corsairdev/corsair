@@ -67,16 +67,14 @@ const HoursSchema = z
 export type StorerocketHours = z.infer<typeof HoursSchema>;
 
 // Every V2 create, PUT and PATCH response includes `geocoding` next to
-// `data`; it is null when the request looked nothing up.
+// `data`; it is null when the request looked nothing up. The enums stay
+// open (`.or(z.string())`) so a status the provider adds later does not fail
+// a write that already happened.
 export const GeocodingSchema = z
 	.object({
-		status: z.enum([
-			'found',
-			'approximate',
-			'not_found',
-			'unavailable',
-			'queued',
-		]),
+		status: z
+			.enum(['found', 'approximate', 'not_found', 'unavailable', 'queued'])
+			.or(z.string()),
 		match: z
 			.enum([
 				'address',
@@ -87,6 +85,7 @@ export const GeocodingSchema = z
 				'region',
 				'country',
 			])
+			.or(z.string())
 			.nullish(),
 	})
 	.loose();
@@ -109,6 +108,52 @@ export const CallToActionSchema = z
 		id: str,
 		title: str,
 		value: str,
+	})
+	.loose();
+
+export const SocialSchema = z
+	.object({
+		key: str,
+		label: str,
+		handle: str,
+		url: str,
+		icon: str,
+	})
+	.loose();
+
+const RangeOutputSchema = z
+	.object({
+		opens: str,
+		closes: str,
+	})
+	.loose();
+
+// Output form of a rule's hours: the documented "closed", "regular" or
+// "open_24_hours", up to six ranges, or a value the provider adds later.
+export const RuleHoursOutputSchema = z.union([
+	z.enum(['closed', 'regular', 'open_24_hours']).or(z.string()),
+	z.array(RangeOutputSchema),
+]);
+
+// The dates that apply to a location after every special-hours rule is
+// resolved, for a window from two days ago to about two months ahead.
+// https://docs.storerocket.io/api/special-hours#a-locations-resolved-dates
+export const LocationSpecialHoursSchema = z
+	.object({
+		window: z.object({ from: str, to: str }).loose().nullish(),
+		dates: z
+			.array(
+				z
+					.object({
+						name: str,
+						start_date: str,
+						end_date: str,
+						hours: RuleHoursOutputSchema.nullish(),
+						note: str,
+					})
+					.loose(),
+			)
+			.nullish(),
 	})
 	.loose();
 
@@ -143,6 +188,16 @@ export const LocationSchema = z
 		filters: z.array(z.unknown()).nullish(),
 		fields: z.array(CustomFieldSchema).nullish(),
 		callsToAction: z.array(CallToActionSchema).nullish(),
+		facebook: str,
+		instagram: str,
+		twitter: str,
+		yelp: str,
+		youtube: str,
+		tiktok: str,
+		// Derived from the social fields above: {key, label, handle, url, icon}.
+		socials: z.array(SocialSchema).nullish(),
+		// Read-only; present when includeSpecialHours=1 is sent.
+		special_hours: LocationSpecialHoursSchema.nullish(),
 	})
 	.loose();
 
@@ -198,7 +253,9 @@ export const MetaSchema = z
 
 export const AppliesToSchema = z
 	.object({
-		type: z.enum(['all', 'countries', 'regions', 'filters', 'locations']),
+		type: z
+			.enum(['all', 'countries', 'regions', 'filters', 'locations'])
+			.or(z.string()),
 		values: z.array(z.string()).nullish(),
 	})
 	.loose();
@@ -227,7 +284,7 @@ export const SpecialHoursRuleSchema = z
 		start_date: str,
 		end_date: str,
 		until_further_notice: bool,
-		hours: RuleHoursSchema.nullish(),
+		hours: RuleHoursOutputSchema.nullish(),
 		repeats_yearly: bool,
 		note: str,
 		applies_to: AppliesToSchema.nullish(),

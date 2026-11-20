@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import { Locations, Projects, SpecialHours, Users } from './endpoints';
+import { LocationSchema } from './endpoints/types';
 import {
 	geocoding,
 	listPage,
@@ -562,6 +563,58 @@ describe('output parsing', () => {
 		await expect(
 			invoke(Locations.get, { projectId: 'PROJECT_ID', locationId: 'X' }),
 		).rejects.toThrow();
+	});
+
+	it('accepts enum values the provider adds later on responses', async () => {
+		respond({
+			data: {
+				...rule,
+				hours: 'by_appointment',
+				applies_to: { type: 'zones', values: ['Z1'] },
+			},
+		});
+
+		await expect(
+			invoke(SpecialHours.get, { projectId: 'PROJECT_ID', ruleId: 'R' }),
+		).resolves.toMatchObject({ data: { hours: 'by_appointment' } });
+
+		respond({
+			data: location,
+			geocoding: { status: 'partial', match: 'neighbourhood' },
+		});
+
+		await expect(
+			invoke(Locations.update, {
+				projectId: 'PROJECT_ID',
+				locationId: 'X',
+				phone: '555-0102',
+			}),
+		).resolves.toMatchObject({ geocoding: { status: 'partial' } });
+	});
+
+	it('types the special_hours block that includeSpecialHours returns', async () => {
+		// Trimmed from a live GET with includeSpecialHours=1 (11-20).
+		const special_hours = {
+			window: { from: '2026-11-18', to: '2027-01-20' },
+			dates: [
+				{
+					name: 'corsair-plugin-test',
+					start_date: '2026-12-24',
+					end_date: '2026-12-24',
+					hours: 'closed',
+					note: null,
+				},
+			],
+		};
+		respond({ data: { ...location, special_hours } });
+
+		const result = (await invoke(Locations.get, {
+			projectId: 'PROJECT_ID',
+			locationId: 'X',
+			includeSpecialHours: true,
+		})) as { data: { special_hours?: unknown } };
+		expect(result.data.special_hours).toEqual(special_hours);
+		expect(LocationSchema.shape.special_hours).toBeDefined();
 	});
 
 	it('passes through extra fields the docs do not spell out', async () => {
