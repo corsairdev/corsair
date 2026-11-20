@@ -618,6 +618,7 @@ export const BaseProviders = [
 	'stackai',
 	'stackexchange',
 	'starton',
+	'statuscake',
 	'storeganise',
 	'storerocket',
 	'stormglass',
@@ -1360,6 +1361,7 @@ export const ProviderDisplayNames = {
 	stackai: 'StackAI',
 	stackexchange: 'Stack Exchange',
 	starton: 'Starton',
+	statuscake: 'StatusCake',
 	storeganise: 'Storeganise',
 	storerocket: 'Storerocket',
 	stormglass: 'Stormglass',
@@ -2109,6 +2111,7 @@ export type AllProviders =
 	| 'stackai'
 	| 'stackexchange'
 	| 'starton'
+	| 'statuscake'
 	| 'storeganise'
 	| 'storerocket'
 	| 'stormglass'
