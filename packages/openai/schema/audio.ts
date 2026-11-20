@@ -24,7 +24,7 @@ export const AudioCreateSpeechResponseSchema = FileOutputSchema.omit({
 		.string()
 		.optional()
 		.describe(
-			'The audio, base64-encoded. Missing when contentOmitted is set or the host kept the file (fileId).',
+			'The audio, base64-encoded. Missing when contentOmitted is set, or when a host kept a file too large to return inline (fileId).',
 		),
 	format: z.string(),
 });
