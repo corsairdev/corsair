@@ -187,8 +187,8 @@ export function configWith(apiKey: string): OpenAPIConfig {
 }
 
 /**
- * Sends one request. Resolves with the parsed body, or `undefined` for the
- * bodyless answers; every documented success here carries a body.
+ * Sends one request and resolves with the parsed body. Every documented
+ * success here carries one, so a missing body is a transport failure.
  *
  * Pagination needs the `Link` response header, and `corsair/http` cannot return
  * a header and a body together: its `ApiResult.body` is
@@ -199,15 +199,16 @@ export function configWith(apiKey: string): OpenAPIConfig {
 export async function makeHotspotSystemRequest(
 	apiKey: string,
 	request_: HotspotSystemRequest,
-): Promise<JsonValue | undefined> {
+): Promise<JsonValue> {
 	const requestOptions: ApiRequestOptions = {
 		method: request_.method,
 		url: request_.path,
 		query: request_.query,
 	};
 
+	let body: JsonValue | undefined;
 	try {
-		return await request<JsonValue>(configWith(apiKey), requestOptions, {
+		body = await request<JsonValue>(configWith(apiKey), requestOptions, {
 			rateLimitConfig: HOTSPOTSYSTEM_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
@@ -241,6 +242,16 @@ export async function makeHotspotSystemRequest(
 		}
 		throw new HotspotSystemTransportError('Unknown HotspotSystem error', false);
 	}
+	// Every documented success carries a JSON body. Core resolves `undefined`
+	// when the body read fails after the headers arrived, which is a dropped
+	// connection, so it goes to the transport path that retries reads.
+	if (body === undefined) {
+		throw new HotspotSystemTransportError(
+			'HotspotSystem sent no response body',
+			false,
+		);
+	}
+	return body;
 }
 
 export type HotspotSystemPage = {
@@ -343,8 +354,22 @@ export async function makeHotspotSystemPageRequest(
 	};
 }
 
-function parseRetryAfter(header: string | null): number | undefined {
+/**
+ * `Retry-After` is either delay-seconds or an HTTP date (RFC 9110). Both become
+ * milliseconds from now; a date in the past or an unreadable value is ignored.
+ */
+export function parseRetryAfter(
+	header: string | null,
+	now: number = Date.now(),
+): number | undefined {
 	if (!header) return undefined;
-	const seconds = Number(header);
-	return Number.isFinite(seconds) && seconds > 0 ? seconds * 1000 : undefined;
+	const value = header.trim();
+	if (/^\d+$/.test(value)) {
+		const seconds = Number(value);
+		return seconds > 0 ? seconds * 1000 : undefined;
+	}
+	const at = Date.parse(value);
+	if (Number.isNaN(at)) return undefined;
+	const wait = at - now;
+	return wait > 0 ? wait : undefined;
 }

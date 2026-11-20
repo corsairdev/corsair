@@ -7,6 +7,7 @@ import {
 	HotspotSystemTransportError,
 	makeHotspotSystemPageRequest,
 	makeHotspotSystemRequest,
+	parseRetryAfter,
 	readErrorMessage,
 	segment,
 } from './client';
@@ -134,6 +135,16 @@ describe('makeHotspotSystemPageRequest', () => {
 		)) as ApiError;
 
 		expect(error.retryAfter).toBe(7000);
+	});
+
+	it('reads an HTTP-date Retry-After as the wait until that time', () => {
+		const now = Date.parse('2026-11-20T12:00:00Z');
+		expect(parseRetryAfter('Fri, 20 Nov 2026 12:01:00 GMT', now)).toBe(60_000);
+		expect(parseRetryAfter('7', now)).toBe(7000);
+		expect(
+			parseRetryAfter('Fri, 20 Nov 2026 11:59:00 GMT', now),
+		).toBeUndefined();
+		expect(parseRetryAfter('soon', now)).toBeUndefined();
 	});
 
 	it('turns a dropped connection into a transport error', async () => {
@@ -294,6 +305,19 @@ describe('makeHotspotSystemRequest', () => {
 		expect(error.rateLimitRemaining).toBe(0);
 		expect(error.request).toEqual({ method: 'GET', url: '/me' });
 		expect(error.body).toEqual({ error: 'slow down' });
+	});
+
+	it('treats a 2xx with no readable body as a transport failure', async () => {
+		// Core resolves `undefined` when the body read fails after the headers.
+		const http = await import('corsair/http');
+		jest.spyOn(http, 'request').mockResolvedValueOnce(undefined);
+
+		const error = (await rejection(
+			makeHotspotSystemRequest(KEY, { method: 'GET', path: '/me' }),
+		)) as HotspotSystemTransportError;
+
+		expect(error).toBeInstanceOf(HotspotSystemTransportError);
+		expect(error.timedOut).toBe(false);
 	});
 
 	it('normalises a transport failure into the plugin error type', async () => {
