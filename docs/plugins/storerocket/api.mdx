@@ -56,8 +56,8 @@ await corsair.storerocket.api.locations.create({
 | `visible` | `boolean` | No | — |
 | `hours` | `object \| null` | No | — |
 | `filters` | `string[] \| null` | No | Filter names; replaces the list, [] or null clears it. |
-| `fields` | `Record<string, unknown> \| null` | No | Named custom fields, such as &#123;"Manager":"Sam"&#125;; a null value removes the attachment. |
-| `callsToAction` | `Record<string, unknown> \| null` | No | Named calls to action, such as &#123;"Book":"https://example.com/book"&#125;; a null value removes the attachment. |
+| `fields` | `Record<string, any> \| null` | No | Named custom fields, such as &#123;"Manager":"Sam"&#125;; a null value removes the attachment. |
+| `callsToAction` | `Record<string, any> \| null` | No | Named calls to action, such as &#123;"Book":"https://example.com/book"&#125;; a null value removes the attachment. |
 | `facebook` | `string \| null` | No | — |
 | `instagram` | `string \| null` | No | — |
 | `twitter` | `string \| null` | No | — |
@@ -138,17 +138,46 @@ Name and city are required. Omit hours or send hours: &#123;&#125; for a coming-
     sat?: string | null,
     sun?: string | null
   } | null,
-  filters?: unknown[] | null,
+  filters?: any[] | null,
   fields?: {
     id?: string | null,
     name?: string | null,
-    value?: unknown | null
+    value?: any | null
   }[] | null,
   callsToAction?: {
     id?: string | null,
     title?: string | null,
     value?: string | null
-  }[] | null
+  }[] | null,
+  facebook?: string | null,
+  instagram?: string | null,
+  twitter?: string | null,
+  yelp?: string | null,
+  youtube?: string | null,
+  tiktok?: string | null,
+  socials?: {
+    key?: string | null,
+    label?: string | null,
+    handle?: string | null,
+    url?: string | null,
+    icon?: string | null
+  }[] | null,
+  special_hours?: {
+    window?: {
+      from?: string | null,
+      to?: string | null
+    } | null,
+    dates?: {
+      name?: string | null,
+      start_date?: string | null,
+      end_date?: string | null,
+      hours?: closed | regular | open_24_hours | string | {
+        opens?: string | null,
+        closes?: string | null
+      }[] | null,
+      note?: string | null
+    }[] | null
+  } | null
 }
 ```
 </Accordion>
@@ -157,8 +186,8 @@ Name and city are required. Omit hours or send hours: &#123;&#125; for a coming-
 
 ```ts
 {
-  status: found | approximate | not_found | unavailable | queued,
-  match?: address | road | place | postcode | city | region | country | null
+  status: found | approximate | not_found | unavailable | queued | string,
+  match?: address | road | place | postcode | city | region | country | string | null
 } | null
 ```
 </Accordion>
@@ -268,17 +297,46 @@ await corsair.storerocket.api.locations.get({ projectId: 'PROJECT_ID', locationI
     sat?: string | null,
     sun?: string | null
   } | null,
-  filters?: unknown[] | null,
+  filters?: any[] | null,
   fields?: {
     id?: string | null,
     name?: string | null,
-    value?: unknown | null
+    value?: any | null
   }[] | null,
   callsToAction?: {
     id?: string | null,
     title?: string | null,
     value?: string | null
-  }[] | null
+  }[] | null,
+  facebook?: string | null,
+  instagram?: string | null,
+  twitter?: string | null,
+  yelp?: string | null,
+  youtube?: string | null,
+  tiktok?: string | null,
+  socials?: {
+    key?: string | null,
+    label?: string | null,
+    handle?: string | null,
+    url?: string | null,
+    icon?: string | null
+  }[] | null,
+  special_hours?: {
+    window?: {
+      from?: string | null,
+      to?: string | null
+    } | null,
+    dates?: {
+      name?: string | null,
+      start_date?: string | null,
+      end_date?: string | null,
+      hours?: closed | regular | open_24_hours | string | {
+        opens?: string | null,
+        closes?: string | null
+      }[] | null,
+      note?: string | null
+    }[] | null
+  } | null
 }
 ```
 </Accordion>
@@ -374,17 +432,46 @@ await corsair.storerocket.api.locations.list({ projectId: "PROJECT_ID", limit: 2
     sat?: string | null,
     sun?: string | null
   } | null,
-  filters?: unknown[] | null,
+  filters?: any[] | null,
   fields?: {
     id?: string | null,
     name?: string | null,
-    value?: unknown | null
+    value?: any | null
   }[] | null,
   callsToAction?: {
     id?: string | null,
     title?: string | null,
     value?: string | null
-  }[] | null
+  }[] | null,
+  facebook?: string | null,
+  instagram?: string | null,
+  twitter?: string | null,
+  yelp?: string | null,
+  youtube?: string | null,
+  tiktok?: string | null,
+  socials?: {
+    key?: string | null,
+    label?: string | null,
+    handle?: string | null,
+    url?: string | null,
+    icon?: string | null
+  }[] | null,
+  special_hours?: {
+    window?: {
+      from?: string | null,
+      to?: string | null
+    } | null,
+    dates?: {
+      name?: string | null,
+      start_date?: string | null,
+      end_date?: string | null,
+      hours?: closed | regular | open_24_hours | string | {
+        opens?: string | null,
+        closes?: string | null
+      }[] | null,
+      note?: string | null
+    }[] | null
+  } | null
 }[]
 ```
 </Accordion>
@@ -466,8 +553,8 @@ await corsair.storerocket.api.locations.replace({
 | `visible` | `boolean` | No | — |
 | `hours` | `object \| null` | No | — |
 | `filters` | `string[] \| null` | No | Filter names; replaces the list, [] or null clears it. |
-| `fields` | `Record<string, unknown> \| null` | No | Named custom fields, such as &#123;"Manager":"Sam"&#125;; a null value removes the attachment. |
-| `callsToAction` | `Record<string, unknown> \| null` | No | Named calls to action, such as &#123;"Book":"https://example.com/book"&#125;; a null value removes the attachment. |
+| `fields` | `Record<string, any> \| null` | No | Named custom fields, such as &#123;"Manager":"Sam"&#125;; a null value removes the attachment. |
+| `callsToAction` | `Record<string, any> \| null` | No | Named calls to action, such as &#123;"Book":"https://example.com/book"&#125;; a null value removes the attachment. |
 | `facebook` | `string \| null` | No | — |
 | `instagram` | `string \| null` | No | — |
 | `twitter` | `string \| null` | No | — |
@@ -548,17 +635,46 @@ PUT keeps the existing contract: supplied fields and callsToAction replace their
     sat?: string | null,
     sun?: string | null
   } | null,
-  filters?: unknown[] | null,
+  filters?: any[] | null,
   fields?: {
     id?: string | null,
     name?: string | null,
-    value?: unknown | null
+    value?: any | null
   }[] | null,
   callsToAction?: {
     id?: string | null,
     title?: string | null,
     value?: string | null
-  }[] | null
+  }[] | null,
+  facebook?: string | null,
+  instagram?: string | null,
+  twitter?: string | null,
+  yelp?: string | null,
+  youtube?: string | null,
+  tiktok?: string | null,
+  socials?: {
+    key?: string | null,
+    label?: string | null,
+    handle?: string | null,
+    url?: string | null,
+    icon?: string | null
+  }[] | null,
+  special_hours?: {
+    window?: {
+      from?: string | null,
+      to?: string | null
+    } | null,
+    dates?: {
+      name?: string | null,
+      start_date?: string | null,
+      end_date?: string | null,
+      hours?: closed | regular | open_24_hours | string | {
+        opens?: string | null,
+        closes?: string | null
+      }[] | null,
+      note?: string | null
+    }[] | null
+  } | null
 }
 ```
 </Accordion>
@@ -567,8 +683,8 @@ PUT keeps the existing contract: supplied fields and callsToAction replace their
 
 ```ts
 {
-  status: found | approximate | not_found | unavailable | queued,
-  match?: address | road | place | postcode | city | region | country | null
+  status: found | approximate | not_found | unavailable | queued | string,
+  match?: address | road | place | postcode | city | region | country | string | null
 } | null
 ```
 </Accordion>
@@ -618,8 +734,8 @@ await corsair.storerocket.api.locations.update({ projectId: 'PROJECT_ID', locati
 | `visible` | `boolean` | No | — |
 | `hours` | `object \| null` | No | — |
 | `filters` | `string[] \| null` | No | Filter names; replaces the list, [] or null clears it. |
-| `fields` | `Record<string, unknown> \| null` | No | Named custom fields, such as &#123;"Manager":"Sam"&#125;; a null value removes the attachment. |
-| `callsToAction` | `Record<string, unknown> \| null` | No | Named calls to action, such as &#123;"Book":"https://example.com/book"&#125;; a null value removes the attachment. |
+| `fields` | `Record<string, any> \| null` | No | Named custom fields, such as &#123;"Manager":"Sam"&#125;; a null value removes the attachment. |
+| `callsToAction` | `Record<string, any> \| null` | No | Named calls to action, such as &#123;"Book":"https://example.com/book"&#125;; a null value removes the attachment. |
 | `facebook` | `string \| null` | No | — |
 | `instagram` | `string \| null` | No | — |
 | `twitter` | `string \| null` | No | — |
@@ -700,17 +816,46 @@ PATCH keeps everything you leave out. Send null to clear a field, hours: null to
     sat?: string | null,
     sun?: string | null
   } | null,
-  filters?: unknown[] | null,
+  filters?: any[] | null,
   fields?: {
     id?: string | null,
     name?: string | null,
-    value?: unknown | null
+    value?: any | null
   }[] | null,
   callsToAction?: {
     id?: string | null,
     title?: string | null,
     value?: string | null
-  }[] | null
+  }[] | null,
+  facebook?: string | null,
+  instagram?: string | null,
+  twitter?: string | null,
+  yelp?: string | null,
+  youtube?: string | null,
+  tiktok?: string | null,
+  socials?: {
+    key?: string | null,
+    label?: string | null,
+    handle?: string | null,
+    url?: string | null,
+    icon?: string | null
+  }[] | null,
+  special_hours?: {
+    window?: {
+      from?: string | null,
+      to?: string | null
+    } | null,
+    dates?: {
+      name?: string | null,
+      start_date?: string | null,
+      end_date?: string | null,
+      hours?: closed | regular | open_24_hours | string | {
+        opens?: string | null,
+        closes?: string | null
+      }[] | null,
+      note?: string | null
+    }[] | null
+  } | null
 }
 ```
 </Accordion>
@@ -719,8 +864,8 @@ PATCH keeps everything you leave out. Send null to clear a field, hours: null to
 
 ```ts
 {
-  status: found | approximate | not_found | unavailable | queued,
-  match?: address | road | place | postcode | city | region | country | null
+  status: found | approximate | not_found | unavailable | queued | string,
+  match?: address | road | place | postcode | city | region | country | string | null
 } | null
 ```
 </Accordion>
@@ -847,14 +992,14 @@ closed | regular | open_24_hours | {
   start_date?: string | null,
   end_date?: string | null,
   until_further_notice?: boolean | null,
-  hours?: closed | regular | open_24_hours | {
-    opens: string,
-    closes: string
+  hours?: closed | regular | open_24_hours | string | {
+    opens?: string | null,
+    closes?: string | null
   }[] | null,
   repeats_yearly?: boolean | null,
   note?: string | null,
   applies_to?: {
-    type: all | countries | regions | filters | locations,
+    type: all | countries | regions | filters | locations | string,
     values?: string[] | null
   } | null,
   source?: string | null,
@@ -940,14 +1085,14 @@ await corsair.storerocket.api.specialHours.get({ projectId: 'PROJECT_ID', ruleId
   start_date?: string | null,
   end_date?: string | null,
   until_further_notice?: boolean | null,
-  hours?: closed | regular | open_24_hours | {
-    opens: string,
-    closes: string
+  hours?: closed | regular | open_24_hours | string | {
+    opens?: string | null,
+    closes?: string | null
   }[] | null,
   repeats_yearly?: boolean | null,
   note?: string | null,
   applies_to?: {
-    type: all | countries | regions | filters | locations,
+    type: all | countries | regions | filters | locations | string,
     values?: string[] | null
   } | null,
   source?: string | null,
@@ -1000,14 +1145,14 @@ await corsair.storerocket.api.specialHours.list({ projectId: 'PROJECT_ID' });
   start_date?: string | null,
   end_date?: string | null,
   until_further_notice?: boolean | null,
-  hours?: closed | regular | open_24_hours | {
-    opens: string,
-    closes: string
+  hours?: closed | regular | open_24_hours | string | {
+    opens?: string | null,
+    closes?: string | null
   }[] | null,
   repeats_yearly?: boolean | null,
   note?: string | null,
   applies_to?: {
-    type: all | countries | regions | filters | locations,
+    type: all | countries | regions | filters | locations | string,
     values?: string[] | null
   } | null,
   source?: string | null,
@@ -1094,14 +1239,14 @@ closed | regular | open_24_hours | {
   start_date?: string | null,
   end_date?: string | null,
   until_further_notice?: boolean | null,
-  hours?: closed | regular | open_24_hours | {
-    opens: string,
-    closes: string
+  hours?: closed | regular | open_24_hours | string | {
+    opens?: string | null,
+    closes?: string | null
   }[] | null,
   repeats_yearly?: boolean | null,
   note?: string | null,
   applies_to?: {
-    type: all | countries | regions | filters | locations,
+    type: all | countries | regions | filters | locations | string,
     values?: string[] | null
   } | null,
   source?: string | null,
