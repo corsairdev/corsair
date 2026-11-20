@@ -45,7 +45,15 @@ export class StoreganiseAPIError extends ApiError {
 		},
 	) {
 		// users.get takes an email address as the id; keep it out of the URL.
-		const url = options.path.replace(/[^/]*(?:@|%40)[^/]*/g, '[email]');
+		// Segment by segment, no backtracking regex.
+		const url = options.path
+			.split('/')
+			.map((part) =>
+				part.includes('@') || part.toLowerCase().includes('%40')
+					? '[email]'
+					: part,
+			)
+			.join('/');
 		super(
 			{ method: options.method as ApiRequestOptions['method'], url },
 			{
