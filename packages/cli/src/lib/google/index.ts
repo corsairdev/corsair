@@ -12,16 +12,10 @@ import { promptTenantId } from '../../utils/prompts';
 import { setupCalendarWatch } from './calendar';
 import { setupDriveWatch } from './drive';
 import { setupGmailWatch } from './gmail';
+import type { GoogleSubscribePlugin } from './plugins';
+import { GOOGLE_SUBSCRIBE_PLUGINS } from './plugins';
 import { refreshGoogleAccessToken } from './shared';
 import { setupSheetsWatch } from './sheets';
-
-const GOOGLE_PLUGINS = [
-	'gmail',
-	'googledrive',
-	'googlecalendar',
-	'googlesheets',
-] as const;
-type GooglePlugin = (typeof GOOGLE_PLUGINS)[number];
 
 async function extractInternalConfig(
 	cwd: string,
@@ -73,7 +67,7 @@ export async function runGoogleSubscribe({
 		const opts = pl.options as Record<string, unknown> | undefined;
 		return (
 			opts?.authType === 'oauth_2' &&
-			GOOGLE_PLUGINS.includes(pl.id as GooglePlugin)
+			GOOGLE_SUBSCRIBE_PLUGINS.includes(pl.id as GoogleSubscribePlugin)
 		);
 	});
 
@@ -87,13 +81,15 @@ export async function runGoogleSubscribe({
 		`Loaded. Found ${googlePlugins.length} Google plugin${googlePlugins.length === 1 ? '' : 's'}.`,
 	);
 
-	let pluginType: GooglePlugin;
+	let pluginType: GoogleSubscribePlugin;
 
 	if (
 		preselectedPluginId &&
-		GOOGLE_PLUGINS.includes(preselectedPluginId as GooglePlugin)
+		GOOGLE_SUBSCRIBE_PLUGINS.includes(
+			preselectedPluginId as GoogleSubscribePlugin,
+		)
 	) {
-		pluginType = preselectedPluginId as GooglePlugin;
+		pluginType = preselectedPluginId as GoogleSubscribePlugin;
 	} else {
 		const selected = await p.select({
 			message: 'Select a Google integration:',
@@ -103,7 +99,7 @@ export async function runGoogleSubscribe({
 			p.cancel('Operation cancelled.');
 			process.exit(0);
 		}
-		pluginType = selected as GooglePlugin;
+		pluginType = selected as GoogleSubscribePlugin;
 	}
 
 	if (pluginType === 'googlesheets') {

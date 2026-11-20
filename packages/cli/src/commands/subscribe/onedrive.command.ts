@@ -1,4 +1,5 @@
 import type { CommandActionData } from '../../index.types';
+import { runWebhookSubscription } from '../../utils/subscription';
 import BaseCommand from '../base.command';
 
 export default class OnedriveCommand extends BaseCommand {
@@ -11,9 +12,6 @@ export default class OnedriveCommand extends BaseCommand {
 	}
 
 	async action({}: CommandActionData) {
-		const { runOnedriveSubscribe } = await import(
-			'../../lib/microsoft/subscribe-microsoft'
-		);
-		await runOnedriveSubscribe({ cwd: process.cwd() });
+		await runWebhookSubscription(process.cwd(), 'onedrive');
 	}
 }

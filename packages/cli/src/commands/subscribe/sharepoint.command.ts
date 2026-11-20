@@ -1,5 +1,5 @@
 import type { CommandActionData } from '../../index.types';
-import { runSharepointSubscribe } from '../../lib/microsoft/sharepoint';
+import { runWebhookSubscription } from '../../utils/subscription';
 import BaseCommand from '../base.command';
 
 export default class SharepointCommand extends BaseCommand {
@@ -12,6 +12,6 @@ export default class SharepointCommand extends BaseCommand {
 	}
 
 	async action({}: CommandActionData) {
-		await runSharepointSubscribe({ cwd: process.cwd() });
+		await runWebhookSubscription(process.cwd(), 'sharepoint');
 	}
 }
