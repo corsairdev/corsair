@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeSlackRequest } from '../client';
 import type { SlackBoundEndpoints, SlackEndpoints } from '../index';
 import type { SlackEndpointOutputs } from './types';
+import { SlackEndpointInputSchemas, SlackEndpointOutputSchemas } from './types';
 import { userKey } from './user-key';
 
 export const archive: SlackEndpoints['channelsArchive'] = async (
@@ -156,17 +157,19 @@ export const listMine: SlackEndpoints['channelsListMine'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeSlackRequest<
-		SlackEndpointOutputs['channelsListMine']
-	>('users.conversations', await userKey(ctx), {
-		method: 'GET',
-		query: input,
-	});
+	const query = SlackEndpointInputSchemas.channelsListMine.parse(input);
+	const result = SlackEndpointOutputSchemas.channelsListMine.parse(
+		await makeSlackRequest<SlackEndpointOutputs['channelsListMine']>(
+			'users.conversations',
+			await userKey(ctx),
+			{ method: 'GET', query },
+		),
+	);
 
 	await logEventFromContext(
 		ctx,
 		'slack.channels.listMine',
-		{ ...input },
+		{ ...query },
 		'completed',
 	);
 	return result;
