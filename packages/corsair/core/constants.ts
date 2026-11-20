@@ -504,6 +504,7 @@ export const BaseProviders = [
 	'pinecone',
 	'pipedrive',
 	'placid',
+	'persistiq',
 	'plain',
 	'platerecognizer',
 	'ploid',
@@ -1251,6 +1252,7 @@ export const ProviderDisplayNames = {
 	pinecone: 'Pinecone',
 	pipedrive: 'Pipedrive',
 	placid: 'Placid',
+	persistiq: 'PersistIQ',
 	plain: 'Plain',
 	platerecognizer: 'Plate Recognizer',
 	ploid: 'Ploid',
@@ -2005,6 +2007,7 @@ export type AllProviders =
 	| 'pinecone'
 	| 'pipedrive'
 	| 'placid'
+	| 'persistiq'
 	| 'plain'
 	| 'platerecognizer'
 	| 'ploid'
