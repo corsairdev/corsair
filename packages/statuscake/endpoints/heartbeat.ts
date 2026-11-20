@@ -6,12 +6,20 @@ import {
 	StatusCakeEndpointOutputSchemas as Outputs,
 } from './types';
 
-/** `tags[]` keys so the API reads the values as an array. */
+/**
+ * The list filters take tags as one comma-separated string: live, a `tags[]`
+ * array answers 400 "Tags must be a comma-separated string". `matchany` is
+ * read by presence: live, `matchany=false` matched any tag just like true,
+ * so it is sent only when true.
+ */
 export function tagQuery(
 	tags: string[] | undefined,
 	matchany: boolean | undefined,
 ) {
-	return { 'tags[]': tags, matchany };
+	return {
+		tags: tags?.length ? tags.join(',') : undefined,
+		matchany: matchany ? true : undefined,
+	};
 }
 
 export const list: StatusCakeEndpoints['heartbeatList'] = (ctx, input) =>

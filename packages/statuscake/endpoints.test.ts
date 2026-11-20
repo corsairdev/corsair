@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import { z } from 'zod';
 import {
 	ContactGroups,
 	Heartbeat,
@@ -8,6 +9,7 @@ import {
 	SSL,
 	Uptime,
 } from './endpoints';
+import { StatusCakeEndpointInputSchemas } from './endpoints/types';
 import {
 	contactGroup,
 	contactGroupsList,
@@ -139,7 +141,7 @@ describe('contactGroups', () => {
 
 		await expect(
 			invoke(ContactGroups.create, { email_addresses: ['a@b.c'] }),
-		).rejects.toThrow('Provide name');
+		).rejects.toThrow('"name"');
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
@@ -179,7 +181,7 @@ describe('contactGroups', () => {
 });
 
 describe('heartbeat', () => {
-	it('lists with status and tag filters as repeated tags[] keys', async () => {
+	it('lists with status and tag filters as one comma-separated tags value', async () => {
 		respond(heartbeatList);
 
 		await invoke(Heartbeat.list, {
@@ -190,11 +192,21 @@ describe('heartbeat', () => {
 
 		const sent = lastRequest();
 		expect(sent.path).toBe('/v1/heartbeat');
-		expect(sent.query).toMatchObject({ status: 'up', matchany: 'true' });
-		expect(sent.queryKeys.filter((key) => key === 'tags[]')).toHaveLength(2);
-		// fromEntries keeps the last value for a repeated key, so the array
-		// itself comes from queryAll.
-		expect(sent.queryAll('tags[]')).toEqual(['batch', 'jobs']);
+		// Live, a tags[] array answers 400 "Tags must be a comma-separated string".
+		expect(sent.query).toMatchObject({
+			status: 'up',
+			matchany: 'true',
+			tags: 'batch,jobs',
+		});
+		expect(sent.queryKeys).not.toContain('tags[]');
+	});
+
+	it('leaves matchany out when false, since the API reads it by presence', async () => {
+		respond(heartbeatList);
+
+		await invoke(Heartbeat.list, { tags: ['batch', 'jobs'], matchany: false });
+
+		expect(lastRequest().queryKeys).not.toContain('matchany');
 	});
 
 	it('create requires period', async () => {
@@ -202,7 +214,7 @@ describe('heartbeat', () => {
 
 		await expect(
 			invoke(Heartbeat.create, { name: 'nightly backup' }),
-		).rejects.toThrow('Provide period');
+		).rejects.toThrow('"period"');
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
@@ -270,7 +282,7 @@ describe('maintenanceWindows', () => {
 
 		await expect(
 			invoke(MaintenanceWindows.create, { name: 'deploy window' }),
-		).rejects.toThrow(/Provide start_at/);
+		).rejects.toThrow(/"start_at"/);
 		await expect(
 			invoke(MaintenanceWindows.create, {
 				name: 'deploy window',
@@ -351,14 +363,14 @@ describe('pagespeed', () => {
 
 		await expect(
 			invoke(Pagespeed.create, { name: 'marketing site' }),
-		).rejects.toThrow(/Provide website_url/);
+		).rejects.toThrow(/"website_url"/);
 		await expect(
 			invoke(Pagespeed.create, {
 				name: 'marketing site',
 				website_url: 'https://www.example.com',
 				check_rate: 3600,
 			}),
-		).rejects.toThrow('Provide region');
+		).rejects.toThrow('"region"');
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
@@ -438,7 +450,7 @@ describe('ssl', () => {
 
 		await expect(
 			invoke(SSL.create, { check_rate: 86400, alert_at: [30, 14, 7] }),
-		).rejects.toThrow('Provide website_url');
+		).rejects.toThrow('"website_url"');
 		await expect(
 			invoke(SSL.create, {
 				website_url: 'https://www.example.com',
@@ -501,16 +513,43 @@ describe('uptime', () => {
 		expect(sent).toMatchObject({
 			method: 'GET',
 			path: '/v1/uptime',
-			query: { status: 'up' },
+			query: { status: 'up', tags: 'production' },
 		});
-		expect(sent.queryKeys).toContain('tags[]');
+		expect(sent.queryKeys).not.toContain('tags[]');
+	});
+
+	it('update does not offer test_type, which the API cannot change', async () => {
+		fetchMock.mockResolvedValueOnce(new Response(null, { status: 204 }));
+
+		await invoke(Uptime.update, {
+			test_id: '1',
+			test_type: 'TCP',
+			paused: true,
+		});
+
+		expect(lastRequest().formKeys).not.toContain('test_type');
+		expect(
+			Object.keys(StatusCakeEndpointInputSchemas.uptimeUpdate.shape),
+		).not.toContain('test_type');
+	});
+
+	it('create schemas declare their required fields, so types and docs show them', () => {
+		const required = (schema: z.ZodType) =>
+			(z.toJSONSchema(schema, { io: 'input' }) as { required?: string[] })
+				.required ?? [];
+		expect(
+			required(StatusCakeEndpointInputSchemas.uptimeCreate).sort(),
+		).toEqual(['check_rate', 'name', 'test_type', 'website_url']);
+		expect(
+			required(StatusCakeEndpointInputSchemas.contactGroupsCreate),
+		).toEqual(['name']);
 	});
 
 	it('create requires name, test_type, website_url and check_rate', async () => {
 		respond(newId, 201);
 
 		await expect(invoke(Uptime.create, { name: 'x' })).rejects.toThrow(
-			/Provide test_type/,
+			/"test_type"/,
 		);
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
