@@ -35,7 +35,7 @@ await corsair.storeganise.api.addons.get({ addonId: '5bf540e8d986a91cd713affe' }
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `customFields` | `Record<string, unknown> \| null` | No | — |
+| `customFields` | `Record<string, any> \| null` | No | — |
 
 
 
@@ -64,7 +64,7 @@ await corsair.storeganise.api.addons.list({});
 ```ts
 {
   id: string,
-  customFields?: Record<string, unknown> | null
+  customFields?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -205,7 +205,7 @@ await corsair.storeganise.api.sites.get({ siteIdOrCode: 'central' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `customFields` | `Record<string, unknown> \| null` | No | — |
+| `customFields` | `Record<string, any> \| null` | No | — |
 
 
 
@@ -239,7 +239,7 @@ await corsair.storeganise.api.sites.list({});
 ```ts
 {
   id: string,
-  customFields?: Record<string, unknown> | null
+  customFields?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -278,7 +278,7 @@ await corsair.storeganise.api.unitRentals.get({ unitRentalId: '5bf540e8d986a91cd
 | `id` | `string` | Yes | — |
 | `unit` | `object \| null` | No | — |
 | `owner` | `object \| null` | No | — |
-| `customFields` | `Record<string, unknown> \| null` | No | — |
+| `customFields` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="unit full type">
@@ -361,7 +361,7 @@ await corsair.storeganise.api.unitRentals.list({});
     id: string,
     email?: string | null
   } | null,
-  customFields?: Record<string, unknown> | null
+  customFields?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -390,7 +390,7 @@ await corsair.storeganise.api.unitRentals.update({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `unitRentalId` | `string` | Yes | — |
-| `customFields` | `Record<string, unknown>` | Yes | — |
+| `customFields` | `Record<string, any>` | Yes | — |
 
 The only documented write. Sets custom fields on one rental, which is how access-control integrations store access codes and overlock flags under prefixed keys such as myAC_accessCode or myAC_overlocked.
 
@@ -403,7 +403,7 @@ The only documented write. Sets custom fields on one rental, which is how access
 | `id` | `string` | Yes | — |
 | `unit` | `object \| null` | No | — |
 | `owner` | `object \| null` | No | — |
-| `customFields` | `Record<string, unknown> \| null` | No | — |
+| `customFields` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="unit full type">
