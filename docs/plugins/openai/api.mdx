@@ -471,8 +471,8 @@ await corsair.openai.api.audio.createSpeech({});
 | `byteLength` | `number` | Yes | Size of the file in bytes. |
 | `filename` | `string` | No | The file name, when known. |
 | `contentOmitted` | `not_requested \| over_limit` | No | Set when the content was left out: the caller did not ask for it, or the file was over the limit. |
-| `fileId` | `string` | No | Where the host saved the file, in place of its content, when it was over the limit. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
-| `audioBase64` | `string` | No | The audio, base64-encoded. Missing when contentOmitted is set or the host kept the file (fileId). |
+| `fileId` | `string` | No | Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
+| `audioBase64` | `string` | No | The audio, base64-encoded. Missing when contentOmitted is set, or when a host kept a file too large to return inline (fileId). |
 | `format` | `string` | Yes | — |
 
 
@@ -1623,7 +1623,7 @@ await corsair.openai.api.containerFiles.retrieveContent({});
 | `byteLength` | `number` | Yes | Size of the file in bytes. |
 | `filename` | `string` | No | The file name, when known. |
 | `contentOmitted` | `not_requested \| over_limit` | No | Set when the content was left out: the caller did not ask for it, or the file was over the limit. |
-| `fileId` | `string` | No | Where the host saved the file, in place of its content, when it was over the limit. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
+| `fileId` | `string` | No | Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
 | `containerId` | `string` | Yes | — |
 
 
@@ -2762,7 +2762,7 @@ await corsair.openai.api.files.downloadContent({});
 | `byteLength` | `number` | Yes | Size of the file in bytes. |
 | `filename` | `string` | No | The file name, when known. |
 | `contentOmitted` | `not_requested \| over_limit` | No | Set when the content was left out: the caller did not ask for it, or the file was over the limit. |
-| `fileId` | `string` | No | Where the host saved the file, in place of its content, when it was over the limit. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
+| `fileId` | `string` | No | Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
 
 
 
@@ -7019,7 +7019,7 @@ await corsair.openai.api.videos.download({});
 | `byteLength` | `number` | Yes | Size of the file in bytes. |
 | `filename` | `string` | No | The file name, when known. |
 | `contentOmitted` | `not_requested \| over_limit` | No | Set when the content was left out: the caller did not ask for it, or the file was over the limit. |
-| `fileId` | `string` | No | Where the host saved the file, in place of its content, when it was over the limit. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
+| `fileId` | `string` | No | Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
 | `videoId` | `string` | Yes | — |
 
 

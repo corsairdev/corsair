@@ -52,7 +52,7 @@ export const createSpeech: OpenaiEndpoints['audioCreateSpeech'] = async (
 	);
 	const result: AudioCreateSpeechResponse = {
 		...file,
-		...(contentBase64 ? { audioBase64: contentBase64 } : {}),
+		...(contentBase64 !== undefined ? { audioBase64: contentBase64 } : {}),
 		format,
 	};
 	return result;
