@@ -3179,6 +3179,14 @@
                 ]
               },
               {
+                "group": "Interzoid",
+                "pages": [
+                  "plugins/interzoid/overview",
+                  "plugins/interzoid/api",
+                  "plugins/interzoid/database"
+                ]
+              },
+              {
                 "group": "IP2Proxy",
                 "pages": [
                   "plugins/ip2proxy/overview",

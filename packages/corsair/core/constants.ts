@@ -381,6 +381,7 @@ export const BaseProviders = [
 	'instagram',
 	'instantly',
 	'intercom',
+	'interzoid',
 	'ip2proxy',
 	'ip2whois',
 	'jigsawstack',
@@ -1126,6 +1127,7 @@ export const ProviderDisplayNames = {
 	instagram: 'Instagram',
 	instantly: 'Instantly',
 	intercom: 'Intercom',
+	interzoid: 'Interzoid',
 	ip2proxy: 'IP2Proxy',
 	ip2whois: 'IP2WHOIS',
 	jigsawstack: 'JigsawStack',
@@ -1878,6 +1880,7 @@ export type AllProviders =
 	| 'instagram'
 	| 'instantly'
 	| 'intercom'
+	| 'interzoid'
 	| 'ip2proxy'
 	| 'ip2whois'
 	| 'jigsawstack'
