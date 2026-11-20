@@ -80,7 +80,7 @@ const operations = [
 
 const riskLevels: Record<string, string> = {
 	...Object.fromEntries(operations.map((op) => [op, 'read'])),
-	'users.create': 'write',
+	'users.create': 'destructive',
 	'users.verify': 'write',
 	'users.updateProfile': 'write',
 	'users.updateNotifications': 'write',
@@ -105,7 +105,7 @@ const riskLevels: Record<string, string> = {
 	'ideas.removeVote': 'write',
 	'ideas.createComment': 'write',
 	'ideas.updateComment': 'write',
-	'ideas.deleteComment': 'write',
+	'ideas.deleteComment': 'destructive',
 	'ideas.createConnector': 'write',
 	'ideas.updateConnector': 'write',
 	'ideas.deleteConnector': 'destructive',

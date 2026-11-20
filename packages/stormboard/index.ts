@@ -345,8 +345,10 @@ export const stormboardEndpointSchemas = {
 
 const stormboardEndpointMeta = {
 	'users.create': {
-		riskLevel: 'write',
-		description: 'Create a Stormboard user and return its API key',
+		// Stormboard emails the new user a verification code.
+		riskLevel: 'destructive',
+		description:
+			'Create a Stormboard user, which emails them a verification code, and return its API key',
 	},
 	'users.verify': {
 		riskLevel: 'write',
@@ -497,7 +499,8 @@ const stormboardEndpointMeta = {
 		description: 'Edit a comment on an idea',
 	},
 	'ideas.deleteComment': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description: 'Delete a comment on an idea',
 	},
 	'ideas.listComments': {
