@@ -1,0 +1,121 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+# `pnpm validate:plugins` fails until the TODO is replaced.
+displayName: "Paradym"
+description: "Paradym is the easiest way to issue, verify, and manage verifiable credentials. This plugin manages wallets, SD-JWT VC credential templates and trusted entities, creates OpenID4VC issuance offers and verification requests, batch-revokes issued credentials, and manages webhook subscriptions with delivery history."
+domain: paradym.id
+recommendedAuth: api_key
+overviewNote: >
+  Authenticate with an API key from the Paradym dashboard; the plugin sends it
+  in the `x-access-token` header. Every wallet-scoped operation is called
+  against the account's wallet: store the wallet id on the account
+  (`wallet_id`) or pass `walletId` in the plugin options (create one with
+  wallets.create, or read the id from the dashboard).
+
+  Listing wallets needs no wallet id. Issuance offers and verification
+  sessions are created as sessions that a holder wallet completes; poll
+  issuance.getSession or verification.getSession, or listen for the
+  openid4vc.* webhooks (the createSubscription response carries the
+  signatureSecret used to verify deliveries).
+
+  This plugin covers the OpenID4VC routes of the published OpenAPI
+  specification. The DIDComm routes, certificates and CSRs, keys and key
+  backends, OAuth clients, attribute providers, authorization servers, mDoc
+  and AnonCreds credential templates, mediator and messaging routes, and
+  wallet profiles are documented by Paradym but not part of this plugin.
+
+  Every operation is described in the official OpenAPI specification:
+  https://api.paradym.id/openapi.json
+examples:
+  read:
+    path: issuance.listSessions
+    title: List issuance sessions
+    args: {}
+  write:
+    path: issuance.createOffer
+    title: Create a credential offer
+    args:
+      credentials:
+        - credentialTemplateId: tmpl_1
+          claims:
+            given_name: Jane
+apiExamples:
+  wallets.list:
+    call: '{ searchName: "Government", sort: "-createdAt" }'
+  wallets.create:
+    call: '{ name: "Government wallet", verificationDataAccess: false }'
+  wallets.get:
+    call: '{ walletId: "8f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5d" }'
+  wallets.update:
+    call: '{ walletId: "8f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5d", name: "Renamed" }'
+  credentialTemplates.list:
+    call: '{ sort: "name" }'
+  credentialTemplates.create:
+    call: '{ type: "urn:eudi:pid:1", name: "PID", attributes: { given_name: { name: "given_name", required: true } }, revocable: true }'
+  credentialTemplates.get:
+    call: '{ credentialTemplateId: "tmpl_1" }'
+  credentialTemplates.update:
+    call: '{ credentialTemplateId: "tmpl_1", name: "PID v2" }'
+  credentialTemplates.archive:
+    call: '{ credentialTemplateId: "tmpl_1" }'
+  credentialTemplates.unarchive:
+    call: '{ credentialTemplateId: "tmpl_1" }'
+  presentationTemplates.list:
+    call: '{}'
+  presentationTemplates.create:
+    call: '{ name: "PID check", credentials: [{ type: "urn:eudi:pid:1", format: "sd-jwt-vc", attributes: { given_name: {} } }] }'
+  presentationTemplates.get:
+    call: '{ presentationTemplateId: "pres_1" }'
+  presentationTemplates.update:
+    call: '{ presentationTemplateId: "pres_1", name: "Renamed" }'
+  presentationTemplates.archive:
+    call: '{ presentationTemplateId: "pres_1" }'
+  issuance.listSessions:
+    call: '{ filterStatus: "offered", pageSize: 10 }'
+  issuance.createOffer:
+    call: '{ credentials: [{ credentialTemplateId: "tmpl_1", claims: { given_name: "Jane" } }], expirationInMinutes: 15 }'
+  issuance.getSession:
+    call: '{ issuanceId: "issuance_1" }'
+  verification.listSessions:
+    call: '{ filterStatus: "verified" }'
+  verification.createRequest:
+    call: '{ presentationTemplateId: "pres_1", expirationInMinutes: 10, challenge: "nonce-123" }'
+  verification.getSession:
+    call: '{ verificationId: "verification_1" }'
+  verification.complete:
+    call: '{ verificationId: "verification_1" }'
+  revocation.batch:
+    call: '{ issuedCredentialIds: ["cred_1", "cred_2"], notifyWallet: true }'
+  trustedEntities.list:
+    call: '{}'
+  trustedEntities.create:
+    call: '{ name: "Government issuer", dids: [{ did: "did:web:example.gov" }] }'
+  trustedEntities.get:
+    call: '{ trustedEntityId: "te_1" }'
+  trustedEntities.delete:
+    call: '{ trustedEntityId: "te_1" }'
+  webhooks.listSubscriptions:
+    call: '{}'
+  webhooks.createSubscription:
+    call: '{ name: "Deal desk", url: "https://example.com/webhooks/paradym", eventTypes: ["openid4vc.issuance.completed"] }'
+  webhooks.deleteSubscription:
+    call: '{ webhookSubscriptionId: "whs_1" }'
+  webhooks.listDeliveries:
+    call: '{ filterStatus: "failed" }'
+  webhooks.getDelivery:
+    call: '{ deliveryId: "del_1" }'
+  webhooks.redeliverDelivery:
+    call: '{ deliveryId: "del_1" }'
+apiNotes:
+  wallets.list: 'Needs no wallet id; searches by name and filters by id or exact name.'
+  wallets.create: 'Wallet creation gives the wallet its own agent and template space.'
+  wallets.update: 'Takes the wallet id as an explicit input, not the account wallet.'
+  credentialTemplates.create: 'The attributes object is keyed by attribute name; Paradym validates its contents, including the credential type identifier.'
+  credentialTemplates.archive: 'Archived templates can be restored with credentialTemplates.unarchive.'
+  presentationTemplates.create: 'The credentials array names the credential types and attributes the holder must present; Paradym validates the per-format attribute definitions.'
+  issuance.createOffer: 'The answer carries the offer URI, QR image and deep link a holder wallet opens; the session stays open until the wallet completes it.'
+  verification.createRequest: 'The answer carries the authorization request URI, QR image and deep link.'
+  verification.complete: 'Completes a session that succeeded but was not marked completed by the holder flow.'
+  revocation.batch: 'Revokes every listed issued credential; revocation cannot be undone.'
+  trustedEntities.create: 'Trust at least one DID or one certificate.'
+  webhooks.createSubscription: 'The answer carries the subscription''s signatureSecret: store it (keys.set_webhook_signature) so deliveries can be verified.'
+  webhooks.redeliverDelivery: 'Redelivers a pending or failed delivery to the subscription URL.'

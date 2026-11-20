@@ -4063,6 +4063,15 @@
                 ]
               },
               {
+                "group": "Paradym",
+                "pages": [
+                  "plugins/paradym/overview",
+                  "plugins/paradym/api",
+                  "plugins/paradym/database",
+                  "plugins/paradym/webhooks"
+                ]
+              },
+              {
                 "group": "Parallel",
                 "pages": [
                   "plugins/parallel/overview",
