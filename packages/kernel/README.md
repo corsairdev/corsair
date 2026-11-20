@@ -19,7 +19,7 @@ pnpm add @corsair-dev/kernel
 
 ## How it is built
 
-The 200 operations come from Kernel's published OpenAPI spec
+The 183 operations come from Kernel's published OpenAPI spec
 (https://api.onkernel.com/openapi.json, fetched 2026-11-20), named after
 Kernel's Node SDK (`@onkernel/sdk` 0.153.0) so its docs translate one to one,
 with `retrieve` written `get` and `deleteByID` written `delete`:
@@ -73,6 +73,10 @@ Left out on purpose:
   route a card issuer posts to through the card vault, never to the API host.
 - The seven `/projects` routes the spec marks deprecated (removed 2026-11-24);
   `projects.*` uses `/org/projects`.
+- Workload identity (17 routes: issuers, federation rules, service accounts,
+  sign-in events). It sets up keyless sign-in for outside workloads, an org
+  admin task. Kernel's spec says API keys can't read any of it, and this plugin
+  signs in with an API key.
 
 ## Endpoints
 
@@ -82,7 +86,7 @@ Left out on purpose:
 | `apiKeys.delete` | `kernel.api.apiKeys.delete` | `destructive` | Delete an API key; anything using it stops working. Cannot be undone. |
 | `apiKeys.get` | `kernel.api.apiKeys.get` | `read` | Get an API key's metadata. |
 | `apiKeys.list` | `kernel.api.apiKeys.list` | `read` | List API keys (names, scopes, last used; never the secrets). |
-| `apiKeys.rotate` | `kernel.api.apiKeys.rotate` | `destructive` | Replace an API key's secret; the old secret stops working. The new one is shown once. |
+| `apiKeys.rotate` | `kernel.api.apiKeys.rotate` | `destructive` | Replace an API key's secret. The new secret is shown once. The old one keeps working for expire_in_days (7 by default); pass expire_in_days: 0 to end it now. |
 | `apiKeys.update` | `kernel.api.apiKeys.update` | `write` | Rename an API key or change its settings. |
 | `apps.list` | `kernel.api.apps.list` | `read` | List deployed Kernel apps and their versions and actions. |
 | `auditLogs.exportChunk` | `kernel.api.auditLogs.exportChunk` | `read` | Download one chunk of the audit log as JSONL (gzipped by default). Returns a file plus has_more and next_cursor for the next chunk. |
@@ -110,7 +114,7 @@ Left out on purpose:
 | `browserPools.get` | `kernel.api.browserPools.get` | `read` | Get a browser pool: configuration, size, and how many browsers are available or leased. |
 | `browserPools.list` | `kernel.api.browserPools.list` | `read` | List browser pools and their sizes. |
 | `browserPools.release` | `kernel.api.browserPools.release` | `write` | Return an acquired browser to its pool (optionally reusing it rather than replacing it). |
-| `browserPools.update` | `kernel.api.browserPools.update` | `write` | Change a browser pool's size or browser configuration. |
+| `browserPools.update` | `kernel.api.browserPools.update` | `write` | Change a browser pool's size or browser configuration. To stop loading a profile, send profile: { id: "" }. |
 | `browsers.computer.batch` | `kernel.api.browsers.computer.batch` | `write` | Run a list of computer actions (click_mouse, type_text, press_key, scroll, move_mouse, drag_mouse, sleep and more) in order in one call; stops at the first error. Faster than one call per action. |
 | `browsers.computer.captureScreenshot` | `kernel.api.browsers.computer.captureScreenshot` | `read` | Take a PNG screenshot of the browser screen (optionally a region). Headful browsers only: a headless browser has no window, so this returns an empty screen; there, use page.screenshot() inside browsers.playwright.execute. Returns a file: on Corsair it is saved to Files and comes back with a fileId. |
 | `browsers.computer.clickMouse` | `kernel.api.browsers.computer.clickMouse` | `write` | Click at screen coordinates x, y (left, right or middle button; num_clicks for double-click). |
@@ -148,7 +152,7 @@ Left out on purpose:
 | `browsers.playwright.executors.delete` | `kernel.api.browsers.playwright.executors.delete` | `destructive` | Stop and remove a named Playwright executor on a browser; a later call with that name starts a fresh one. |
 | `browsers.playwright.executors.list` | `kernel.api.browsers.playwright.executors.list` | `read` | List the Playwright executors (worker processes) on a browser and whether each is busy. |
 | `browsers.process.exec` | `kernel.api.browsers.process.exec` | `write` | Run a shell command in the browser VM and wait for it: returns exit code, stdout and stderr (base64). Set timeout_sec for long commands. |
-| `browsers.process.kill` | `kernel.api.browsers.process.kill` | `write` | Send a signal (TERM by default, or KILL, INT, HUP) to a spawned process. |
+| `browsers.process.kill` | `kernel.api.browsers.process.kill` | `write` | Send a signal to a spawned process. signal is required: TERM to end it, KILL to force it, or INT, HUP. |
 | `browsers.process.resize` | `kernel.api.browsers.process.resize` | `write` | Resize the terminal of a process spawned with allocate_tty. |
 | `browsers.process.spawn` | `kernel.api.browsers.process.spawn` | `write` | Start a command in the browser VM without waiting; returns a process_id for browsers.process.status, stdin and kill. |
 | `browsers.process.status` | `kernel.api.browsers.process.status` | `read` | Get a spawned process's state, exit code and resource use. |
@@ -195,7 +199,7 @@ Left out on purpose:
 | `extensions.get` | `kernel.api.extensions.get` | `read` | Get an uploaded extension's metadata. |
 | `extensions.list` | `kernel.api.extensions.list` | `read` | List uploaded Chrome extensions. |
 | `extensions.upload` | `kernel.api.extensions.upload` | `write` | Upload a Chrome extension (a zip of the unpacked extension, as a URL or base64) to use in browsers by name. |
-| `invocations.create` | `kernel.api.invocations.create` | `write` | Run an action of a deployed Kernel app (billed per second). async: true returns at once; poll invocations.get for the result. |
+| `invocations.create` | `kernel.api.invocations.create` | `destructive` | Run an action of a deployed Kernel app (billed per second). async: true returns at once; poll invocations.get for the result. |
 | `invocations.deleteBrowsers` | `kernel.api.invocations.deleteBrowsers` | `destructive` | Delete every browser an invocation started. Cannot be undone. |
 | `invocations.get` | `kernel.api.invocations.get` | `read` | Get an invocation: status, output and timing. Poll this instead of the event stream. |
 | `invocations.list` | `kernel.api.invocations.list` | `read` | List app action invocations, filtered by app, action, status or time. |
@@ -235,11 +239,6 @@ Left out on purpose:
 | `search.create` | `kernel.api.search.create` | `read` | Search the web through one of Kernel's search providers and get ranked results (titles, URLs, snippets), kept for search.contents.fetch. |
 | `search.get` | `kernel.api.search.get` | `read` | Get a search that was run earlier, with its results. |
 | `search.providers.list` | `kernel.api.search.providers.list` | `read` | List the search providers and the options each supports. |
-| `serviceAccounts.create` | `kernel.api.serviceAccounts.create` | `write` | Create a service account for workload identity sign-in. |
-| `serviceAccounts.delete` | `kernel.api.serviceAccounts.delete` | `destructive` | Archive a service account; its sign-ins stop working. |
-| `serviceAccounts.get` | `kernel.api.serviceAccounts.get` | `read` | Get a service account. |
-| `serviceAccounts.list` | `kernel.api.serviceAccounts.list` | `read` | List service accounts. |
-| `serviceAccounts.update` | `kernel.api.serviceAccounts.update` | `write` | Update a service account. |
 | `tasks.create` | `kernel.api.tasks.create` | `write` | Record a task an agent is working on, optionally with the browsers it uses; submit reports against it. |
 | `tasks.get` | `kernel.api.tasks.get` | `read` | Get a task. |
 | `tasks.linkBrowsers` | `kernel.api.tasks.linkBrowsers` | `write` | Link browser sessions to a task. |
@@ -266,18 +265,6 @@ Left out on purpose:
 | `vaults.items.upsert` | `kernel.api.vaults.items.upsert` | `write` | Create a vault item (card, credential, wallet or payment request) under a key, or get the identical existing one. |
 | `vaults.list` | `kernel.api.vaults.list` | `read` | List vaults in the project. |
 | `vaults.upsert` | `kernel.api.vaults.upsert` | `write` | Create a vault (a project-scoped store of secrets, cards and credentials for browsers to use), or get the existing one with that name. |
-| `workloadIdentityAuthenticationEvents.list` | `kernel.api.workloadIdentityAuthenticationEvents.list` | `read` | List workload identity sign-in outcomes (sanitized). |
-| `workloadIdentityFederationRules.create` | `kernel.api.workloadIdentityFederationRules.create` | `write` | Create a rule mapping an issuer's token claims to a service account. |
-| `workloadIdentityFederationRules.delete` | `kernel.api.workloadIdentityFederationRules.delete` | `destructive` | Archive a workload identity federation rule. |
-| `workloadIdentityFederationRules.get` | `kernel.api.workloadIdentityFederationRules.get` | `read` | Get a workload identity federation rule. |
-| `workloadIdentityFederationRules.list` | `kernel.api.workloadIdentityFederationRules.list` | `read` | List workload identity federation rules. |
-| `workloadIdentityFederationRules.update` | `kernel.api.workloadIdentityFederationRules.update` | `write` | Update a workload identity federation rule. |
-| `workloadIdentityIssuers.create` | `kernel.api.workloadIdentityIssuers.create` | `write` | Register an OIDC issuer whose tokens can sign in as a service account. |
-| `workloadIdentityIssuers.delete` | `kernel.api.workloadIdentityIssuers.delete` | `destructive` | Archive a workload identity issuer. |
-| `workloadIdentityIssuers.get` | `kernel.api.workloadIdentityIssuers.get` | `read` | Get a workload identity issuer. |
-| `workloadIdentityIssuers.list` | `kernel.api.workloadIdentityIssuers.list` | `read` | List workload identity issuers. |
-| `workloadIdentityIssuers.update` | `kernel.api.workloadIdentityIssuers.update` | `write` | Update a workload identity issuer. |
-| `workloadIdentityIssuers.verify` | `kernel.api.workloadIdentityIssuers.verify` | `read` | Check that an issuer's discovery document and signing keys can be fetched. |
 
 ## Auth
 

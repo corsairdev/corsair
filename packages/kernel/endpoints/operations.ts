@@ -99,6 +99,16 @@ export function timeoutFor(id: string, input: Record<string, unknown>): number {
 		case 'vaults.items.get':
 		case 'vaults.items.events':
 			return number(input.wait, 0) * SECOND + MARGIN_MS;
+		case 'vaults.items.performOperation':
+			// 1pw_access_request_status keeps checking for timeout_seconds (up to
+			// 120 s) after waiting up to 20 s for its first scheduled check;
+			// webmcp_invoke and 1pw_fill carry their own deadlines.
+			return Math.max(
+				SLOW_CALL_MS,
+				(number(input.timeout_seconds, 0) + 20) * SECOND + MARGIN_MS,
+				number(input.timeout_sec, 0) * SECOND + MARGIN_MS,
+				number(input.timeout_ms, 0) + MARGIN_MS,
+			);
 	}
 	return SLOW_OPERATIONS.has(id) ? SLOW_CALL_MS : MARGIN_MS;
 }
@@ -141,7 +151,12 @@ async function buildForm(
 	// `unknown` because a multipart value is a validated scalar, file, list or object.
 	const add = async (key: string, value: unknown, leaf: string) => {
 		if (value === undefined || value === null) return;
-		if (fileFields.has(leaf) && isFileValue(value)) {
+		// A bare string in a file field is a public URL (KernelFileInputSchema),
+		// so it is downloaded and sent as the file, never as text.
+		if (
+			fileFields.has(leaf) &&
+			(isFileValue(value) || typeof value === 'string')
+		) {
 			const resolved = await resolveFileInput(value, {
 				maxBytes: KERNEL_UPLOAD_MAX_BYTES,
 				fallbackName: leaf === 'zip_file' ? 'archive.zip' : 'file',
@@ -198,6 +213,7 @@ function fileFieldNames(operation: KernelOperationDefinition): Set<string> {
 export function fileNameFor(
 	id: string,
 	input: Record<string, unknown>,
+	contentType?: string | null,
 ): string {
 	const text = (value: unknown, fallback: string) =>
 		typeof value === 'string' && value.length > 0 ? value : fallback;
@@ -213,7 +229,10 @@ export function fileNameFor(
 		case 'browsers.replays.download':
 			return `replay-${text(input.replay_id, 'recording')}.mp4`;
 		case 'profiles.download':
-			return `profile-${text(input.id_or_name, 'archive')}.${text(input.format, 'tar.zst')}`;
+			// A legacy profile comes back as JSON whatever format was asked for.
+			return `profile-${text(input.id_or_name, 'archive')}.${
+				contentType?.includes('json') ? 'json' : text(input.format, 'tar.zst')
+			}`;
 		case 'extensions.download':
 			return `${text(input.id_or_name, 'extension')}.zip`;
 		case 'extensions.downloadFromChromeStore':
@@ -331,7 +350,7 @@ export function createKernelOperation<Id extends KernelOperationId>(
 					throw new Error('Kernel returned no file');
 				response = {
 					...toFileOutput(page.body.bytes, page.body.contentType, {
-						filename: fileNameFor(id, parsedInput.data),
+						filename: fileNameFor(id, parsedInput.data, page.body.contentType),
 					}),
 					has_more: hasMore,
 					next_cursor: next,
@@ -353,7 +372,7 @@ export function createKernelOperation<Id extends KernelOperationId>(
 				);
 			}
 			response = toFileOutput(binary.bytes, binary.contentType, {
-				filename: fileNameFor(id, parsedInput.data),
+				filename: fileNameFor(id, parsedInput.data, binary.contentType),
 			});
 		} else {
 			const body = await makeKernelRequest(request);

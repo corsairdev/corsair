@@ -14,6 +14,7 @@ const fetchMock = jest.fn<Promise<Response>, [string, RequestInit]>();
 
 beforeEach(() => {
 	fetchMock.mockReset();
+	// `unknown` because jest's mock type and fetch's overloads don't overlap; the mock answers every call this file makes.
 	global.fetch = fetchMock as unknown as typeof fetch;
 });
 
@@ -23,6 +24,7 @@ afterAll(() => {
 
 function json(
 	status: number,
+	// `unknown` because the fake answer is any JSON value a test needs.
 	body: unknown,
 	headers: Record<string, string> = {},
 ) {
@@ -103,6 +105,7 @@ describe('makeKernelRequest', () => {
 			method: 'POST',
 			path: '/credentials',
 			body: { values: { password: 'hunter2' } },
+			// `unknown` because a rejected promise carries no type; the next line checks it is an ApiError.
 		}).catch((caught: unknown) => caught);
 		expect(error).toBeInstanceOf(ApiError);
 		const apiError = error as ApiError;
@@ -113,6 +116,38 @@ describe('makeKernelRequest', () => {
 		expect(apiError.request.body).toBe('[REDACTED]');
 		expect(JSON.stringify(apiError.body)).not.toContain('hunter2');
 		expect(JSON.stringify(apiError)).not.toContain('sk_test');
+	});
+
+	it('takes query values and sent strings Kernel echoes back out of the error', async () => {
+		fetchMock.mockResolvedValue(
+			json(400, {
+				code: 'invalid_request',
+				message:
+					"no credential matches 'person@example.com' for 'hunter22secret'",
+			}),
+		);
+		const error = (await makeKernelRequest({
+			apiKey: 'sk_test',
+			method: 'POST',
+			path: '/credentials',
+			query: { search: 'person@example.com' },
+			body: { values: { password: 'hunter22secret' } },
+			// `unknown` because a rejected promise carries no type; it is cast to the ApiError the transport throws.
+		}).catch((caught: unknown) => caught)) as ApiError;
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error.status).toBe(400);
+		// Kernel's reason stays, the values it quoted don't.
+		expect(error.message).toBe(
+			"Kernel 400: no credential matches '[REDACTED]' for '[REDACTED]' (invalid_request)",
+		);
+		expect(error.request.query).toEqual({ search: '[REDACTED]' });
+		expect(error.url).toBe(
+			'https://api.onkernel.com/credentials?search=[REDACTED]',
+		);
+		const serialized = JSON.stringify(error);
+		expect(serialized).not.toContain('person@example.com');
+		expect(serialized).not.toContain('person%40example.com');
+		expect(serialized).not.toContain('hunter22secret');
 	});
 
 	it('refuses to send a request without a key', async () => {
@@ -174,6 +209,7 @@ describe('makeKernelPagedRequest', () => {
 			apiKey: 'sk_test',
 			method: 'GET',
 			path: '/proxy_ips',
+			// `unknown` because a rejected promise carries no type; the next line checks it is an ApiError.
 		}).catch((caught: unknown) => caught);
 		expect(error).toBeInstanceOf(ApiError);
 		expect((error as ApiError).status).toBe(403);

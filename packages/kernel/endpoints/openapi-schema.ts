@@ -316,7 +316,7 @@ export function kernelPagingField(
 	return operation.paging ? pagingFields[operation.paging] : undefined;
 }
 
-// Built on first use, one operation at a time: converting all 200 operations at
+// Built on first use, one operation at a time: converting all 183 operations at
 // import would build every response model for an instance that may call two.
 const definitionCache = new Map<string, z.ZodType>();
 // `unknown` is necessary because each cached request schema has its own fields.

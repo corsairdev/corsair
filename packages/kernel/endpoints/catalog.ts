@@ -248,13 +248,6 @@ export const kernelEndpointsNested = {
 			list: op('search.providers.list'),
 		},
 	},
-	serviceAccounts: {
-		create: op('serviceAccounts.create'),
-		delete: op('serviceAccounts.delete'),
-		get: op('serviceAccounts.get'),
-		list: op('serviceAccounts.list'),
-		update: op('serviceAccounts.update'),
-	},
 	tasks: {
 		create: op('tasks.create'),
 		get: op('tasks.get'),
@@ -292,24 +285,6 @@ export const kernelEndpointsNested = {
 		},
 		list: op('vaults.list'),
 		upsert: op('vaults.upsert'),
-	},
-	workloadIdentityAuthenticationEvents: {
-		list: op('workloadIdentityAuthenticationEvents.list'),
-	},
-	workloadIdentityFederationRules: {
-		create: op('workloadIdentityFederationRules.create'),
-		delete: op('workloadIdentityFederationRules.delete'),
-		get: op('workloadIdentityFederationRules.get'),
-		list: op('workloadIdentityFederationRules.list'),
-		update: op('workloadIdentityFederationRules.update'),
-	},
-	workloadIdentityIssuers: {
-		create: op('workloadIdentityIssuers.create'),
-		delete: op('workloadIdentityIssuers.delete'),
-		get: op('workloadIdentityIssuers.get'),
-		list: op('workloadIdentityIssuers.list'),
-		update: op('workloadIdentityIssuers.update'),
-		verify: op('workloadIdentityIssuers.verify'),
 	},
 } as const;
 
@@ -529,11 +504,6 @@ export const kernelEndpointSchemas = {
 	'search.create': kernelSchemaEntry('search.create'),
 	'search.get': kernelSchemaEntry('search.get'),
 	'search.providers.list': kernelSchemaEntry('search.providers.list'),
-	'serviceAccounts.create': kernelSchemaEntry('serviceAccounts.create'),
-	'serviceAccounts.delete': kernelSchemaEntry('serviceAccounts.delete'),
-	'serviceAccounts.get': kernelSchemaEntry('serviceAccounts.get'),
-	'serviceAccounts.list': kernelSchemaEntry('serviceAccounts.list'),
-	'serviceAccounts.update': kernelSchemaEntry('serviceAccounts.update'),
 	'tasks.create': kernelSchemaEntry('tasks.create'),
 	'tasks.get': kernelSchemaEntry('tasks.get'),
 	'tasks.linkBrowsers': kernelSchemaEntry('tasks.linkBrowsers'),
@@ -576,42 +546,6 @@ export const kernelEndpointSchemas = {
 	'vaults.items.upsert': kernelSchemaEntry('vaults.items.upsert'),
 	'vaults.list': kernelSchemaEntry('vaults.list'),
 	'vaults.upsert': kernelSchemaEntry('vaults.upsert'),
-	'workloadIdentityAuthenticationEvents.list': kernelSchemaEntry(
-		'workloadIdentityAuthenticationEvents.list',
-	),
-	'workloadIdentityFederationRules.create': kernelSchemaEntry(
-		'workloadIdentityFederationRules.create',
-	),
-	'workloadIdentityFederationRules.delete': kernelSchemaEntry(
-		'workloadIdentityFederationRules.delete',
-	),
-	'workloadIdentityFederationRules.get': kernelSchemaEntry(
-		'workloadIdentityFederationRules.get',
-	),
-	'workloadIdentityFederationRules.list': kernelSchemaEntry(
-		'workloadIdentityFederationRules.list',
-	),
-	'workloadIdentityFederationRules.update': kernelSchemaEntry(
-		'workloadIdentityFederationRules.update',
-	),
-	'workloadIdentityIssuers.create': kernelSchemaEntry(
-		'workloadIdentityIssuers.create',
-	),
-	'workloadIdentityIssuers.delete': kernelSchemaEntry(
-		'workloadIdentityIssuers.delete',
-	),
-	'workloadIdentityIssuers.get': kernelSchemaEntry(
-		'workloadIdentityIssuers.get',
-	),
-	'workloadIdentityIssuers.list': kernelSchemaEntry(
-		'workloadIdentityIssuers.list',
-	),
-	'workloadIdentityIssuers.update': kernelSchemaEntry(
-		'workloadIdentityIssuers.update',
-	),
-	'workloadIdentityIssuers.verify': kernelSchemaEntry(
-		'workloadIdentityIssuers.verify',
-	),
 } satisfies RequiredPluginEndpointSchemas<typeof kernelEndpointsNested>;
 
 export const kernelEndpointMeta = {
@@ -638,7 +572,7 @@ export const kernelEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			"Replace an API key's secret; the old secret stops working. The new one is shown once.",
+			"Replace an API key's secret. The new secret is shown once. The old one keeps working for expire_in_days (7 by default); pass expire_in_days: 0 to end it now.",
 	},
 	'apiKeys.update': {
 		riskLevel: 'write',
@@ -771,7 +705,8 @@ export const kernelEndpointMeta = {
 	},
 	'browserPools.update': {
 		riskLevel: 'write',
-		description: "Change a browser pool's size or browser configuration.",
+		description:
+			'Change a browser pool\'s size or browser configuration. To stop loading a profile, send profile: { id: "" }.',
 	},
 	'browsers.computer.batch': {
 		riskLevel: 'write',
@@ -953,7 +888,7 @@ export const kernelEndpointMeta = {
 	'browsers.process.kill': {
 		riskLevel: 'write',
 		description:
-			'Send a signal (TERM by default, or KILL, INT, HUP) to a spawned process.',
+			'Send a signal to a spawned process. signal is required: TERM to end it, KILL to force it, or INT, HUP.',
 	},
 	'browsers.process.resize': {
 		riskLevel: 'write',
@@ -1170,7 +1105,8 @@ export const kernelEndpointMeta = {
 			'Upload a Chrome extension (a zip of the unpacked extension, as a URL or base64) to use in browsers by name.',
 	},
 	'invocations.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
 			'Run an action of a deployed Kernel app (billed per second). async: true returns at once; poll invocations.get for the result.',
 	},
@@ -1348,27 +1284,6 @@ export const kernelEndpointMeta = {
 		riskLevel: 'read',
 		description: 'List the search providers and the options each supports.',
 	},
-	'serviceAccounts.create': {
-		riskLevel: 'write',
-		description: 'Create a service account for workload identity sign-in.',
-	},
-	'serviceAccounts.delete': {
-		riskLevel: 'destructive',
-		irreversible: true,
-		description: 'Archive a service account; its sign-ins stop working.',
-	},
-	'serviceAccounts.get': {
-		riskLevel: 'read',
-		description: 'Get a service account.',
-	},
-	'serviceAccounts.list': {
-		riskLevel: 'read',
-		description: 'List service accounts.',
-	},
-	'serviceAccounts.update': {
-		riskLevel: 'write',
-		description: 'Update a service account.',
-	},
 	'tasks.create': {
 		riskLevel: 'write',
 		description:
@@ -1489,58 +1404,5 @@ export const kernelEndpointMeta = {
 		riskLevel: 'write',
 		description:
 			'Create a vault (a project-scoped store of secrets, cards and credentials for browsers to use), or get the existing one with that name.',
-	},
-	'workloadIdentityAuthenticationEvents.list': {
-		riskLevel: 'read',
-		description: 'List workload identity sign-in outcomes (sanitized).',
-	},
-	'workloadIdentityFederationRules.create': {
-		riskLevel: 'write',
-		description:
-			"Create a rule mapping an issuer's token claims to a service account.",
-	},
-	'workloadIdentityFederationRules.delete': {
-		riskLevel: 'destructive',
-		irreversible: true,
-		description: 'Archive a workload identity federation rule.',
-	},
-	'workloadIdentityFederationRules.get': {
-		riskLevel: 'read',
-		description: 'Get a workload identity federation rule.',
-	},
-	'workloadIdentityFederationRules.list': {
-		riskLevel: 'read',
-		description: 'List workload identity federation rules.',
-	},
-	'workloadIdentityFederationRules.update': {
-		riskLevel: 'write',
-		description: 'Update a workload identity federation rule.',
-	},
-	'workloadIdentityIssuers.create': {
-		riskLevel: 'write',
-		description:
-			'Register an OIDC issuer whose tokens can sign in as a service account.',
-	},
-	'workloadIdentityIssuers.delete': {
-		riskLevel: 'destructive',
-		irreversible: true,
-		description: 'Archive a workload identity issuer.',
-	},
-	'workloadIdentityIssuers.get': {
-		riskLevel: 'read',
-		description: 'Get a workload identity issuer.',
-	},
-	'workloadIdentityIssuers.list': {
-		riskLevel: 'read',
-		description: 'List workload identity issuers.',
-	},
-	'workloadIdentityIssuers.update': {
-		riskLevel: 'write',
-		description: 'Update a workload identity issuer.',
-	},
-	'workloadIdentityIssuers.verify': {
-		riskLevel: 'read',
-		description:
-			"Check that an issuer's discovery document and signing keys can be fetched.",
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof kernelEndpointsNested>;

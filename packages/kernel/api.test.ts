@@ -100,6 +100,7 @@ live('Kernel live API', () => {
 	});
 
 	it('reads one list or get per tag', async () => {
+		// `unknown` because each entry is a different operation with its own output type; the test only checks that the call settles.
 		const calls: Array<[string, () => Promise<unknown>]> = [
 			['apiKeys.list', () => api.apiKeys.list({ limit: 1 })],
 			['apps.list', () => api.apps.list({ limit: 1 })],
@@ -147,7 +148,6 @@ live('Kernel live API', () => {
 			['proxies.list', () => api.proxies.list({ limit: 1 })],
 			['proxyIPs.list', () => api.proxyIPs.list({ limit: 1 })],
 			['search.providers.list', () => api.search.providers.list({})],
-			['serviceAccounts.list', () => api.serviceAccounts.list({ limit: 1 })],
 			['tasks.list', () => api.tasks.list({ limit: 1 })],
 			[
 				'telemetry.destinations.list',
@@ -158,18 +158,6 @@ live('Kernel live API', () => {
 				() => api.vaultProviderConfigs.list({ limit: 1 }),
 			],
 			['vaults.list', () => api.vaults.list({ limit: 1 })],
-			[
-				'workloadIdentityAuthenticationEvents.list',
-				() => api.workloadIdentityAuthenticationEvents.list({ limit: 1 }),
-			],
-			[
-				'workloadIdentityFederationRules.list',
-				() => api.workloadIdentityFederationRules.list({ limit: 1 }),
-			],
-			[
-				'workloadIdentityIssuers.list',
-				() => api.workloadIdentityIssuers.list({ limit: 1 }),
-			],
 		];
 		const failures: string[] = [];
 		for (const [id, call] of calls) {
@@ -337,6 +325,8 @@ live('Kernel live API', () => {
 						contentType: 'application/json',
 					},
 				},
+				// A bare URL is downloaded and sent as the file, not as its text.
+				{ dest_path: `${dir}/example.html`, file: 'https://example.com/' },
 			],
 		});
 		ran.add('browsers.fs.upload');
@@ -347,8 +337,15 @@ live('Kernel live API', () => {
 		ran.add('browsers.fs.listFiles');
 		expect(listing.map((entry) => entry.name).sort()).toEqual([
 			'data.json',
+			'example.html',
 			'hello.txt',
 		]);
+		const page = await api.browsers.fs.fileInfo({
+			id_or_name: browserId,
+			path: `${dir}/example.html`,
+		});
+		// The page's HTML (about 1 KB), not the 20 characters of its URL.
+		expect(page.size_bytes ?? 0).toBeGreaterThan(200);
 		const info = await api.browsers.fs.fileInfo({
 			id_or_name: browserId,
 			path: `${dir}/hello.txt`,

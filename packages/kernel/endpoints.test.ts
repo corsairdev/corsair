@@ -21,6 +21,34 @@ jest.mock('./client', () => {
 	};
 });
 
+// The real resolveFileInput, with every public link served from memory instead of the network.
+jest.mock('corsair/http', () => {
+	const actual = jest.requireActual('corsair/http');
+	return {
+		...actual,
+		// unknown: a pass-through to the real resolveFileInput, which checks its own arguments.
+		resolveFileInput: (input: unknown, options: unknown, deps?: unknown) =>
+			actual.resolveFileInput(input, options, deps ?? mockLinks.deps),
+	};
+});
+
+const mockLinks = {
+	fetched: [] as string[],
+	deps: {
+		resolve: async () => ['93.184.216.34'],
+		transport: async (url: URL) => {
+			mockLinks.fetched.push(url.toString());
+			return {
+				status: 200,
+				headers: { 'content-type': 'application/zip' },
+				body: (async function* () {
+					yield new Uint8Array([80, 75, 3, 4]);
+				})(),
+			};
+		},
+	},
+};
+
 const mockedRequest = jest.mocked(client.makeKernelRequest);
 const mockedPagedRequest = jest.mocked(client.makeKernelPagedRequest);
 const mockedLogEvent = jest.mocked(logEventFromContext);
@@ -46,12 +74,13 @@ function buildCtx(): KernelContext {
 			set_webhook_signature: () => Promise.resolve(),
 		},
 		db: {},
+		// `unknown` because a test context fills only the fields the endpoints read, not the whole plugin context.
 	} as unknown as KernelContext;
 }
 
 const ctx = buildCtx();
 
-// `unknown` is necessary because the table drives all 200 operations, each with its own input and output type, through one signature.
+// `unknown` is necessary because the table drives all 183 operations, each with its own input and output type, through one signature.
 type AnyEndpoint = (context: KernelContext, input: unknown) => Promise<unknown>;
 
 function endpointFor(id: string): AnyEndpoint {
@@ -82,6 +111,22 @@ function sampleBody(operation: KernelOperationDefinition): unknown {
 	if (shape.type === 'array') return [];
 	if (shape.type === 'string') return 'value';
 	return {};
+}
+
+/** The URLs an example passes in its file fields (`file`, `zip_file`), at any depth. */
+// `unknown` because example args are free-form YAML values.
+function fileUrlsIn(value: unknown, key?: string): string[] {
+	if (typeof value === 'string') {
+		return key === 'file' || key === 'zip_file' ? [value] : [];
+	}
+	if (Array.isArray(value))
+		return value.flatMap((item) => fileUrlsIn(item, key));
+	if (typeof value === 'object' && value !== null) {
+		return Object.entries(value).flatMap(([name, inner]) =>
+			fileUrlsIn(inner, name),
+		);
+	}
+	return [];
 }
 
 beforeEach(() => {
@@ -139,6 +184,14 @@ describe('every manifest operation', () => {
 			if (operation.request === 'none') expect(sent?.body).toBeUndefined();
 			if (operation.request === 'multipart') {
 				expect(sent?.body).toBeInstanceOf(FormData);
+				// Every file the example passes as a URL arrives as a file part, never as text.
+				const form = sent?.body as FormData;
+				const urls = fileUrlsIn(args);
+				const parts = [...form.values()];
+				expect(parts.filter((value) => value instanceof Blob)).toHaveLength(
+					urls.length,
+				);
+				for (const url of urls) expect(parts).not.toContain(url);
 			}
 			if (operation.request === 'binary')
 				expect(sent?.body).toBeInstanceOf(Blob);
@@ -385,6 +438,14 @@ describe('files', () => {
 		expect(
 			fileNameFor('profiles.download', { id_or_name: 'p', format: 'tar' }),
 		).toBe('profile-p.tar');
+		// A legacy profile answers JSON whatever format was asked for.
+		expect(
+			fileNameFor(
+				'profiles.download',
+				{ id_or_name: 'p', format: 'tar' },
+				'application/json',
+			),
+		).toBe('profile-p.json');
 		expect(fileNameFor('auditLogs.exportChunk', {})).toBe(
 			'audit-logs.jsonl.gz',
 		);
@@ -490,6 +551,25 @@ describe('timeouts', () => {
 		expect(timeoutFor('browsers.curl', { timeout_ms: 60_000 })).toBe(90_000);
 		expect(timeoutFor('search.contents.fetch', {})).toBe(90_000);
 		expect(timeoutFor('vaults.items.get', { wait: 60 })).toBe(90_000);
+	});
+
+	it('waits out a 1Password approval poll instead of aborting at 30 s', () => {
+		// timeout_seconds plus up to 20 s for the first scheduled check, plus the margin.
+		expect(
+			timeoutFor('vaults.items.performOperation', {
+				type: '1pw_access_request_status',
+				timeout_seconds: 120,
+			}),
+		).toBe(170_000);
+		expect(
+			timeoutFor('vaults.items.performOperation', {
+				type: 'webmcp_invoke',
+				timeout_sec: 120,
+			}),
+		).toBe(150_000);
+		expect(
+			timeoutFor('vaults.items.performOperation', { type: 'authorize' }),
+		).toBe(120_000);
 	});
 
 	it('gives slow calls two minutes and the rest thirty seconds', () => {

@@ -25,9 +25,9 @@ describe('kernel-manifest.json', () => {
 		).toEqual([]);
 	});
 
-	it('has 200 operations, one per id, matching the generated types', () => {
-		expect(ids).toHaveLength(200);
-		expect(new Set(ids).size).toBe(200);
+	it('has 183 operations, one per id, matching the generated types', () => {
+		expect(ids).toHaveLength(183);
+		expect(new Set(ids).size).toBe(183);
 		expect([...KERNEL_OPERATION_IDS].sort()).toEqual([...ids].sort());
 	});
 
@@ -65,14 +65,39 @@ describe('kernel-manifest.json', () => {
 		for (const route of [
 			'POST /mpp/browsers',
 			'GET /vault/card-captures/current',
+			'POST /vault/card-captures/current',
 			'POST /vault/card-ingest/{payment_method_id}',
-			'GET /projects',
-			'GET /invocations/{id}/events',
+			// The seven server-sent event streams.
 			'GET /auth/connections/{id}/events',
+			'GET /browsers/{id_or_name}/fs/watch/{watch_id}/events',
 			'GET /browsers/{id_or_name}/logs/stream',
+			'GET /browsers/{id_or_name}/process/{process_id}/stdout/stream',
+			'GET /browsers/{id_or_name}/telemetry/stream',
+			'GET /deployments/{id}/events',
+			'GET /invocations/{id}/events',
 		]) {
 			expect(routes).not.toContain(route);
 		}
+		// The deprecated /projects family is out; /org/projects is what projects.* uses.
+		const paths = kernelOperations.map((operation) => operation.path);
+		expect(paths.filter((path) => /^\/projects(\/|$)/.test(path))).toEqual([]);
+		expect(paths).toContain('/org/projects');
+		// Workload identity: Kernel lets no API key read it.
+		expect(
+			paths.filter((path) =>
+				/^\/org\/(service_accounts|workload_identity)/.test(path),
+			),
+		).toEqual([]);
+	});
+
+	it('declares a response schema for every JSON operation', () => {
+		const missing = kernelOperations
+			.filter(
+				(operation) =>
+					operation.response === 'json' && operation.output === undefined,
+			)
+			.map((operation) => operation.id);
+		expect(missing).toEqual([]);
 	});
 });
 
@@ -92,6 +117,26 @@ describe('zod schemas', () => {
 		expect(Object.keys(KernelEndpointOutputSchemas).sort()).toEqual(
 			[...ids].sort(),
 		);
+	});
+
+	it('takes the documented clear values: an empty browser name, a null kms_key_id', () => {
+		const update = getKernelInputSchema('browsers.update');
+		expect(update.safeParse({ id_or_name: 'abc', name: '' }).success).toBe(
+			true,
+		);
+		expect(
+			update.safeParse({ id_or_name: 'abc', name: 'checkout-1' }).success,
+		).toBe(true);
+		expect(
+			update.safeParse({ id_or_name: 'abc', name: 'x'.repeat(256) }).success,
+		).toBe(false);
+		const destination = getKernelInputSchema(
+			'auditLogs.exportDestinations.update',
+		);
+		expect(
+			destination.safeParse({ id: 'dest_1', prefix: 'logs/', kms_key_id: null })
+				.success,
+		).toBe(true);
 	});
 
 	it("types a pool browser's memory as a string, not an object", () => {

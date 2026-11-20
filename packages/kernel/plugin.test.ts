@@ -181,6 +181,7 @@ describe('risk levels (PLUGIN_PR_RULES R8)', () => {
 		for (const id of [
 			'apiKeys.create',
 			'apiKeys.rotate',
+			'invocations.create',
 			'vaults.items.performOperation',
 			'browsers.fs.deleteFile',
 		]) {

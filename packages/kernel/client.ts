@@ -265,22 +265,29 @@ const REDACTED = '[REDACTED]';
  * (`{ code, message }`) instead; the serialized body never goes in.
  */
 export function withoutRequestData(error: ApiError): ApiError {
-	const body = withoutEchoedValues(error.body);
+	const sent = sentStrings(error.request);
+	const body = scrubSent(withoutEchoedValues(error.body), sent);
+	const message = scrubSent(
+		kernelErrorMessage(error.status, error.statusText, body),
+		sent,
+	);
 	return new ApiError(
 		{
 			...error.request,
 			body: error.request.body === undefined ? undefined : REDACTED,
 			formData: undefined,
 			headers: undefined,
+			// Query values can be search terms (an email in auditLogs.list): keep the keys only.
+			query: redactedValues(error.request.query),
 		},
 		{
-			url: error.url,
+			url: withoutQueryValues(error.url),
 			ok: false,
 			status: error.status,
 			statusText: error.statusText,
 			body,
 		},
-		kernelErrorMessage(error.status, error.statusText, body),
+		typeof message === 'string' ? message : String(message),
 		{
 			retryAfter: error.retryAfter,
 			rateLimitReset: error.rateLimitReset,
@@ -319,6 +326,85 @@ export function kernelErrorMessage(
 			: '';
 	const text = `Kernel ${status}: ${reason}${code}`;
 	return text.length > 500 ? `${text.slice(0, 497)}...` : text;
+}
+
+/** Shorter strings are ids, enum values and flags, not secrets worth hiding. */
+const MIN_SCRUBBED_LENGTH = 6;
+
+/**
+ * Every string this call sent (JSON body, form fields, query values), longest
+ * first, so a Kernel message that quotes one back ("invalid value 'hunter22'")
+ * loses it while keeping its reason.
+ */
+function sentStrings(request: ApiError['request']): string[] {
+	const found = new Set<string>();
+	// `unknown` because a sent value is any JSON value, form entry or file.
+	const visit = (value: unknown, depth: number) => {
+		if (depth > 8 || value === undefined || value === null) return;
+		if (typeof value === 'string') {
+			if (value.length >= MIN_SCRUBBED_LENGTH) found.add(value);
+			return;
+		}
+		if (typeof Blob !== 'undefined' && value instanceof Blob) return;
+		if (typeof FormData !== 'undefined' && value instanceof FormData) {
+			for (const [, entry] of value.entries()) visit(entry, depth + 1);
+			return;
+		}
+		if (Array.isArray(value)) {
+			for (const item of value) visit(item, depth + 1);
+			return;
+		}
+		if (typeof value === 'object') {
+			for (const inner of Object.values(value)) visit(inner, depth + 1);
+		}
+	};
+	visit(request.body, 0);
+	visit(request.formData, 0);
+	visit(request.query, 0);
+	return [...found].sort((a, b) => b.length - a.length);
+}
+
+/** Replaces every sent string inside an error body or message with [REDACTED]. */
+// `unknown` because an error body is whatever JSON (or text) Kernel sent.
+function scrubSent(value: unknown, sent: string[], depth = 0): unknown {
+	if (sent.length === 0 || depth > 6) return value;
+	if (typeof value === 'string') {
+		let text = value;
+		for (const item of sent) text = text.split(item).join(REDACTED);
+		return text;
+	}
+	if (Array.isArray(value)) {
+		return value.map((item) => scrubSent(item, sent, depth + 1));
+	}
+	if (typeof value === 'object' && value !== null) {
+		// `unknown` because error detail items have no fixed shape.
+		const result: Record<string, unknown> = {};
+		for (const [key, inner] of Object.entries(value)) {
+			result[key] = scrubSent(inner, sent, depth + 1);
+		}
+		return result;
+	}
+	return value;
+}
+
+// `unknown` because query values are scalars, arrays or a string map.
+function redactedValues(
+	query: Record<string, unknown> | undefined,
+): Record<string, string> | undefined {
+	if (query === undefined) return undefined;
+	return Object.fromEntries(Object.keys(query).map((key) => [key, REDACTED]));
+}
+
+/** `https://…/audit_logs?search=a%40b.com` → `https://…/audit_logs?search=[REDACTED]`. */
+export function withoutQueryValues(url: string): string {
+	const mark = url.indexOf('?');
+	if (mark === -1) return url;
+	const keys = url
+		.slice(mark + 1)
+		.split('&')
+		.filter((part) => part.length > 0)
+		.map((part) => `${part.split('=')[0]}=${REDACTED}`);
+	return `${url.slice(0, mark)}?${keys.join('&')}`;
 }
 
 const ECHO_KEYS = new Set(['value', 'values', 'input', 'received']);

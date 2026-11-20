@@ -172,11 +172,6 @@ export const KERNEL_OPERATION_IDS = [
 	'search.create',
 	'search.get',
 	'search.providers.list',
-	'serviceAccounts.create',
-	'serviceAccounts.delete',
-	'serviceAccounts.get',
-	'serviceAccounts.list',
-	'serviceAccounts.update',
 	'tasks.create',
 	'tasks.get',
 	'tasks.linkBrowsers',
@@ -203,18 +198,6 @@ export const KERNEL_OPERATION_IDS = [
 	'vaults.items.upsert',
 	'vaults.list',
 	'vaults.upsert',
-	'workloadIdentityAuthenticationEvents.list',
-	'workloadIdentityFederationRules.create',
-	'workloadIdentityFederationRules.delete',
-	'workloadIdentityFederationRules.get',
-	'workloadIdentityFederationRules.list',
-	'workloadIdentityFederationRules.update',
-	'workloadIdentityIssuers.create',
-	'workloadIdentityIssuers.delete',
-	'workloadIdentityIssuers.get',
-	'workloadIdentityIssuers.list',
-	'workloadIdentityIssuers.update',
-	'workloadIdentityIssuers.verify',
 ] as const;
 
 export type KernelOperationId = (typeof KERNEL_OPERATION_IDS)[number];
@@ -1942,72 +1925,6 @@ export type KernelWebMCPInvokeVaultItemOperationRequestInput = {
 	/** Opaque reference to the exact live WebMCP registration. */
 	tool_ref: string;
 	type: 'webmcp_invoke';
-};
-
-export type KernelWorkloadIdentityAuthorizationInput = {
-	max_token_ttl_seconds?: number;
-	/** Allow statements for resources in this rule's project, in the same format as a scoped API key policy. API key actions are not allowed. */
-	policy: KernelApiKeyPolicyInput;
-	/** The one project credentials from this rule are limited to. */
-	project_id: string;
-	token_audience: string;
-};
-
-export type KernelWorkloadIdentityKeySourceInput = {
-	/** Optional public CA certificates. When set, only these CAs are trusted for key retrieval, in place of the system roots. Private keys and private-network retrieval are not supported. */
-	ca_cert_pem?: string;
-	discovery_base_url?: string;
-	keys?: Array<Record<string, KernelJsonValue>>;
-	type: 'discovery' | 'explicit_url' | 'inline';
-	url?: string;
-};
-
-export type KernelWorkloadIdentityMatchInput = {
-	/** Exact string conditions keyed by RFC 6901 JSON Pointers. All conditions are ANDed. */
-	claims?: Record<string, string>;
-	environment?: string;
-	event_names?: Array<string>;
-	job_workflow_ref?: string;
-	namespace?: string;
-	ref?: string;
-	/** Friendly display name. Immutable IDs define the repository identity. */
-	repository?: string;
-	repository_id?: string;
-	repository_owner_id?: string;
-	service_account?: string;
-	subject?: string;
-	subject_prefix?: string;
-	/** Must be the issuer's preset_type. */
-	type:
-		| 'github_actions'
-		| 'aws'
-		| 'google_cloud'
-		| 'microsoft_entra'
-		| 'kubernetes'
-		| 'custom_oidc';
-	workflow?: string;
-	workflow_ref?: string;
-};
-
-/** The kind of identity provider. GitHub Actions, Google Cloud and Microsoft Entra issuers are recognized by their issuer URL and must use their own type. Defaults to the type the issuer URL belongs to, or custom_oidc. */
-export type KernelWorkloadIdentityPresetTypeInput =
-	| 'github_actions'
-	| 'aws'
-	| 'google_cloud'
-	| 'microsoft_entra'
-	| 'kubernetes'
-	| 'custom_oidc';
-
-export type KernelWorkloadIdentityTargetInput = {
-	service_account_id: string;
-	type: 'service_account';
-};
-
-export type KernelWorkloadIdentityTokenValidationInput = {
-	/** Maximum incoming signed exp minus iat, independent of outgoing token lifetime. At most 172800 (48 hours), which covers Azure managed identity tokens that live slightly over 24 hours. */
-	max_lifetime_seconds?: number;
-	/** Whether an incoming token can be exchanged more than once before it expires. Defaults to single_use for github_actions, aws, microsoft_entra and custom_oidc, and to allow_reuse for kubernetes, because a pod reads the same projected token until it is rotated. google_cloud is always allow_reuse… */
-	replay_protection?: 'single_use' | 'allow_reuse';
 };
 
 /** The payment method created in pending_enrollment. Deliver a card_enrollment action.url to the cardholder; it is a single-use capability and must not be logged. A card_ingest action.url is posted to by the card's issuer. Observe completion through the wallet's payment_methods expansion. */
@@ -6473,21 +6390,6 @@ export type KernelSearchWarning = {
 	result_id?: string | null;
 };
 
-export type KernelServiceAccount = {
-	archived_at?: string | null;
-	created_at?: string | null;
-	created_by_user_id?: string | null;
-	description?: string | null;
-	id?: string | null;
-	/** When one of the account's API keys last authenticated or one of its rules last issued a token. Recorded at most once every 15 minutes, so it can lag. Null if the account has never been used. */
-	last_used_at?: string | null;
-	name?: string | null;
-	org_id?: string | null;
-	/** Authority revision. Cosmetic updates do not widen permissions. */
-	security_version?: number | null;
-	updated_at?: string | null;
-};
-
 /** Issued Shop Pay cards retain encrypted card material for the fill operation. */
 export type KernelShopPayCardState = {
 	domains?: Array<string> | null;
@@ -6989,118 +6891,6 @@ export type KernelWebMCPToolsResponse = {
 	tools?: Array<KernelWebMCPTool> | null;
 };
 
-export type KernelWorkloadIdentityAuthenticationEvent = {
-	correlation_id?: string | null;
-	created_at?: string | null;
-	credential_id?: string | null;
-	federation_rule_id?: string | null;
-	id?: string | null;
-	issuer_id?: string | null;
-	org_id?: string | null;
-	outcome?: string | null;
-	project_id?: string | null;
-	reason?: string | null;
-	service_account_id?: string | null;
-};
-
-export type KernelWorkloadIdentityAuthorization = {
-	max_token_ttl_seconds?: number | null;
-	/** Allow statements for resources in this rule's project, in the same format as a scoped API key policy. API key actions are not allowed. */
-	policy?: KernelApiKeyPolicy | null;
-	/** The one project credentials from this rule are limited to. */
-	project_id?: string | null;
-	token_audience?: string | null;
-};
-
-export type KernelWorkloadIdentityFederationRule = {
-	archived_at?: string | null;
-	authorization?: KernelWorkloadIdentityAuthorization | null;
-	created_at?: string | null;
-	created_by_user_id?: string | null;
-	description?: string | null;
-	enabled?: boolean | null;
-	expected_audience?: string | null;
-	id?: string | null;
-	issuer_id?: string | null;
-	last_exchange_at?: string | null;
-	match?: KernelWorkloadIdentityMatch | null;
-	name?: string | null;
-	org_id?: string | null;
-	/** Authority revision. Cosmetic updates do not widen permissions. */
-	security_version?: number | null;
-	target?: KernelWorkloadIdentityTarget | null;
-	updated_at?: string | null;
-};
-
-export type KernelWorkloadIdentityIssuer = {
-	archived_at?: string | null;
-	created_at?: string | null;
-	created_by_user_id?: string | null;
-	description?: string | null;
-	enabled?: boolean | null;
-	id?: string | null;
-	/** Exact expected signed issuer. Optional for github_actions and google_cloud, which each have one fixed issuer. */
-	issuer_url?: string | null;
-	jwks?: KernelWorkloadIdentityKeySource | null;
-	name?: string | null;
-	org_id?: string | null;
-	preset_type?: KernelWorkloadIdentityPresetType | null;
-	/** Authority revision. Cosmetic updates do not widen permissions. */
-	security_version?: number | null;
-	token_validation?: KernelWorkloadIdentityTokenValidation | null;
-	updated_at?: string | null;
-};
-
-export type KernelWorkloadIdentityIssuerKeyCheck = {
-	issuer_id?: string | null;
-	key_ids?: Array<string> | null;
-};
-
-export type KernelWorkloadIdentityKeySource = {
-	/** Optional public CA certificates. When set, only these CAs are trusted for key retrieval, in place of the system roots. Private keys and private-network retrieval are not supported. */
-	ca_cert_pem?: string | null;
-	discovery_base_url?: string | null;
-	keys?: Array<Record<string, KernelJsonValue>> | null;
-	type?: string | null;
-	url?: string | null;
-};
-
-export type KernelWorkloadIdentityMatch = {
-	/** Exact string conditions keyed by RFC 6901 JSON Pointers. All conditions are ANDed. */
-	claims?: Record<string, string> | null;
-	environment?: string | null;
-	event_names?: Array<string> | null;
-	job_workflow_ref?: string | null;
-	namespace?: string | null;
-	ref?: string | null;
-	/** Friendly display name. Immutable IDs define the repository identity. */
-	repository?: string | null;
-	repository_id?: string | null;
-	repository_owner_id?: string | null;
-	service_account?: string | null;
-	subject?: string | null;
-	subject_prefix?: string | null;
-	/** Must be the issuer's preset_type. */
-	type?: string | null;
-	workflow?: string | null;
-	workflow_ref?: string | null;
-};
-
-/** The kind of identity provider. GitHub Actions, Google Cloud and Microsoft Entra issuers are recognized by their issuer URL and must use their own type. Defaults to the type the issuer URL belongs to, or custom_oidc. */
-export type KernelWorkloadIdentityPresetType = string;
-
-export type KernelWorkloadIdentityTarget = {
-	service_account_id?: string | null;
-	type?: string | null;
-};
-
-export type KernelWorkloadIdentityTokenValidation = {
-	/** Maximum incoming signed exp minus iat, independent of outgoing token lifetime. At most 172800 (48 hours), which covers Azure managed identity tokens that live slightly over 24 hours. */
-	max_lifetime_seconds?: number | null;
-	/** Whether an incoming token can be exchanged more than once before it expires. Defaults to single_use for github_actions, aws, microsoft_entra and custom_oidc, and to allow_reuse for kubernetes, because a pod reads the same projected token until it is rotated. google_cloud is always allow_reuse… */
-	replay_protection?: string | null;
-};
-
 export type KernelOperationInputs = {
 	'apiKeys.create': {
 		/** Number of days until expiry, up to 3650. Use null for never. Cannot be combined with expires_at. */
@@ -7232,7 +7022,7 @@ export type KernelOperationInputs = {
 		id: string;
 		bucket?: string;
 		/** KMS key ID, alias, or ARN. Set to an empty string to remove the configured KMS key; omit or send null to leave unchanged. */
-		kms_key_id?: string;
+		kms_key_id?: string | null;
 		prefix?: string;
 		region?: string;
 		role_arn?: string;
@@ -8597,32 +8387,6 @@ export type KernelOperationInputs = {
 		/** Optional concrete provider slug filter. Omit to list every provider. A slug that is not listed returns an empty array. */
 		slug?: KernelSearchProviderSlugInput;
 	};
-	'serviceAccounts.create': {
-		description?: string;
-		name: string;
-	};
-	'serviceAccounts.delete': {
-		/** Stable resource ID. */
-		id: string;
-	};
-	'serviceAccounts.get': {
-		/** Stable resource ID. */
-		id: string;
-	};
-	'serviceAccounts.list': {
-		limit?: number;
-		offset?: number;
-		/** Case-insensitive substring match against name or description; exact ID match. */
-		query?: string;
-		status?: 'active' | 'archived' | 'all';
-	};
-	'serviceAccounts.update': {
-		/** Stable resource ID. */
-		id: string;
-		description?: string;
-		expected_version: number;
-		name?: string;
-	};
 	'tasks.create': {
 		/** Makes retrying the create safe. A retry with the same key and the same request returns the record the first call created, with status 200, instead of creating another. Reusing a key with a different request returns 422. Keys are scoped to the project and do not expire. The Kernel SDKs send a key… */
 		idempotency_key?: string;
@@ -8771,101 +8535,6 @@ export type KernelOperationInputs = {
 	'vaults.upsert': {
 		/** Immutable name used to create or retrieve the vault. */
 		name: string;
-	};
-	'workloadIdentityAuthenticationEvents.list': {
-		limit?: number;
-		offset?: number;
-		issuer_id?: string;
-		federation_rule_id?: string;
-		service_account_id?: string;
-		project_id?: string;
-		outcome?: 'success' | 'failure';
-		start_time?: string;
-		end_time?: string;
-	};
-	'workloadIdentityFederationRules.create': {
-		authorization: KernelWorkloadIdentityAuthorizationInput;
-		description?: string;
-		enabled?: boolean;
-		expected_audience: string;
-		issuer_id: string;
-		match: KernelWorkloadIdentityMatchInput;
-		name: string;
-		target: KernelWorkloadIdentityTargetInput;
-	};
-	'workloadIdentityFederationRules.delete': {
-		/** Stable resource ID. */
-		id: string;
-	};
-	'workloadIdentityFederationRules.get': {
-		/** Stable resource ID. */
-		id: string;
-	};
-	'workloadIdentityFederationRules.list': {
-		limit?: number;
-		offset?: number;
-		/** Case-insensitive substring match against name or description; exact ID match. */
-		query?: string;
-		status?: 'active' | 'archived' | 'all';
-		issuer_id?: string;
-		service_account_id?: string;
-		project_id?: string;
-	};
-	'workloadIdentityFederationRules.update': {
-		/** Stable resource ID. */
-		id: string;
-		authorization?: KernelWorkloadIdentityAuthorizationInput;
-		description?: string;
-		enabled?: boolean;
-		expected_audience?: string;
-		expected_version: number;
-		issuer_id?: string;
-		match?: KernelWorkloadIdentityMatchInput;
-		name?: string;
-		target?: KernelWorkloadIdentityTargetInput;
-	};
-	'workloadIdentityIssuers.create': {
-		description?: string;
-		enabled?: boolean;
-		/** Exact expected signed issuer. Optional for github_actions and google_cloud, which each have one fixed issuer. */
-		issuer_url?: string;
-		jwks?: KernelWorkloadIdentityKeySourceInput;
-		name: string;
-		preset_type?: KernelWorkloadIdentityPresetTypeInput;
-		token_validation?: KernelWorkloadIdentityTokenValidationInput;
-	};
-	'workloadIdentityIssuers.delete': {
-		/** Stable resource ID. */
-		id: string;
-	};
-	'workloadIdentityIssuers.get': {
-		/** Stable resource ID. */
-		id: string;
-	};
-	'workloadIdentityIssuers.list': {
-		limit?: number;
-		offset?: number;
-		/** Case-insensitive substring match against name or description; exact ID match. */
-		query?: string;
-		status?: 'active' | 'archived' | 'all';
-		enabled?: boolean;
-	};
-	'workloadIdentityIssuers.update': {
-		/** Stable resource ID. */
-		id: string;
-		description?: string;
-		enabled?: boolean;
-		expected_version: number;
-		/** Exact expected signed issuer. Optional for github_actions and google_cloud, which each have one fixed issuer. */
-		issuer_url?: string;
-		jwks?: KernelWorkloadIdentityKeySourceInput;
-		name?: string;
-		preset_type?: KernelWorkloadIdentityPresetTypeInput;
-		token_validation?: KernelWorkloadIdentityTokenValidationInput;
-	};
-	'workloadIdentityIssuers.verify': {
-		/** Issuer ID. */
-		id: string;
 	};
 };
 
@@ -9306,21 +8975,6 @@ export type KernelOperationOutputs = {
 	'search.create': KernelSearch;
 	'search.get': KernelSearch;
 	'search.providers.list': Array<KernelSearchProvider>;
-	'serviceAccounts.create': KernelServiceAccount;
-	'serviceAccounts.delete': {
-		/** Kernel accepted the call; it answers with no body. */
-		success: true;
-	};
-	'serviceAccounts.get': KernelServiceAccount;
-	'serviceAccounts.list': {
-		/** This page of results. */
-		items: Array<KernelServiceAccount>;
-		/** True when more results follow; pass next_offset as offset to read them. */
-		has_more: boolean;
-		/** Value for `offset` that reads the next page, or null on the last page. */
-		next_offset: number | null;
-	};
-	'serviceAccounts.update': KernelServiceAccount;
 	'tasks.create': KernelTask;
 	'tasks.get': KernelTask;
 	'tasks.linkBrowsers': KernelTask;
@@ -9387,43 +9041,4 @@ export type KernelOperationOutputs = {
 		next_offset: number | null;
 	};
 	'vaults.upsert': KernelVault;
-	'workloadIdentityAuthenticationEvents.list': {
-		/** This page of results. */
-		items: Array<KernelWorkloadIdentityAuthenticationEvent>;
-		/** True when more results follow; pass next_offset as offset to read them. */
-		has_more: boolean;
-		/** Value for `offset` that reads the next page, or null on the last page. */
-		next_offset: number | null;
-	};
-	'workloadIdentityFederationRules.create': KernelWorkloadIdentityFederationRule;
-	'workloadIdentityFederationRules.delete': {
-		/** Kernel accepted the call; it answers with no body. */
-		success: true;
-	};
-	'workloadIdentityFederationRules.get': KernelWorkloadIdentityFederationRule;
-	'workloadIdentityFederationRules.list': {
-		/** This page of results. */
-		items: Array<KernelWorkloadIdentityFederationRule>;
-		/** True when more results follow; pass next_offset as offset to read them. */
-		has_more: boolean;
-		/** Value for `offset` that reads the next page, or null on the last page. */
-		next_offset: number | null;
-	};
-	'workloadIdentityFederationRules.update': KernelWorkloadIdentityFederationRule;
-	'workloadIdentityIssuers.create': KernelWorkloadIdentityIssuer;
-	'workloadIdentityIssuers.delete': {
-		/** Kernel accepted the call; it answers with no body. */
-		success: true;
-	};
-	'workloadIdentityIssuers.get': KernelWorkloadIdentityIssuer;
-	'workloadIdentityIssuers.list': {
-		/** This page of results. */
-		items: Array<KernelWorkloadIdentityIssuer>;
-		/** True when more results follow; pass next_offset as offset to read them. */
-		has_more: boolean;
-		/** Value for `offset` that reads the next page, or null on the last page. */
-		next_offset: number | null;
-	};
-	'workloadIdentityIssuers.update': KernelWorkloadIdentityIssuer;
-	'workloadIdentityIssuers.verify': KernelWorkloadIdentityIssuerKeyCheck;
 };

@@ -2,7 +2,7 @@
 # example per operation. Generated with the plugin from Kernel's OpenAPI spec;
 # docs-examples.test.ts parses every example with its input schema.
 displayName: Kernel
-description: "Cloud browsers for agents: start headless or headful Chromium sessions, drive them with Playwright, computer controls or WebMCP in one call, hand a session to a person through a live view, keep logins in profiles and managed auth, and manage files, processes, replays, proxies, extensions, pools and vaults (200 operations)."
+description: "Cloud browsers for agents: start headless or headful Chromium sessions, drive them with Playwright, computer controls or WebMCP in one call, hand a session to a person through a live view, keep logins in profiles and managed auth, and manage files, processes, replays, proxies, extensions, pools and vaults (183 operations)."
 overviewNote: "A browser bills per second while active and holds a concurrency slot until it is deleted: call `browsers.delete` when done. `headless: true` costs about 8x less than headful but has no live view. `browsers.playwright.execute` acts on a page in one call. Screenshots, file reads, replays and archives come back as files. Kernel's event streams (SSE) are left out; poll the matching `get` instead."
 examples:
   read:
@@ -328,16 +328,6 @@ apiExamples:
     args: {"id": "search_123"}
   search.providers.list:
     args: {}
-  serviceAccounts.create:
-    args: {"name": "my-name"}
-  serviceAccounts.delete:
-    args: {"id": "serviceAccount_123"}
-  serviceAccounts.get:
-    args: {"id": "serviceAccount_123"}
-  serviceAccounts.list:
-    args: {}
-  serviceAccounts.update:
-    args: {"id": "serviceAccount_123", "expected_version": 1}
   tasks.create:
     args: {"description": "example"}
   tasks.get:
@@ -390,27 +380,3 @@ apiExamples:
     args: {}
   vaults.upsert:
     args: {"name": "my-name"}
-  workloadIdentityAuthenticationEvents.list:
-    args: {}
-  workloadIdentityFederationRules.create:
-    args: {"name": "my-name", "issuer_id": "example", "match": {"type": "github_actions"}, "expected_audience": "example", "target": {"type": "service_account", "service_account_id": "example"}, "authorization": {"project_id": "example", "policy": {"statements": [{"action": "example", "resource": "example"}]}, "token_audience": "example"}}
-  workloadIdentityFederationRules.delete:
-    args: {"id": "workloadIdentityFederationRule_123"}
-  workloadIdentityFederationRules.get:
-    args: {"id": "workloadIdentityFederationRule_123"}
-  workloadIdentityFederationRules.list:
-    args: {}
-  workloadIdentityFederationRules.update:
-    args: {"id": "workloadIdentityFederationRule_123", "expected_version": 1}
-  workloadIdentityIssuers.create:
-    args: {"name": "my-name"}
-  workloadIdentityIssuers.delete:
-    args: {"id": "workloadIdentityIssuer_123"}
-  workloadIdentityIssuers.get:
-    args: {"id": "workloadIdentityIssuer_123"}
-  workloadIdentityIssuers.list:
-    args: {}
-  workloadIdentityIssuers.update:
-    args: {"id": "workloadIdentityIssuer_123", "expected_version": 1}
-  workloadIdentityIssuers.verify:
-    args: {"id": "workloadIdentityIssuer_123"}
