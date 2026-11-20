@@ -91,6 +91,7 @@ export const Unsubscribes = {
 			body: req.body,
 			query: req.query,
 			timeout: ctx.options.timeout,
+			text: true,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.unsubscribesBulkUnsubscribeVariables.parse(
@@ -190,6 +191,7 @@ export const Unsubscribes = {
 			body: req.body,
 			query: req.query,
 			timeout: ctx.options.timeout,
+			text: true,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.unsubscribesResubscribeVariable.parse(
@@ -256,6 +258,7 @@ export const Unsubscribes = {
 			body: req.body,
 			query: req.query,
 			timeout: ctx.options.timeout,
+			text: true,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.unsubscribesUnsubscribeContact.parse(
@@ -291,6 +294,7 @@ export const Unsubscribes = {
 			body: req.body,
 			query: req.query,
 			timeout: ctx.options.timeout,
+			text: true,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.unsubscribesResubscribeContact.parse(

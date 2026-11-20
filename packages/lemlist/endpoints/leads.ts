@@ -333,6 +333,7 @@ export const Leads = {
 		const req: LemlistCall = ((input) => ({
 			method: 'POST',
 			url: `/leads/start/${encodeURIComponent(input.leadId)}`,
+			query: input.campaignId ? { campaignId: input.campaignId } : undefined,
 		}))(parsedInput);
 		// `unknown` because response.json() returns untrusted external data; the Zod schema narrows it.
 		const response = await makeLemlistRequest<unknown>(req.url, ctx.key, {

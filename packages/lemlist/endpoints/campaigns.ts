@@ -79,12 +79,14 @@ export const Campaigns = {
 			query: req.query,
 			timeout: ctx.options.timeout,
 		});
-		const parsed = LemlistEndpointOutputSchemas.campaignsList.parse(response);
+		const parsed = LemlistEndpointOutputSchemas.campaignsList.parse(
+			Array.isArray(response) ? { campaigns: response } : response,
+		);
 		const logFn: (
 			_input: CampaignsListInput,
 			_res: CampaignsListResponse,
 		) => Record<string, string | number | boolean> = (input, res) => ({
-			count: res.length,
+			count: res.campaigns.length,
 		});
 		await logEventFromContext(
 			ctx,

@@ -444,7 +444,8 @@ export const LeadSchema = z
 		emailStatus: z.string().optional(),
 		state: z.string().optional(),
 		status: z.string().optional(),
-		variables: z.record(z.string(), z.string()).optional(),
+		// `unknown` because LeadV2 variables are free-form (strings, numbers, nested enrichment values).
+		variables: z.record(z.string(), z.unknown()).optional(),
 	})
 	// `passthrough` because leads carry arbitrary custom variables and enrichment fields.
 	.passthrough();
@@ -682,7 +683,23 @@ export const CampaignsListInputSchema = z.strictObject({
 });
 export type CampaignsListInput = z.infer<typeof CampaignsListInputSchema>;
 
-export const CampaignsListResponseSchema = z.array(CampaignSchema);
+// With `version=v2` (always sent) Lemlist wraps the page: `{ campaigns, pagination }`.
+// A bare array (legacy shape) is normalised to the same envelope by the endpoint.
+export const CampaignsListResponseSchema = z
+	.object({
+		campaigns: z.array(CampaignSchema),
+		pagination: z
+			.object({
+				totalRecords: z.number().optional(),
+				currentPage: z.number().optional(),
+				nextPage: z.number().optional(),
+				totalPage: z.number().optional(),
+			})
+			// `passthrough` because Lemlist may add paging fields.
+			.passthrough()
+			.optional(),
+	})
+	.passthrough();
 export type CampaignsListResponse = z.infer<typeof CampaignsListResponseSchema>;
 
 export const CampaignsCreateInputSchema = z.strictObject({
@@ -947,9 +964,15 @@ export const CampaignsUpdateSettingsInputSchema = z
 			})
 			.optional(),
 	})
-	.refine((input) => Object.keys(input).some((key) => key !== 'campaignId'), {
-		message: 'At least one settings field is required',
-	});
+	.refine(
+		(input) =>
+			Object.entries(input).some(
+				([key, value]) => key !== 'campaignId' && value !== undefined,
+			),
+		{
+			message: 'At least one settings field is required',
+		},
+	);
 export type CampaignsUpdateSettingsInput = z.infer<
 	typeof CampaignsUpdateSettingsInputSchema
 >;
@@ -1231,7 +1254,7 @@ export type CampaignsAddAbmLeadsResponse = z.infer<
 
 export const LeadsGetInputSchema = z
 	.strictObject({
-		id: z.string().optional(),
+		id: z.string().min(1).optional(),
 		email: z.string().email().optional(),
 		version: z.enum(['v2']).optional(),
 	})
@@ -1269,6 +1292,29 @@ export type LeadsListInCampaignResponse = z.infer<
 	typeof LeadsListInCampaignResponseSchema
 >;
 
+const LEAD_CREATE_KNOWN_KEYS = new Set([
+	'campaignId',
+	'email',
+	'firstName',
+	'lastName',
+	'companyName',
+	'jobTitle',
+	'linkedinUrl',
+	'picture',
+	'phone',
+	'companyDomain',
+	'contactOwner',
+	'crmId',
+	'icebreaker',
+	'timezone',
+	'deduplicate',
+	'linkedinEnrichment',
+	'findEmail',
+	'verifyEmail',
+	'findPhone',
+	'updateStrategy',
+]);
+
 export const LeadsCreateInCampaignInputSchema = z
 	.strictObject({
 		campaignId: z.string().min(1),
@@ -1296,6 +1342,14 @@ export const LeadsCreateInCampaignInputSchema = z
 	})
 	// Lemlist documents arbitrary string body fields as custom lead variables.
 	.passthrough()
+	.refine(
+		(input) =>
+			Object.entries(input).every(
+				([key, value]) =>
+					LEAD_CREATE_KNOWN_KEYS.has(key) || typeof value === 'string',
+			),
+		{ message: 'Custom lead variables must be strings' },
+	)
 	.refine(
 		(input) => input.email !== undefined || input.linkedinUrl !== undefined,
 		{
@@ -1361,6 +1415,8 @@ export type LeadsUnsubscribeFromCampaignResponse = z.infer<
 
 export const LeadsResumeInputSchema = z.strictObject({
 	leadId: z.string().min(1),
+	// Resumes the lead in this campaign only; omit to resume it in every campaign.
+	campaignId: z.string().min(1).optional(),
 });
 export type LeadsResumeInput = z.infer<typeof LeadsResumeInputSchema>;
 
@@ -1369,7 +1425,8 @@ export type LeadsResumeResponse = z.infer<typeof LeadsResumeResponseSchema>;
 
 export const LeadsPauseInputSchema = z.strictObject({
 	leadId: z.string().min(1),
-	campaignId: z.string().optional(),
+	// Pauses the lead in this campaign only; omit to pause it in every campaign.
+	campaignId: z.string().min(1).optional(),
 });
 export type LeadsPauseInput = z.infer<typeof LeadsPauseInputSchema>;
 
@@ -1675,7 +1732,19 @@ export type UnsubscribesBulkUnsubscribeVariablesInput = z.infer<
 	typeof UnsubscribesBulkUnsubscribeVariablesInputSchema
 >;
 
-export const UnsubscribesBulkUnsubscribeVariablesResponseSchema = z.string();
+// Live 11-20: `{ message, count, values, skippedValues }`; the reference's example is a bare string.
+export const UnsubscribesBulkUnsubscribeVariablesResponseSchema = z.union([
+	z
+		.object({
+			message: z.string().optional(),
+			count: z.number().optional(),
+			values: z.array(z.string()).optional(),
+			skippedValues: z.array(z.string()).optional(),
+		})
+		// `passthrough` because Lemlist may report more per-value detail.
+		.passthrough(),
+	z.string(),
+]);
 export type UnsubscribesBulkUnsubscribeVariablesResponse = z.infer<
 	typeof UnsubscribesBulkUnsubscribeVariablesResponseSchema
 >;
