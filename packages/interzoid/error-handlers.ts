@@ -16,7 +16,9 @@ export const errorHandlers = {
 	},
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 429) return true;
+			// An HTTP failure is classified by its status alone: a 504 whose
+			// message mentions a rate limit is a server error, not a 429.
+			if (error instanceof ApiError) return error.status === 429;
 			const msg = error.message.toLowerCase();
 			return (
 				msg.includes('too many requests') ||

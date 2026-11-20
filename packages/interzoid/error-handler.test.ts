@@ -27,6 +27,12 @@ function route(error: Error): string {
 }
 
 describe('Interzoid errorHandlers', () => {
+	it('routes a 504 that mentions a rate limit to SERVICE_ERROR', () => {
+		expect(route(apiError(504, 'rate limit lookup timed out'))).toBe(
+			'SERVICE_ERROR',
+		);
+	});
+
 	it('routes 429 to RATE_LIMIT_ERROR with zero retries', async () => {
 		const error = apiError(429, 'Too Many Requests', 2000);
 		expect(route(error)).toBe('RATE_LIMIT_ERROR');

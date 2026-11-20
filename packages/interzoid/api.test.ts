@@ -25,6 +25,7 @@ describeLive('Interzoid live API smoke test (env-gated)', () => {
 		const parsed = GetRemainingCreditsOutputSchema.parse(res);
 		expect(parsed.Code).toBe('Success');
 		// A trial balance can be 0; overage shows as a negative number.
+		expect(String(parsed.Credits ?? '').trim()).not.toBe('');
 		expect(Number.isFinite(Number(parsed.Credits))).toBe(true);
 	});
 });
