@@ -106,9 +106,12 @@ await tenant.interzoid.api.matching.getCompanyMatchAdvanced({ company: 'IBM Corp
 ```
 
 
-**Write**
+**Standardize a company name (Interzoid has no writes; every operation is a lookup)**
 
-_No write-style endpoint inferred; pick any operation from the [API](/plugins/interzoid/api) reference._
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.interzoid.api.standardization.getOrgStandard({ org: 'ibm inc' });
+```
 
 
 See the full list on the [API](/plugins/interzoid/api) page.

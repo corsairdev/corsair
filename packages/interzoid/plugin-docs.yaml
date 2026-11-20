@@ -9,6 +9,11 @@ examples:
     args:
       company: IBM Corporation
       algorithm: model-v4-wide
+  write:
+    path: standardization.getOrgStandard
+    title: Standardize a company name (Interzoid has no writes; every operation is a lookup)
+    args:
+      org: "ibm inc"
 overviewNote: |
   Interzoid provides AI and algorithmic data matching keys (SimKeys), standardization, enrichment, and validation APIs.
   An Interzoid API key (license) is required for authenticated operations.
