@@ -12,6 +12,7 @@ import {
 	builtWithByCategory,
 	builtWithCategorySlug,
 	builtWithMoreApps,
+	builtWithUsesMcp,
 	getBuiltWith,
 } from '@/lib/built-with';
 import { escapeJsonLd } from '@/lib/integration-seo';
@@ -37,6 +38,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 function ProjectCard({ project }: { project: BuiltWithProject }) {
 	const apps = builtWithApps(project);
+	const mcp = builtWithUsesMcp(project);
 	const shown = apps.slice(0, 5);
 	const more = apps.length - shown.length + builtWithMoreApps(project);
 	const repoUrl = `https://github.com/${project.repo}`;
@@ -83,8 +85,21 @@ function ProjectCard({ project }: { project: BuiltWithProject }) {
 						{more > 0 ? (
 							<span className="text-[12px] text-[#1c1c1c66]">+{more}</span>
 						) : null}
+						{mcp ? (
+							<span
+								aria-hidden="true"
+								title="Uses Corsair MCP"
+								className="rounded-[4px] border border-[#1c1c1c]/15 px-1.5 py-px font-[family-name:var(--landing-font-mono)] text-[10.5px] uppercase tracking-wider text-[#1c1c1c99]"
+							>
+								MCP
+							</span>
+						) : null}
 						<span className="sr-only">
-							Uses {apps.map(builtWithAppName).join(', ')}
+							Uses{' '}
+							{[
+								...apps.map(builtWithAppName),
+								...(mcp ? ['Corsair MCP'] : []),
+							].join(', ')}
 						</span>
 					</span>
 					<span className="font-[family-name:var(--landing-font-mono)] text-[11px] uppercase tracking-wider text-[#1c1c1c66]">

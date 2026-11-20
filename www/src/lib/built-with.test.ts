@@ -6,6 +6,7 @@ import {
 	builtWithApps,
 	builtWithByCategory,
 	builtWithMoreApps,
+	builtWithUsesMcp,
 	parseBuiltWith,
 } from './built-with';
 
@@ -160,6 +161,15 @@ describe('builtWithByCategory', () => {
 });
 
 describe('apps', () => {
+	it('says when a project reaches its apps through the MCP server, with no plugin logos too', () => {
+		const only = (corsair: string[]) =>
+			parseBuiltWith({ categories: [], projects: [project({ corsair })] })!
+				.projects[0]!;
+		assert.equal(builtWithUsesMcp(only(['mcp'])), true);
+		assert.deepEqual(builtWithApps(only(['mcp'])), []);
+		assert.equal(builtWithUsesMcp(only(['gmail'])), false);
+	});
+
 	it('shows logos for plugins only and counts the ones the source summed up', () => {
 		const p = parseBuiltWith({
 			categories: [],
@@ -169,6 +179,7 @@ describe('apps', () => {
 		})!.projects[0]!;
 		assert.deepEqual(builtWithApps(p), ['gmail', 'github']);
 		assert.equal(builtWithMoreApps(p), 278);
+		assert.equal(builtWithUsesMcp(p), true);
 		assert.equal(builtWithAppName('googlecalendar'), 'Google Calendar');
 		assert.equal(builtWithAppName('zendesk'), 'Zendesk');
 		assert.equal(builtWithAppName('acme'), 'Acme');

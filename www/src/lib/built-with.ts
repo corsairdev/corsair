@@ -184,6 +184,11 @@ export function builtWithApps(project: BuiltWithProject): string[] {
 	return project.corsair.filter((id) => /^[a-z0-9]+$/.test(id) && id !== 'mcp');
 }
 
+/** Whether the project reaches its apps through Corsair's MCP server (the source's "mcp" marker); the card says so. */
+export function builtWithUsesMcp(project: BuiltWithProject): boolean {
+	return project.corsair.includes('mcp');
+}
+
 /** How many more plugins the source counted than it listed ("plus-278-more"). */
 export function builtWithMoreApps(project: BuiltWithProject): number {
 	const more = project.corsair
