@@ -1074,8 +1074,9 @@ const CampaignChannelsFilterSchema = z
 
 export const CampaignsGetStatsInputSchema = z.strictObject({
 	campaignId: z.string().min(1),
-	startDate: z.iso.datetime(),
-	endDate: z.iso.datetime(),
+	// Lemlist takes ISO 8601 with Z or an offset (live 11-20: +02:00 answered 200).
+	startDate: z.iso.datetime({ offset: true }),
+	endDate: z.iso.datetime({ offset: true }),
 	sendUser: z
 		.string()
 		.regex(/^usr_[^|]+\|[^@]+@[^@]+$/)
@@ -1094,8 +1095,9 @@ export type CampaignsGetStatsResponse = z.infer<
 
 export const CampaignsGetBatchStatsInputSchema = z.strictObject({
 	campaignIds: z.array(z.string()).min(1).max(100),
-	startDate: z.iso.datetime(),
-	endDate: z.iso.datetime(),
+	// Lemlist takes ISO 8601 with Z or an offset (live 11-20: +02:00 answered 200).
+	startDate: z.iso.datetime({ offset: true }),
+	endDate: z.iso.datetime({ offset: true }),
 	sendUser: z
 		.string()
 		.regex(/^usr_[^|]+\|[^@]+@[^@]+$/)

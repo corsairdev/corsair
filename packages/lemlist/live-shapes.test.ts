@@ -4,6 +4,8 @@ import { logEventFromContext } from 'corsair/core';
 import { makeLemlistRequest } from './client';
 import { Campaigns, Leads, Unsubscribes } from './endpoints';
 import {
+	CampaignsGetBatchStatsInputSchema,
+	CampaignsGetStatsInputSchema,
 	CampaignsUpdateSettingsInputSchema,
 	LeadsCreateInCampaignInputSchema,
 	LeadsGetInputSchema,
@@ -233,5 +235,24 @@ describe('risk levels and key selection', () => {
 		await expect(keyBuilder(builderCtx, 'endpoint')).resolves.toBe(
 			'stored_api_key',
 		);
+	});
+});
+
+describe('stats date ranges', () => {
+	it('accepts ISO dates with a time zone offset (live: +02:00 answered 200)', () => {
+		const range = {
+			startDate: '2026-11-01T09:00:00+02:00',
+			endDate: '2026-11-21T09:00:00+02:00',
+		};
+		expect(
+			CampaignsGetStatsInputSchema.safeParse({ campaignId: 'cam_1', ...range })
+				.success,
+		).toBe(true);
+		expect(
+			CampaignsGetBatchStatsInputSchema.safeParse({
+				campaignIds: ['cam_1'],
+				...range,
+			}).success,
+		).toBe(true);
 	});
 });
