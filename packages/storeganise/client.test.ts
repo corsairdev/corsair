@@ -65,10 +65,10 @@ describe('baseForBusiness', () => {
 
 	it('rejects a business code that is not a subdomain slug', () => {
 		expect(() => baseForBusiness('evil.example.com')).toThrow(
-			'not a subdomain slug',
+			'use the subdomain slug',
 		);
-		expect(() => baseForBusiness('')).toThrow('not a subdomain slug');
-		expect(() => baseForBusiness('space up')).toThrow('not a subdomain slug');
+		expect(() => baseForBusiness('')).toThrow('use the subdomain slug');
+		expect(() => baseForBusiness('space up')).toThrow('use the subdomain slug');
 	});
 });
 

@@ -63,8 +63,6 @@ export class StoreganiseAPIError extends ApiError {
 	}
 }
 
-const EMAIL = /[^\s@"'<>(),;:]+@[^\s@"'<>(),;:]+\.[a-z]{2,}/gi;
-
 /**
  * Validation errors can echo what was sent (a 400 naming the email that is
  * taken), so every string in an error body or message has email addresses
@@ -72,7 +70,13 @@ const EMAIL = /[^\s@"'<>(),;:]+@[^\s@"'<>(),;:]+\.[a-z]{2,}/gi;
  */
 // unknown: error bodies are arbitrary JSON; the same shape comes back.
 export function maskEmails<T>(value: T): T {
-	if (typeof value === 'string') return value.replace(EMAIL, '[email]') as T;
+	if (typeof value === 'string') {
+		// Token by token, no backtracking regex: any word with an @ is masked.
+		return value
+			.split(/(\s+)/)
+			.map((token) => (token.includes('@') ? '[email]' : token))
+			.join('') as T;
+	}
 	if (Array.isArray(value)) return value.map((item) => maskEmails(item)) as T;
 	const record = asRecord(value);
 	if (!record) return value;
@@ -115,10 +119,9 @@ export function describeStoreganiseError(
  */
 export function baseForBusiness(businessCode: string): string {
 	if (!/^[a-z0-9][a-z0-9-]*$/i.test(businessCode)) {
+		// The value isn't echoed: an operator may have typed an email here.
 		throw new Error(
-			`Invalid Storeganise business code: ${JSON.stringify(
-				businessCode,
-			)} is not a subdomain slug`,
+			'Invalid Storeganise business code: use the subdomain slug (acme for acme.storeganise.com), letters, digits and hyphens only.',
 		);
 	}
 	return `https://${businessCode.toLowerCase()}.storeganise.com/api/v1`;

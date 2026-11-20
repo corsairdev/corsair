@@ -1,6 +1,6 @@
 import { AuthMissingError } from 'corsair/core';
 import { ApiError } from 'corsair/http';
-import { makeStoreganiseRequest } from './client';
+import { baseForBusiness, makeStoreganiseRequest } from './client';
 import { storeganise } from './index';
 
 const BASE = 'https://spaceup.storeganise.com/api/v1';
@@ -94,6 +94,17 @@ describe('errors (R8)', () => {
 				path: '/admin/units',
 			}),
 		).rejects.toBe(transport);
+	});
+});
+
+describe('baseForBusiness', () => {
+	it('refuses a non-slug business code without echoing it', () => {
+		expect(() => baseForBusiness('jane@example.com')).toThrow(/subdomain slug/);
+		try {
+			baseForBusiness('jane@example.com');
+		} catch (error) {
+			expect(String(error)).not.toContain('jane');
+		}
 	});
 });
 
