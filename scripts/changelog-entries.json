@@ -10815,5 +10815,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-20",
+    "package": "@corsair-dev/lemlist",
+    "dir": "packages/lemlist",
+    "name": "Lemlist",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
