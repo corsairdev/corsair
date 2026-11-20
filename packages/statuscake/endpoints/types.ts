@@ -1,5 +1,27 @@
 import { z } from 'zod';
 
+/**
+ * The field set with the create-only required fields made required, so the
+ * TypeScript type and the generated reference show what the API needs on
+ * create. Updates keep every field optional.
+ */
+function requireOnCreate<
+	S extends Record<string, z.ZodType>,
+	K extends keyof S & string,
+>(fields: S, keys: readonly K[]) {
+	const out: Record<string, z.ZodType> = { ...fields };
+	for (const key of keys) {
+		const field = fields[key];
+		if (field instanceof z.ZodOptional) {
+			const inner = field.unwrap() as z.ZodType;
+			out[key] = field.description ? inner.describe(field.description) : inner;
+		}
+	}
+	return out as Omit<S, K> & {
+		[P in K]: S[P] extends z.ZodOptional<infer I> ? I : S[P];
+	};
+}
+
 // Mirrors the official OpenAPI spec (developers.statuscake.com, Redocly
 // YAML): inputs keep StatusCake's parameter names, outputs keep the
 // documented response shapes with the `{ data, metadata, links }` envelope.
@@ -185,19 +207,9 @@ const ContactGroupFields = {
 
 const ContactGroupsListInputSchema = PagedInputSchema;
 
-const ContactGroupCreateInputSchema = z
-	.object({
-		...ContactGroupFields,
-	})
-	.superRefine((value, ctx) => {
-		if (value.name === undefined) {
-			ctx.addIssue({
-				code: 'custom',
-				message: 'Provide name; the API requires it on create.',
-				path: ['name'],
-			});
-		}
-	});
+const ContactGroupCreateInputSchema = z.object(
+	requireOnCreate(ContactGroupFields, ['name'] as const),
+);
 
 const ContactGroupUpdateInputSchema = z.object({
 	group_id: idField('contact group'),
@@ -288,21 +300,9 @@ const HeartbeatFields = {
 	tags: TagsField(),
 };
 
-const HeartbeatCreateInputSchema = z
-	.object({
-		...HeartbeatFields,
-	})
-	.superRefine((value, ctx) => {
-		for (const field of ['name', 'period'] as const) {
-			if (value[field] === undefined) {
-				ctx.addIssue({
-					code: 'custom',
-					message: `Provide ${field}; the API requires it on create.`,
-					path: [field],
-				});
-			}
-		}
-	});
+const HeartbeatCreateInputSchema = z.object(
+	requireOnCreate(HeartbeatFields, ['name', 'period'] as const),
+);
 
 const HeartbeatUpdateInputSchema = z.object({
 	test_id: idField('heartbeat check'),
@@ -404,19 +404,15 @@ const MaintenanceWindowFields = {
 };
 
 const MaintenanceWindowCreateInputSchema = z
-	.object({
-		...MaintenanceWindowFields,
-	})
+	.object(
+		requireOnCreate(MaintenanceWindowFields, [
+			'name',
+			'start_at',
+			'end_at',
+			'timezone',
+		] as const),
+	)
 	.superRefine((value, ctx) => {
-		for (const field of ['name', 'start_at', 'end_at', 'timezone'] as const) {
-			if (value[field] === undefined) {
-				ctx.addIssue({
-					code: 'custom',
-					message: `Provide ${field}; the API requires it on create.`,
-					path: [field],
-				});
-			}
-		}
 		if (!value.tests?.length && !value.tags?.length) {
 			ctx.addIssue({
 				code: 'custom',
@@ -562,26 +558,14 @@ const PagespeedFields = {
 	paused: PausedField('Defaults to false.'),
 };
 
-const PagespeedCreateInputSchema = z
-	.object({
-		...PagespeedFields,
-	})
-	.superRefine((value, ctx) => {
-		for (const field of [
-			'name',
-			'website_url',
-			'check_rate',
-			'region',
-		] as const) {
-			if (value[field] === undefined) {
-				ctx.addIssue({
-					code: 'custom',
-					message: `Provide ${field}; the API requires it on create.`,
-					path: [field],
-				});
-			}
-		}
-	});
+const PagespeedCreateInputSchema = z.object(
+	requireOnCreate(PagespeedFields, [
+		'name',
+		'website_url',
+		'check_rate',
+		'region',
+	] as const),
+);
 
 const PagespeedUpdateInputSchema = z.object({
 	test_id: idField('pagespeed check'),
@@ -731,22 +715,13 @@ const SSLFields = {
 		.describe('Custom user agent used when testing.'),
 };
 
-const SSLCreateInputSchema = z
-	.object({
-		...SSLFields,
-	})
-	.superRefine((value, ctx) => {
-		const missing = (['website_url', 'check_rate', 'alert_at'] as const).filter(
-			(field) => value[field] === undefined,
-		);
-		for (const field of missing) {
-			ctx.addIssue({
-				code: 'custom',
-				message: `Provide ${field}; the API requires it on create.`,
-				path: [field],
-			});
-		}
-	});
+const SSLCreateInputSchema = z.object(
+	requireOnCreate(SSLFields, [
+		'website_url',
+		'check_rate',
+		'alert_at',
+	] as const),
+);
 
 const SSLUpdateInputSchema = z.object({
 	test_id: idField('SSL check'),
@@ -998,26 +973,22 @@ const UptimeFields = {
 		.describe('Custom user agent used when testing.'),
 };
 
-const UptimeCreateInputSchema = z
-	.object({
-		...UptimeFields,
-	})
-	.superRefine((value, ctx) => {
-		const missing = (
-			['name', 'test_type', 'website_url', 'check_rate'] as const
-		).filter((field) => value[field] === undefined);
-		for (const field of missing) {
-			ctx.addIssue({
-				code: 'custom',
-				message: `Provide ${field}; the API requires it on create.`,
-				path: [field],
-			});
-		}
-	});
+const UptimeCreateInputSchema = z.object(
+	requireOnCreate(UptimeFields, [
+		'name',
+		'test_type',
+		'website_url',
+		'check_rate',
+	] as const),
+);
+
+// The API can't change a check's type after create (the update endpoint has
+// no test_type parameter), so updates don't offer it.
+const { test_type: _createOnlyTestType, ...UptimeUpdateFields } = UptimeFields;
 
 const UptimeUpdateInputSchema = z.object({
 	test_id: idField('uptime check'),
-	...UptimeFields,
+	...UptimeUpdateFields,
 });
 
 const UptimeGetInputSchema = z.object({
