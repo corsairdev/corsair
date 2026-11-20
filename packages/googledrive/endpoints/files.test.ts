@@ -135,7 +135,7 @@ function tab(title: string, lines: string[], childTabs: unknown[] = []) {
 
 function mockDoc(tabs: unknown[], meta: Record<string, unknown> = driveFile) {
 	mockRequest.mockImplementation(async (config: { BASE: string }) =>
-		config.BASE.includes('docs.googleapis.com') ? { tabs } : meta,
+		config.BASE === 'https://docs.googleapis.com/v1' ? { tabs } : meta,
 	);
 }
 
@@ -256,7 +256,7 @@ describe('files.exportText', () => {
 		const message =
 			'Google Docs API has not been used in project 123 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/docs.googleapis.com/overview?project=123';
 		mockRequest.mockImplementation(async (config: { BASE: string }) => {
-			if (!config.BASE.includes('docs.googleapis.com')) return driveFile;
+			if (config.BASE !== 'https://docs.googleapis.com/v1') return driveFile;
 			throw new ApiError(
 				{ method: 'GET', url: '/documents/file-1' },
 				{
