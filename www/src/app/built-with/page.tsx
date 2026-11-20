@@ -79,7 +79,7 @@ function ProjectCard({ project }: { project: BuiltWithProject }) {
 				{project.description}
 			</p>
 			<div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[12.5px] text-[#1c1c1c80]">
-				<span>{project.author}</span>
+				{project.author ? <span>{project.author}</span> : null}
 				{project.event ? (
 					<span className="rounded-full border border-[#4a38f5]/20 bg-[#4a38f5]/[0.06] px-2 py-0.5 text-[#3d2ee0]">
 						{project.event}

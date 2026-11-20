@@ -9,6 +9,7 @@ import {
 	parseBuiltWith,
 } from './built-with';
 
+// The overrides are unknown on purpose: the tests feed parseBuiltWith rows of the wrong shape, as the source could.
 const project = (over: Record<string, unknown>) => ({
 	id: 'p',
 	name: 'P',
@@ -46,9 +47,52 @@ describe('parseBuiltWith', () => {
 		);
 	});
 
+	it('cleans fields of the wrong type instead of passing them to the page', () => {
+		const data = parseBuiltWith({
+			categories: [
+				{
+					id: 'email-calendar',
+					title: 'Email and calendar',
+					blurb: { text: 'x' },
+				},
+				{ id: 'no-title' },
+			],
+			projects: [
+				project({
+					id: 'messy',
+					author: { name: '@o' },
+					corsair: [123, 'gmail', null, { id: 'slack' }],
+					kind: ['oss', 7],
+					lang: 'TypeScript',
+					event: 42,
+					added: false,
+				}),
+				project({ id: 'no-apps', corsair: 'gmail' }),
+			],
+		})!;
+		assert.deepEqual(data.categories, [
+			{ id: 'email-calendar', title: 'Email and calendar', blurb: '' },
+		]);
+		assert.deepEqual(
+			data.projects.map((p) => p.id),
+			['messy'],
+		);
+		const [messy] = data.projects;
+		assert.equal(messy!.author, '');
+		assert.deepEqual(messy!.corsair, ['gmail']);
+		assert.deepEqual(messy!.kind, ['oss']);
+		assert.deepEqual(messy!.lang, []);
+		assert.equal(messy!.event, '');
+		assert.equal(messy!.added, '');
+		// What used to throw: every app name renders.
+		assert.deepEqual(builtWithApps(messy!).map(builtWithAppName), ['Gmail']);
+	});
+
 	it('returns null for a file that is not the list', () => {
 		assert.equal(parseBuiltWith({ hello: 'world' }), null);
 		assert.equal(parseBuiltWith(null), null);
+		assert.equal(parseBuiltWith('[]'), null);
+		assert.equal(parseBuiltWith({ categories: [], projects: {} }), null);
 	});
 });
 

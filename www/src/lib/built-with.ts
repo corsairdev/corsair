@@ -33,38 +33,73 @@ export type BuiltWith = {
 	projects: BuiltWithProject[];
 };
 
-const isProject = (p: unknown): p is BuiltWithProject => {
-	const o = p as Record<string, unknown>;
-	return (
-		Boolean(o) &&
-		typeof o.id === 'string' &&
-		typeof o.name === 'string' &&
-		typeof o.url === 'string' &&
-		/^https?:\/\//.test(o.url) &&
-		typeof o.repo === 'string' &&
-		typeof o.description === 'string' &&
-		typeof o.category === 'string' &&
-		Array.isArray(o.corsair)
-	);
-};
+// The file is built from another repo that outside contributors edit by pull request, so nothing in it is
+// trusted: every field is checked and normalized here, and a row that isn't a project is dropped. A bad row
+// then costs one card, never the page.
 
+const isString = (v: unknown): v is string => typeof v === 'string';
+
+/** Only the strings in a list; anything else in it (a number, an object) is left out. */
+const strings = (v: unknown): string[] =>
+	Array.isArray(v) ? v.filter(isString) : [];
+
+// Takes unknown because it is what narrows a parsed JSON row into a project: the row can be any JSON value.
+function toProject(row: unknown): BuiltWithProject | null {
+	if (!row || typeof row !== 'object' || Array.isArray(row)) return null;
+	// A JSON object's fields are unknown until each one is checked below.
+	const o = row as Record<string, unknown>;
+	if (
+		!isString(o.id) ||
+		!isString(o.name) ||
+		!isString(o.url) ||
+		!/^https?:\/\//.test(o.url) ||
+		!isString(o.repo) ||
+		!isString(o.description) ||
+		!isString(o.category) ||
+		!Array.isArray(o.corsair)
+	)
+		return null;
+	return {
+		id: o.id,
+		name: o.name,
+		url: o.url,
+		repo: o.repo,
+		description: o.description,
+		category: o.category,
+		author: isString(o.author) ? o.author : '',
+		kind: strings(o.kind),
+		lang: strings(o.lang),
+		corsair: strings(o.corsair),
+		event: isString(o.event) ? o.event : '',
+		hosted: o.hosted === true,
+		added: isString(o.added) ? o.added : '',
+		verified: o.verified === true,
+	};
+}
+
+// Takes unknown like toProject: a category row can be any JSON value until it is checked.
+function toCategory(row: unknown): BuiltWithCategory | null {
+	if (!row || typeof row !== 'object' || Array.isArray(row)) return null;
+	// A JSON object's fields are unknown until each one is checked below.
+	const o = row as Record<string, unknown>;
+	if (!isString(o.id) || !isString(o.title)) return null;
+	return { id: o.id, title: o.title, blurb: isString(o.blurb) ? o.blurb : '' };
+}
+
+const kept = <T>(rows: (T | null)[]): T[] =>
+	rows.filter((r): r is T => r !== null);
+
+// Takes unknown because it parses the fetched file, which can be any JSON value (or none at all).
 /** Keeps only well-formed entries, so a bad row in the source can't break the page. */
 export function parseBuiltWith(json: unknown): BuiltWith | null {
+	if (!json || typeof json !== 'object') return null;
+	// The file's top-level fields are unknown until checked below.
 	const o = json as Record<string, unknown>;
-	if (!o || !Array.isArray(o.categories) || !Array.isArray(o.projects))
-		return null;
-	const categories = (o.categories as BuiltWithCategory[]).filter(
-		(c) => c && typeof c.id === 'string' && typeof c.title === 'string',
-	);
-	const projects = (o.projects as unknown[]).filter(isProject).map((p) => ({
-		...p,
-		kind: Array.isArray(p.kind) ? p.kind : [],
-		lang: Array.isArray(p.lang) ? p.lang : [],
-		event: typeof p.event === 'string' ? p.event : '',
-		hosted: p.hosted === true,
-		verified: p.verified === true,
-	}));
-	return { categories, projects };
+	if (!Array.isArray(o.categories) || !Array.isArray(o.projects)) return null;
+	return {
+		categories: kept(o.categories.map(toCategory)),
+		projects: kept(o.projects.map(toProject)),
+	};
 }
 
 export async function getBuiltWith(): Promise<BuiltWith | null> {
