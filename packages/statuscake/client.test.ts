@@ -1,3 +1,4 @@
+import { ApiError } from 'corsair/http';
 import {
 	encodeStatusCakeForm,
 	makeStatusCakeRequest,
@@ -128,6 +129,22 @@ describe('makeStatusCakeRequest', () => {
 		expect(error.method).toBe('POST');
 	});
 
+	it('rebuilds core ApiError without the form body (passwords, contact details)', async () => {
+		respond(validationError, 400);
+
+		const error = await failure(
+			makeStatusCakeRequest(API_TOKEN, {
+				method: 'POST',
+				path: '/uptime',
+				form: { basic_password: 'hunter2-secret', email_addresses: ['a@b.co'] },
+			}),
+		);
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error.request.body).toBeUndefined();
+		expect(error.cause).toBeUndefined();
+		expect(JSON.stringify(error)).not.toContain('hunter2');
+	});
+
 	it('keeps a bare 403 gateway denial as an auth error with no body', async () => {
 		// Probed live: a wrong token is denied before the API app runs and the
 		// response carries no body at all.
@@ -169,18 +186,13 @@ describe('makeStatusCakeRequest', () => {
 		expect(error.retryAfter).toBe(7000);
 	});
 
-	it('keeps a transport failure replayable with its method', async () => {
-		fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
+	it('lets a transport failure through unchanged', async () => {
+		const transport = new TypeError('fetch failed');
+		fetchMock.mockRejectedValueOnce(transport);
 
-		const error = await failure(
-			makeStatusCakeRequest(API_TOKEN, {
-				method: 'GET',
-				path: '/uptime',
-			}),
-		);
-		expect(error.message).toBe('fetch failed');
-		expect(error.method).toBe('GET');
-		expect(error.status).toBeUndefined();
+		await expect(
+			makeStatusCakeRequest(API_TOKEN, { method: 'GET', path: '/uptime' }),
+		).rejects.toBe(transport);
 	});
 });
 

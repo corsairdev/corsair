@@ -33,36 +33,45 @@ const STATUSCAKE_RATE_LIMIT_CONFIG: RateLimitConfig = {
  * parameter. Messages are documented as wording that may change, so nothing
  * downstream should match on the text.
  * https://developers.statuscake.com/guides/api/errors
+ *
+ * A failed call throws this: core's `ApiError` (R8: core and the 429 handler
+ * read `status` and `retryAfter` from it), rebuilt without the request body
+ * and query. Those carry contact-group emails and mobile numbers and uptime
+ * basic-auth passwords, which core's own ApiError keeps on `request.body`.
  */
-export class StatusCakeAPIError extends Error {
-	readonly status?: number;
-	/** The unmodified response body, when there was one. */
-	// unknown: error bodies are usually the documented shape, but the gateway
-	// answers a bare 403 with no body at all.
-	readonly body?: unknown;
-	/** Milliseconds to wait before retrying, from x-ratelimit-reset. */
-	readonly retryAfter?: number;
+export class StatusCakeAPIError extends ApiError {
 	/** The HTTP method of the failed request, for replay-safety decisions. */
-	readonly method?: string;
+	readonly method: string;
 
 	constructor(
 		message: string,
 		options: {
-			cause?: Error;
-			status?: number;
-			// unknown: same open body as the field above.
+			method: string;
+			/** Request path, without query. */
+			path: string;
+			status: number;
+			statusText?: string;
+			// unknown: error bodies are usually the documented shape, but the
+			// gateway answers a bare 403 with no body at all.
 			body?: unknown;
 			retryAfter?: number;
-			method?: string;
-		} = {},
+		},
 	) {
-		super(message, options.cause ? { cause: options.cause } : undefined);
+		const url = `${STATUSCAKE_API_BASE}${options.path}`;
+		super(
+			{ method: options.method as ApiRequestOptions['method'], url },
+			{
+				url,
+				ok: false,
+				status: options.status,
+				statusText: options.statusText ?? '',
+				body: options.body,
+			},
+			message,
+			{ retryAfter: options.retryAfter },
+		);
 		this.name = 'StatusCakeAPIError';
-		const cause = options.cause instanceof ApiError ? options.cause : undefined;
-		this.status = options.status ?? cause?.status;
-		this.body = options.body ?? cause?.body;
-		this.retryAfter = options.retryAfter ?? cause?.retryAfter;
-		this.method = options.method ?? cause?.request.method;
+		this.method = options.method;
 	}
 
 	/**
@@ -180,16 +189,22 @@ export async function makeStatusCakeRequest(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
+			// Rebuilt without the request (contact details and passwords in the
+			// form body); status, retryAfter and the response body carry over.
 			throw new StatusCakeAPIError(
 				describeStatusCakeError(error.status, error.body, error.message),
-				{ cause: error, status: error.status, body: error.body, method },
+				{
+					method,
+					path,
+					status: error.status,
+					statusText: error.statusText,
+					body: error.body,
+					retryAfter: error.retryAfter,
+				},
 			);
 		}
-		// DOMException (fetch timeouts) can fail instanceof Error across realms.
-		if (error instanceof Error || error instanceof DOMException) {
-			throw new StatusCakeAPIError(error.message, { cause: error, method });
-		}
-		throw new StatusCakeAPIError('Unknown StatusCake error', { method });
+		// Timeouts and network failures carry no request data; let them through.
+		throw error;
 	}
 }
 

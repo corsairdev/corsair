@@ -27,7 +27,9 @@ function apiError(
 	return new StatusCakeAPIError(`StatusCake ${status}: failed`, {
 		status,
 		body,
-		...options,
+		path: '/uptime',
+		method: options.method ?? 'POST',
+		retryAfter: options.retryAfter,
 	});
 }
 
@@ -116,15 +118,11 @@ describe('StatusCake error handlers', () => {
 		},
 	);
 
-	it('does not replay a write that timed out', async () => {
+	it('does not replay a request that timed out', async () => {
 		const timeout = new Error('The operation timed out');
 		timeout.name = 'TimeoutError';
-		const error = new StatusCakeAPIError(timeout.message, {
-			cause: timeout,
-			method: 'POST',
-		});
-		expect(classify(error)).toBe('DEFAULT');
-		expect(await strategy(error)).toEqual({ maxRetries: 0 });
+		expect(classify(timeout)).toBe('DEFAULT');
+		expect(await strategy(timeout)).toEqual({ maxRetries: 0 });
 	});
 
 	it('falls back to DEFAULT for anything else', async () => {
