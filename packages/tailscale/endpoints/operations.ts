@@ -105,9 +105,6 @@ export function policyFileResult(
 	};
 }
 
-/** A field name the caller typed for a route with no body: shown; anything else is masked. */
-const PLAIN_FIELD = /^[A-Za-z_][A-Za-z0-9_]{0,40}$/;
-
 type Issue = {
 	path: readonly PropertyKey[];
 	message: string;
@@ -117,8 +114,9 @@ type Issue = {
 
 /**
  * Issue paths and zod's messages, which name what was expected rather than the
- * value sent. Map keys (domains, device ids, tags) are masked, and so are
- * unknown keys that don't look like field names.
+ * value sent. Map keys (domains, device ids, tags) are masked, and so is every
+ * unknown key the caller sent (it could be a hostname such as alice_laptop);
+ * the message lists the fields the operation takes instead.
  */
 export function describeIssues(
 	id: string,
@@ -132,11 +130,22 @@ export function describeIssues(
 			const where =
 				maskedIssuePath(id, issue.path, mode) ||
 				(mode === 'input' ? 'input' : 'response');
+			const unknown = issue.keys?.length ?? 0;
 			const message =
 				issue.code === 'unrecognized_keys'
-					? `unknown field ${(issue.keys ?? [])
-							.map((key) => (PLAIN_FIELD.test(key) ? key : MASKED_KEY))
-							.join(', ')}`
+					? `${unknown} unknown field${unknown === 1 ? '' : 's'} (${Array(
+							unknown,
+						)
+							.fill(MASKED_KEY)
+							.join(', ')})${
+							issue.path.length === 0 && mode === 'input'
+								? `; this operation takes ${
+										tailscaleInputFields(id)
+											.map((field) => field.name)
+											.join(', ') || 'no fields'
+									}`
+								: ''
+						}`
 					: issue.message;
 			return `${where}: ${message}`;
 		})

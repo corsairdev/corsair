@@ -22,6 +22,7 @@
 // Calls go through createCorsair, so the plugin's error handlers and core's
 // retries apply as in production. Failing assertions never print a secret,
 // token or invite URL: those are checked as booleans.
+import { randomBytes } from 'node:crypto';
 import { writeFileSync } from 'node:fs';
 import { createCorsair } from 'corsair/core';
 import { tailscale } from './index';
@@ -35,7 +36,8 @@ if (!hasKey) {
 }
 const live = hasKey ? describe : describe.skip;
 
-const RUN = Date.now().toString(36);
+// Random, so two runs started at once never share a fixture name.
+const RUN = randomBytes(6).toString('hex');
 const NAME = `corsair-plugin-test-${RUN}`;
 const SERVICE = `svc:${NAME}`;
 const SPLIT_DOMAIN = `${NAME}.invalid`;
@@ -217,7 +219,7 @@ live('Tailscale live API', () => {
 		const firstKey = await api.keys.get({ keyId: keys.keys?.[0]?.id ?? '' });
 		expect(firstKey.id).toBe(keys.keys?.[0]?.id);
 		// Never the secret.
-		expect(firstKey.key ?? '').toBe('');
+		expect((firstKey.key ?? '') === '').toBe(true);
 
 		expect(Array.isArray((await api.webhooks.list({})).webhooks ?? [])).toBe(
 			true,

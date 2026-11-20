@@ -388,13 +388,16 @@ describe('routing', () => {
 			/^Invalid input for tailscale dns\.splitDns\.update: domains\.<key>\.0: /,
 		);
 		expect(error.message).not.toContain('alice-laptop');
+		// Every unknown key is masked, identifier-shaped ones too; the message
+		// names the fields the operation takes instead.
 		const unknown = (await endpointFor('devices.get')(buildCtx(), {
 			deviceId: 'n1',
-			device: 'n1',
+			alice_laptop: 'n1',
 			'bob@example.com': 1,
 		}).catch((e: unknown) => e)) as Error;
-		expect(unknown.message).toContain('unknown field device, <key>');
-		expect(unknown.message).not.toContain('bob@example.com');
+		expect(unknown.message).toBe(
+			'Invalid input for tailscale devices.get: input: 2 unknown fields (<key>, <key>); this operation takes deviceId, fields',
+		);
 		mockedRequest.mockResolvedValueOnce({ 'alice-laptop.internal': 'x' });
 		const output = (await endpointFor('dns.splitDns.get')(buildCtx(), {}).catch(
 			(e: unknown) => e,
