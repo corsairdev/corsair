@@ -2,10 +2,14 @@ import { createCorsair } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { stannp } from './index';
 
-// Read-only live smoke. Stannp has no free tier documented, so this runs
-// only with STANNP_API_KEY set; everything else skips. No send: the writes
-// here post real mail or take payment.
-const describeIfKey = process.env.STANNP_API_KEY ? describe : describe.skip;
+// Read-only live smoke, runs only with STANNP_API_KEY set (a free Stannp
+// account works; set STANNP_REGION=eu for a UK/EU account). No send: the
+// writes post real mail or take payment.
+const hasKey = Boolean(process.env.STANNP_API_KEY);
+if (!hasKey) {
+	console.warn('Skipping stannp live tests: STANNP_API_KEY is not set.');
+}
+const describeIfKey = hasKey ? describe : describe.skip;
 
 const region = process.env.STANNP_REGION === 'eu' ? 'eu' : 'us';
 
