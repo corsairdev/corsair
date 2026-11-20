@@ -16,7 +16,7 @@ import {
 	TeamGetResponseSchema,
 } from './endpoints/types';
 
-const LIVE_KEY = process.env.LEMLIST_API_KEY ?? '';
+const LIVE_KEY = process.env.LEMLIST_API_KEY?.trim() ?? '';
 
 if (!LIVE_KEY) {
 	console.warn(
