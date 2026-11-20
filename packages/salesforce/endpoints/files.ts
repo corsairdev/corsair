@@ -36,7 +36,10 @@ export const getFileContent: SalesforceEndpoints['getFileContent'] = async (
 		(extension && MEDIA_TYPES[extension]) || 'application/octet-stream',
 		{ filename, maxBytes: CONTENT_MAX_BYTES, text: false },
 	);
-	return { ...file, ...(contentBase64 ? { content: contentBase64 } : {}) };
+	return {
+		...file,
+		...(contentBase64 !== undefined ? { content: contentBase64 } : {}),
+	};
 };
 
 /**

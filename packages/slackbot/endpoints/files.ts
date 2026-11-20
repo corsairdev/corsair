@@ -486,7 +486,7 @@ export const download: SlackbotEndpoints['filesDownload'] = async (
 		ok: true,
 		file: metadata.file,
 		...file,
-		...(contentBase64 ? { content: contentBase64 } : {}),
+		...(contentBase64 !== undefined ? { content: contentBase64 } : {}),
 		content_type: contentType,
 		byte_size: buffer.byteLength,
 	};

@@ -129,7 +129,7 @@ await corsair.tinypng.api.images.compressAndStoreInAzure({
 
 `images.output`
 
-Download a compressed image by its Tinify image ID. On Corsair up to about 700 KB comes back inline as base64 and a larger image comes back as fileId, a Files id; without a host that keeps files the image comes back inline as base64.
+Download a compressed image by its Tinify image ID. On Corsair up to about 700 KB comes back inline as base64 and a larger image comes back as fileId, a Files id; without a host that keeps files the image comes back inline as base64 up to 100 MB, or contentOmitted beyond it.
 
 **Risk:** `read`
 
@@ -159,7 +159,7 @@ await corsair.tinypng.api.images.output({ imageId: '2xnsp7jn34e5' });
 | `width` | `number` | No | — |
 | `height` | `number` | No | — |
 | `compressionCount` | `number` | No | — |
-| `base64` | `string` | No | The image, base64-encoded. Missing when contentOmitted is set or the host kept the file (fileId). |
+| `base64` | `string` | No | The image, base64-encoded. Missing when contentOmitted is set, or when a host kept a file too large to return inline (fileId). |
 
 
 

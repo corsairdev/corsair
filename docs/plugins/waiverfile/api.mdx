@@ -1650,7 +1650,7 @@ await corsair.waiverfile.api.waivers.pageCount({ startDate: '2024-06-01', endDat
 
 `waivers.pdf`
 
-Download a signed waiver as a PDF. On Corsair up to about 700 KB comes back base64-encoded in `content` and a larger PDF comes back as fileId, a Files id; without a host that keeps files it comes back in `content`.
+Download a signed waiver as a PDF. On Corsair up to about 700 KB comes back base64-encoded in `content` and a larger PDF comes back as fileId, a Files id; without a host that keeps files it comes back in `content` up to 100 MB, or contentOmitted beyond it.
 
 **Risk:** `read`
 
@@ -1677,7 +1677,7 @@ await corsair.waiverfile.api.waivers.pdf({ waiverID: '4e5c5176-1238-45a3-8a87-35
 | `fileId` | `string` | No | Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
 | `waiverID` | `string` | Yes | — |
 | `bytes` | `number` | Yes | — |
-| `content` | `string` | No | Base64. Decode it to get the PDF bytes. Missing when contentOmitted is set or the host kept the file (fileId). |
+| `content` | `string` | No | Base64. Decode it to get the PDF bytes. Missing when contentOmitted is set, or when a host kept a file too large to return inline (fileId). |
 
 
 

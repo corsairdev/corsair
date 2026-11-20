@@ -126,7 +126,7 @@ const tinypngEndpointMeta = {
 	'images.output': {
 		riskLevel: 'read',
 		description:
-			'Download a compressed image by its Tinify image ID. On Corsair up to about 700 KB comes back inline as base64 and a larger image comes back as fileId, a Files id; without a host that keeps files the image comes back inline as base64.',
+			'Download a compressed image by its Tinify image ID. On Corsair up to about 700 KB comes back inline as base64 and a larger image comes back as fileId, a Files id; without a host that keeps files the image comes back inline as base64 up to 100 MB, or contentOmitted beyond it.',
 	},
 	'images.transform': {
 		riskLevel: 'write',

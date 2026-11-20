@@ -2502,7 +2502,7 @@ const salesforceEndpointMeta = {
 	'files.getFileContent': {
 		riskLevel: 'read',
 		description:
-			"Get a file's content, named by its title. On Corsair up to about 700 KB comes back inline as content and a larger file comes back as fileId, a Files id; without a host that keeps files the content comes back inline as base64.",
+			"Get a file's content, named by its title. On Corsair up to about 700 KB comes back inline as content and a larger file comes back as fileId, a Files id; without a host that keeps files the content comes back inline as base64 up to 100 MB, or contentOmitted beyond it.",
 	},
 	'files.getFileInformation': {
 		riskLevel: 'read',

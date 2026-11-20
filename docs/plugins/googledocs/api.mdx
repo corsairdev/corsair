@@ -186,7 +186,7 @@ await corsair.googledocs.api.documents.createDocumentMarkdown({});
 
 `documents.exportDocumentAsPdf`
 
-Export a Google Doc as PDF (Drive enforces a 10MB limit). On Corsair up to about 700 KB comes back inline as data and a larger PDF comes back as fileId, a Files id; without a host that keeps files the PDF comes back inline.
+Export a Google Doc as PDF (Drive enforces a 10MB limit). On Corsair up to about 700 KB comes back inline as data and a larger PDF comes back as fileId, a Files id; without a host that keeps files the PDF comes back inline up to 100 MB, or contentOmitted beyond it.
 
 **Risk:** `read`
 
@@ -212,7 +212,7 @@ await corsair.googledocs.api.documents.exportDocumentAsPdf({});
 | `contentOmitted` | `not_requested \| over_limit` | No | Set when the content was left out: the caller did not ask for it, or the file was over the limit. |
 | `fileId` | `string` | No | Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
 | `mimeType` | `string` | Yes | — |
-| `data` | `string` | No | The PDF, base64-encoded. Missing when contentOmitted is set or the host kept the file (fileId). |
+| `data` | `string` | No | The PDF, base64-encoded. Missing when contentOmitted is set, or when a host kept a file too large to return inline (fileId). |
 
 
 

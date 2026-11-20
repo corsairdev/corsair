@@ -212,7 +212,7 @@ const googledocsEndpointMeta = {
 	'documents.exportDocumentAsPdf': {
 		riskLevel: 'read',
 		description:
-			'Export a Google Doc as PDF (Drive enforces a 10MB limit). On Corsair up to about 700 KB comes back inline as data and a larger PDF comes back as fileId, a Files id; without a host that keeps files the PDF comes back inline.',
+			'Export a Google Doc as PDF (Drive enforces a 10MB limit). On Corsair up to about 700 KB comes back inline as data and a larger PDF comes back as fileId, a Files id; without a host that keeps files the PDF comes back inline up to 100 MB, or contentOmitted beyond it.',
 	},
 	'documents.searchDocuments': {
 		riskLevel: 'read',

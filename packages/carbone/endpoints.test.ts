@@ -222,6 +222,19 @@ describe('Carbone endpoints execution', () => {
 			}
 		});
 
+		it('downloadTemplate returns an empty template as empty content, not as nothing', async () => {
+			jest.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
+				ok: true,
+				arrayBuffer: async () => Buffer.alloc(0),
+				// unknown: test/fixture cast; production types are Zod-validated
+			} as unknown as Response);
+			const res = await TemplatesEndpoints.downloadTemplate(
+				createMockContext(),
+				{ templateId: 'tmpl_empty' },
+			);
+			expect(res).toMatchObject({ content: '', byteLength: 0, success: true });
+		});
+
 		it('downloadTemplate performs authenticated request and returns template content', async () => {
 			const expectedBuffer = Buffer.from([0x50, 0x4b, 0x03, 0x04, 0xff, 0x00]);
 			const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValueOnce({

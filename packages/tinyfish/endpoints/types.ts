@@ -687,7 +687,7 @@ export const GetStepScreenshotResponseSchema = FileOutputSchema.omit({
 		.min(1)
 		.optional()
 		.describe(
-			'The screenshot, base64-encoded. Missing when contentOmitted is set or the host kept the file (fileId).',
+			'The screenshot, base64-encoded. Missing when contentOmitted is set, or when a host kept a file too large to return inline (fileId).',
 		),
 	sizeBytes: z.number().int().min(1),
 });

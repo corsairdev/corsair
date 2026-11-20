@@ -497,7 +497,7 @@ export const exportDocumentAsPdf: GoogleDocsEndpoints['exportDocumentAsPdf'] =
 		const result = {
 			mimeType: 'application/pdf',
 			...file,
-			...(contentBase64 ? { data: contentBase64 } : {}),
+			...(contentBase64 !== undefined ? { data: contentBase64 } : {}),
 		};
 
 		await logEventFromContext(

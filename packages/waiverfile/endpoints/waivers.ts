@@ -286,7 +286,7 @@ export const pdf: WaiverFileEndpoints['waiversPdf'] = (ctx, input) =>
 					...output,
 					// The length of the bytes actually received, not a decoded string.
 					bytes: file.bytes.byteLength,
-					...(contentBase64 ? { content: contentBase64 } : {}),
+					...(contentBase64 !== undefined ? { content: contentBase64 } : {}),
 				};
 			},
 			log: (parsed, result) => ({

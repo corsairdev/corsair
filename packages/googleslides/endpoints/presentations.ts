@@ -447,7 +447,7 @@ export const presentationsExport: GoogleSlidesEndpoints['presentationsExport'] =
 					format,
 					mimeType: contentType.split(';')[0] ?? mimeType,
 					...file,
-					...(contentBase64 ? { data: contentBase64 } : {}),
+					...(contentBase64 !== undefined ? { data: contentBase64 } : {}),
 				};
 			},
 			(parsed) => ({

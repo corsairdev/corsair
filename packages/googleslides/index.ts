@@ -275,7 +275,7 @@ const googleSlidesEndpointMeta = {
 	'presentations.exportPdf': {
 		riskLevel: 'read',
 		description:
-			'Export a presentation to PDF or PPTX. On Corsair up to about 700 KB comes back inline as data and a larger file comes back as fileId, a Files id; without a host that keeps files the file comes back inline as base64.',
+			'Export a presentation to PDF or PPTX. On Corsair up to about 700 KB comes back inline as data and a larger file comes back as fileId, a Files id; without a host that keeps files the file comes back inline as base64 up to 100 MB, or contentOmitted beyond it.',
 	},
 	'presentations.delete': {
 		riskLevel: 'destructive',

@@ -863,7 +863,7 @@ const ExportResponseSchema = FileOutputSchema.omit({
 			.string()
 			.optional()
 			.describe(
-				'The file, base64-encoded. Missing when contentOmitted is set or the host kept the file (fileId).',
+				'The file, base64-encoded. Missing when contentOmitted is set, or when a host kept a file too large to return inline (fileId).',
 			),
 	})
 	.loose();

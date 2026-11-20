@@ -270,7 +270,7 @@ export const getStepScreenshot: TinyFishEndpoints['getStepScreenshot'] = async (
 			);
 			return {
 				...file,
-				...(contentBase64 ? { base64: contentBase64 } : {}),
+				...(contentBase64 !== undefined ? { base64: contentBase64 } : {}),
 				sizeBytes: bytes.byteLength,
 			};
 		},

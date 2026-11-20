@@ -29,6 +29,7 @@ function serve(bytes: Buffer, meta: Record<string, string> | null) {
 	});
 }
 
+// unknown: getFileContent reads only the key, the instance URL and the account id here, not a full plugin context.
 const ctx = {
 	key: 'test_token',
 	authType: 'api_key' as const,
@@ -63,6 +64,17 @@ describe('salesforce files.getFileContent', () => {
 				'sobjects/ContentVersion/068xx',
 			]),
 		);
+	});
+
+	it('returns an empty file as empty content, not as nothing', async () => {
+		serve(Buffer.alloc(0), { Title: 'empty', FileExtension: 'txt' });
+		const out = await getFileContent(ctx, { fileId: '068xx' });
+		expect(out).toEqual({
+			contentType: 'text/plain',
+			byteLength: 0,
+			filename: 'empty.txt',
+			content: '',
+		});
 	});
 
 	it('still returns the content when the version record cannot be read', async () => {

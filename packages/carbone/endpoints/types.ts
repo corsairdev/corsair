@@ -171,7 +171,7 @@ export const DownloadTemplateOutputSchema = FileOutputSchema.omit({
 			.string()
 			.optional()
 			.describe(
-				'Base64-encoded content of the template file. Missing when contentOmitted is set or the host kept the file (fileId).',
+				'Base64-encoded content of the template file. Missing when contentOmitted is set, or when a host kept a file too large to return inline (fileId).',
 			),
 		success: z
 			.boolean()

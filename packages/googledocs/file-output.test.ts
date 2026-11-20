@@ -11,6 +11,7 @@ const PDF = new Uint8Array([0x25, 0x50, 0x44, 0x46, 0x2d, 0xff, 0xfe, 0x00]);
 const originalFetch = global.fetch;
 
 function serve(pdf: Uint8Array, name: string | null) {
+	// unknown: the stub answers the export and the name lookup by URL only; it is not a full fetch.
 	global.fetch = (async (url: unknown) => {
 		const u = String(url);
 		if (u.includes('/export?')) {

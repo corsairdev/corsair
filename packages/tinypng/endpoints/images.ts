@@ -87,7 +87,10 @@ function imageBytes(imageId: string, response: TinifyResponse) {
 			text: false,
 		},
 	);
-	return { ...file, ...(contentBase64 ? { base64: contentBase64 } : {}) };
+	return {
+		...file,
+		...(contentBase64 !== undefined ? { base64: contentBase64 } : {}),
+	};
 }
 
 type OutputOptions = Pick<

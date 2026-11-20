@@ -148,7 +148,7 @@ export const downloadTemplate: CarboneEndpoints['downloadTemplate'] = async (
 	return {
 		templateId: input.templateId,
 		...file,
-		...(contentBase64 ? { content: contentBase64 } : {}),
+		...(contentBase64 !== undefined ? { content: contentBase64 } : {}),
 		success: true,
 	} satisfies DownloadTemplateOutput;
 };
