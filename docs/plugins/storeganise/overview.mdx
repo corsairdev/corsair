@@ -1,0 +1,142 @@
+---
+title: "Storeganise plugin"
+sidebarTitle: "Overview"
+description: "Storeganise is self-storage management software. This plugin reads sites, units, users, invoices, unit rentals, jobs and add-ons from the Admin API, updates unit-rental custom fields (access codes, overlock flags), and verifies the signed webhook deliveries Storeganise sends for system events."
+---
+
+Use **Storeganise** through Corsair: one client, typed API calls, and incoming webhooks.
+
+Storeganise serves each operator from its own subdomain, so the account needs two credentials: the API key (Main Settings &gt; Developer) and the business code, which is the subdomain of https://&lt;business_code&gt;.storeganise.com. Keys authenticate with a literal scheme header, Authorization: ApiKey &lt;key&gt;, where the word ApiKey is the scheme itself and must not be replaced; the legacy &lt;business_code&gt;-api.storeganise.com host named in older onboarding docs no longer answers. The complete Admin API reference is access-gated by the vendor, so this plugin covers the endpoints Storeganise documents publicly (articles 297, 287, 475, 19 and 33 in the help center); response fields beyond those evidenced there are passed through loosely rather than typed. Webhook deliveries POST &#123; id, created, type, data &#125; and carry an sg-signature header: HMAC-SHA256 of the raw body keyed with the webhook secret (visible from api.settings.get), digested base64; set the secret on the plugin or with keys.set_webhook_signature, or deliveries are rejected with 401. Answer a delivery with 200 within 30 seconds; failures are retried twice more, then the related job is marked failed. One endpoint receives every event type, among 50+ documented names such as job.unit_moveIn.completed, unitRental.markOverdue and invoice.created. Pagination is not publicly documented; list reads accept the documented sync patterns instead: updatedAfter (UTC, formatted YYYY-MM-DDTHH:MM:SS.000Z) on users and invoices, and ids (up to 50, comma-separated) on users, invoices and unit rentals.
+
+**What you get:**
+
+- 13 typed API operations
+- 1 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/storeganise better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/storeganise better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/storeganise better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/storeganise better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { storeganise } from '@corsair-dev/storeganise';
+
+export const corsair = createCorsair({
+	plugins: [
+		storeganise(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Storeganise API key before the first call: `pnpm corsair setup --plugin=storeganise --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+storeganise()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'storeganise',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List storage sites**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.storeganise.api.sites.list({});
+```
+
+
+**Set access-code custom fields on a unit rental**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.storeganise.api.unitRentals.update({
+	unitRentalId: '5bf540e8d986a91cd713affe',
+	customFields: { myAC_accessCode: '482913' },
+});
+```
+
+
+See the full list on the [API](/plugins/storeganise/api) page.
+
+## Webhooks
+
+This plugin registers **1** webhook event type. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/storeganise/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/storeganise/api">
+    Every `storeganise.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/storeganise/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
