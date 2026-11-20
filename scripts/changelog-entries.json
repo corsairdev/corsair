@@ -10460,5 +10460,21 @@
         "title": "Take a file link or base64 where a Blob was required"
       }
     ]
+  },
+  {
+    "date": "2026-11-20",
+    "package": "@corsair-dev/openai",
+    "dir": "packages/openai",
+    "name": "OpenAI",
+    "version": "0.1.5",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2644,
+        "title": "Take a file link or base64 where a Blob was required"
+      }
+    ]
   }
 ]
