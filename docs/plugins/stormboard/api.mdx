@@ -290,14 +290,14 @@ await corsair.stormboard.api.ideas.create({ stormid: 49999, data: 'This is an id
 | `type` | `string` | No | — |
 | `data` | `string` | Yes | — |
 | `name` | `string` | No | — |
-| `color` | `string` | No | — |
-| `shape` | `string` | No | — |
+| `color` | `yellow \| light-orange \| orange \| red \| light-green \| green \| teal \| turquoise \| light-blue \| blue \| light-purple \| purple \| brown \| light-pink \| pink \| grey` | No | — |
+| `shape` | `standard \| gem \| hexagon \| octagon \| square \| title \| triangle` | No | — |
 | `sectionindex` | `string` | No | — |
 | `x` | `number` | No | — |
 | `y` | `number` | No | — |
 | `lock` | `0 \| 1` | No | — |
 
-Stormboard assigns the id; the answer carries it as &#123;"message": "idea created", "id": 10000001&#125;. The color and shape values have API defaults (yellow, standard) and the docs name no closed list, so they pass through as strings.
+Stormboard assigns the id; the answer carries it as &#123;"message": "idea created", "id": 10000001&#125;. color is one of the documented 16 (yellow, the default, through grey) and shape one of standard, gem, hexagon, octagon, square, title or triangle.
 
 
 
@@ -730,8 +730,8 @@ await corsair.stormboard.api.ideas.update({ ideaId: 10000001, data: 'Updated ide
 | `ideaId` | `number` | Yes | — |
 | `type` | `string` | No | — |
 | `data` | `string` | Yes | — |
-| `color` | `string` | No | — |
-| `shape` | `string` | No | — |
+| `color` | `yellow \| light-orange \| orange \| red \| light-green \| green \| teal \| turquoise \| light-blue \| blue \| light-purple \| purple \| brown \| light-pink \| pink \| grey` | No | — |
+| `shape` | `standard \| gem \| hexagon \| octagon \| square \| title \| triangle` | No | — |
 | `x` | `number` | No | — |
 | `y` | `number` | No | — |
 | `lock` | `0 \| 1` | No | — |
@@ -967,14 +967,14 @@ Create a Storm
 **Risk:** `write`
 
 ```ts
-await corsair.stormboard.api.storms.create({ plan: 'Team', title: 'Sprint Planning', description: 'Weekly sprint board' });
+await corsair.stormboard.api.storms.create({ plan: 'personal', title: 'Sprint Planning', description: 'Weekly sprint board' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `plan` | `string` | Yes | The Storm plan; the docs name no closed list, so any plan string is passed through. |
+| `plan` | `personal \| student \| educator \| team` | Yes | The plan to create the Storm under; student and educator need that plan, team needs team_id. |
 | `title` | `string` | Yes | — |
 | `description` | `string` | No | — |
 | `template` | `number` | No | — |
@@ -1053,7 +1053,8 @@ await corsair.stormboard.api.storms.duplicate({ stormId: 49999, stormname: 'My C
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `message` | `string \| number` | Yes | — |
-| `id` | `number \| string \| null` | No | — |
+| `stormid` | `number \| string \| null` | No | — |
+| `stormkey` | `string \| null` | No | — |
 
 
 
