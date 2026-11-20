@@ -954,6 +954,7 @@ await corsair.statuscake.api.pagespeed.history({ test_id: '123456', limit: 100 }
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `links` | `object` | Yes | — |
+| `metadata` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -977,6 +978,15 @@ await corsair.statuscake.api.pagespeed.history({ test_id: '123456', limit: 100 }
   self?: string | null,
   next?: string | null
 }
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  aggregates?: Record<string, Record<string, any>> | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
