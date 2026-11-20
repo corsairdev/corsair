@@ -123,12 +123,14 @@ export async function makeStormboardRequest(
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: path,
-		// GET and DELETE carry parameters in the query string; the documented
-		// delete-between route takes its two idea ids there.
+		// GET and DELETE carry parameters in the query string. A DELETE can
+		// also send a JSON body: the delete-between route reads its two idea
+		// ids from the body and answers 400 when they come as query
+		// parameters (checked live 11-20).
 		query: method === 'GET' || method === 'DELETE' ? query : undefined,
-		body: method === 'GET' || method === 'DELETE' ? undefined : body,
+		body: method === 'GET' ? undefined : body,
 		mediaType:
-			method === 'GET' || method === 'DELETE' ? undefined : 'application/json',
+			method === 'GET' || body === undefined ? undefined : 'application/json',
 	};
 
 	try {

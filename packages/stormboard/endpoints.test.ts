@@ -6,6 +6,9 @@ import {
 	comment,
 	connector,
 	idea,
+	liveConnectorSaved,
+	livePersonalProfile,
+	liveTemplate,
 	noAuth,
 	participant,
 	profile,
@@ -133,6 +136,13 @@ const cases: Case[] = [
 		expect: { method: 'GET', path: '/users/profile' },
 	},
 	{
+		op: 'users.getProfile (live Personal plan: team false, numeric flags)',
+		endpoint: Users.getProfile,
+		input: {},
+		respondWith: () => ({ body: { profile: livePersonalProfile } }),
+		expect: { method: 'GET', path: '/users/profile' },
+	},
+	{
 		op: 'users.getAuth',
 		endpoint: Users.getAuth,
 		input: {},
@@ -203,9 +213,7 @@ const cases: Case[] = [
 		op: 'storms.getTemplate',
 		endpoint: Storms.getTemplate,
 		input: { stormId: 49999 },
-		respondWith: () => ({
-			body: { index: 'abcdef123456', name: 'Section 1', type: 'default' },
-		}),
+		respondWith: () => ({ body: liveTemplate }),
 		expect: { method: 'GET', path: '/storms/49999/template' },
 	},
 	{
@@ -213,14 +221,14 @@ const cases: Case[] = [
 		endpoint: Storms.updateSection,
 		input: {
 			stormId: 49999,
-			sectionIndex: 1,
+			sectionIndex: 'abcdef123456',
 			name: 'New Section Title',
 			character: '1',
 		},
 		respondWith: () => ({ body: { message: 'Section updated', status: 200 } }),
 		expect: {
 			method: 'PUT',
-			path: '/storms/49999/section/1',
+			path: '/storms/49999/section/abcdef123456',
 			body: { name: 'New Section Title', character: '1' },
 		},
 	},
@@ -252,12 +260,12 @@ const cases: Case[] = [
 	{
 		op: 'storms.list',
 		endpoint: Storms.list,
-		input: { status: 'active', order: 'activity', results: 50 },
+		input: { status: 'closed', order: 'alpha', results: 50 },
 		respondWith: () => ({ body: stormsPage }),
 		expect: {
 			method: 'GET',
 			path: '/storms/list',
-			query: { status: 'active', order: 'activity', results: '50' },
+			query: { status: 'closed', order: 'alpha', results: '50' },
 		},
 	},
 	{
@@ -502,7 +510,7 @@ const cases: Case[] = [
 			label: 'Depends On',
 			color: 'pink',
 		},
-		respondWith: () => ({ body: connector }),
+		respondWith: () => ({ body: liveConnectorSaved }),
 		expect: {
 			method: 'POST',
 			path: '/ideas/connector',
@@ -515,10 +523,32 @@ const cases: Case[] = [
 		},
 	},
 	{
+		op: 'ideas.createConnector (uuid refs)',
+		endpoint: Ideas.createConnector,
+		input: {
+			from_idea_id: '1e7accc2-fb9b-4003-b98c-1924fe7f6c72',
+			to_idea_id: 'b155f49a-f298-4a90-aaa8-7ce78b42ad00',
+		},
+		respondWith: () => ({ body: liveConnectorSaved }),
+		expect: {
+			method: 'POST',
+			path: '/ideas/connector',
+			body: {
+				from_idea_id: '1e7accc2-fb9b-4003-b98c-1924fe7f6c72',
+				to_idea_id: 'b155f49a-f298-4a90-aaa8-7ce78b42ad00',
+			},
+		},
+	},
+	{
 		op: 'ideas.updateConnector',
 		endpoint: Ideas.updateConnector,
 		input: { connectorId: 9999, label: 'Depended On', color: 'yellow' },
-		respondWith: () => ({ body: { ...connector, label: 'Depended On' } }),
+		respondWith: () => ({
+			body: {
+				...liveConnectorSaved,
+				connector: { ...liveConnectorSaved.connector, label: 'Depended On' },
+			},
+		}),
 		expect: {
 			method: 'PUT',
 			path: '/ideas/connector/9999',
@@ -537,10 +567,11 @@ const cases: Case[] = [
 		endpoint: Ideas.deleteConnectorBetween,
 		input: { from_idea_id: 1000, to_idea_id: 1001 },
 		respondWith: () => ({ body: { message: 'Idea Connector deleted' } }),
+		// The API reads the ids from a JSON body (live 11-20).
 		expect: {
 			method: 'DELETE',
 			path: '/ideas/connector',
-			query: { from_idea_id: '1000', to_idea_id: '1001' },
+			body: { from_idea_id: 1000, to_idea_id: 1001 },
 		},
 	},
 	{
@@ -716,7 +747,8 @@ describe('stormboard output parsing', () => {
 	});
 
 	it('rejects a wrong-shaped idea record rather than returning a blank row', async () => {
-		respond({ idea: { id: 'not-a-number' } });
+		// String ids are valid (the docs' examples use both); an object id is not.
+		respond({ idea: { id: { value: 1 } } });
 
 		await expect(invoke(Ideas.get, { ideaId: 1 })).rejects.toThrow();
 	});

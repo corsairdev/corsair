@@ -15,6 +15,13 @@ const bool = z.boolean().nullish();
 
 const positiveInt = z.number().int().positive();
 const nonNegInt = z.number().int().min(0);
+// The docs' examples carry ids both as numbers ({"id": 49999}) and as
+// strings ({"id": "49999"}); live answers use numbers. Responses accept both.
+const id = z.union([z.number(), z.string()]).nullish();
+// The connector routes take an idea's numeric id or its uuid.
+const ideaRef = z
+	.union([positiveInt, z.string().uuid()])
+	.describe("The idea's numeric id or its uuid.");
 
 // unknown: the date parts arrive as strings until split narrows them.
 function isCalendarDate(value: string): boolean {
@@ -43,7 +50,7 @@ function isCalendarDate(value: string): boolean {
 const isoDate = z
 	.string()
 	.regex(
-		/^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:?\d{2}))?$/,
+		/^\d{4}-\d{2}-\d{2}(T([01]\d|2[0-3]):[0-5]\d:[0-5]\d(\.\d+)?(Z|[+-]([01]\d|2[0-3]):?[0-5]\d)?)?$/,
 		'Expected an ISO 8601 date',
 	)
 	.refine(
@@ -74,10 +81,11 @@ const IdeaDataSchema = z
 
 export const IdeaSchema = z
 	.object({
-		id: num,
+		id,
+		uuid: str,
 		storm: z
 			.object({
-				id: num,
+				id,
 				title: str,
 			})
 			.loose()
@@ -101,7 +109,7 @@ export type StormboardIdea = z.infer<typeof IdeaSchema>;
 
 export const StormSchema = z
 	.object({
-		id: num,
+		id,
 		key: str,
 		title: str,
 		description: str,
@@ -111,7 +119,7 @@ export const StormSchema = z
 		closed: bool,
 		team: z
 			.object({
-				id: num,
+				id,
 			})
 			.loose()
 			.nullish(),
@@ -128,7 +136,7 @@ export type StormboardStorm = z.infer<typeof StormSchema>;
 
 export const CommentSchema = z
 	.object({
-		id: num,
+		id,
 		comment: str,
 		created: str,
 		user: UserStubSchema.nullish(),
@@ -139,9 +147,11 @@ export type StormboardComment = z.infer<typeof CommentSchema>;
 
 export const ConnectorSchema = z
 	.object({
-		id: num,
-		from: num,
-		to: num,
+		id,
+		from: id,
+		to: id,
+		from_uuid: str,
+		to_uuid: str,
 		label: str,
 		style: z
 			.object({
@@ -162,7 +172,7 @@ export type StormboardConnector = z.infer<typeof ConnectorSchema>;
 export const ChatMessageSchema = z
 	.object({
 		isnew: bool,
-		storm: num,
+		storm: id,
 		user: UserStubSchema.nullish(),
 		created: str,
 		msg: str,
@@ -173,7 +183,7 @@ export type StormboardChatMessage = z.infer<typeof ChatMessageSchema>;
 
 export const TagSchema = z
 	.object({
-		id: num,
+		id,
 		name: str,
 		type: str,
 		status: str,
@@ -209,6 +219,8 @@ const MessageWithIdSchema = z
 
 // ── Users ─────────────────────────────────────────────────────────────────
 
+const notificationValue = z.union([z.number(), z.string()]).nullish();
+
 export const ProfileSchema = z
 	.object({
 		auth: z
@@ -217,24 +229,30 @@ export const ProfileSchema = z
 			})
 			.loose()
 			.nullish(),
-		id: num,
+		id,
 		firstname: str,
 		lastname: str,
 		username: str,
 		email: str,
 		plan: str,
+		// A Personal account answers "team": false (live 11-20).
 		team: z
-			.object({
-				id: str,
-				name: str,
-			})
-			.loose()
+			.union([
+				z
+					.object({
+						id,
+						name: str,
+					})
+					.loose(),
+				z.boolean(),
+			])
 			.nullish(),
+		// Live answers carry the flags as numbers; the docs show strings.
 		notifications: z
 			.object({
-				dailyemail: str,
-				newstormuser: str,
-				newsletter: str,
+				dailyemail: notificationValue,
+				newstormuser: notificationValue,
+				newsletter: notificationValue,
 			})
 			.loose()
 			.nullish(),
@@ -331,7 +349,12 @@ const StormsGetTemplateInputSchema = z.object({
 
 const StormsUpdateSectionInputSchema = z.object({
 	stormId: positiveInt,
-	sectionIndex: nonNegInt,
+	sectionIndex: z
+		.string()
+		.min(1)
+		.describe(
+			'The section index from storms.getTemplate, such as "abcdef123456".',
+		),
 	name: z.string().min(1).optional(),
 	description: z.string().optional(),
 	character: z.string().optional(),
@@ -355,14 +378,16 @@ const StormsListInputSchema = z.object({
 	folder: nonNegInt.optional(),
 	needle: z.string().optional(),
 	status: z
-		.enum(['active', 'closed'])
+		.enum(['open', 'closed'])
 		.optional()
-		.describe('Filter by Storm state; the API defaults to active.'),
+		.describe('Filter by Storm state; the API defaults to open.'),
 	start: nonNegInt.optional(),
 	order: z
-		.enum(['activity', 'created', 'title'])
+		.enum(['activity', 'alpha', 'frequency', 'starred'])
 		.optional()
-		.describe('Sort order; the API defaults to activity.'),
+		.describe(
+			'Sort order: activity (last active, the default), alpha (A-Z), frequency or starred.',
+		),
 	results: nonNegInt.optional(),
 });
 
@@ -391,7 +416,7 @@ const StormsInviteInputSchema = z.object({
 		.describe('Email addresses of the participants to invite.'),
 	message: z.string().optional(),
 	type: z
-		.enum(['contributor', 'admin', 'viewer'])
+		.enum(['contributor', 'viewer'])
 		.optional()
 		.describe('The access the invite grants; the API defaults to contributor.'),
 });
@@ -491,8 +516,8 @@ const IdeasListCommentsInputSchema = z.object({
 });
 
 const IdeasCreateConnectorInputSchema = z.object({
-	from_idea_id: positiveInt,
-	to_idea_id: positiveInt,
+	from_idea_id: ideaRef,
+	to_idea_id: ideaRef,
 	label: z.string().optional(),
 	color: z.string().optional(),
 	to_end_type: z.string().optional(),
@@ -512,8 +537,8 @@ const IdeasDeleteConnectorInputSchema = z.object({
 });
 
 const IdeasDeleteConnectorBetweenInputSchema = z.object({
-	from_idea_id: positiveInt,
-	to_idea_id: positiveInt,
+	from_idea_id: ideaRef,
+	to_idea_id: ideaRef,
 });
 
 const IdeasUpdateTaskInputSchema = z.object({
@@ -581,6 +606,28 @@ const StormListPageSchema = z
 	.loose();
 
 const MessageListSchema = z.object({ messages: z.array(ChatMessageSchema) });
+
+const ConnectorWriteSchema = z
+	.object({
+		message: str,
+		connector: ConnectorSchema,
+	})
+	.loose();
+
+// Live answer: {"template": [{index, name, description, character, color,
+// type, subsections}], "status": 200}; the docs show a single section.
+const TemplateSectionSchema = z
+	.object({
+		index: str,
+		name: str,
+		description: str,
+		character: str,
+		color: str,
+		type: str,
+		// unknown: subsections repeat the section shape with no documented depth.
+		subsections: z.unknown().nullish(),
+	})
+	.loose();
 
 export const StormboardEndpointInputSchemas = {
 	usersCreate: UsersCreateInputSchema,
@@ -675,7 +722,9 @@ export const StormboardEndpointOutputSchemas = {
 	stormsGet: z.object({ storm: StormSchema }).loose(),
 	stormsUpdate: MessageWithIdSchema,
 	stormsUpdateLegend: MessageWithIdSchema,
-	stormsGetTemplate: z.object({}).loose(),
+	stormsGetTemplate: z
+		.object({ template: z.array(TemplateSectionSchema).nullish() })
+		.loose(),
 	stormsUpdateSection: MessageWithIdSchema,
 	stormsGetAccess: z
 		.object({
@@ -779,8 +828,10 @@ export const StormboardEndpointOutputSchemas = {
 	ideasUpdateComment: MessageWithIdSchema,
 	ideasDeleteComment: MessageWithIdSchema,
 	ideasListComments: z.object({ comments: z.array(CommentSchema) }).loose(),
-	ideasCreateConnector: ConnectorSchema,
-	ideasUpdateConnector: ConnectorSchema,
+	// Both answer {"message": "Idea Connector saved", "connector": {...}}
+	// (live 11-20); the docs' example shows a bare connector.
+	ideasCreateConnector: ConnectorWriteSchema,
+	ideasUpdateConnector: ConnectorWriteSchema,
 	ideasDeleteConnector: MessageWithIdSchema,
 	ideasDeleteConnectorBetween: MessageWithIdSchema,
 	ideasUpdateTask: z.object({ task: TaskSchema }).loose(),

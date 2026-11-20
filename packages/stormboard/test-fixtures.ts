@@ -116,6 +116,57 @@ export const profile = {
 	},
 };
 
+/** A Personal-plan profile as the live API answers it (11-20, trimmed). */
+export const livePersonalProfile = {
+	auth: { api_key: 'apikeyabc123' },
+	id: 1944623,
+	firstname: 'Corsair',
+	lastname: 'PluginTest',
+	username: 'cptest',
+	email: 'test@example.com',
+	plan: 'Personal',
+	team: false,
+	notifications: {
+		dailyemail: 0,
+		newstormuser: 0,
+		newsletter: 0,
+		commentmentions: 1,
+	},
+};
+
+/** POST /ideas/connector as the live API answers it (11-20, trimmed). */
+export const liveConnectorSaved = {
+	message: 'Idea Connector saved',
+	connector: {
+		id: 2236243,
+		from: 22221652,
+		to: 22221653,
+		label: 'corsair-plugin-test',
+		style: { color: 'default', fromEndType: '', toEndType: 'arrow' },
+		points: [],
+		data: [],
+		from_uuid: '1e7accc2-fb9b-4003-b98c-1924fe7f6c72',
+		to_uuid: 'b155f49a-f298-4a90-aaa8-7ce78b42ad00',
+	},
+	status: 200,
+};
+
+/** GET /storms/{id}/template as the live API answers it (11-20, trimmed). */
+export const liveTemplate = {
+	template: [
+		{
+			index: 'abcdef123456',
+			name: 'Section 1',
+			description: '',
+			character: '1',
+			color: '#3bafda',
+			type: 'default',
+			subsections: [],
+		},
+	],
+	status: 200,
+};
+
 export const authKey = {
 	key: 'apikeyabc123',
 	created: '2014-01-01T18:00:00+00:00',

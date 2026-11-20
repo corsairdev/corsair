@@ -9,8 +9,10 @@ recommendedAuth: api_key
 overviewNote: >-
   The API key sits on the API tab of the Stormboard account
   (stormboard.com/users/account#api) and authenticates with the X-API-Key
-  header. Some operations need an active team subscription; the docs mark
-  each route's availability (Public, Team Members, Team Owners). The API
+  header. Some operations need a paid subscription; the docs mark each
+  route's availability (Public, Team Members, Team Owners), and on the free
+  Personal plan storms.update, ideas.update, ideas.delete, votes and
+  comments answer 401 "only available to Stormboard subscribers". The API
   uses standard rate-limiting headers (RateLimit-Limit,
   RateLimit-Remaining, RateLimit-Reset) and answers 429 when the period
   quota is spent, which this plugin waits out before retrying. The two
@@ -70,7 +72,7 @@ apiExamples:
   storms.updateSection:
     args:
       stormId: 49999
-      sectionIndex: 1
+      sectionIndex: abcdef123456
       name: New Section Title
   storms.getAccess:
     args:
@@ -83,7 +85,7 @@ apiExamples:
     args:
       stormId: 49999
   storms.list:
-    call: '{ status: "active", order: "activity", results: 50 }'
+    call: '{ status: "open", order: "activity", results: 50 }'
   storms.listInvites: {}
   storms.listConnectors:
     args:
@@ -212,8 +214,9 @@ apiNotes:
   storms.list: >-
     The list read pages with start and results and answers hasmore plus the
     storms array; walk it by advancing start until hasmore is false.
-    Filters combine: team, folder and needle narrow the result, and the
-    documented status values are active and closed.
+    Filters combine: team, folder and needle narrow the result. status is
+    open (the default) or closed; order is activity (the default), alpha,
+    frequency or starred.
   storms.close: >-
     Closing answers {"message": "Storm closed"} and can be undone with
     api.storms.reopen, so it is registered as a write rather than a delete.
@@ -226,5 +229,6 @@ apiNotes:
     (yellow, standard) and the docs name no closed list, so they pass
     through as strings.
   ideas.deleteConnectorBetween: >-
-    The documented delete-between route takes the two idea ids as request
-    parameters, which travel as query parameters on a DELETE.
+    The two ids go in the DELETE's JSON body; the API answers 400 when they
+    come as query parameters. Either idea can be named by its numeric id or
+    its uuid.

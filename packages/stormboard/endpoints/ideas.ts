@@ -223,7 +223,9 @@ export const createConnector: StormboardEndpoints['ideasCreateConnector'] = (
 			body,
 		}),
 		{
-			log: (_, result) => ({ connectorId: result.id ?? undefined }),
+			log: (_, result) => ({
+				connectorId: result.connector?.id ?? undefined,
+			}),
 		},
 	);
 
@@ -280,10 +282,10 @@ export const deleteConnectorBetween: StormboardEndpoints['ideasDeleteConnectorBe
 			({ from_idea_id, to_idea_id }) => ({
 				method: 'DELETE',
 				path: '/ideas/connector',
-				// The documented delete-between takes the two idea ids as
-				// request parameters; on a DELETE those travel as query
-				// parameters.
-				query: { from_idea_id, to_idea_id },
+				// The API reads the two idea ids from a JSON body; as query
+				// parameters it answers 400 "from_idea_id and to_idea_id are
+				// both required" (checked live 11-20).
+				body: { from_idea_id, to_idea_id },
 			}),
 			{
 				log: () => ({ deleted: true }),
