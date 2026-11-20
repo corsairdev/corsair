@@ -137,11 +137,12 @@ const LINK = /^(https?:|data:)/i;
 /**
  * The bytes to send for a file part. A Blob goes as it was given and a plain
  * string as its text. A link, `{ url }` or `{ base64 }` becomes a File through
- * core's guarded download, held to `maxBytes` (core's 25 MB when unset).
+ * core's guarded download, held to `maxBytes`: 25 MB when the endpoint names no
+ * limit, passed explicitly because core caps base64 and data: inputs only when asked.
  */
 export async function toOpenaiBlob(
 	file: FileInput,
-	maxBytes?: number,
+	maxBytes: number = 25 * 1024 * 1024,
 ): Promise<Blob> {
 	if (file instanceof Blob) return file;
 	if (typeof file === 'string' && !LINK.test(file)) return new Blob([file]);

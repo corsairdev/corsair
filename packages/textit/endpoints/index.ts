@@ -9,6 +9,12 @@ import {
 	TextItEndpointOutputSchemas as Outputs,
 } from './types';
 
+/**
+ * Most bytes taken from a link, base64 or a data: URL: core's download default,
+ * passed explicitly so inline base64 is held to it too (core caps it only when asked).
+ */
+const FILE_MAX_BYTES = 25 * 1024 * 1024;
+
 type Operation = keyof typeof Inputs & keyof typeof Outputs;
 // May be async, so a file given as a link or base64 is resolved first.
 type Builder<K extends Operation> = (
@@ -172,7 +178,12 @@ export const textItEndpointsNested = {
 				file:
 					file instanceof Blob
 						? file
-						: (await resolveFileInput(file, { fallbackName: 'media' })).file,
+						: (
+								await resolveFileInput(file, {
+									maxBytes: FILE_MAX_BYTES,
+									fallbackName: 'media',
+								})
+							).file,
 			},
 		})),
 	},

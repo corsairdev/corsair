@@ -3,6 +3,12 @@ import { resolveFileInput } from 'corsair/http';
 import type { AltTextAiContext } from '../index';
 import type { AltTextAiImage } from './types';
 
+/**
+ * Most bytes taken from a link, base64 or a data: URL: core's download default,
+ * passed explicitly so inline base64 is held to it too (core caps it only when asked).
+ */
+const FILE_MAX_BYTES = 25 * 1024 * 1024;
+
 /** AltText.ai rejects multipart uploads without a filename — coerce Blob → File. */
 export function toCsvUploadFile(file: Blob): File {
 	if (typeof File !== 'undefined' && file instanceof File && file.name) {
@@ -29,7 +35,10 @@ const GENERIC_TYPES = new Set([
  */
 export async function toBulkCsvFile(input: FileInput): Promise<File> {
 	if (input instanceof Blob) return toCsvUploadFile(input);
-	const resolved = await resolveFileInput(input, { fallbackName: 'bulk.csv' });
+	const resolved = await resolveFileInput(input, {
+		maxBytes: FILE_MAX_BYTES,
+		fallbackName: 'bulk.csv',
+	});
 	const name = /\.csv$/i.test(resolved.filename)
 		? resolved.filename
 		: `${resolved.filename}.csv`;

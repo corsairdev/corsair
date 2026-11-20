@@ -5,6 +5,12 @@ import type { OcrWebServiceEndpoints } from '../index';
 import type { RecognizeInput } from './types';
 import { RecognizeInputSchema, RecognizeResponseSchema } from './types';
 
+/**
+ * Most bytes taken from a link, base64 or a data: URL: core's download default,
+ * passed explicitly so inline base64 is held to it too (core caps it only when asked).
+ */
+const FILE_MAX_BYTES = 25 * 1024 * 1024;
+
 const OCR_OUTPUT_HOSTS = new Set([
 	'www.ocrwebservice.com',
 	'ocrwebservice.com',
@@ -37,7 +43,12 @@ function requireHttpsOutputUrl(url: string): string {
  */
 async function documentBody(file: RecognizeInput['file']): Promise<Blob> {
 	if (file instanceof Blob) return file;
-	return (await resolveFileInput(file, { fallbackName: 'document' })).file;
+	return (
+		await resolveFileInput(file, {
+			maxBytes: FILE_MAX_BYTES,
+			fallbackName: 'document',
+		})
+	).file;
 }
 
 export const recognize: OcrWebServiceEndpoints['recognize'] = async (

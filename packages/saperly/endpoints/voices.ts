@@ -10,6 +10,12 @@ import {
 	StatusSchema,
 } from './types';
 
+/**
+ * Most bytes taken from a link, base64 or a data: URL: core's download default,
+ * passed explicitly so inline base64 is held to it too (core caps it only when asked).
+ */
+const FILE_MAX_BYTES = 25 * 1024 * 1024;
+
 export const list: SaperlyEndpoints['listVoices'] = async (ctx, input) => {
 	return callSaperly(
 		ctx,
@@ -54,8 +60,12 @@ export const createCustom: SaperlyEndpoints['createCustomVoice'] = async (
 	const audio =
 		given.audio instanceof Blob
 			? given.audio
-			: (await resolveFileInput(given.audio, { fallbackName: 'voice-sample' }))
-					.file;
+			: (
+					await resolveFileInput(given.audio, {
+						maxBytes: FILE_MAX_BYTES,
+						fallbackName: 'voice-sample',
+					})
+				).file;
 	return callSaperly(
 		ctx,
 		'saperly.customVoices.create',

@@ -50,7 +50,7 @@ async function uploadFile(
 		!TYPED_EXTENSION.test(resolved.filename)
 	) {
 		throw new Error(
-			`Neither the file's name (${resolved.filename}) nor its type (${resolved.contentType}) says what it is. Set filetype.`,
+			`Neither the file's name nor its type (${resolved.contentType}) says what it is. Set filetype.`,
 		);
 	}
 	return resolved.file;

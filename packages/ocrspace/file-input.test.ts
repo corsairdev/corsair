@@ -162,6 +162,18 @@ describe('ocr.parse file input', () => {
 		expect(new Uint8Array(await sentFile().arrayBuffer())).toEqual(PNG);
 	});
 
+	it("keeps the file's name out of the filetype error", async () => {
+		mockLinks.served.set('https://files.example.com/Jane_Doe_record', {
+			body: PNG,
+			type: 'application/octet-stream',
+		});
+		const error = await parse(createContext(), {
+			file: 'https://files.example.com/Jane_Doe_record',
+		}).catch((e: Error) => e);
+		expect(String(error)).toMatch(/Set filetype/);
+		expect(String(error)).not.toMatch(/Jane_Doe/);
+	});
+
 	it('refuses a private address before any request to OCR.space', async () => {
 		for (const file of [
 			'https://127.0.0.1/scan.png',

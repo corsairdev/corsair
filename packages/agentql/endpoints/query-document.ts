@@ -5,6 +5,12 @@ import type { AgentQLEndpoints } from '../index';
 import { buildQueryDocumentCacheKey, hashFileContent } from './cache-keys';
 import type { AgentQLQueryDocumentResponse } from './types';
 
+/**
+ * Most bytes taken from a link, base64 or a data: URL: core's download default,
+ * passed explicitly so inline base64 is held to it too (core caps it only when asked).
+ */
+const FILE_MAX_BYTES = 25 * 1024 * 1024;
+
 export const queryDocument: AgentQLEndpoints['queryDocument'] = async (
 	ctx,
 	input,
@@ -17,6 +23,7 @@ export const queryDocument: AgentQLEndpoints['queryDocument'] = async (
 		file = input.file;
 	} else {
 		const resolved = await resolveFileInput(input.file, {
+			maxBytes: FILE_MAX_BYTES,
 			fallbackName: 'document',
 		});
 		file = resolved.file;

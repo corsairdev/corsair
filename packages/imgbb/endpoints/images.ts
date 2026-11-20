@@ -46,7 +46,13 @@ export const upload: ImgBBEndpoints['upload'] = async (ctx, input) => {
 	// `unknown` as-is, and unwraps it to just the useful `data` object.
 	const envelope = ImgBBUploadEnvelopeSchema.parse(raw);
 
-	await logEventFromContext(ctx, 'imgbb.images.upload', { name }, 'completed');
+	// Only the name the caller gave: one taken from the file could carry personal data.
+	await logEventFromContext(
+		ctx,
+		'imgbb.images.upload',
+		{ name: input.name },
+		'completed',
+	);
 
 	return envelope.data;
 };

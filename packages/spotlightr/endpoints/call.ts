@@ -6,6 +6,12 @@ import type { SpotlightrContext } from '..';
 import type { SpotlightrRequest } from '../client';
 import { makeSpotlightrRequest } from '../client';
 
+/**
+ * Most bytes taken from a link, base64 or a data: URL: core's download default,
+ * passed explicitly so inline base64 is held to it too (core caps it only when asked).
+ */
+const FILE_MAX_BYTES = 25 * 1024 * 1024;
+
 type LogFields = Record<string, string | number | boolean | undefined>;
 
 /**
@@ -65,5 +71,7 @@ export async function uploadFile(
 	fallbackName: string,
 ): Promise<Blob> {
 	if (file instanceof Blob) return file;
-	return (await resolveFileInput(file, { fallbackName })).file;
+	return (
+		await resolveFileInput(file, { maxBytes: FILE_MAX_BYTES, fallbackName })
+	).file;
 }

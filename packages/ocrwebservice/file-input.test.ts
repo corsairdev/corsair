@@ -127,6 +127,19 @@ describe('ocr.recognize file input', () => {
 		expect(new Uint8Array(await body.arrayBuffer())).toEqual(PDF);
 	});
 
+	it('refuses {base64} over the 25 MB limit before any request', async () => {
+		// Core checks the encoded length before decoding, so no 26 MB buffer is built.
+		const base64 = 'A'.repeat(Math.ceil((26 * 1024 * 1024 * 4) / 3));
+		await expect(
+			recognize(ctx, {
+				file: { base64, filename: 'big.pdf', contentType: 'application/pdf' },
+				language: 'english',
+				gettext: true,
+			}),
+		).rejects.toThrow(/limit|too large|bytes/i);
+		expect(mockPost).not.toHaveBeenCalled();
+	});
+
 	it('still sends a Blob as it was given', async () => {
 		const blob = new Blob([PDF], { type: 'application/pdf' });
 

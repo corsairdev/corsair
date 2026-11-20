@@ -20,6 +20,7 @@ jest.mock('corsair/http', () => {
 	const actual = jest.requireActual('corsair/http');
 	return {
 		...actual,
+		// unknown: a pass-through to the real resolveFileInput, which checks its own arguments.
 		resolveFileInput: (input: unknown, options: unknown, deps?: unknown) =>
 			actual.resolveFileInput(input, options, deps ?? mockLinks.deps),
 	};

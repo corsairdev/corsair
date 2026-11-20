@@ -2,7 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { gongRequest } from '../client';
 import type { GongFamilyContext } from './family-context';
 import { gongCredentials } from './family-context';
-import { gongUploadPart } from './file-input';
+import { DEFAULT_FILE_MAX_BYTES, gongUploadPart } from './file-input';
 import type { GongTargetsInputs, GongTargetsOutputs } from './targets-types';
 
 type LocalGongContext = GongFamilyContext;
@@ -53,7 +53,10 @@ export const uploadAssignments: Endpoint<'uploadAssignments'> = async (
 		query: { workspaceId, validateOnly },
 		formData: {
 			// Gong documents no size for this CSV, so core's 25 MB download cap applies.
-			file: await gongUploadPart(file, { fallbackName: 'assignments.csv' }),
+			file: await gongUploadPart(file, {
+				maxBytes: DEFAULT_FILE_MAX_BYTES,
+				fallbackName: 'assignments.csv',
+			}),
 		},
 	});
 	await logEventFromContext(

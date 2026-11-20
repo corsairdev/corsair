@@ -10,6 +10,12 @@ import {
 	TemplateMultipartInputSchema,
 } from './types';
 
+/**
+ * Most bytes taken from a link, base64 or a data: URL: core's download default,
+ * passed explicitly so inline base64 is held to it too (core caps it only when asked).
+ */
+const FILE_MAX_BYTES = 25 * 1024 * 1024;
+
 const InlineTemplateSchema = z.base64();
 
 /**
@@ -35,8 +41,12 @@ async function templateUploadForm(
 	const file =
 		template instanceof Blob
 			? template
-			: (await resolveFileInput(template, { fallbackName: 'template.html' }))
-					.file;
+			: (
+					await resolveFileInput(template, {
+						maxBytes: FILE_MAX_BYTES,
+						fallbackName: 'template.html',
+					})
+				).file;
 	return { template: file, data: JSON.stringify(data) };
 }
 

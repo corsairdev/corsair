@@ -8,6 +8,12 @@ import {
 	PipedriveEndpointOutputSchemas,
 } from './types';
 
+/**
+ * Most bytes taken from a link, base64 or a data: URL: core's download default,
+ * passed explicitly so inline base64 is held to it too (core caps it only when asked).
+ */
+const FILE_MAX_BYTES = 25 * 1024 * 1024;
+
 type QueryScalar = string | number | boolean | undefined;
 
 function toQuery(
@@ -285,7 +291,10 @@ async function productImageFile(
 	data: FileInput,
 ): Promise<{ data: Blob; name?: string }> {
 	if (data instanceof Blob) return { data };
-	const resolved = await resolveFileInput(data, { fallbackName: 'image' });
+	const resolved = await resolveFileInput(data, {
+		maxBytes: FILE_MAX_BYTES,
+		fallbackName: 'image',
+	});
 	return {
 		data: resolved.file,
 		name: /\.[A-Za-z0-9]+$/.test(resolved.filename)

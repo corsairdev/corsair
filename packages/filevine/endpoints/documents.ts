@@ -6,6 +6,12 @@ import {
 	resolveFilevineOrgContext,
 } from '../client';
 
+/**
+ * Most bytes taken from a link, base64 or a data: URL: core's download default,
+ * passed explicitly so inline base64 is held to it too (core caps it only when asked).
+ */
+const FILE_MAX_BYTES = 25 * 1024 * 1024;
+
 function stringToBlob(input: string, encoding: 'base64' | 'text'): Blob {
 	// Explicit encoding only — never guess. 'base64' is strictly validated
 	// (alphabet, padding, length, round-trip) so malformed or truncated input
@@ -61,7 +67,12 @@ async function documentBlob(
 ): Promise<Blob> {
 	if (typeof file === 'string') {
 		if (fileEncoding === undefined && LINK.test(file)) {
-			return (await resolveFileInput(file, { fallbackName: 'document' })).file;
+			return (
+				await resolveFileInput(file, {
+					maxBytes: FILE_MAX_BYTES,
+					fallbackName: 'document',
+				})
+			).file;
 		}
 		return stringToBlob(file, fileEncoding ?? 'text');
 	}
@@ -77,7 +88,12 @@ async function documentBlob(
 		given !== null &&
 		('url' in given || 'base64' in given)
 	) {
-		return (await resolveFileInput(file, { fallbackName: 'document' })).file;
+		return (
+			await resolveFileInput(file, {
+				maxBytes: FILE_MAX_BYTES,
+				fallbackName: 'document',
+			})
+		).file;
 	}
 	throw new FilevineAPIError(
 		'documents.upload file must be a link, {url}, {base64}, Blob, Buffer, Uint8Array, ArrayBuffer, or base64/text string',
