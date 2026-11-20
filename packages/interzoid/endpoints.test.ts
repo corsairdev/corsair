@@ -9,6 +9,11 @@ import {
 } from './endpoints';
 import type { InterzoidContext } from './index';
 
+/** A `then` handler for calls that must reject: a resolved call fails the test. */
+const expectedRejection = (): never => {
+	throw new Error('expected the call to reject');
+};
+
 jest.mock('./client', () => ({
 	...jest.requireActual('./client'),
 	makeInterzoidRequest: jest.fn(),
@@ -78,7 +83,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Matching.getCompanyMatchAdvanced(
 				mockContext,
 				{ company: '', algorithm: 'test' },
-			).catch((e: unknown) => e);
+			).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -117,7 +122,7 @@ describe('Interzoid Endpoints', () => {
 			// `unknown` because a rejection value has no static type; assertions below narrow it.
 			const caught: unknown = await Matching.getFullNameMatch(mockContext, {
 				fullname: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -161,7 +166,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Matching.getAddressMatchAdvanced(
 				mockContext,
 				{ address: '', algorithm: 'test' },
-			).catch((e: unknown) => e);
+			).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -205,7 +210,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Matching.getAddressAndFullNameMatch(
 				mockContext,
 				{ address: '', fullname: '' },
-			).catch((e: unknown) => e);
+			).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -249,7 +254,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Matching.getCompanyAndAddressMatch(
 				mockContext,
 				{ company: '', address: '' },
-			).catch((e: unknown) => e);
+			).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -293,7 +298,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Matching.getCompanyAndFullNameMatch(
 				mockContext,
 				{ company: '', fullname: '' },
-			).catch((e: unknown) => e);
+			).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -335,7 +340,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Matching.getGlobalAddressMatch(
 				mockContext,
 				{ address: '', algorithm: 'test' },
-			).catch((e: unknown) => e);
+			).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -377,7 +382,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Matching.getProductMatch(mockContext, {
 				product: '',
 				algorithm: 'test',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -421,7 +426,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Matching.getOrgMatchScore(mockContext, {
 				org1: '',
 				org2: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -465,7 +470,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Matching.getFullNameMatchScore(
 				mockContext,
 				{ fullname1: '', fullname2: '' },
-			).catch((e: unknown) => e);
+			).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -506,7 +511,7 @@ describe('Interzoid Endpoints', () => {
 			// `unknown` because a rejection value has no static type; assertions below narrow it.
 			const caught: unknown = await Matching.getCompanyMatch(mockContext, {
 				company: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -545,7 +550,7 @@ describe('Interzoid Endpoints', () => {
 			// `unknown` because a rejection value has no static type; assertions below narrow it.
 			const caught: unknown = await Matching.getAddressMatch(mockContext, {
 				address: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -589,7 +594,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Matching.getFullNameParsedMatch(
 				mockContext,
 				{ firstname: '', lastname: '' },
-			).catch((e: unknown) => e);
+			).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -628,7 +633,7 @@ describe('Interzoid Endpoints', () => {
 			// `unknown` because a rejection value has no static type; assertions below narrow it.
 			const caught: unknown = await Matching.getCityMatch(mockContext, {
 				city: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -667,7 +672,7 @@ describe('Interzoid Endpoints', () => {
 			// `unknown` because a rejection value has no static type; assertions below narrow it.
 			const caught: unknown = await Matching.getCountryMatch(mockContext, {
 				country: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -707,7 +712,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Standardization.getOrgStandard(
 				mockContext,
 				{ org: '' },
-			).catch((e: unknown) => e);
+			).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -750,7 +755,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Standardization.getCountryStandard(
 				mockContext,
 				{ country: '', algorithm: 'test' },
-			).catch((e: unknown) => e);
+			).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -804,7 +809,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Standardization.getCountryInfo(
 				mockContext,
 				{ country: '', algorithm: 'test' },
-			).catch((e: unknown) => e);
+			).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -849,7 +854,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Standardization.getStateAbbreviation(
 				mockContext,
 				{ state: '', algorithm: 'test' },
-			).catch((e: unknown) => e);
+			).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -892,7 +897,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Standardization.getCityStandard(
 				mockContext,
 				{ city: '', algorithm: 'test' },
-			).catch((e: unknown) => e);
+			).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -931,7 +936,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Standardization.getOfficialName(
 				mockContext,
 				{ lookup: '' },
-			).catch((e: unknown) => e);
+			).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -977,7 +982,7 @@ describe('Interzoid Endpoints', () => {
 			// `unknown` because a rejection value has no static type; assertions below narrow it.
 			const caught: unknown = await Intelligence.getBusinessInfo(mockContext, {
 				lookup: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -1016,7 +1021,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Intelligence.getParentCompanyInfo(
 				mockContext,
 				{ lookup: '' },
-			).catch((e: unknown) => e);
+			).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -1055,7 +1060,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Intelligence.getExecutiveProfile(
 				mockContext,
 				{ lookup: '' },
-			).catch((e: unknown) => e);
+			).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -1094,7 +1099,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Intelligence.getBusinessInfoDomain(
 				mockContext,
 				{ lookup: '' },
-			).catch((e: unknown) => e);
+			).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -1133,7 +1138,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Intelligence.getBusinessInfoName(
 				mockContext,
 				{ lookup: '' },
-			).catch((e: unknown) => e);
+			).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -1173,7 +1178,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Intelligence.getCompanyVerification(
 				mockContext,
 				{ lookup: '' },
-			).catch((e: unknown) => e);
+			).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -1211,7 +1216,7 @@ describe('Interzoid Endpoints', () => {
 			// `unknown` because a rejection value has no static type; assertions below narrow it.
 			const caught: unknown = await Intelligence.getStockInfo(mockContext, {
 				lookup: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -1249,7 +1254,7 @@ describe('Interzoid Endpoints', () => {
 			// `unknown` because a rejection value has no static type; assertions below narrow it.
 			const caught: unknown = await Intelligence.getIndustryCodes(mockContext, {
 				lookup: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -1287,7 +1292,7 @@ describe('Interzoid Endpoints', () => {
 			// `unknown` because a rejection value has no static type; assertions below narrow it.
 			const caught: unknown = await Intelligence.getSicCodes(mockContext, {
 				lookup: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -1328,7 +1333,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Intelligence.getUniversityInfo(
 				mockContext,
 				{ lookup: '' },
-			).catch((e: unknown) => e);
+			).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -1369,7 +1374,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Intelligence.getProductRecallInfo(
 				mockContext,
 				{ lookup: '' },
-			).catch((e: unknown) => e);
+			).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -1407,7 +1412,7 @@ describe('Interzoid Endpoints', () => {
 			// `unknown` because a rejection value has no static type; assertions below narrow it.
 			const caught: unknown = await Intelligence.getTechStack(mockContext, {
 				lookup: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -1446,7 +1451,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Intelligence.getCompetitorAnalysis(
 				mockContext,
 				{ lookup: '' },
-			).catch((e: unknown) => e);
+			).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -1484,7 +1489,7 @@ describe('Interzoid Endpoints', () => {
 			// `unknown` because a rejection value has no static type; assertions below narrow it.
 			const caught: unknown = await Intelligence.getBuyingSignals(mockContext, {
 				lookup: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -1524,7 +1529,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Intelligence.getPrivateCompanyDealIntel(
 				mockContext,
 				{ lookup: '' },
-			).catch((e: unknown) => e);
+			).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -1565,7 +1570,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Intelligence.getNearestCoffeeShops(
 				mockContext,
 				{ lookup: '' },
-			).catch((e: unknown) => e);
+			).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -1603,7 +1608,7 @@ describe('Interzoid Endpoints', () => {
 			// `unknown` because a rejection value has no static type; assertions below narrow it.
 			const caught: unknown = await Intelligence.getUserXHandle(mockContext, {
 				lookup: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -1641,7 +1646,7 @@ describe('Interzoid Endpoints', () => {
 			// `unknown` because a rejection value has no static type; assertions below narrow it.
 			const caught: unknown = await Intelligence.getXUserProfile(mockContext, {
 				handle: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -1679,7 +1684,7 @@ describe('Interzoid Endpoints', () => {
 			// `unknown` because a rejection value has no static type; assertions below narrow it.
 			const caught: unknown = await Intelligence.getXLast3(mockContext, {
 				handle: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -1717,7 +1722,7 @@ describe('Interzoid Endpoints', () => {
 			// `unknown` because a rejection value has no static type; assertions below narrow it.
 			const caught: unknown = await Intelligence.getEsgProfile(mockContext, {
 				lookup: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -1755,7 +1760,7 @@ describe('Interzoid Endpoints', () => {
 			// `unknown` because a rejection value has no static type; assertions below narrow it.
 			const caught: unknown = await Intelligence.getGovContracts(mockContext, {
 				lookup: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -1794,7 +1799,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Intelligence.getFacilitiesProfile(
 				mockContext,
 				{ lookup: '' },
-			).catch((e: unknown) => e);
+			).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -1835,7 +1840,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Intelligence.getBuildingProfile(
 				mockContext,
 				{ address: '' },
-			).catch((e: unknown) => e);
+			).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -1876,7 +1881,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Intelligence.getPropertyHistory(
 				mockContext,
 				{ address: '' },
-			).catch((e: unknown) => e);
+			).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -1915,7 +1920,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Intelligence.getSalesUseTaxRates(
 				mockContext,
 				{ lookup: '' },
-			).catch((e: unknown) => e);
+			).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -1954,7 +1959,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Intelligence.getIrsPerDiemRates(
 				mockContext,
 				{ lookup: '' },
-			).catch((e: unknown) => e);
+			).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -1992,7 +1997,7 @@ describe('Interzoid Endpoints', () => {
 			// `unknown` because a rejection value has no static type; assertions below narrow it.
 			const caught: unknown = await Intelligence.getEuVatRates(mockContext, {
 				lookup: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -2037,7 +2042,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Intelligence.getCustomsDutyRates(
 				mockContext,
 				{ origin: '', lookup: '', hscode: '' },
-			).catch((e: unknown) => e);
+			).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -2076,7 +2081,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Intelligence.getMuniIssuerProfile(
 				mockContext,
 				{ lookup: '' },
-			).catch((e: unknown) => e);
+			).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -2121,7 +2126,7 @@ describe('Interzoid Endpoints', () => {
 				topic: '',
 				output: '',
 				model: 'test',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -2169,7 +2174,7 @@ describe('Interzoid Endpoints', () => {
 			// `unknown` because a rejection value has no static type; assertions below narrow it.
 			const caught: unknown = await Validation.getEmailInfo(mockContext, {
 				email: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -2208,7 +2213,7 @@ describe('Interzoid Endpoints', () => {
 			// `unknown` because a rejection value has no static type; assertions below narrow it.
 			const caught: unknown = await Validation.getEmailTrustScore(mockContext, {
 				lookup: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -2246,7 +2251,7 @@ describe('Interzoid Endpoints', () => {
 			// `unknown` because a rejection value has no static type; assertions below narrow it.
 			const caught: unknown = await Validation.getEmailDomainType(mockContext, {
 				email: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -2284,7 +2289,7 @@ describe('Interzoid Endpoints', () => {
 			// `unknown` because a rejection value has no static type; assertions below narrow it.
 			const caught: unknown = await Validation.getIpProfile(mockContext, {
 				lookup: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -2322,7 +2327,7 @@ describe('Interzoid Endpoints', () => {
 			// `unknown` because a rejection value has no static type; assertions below narrow it.
 			const caught: unknown = await Validation.getPhoneProfile(mockContext, {
 				lookup: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -2361,7 +2366,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Validation.getGlobalNumberInfo(
 				mockContext,
 				{ intlnumber: '' },
-			).catch((e: unknown) => e);
+			).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -2400,7 +2405,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Validation.getAreaCodeFromNumber(
 				mockContext,
 				{ number: '' },
-			).catch((e: unknown) => e);
+			).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -2438,7 +2443,7 @@ describe('Interzoid Endpoints', () => {
 			// `unknown` because a rejection value has no static type; assertions below narrow it.
 			const caught: unknown = await Validation.getAreaCode(mockContext, {
 				areacode: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -2476,7 +2481,7 @@ describe('Interzoid Endpoints', () => {
 			// `unknown` because a rejection value has no static type; assertions below narrow it.
 			const caught: unknown = await Validation.getZipCodeInfo(mockContext, {
 				zip: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -2516,7 +2521,7 @@ describe('Interzoid Endpoints', () => {
 			// `unknown` because a rejection value has no static type; assertions below narrow it.
 			const caught: unknown = await Validation.addressParse(mockContext, {
 				address: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -2554,7 +2559,7 @@ describe('Interzoid Endpoints', () => {
 			// `unknown` because a rejection value has no static type; assertions below narrow it.
 			const caught: unknown = await Utilities.getEntityType(mockContext, {
 				text: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -2590,7 +2595,7 @@ describe('Interzoid Endpoints', () => {
 			// `unknown` because a rejection value has no static type; assertions below narrow it.
 			const caught: unknown = await Utilities.getGender(mockContext, {
 				name: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -2628,7 +2633,7 @@ describe('Interzoid Endpoints', () => {
 			// `unknown` because a rejection value has no static type; assertions below narrow it.
 			const caught: unknown = await Utilities.getNameOrigin(mockContext, {
 				name: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -2672,7 +2677,7 @@ describe('Interzoid Endpoints', () => {
 			// `unknown` because a rejection value has no static type; assertions below narrow it.
 			const caught: unknown = await Utilities.identifyLanguage(mockContext, {
 				text: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -2710,7 +2715,7 @@ describe('Interzoid Endpoints', () => {
 			// `unknown` because a rejection value has no static type; assertions below narrow it.
 			const caught: unknown = await Utilities.translateToEnglish(mockContext, {
 				text: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -2750,7 +2755,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Utilities.translateToAny(mockContext, {
 				text: '',
 				to: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -2793,7 +2798,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Utilities.getGlobalLatency(mockContext, {
 				origin: '',
 				url: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -2836,7 +2841,7 @@ describe('Interzoid Endpoints', () => {
 			const caught: unknown = await Utilities.getGlobalPageLoad(mockContext, {
 				origin: '',
 				url: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -2874,7 +2879,7 @@ describe('Interzoid Endpoints', () => {
 			// `unknown` because a rejection value has no static type; assertions below narrow it.
 			const caught: unknown = await Utilities.getCurrencyRate(mockContext, {
 				symbol: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -2920,7 +2925,7 @@ describe('Interzoid Endpoints', () => {
 				from: '',
 				to: '',
 				amount: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -2958,7 +2963,7 @@ describe('Interzoid Endpoints', () => {
 			// `unknown` because a rejection value has no static type; assertions below narrow it.
 			const caught: unknown = await Utilities.getWeatherZipCode(mockContext, {
 				zip: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -2996,7 +3001,7 @@ describe('Interzoid Endpoints', () => {
 			// `unknown` because a rejection value has no static type; assertions below narrow it.
 			const caught: unknown = await Utilities.getGlobalWeather(mockContext, {
 				location: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
@@ -3034,7 +3039,7 @@ describe('Interzoid Endpoints', () => {
 			// `unknown` because a rejection value has no static type; assertions below narrow it.
 			const caught: unknown = await Utilities.getGlobalTime(mockContext, {
 				locale: '',
-			}).catch((e: unknown) => e);
+			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
