@@ -494,6 +494,7 @@ export const BaseProviders = [
 	'parma',
 	'parsehub',
 	'parseur',
+	'parsio',
 	'pdfapi',
 	'pdfco',
 	'pdfless',
@@ -1241,6 +1242,7 @@ export const ProviderDisplayNames = {
 	parma: 'Parma',
 	parsehub: 'ParseHub',
 	parseur: 'Parseur',
+	parsio: 'Parsio',
 	pdfapi: 'PDF-API.io',
 	pdfco: 'PDF.co',
 	pdfless: 'PDFLess',
@@ -1995,6 +1997,7 @@ export type AllProviders =
 	| 'parma'
 	| 'parsehub'
 	| 'parseur'
+	| 'parsio'
 	| 'pdfapi'
 	| 'pdfco'
 	| 'pdfless'
