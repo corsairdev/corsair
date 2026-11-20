@@ -169,9 +169,71 @@ describe('client.ts', () => {
 			});
 			expect(sanitized.message).toBe('Invalid request: [REDACTED]');
 		});
+
+		it('redacts customer data used as error-body keys and URL path values', () => {
+			const error = new ApiError(
+				{
+					method: 'GET',
+					url: '/v2/unsubscribes/variables/https%3A%2F%2Fwww.linkedin.com%2Fin%2Fjane-doe',
+				},
+				{
+					url: 'https://api.lemlist.com/api/v2/unsubscribes/variables/https%3A%2F%2Fwww.linkedin.com%2Fin%2Fjane-doe',
+					ok: false,
+					status: 400,
+					statusText: 'Bad Request',
+					body: { rejected: { 'jane@example.com': 'invalid' } },
+				},
+				'Bad Request',
+			);
+
+			const sanitized = sanitizeApiError(error);
+
+			expect(JSON.stringify(sanitized.body)).not.toContain('jane@example.com');
+			expect(sanitized.url).toBe(
+				'https://api.lemlist.com/api/v2/unsubscribes/variables/[REDACTED]',
+			);
+			expect(sanitized.request.url).toBe(
+				'/v2/unsubscribes/variables/[REDACTED]',
+			);
+		});
 	});
 
 	describe('makeLemlistRequest', () => {
+		it('reads text replies as bytes and decodes them (live: plain text under application/json)', async () => {
+			const bytes = (text: string) => ({
+				bytes: new TextEncoder().encode(text),
+				contentType: 'application/json',
+			});
+			mockRequest.mockResolvedValueOnce(bytes('Variable subscribed'));
+			await expect(
+				makeLemlistRequest('/v2/unsubscribes/variables/x', 'test_key', {
+					method: 'DELETE',
+					text: true,
+				}),
+			).resolves.toBe('Variable subscribed');
+			expect(mockRequest.mock.calls[0]?.[1]).toEqual(
+				expect.objectContaining({ responseType: 'binary' }),
+			);
+
+			mockRequest.mockResolvedValueOnce(bytes('{"count":1}'));
+			await expect(
+				makeLemlistRequest('/v2/unsubscribes/variables', 'test_key', {
+					method: 'POST',
+					body: { values: ['a@example.com'] },
+					text: true,
+				}),
+			).resolves.toEqual({ count: 1 });
+		});
+
+		it('refuses "." and ".." path identifiers before any request', async () => {
+			await expect(
+				makeLemlistRequest('/activities/../recording-transcript', 'test_key', {
+					method: 'DELETE',
+				}),
+			).rejects.toThrow('cannot be "." or ".."');
+			expect(mockRequest).not.toHaveBeenCalled();
+		});
+
 		it('sends correct base URL, headers and rate limit config', async () => {
 			mockRequest.mockResolvedValue({ _id: 'tea_123' });
 

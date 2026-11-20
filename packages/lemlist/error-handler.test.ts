@@ -27,6 +27,12 @@ describe('error-handlers.ts', () => {
 			expect(result).toEqual({ maxRetries: 2, headersRetryAfterMs: 3500 });
 		});
 
+		it('does not treat a non-429 provider error that mentions a rate limit as one', () => {
+			const err = makeApiError(504, 'Upstream rate limit');
+			expect(errorHandlers.RATE_LIMIT_ERROR.match(err)).toBe(false);
+			expect(errorHandlers.SERVER_ERROR.match(err)).toBe(true);
+		});
+
 		it('matches rate limit error messages', async () => {
 			const err = new Error('Rate limit exceeded');
 			expect(errorHandlers.RATE_LIMIT_ERROR.match(err)).toBe(true);

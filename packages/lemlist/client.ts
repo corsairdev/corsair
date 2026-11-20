@@ -137,6 +137,8 @@ function sanitizePathSegment(segment: string): string {
 	}
 	if (
 		/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i.test(decoded) ||
+		/^https?:\/\//i.test(decoded) ||
+		/linkedin\.com\//i.test(decoded) ||
 		/\+?\d[\d ().-]{6,}\d/.test(decoded) ||
 		/^[A-Z]{2,6}_[A-Z0-9-]{2,}$/i.test(decoded)
 	) {
@@ -204,7 +206,9 @@ function sanitizeProviderData(
 	const sanitized: Record<string, unknown> = {};
 	for (const key of Object.keys(value)) {
 		const normalized = key.toLowerCase().replace(/[-_]/g, '');
-		sanitized[key] = SENSITIVE_ERROR_FIELDS.has(normalized)
+		// Keys can carry customer data too (e.g. `{ rejected: { "a@b.co": "invalid" } }`).
+		const safeKey = sanitizeErrorText(key, apiKey, requestValues);
+		sanitized[safeKey] = SENSITIVE_ERROR_FIELDS.has(normalized)
 			? '[REDACTED]'
 			: sanitizeProviderData(value[key], apiKey, requestValues);
 	}
@@ -257,7 +261,34 @@ export type LemlistRequestOptions = {
 	body?: Record<string, unknown> | unknown[];
 	query?: Record<string, LemlistQueryValue>;
 	timeout?: number;
+	/**
+	 * Some Lemlist writes answer plain text (`Variable subscribed`) under an
+	 * `application/json` content type, which core cannot parse. Read the body as
+	 * bytes and return parsed JSON when it is JSON, else the text.
+	 */
+	text?: boolean;
 };
+
+const textDecoder = new TextDecoder();
+
+// `unknown` because the decoded body may be JSON of any shape or plain text.
+function decodeTextResponse(value: unknown): unknown {
+	if (
+		typeof value !== 'object' ||
+		value === null ||
+		!('bytes' in value) ||
+		!(value.bytes instanceof Uint8Array)
+	) {
+		return value;
+	}
+	const text = textDecoder.decode(value.bytes).trim();
+	if (text.length === 0) return '';
+	try {
+		return JSON.parse(text);
+	} catch {
+		return text;
+	}
+}
 
 /**
  * Issues an authenticated request to the Lemlist API.
@@ -271,7 +302,21 @@ export async function makeLemlistRequest<T>(
 		throw new AuthMissingError('lemlist', 'api_key');
 	}
 
-	const { method = 'GET', body, query, timeout = 20000 } = options;
+	// Ids are encoded with encodeURIComponent, which leaves `.` and `..` intact;
+	// fetch would collapse them into a different route.
+	if (
+		endpoint
+			.split(/[?#]/, 1)[0]
+			?.split('/')
+			.some((segment) => segment === '.' || segment === '..')
+	) {
+		throw new LemlistAPIError(
+			'Lemlist path identifiers cannot be "." or ".."',
+			'INVALID_PATH',
+		);
+	}
+
+	const { method = 'GET', body, query, timeout = 20000, text } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: LEMLIST_API_BASE,
@@ -295,12 +340,14 @@ export async function makeLemlistRequest<T>(
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
 		query: compactQuery(query),
+		...(text ? { responseType: 'binary' as const } : {}),
 	};
 
 	try {
-		return await request<T>(config, requestOptions, {
+		const result = await request<T>(config, requestOptions, {
 			rateLimitConfig: LEMLIST_RATE_LIMIT_CONFIG,
 		});
+		return text ? (decodeTextResponse(result) as T) : result;
 	} catch (error: unknown) {
 		// `unknown` because caught errors in TypeScript have no static type.
 		if (error instanceof ApiError) {
