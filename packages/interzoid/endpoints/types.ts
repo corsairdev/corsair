@@ -412,6 +412,12 @@ export type GetCityStandardOutput = z.infer<typeof GetCityStandardOutputSchema>;
 export const GetOfficialNameInputSchema = z
 	.object({
 		lookup: z.string().min(1, 'lookup is required'),
+		language: z
+			.string()
+			.optional()
+			.describe(
+				'Return the values in this language, as a two-letter code such as `fr`. English when omitted.',
+			),
 	})
 	.strict();
 export type GetOfficialNameInput = z.infer<typeof GetOfficialNameInputSchema>;
@@ -671,6 +677,12 @@ export type GetIndustryCodesOutput = z.infer<
 export const GetSicCodesInputSchema = z
 	.object({
 		lookup: z.string().min(1, 'lookup is required'),
+		language: z
+			.string()
+			.optional()
+			.describe(
+				'Return the values in this language, as a two-letter code such as `fr`. English when omitted.',
+			),
 	})
 	.strict();
 export type GetSicCodesInput = z.infer<typeof GetSicCodesInputSchema>;
@@ -1292,7 +1304,11 @@ export type GetEuVatRatesOutput = z.infer<typeof GetEuVatRatesOutputSchema>;
 
 export const GetCustomsDutyRatesInputSchema = z
 	.object({
-		origin: z.string().min(1, 'origin is required'),
+		origin: z
+			.string()
+			.min(1)
+			.optional()
+			.describe('Optional; Interzoid picks its default when omitted.'),
 		lookup: z.string().min(1, 'lookup is required'),
 		hscode: z.string().min(1, 'hscode is required'),
 		language: z
@@ -1772,7 +1788,11 @@ export type TranslateToAnyOutput = z.infer<typeof TranslateToAnyOutputSchema>;
 
 export const GetGlobalLatencyInputSchema = z
 	.object({
-		origin: z.string().min(1, 'origin is required'),
+		origin: z
+			.string()
+			.min(1)
+			.optional()
+			.describe('Optional; Interzoid picks its default when omitted.'),
 		url: z.string().min(1, 'url is required'),
 	})
 	.strict();

@@ -65,6 +65,14 @@ describe('makeInterzoidRequest', () => {
 		});
 	});
 
+	it("gives slow premium lookups 90 s instead of core's 20 s", async () => {
+		mockedRequest.mockResolvedValue({ Code: 'Success' });
+		await makeInterzoidRequest('/getcustom', 'test-key', {
+			query: { topic: 't', lookup: 'IBM', output: 'city' },
+		});
+		expect(mockedRequest.mock.calls[0]?.[0]?.TIMEOUT).toBe(90_000);
+	});
+
 	it('forwards query parameters correctly', async () => {
 		mockedRequest.mockResolvedValue({ SimKey: 'xyz123', Code: 'Success' });
 

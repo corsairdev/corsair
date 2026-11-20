@@ -324,7 +324,7 @@ await corsair.interzoid.api.intelligence.getCustomsDutyRates({ origin: 'China', 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `origin` | `string` | Yes | — |
+| `origin` | `string` | No | Optional; Interzoid picks its default when omitted. |
 | `lookup` | `string` | Yes | — |
 | `hscode` | `string` | Yes | — |
 | `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
@@ -984,6 +984,7 @@ await corsair.interzoid.api.intelligence.getSicCodes({ lookup: 'Safeway Inc.' })
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
 
 
 
@@ -1874,6 +1875,7 @@ await corsair.interzoid.api.standardization.getOfficialName({ lookup: 'Apple' })
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
 
 
 
@@ -2120,7 +2122,7 @@ await corsair.interzoid.api.utilities.getGlobalLatency({ origin: 'Singapore', ur
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `origin` | `string` | Yes | — |
+| `origin` | `string` | No | Optional; Interzoid picks its default when omitted. |
 | `url` | `string` | Yes | — |
 
 
@@ -2577,7 +2579,7 @@ await corsair.interzoid.api.validation.getAreaCodeFromNumber({ number: '415-555-
 
 `validation.getEmailDomainType`
 
-Classify email domain into Business, Government, Education, Generic, or Disposable
+Classify email domain into Business, Government, Education, Generic or Disposable; Unknown when Interzoid cannot tell
 
 **Risk:** `read`
 

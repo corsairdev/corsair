@@ -792,7 +792,7 @@ const interzoidEndpointMeta = {
 	'validation.getEmailDomainType': {
 		riskLevel: 'read',
 		description:
-			'Classify email domain into Business, Government, Education, Generic, or Disposable',
+			'Classify email domain into Business, Government, Education, Generic or Disposable; Unknown when Interzoid cannot tell',
 	},
 	'validation.getIpProfile': {
 		riskLevel: 'read',

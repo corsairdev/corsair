@@ -14,6 +14,8 @@ export class InterzoidAPIError extends Error {
 
 export const INTERZOID_API_BASE = 'https://api.interzoid.com';
 
+export const INTERZOID_TIMEOUT_MS = 90_000;
+
 export async function makeInterzoidRequest<T>(
 	endpoint: string,
 	apiKey?: string,
@@ -36,6 +38,9 @@ export async function makeInterzoidRequest<T>(
 
 	const config: OpenAPIConfig = {
 		BASE: INTERZOID_API_BASE,
+		// Premium lookups (web-search AI models, 10 to 25 credits) can take longer
+		// than core's 20 s default, and an aborted call may still be billed.
+		TIMEOUT: INTERZOID_TIMEOUT_MS,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',

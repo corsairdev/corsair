@@ -2139,6 +2139,8 @@ describe('Interzoid Endpoints', () => {
 		// Interzoid answers 400 "Insufficient parameters: lookup is required"
 		// without it (probed 11-20), so the schema refuses the call first.
 		it('refuses a call without lookup before any request', async () => {
+			// `unknown` because a rejection value has no static type; `as never`
+			// lets the test pass an input the types forbid, which is the point.
 			const caught: unknown = await Intelligence.getCustomData(mockContext, {
 				topic: 'company headquarters',
 				output: 'city,country',
