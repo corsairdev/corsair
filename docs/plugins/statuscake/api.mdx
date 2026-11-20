@@ -26,7 +26,7 @@ await corsair.statuscake.api.contactGroups.create({ name: 'DevOps', email_addres
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `name` | `string` | No | Name of the contact group. |
+| `name` | `string` | Yes | Name of the contact group. |
 | `email_addresses` | `string[]` | No | List of email addresses. Sending an empty array clears them. |
 | `mobile_numbers` | `string[]` | No | International format mobile numbers. Sending an empty array clears them. |
 | `integrations` | `string[]` | No | Integration IDs. Sending an empty array clears them. |
@@ -246,8 +246,8 @@ await corsair.statuscake.api.heartbeat.create({ name: 'nightly backup', period: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `name` | `string` | No | Name of the check. |
-| `period` | `number` | No | Seconds since the last ping before the check is considered down. Defaults to 1800. |
+| `name` | `string` | Yes | Name of the check. |
+| `period` | `number` | Yes | Seconds since the last ping before the check is considered down. Defaults to 1800. |
 | `contact_groups` | `string[]` | No | Contact groups alerted by this check. |
 | `host` | `string` | No | Name of the hosting provider. |
 | `paused` | `boolean` | No | Whether the check should be run. Defaults to false. |
@@ -573,10 +573,10 @@ await corsair.statuscake.api.maintenanceWindows.create({ name: 'deploy window', 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `name` | `string` | No | Name of the maintenance window. |
-| `start_at` | `string` | No | Start of the window in RFC3339 format; the UTC offset is ignored. |
-| `end_at` | `string` | No | End of the window in RFC3339 format; the UTC offset is ignored. |
-| `timezone` | `string` | No | Timezone of the window, from the tz database (such as Europe/London). |
+| `name` | `string` | Yes | Name of the maintenance window. |
+| `start_at` | `string` | Yes | Start of the window in RFC3339 format; the UTC offset is ignored. |
+| `end_at` | `string` | Yes | End of the window in RFC3339 format; the UTC offset is ignored. |
+| `timezone` | `string` | Yes | Timezone of the window, from the tz database (such as Europe/London). |
 | `repeat_interval` | `never \| 1d \| 1w \| 2w \| 1m` | No | How often the window repeats. Defaults to never. |
 | `tests` | `string[]` | No | Uptime checks the window covers. At least one of tests and tags is required on create. |
 | `tags` | `string[]` | No | List of tags. Sending an empty array clears every tag on an update. |
@@ -804,10 +804,10 @@ await corsair.statuscake.api.pagespeed.create({ name: 'marketing site', website_
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `name` | `string` | No | Name of the check. |
-| `website_url` | `string` | No | URL, FQDN, or IP address of the website under test. |
-| `check_rate` | `number \| string` | No | Seconds between checks, one of 60, 300, 600, 900, 1800, 3600, 86400. Defaults to 300 (5 minutes). |
-| `region` | `AU \| CA \| DE \| FR \| IN \| JP \| NL \| SG \| UK \| US \| USW` | No | Region to run the check from, from the pagespeed locations list. |
+| `name` | `string` | Yes | Name of the check. |
+| `website_url` | `string` | Yes | URL, FQDN, or IP address of the website under test. |
+| `check_rate` | `number \| string` | Yes | Seconds between checks, one of 60, 300, 600, 900, 1800, 3600, 86400. Defaults to 300 (5 minutes). |
+| `region` | `AU \| CA \| DE \| FR \| IN \| JP \| NL \| SG \| UK \| US \| USW` | Yes | Region to run the check from, from the pagespeed locations list. |
 | `alert_bigger` | `number` | No | Alert when the page is larger than this many kb. Defaults to 0 (disabled). |
 | `alert_slower` | `number` | No | Alert when the page loads slower than this many ms. Defaults to 0 (disabled). |
 | `alert_smaller` | `number` | No | Alert when the page is smaller than this many kb. Defaults to 0 (disabled). |
@@ -1114,9 +1114,9 @@ await corsair.statuscake.api.ssl.create({ website_url: 'https://www.example.com'
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `website_url` | `string` | No | URL of the server under test. Must begin with `https://`. |
-| `check_rate` | `number \| string` | No | Seconds between checks, one of 300, 600, 1800, 3600, 86400, 2073600. Defaults to 86400 (daily). |
-| `alert_at` | `number[]` | No | Exactly 3 numbers: the days before expiry when alerts are sent, such as [30, 14, 7]. |
+| `website_url` | `string` | Yes | URL of the server under test. Must begin with `https://`. |
+| `check_rate` | `number \| string` | Yes | Seconds between checks, one of 300, 600, 1800, 3600, 86400, 2073600. Defaults to 86400 (daily). |
+| `alert_at` | `number[]` | Yes | Exactly 3 numbers: the days before expiry when alerts are sent, such as [30, 14, 7]. |
 | `alert_broken` | `boolean` | No | Alert when certificate issues are found. Defaults to false. |
 | `alert_expiry` | `boolean` | No | Alert when the certificate is to expire. Defaults to false. |
 | `alert_mixed` | `boolean` | No | Alert when mixed content is found. Defaults to false. |
@@ -1464,10 +1464,10 @@ await corsair.statuscake.api.uptime.create({ name: 'statuscake.com', test_type: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `name` | `string` | No | Name of the check. |
-| `test_type` | `DNS \| HEAD \| HTTP \| PING \| SMTP \| SSH \| TCP` | No | Kind of check. Required on create. |
-| `website_url` | `string` | No | URL, FQDN, or IP address of the server under test. |
-| `check_rate` | `number \| string` | No | Seconds between checks, one of 0, 30, 60, 300, 900, 1800, 3600, 86400. 0 runs the check only from the regions set in regions. |
+| `name` | `string` | Yes | Name of the check. |
+| `test_type` | `DNS \| HEAD \| HTTP \| PING \| SMTP \| SSH \| TCP` | Yes | Kind of check. Required on create. |
+| `website_url` | `string` | Yes | URL, FQDN, or IP address of the server under test. |
+| `check_rate` | `number \| string` | Yes | Seconds between checks, one of 0, 30, 60, 300, 900, 1800, 3600, 86400. 0 runs the check only from the regions set in regions. |
 | `basic_username` | `string` | No | Basic authentication username. |
 | `basic_password` | `string` | No | Basic authentication password. |
 | `confirmation` | `number` | No | Confirmation servers that must agree on downtime. Defaults to 2. |
@@ -1831,7 +1831,6 @@ await corsair.statuscake.api.uptime.update({ test_id: '123456', paused: true });
 |------|------|----------|-------------|
 | `test_id` | `string` | Yes | The uptime check ID. |
 | `name` | `string` | No | Name of the check. |
-| `test_type` | `DNS \| HEAD \| HTTP \| PING \| SMTP \| SSH \| TCP` | No | Kind of check. Required on create. |
 | `website_url` | `string` | No | URL, FQDN, or IP address of the server under test. |
 | `check_rate` | `number \| string` | No | Seconds between checks, one of 0, 30, 60, 300, 900, 1800, 3600, 86400. 0 runs the check only from the regions set in regions. |
 | `basic_username` | `string` | No | Basic authentication username. |
