@@ -10028,5 +10028,165 @@
         "title": "Return OpenAI and Gemini downloads as file outputs"
       }
     ]
+  },
+  {
+    "date": "2026-11-20",
+    "package": "@corsair-dev/carbone",
+    "dir": "packages/carbone",
+    "name": "Carbone",
+    "version": "0.1.1",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2643,
+        "title": "Return downloaded files as file outputs in nine plugins"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-20",
+    "package": "@corsair-dev/gmicloud",
+    "dir": "packages/gmicloud",
+    "name": "GMI Cloud",
+    "version": "0.1.1",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2643,
+        "title": "Return downloaded files as file outputs in nine plugins"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-20",
+    "package": "@corsair-dev/googledocs",
+    "dir": "packages/googledocs",
+    "name": "Google Docs",
+    "version": "0.1.6",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2643,
+        "title": "Return downloaded files as file outputs in nine plugins"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-20",
+    "package": "@corsair-dev/googleslides",
+    "dir": "packages/googleslides",
+    "name": "Google Slides",
+    "version": "0.1.1",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2643,
+        "title": "Return downloaded files as file outputs in nine plugins"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-20",
+    "package": "@corsair-dev/openai",
+    "dir": "packages/openai",
+    "name": "OpenAI",
+    "version": "0.1.4",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2643,
+        "title": "Return downloaded files as file outputs in nine plugins"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-20",
+    "package": "@corsair-dev/salesforce",
+    "dir": "packages/salesforce",
+    "name": "Salesforce",
+    "version": "0.1.2",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2643,
+        "title": "Return downloaded files as file outputs in nine plugins"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-20",
+    "package": "@corsair-dev/slackbot",
+    "dir": "packages/slackbot",
+    "name": "Slack Bot",
+    "version": "0.1.1",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2643,
+        "title": "Return downloaded files as file outputs in nine plugins"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-20",
+    "package": "@corsair-dev/tinyfish",
+    "dir": "packages/tinyfish",
+    "name": "TinyFish",
+    "version": "0.1.1",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2643,
+        "title": "Return downloaded files as file outputs in nine plugins"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-20",
+    "package": "@corsair-dev/tinypng",
+    "dir": "packages/tinypng",
+    "name": "TinyPNG",
+    "version": "0.1.1",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2643,
+        "title": "Return downloaded files as file outputs in nine plugins"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-20",
+    "package": "@corsair-dev/waiverfile",
+    "dir": "packages/waiverfile",
+    "name": "WaiverFile",
+    "version": "0.1.1",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2643,
+        "title": "Return downloaded files as file outputs in nine plugins"
+      }
+    ]
   }
 ]

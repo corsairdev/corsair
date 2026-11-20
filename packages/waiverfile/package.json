@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/waiverfile",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "WaiverFile plugin for Corsair - read signed waivers and their PDFs, search and page through waiver data, manage events and event categories, list waiver forms, and subscribe URLs to WaiverFile webhooks",
   "type": "module",
   "main": "./dist/index.js",

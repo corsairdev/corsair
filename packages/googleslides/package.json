@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/googleslides",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Google Slides plugin for Corsair: create presentations, build slides, edit text and elements, read speaker notes, and export to PDF or PPTX.",
   "type": "module",
   "main": "./dist/index.js",

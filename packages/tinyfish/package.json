@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/tinyfish",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "TinyFish plugin for Corsair — web search, page fetch, cloud browser sessions, web automation agents, cited research, profiles and wallet",
   "type": "module",
   "main": "./dist/index.js",
