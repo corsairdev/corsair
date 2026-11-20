@@ -5107,6 +5107,15 @@
                 ]
               },
               {
+                "group": "Storeganise",
+                "pages": [
+                  "plugins/storeganise/overview",
+                  "plugins/storeganise/api",
+                  "plugins/storeganise/database",
+                  "plugins/storeganise/webhooks"
+                ]
+              },
+              {
                 "group": "Storerocket",
                 "pages": [
                   "plugins/storerocket/overview",
