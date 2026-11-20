@@ -78,9 +78,9 @@ const webhookPaths = [
 
 const riskLevels: Record<string, string> = {
 	...Object.fromEntries(operations.map((op) => [op, 'read'])),
-	'account.topup': 'write',
-	'campaigns.approve': 'write',
-	'campaigns.book': 'write',
+	'account.topup': 'destructive',
+	'campaigns.approve': 'destructive',
+	'campaigns.book': 'destructive',
 	'campaigns.create': 'write',
 	'campaigns.delete': 'destructive',
 	'campaigns.sample': 'write',
@@ -93,16 +93,16 @@ const riskLevels: Record<string, string> = {
 	'groups.delete': 'destructive',
 	'groups.purge': 'destructive',
 	'groups.removeRecipients': 'write',
-	'letters.cancel': 'write',
-	'letters.create': 'write',
-	'letters.post': 'write',
-	'postcards.cancel': 'write',
-	'postcards.create': 'write',
+	'letters.cancel': 'destructive',
+	'letters.create': 'destructive',
+	'letters.post': 'destructive',
+	'postcards.cancel': 'destructive',
+	'postcards.create': 'destructive',
 	'recipients.create': 'write',
 	'recipients.delete': 'destructive',
 	'recipients.import': 'write',
 	'selections.create': 'write',
-	'sms.create': 'write',
+	'sms.create': 'destructive',
 };
 
 describe('stannp plugin definition', () => {

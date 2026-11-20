@@ -13,11 +13,11 @@ pnpm add @corsair-dev/stannp
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
 | `account.balance` | `stannp.api.account.balance` | `read` | Read the account balance |
-| `account.topup` | `stannp.api.account.topup` | `write` | Top up the account balance from the saved card; the amount is charged for real |
+| `account.topup` | `stannp.api.account.topup` | `destructive` | Top up the account balance from the saved card; the amount is charged for real |
 | `addresses.validate` | `stannp.api.addresses.validate` | `read` | Validate a UK or US postal address and get the corrected form with a validity flag |
-| `campaigns.approve` | `stannp.api.campaigns.approve` | `write` | Approve a campaign, locking its design and recipient selection; the lock cannot be undone |
+| `campaigns.approve` | `stannp.api.campaigns.approve` | `destructive` | Approve a campaign, locking its design and recipient selection; the lock cannot be undone |
 | `campaigns.availableDates` | `stannp.api.campaigns.availableDates` | `read` | List the dates a campaign can be booked for |
-| `campaigns.book` | `stannp.api.campaigns.book` | `write` | Book a campaign for dispatch on a date, paying from the balance; this starts a real mailing |
+| `campaigns.book` | `stannp.api.campaigns.book` | `destructive` | Book a campaign for dispatch on a date, paying from the balance; this starts a real mailing |
 | `campaigns.cost` | `stannp.api.campaigns.cost` | `read` | Price a campaign: per-piece rates and totals for validated, non-validated and international recipients |
 | `campaigns.create` | `stannp.api.campaigns.create` | `write` | Create a campaign for a group from a template, copied design or uploaded artwork; nothing sends until it is booked |
 | `campaigns.delete` | `stannp.api.campaigns.delete` | `destructive` | Permanently delete a campaign that has not been booked; this cannot be undone |
@@ -35,12 +35,12 @@ pnpm add @corsair-dev/stannp
 | `groups.list` | `stannp.api.groups.list` | `read` | List mailing groups with recipient counts and import progress, paged with offset and limit |
 | `groups.purge` | `stannp.api.groups.purge` | `destructive` | Remove every recipient from a group; with delete_recipients the recipients are deleted account-wide, which cannot be undone |
 | `groups.removeRecipients` | `stannp.api.groups.removeRecipients` | `write` | Remove recipients from a group; the recipients stay on the account |
-| `letters.cancel` | `stannp.api.letters.cancel` | `write` | Cancel a letter that has not started processing yet |
-| `letters.create` | `stannp.api.letters.create` | `write` | Create and mail a letter merged from a template or PDF; test mode renders a PDF proof without posting or charging |
+| `letters.cancel` | `stannp.api.letters.cancel` | `destructive` | Cancel a letter that has not started processing yet |
+| `letters.create` | `stannp.api.letters.create` | `destructive` | Create and mail a letter merged from a template or PDF; test mode renders a PDF proof without posting or charging |
 | `letters.get` | `stannp.api.letters.get` | `read` | Get one letter mailpiece with its status, tracking and cost |
-| `letters.post` | `stannp.api.letters.post` | `write` | Post an already mail-merged letter PDF whose address the API reads with OCR |
-| `postcards.cancel` | `stannp.api.postcards.cancel` | `write` | Cancel a postcard that has not started processing yet |
-| `postcards.create` | `stannp.api.postcards.create` | `write` | Create and mail a postcard to one recipient; test mode renders a PDF proof without posting or charging |
+| `letters.post` | `stannp.api.letters.post` | `destructive` | Post an already mail-merged letter PDF whose address the API reads with OCR |
+| `postcards.cancel` | `stannp.api.postcards.cancel` | `destructive` | Cancel a postcard that has not started processing yet |
+| `postcards.create` | `stannp.api.postcards.create` | `destructive` | Create and mail a postcard to one recipient; test mode renders a PDF proof without posting or charging |
 | `postcards.get` | `stannp.api.postcards.get` | `read` | Get one postcard mailpiece with its status, tracking and cost |
 | `recipients.create` | `stannp.api.recipients.create` | `write` | Create a recipient, optionally into a group, with duplicate handling and custom fields |
 | `recipients.delete` | `stannp.api.recipients.delete` | `destructive` | Permanently delete a recipient from the account; this cannot be undone |
@@ -50,7 +50,7 @@ pnpm add @corsair-dev/stannp
 | `reporting.list` | `stannp.api.reporting.list` | `read` | List mailpieces in a date range, optionally filtered by status or tag |
 | `reporting.summary` | `stannp.api.reporting.summary` | `read` | Count mailpieces per delivery status within a date range |
 | `selections.create` | `stannp.api.selections.create` | `write` | Create an auto-filter selection that targets a subset of a group |
-| `sms.create` | `stannp.api.sms.create` | `write` | Send an SMS to a phone number or stored recipient; test mode builds it without sending or charging |
+| `sms.create` | `stannp.api.sms.create` | `destructive` | Send an SMS to a phone number or stored recipient; test mode builds it without sending or charging |
 | `tools.pdfMerge` | `stannp.api.tools.pdfMerge` | `read` | Merge several PDFs by URL into one file |
 | `tools.templates` | `stannp.api.tools.templates` | `read` | List the design templates on the account |
 

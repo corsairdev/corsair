@@ -358,7 +358,7 @@ const stannpEndpointMeta = {
 		description: 'Read the account balance',
 	},
 	'account.topup': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Top up the account balance from the saved card; the amount is charged for real',
 	},
@@ -368,7 +368,7 @@ const stannpEndpointMeta = {
 			'Validate a UK or US postal address and get the corrected form with a validity flag',
 	},
 	'postcards.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Create and mail a postcard to one recipient; test mode renders a PDF proof without posting or charging',
 	},
@@ -378,16 +378,16 @@ const stannpEndpointMeta = {
 			'Get one postcard mailpiece with its status, tracking and cost',
 	},
 	'postcards.cancel': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Cancel a postcard that has not started processing yet',
 	},
 	'letters.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Create and mail a letter merged from a template or PDF; test mode renders a PDF proof without posting or charging',
 	},
 	'letters.post': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Post an already mail-merged letter PDF whose address the API reads with OCR',
 	},
@@ -396,7 +396,7 @@ const stannpEndpointMeta = {
 		description: 'Get one letter mailpiece with its status, tracking and cost',
 	},
 	'letters.cancel': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Cancel a letter that has not started processing yet',
 	},
 	'recipients.list': {
@@ -476,7 +476,7 @@ const stannpEndpointMeta = {
 			'Produce a PDF sample of the campaign; the link is valid for 30 minutes',
 	},
 	'campaigns.approve': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		irreversible: true,
 		description:
 			'Approve a campaign, locking its design and recipient selection; the lock cannot be undone',
@@ -491,7 +491,7 @@ const stannpEndpointMeta = {
 		description: 'List the dates a campaign can be booked for',
 	},
 	'campaigns.book': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Book a campaign for dispatch on a date, paying from the balance; this starts a real mailing',
 	},
@@ -533,7 +533,7 @@ const stannpEndpointMeta = {
 		description: 'List the folders in the secure file transfer area',
 	},
 	'sms.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Send an SMS to a phone number or stored recipient; test mode builds it without sending or charging',
 	},
@@ -580,20 +580,17 @@ const stannpWebhookSchemas = {
 // The webhook secret: the plugin's webhookSecret option, else the one stored
 // with keys.set_webhook_signature. Stannp signs deliveries only when a
 // secret is set on the webhook, so an absent secret means unverified
-// deliveries rather than a failure.
+// deliveries rather than a failure. A failed read of the stored secret is
+// not the same as no secret: it throws, so the delivery is rejected instead
+// of being accepted unverified.
 export async function resolveWebhookSecret(
 	options: { webhookSecret?: string } | undefined,
 	keys: { get_webhook_signature: () => Promise<string | null> } | undefined,
 ): Promise<string | undefined> {
 	const fromOption = options?.webhookSecret?.trim();
 	if (fromOption) return fromOption;
-	try {
-		const stored = (await keys?.get_webhook_signature())?.trim();
-		return stored || undefined;
-	} catch (error) {
-		console.warn('Failed to read the Stannp webhook secret:', error);
-		return undefined;
-	}
+	const stored = (await keys?.get_webhook_signature())?.trim();
+	return stored || undefined;
 }
 
 export type BaseStannpPlugin<T extends StannpPluginOptions> = CorsairPlugin<
