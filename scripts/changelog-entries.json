@@ -10593,5 +10593,11 @@
         "title": "Store the connecting user's token from a managed OAuth delivery"
       }
     ]
+  },
+  {
+    "date": "2026-11-20",
+    "package": "cloud",
+    "version": "0.2.16",
+    "changes": []
   }
 ]
