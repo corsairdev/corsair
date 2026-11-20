@@ -1,0 +1,75 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+# `pnpm validate:plugins` fails until the TODO is replaced.
+displayName: "PDF4me"
+description: "PDF4me is a PDF and document processing SaaS. This plugin merges, splits, compresses and organizes PDFs, converts them to Word and renders HTML to PDF, runs OCR, reads PDF metadata, extracts tables and form data, and polls asynchronous processing jobs. File answers come back base64-encoded."
+domain: pdf4me.com
+recommendedAuth: api_key
+overviewNote: >
+  Authenticate with the API key from the PDF4me dashboard; the plugin sends
+  it as the raw value of the Authorization header, without a Bearer prefix,
+  as the API expects. File payloads go in the docContent field as base64, a
+  pdf4meblobid:// reference or an https URL, with docName always set — the
+  API dispatches on the extension.
+
+  PDF-producing actions answer the raw file unless isAsync is set; the
+  plugin decodes both the binary answer and the documented JSON shape
+  ({"File Content", "File Name"}) into fileContent. Pass isAsync: true to get
+  a job and poll it with jobs.status (the plugin declares that as a job, so
+  the agent can wait on it). Processing calls consume credits.
+
+  This plugin covers a working subset: merge, split, compress, page
+  organization, metadata, PDF-to-Word, HTML-to-PDF, OCR, and table and form
+  extraction. The barcode, Excel, image, Word-suite, generate and signature
+  families are documented by PDF4me but not part of this plugin.
+
+  Every operation is described in the official docs:
+  https://docs.pdf4me.com/pdf4me-api/
+examples:
+  read:
+    path: pdf.getInfo
+    title: Read PDF metadata
+    args:
+      docContent: JVBERi0=
+      docName: document.pdf
+  write:
+    path: pdf.compress
+    title: Compress a PDF
+    args:
+      docContent: JVBERi0=
+      docName: document.pdf
+      optimizeProfile: Web
+apiExamples:
+  pdf.merge:
+    call: '{ docContent: ["<base64 of first.pdf>", "<base64 of second.pdf>"], docName: "merged.pdf" }'
+  pdf.split:
+    call: '{ docContent: "<base64>", docName: "document.pdf", splitMode: "pages", splitPageNr: 3 }'
+  pdf.compress:
+    call: '{ docContent: "<base64>", docName: "document.pdf", optimizeProfile: "Web" }'
+  pdf.extractPages:
+    call: '{ docContent: "<base64>", docName: "document.pdf", pageNumbers: [1, 3] }'
+  pdf.deletePages:
+    call: '{ docContent: "<base64>", docName: "document.pdf", pageNumbers: [2] }'
+  pdf.getInfo:
+    call: '{ docContent: "<base64>", docName: "document.pdf" }'
+  convert.pdfToWord:
+    call: '{ docContent: "<base64>", docName: "document.pdf", docType: "docx" }'
+  convert.htmlToPdf:
+    call: '{ htmlContent: "<h1>Hello</h1>", docName: "out.pdf" }'
+  convert.ocrPdf:
+    call: '{ docContent: "<base64>", docName: "scan.pdf", ocrWhenNeeded: true, ocrLang: "eng" }'
+  extract.tableFromPdf:
+    call: '{ docContent: "<base64>", docName: "document.pdf" }'
+  extract.pdfFormData:
+    call: '{ docContent: "<base64>", docName: "filled-form.pdf" }'
+  jobs.status:
+    call: '{ jobId: "job-1" }'
+apiNotes:
+  pdf.merge: 'docContent is an array and order matters — the array order is the merge order. The answer is the merged PDF.'
+  pdf.split: 'splitMode picks pages, text, barcode or swissQr; the answer holds the split parts.'
+  pdf.compress: 'optimizeProfile values: Max, Web, Print, Default. Default is mapped to Max server-side; an unknown value fails with 400 Invalid Optimization Profile.'
+  pdf.deletePages: 'The original document is not recoverable from the answer, so this is marked destructive.'
+  pdf.getInfo: 'Reads page count, dimensions, author and other metadata.'
+  convert.ocrPdf: 'ocrWhenNeeded is the documented mixed-type boolean field; ocrLang takes an OCR language code such as eng.'
+  extract.tableFromPdf: 'Answers the extracted tables as structured data.'
+  extract.pdfFormData: 'Answers the values of filled PDF form fields.'
+  jobs.status: 'Poll a job started with isAsync: true. isFinished with isSuccess true means done; hasFailed true means it failed.'
