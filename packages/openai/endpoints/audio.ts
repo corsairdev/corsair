@@ -3,6 +3,7 @@ import { toFileOutput } from 'corsair/http';
 import {
 	DOWNLOAD_MAX_BYTES,
 	multipartOpenaiRequest,
+	OPENAI_UPLOAD_MAX_BYTES,
 	requestOpenaiBinary,
 } from '../client';
 import type { OpenaiEndpoints } from '../index';
@@ -66,7 +67,12 @@ export const createTranscription: OpenaiEndpoints['audioCreateTranscription'] =
 				ctx.key,
 				{
 					files: [
-						{ field: 'file', file: input.file, fileName: input.fileName },
+						{
+							field: 'file',
+							file: input.file,
+							fileName: input.fileName,
+							maxBytes: OPENAI_UPLOAD_MAX_BYTES.audio,
+						},
 					],
 					fields: {
 						model: input.model,
@@ -99,7 +105,14 @@ export const createTranslation: OpenaiEndpoints['audioCreateTranslation'] =
 			'audio/translations',
 			ctx.key,
 			{
-				files: [{ field: 'file', file: input.file, fileName: input.fileName }],
+				files: [
+					{
+						field: 'file',
+						file: input.file,
+						fileName: input.fileName,
+						maxBytes: OPENAI_UPLOAD_MAX_BYTES.audio,
+					},
+				],
 				fields: {
 					model: input.model,
 					prompt: input.prompt,

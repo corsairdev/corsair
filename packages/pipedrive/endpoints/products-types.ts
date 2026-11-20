@@ -1,3 +1,4 @@
+import { FileInputSchema } from 'corsair/http';
 import { z } from 'zod';
 
 const uniqueValues = <T>(values: T[]) => new Set(values).size === values.length;
@@ -128,8 +129,14 @@ const ProductVariationUpdateInputSchema = ProductIdInputSchema.extend({
 }).strict();
 
 const ProductImageInputSchema = ProductIdInputSchema.extend({
-	// Pipedrive documents this multipart field as binary; Blob preserves binary data without string encoding.
-	data: z.instanceof(Blob),
+	// Pipedrive documents this multipart field as binary. An agent sends a link
+	// or base64, which the endpoint turns into the image's bytes; a Blob from
+	// TypeScript is sent as it is.
+	data: z
+		.union([FileInputSchema, z.instanceof(Blob)])
+		.describe(
+			'The image (GIF, JPG, PNG or WEBP): a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…).',
+		),
 	// Sent as the multipart file name; it needs an extension such as .png or .jpg.
 	file_name: z
 		.string()

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { gongFileSchema } from './file-input';
 
 const recordsSchema = z
 	.object({
@@ -51,7 +52,9 @@ export const GongCallsInputSchemas = {
 	}),
 	addCallRecording: z.object({
 		id: z.string().regex(/^\d{1,20}$/),
-		mediaFile: z.instanceof(Blob),
+		mediaFile: gongFileSchema(
+			'The recording (WAV, MP3, MP4, MKV or FLAC, up to 1.5 GB)',
+		),
 	}),
 } as const;
 

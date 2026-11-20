@@ -202,7 +202,7 @@ const spotlightrEndpointMeta = {
 	'videos.create': {
 		riskLevel: 'write',
 		description:
-			'Create a video from a hosted link or an uploaded file, optionally copying player settings from another video',
+			'Create a video from a hosted link or an uploaded file, optionally copying player settings from another video. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'videos.updateSource': {
 		// Overwrites the video's source; the old URL is not kept anywhere.
@@ -270,7 +270,8 @@ const spotlightrEndpointMeta = {
 	},
 	'assets.upload': {
 		riskLevel: 'write',
-		description: 'Upload an asset file to the account library',
+		description:
+			'Upload an asset file to the account library. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof spotlightrEndpointsNested

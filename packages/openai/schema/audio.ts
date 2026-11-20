@@ -1,5 +1,6 @@
 import { FileOutputSchema } from 'corsair/http';
 import { z } from 'zod';
+import { openaiFileInput } from './file-input';
 
 export const AudioCreateSpeechInputSchema = z.object({
 	model: z.string(),
@@ -32,7 +33,7 @@ export type AudioCreateSpeechResponse = z.infer<
 >;
 
 export const AudioCreateTranscriptionInputSchema = z.object({
-	file: z.union([z.instanceof(Blob), z.string()]),
+	file: openaiFileInput('The audio file, up to 25 MB'),
 	fileName: z.string(),
 	model: z.string(),
 	language: z.string().optional(),
@@ -58,7 +59,7 @@ export type AudioCreateTranscriptionResponse = z.infer<
 >;
 
 export const AudioCreateTranslationInputSchema = z.object({
-	file: z.union([z.instanceof(Blob), z.string()]),
+	file: openaiFileInput('The audio file, up to 25 MB'),
 	fileName: z.string(),
 	model: z.string(),
 	prompt: z.string().optional(),
