@@ -414,6 +414,7 @@ export const BaseProviders = [
 	'launchdarkly',
 	'leexi',
 	'leiga',
+	'lemlist',
 	'lemonsqueezy',
 	'lever',
 	'linear',
@@ -1160,6 +1161,7 @@ export const ProviderDisplayNames = {
 	launchdarkly: 'LaunchDarkly',
 	leexi: 'Leexi',
 	leiga: 'Leiga',
+	lemlist: 'Lemlist',
 	lemonsqueezy: 'Lemon Squeezy',
 	lever: 'Lever',
 	linear: 'Linear',
@@ -1913,6 +1915,7 @@ export type AllProviders =
 	| 'launchdarkly'
 	| 'leexi'
 	| 'leiga'
+	| 'lemlist'
 	| 'lemonsqueezy'
 	| 'lever'
 	| 'linear'

@@ -3438,6 +3438,14 @@
                 ]
               },
               {
+                "group": "Lemlist",
+                "pages": [
+                  "plugins/lemlist/overview",
+                  "plugins/lemlist/api",
+                  "plugins/lemlist/database"
+                ]
+              },
+              {
                 "group": "Lemon Squeezy",
                 "pages": [
                   "plugins/lemonsqueezy/overview",
