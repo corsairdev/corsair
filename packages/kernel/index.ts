@@ -37,6 +37,13 @@ export type KernelPluginOptions = {
 	 */
 	authType?: PickAuth<'api_key' | 'managed_pricing'>;
 	key?: string;
+	/**
+	 * A Kernel project id (`proj_…`, not its name). Sent as
+	 * `X-Kernel-Project-Id` on every call, so an org-wide key only sees and
+	 * creates resources in that project. Leave it out to use the org's default
+	 * project, or when the key is already scoped to one project.
+	 */
+	projectId?: string;
 	hooks?: InternalKernelPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof kernelEndpointsNested>;

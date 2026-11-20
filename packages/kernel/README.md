@@ -8,6 +8,15 @@ Kernel plugin for Corsair: cloud browsers for agents.
 pnpm add @corsair-dev/kernel
 ```
 
+## Options
+
+- `authType`: `api_key` (your own Kernel key) or `managed_pricing` (Corsair
+  Hub supplies the key and charges credits).
+- `projectId`: a Kernel project id (`proj_…`). Every call carries it as
+  `X-Kernel-Project-Id`, so an org-wide key only sees and creates browsers,
+  profiles and logins inside that project. Leave it out for the org's default
+  project, or when the key is already scoped to one project.
+
 ## How it is built
 
 The 200 operations come from Kernel's published OpenAPI spec
@@ -116,7 +125,7 @@ Left out on purpose:
 | `browsers.computer.writeClipboard` | `kernel.api.browsers.computer.writeClipboard` | `write` | Put text on the browser VM's clipboard. |
 | `browsers.create` | `kernel.api.browsers.create` | `write` | Start a cloud Chromium browser and get its session_id, cdp_ws_url and browser_live_view_url. Use headless: true unless a person must watch or take over: headless costs about 8x less ($0.06/h vs $0.48/h) and has no live view. stealth: true (or captcha_solver + proxy) helps on bot-protected sites. Pass profile {name, save_changes: true} to start signed in and keep new cookies; the profile is saved when the browser is deleted. start_url opens a page. A browser bills per second while it is active (a CDP, live view or computer-control connection), drops to unbilled standby after about 10 s idle, and is deleted after timeout_seconds of standby (default 60). It holds one of the org's concurrent-browser slots until deleted, so call browsers.delete when done. |
 | `browsers.curl` | `kernel.api.browsers.curl` | `write` | Send an HTTP request from inside the browser (its cookies, proxy and network fingerprint) and get status, headers and body back. Handy for an API call that needs the signed-in session. |
-| `browsers.delete` | `kernel.api.browsers.delete` | `destructive` | End a browser session now and stop its billing; frees its concurrency slot. If it was started with profile save_changes: true, the cookies and storage are saved to the profile first. Cannot be undone: the session, its tabs and its files are gone. |
+| `browsers.delete` | `kernel.api.browsers.delete` | `write` | End a browser session now and stop its billing; frees its concurrency slot. If it was started with profile save_changes: true, the cookies and storage are saved to the profile first. Cannot be undone: the session, its tabs and its files are gone. |
 | `browsers.fs.createDirectory` | `kernel.api.browsers.fs.createDirectory` | `write` | Create a directory (and its parents) in the browser VM. |
 | `browsers.fs.deleteDirectory` | `kernel.api.browsers.fs.deleteDirectory` | `destructive` | Delete a directory and everything in it from the browser VM. |
 | `browsers.fs.deleteFile` | `kernel.api.browsers.fs.deleteFile` | `destructive` | Delete a file from the browser VM. |

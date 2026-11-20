@@ -5202,7 +5202,7 @@ await corsair.kernel.api.browsers.curl({ id_or_name: 'htzv5orfit78e1m2biiifpbv',
 
 End a browser session now and stop its billing; frees its concurrency slot. If it was started with profile save_changes: true, the cookies and storage are saved to the profile first. Cannot be undone: the session, its tabs and its files are gone.
 
-**Risk:** `destructive` · **Irreversible**
+**Risk:** `write`
 
 ```ts
 await corsair.kernel.api.browsers.delete({ id_or_name: 'htzv5orfit78e1m2biiifpbv' });

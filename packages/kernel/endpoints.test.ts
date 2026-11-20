@@ -183,6 +183,30 @@ describe('inputs', () => {
 		expect(sent?.timeoutMs).toBe(120_000);
 	});
 
+	it('scopes every call to the projectId option through X-Kernel-Project-Id', async () => {
+		mockedRequest.mockResolvedValue({ success: true, result: 'ok' });
+		const scoped = {
+			...buildCtx(),
+			options: { projectId: 'proj_abc123' },
+		} as unknown as KernelContext;
+		await endpointFor('browsers.playwright.execute')(scoped, {
+			id_or_name: 'abc',
+			code: 'return 1;',
+			idempotency_key: 'retry-1',
+		});
+		expect(mockedRequest.mock.calls[0]?.[0]?.headers).toEqual({
+			'X-Kernel-Project-Id': 'proj_abc123',
+			'Idempotency-Key': 'retry-1',
+		});
+
+		mockedRequest.mockClear();
+		await endpointFor('browsers.playwright.execute')(ctx, {
+			id_or_name: 'abc',
+			code: 'return 1;',
+		});
+		expect(mockedRequest.mock.calls[0]?.[0]?.headers).toEqual({});
+	});
+
 	it('refuses an invalid input before any request, naming the field but not the value', async () => {
 		await expect(
 			endpointFor('browsers.computer.clickMouse')(ctx, {

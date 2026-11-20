@@ -158,12 +158,18 @@ describe('risk levels (PLUGIN_PR_RULES R8)', () => {
 		{ riskLevel: string; irreversible?: boolean; description?: string }
 	>;
 
+	// Stopping something is a write: an approval before a browser can stop billing is backwards.
+	const stopsRatherThanDestroys = new Set([
+		'browsers.fs.watch.stop',
+		'browsers.delete',
+	]);
+
 	it('marks every delete and the key and payment operations destructive', () => {
 		for (const operation of kernelOperations) {
 			const entry = meta[operation.id];
 			if (
 				operation.method === 'DELETE' &&
-				operation.id !== 'browsers.fs.watch.stop'
+				!stopsRatherThanDestroys.has(operation.id)
 			) {
 				expect([operation.id, entry?.riskLevel]).toEqual([
 					operation.id,
@@ -179,6 +185,9 @@ describe('risk levels (PLUGIN_PR_RULES R8)', () => {
 			'browsers.fs.deleteFile',
 		]) {
 			expect(meta[id]?.riskLevel).toBe('destructive');
+		}
+		for (const id of stopsRatherThanDestroys) {
+			expect(meta[id]?.riskLevel).toBe('write');
 		}
 	});
 

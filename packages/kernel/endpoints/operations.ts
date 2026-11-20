@@ -267,6 +267,9 @@ export function createKernelOperation<Id extends KernelOperationId>(
 		// `unknown` because query values are validated scalars, arrays or a string map.
 		const query: Record<string, unknown> = {};
 		const headers: Record<string, string> = {};
+		if (ctx.options?.projectId) {
+			headers['X-Kernel-Project-Id'] = ctx.options.projectId;
+		}
 		for (const field of kernelInputFields(id)) {
 			if (field.in === 'body') continue;
 			const value = valid[field.name];

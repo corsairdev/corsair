@@ -839,8 +839,7 @@ export const kernelEndpointMeta = {
 			'Send an HTTP request from inside the browser (its cookies, proxy and network fingerprint) and get status, headers and body back. Handy for an API call that needs the signed-in session.',
 	},
 	'browsers.delete': {
-		riskLevel: 'destructive',
-		irreversible: true,
+		riskLevel: 'write',
 		description:
 			'End a browser session now and stop its billing; frees its concurrency slot. If it was started with profile save_changes: true, the cookies and storage are saved to the profile first. Cannot be undone: the session, its tabs and its files are gone.',
 	},
