@@ -806,6 +806,11 @@ describe('stormboard output parsing', () => {
 		await expect(
 			invoke(Storms.duplicate, { stormId: 49999 }),
 		).resolves.toMatchObject({ stormid: 2065032 });
+		// The answer's stormid feeds storms.get, which takes a number.
+		respond({ message: 'Storm duplicated', stormid: '2065032', stormkey: 'k' });
+		await expect(
+			invoke(Storms.duplicate, { stormId: 49999 }),
+		).rejects.toThrow();
 		expect(mockLog).toHaveBeenCalledWith(
 			expect.anything(),
 			'stormboard.storms.duplicate',

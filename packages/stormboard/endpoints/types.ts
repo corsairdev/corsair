@@ -810,7 +810,8 @@ export const StormboardEndpointOutputSchemas = {
 	stormsDuplicate: z
 		.object({
 			message: z.union([z.string(), z.number()]),
-			stormid: id,
+			// A number in the docs and live, so it feeds storms.get directly.
+			stormid: num,
 			stormkey: str,
 		})
 		.loose(),
