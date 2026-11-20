@@ -291,11 +291,18 @@ describe('routing', () => {
 			message: 'test(s) failed',
 			data: [{ user: 'tag:agent', errors: ['want: Accept, got: Drop'] }],
 		});
-		// A body cut short is an error, never a pass.
-		reply('{"message": "test(s) fa');
-		await expect(
-			endpointFor('policyFile.validate')(buildCtx(), { policy: '{}' }),
-		).rejects.toThrow(SyntaxError);
+		// A body cut short is an error, never a pass, and the error doesn't
+		// quote the body (V8's own SyntaxError would).
+		reply('{"message": "alice@example.com failed');
+		const cut = (await endpointFor('policyFile.validate')(buildCtx(), {
+			policy: '{}',
+		}).catch((e: unknown) => e)) as Error;
+		expect(cut).toBeInstanceOf(SyntaxError);
+		expect(cut.message).toBe(
+			'Tailscale policyFile.validate returned a body that is not valid JSON',
+		);
+		expect(cut.message).not.toContain('alice');
+		expect(cut.cause).toBeUndefined();
 		mockedRawRequest.mockRejectedValueOnce(new TypeError('terminated'));
 		await expect(
 			endpointFor('policyFile.validate')(buildCtx(), { policy: '{}' }),
@@ -447,6 +454,24 @@ describe('helpers', () => {
 		expect(quoteEtag('"e0b2816b418"')).toBe('"e0b2816b418"');
 		expect(quoteEtag(' ts-default ')).toBe('"ts-default"');
 		expect(quoteEtag('W/"weak"')).toBe('W/"weak"');
+	});
+
+	it('never quotes a malformed policy body in the error', () => {
+		for (const [format, details] of [
+			['json', false],
+			['hujson', true],
+		] as const) {
+			let error: unknown;
+			try {
+				policyFileResult('{"acls": ["bob@example.com"', null, format, details);
+			} catch (caught) {
+				error = caught;
+			}
+			expect(error).toBeInstanceOf(SyntaxError);
+			expect((error as Error).message).toBe(
+				'Tailscale policyFile.get returned a body that is not valid JSON',
+			);
+		}
 	});
 
 	it('keeps detailed policy text that is not base64 as it is', () => {

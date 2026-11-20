@@ -56,6 +56,23 @@ function decodeBase64(text: string): string {
 }
 
 /**
+ * JSON.parse with a fixed message on failure: V8 quotes part of the input in
+ * its SyntaxError ("Unexpected token ... "alice@exa"... is not valid JSON"),
+ * and a response body can hold emails and hostnames. The original error is
+ * not kept as the cause, for the same reason.
+ */
+// `unknown` because the parsed body is checked by the operation's output schema.
+export function parseJsonBody(text: string, id: string): unknown {
+	try {
+		return JSON.parse(text);
+	} catch {
+		throw new SyntaxError(
+			`Tailscale ${id} returned a body that is not valid JSON`,
+		);
+	}
+}
+
+/**
  * The policy file as the caller asked for it: HuJSON text (comments kept),
  * a JSON object, or the detailed form, with the version from the ETag header.
  */
@@ -65,22 +82,27 @@ export function policyFileResult(
 	etag: string | null,
 	format: 'hujson' | 'json',
 	details: boolean,
+	id = 'policyFile.get',
 ): unknown {
 	if (details) {
-		const body = JSON.parse(text) as {
+		const body = parseJsonBody(text, id) as {
 			acl?: unknown;
 			warnings?: unknown;
 			errors?: unknown;
-		};
+		} | null;
 		return {
-			policy: typeof body.acl === 'string' ? decodeBase64(body.acl) : body.acl,
+			policy:
+				typeof body?.acl === 'string' ? decodeBase64(body.acl) : body?.acl,
 			etag,
 			// Tailscale sends null, not [], when there are none.
-			warnings: body.warnings,
-			errors: body.errors,
+			warnings: body?.warnings,
+			errors: body?.errors,
 		};
 	}
-	return { policy: format === 'json' ? JSON.parse(text) : text, etag };
+	return {
+		policy: format === 'json' ? parseJsonBody(text, id) : text,
+		etag,
+	};
 }
 
 /** A field name the caller typed for a route with no body: shown; anything else is masked. */
@@ -237,13 +259,14 @@ export function createTailscaleOperation<Id extends TailscaleOperationId>(
 					raw.headers.get('etag'),
 					format,
 					details,
+					id,
 				);
 			} else if (operation.emptyMeansNone) {
 				// The raw transport, so a body that fails to arrive is an error and
 				// only a fully read empty body means "nothing to report".
 				headers.Accept = 'application/json';
 				const raw = await makeTailscaleRawRequest(request);
-				response = raw.text.length === 0 ? null : JSON.parse(raw.text);
+				response = raw.text.length === 0 ? null : parseJsonBody(raw.text, id);
 			} else {
 				const body = await makeTailscaleRequest(request);
 				response = operation.response === 'empty' ? { success: true } : body;
