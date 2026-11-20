@@ -4095,6 +4095,14 @@
                 ]
               },
               {
+                "group": "Payhip",
+                "pages": [
+                  "plugins/payhip/overview",
+                  "plugins/payhip/api",
+                  "plugins/payhip/database"
+                ]
+              },
+              {
                 "group": "PDF-API.io",
                 "pages": [
                   "plugins/pdfapi/overview",
