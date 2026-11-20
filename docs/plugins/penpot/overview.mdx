@@ -1,0 +1,142 @@
+---
+title: "Penpot plugin"
+sidebarTitle: "Overview"
+description: "Penpot is the open-source design tool. This plugin manages teams, projects and design files over the RPC API, creates file snapshots and share links, reads and writes comment threads, configures team webhooks, and manages the account's API access tokens."
+---
+
+Use **Penpot** through Corsair: one client, typed API calls, and incoming webhooks.
+
+Authenticate with an access token generated under Account settings &gt; API access tokens; the plugin sends it as `Authorization: Token <token>` and asks for plain JSON with `Accept: application/json` (without that header Penpot answers in transit format). Every operation is a single RPC: a POST to /api/rpc/command/&lt;name&gt; on your Penpot instance. For self-hosted instances pass the instance host as baseUrl in the plugin options.
+Penpot documents request schemas only, so output objects are kept loose; ids are UUIDs. The API reference lives at https://design.penpot.app/api/_doc (auto-generated from source).
+Webhook deliveries from Penpot carry no signature header — the help center documents no signing scheme — so the plugin accepts them on the documented envelope shape (an event key with a payload) and says so plainly; add your own verification at the route level if you need stronger guarantees.
+The RPC surface has ~150 operations; this plugin covers the teams, projects, files (including snapshots and share links), comments, webhooks and access-token groups. Fonts, media objects, invitations, members, organizations and exports are documented by Penpot but not part of this plugin.
+
+**What you get:**
+
+- 32 typed API operations
+- 1 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/penpot better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/penpot better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/penpot better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/penpot better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { penpot } from '@corsair-dev/penpot';
+
+export const corsair = createCorsair({
+	plugins: [
+		penpot(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Penpot API key before the first call: `pnpm corsair setup --plugin=penpot --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+penpot()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'penpot',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List all projects**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.penpot.api.projects.listAll({});
+```
+
+
+**Create a project**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.penpot.api.projects.create({ teamId: '5f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5d', name: 'Website Redesign' });
+```
+
+
+See the full list on the [API](/plugins/penpot/api) page.
+
+## Webhooks
+
+This plugin registers **1** webhook event type. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/penpot/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/penpot/api">
+    Every `penpot.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/penpot/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

@@ -1,0 +1,115 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+# `pnpm validate:plugins` fails until the TODO is replaced.
+displayName: "Penpot"
+description: "Penpot is the open-source design tool. This plugin manages teams, projects and design files over the RPC API, creates file snapshots and share links, reads and writes comment threads, configures team webhooks, and manages the account's API access tokens."
+domain: penpot.app
+recommendedAuth: api_key
+overviewNote: >
+  Authenticate with an access token generated under Account settings > API
+  access tokens; the plugin sends it as `Authorization: Token <token>` and
+  asks for plain JSON with `Accept: application/json` (without that header
+  Penpot answers in transit format). Every operation is a single RPC: a POST
+  to /api/rpc/command/<name> on your Penpot instance. For self-hosted
+  instances pass the instance host as baseUrl in the plugin options.
+
+  Penpot documents request schemas only, so output objects are kept loose;
+  ids are UUIDs. The API reference lives at
+  https://design.penpot.app/api/_doc (auto-generated from source).
+
+  Webhook deliveries from Penpot carry no signature header — the help center
+  documents no signing scheme — so the plugin accepts them on the documented
+  envelope shape (an event key with a payload) and says so plainly; add your
+  own verification at the route level if you need stronger guarantees.
+
+  The RPC surface has ~150 operations; this plugin covers the teams,
+  projects, files (including snapshots and share links), comments, webhooks
+  and access-token groups. Fonts, media objects, invitations, members,
+  organizations and exports are documented by Penpot but not part of this
+  plugin.
+examples:
+  read:
+    path: projects.listAll
+    title: List all projects
+    args: {}
+  write:
+    path: projects.create
+    title: Create a project
+    args:
+      teamId: 5f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5d
+      name: Website Redesign
+apiExamples:
+  teams.list:
+    call: '{}'
+  teams.create:
+    call: '{ name: "Design Guild" }'
+  teams.get:
+    call: '{}'
+  teams.delete:
+    call: '{ id: "5f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5d" }'
+  projects.listAll:
+    call: '{}'
+  projects.create:
+    call: '{ teamId: "5f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5d", name: "Website Redesign" }'
+  projects.get:
+    call: '{ id: "6f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5e" }'
+  projects.rename:
+    call: '{ id: "6f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5e", name: "Renamed" }'
+  projects.delete:
+    call: '{ id: "6f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5e" }'
+  projects.duplicate:
+    call: '{ id: "6f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5e", name: "Copy" }'
+  files.get:
+    call: '{ id: "7f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5f" }'
+  files.create:
+    call: '{ projectId: "6f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5e", name: "Landing page", isShared: true }'
+  files.delete:
+    call: '{ id: "7f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5f" }'
+  files.duplicate:
+    call: '{ fileId: "7f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5f", name: "Copy" }'
+  files.rename:
+    call: '{ id: "7f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5f", name: "Renamed" }'
+  files.snapshotsList:
+    call: '{ fileId: "7f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5f" }'
+  files.snapshotsCreate:
+    call: '{ fileId: "7f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5f", label: "Before handoff" }'
+  files.snapshotsDelete:
+    call: '{ id: "8f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c60" }'
+  files.shareLinkCreate:
+    call: '{ fileId: "7f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5f", whoComment: "team" }'
+  files.shareLinkDelete:
+    call: '{ id: "9f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c61" }'
+  comments.threadsList:
+    call: '{ fileId: "7f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5f" }'
+  comments.threadGet:
+    call: '{ fileId: "7f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5f", id: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c62" }'
+  comments.threadCreate:
+    call: '{ fileId: "7f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5f", pageId: "bf2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c63", content: "Can we tighten the spacing here?" }'
+  comments.list:
+    call: '{ threadId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c62" }'
+  comments.create:
+    call: '{ threadId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c62", content: "Done in the latest push." }'
+  webhooks.list:
+    call: '{ teamId: "5f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5d" }'
+  webhooks.create:
+    call: '{ teamId: "5f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5d", uri: "https://example.com/webhooks/penpot", mtype: "application/json" }'
+  webhooks.update:
+    call: '{ id: "df2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c65", uri: "https://example.com/webhooks/penpot", mtype: "application/json", isActive: false }'
+  webhooks.delete:
+    call: '{ id: "df2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c65" }'
+  accessTokens.list:
+    call: '{}'
+  accessTokens.create:
+    call: '{ name: "CI token" }'
+  accessTokens.delete:
+    call: '{ id: "ef2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c66" }'
+apiNotes:
+  teams.list: 'Returns the teams of the authenticated profile.'
+  teams.get: 'The get-team RPC takes no documented body; the result comes from the token profile context.'
+  projects.listAll: 'Returns every project the profile can see across teams.'
+  files.get: 'The answer includes the full file data tree.'
+  comments.threadsList: 'Give fileId or teamId; the API rejects a call with neither.'
+  comments.create: 'Content is capped at 750 characters.'
+  webhooks.create: 'mtype picks the delivery payload format: application/json or application/transit+json.'
+  webhooks.delete: 'Deliveries stop until the webhook is created again.'
+  accessTokens.create: 'The token value is shown once in the answer and never again.'
+  accessTokens.delete: 'Revoking a token immediately breaks apps using it.'
