@@ -1,0 +1,202 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub, and one call
+# example per operation. Generated with the plugin from Tailscale's OpenAPI
+# spec; docs-examples.test.ts parses every example with its input schema.
+displayName: Tailscale
+description: "Run a tailnet from an agent: list and approve devices, mint tagged, ephemeral auth keys for new nodes, read, validate and safely update the policy file (ACLs and grants, with etag checks and ACL tests), publish internal apps and MCP servers as Tailscale Services, and manage DNS, users, invites, webhooks, posture attributes and the configuration audit log (93 operations)."
+overviewNote: "Connect with an API access token (expires after at most 90 days) or, better for a team, an OAuth client secret (tskey-client-...), which never expires and carries only the scopes it was given. Every call addresses the tailnet the key belongs to unless `tailnet` is set. Change the policy file with `policyFile.validate` first, then `policyFile.set` with the etag from `policyFile.get`."
+examples:
+  read:
+    path: devices.list
+    title: List tagged servers
+    args: {"filters": {"tags": ["tag:mcp"]}}
+  write:
+    path: keys.create
+    title: Mint an auth key for an agent node
+    args: {"description": "agent node", "expirySeconds": 3600, "capabilities": {"devices": {"create": {"reusable": false, "ephemeral": true, "preauthorized": true, "tags": ["tag:agent"]}}}}
+apiExamples:
+  contacts.get:
+    args: {}
+  contacts.resendVerificationEmail:
+    args: {"contactType": "security"}
+  contacts.update:
+    args: {"contactType": "security", "email": "security@example.com"}
+  deviceInvites.accept:
+    args: {"invite": "https://login.tailscale.com/admin/invite/12346abc"}
+  deviceInvites.create:
+    args: {"deviceId": "nKLggijBzX11CNTRL", "invites": [{"multiUse": false, "allowExitNode": false}]}
+  deviceInvites.delete:
+    args: {"deviceInviteId": "12346"}
+  deviceInvites.get:
+    args: {"deviceInviteId": "12346"}
+  deviceInvites.list:
+    args: {"deviceId": "nKLggijBzX11CNTRL"}
+  deviceInvites.resend:
+    args: {"deviceInviteId": "12346"}
+  devices.authorize:
+    args: {"deviceId": "nKLggijBzX11CNTRL", "authorized": true}
+  devices.delete:
+    args: {"deviceId": "nKLggijBzX11CNTRL"}
+  devices.expireKey:
+    args: {"deviceId": "nKLggijBzX11CNTRL"}
+  devices.get:
+    args: {"deviceId": "nKLggijBzX11CNTRL", "fields": "all"}
+  devices.list:
+    args: {"filters": {"tags": ["tag:mcp"]}, "fields": "all"}
+  devices.postureAttributes.batchUpdate:
+    args: {"nodes": {"nKLggijBzX11CNTRL": {"custom:agentApproved": {"value": true}}}}
+  devices.postureAttributes.delete:
+    args: {"deviceId": "nKLggijBzX11CNTRL", "attributeKey": "custom:agentApproved"}
+  devices.postureAttributes.get:
+    args: {"deviceId": "nKLggijBzX11CNTRL"}
+  devices.postureAttributes.set:
+    args: {"deviceId": "nKLggijBzX11CNTRL", "attributeKey": "custom:agentApproved", "value": true, "expiry": "2026-12-31T00:00:00Z", "comment": "approved for agent access"}
+  devices.routes.list:
+    args: {"deviceId": "nKLggijBzX11CNTRL"}
+  devices.routes.set:
+    args: {"deviceId": "nKLggijBzX11CNTRL", "routes": ["10.0.0.0/24"]}
+  devices.setIp:
+    args: {"deviceId": "nKLggijBzX11CNTRL", "ipv4": "100.80.0.1"}
+  devices.setName:
+    args: {"deviceId": "nKLggijBzX11CNTRL", "name": "mcp-server-1"}
+  devices.setTags:
+    args: {"deviceId": "nKLggijBzX11CNTRL", "tags": ["tag:mcp"]}
+  devices.updateKey:
+    args: {"deviceId": "nKLggijBzX11CNTRL", "keyExpiryDisabled": true}
+  dns.configuration.get:
+    args: {}
+  dns.configuration.set:
+    args: {}
+  dns.nameservers.list:
+    args: {}
+  dns.nameservers.set:
+    args: {"dns": ["1.1.1.1", "1.0.0.1"]}
+  dns.preferences.get:
+    args: {}
+  dns.preferences.set:
+    args: {"magicDNS": true}
+  dns.searchPaths.list:
+    args: {}
+  dns.searchPaths.set:
+    args: {"searchPaths": ["corp.example.com"]}
+  dns.splitDns.get:
+    args: {}
+  dns.splitDns.set:
+    args: {"domains": {"corp.example.com": ["10.0.0.53"]}}
+  dns.splitDns.update:
+    args: {"domains": {"corp.example.com": ["10.0.0.53"], "old.example.com": null}}
+  keys.create:
+    args: {"description": "agent node", "expirySeconds": 3600, "capabilities": {"devices": {"create": {"reusable": false, "ephemeral": true, "preauthorized": true, "tags": ["tag:agent"]}}}}
+  keys.delete:
+    args: {"keyId": "kXYZ123CNTRL"}
+  keys.get:
+    args: {"keyId": "kXYZ123CNTRL"}
+  keys.list:
+    args: {"all": true}
+  keys.update:
+    args: {"keyId": "kXYZ123CNTRL", "keyType": "client", "scopes": ["devices:core:read", "policy_file:read"]}
+  logging.awsExternalId.get:
+    args: {"reusable": true}
+  logging.awsExternalId.validate:
+    args: {"id": "ext123", "roleArn": "arn:aws:iam::123456789012:role/tailscale-logs"}
+  logging.configurationLogs.list:
+    args: {"start": "2026-11-19T00:00:00Z", "end": "2026-11-20T00:00:00Z", "event": ["TAILNET.UPDATE.ACL"]}
+  logging.networkLogs.list:
+    args: {"start": "2026-11-19T00:00:00Z", "end": "2026-11-20T00:00:00Z"}
+  logging.streaming.disable:
+    args: {"logType": "configuration"}
+  logging.streaming.get:
+    args: {"logType": "configuration"}
+  logging.streaming.getStatus:
+    args: {"logType": "configuration"}
+  logging.streaming.set:
+    args: {"logType": "configuration", "destinationType": "splunk", "url": "https://splunk.example.com:8088", "user": "tailscale", "token": "splunk-hec-token"}
+  oauthApps.create:
+    args: {"name": "Internal agent", "redirectURIs": ["https://agent.example.com/callback"], "scopes": ["auth_keys:create:once"]}
+  oauthApps.delete:
+    args: {"appId": "a123456CNTRL"}
+  oauthApps.get:
+    args: {"appId": "a123456CNTRL"}
+  oauthApps.list:
+    args: {}
+  oauthApps.update:
+    args: {"appId": "a123456CNTRL", "name": "Internal agent", "redirectURIs": ["https://agent.example.com/callback"], "scopes": ["auth_keys:create:once"]}
+  policyFile.get:
+    args: {"format": "hujson"}
+  policyFile.preview:
+    args: {"type": "ipport", "previewFor": "100.80.0.1:443", "policy": "{\n  // Agents tagged tag:agent may reach MCP servers on port 443 only.\n  \"tagOwners\": { \"tag:agent\": [\"autogroup:admin\"], \"tag:mcp\": [\"autogroup:admin\"] },\n  \"grants\": [\n    { \"src\": [\"autogroup:member\"], \"dst\": [\"*\"], \"ip\": [\"*\"] },\n    { \"src\": [\"tag:agent\"], \"dst\": [\"tag:mcp\"], \"ip\": [\"tcp:443\"] }\n  ],\n  \"tests\": [{ \"src\": \"tag:agent\", \"accept\": [\"tag:mcp:443\"], \"deny\": [\"tag:mcp:22\"] }]\n}\n"}
+  policyFile.set:
+    args: {"policy": "{\n  // Agents tagged tag:agent may reach MCP servers on port 443 only.\n  \"tagOwners\": { \"tag:agent\": [\"autogroup:admin\"], \"tag:mcp\": [\"autogroup:admin\"] },\n  \"grants\": [\n    { \"src\": [\"autogroup:member\"], \"dst\": [\"*\"], \"ip\": [\"*\"] },\n    { \"src\": [\"tag:agent\"], \"dst\": [\"tag:mcp\"], \"ip\": [\"tcp:443\"] }\n  ],\n  \"tests\": [{ \"src\": \"tag:agent\", \"accept\": [\"tag:mcp:443\"], \"deny\": [\"tag:mcp:22\"] }]\n}\n", "ifMatch": "\"e0b2816b418b3f266309d94426ac7668\""}
+  policyFile.validate:
+    args: {"tests": [{"src": "tag:agent", "accept": ["tag:mcp:443"], "deny": ["tag:mcp:22"]}]}
+  postureIntegrations.create:
+    args: {"provider": "falcon", "cloudId": "us-1", "clientId": "falcon-client-id", "clientSecret": "falcon-client-secret"}
+  postureIntegrations.delete:
+    args: {"id": "p56wQiqrn7mfDEVEL"}
+  postureIntegrations.get:
+    args: {"id": "p56wQiqrn7mfDEVEL"}
+  postureIntegrations.list:
+    args: {}
+  postureIntegrations.update:
+    args: {"id": "p56wQiqrn7mfDEVEL", "cloudId": "us-2"}
+  services.delete:
+    args: {"serviceName": "svc:mcp"}
+  services.get:
+    args: {"serviceName": "svc:mcp"}
+  services.hosts.getApproval:
+    args: {"serviceName": "svc:mcp", "deviceId": "nKLggijBzX11CNTRL"}
+  services.hosts.list:
+    args: {"serviceName": "svc:mcp"}
+  services.hosts.setApproval:
+    args: {"serviceName": "svc:mcp", "deviceId": "nKLggijBzX11CNTRL", "approved": true}
+  services.list:
+    args: {}
+  services.update:
+    args: {"serviceName": "svc:mcp", "ports": ["tcp:443"], "tags": ["tag:mcp"], "comment": "MCP server for agents"}
+  tailnetSettings.get:
+    args: {}
+  tailnetSettings.update:
+    args: {"devicesApprovalOn": true, "devicesKeyDurationDays": 90}
+  tailnets.create:
+    args: {"displayName": "agent-fleet"}
+  tailnets.delete:
+    args: {}
+  tailnets.list:
+    args: {"limit": 50}
+  userInvites.create:
+    args: {"invites": [{"role": "member", "email": "new.teammate@example.com"}]}
+  userInvites.delete:
+    args: {"userInviteId": "29214"}
+  userInvites.get:
+    args: {"userInviteId": "29214"}
+  userInvites.list:
+    args: {}
+  userInvites.resend:
+    args: {"userInviteId": "29214"}
+  users.approve:
+    args: {"userId": "uS81iBWpBf11CNTRL"}
+  users.delete:
+    args: {"userId": "uS81iBWpBf11CNTRL"}
+  users.get:
+    args: {"userId": "uS81iBWpBf11CNTRL"}
+  users.list:
+    args: {"type": "member", "role": "all"}
+  users.restore:
+    args: {"userId": "uS81iBWpBf11CNTRL"}
+  users.suspend:
+    args: {"userId": "uS81iBWpBf11CNTRL"}
+  users.updateRole:
+    args: {"userId": "uS81iBWpBf11CNTRL", "role": "auditor"}
+  webhooks.create:
+    args: {"endpointUrl": "https://hooks.slack.com/services/T000/B000/XXXX", "providerType": "slack", "subscriptions": ["nodeNeedsApproval", "nodeCreated", "policyUpdate"]}
+  webhooks.delete:
+    args: {"endpointId": "w5S9wB4zAH11CNTRL"}
+  webhooks.get:
+    args: {"endpointId": "w5S9wB4zAH11CNTRL"}
+  webhooks.list:
+    args: {}
+  webhooks.rotateSecret:
+    args: {"endpointId": "w5S9wB4zAH11CNTRL"}
+  webhooks.test:
+    args: {"endpointId": "w5S9wB4zAH11CNTRL"}
+  webhooks.update:
+    args: {"endpointId": "w5S9wB4zAH11CNTRL", "subscriptions": ["nodeNeedsApproval", "userNeedsApproval"]}
