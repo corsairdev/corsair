@@ -169,7 +169,10 @@ export function builtWithMoreApps(project: BuiltWithProject): number {
 }
 
 export function builtWithAppName(id: string): string {
-	return APP_NAMES[id] ?? id.charAt(0).toUpperCase() + id.slice(1);
+	// Own names only: an id such as "constructor" would otherwise read Object's inherited property.
+	return Object.hasOwn(APP_NAMES, id)
+		? APP_NAMES[id]!
+		: id.charAt(0).toUpperCase() + id.slice(1);
 }
 
 export function builtWithCategorySlug(id: string): string {

@@ -134,5 +134,8 @@ describe('apps', () => {
 		assert.equal(builtWithAppName('googlecalendar'), 'Google Calendar');
 		assert.equal(builtWithAppName('zendesk'), 'Zendesk');
 		assert.equal(builtWithAppName('acme'), 'Acme');
+		// Not Object's inherited properties: a function here breaks the page.
+		assert.equal(builtWithAppName('constructor'), 'Constructor');
+		assert.equal(builtWithAppName('tostring'), 'Tostring');
 	});
 });
