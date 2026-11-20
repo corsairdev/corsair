@@ -280,7 +280,8 @@ const textItEndpointMeta = {
 	},
 	'media.upload': {
 		riskLevel: 'write',
-		description: 'Upload a media file for message attachments.',
+		description:
+			'Upload a media file for message attachments. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'messages.list': {
 		riskLevel: 'read',

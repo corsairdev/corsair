@@ -1770,19 +1770,36 @@ await corsair.textit.api.labels.update({ uuid: '5a4eb79e-1b1f-4ae3-8700-09384cca
 
 `media.upload`
 
-Upload a media file for message attachments.
+Upload a media file for message attachments. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
 ```ts
-await corsair.textit.api.media.upload({ file: new Blob(['example'], { type: 'text/plain' }) });
+await corsair.textit.api.media.upload({ file: 'https://example.com/photo.jpg' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `file` | `custom` | Yes | — |
+| `file` | `string \| object \| custom` | Yes | The media file to attach to messages: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 

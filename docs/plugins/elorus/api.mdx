@@ -12500,7 +12500,7 @@ await corsair.elorus.api.v11.warehouse_update({
 
 `v12.bills_attachments_create`
 
-Create a new attachment.
+Create a new attachment. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -12531,7 +12531,15 @@ await corsair.elorus.api.v12.bills_attachments_create({ path: {"parent_pk":"demo
 ```ts
 {
   title?: string,
-  file: custom,
+  file: string | {
+    url: string,
+    filename?: string,
+    contentType?: string
+  } | {
+    base64: string,
+    filename?: string,
+    contentType?: string
+  } | custom,
   primary?: boolean
 }
 ```
@@ -14673,7 +14681,7 @@ await corsair.elorus.api.v12.bills_update({
 
 `v12.cashpayments_attachments_create`
 
-Create a new attachment.
+Create a new attachment. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -14704,7 +14712,15 @@ await corsair.elorus.api.v12.cashpayments_attachments_create({ path: {"parent_pk
 ```ts
 {
   title?: string,
-  file: custom
+  file: string | {
+    url: string,
+    filename?: string,
+    contentType?: string
+  } | {
+    base64: string,
+    filename?: string,
+    contentType?: string
+  } | custom
 }
 ```
 </Accordion>
@@ -15738,7 +15754,7 @@ await corsair.elorus.api.v12.cashpayments_update({
 
 `v12.cashreceipts_attachments_create`
 
-Create a new attachment.
+Create a new attachment. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -15769,7 +15785,15 @@ await corsair.elorus.api.v12.cashreceipts_attachments_create({ path: {"parent_pk
 ```ts
 {
   title?: string,
-  file: custom
+  file: string | {
+    url: string,
+    filename?: string,
+    contentType?: string
+  } | {
+    base64: string,
+    filename?: string,
+    contentType?: string
+  } | custom
 }
 ```
 </Accordion>
@@ -16841,7 +16865,7 @@ await corsair.elorus.api.v12.cashreceipts_update({
 
 `v12.contacts_attachments_create`
 
-Create a new attachment.
+Create a new attachment. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -16872,7 +16896,15 @@ await corsair.elorus.api.v12.contacts_attachments_create({ path: {"parent_pk":"d
 ```ts
 {
   title?: string,
-  file: custom
+  file: string | {
+    url: string,
+    filename?: string,
+    contentType?: string
+  } | {
+    base64: string,
+    filename?: string,
+    contentType?: string
+  } | custom
 }
 ```
 </Accordion>
@@ -18173,7 +18205,7 @@ await corsair.elorus.api.v12.creditnotes_applied-credit_list({
 
 `v12.creditnotes_attachments_create`
 
-Create a new attachment.
+Create a new attachment. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -18204,7 +18236,15 @@ await corsair.elorus.api.v12.creditnotes_attachments_create({ path: {"parent_pk"
 ```ts
 {
   title?: string,
-  file: custom
+  file: string | {
+    url: string,
+    filename?: string,
+    contentType?: string
+  } | {
+    base64: string,
+    filename?: string,
+    contentType?: string
+  } | custom
 }
 ```
 </Accordion>
@@ -20580,7 +20620,7 @@ await corsair.elorus.api.v12.creditnotes_update({
 
 `v12.deliverynotes_attachments_create`
 
-Create a new attachment.
+Create a new attachment. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -20611,7 +20651,15 @@ await corsair.elorus.api.v12.deliverynotes_attachments_create({ path: {"parent_p
 ```ts
 {
   title?: string,
-  file: custom
+  file: string | {
+    url: string,
+    filename?: string,
+    contentType?: string
+  } | {
+    base64: string,
+    filename?: string,
+    contentType?: string
+  } | custom
 }
 ```
 </Accordion>
@@ -23361,7 +23409,7 @@ await corsair.elorus.api.v12.emailtemplates_update({
 
 `v12.estimates_attachments_create`
 
-Create a new attachment.
+Create a new attachment. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -23392,7 +23440,15 @@ await corsair.elorus.api.v12.estimates_attachments_create({ path: {"parent_pk":"
 ```ts
 {
   title?: string,
-  file: custom
+  file: string | {
+    url: string,
+    filename?: string,
+    contentType?: string
+  } | {
+    base64: string,
+    filename?: string,
+    contentType?: string
+  } | custom
 }
 ```
 </Accordion>
@@ -25463,7 +25519,7 @@ await corsair.elorus.api.v12.expensecategories_read({
 
 `v12.expenses_attachments_create`
 
-Create a new attachment.
+Create a new attachment. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -25494,7 +25550,15 @@ await corsair.elorus.api.v12.expenses_attachments_create({ path: {"parent_pk":"d
 ```ts
 {
   title?: string,
-  file: custom,
+  file: string | {
+    url: string,
+    filename?: string,
+    contentType?: string
+  } | {
+    base64: string,
+    filename?: string,
+    contentType?: string
+  } | custom,
   primary?: boolean
 }
 ```
@@ -28146,7 +28210,7 @@ await corsair.elorus.api.v12.invoices_applied-credit_list({
 
 `v12.invoices_attachments_create`
 
-Create a new attachment.
+Create a new attachment. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -28177,7 +28241,15 @@ await corsair.elorus.api.v12.invoices_attachments_create({ path: {"parent_pk":"d
 ```ts
 {
   title?: string,
-  file: custom
+  file: string | {
+    url: string,
+    filename?: string,
+    contentType?: string
+  } | {
+    base64: string,
+    filename?: string,
+    contentType?: string
+  } | custom
 }
 ```
 </Accordion>
@@ -32056,7 +32128,7 @@ await corsair.elorus.api.v12.products_update({
 
 `v12.projects_attachments_create`
 
-Create a new attachment.
+Create a new attachment. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -32087,7 +32159,15 @@ await corsair.elorus.api.v12.projects_attachments_create({ path: {"parent_pk":"d
 ```ts
 {
   title?: string,
-  file: custom
+  file: string | {
+    url: string,
+    filename?: string,
+    contentType?: string
+  } | {
+    base64: string,
+    filename?: string,
+    contentType?: string
+  } | custom
 }
 ```
 </Accordion>
@@ -34974,7 +35054,7 @@ await corsair.elorus.api.v12.suppliercredits_applied-credit_list({
 
 `v12.suppliercredits_attachments_create`
 
-Create a new attachment.
+Create a new attachment. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -35005,7 +35085,15 @@ await corsair.elorus.api.v12.suppliercredits_attachments_create({ path: {"parent
 ```ts
 {
   title?: string,
-  file: custom,
+  file: string | {
+    url: string,
+    filename?: string,
+    contentType?: string
+  } | {
+    base64: string,
+    filename?: string,
+    contentType?: string
+  } | custom,
   primary?: boolean
 }
 ```

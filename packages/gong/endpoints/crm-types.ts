@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { gongFileSchema } from './file-input';
 
 const objectType = z.enum(['ACCOUNT', 'CONTACT', 'DEAL', 'LEAD']);
 const uploadObjectType = z.enum([
@@ -72,7 +73,9 @@ export const GongCrmInputSchemas = {
 		integrationId: z.number().int().nonnegative(),
 		objectType: uploadObjectType,
 		clientRequestId: z.string().regex(/^[A-Za-z0-9_-]+$/),
-		dataFile: z.instanceof(Blob),
+		dataFile: gongFileSchema(
+			'The LDJSON data file, one object per line, up to 200 MB',
+		),
 	}),
 	getRequestStatus: z.object({
 		integrationId: z.number().int().nonnegative(),

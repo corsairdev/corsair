@@ -321,9 +321,11 @@ export const BaseProviders = [
 	'godial',
 	'gong',
 	'googleaddressvalidation',
+	'googleads',
 	'googleanalytics',
 	'googlebigquery',
 	'googlecalendar',
+	'googlephotos',
 	'googleclassroom',
 	'googlecloudvision',
 	'googlecontacts',
@@ -332,6 +334,7 @@ export const BaseProviders = [
 	'googlemaps',
 	'googlemeet',
 	'googlesheets',
+	'googlesearchconsole',
 	'googleslides',
 	'googletasks',
 	'gorgias',
@@ -476,6 +479,7 @@ export const BaseProviders = [
 	'opengraph',
 	'openrouter',
 	'opensea',
+	'openseo',
 	'openweathermap',
 	'orbit',
 	'oura',
@@ -1056,9 +1060,11 @@ export const ProviderDisplayNames = {
 	godial: 'GoDial',
 	gong: 'Gong',
 	googleaddressvalidation: 'Google Address Validation',
+	googleads: 'Google Ads',
 	googleanalytics: 'Google Analytics',
 	googlebigquery: 'Google BigQuery',
 	googlecalendar: 'Google Calendar',
+	googlephotos: 'Google Photos',
 	googleclassroom: 'Google Classroom',
 	googlecloudvision: 'Google Cloud Vision',
 	googlecontacts: 'Google Contacts',
@@ -1067,6 +1073,7 @@ export const ProviderDisplayNames = {
 	googlemaps: 'Google Maps',
 	googlemeet: 'Google Meet',
 	googlesheets: 'Google Sheets',
+	googlesearchconsole: 'Google Search Console',
 	googleslides: 'Google Slides',
 	googletasks: 'Google Tasks',
 	gorgias: 'Gorgias',
@@ -1211,6 +1218,7 @@ export const ProviderDisplayNames = {
 	opengraph: 'OpenGraph.io',
 	openrouter: 'OpenRouter',
 	opensea: 'OpenSea',
+	openseo: 'OpenSEO',
 	openweathermap: 'OpenWeatherMap',
 	orbit: 'Orbit',
 	oura: 'Oura',
@@ -1798,9 +1806,11 @@ export type AllProviders =
 	| 'godial'
 	| 'gong'
 	| 'googleaddressvalidation'
+	| 'googleads'
 	| 'googleanalytics'
 	| 'googlebigquery'
 	| 'googlecalendar'
+	| 'googlephotos'
 	| 'googleclassroom'
 	| 'googlecloudvision'
 	| 'googlecontacts'
@@ -1809,6 +1819,7 @@ export type AllProviders =
 	| 'googlemaps'
 	| 'googlemeet'
 	| 'googlesheets'
+	| 'googlesearchconsole'
 	| 'googleslides'
 	| 'googletasks'
 	| 'gorgias'
@@ -1953,6 +1964,7 @@ export type AllProviders =
 	| 'opengraph'
 	| 'openrouter'
 	| 'opensea'
+	| 'openseo'
 	| 'openweathermap'
 	| 'orbit'
 	| 'oura'

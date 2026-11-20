@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import { resolveFileInput } from 'corsair/http';
 import type { TextItContext } from '..';
 import type { TextItRequest } from '../client';
 import { makeTextItRequest } from '../client';
@@ -8,10 +9,17 @@ import {
 	TextItEndpointOutputSchemas as Outputs,
 } from './types';
 
+/**
+ * Most bytes taken from a link, base64 or a data: URL: core's download default,
+ * passed explicitly so inline base64 is held to it too (core caps it only when asked).
+ */
+const FILE_MAX_BYTES = 25 * 1024 * 1024;
+
 type Operation = keyof typeof Inputs & keyof typeof Outputs;
+// May be async, so a file given as a link or base64 is resolved first.
 type Builder<K extends Operation> = (
 	input: TextItEndpointInputs[K],
-) => TextItRequest;
+) => TextItRequest | Promise<TextItRequest>;
 
 function endpoint<K extends Operation>(
 	key: K,
@@ -27,7 +35,7 @@ function endpoint<K extends Operation>(
 		// K. Each cast restores the type of the schema `key` selects; parse() has
 		// already validated the value against that schema at runtime.
 		const input = Inputs[key].parse(raw ?? {}) as TextItEndpointInputs[K];
-		const response = await makeTextItRequest(ctx.key, build(input));
+		const response = await makeTextItRequest(ctx.key, await build(input));
 		const result = Outputs[key].parse(response) as TextItEndpointOutputs[K];
 		await logEventFromContext(ctx, `textit.${event}`, {}, 'completed');
 		return result;
@@ -160,10 +168,23 @@ export const textItEndpointsNested = {
 		),
 	},
 	media: {
-		upload: endpoint('mediaUpload', 'media.upload', ({ file }) => ({
+		// A Blob is sent as it was given; a link or base64 is fetched or decoded
+		// into the file part. TextIt documents no upload limit, so a link is held
+		// to core's default 25 MB.
+		upload: endpoint('mediaUpload', 'media.upload', async ({ file }) => ({
 			method: 'POST',
 			path: '/media.json',
-			formData: { file },
+			formData: {
+				file:
+					file instanceof Blob
+						? file
+						: (
+								await resolveFileInput(file, {
+									maxBytes: FILE_MAX_BYTES,
+									fallbackName: 'media',
+								})
+							).file,
+			},
 		})),
 	},
 	messages: {

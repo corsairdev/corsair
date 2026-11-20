@@ -1,0 +1,148 @@
+---
+title: "Google Search Console plugin"
+sidebarTitle: "Overview"
+description: "Query search performance and inspect indexing, mobile usability and rich results through the Google Search Console API."
+---
+
+Use **Google Search Console** through Corsair: one client, typed API calls.
+
+The Search Console API reports on how Google sees a property: the queries and pages that earn clicks and impressions, what Google knows about a single URL, and the sitemaps submitted for it.
+
+Calls are made with an OAuth token belonging to an account that has access to the property. The only scope this plugin needs is `https://www.googleapis.com/auth/webmasters`, which covers the reads and the sitemap writes.
+
+Things to know before you call:
+
+- **A property is named the way Search Console names it.** `https://example.com/` for a URL-prefix property, or `sc-domain:example.com` for a domain property. Both travel in the path, and the plugin encodes them.
+- **Dates are Pacific Time.** `startDate` and `endDate` are `YYYY-MM-DD` in the API's own time zone, and the end date is included in the range.
+- **`rowLimit` is 1 to 25,000, default 1,000.** There is no page token: page with `startRow`, and a `startRow` past the end answers a successful empty page.
+- **Results are grouped by the dimensions you ask for, sorted by clicks descending.** `ctr` is a fraction, so `0.05` is 5%.
+- **`HOUR` needs `dataState: 'HOURLY_ALL'`,** and hourly data only goes back 10 days. The plugin refuses the combination without the state rather than letting the API reject it.
+- **`type` and `searchType` are the same setting.** Send one; the plugin rejects both.
+- **A sitemap's `feedpath` is a full URL,** not a path, and it is submitted with a PUT that has no body. Google fetches it.
+- **URL inspection has its own quota:** 2,000 per day and 600 per minute per site. Search Analytics allows 1,200 per minute per site, and a load-quota refusal asks for a 15 minute wait.
+- **No inbound webhooks.** The API does not send any.
+
+**What you get:**
+
+- 10 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/googlesearchconsole better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/googlesearchconsole better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/googlesearchconsole better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/googlesearchconsole better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { googlesearchconsole } from '@corsair-dev/googlesearchconsole';
+
+export const corsair = createCorsair({
+	plugins: [
+		googlesearchconsole(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="OAuth 2.0 (Recommended)">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Google Search Console OAuth app.
+
+```ts
+googlesearchconsole()
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'googlesearchconsole',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read the top queries for a property over a month**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.googlesearchconsole.api.searchanalytics.query({
+	siteUrl: 'https://example.com/',
+	startDate: '2026-10-01',
+	endDate: '2026-10-31',
+	dimensions: ['QUERY'],
+});
+```
+
+
+**Submit a sitemap**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.googlesearchconsole.api.sitemaps.submit({ siteUrl: 'https://example.com/', feedpath: 'https://example.com/sitemap.xml' });
+```
+
+
+See the full list on the [API](/plugins/googlesearchconsole/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/googlesearchconsole/api">
+    Every `googlesearchconsole.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

@@ -523,7 +523,8 @@ const slackbotEndpointMeta = {
 	},
 	'files.download': {
 		riskLevel: 'read',
-		description: 'Download the contents of a Slack file',
+		description:
+			'Download a Slack file. On Corsair up to about 700 KB comes back inline as content and a larger file comes back as fileId, a Files id; without a host that keeps files the content comes back inline up to max_bytes.',
 	},
 	'files.commentsDelete': {
 		riskLevel: 'destructive',

@@ -1,7 +1,15 @@
 import { logEventFromContext } from 'corsair/core';
+import { resolveFileInput } from 'corsair/http';
 import { makeOcrWebServicePostRequest, OcrWebServiceAPIError } from '../client';
 import type { OcrWebServiceEndpoints } from '../index';
+import type { RecognizeInput } from './types';
 import { RecognizeInputSchema, RecognizeResponseSchema } from './types';
+
+/**
+ * Most bytes taken from a link, base64 or a data: URL: core's download default,
+ * passed explicitly so inline base64 is held to it too (core caps it only when asked).
+ */
+const FILE_MAX_BYTES = 25 * 1024 * 1024;
 
 const OCR_OUTPUT_HOSTS = new Set([
 	'www.ocrwebservice.com',
@@ -26,6 +34,21 @@ function requireHttpsOutputUrl(url: string): string {
 	}
 
 	throw new OcrWebServiceAPIError('OCR output URL must be HTTPS');
+}
+
+/**
+ * The document sent as the request body. A Blob goes as it was given; a link
+ * or base64 is fetched or decoded here, up to core's default 25 MB, since OCR
+ * Web Service documents no upload limit of its own.
+ */
+async function documentBody(file: RecognizeInput['file']): Promise<Blob> {
+	if (file instanceof Blob) return file;
+	return (
+		await resolveFileInput(file, {
+			maxBytes: FILE_MAX_BYTES,
+			fallbackName: 'document',
+		})
+	).file;
 }
 
 export const recognize: OcrWebServiceEndpoints['recognize'] = async (
@@ -61,7 +84,7 @@ export const recognize: OcrWebServiceEndpoints['recognize'] = async (
 				newline: newline === true ? 1 : undefined,
 				description,
 			},
-			body: file,
+			body: await documentBody(file),
 		},
 	);
 

@@ -131,7 +131,7 @@ string | number | {
 
 `assets.upload`
 
-Upload an asset file to the account library
+Upload an asset file to the account library. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -143,9 +143,26 @@ await corsair.spotlightr.api.assets.upload({ file: new Blob(['...'], { type: 'im
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `file` | `custom` | Yes | File to upload |
+| `file` | `string \| object \| custom` | Yes | File to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…) |
 
 The file is sent as multipart form data.
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -396,7 +413,7 @@ string | number | {
 
 `videos.create`
 
-Create a video from a hosted link or an uploaded file, optionally copying player settings from another video
+Create a video from a hosted link or an uploaded file, optionally copying player settings from another video. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -410,7 +427,7 @@ await corsair.spotlightr.api.videos.create({ name: 'Product tour', url: 'https:/
 |------|------|----------|-------------|
 | `name` | `string` | Yes | Name of the video |
 | `url` | `string` | No | Any hosted video link (YouTube, Vimeo, Drive); wins over `file` |
-| `file` | `custom` | No | Video file to upload, used when `url` is absent |
+| `file` | `string \| object \| custom` | No | Video file to upload, used when `url` is absent: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). A link is fetched here, up to 25 MB; for a larger video pass its link as `url` and Spotlightr fetches it itself |
 | `custom_s3` | `number` | No | 0, or the ID of a custom storage integration |
 | `hls` | `boolean` | No | Encode to HLS (true) or leave the source unsecured (false) |
 | `video_group` | `number` | No | Project to file it under |
@@ -418,6 +435,23 @@ await corsair.spotlightr.api.videos.create({ name: 'Product tour', url: 'https:/
 | `player_settings` | `number \| string` | No | Another of your videos' numeric ID to copy player settings from |
 
 Pass either `url` or `file`. `url` wins when both are given, and `hls` asks for HLS encoding.
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 

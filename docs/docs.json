@@ -2689,6 +2689,14 @@
                 ]
               },
               {
+                "group": "Google Ads",
+                "pages": [
+                  "plugins/googleads/overview",
+                  "plugins/googleads/api",
+                  "plugins/googleads/database"
+                ]
+              },
+              {
                 "group": "Google Analytics",
                 "pages": [
                   "plugins/googleanalytics/overview",
@@ -2771,6 +2779,22 @@
                   "plugins/googlemeet/overview",
                   "plugins/googlemeet/api",
                   "plugins/googlemeet/database"
+                ]
+              },
+              {
+                "group": "Google Photos",
+                "pages": [
+                  "plugins/googlephotos/overview",
+                  "plugins/googlephotos/api",
+                  "plugins/googlephotos/database"
+                ]
+              },
+              {
+                "group": "Google Search Console",
+                "pages": [
+                  "plugins/googlesearchconsole/overview",
+                  "plugins/googlesearchconsole/api",
+                  "plugins/googlesearchconsole/database"
                 ]
               },
               {
@@ -3941,6 +3965,14 @@
                   "plugins/opensea/overview",
                   "plugins/opensea/api",
                   "plugins/opensea/database"
+                ]
+              },
+              {
+                "group": "OpenSEO",
+                "pages": [
+                  "plugins/openseo/overview",
+                  "plugins/openseo/api",
+                  "plugins/openseo/database"
                 ]
               },
               {
