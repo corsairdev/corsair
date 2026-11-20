@@ -10476,5 +10476,11 @@
         "title": "Take a file link or base64 where a Blob was required"
       }
     ]
+  },
+  {
+    "date": "2026-11-20",
+    "package": "cloud",
+    "version": "0.2.15",
+    "changes": []
   }
 ]
