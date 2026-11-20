@@ -8,6 +8,8 @@ import {
 import type { ArynContext } from './index';
 
 jest.mock('corsair/http', () => ({
+	// The schemas use core's FileInputSchema; only the request is stubbed.
+	...jest.requireActual('corsair/http'),
 	request: jest.fn(),
 	ApiError: class extends Error {
 		constructor(

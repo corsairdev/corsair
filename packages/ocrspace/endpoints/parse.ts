@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import { resolveFileInput } from 'corsair/http';
 import {
 	assertOcrSuccess,
 	makeOcrSpaceGetRequest,
@@ -8,14 +9,53 @@ import type { OcrSpaceContext, OcrSpaceEndpoints } from '../index';
 import type {
 	OcrResponse,
 	ParseImageUrlResponse,
+	ParseInput,
 	ParseResponse,
 } from './types';
 import {
+	isTypedMime,
 	ParseImageUrlInputSchema,
 	ParseImageUrlResponseSchema,
 	ParseInputSchema,
 	ParseResponseSchema,
 } from './types';
+
+/**
+ * OCR.space's largest plan (PRO PDF) takes files of 100 MB and more; the free
+ * plan stops at 1 MB and PRO at 5 MB, and the API itself refuses a file over
+ * the account's limit. A link is fetched into memory up to this size.
+ */
+export const UPLOAD_MAX_BYTES = 100 * 1024 * 1024;
+
+// Extensions OCR.space reads the file type from.
+const TYPED_EXTENSION = /\.(pdf|gif|png|jpe?g|tiff?|bmp)$/i;
+
+/**
+ * The file to upload. A Blob is sent as it was given; a link or base64 is
+ * fetched or decoded here, and must say what it is (by its type or the
+ * extension of its name) unless filetype is set, as an untyped Blob must.
+ */
+async function uploadFile(
+	file: NonNullable<ParseInput['file']>,
+	filetype: string | undefined,
+): Promise<Blob> {
+	if (file instanceof Blob) return file;
+	const resolved = await resolveFileInput(file, {
+		maxBytes: UPLOAD_MAX_BYTES,
+		fallbackName: 'upload',
+	});
+	if (
+		filetype === undefined &&
+		!isTypedMime(resolved.contentType) &&
+		!TYPED_EXTENSION.test(resolved.filename)
+	) {
+		throw new Error(
+			// A fixed message: a caller's name or media type parameters could carry personal data.
+			"Neither the file's name nor its type says what it is. Set filetype.",
+		);
+	}
+	return resolved.file;
+}
 
 /**
  * `ParsedResults` holds one entry per page of a PDF. The joined text is stored
@@ -135,7 +175,7 @@ export const parse: OcrSpaceEndpoints['parse'] = async (ctx, input) => {
 		formData.url = url;
 	}
 	if (file !== undefined) {
-		formData.file = file;
+		formData.file = await uploadFile(file, options.filetype);
 	}
 	if (base64Image !== undefined) {
 		formData.base64Image = base64Image;

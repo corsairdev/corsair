@@ -28,6 +28,15 @@ const ChannelsListInputSchema = z.object({
 	limit: z.number().optional(),
 });
 
+const ChannelsListMineInputSchema = z.object({
+	user: z.string().optional(),
+	types: z.string().optional(),
+	exclude_archived: z.boolean().optional(),
+	team_id: z.string().optional(),
+	cursor: z.string().optional(),
+	limit: z.number().optional(),
+});
+
 const ChannelsGetHistoryInputSchema = z.object({
 	channel: z.string(),
 	latest: z.string().optional(),
@@ -359,6 +368,7 @@ export const SlackEndpointInputSchemas = {
 	channelsCreate: ChannelsCreateInputSchema,
 	channelsGet: ChannelsGetInputSchema,
 	channelsList: ChannelsListInputSchema,
+	channelsListMine: ChannelsListMineInputSchema,
 	channelsGetHistory: ChannelsGetHistoryInputSchema,
 	channelsInvite: ChannelsInviteInputSchema,
 	channelsJoin: ChannelsJoinInputSchema,
@@ -894,6 +904,7 @@ export const SlackEndpointOutputSchemas = {
 	channelsCreate: ConversationsCreateResponseSchema,
 	channelsGet: ConversationsInfoResponseSchema,
 	channelsList: ConversationsListResponseSchema,
+	channelsListMine: ConversationsListResponseSchema,
 	channelsGetHistory: ConversationsHistoryResponseSchema,
 	channelsInvite: ConversationsInviteResponseSchema,
 	channelsJoin: ConversationsJoinResponseSchema,

@@ -1,3 +1,4 @@
+import { FileInputSchema } from 'corsair/http';
 import { z } from 'zod';
 
 const id = z.string().min(1);
@@ -369,13 +370,22 @@ export const ListVoicesInputSchema = z.strictObject({
 	language: z.string().min(1).optional(),
 });
 export const ListCustomVoicesInputSchema = EmptyInputSchema;
+// What a caller passes: an agent's JSON carries a link to the sample or its
+// base64; a Blob or File still works from TypeScript.
 export const CreateCustomVoiceInputSchema = z.strictObject({
 	name: z.string().min(1),
 	language: z.string().min(1),
 	gender: z.enum(['male', 'female', 'neutral']),
-	audio: z.instanceof(Blob),
+	audio: z
+		.union([FileInputSchema, z.instanceof(Blob)])
+		.describe(
+			'The voice sample audio: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…).',
+		),
 	idempotencyKey: z.string().min(1),
 });
+// What is sent: the sample itself, as the multipart body needs it.
+export const CreateCustomVoiceRequestSchema =
+	CreateCustomVoiceInputSchema.extend({ audio: z.instanceof(Blob) });
 export const CustomVoiceIdInputSchema = NumberIdInputSchema;
 
 export const ListLanguagesInputSchema = EmptyInputSchema;

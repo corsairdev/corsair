@@ -1,7 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
+import { toFileOutput } from 'corsair/http';
 import {
+	DOWNLOAD_MAX_BYTES,
 	downloadOpenaiFile,
 	makeOpenaiRequest,
+	OPENAI_UPLOAD_MAX_BYTES,
 	uploadOpenaiFile,
 } from '../client';
 import type { OpenaiEndpoints } from '../index';
@@ -17,6 +20,7 @@ export const upload: OpenaiEndpoints['filesUpload'] = async (ctx, input) => {
 		file: input.file,
 		fileName: input.fileName,
 		fields: { purpose: input.purpose },
+		maxBytes: OPENAI_UPLOAD_MAX_BYTES.file,
 	});
 
 	await logEventFromContext(
@@ -90,11 +94,10 @@ export const downloadContent: OpenaiEndpoints['filesDownloadContent'] = async (
 	ctx,
 	input,
 ) => {
-	const buffer = await downloadOpenaiFile(
+	const file = await downloadOpenaiFile(
 		`files/${input.fileId}/content`,
 		ctx.key,
 	);
-	const contentBase64 = Buffer.from(buffer).toString('base64');
 
 	await logEventFromContext(
 		ctx,
@@ -102,5 +105,9 @@ export const downloadContent: OpenaiEndpoints['filesDownloadContent'] = async (
 		{ ...input },
 		'completed',
 	);
-	return { fileId: input.fileId, contentBase64 };
+	// `fileId` in the result is core's: where a host saved the file. OpenAI's id is the input.
+	return toFileOutput(file.bytes, file.contentType, {
+		filename: file.filename,
+		maxBytes: DOWNLOAD_MAX_BYTES,
+	});
 };

@@ -1,3 +1,4 @@
+import { FileInputSchema } from 'corsair/http';
 import { z } from 'zod';
 
 const ActivitiesCreateInputSchema = z
@@ -185,8 +186,13 @@ const ClubsGetInputSchema = z
 
 const UploadsCreateInputSchema = z
 	.object({
-		// Strava POST /uploads is multipart/form-data; file must be a Blob or File object
-		file: z.instanceof(Blob),
+		// Strava POST /uploads is multipart/form-data. A link or base64 is fetched
+		// or decoded into the file part; a Blob or File is sent as it is.
+		file: z
+			.union([FileInputSchema, z.instanceof(Blob)])
+			.describe(
+				'The activity file (FIT, TCX or GPX, optionally gzipped; data_type says which): a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…).',
+			),
 		data_type: z.enum(['fit', 'fit.gz', 'tcx', 'tcx.gz', 'gpx', 'gpx.gz']),
 		name: z.string().optional(),
 		description: z.string().optional(),
