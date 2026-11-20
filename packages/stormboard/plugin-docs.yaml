@@ -50,7 +50,7 @@ apiExamples:
       newsletter: 1
   storms.create:
     args:
-      plan: Team
+      plan: personal
       title: Sprint Planning
       description: Weekly sprint board
   storms.get:
@@ -225,9 +225,9 @@ apiNotes:
     example, so their output schema accepts any JSON object.
   ideas.create: >-
     Stormboard assigns the id; the answer carries it as {"message": "idea
-    created", "id": 10000001}. The color and shape values have API defaults
-    (yellow, standard) and the docs name no closed list, so they pass
-    through as strings.
+    created", "id": 10000001}. color is one of the documented 16 (yellow,
+    the default, through grey) and shape one of standard, gem, hexagon,
+    octagon, square, title or triangle.
   ideas.deleteConnectorBetween: >-
     The two ids go in the DELETE's JSON body; the API answers 400 when they
     come as query parameters. Either idea can be named by its numeric id or

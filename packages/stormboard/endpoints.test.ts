@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { Chat, Folders, Ideas, Storms, Tags, Users } from './endpoints';
 import {
 	authKey,
@@ -170,14 +171,14 @@ const cases: Case[] = [
 	{
 		op: 'storms.create',
 		endpoint: Storms.create,
-		input: { plan: 'Team', title: 'New Storm', votesperuser: 5 },
+		input: { plan: 'personal', title: 'New Storm', votesperuser: 5 },
 		respondWith: () => ({
 			body: { message: 'Storm created', id: 1000000, key: 'storm99' },
 		}),
 		expect: {
 			method: 'POST',
 			path: '/storms',
-			body: { plan: 'Team', title: 'New Storm', votesperuser: 5 },
+			body: { plan: 'personal', title: 'New Storm', votesperuser: 5 },
 		},
 	},
 	{
@@ -704,9 +705,9 @@ describe('stormboard requests, one per documented operation', () => {
 			const sent = lastRequest();
 			expect(sent.method).toBe(wanted.method);
 			expect(sent.path).toBe(wanted.path);
-			if (wanted.query) {
-				expect(sent.query).toEqual(wanted.query);
-			}
+			// Exact on every row, so a body-only route can't also leak its
+			// ids into the query string.
+			expect(sent.query).toEqual(wanted.query ?? {});
 			if (wanted.body !== undefined) {
 				expect(JSON.parse(sent.body as string)).toEqual(wanted.body);
 			} else {
@@ -785,11 +786,44 @@ describe('stormboard output parsing', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
+	it('requires team_id for the team plan', async () => {
+		await expect(
+			invoke(Storms.create, { plan: 'team', title: 'Team Storm' }),
+		).rejects.toThrow('team_id');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('refuses an idea shape outside the documented list', async () => {
+		await expect(
+			invoke(Ideas.create, { stormid: 49999, data: 'x', shape: 'circle' }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('types the stormid a duplicate answers', async () => {
+		respond({ message: 'Storm duplicated', stormid: 2065032, stormkey: 'k' });
+
+		await expect(
+			invoke(Storms.duplicate, { stormId: 49999 }),
+		).resolves.toMatchObject({ stormid: 2065032 });
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.anything(),
+			'stormboard.storms.duplicate',
+			{ newStormId: 2065032 },
+			'completed',
+		);
+	});
+
 	it('surfaces the 403 auth envelope as a typed error', async () => {
 		respond(noAuth, 403);
 
-		await expect(invoke(Storms.list, {})).rejects.toThrow(
-			'Stormboard 403: No authentication method set, it is required for this endpoint',
-		);
+		const error = await invoke(Storms.list, {}).catch((e: unknown) => e);
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).toMatchObject({
+			name: 'ApiError',
+			status: 403,
+			message:
+				'Stormboard 403: No authentication method set, it is required for this endpoint',
+		});
 	});
 });

@@ -379,7 +379,7 @@ export const duplicate: StormboardEndpoints['stormsDuplicate'] = (ctx, input) =>
 			body: { stormname },
 		}),
 		{
-			log: (_, result) => ({ newStormId: result.id ?? undefined }),
+			log: (_, result) => ({ newStormId: result.stormid ?? undefined }),
 		},
 	);
 

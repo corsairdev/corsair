@@ -77,7 +77,7 @@ describe('makeStormboardRequest', () => {
 		await makeStormboardRequest(API_KEY, {
 			method: 'POST',
 			path: '/storms',
-			body: { plan: 'Team', title: 'New Storm' },
+			body: { plan: 'personal', title: 'New Storm' },
 		});
 
 		const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
@@ -85,7 +85,7 @@ describe('makeStormboardRequest', () => {
 		expect(new Headers(init.headers).get('content-type')).toBe(
 			'application/json',
 		);
-		expect(String(init.body)).toBe('{"plan":"Team","title":"New Storm"}');
+		expect(String(init.body)).toBe('{"plan":"personal","title":"New Storm"}');
 	});
 
 	it('carries query parameters on DELETE', async () => {

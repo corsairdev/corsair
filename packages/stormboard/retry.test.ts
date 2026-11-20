@@ -104,7 +104,7 @@ describe('retries through createCorsair', () => {
 
 			await expect(
 				corsair.stormboard.api.storms.create({
-					plan: 'Team',
+					plan: 'personal',
 					title: 'No retry',
 				}),
 			).rejects.toMatchObject({ status: 502 });

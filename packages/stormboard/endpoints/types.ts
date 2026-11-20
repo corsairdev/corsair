@@ -305,21 +305,30 @@ const UsersUpdateNotificationsInputSchema = z.object({
 
 // ── Storms ────────────────────────────────────────────────────────────────
 
-const StormsCreateInputSchema = z.object({
-	plan: z
-		.string()
-		.min(1)
-		.describe(
-			'The Storm plan; the docs name no closed list, so any plan string is passed through.',
-		),
-	title: z.string().min(1),
-	description: z.string().optional(),
-	template: nonNegInt.optional(),
-	votesperuser: nonNegInt.optional(),
-	avatars: z.union([z.literal(0), z.literal(1)]).optional(),
-	ideacreator: z.union([z.literal(0), z.literal(1)]).optional(),
-	team_id: nonNegInt.optional(),
-});
+const StormsCreateInputSchema = z
+	.object({
+		plan: z
+			.enum(['personal', 'student', 'educator', 'team'])
+			.describe(
+				'The plan to create the Storm under; student and educator need that plan, team needs team_id.',
+			),
+		title: z.string().min(1),
+		description: z.string().optional(),
+		template: nonNegInt.optional(),
+		votesperuser: nonNegInt.optional(),
+		avatars: z.union([z.literal(0), z.literal(1)]).optional(),
+		ideacreator: z.union([z.literal(0), z.literal(1)]).optional(),
+		team_id: positiveInt.optional(),
+	})
+	.superRefine((input, ctx) => {
+		if (input.plan === 'team' && input.team_id === undefined) {
+			ctx.addIssue({
+				code: 'custom',
+				message: 'The team plan requires team_id',
+				path: ['team_id'],
+			});
+		}
+	});
 
 const StormsGetInputSchema = z.object({
 	stormId: positiveInt,
@@ -453,13 +462,42 @@ const StormsUnfavoriteInputSchema = z.object({
 
 // ── Ideas ─────────────────────────────────────────────────────────────────
 
+// Documented closed lists for an idea's color and shape.
+const IdeaColor = z.enum([
+	'yellow',
+	'light-orange',
+	'orange',
+	'red',
+	'light-green',
+	'green',
+	'teal',
+	'turquoise',
+	'light-blue',
+	'blue',
+	'light-purple',
+	'purple',
+	'brown',
+	'light-pink',
+	'pink',
+	'grey',
+]);
+const IdeaShape = z.enum([
+	'standard',
+	'gem',
+	'hexagon',
+	'octagon',
+	'square',
+	'title',
+	'triangle',
+]);
+
 const IdeasCreateInputSchema = z.object({
 	stormid: positiveInt,
 	type: z.string().optional(),
 	data: z.string().min(1),
 	name: z.string().optional(),
-	color: z.string().optional(),
-	shape: z.string().optional(),
+	color: IdeaColor.optional(),
+	shape: IdeaShape.optional(),
 	sectionindex: z.string().optional(),
 	x: nonNegInt.optional(),
 	y: nonNegInt.optional(),
@@ -470,8 +508,8 @@ const IdeasUpdateInputSchema = z.object({
 	ideaId: positiveInt,
 	type: z.string().optional(),
 	data: z.string().min(1),
-	color: z.string().optional(),
-	shape: z.string().optional(),
+	color: IdeaColor.optional(),
+	shape: IdeaShape.optional(),
 	x: nonNegInt.optional(),
 	y: nonNegInt.optional(),
 	lock: z.union([z.literal(0), z.literal(1)]).optional(),
@@ -767,7 +805,15 @@ export const StormboardEndpointOutputSchemas = {
 	stormsDeclineInvite: MessageWithIdSchema,
 	stormsJoin: MessageWithIdSchema,
 	stormsLeave: MessageWithIdSchema,
-	stormsDuplicate: MessageWithIdSchema,
+	// Answers {"message": "Storm duplicated", "stormid": 2065032,
+	// "stormkey": "button97"} (live 11-20).
+	stormsDuplicate: z
+		.object({
+			message: z.union([z.string(), z.number()]),
+			stormid: id,
+			stormkey: str,
+		})
+		.loose(),
 	// The docs document no response example for the favorite toggles.
 	stormsFavorite: z.object({}).loose(),
 	stormsUnfavorite: z.object({}).loose(),
