@@ -10797,5 +10797,23 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-20",
+    "package": "@corsair-dev/interzoid",
+    "dir": "packages/interzoid",
+    "name": "Interzoid",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-20",
+    "package": "@corsair-dev/stormboard",
+    "dir": "packages/stormboard",
+    "name": "Stormboard",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
