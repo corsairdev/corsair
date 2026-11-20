@@ -314,6 +314,20 @@ describe('locations', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
+	it('update refuses null for name and city, which the API requires', async () => {
+		// Live 11-20: PATCH {"name":null} and {"city":null} answer 422.
+		for (const field of ['name', 'city']) {
+			await expect(
+				invoke(Locations.update, {
+					projectId: 'PROJECT_ID',
+					locationId: 'LOCATION_ID',
+					[field]: null,
+				}),
+			).rejects.toThrow();
+		}
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('update PATCHes only the sent fields and clears with null', async () => {
 		respond({ data: location, geocoding });
 
@@ -551,6 +565,33 @@ describe('specialHours', () => {
 			path: '/api/v2/projects/PROJECT_ID/special-hours/k4ZqP0mE7d',
 		});
 		expect(sent.body).toBe('{"hours":[{"opens":"10:00","closes":"15:00"}]}');
+	});
+
+	it('update lets repeats_yearly rely on the saved holiday_key', async () => {
+		// Live 11-20: PATCH {"repeats_yearly":true} on a rule with a saved
+		// holiday_key answers 200.
+		respond({ data: rule });
+
+		await expect(
+			invoke(SpecialHours.update, {
+				projectId: 'PROJECT_ID',
+				ruleId: 'k4ZqP0mE7d',
+				repeats_yearly: true,
+			}),
+		).resolves.toEqual({ data: rule });
+		expect(lastRequest().body).toBe('{"repeats_yearly":true}');
+	});
+
+	it('update refuses repeats_yearly while clearing the holiday_key', async () => {
+		await expect(
+			invoke(SpecialHours.update, {
+				projectId: 'PROJECT_ID',
+				ruleId: 'k4ZqP0mE7d',
+				repeats_yearly: true,
+				holiday_key: null,
+			}),
+		).rejects.toThrow('repeats_yearly needs a holiday_key');
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('delete shapes the 204 to the documented contract', async () => {

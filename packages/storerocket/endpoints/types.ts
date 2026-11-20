@@ -533,8 +533,9 @@ const LocationsUpdateInputSchema = z
 	.object({
 		projectId: recordId,
 		locationId: recordId,
-		name: z.string().min(1).nullish().optional(),
-		city: z.string().min(1).nullish().optional(),
+		// Omit to keep the saved value; the API answers 422 to null.
+		name: z.string().min(1).optional(),
+		city: z.string().min(1).optional(),
 		...LocationWriteFieldsSchema,
 	})
 	.superRefine((input, ctx) => {
@@ -731,7 +732,9 @@ const SpecialHoursUpdateInputSchema = z
 			}
 		}
 		if (input.repeats_yearly) {
-			if (input.holiday_key === undefined || input.holiday_key === null) {
+			// An omitted holiday_key keeps the saved one; only clearing it
+			// while turning on repeats_yearly is refused here.
+			if (input.holiday_key === null) {
 				ctx.addIssue({
 					code: z.ZodIssueCode.custom,
 					message: 'repeats_yearly needs a holiday_key',
