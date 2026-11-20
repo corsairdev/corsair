@@ -4152,6 +4152,15 @@
                 ]
               },
               {
+                "group": "Piggy",
+                "pages": [
+                  "plugins/piggy/overview",
+                  "plugins/piggy/api",
+                  "plugins/piggy/database",
+                  "plugins/piggy/webhooks"
+                ]
+              },
+              {
                 "group": "Pinecone",
                 "pages": [
                   "plugins/pinecone/overview",
