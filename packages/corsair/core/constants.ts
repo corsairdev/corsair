@@ -394,6 +394,7 @@ export const BaseProviders = [
 	'kanbanize',
 	'keen',
 	'keenable',
+	'kernel',
 	'keyword',
 	'kibana',
 	'kickbox',
@@ -617,6 +618,7 @@ export const BaseProviders = [
 	'stackexchange',
 	'starton',
 	'storeganise',
+	'storerocket',
 	'stormglass',
 	'strava',
 	'streamtime',
@@ -1133,6 +1135,7 @@ export const ProviderDisplayNames = {
 	kanbanize: 'Kanbanize',
 	keen: 'Keen',
 	keenable: 'Keenable',
+	kernel: 'Kernel',
 	keyword: 'Keyword',
 	kibana: 'Kibana',
 	kickbox: 'Kickbox',
@@ -1356,6 +1359,7 @@ export const ProviderDisplayNames = {
 	stackexchange: 'Stack Exchange',
 	starton: 'Starton',
 	storeganise: 'Storeganise',
+	storerocket: 'Storerocket',
 	stormglass: 'Stormglass',
 	strava: 'Strava',
 	streamtime: 'Streamtime',
@@ -1879,6 +1883,7 @@ export type AllProviders =
 	| 'kanbanize'
 	| 'keen'
 	| 'keenable'
+	| 'kernel'
 	| 'keyword'
 	| 'kibana'
 	| 'kickbox'
@@ -2102,6 +2107,7 @@ export type AllProviders =
 	| 'stackexchange'
 	| 'starton'
 	| 'storeganise'
+	| 'storerocket'
 	| 'stormglass'
 	| 'strava'
 	| 'streamtime'
