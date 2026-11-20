@@ -112,7 +112,7 @@ Left out on purpose:
 | `browserPools.release` | `kernel.api.browserPools.release` | `write` | Return an acquired browser to its pool (optionally reusing it rather than replacing it). |
 | `browserPools.update` | `kernel.api.browserPools.update` | `write` | Change a browser pool's size or browser configuration. |
 | `browsers.computer.batch` | `kernel.api.browsers.computer.batch` | `write` | Run a list of computer actions (click_mouse, type_text, press_key, scroll, move_mouse, drag_mouse, sleep and more) in order in one call; stops at the first error. Faster than one call per action. |
-| `browsers.computer.captureScreenshot` | `kernel.api.browsers.computer.captureScreenshot` | `read` | Take a PNG screenshot of the browser screen (optionally a region). Returns a file: on Corsair it is saved to Files and comes back with a fileId. |
+| `browsers.computer.captureScreenshot` | `kernel.api.browsers.computer.captureScreenshot` | `read` | Take a PNG screenshot of the browser screen (optionally a region). Headful browsers only: a headless browser has no window, so this returns an empty screen; there, use page.screenshot() inside browsers.playwright.execute. Returns a file: on Corsair it is saved to Files and comes back with a fileId. |
 | `browsers.computer.clickMouse` | `kernel.api.browsers.computer.clickMouse` | `write` | Click at screen coordinates x, y (left, right or middle button; num_clicks for double-click). |
 | `browsers.computer.dragMouse` | `kernel.api.browsers.computer.dragMouse` | `write` | Press the mouse, drag it along a path of [x, y] points, and release. |
 | `browsers.computer.getMousePosition` | `kernel.api.browsers.computer.getMousePosition` | `read` | Get the mouse cursor's current screen coordinates. |

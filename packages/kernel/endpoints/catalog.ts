@@ -781,7 +781,7 @@ export const kernelEndpointMeta = {
 	'browsers.computer.captureScreenshot': {
 		riskLevel: 'read',
 		description:
-			'Take a PNG screenshot of the browser screen (optionally a region). Returns a file: on Corsair it is saved to Files and comes back with a fileId.',
+			'Take a PNG screenshot of the browser screen (optionally a region). Headful browsers only: a headless browser has no window, so this returns an empty screen; there, use page.screenshot() inside browsers.playwright.execute. Returns a file: on Corsair it is saved to Files and comes back with a fileId.',
 	},
 	'browsers.computer.clickMouse': {
 		riskLevel: 'write',
