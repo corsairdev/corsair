@@ -1,9 +1,9 @@
+import { ApiError } from 'corsair/http';
 import {
 	configWith,
 	describeFailure,
 	HOTSPOTSYSTEM_API_BASE,
 	HOTSPOTSYSTEM_API_KEY_HEADER,
-	HotspotSystemAPIError,
 	HotspotSystemTransportError,
 	makeHotspotSystemPageRequest,
 	makeHotspotSystemRequest,
@@ -114,12 +114,13 @@ describe('makeHotspotSystemPageRequest', () => {
 
 		const error = (await rejection(
 			makeHotspotSystemPageRequest(KEY, { method: 'GET', path: '/locations' }),
-		)) as HotspotSystemAPIError;
+		)) as ApiError;
 
-		expect(error).toBeInstanceOf(HotspotSystemAPIError);
+		expect(error).toBeInstanceOf(ApiError);
 		expect(error.status).toBe(500);
 		expect(error.message).toBe('HotspotSystem 500: Internal Server Error');
-		expect(error.method).toBe('GET');
+		expect(error.request.method).toBe('GET');
+		expect(error.request.url).toBe('/locations');
 	});
 
 	it('reads Retry-After as milliseconds', async () => {
@@ -130,7 +131,7 @@ describe('makeHotspotSystemPageRequest', () => {
 
 		const error = (await rejection(
 			makeHotspotSystemPageRequest(KEY, { method: 'GET', path: '/locations' }),
-		)) as HotspotSystemAPIError;
+		)) as ApiError;
 
 		expect(error.retryAfter).toBe(7000);
 	});
@@ -177,9 +178,9 @@ describe('makeHotspotSystemPageRequest', () => {
 
 		const error = (await rejection(
 			makeHotspotSystemPageRequest(KEY, { method: 'GET', path: '/locations' }),
-		)) as HotspotSystemAPIError;
+		)) as ApiError;
 
-		expect(error).toBeInstanceOf(HotspotSystemAPIError);
+		expect(error).toBeInstanceOf(ApiError);
 		expect(error.status).toBe(503);
 	});
 
@@ -207,7 +208,7 @@ describe('makeHotspotSystemPageRequest', () => {
 
 		const error = (await rejection(
 			makeHotspotSystemPageRequest(KEY, { method: 'GET', path: '/locations' }),
-		)) as HotspotSystemAPIError;
+		)) as ApiError;
 
 		const inspect = require('node:util').inspect(error) as string;
 		expect(error.message).not.toContain(KEY);
@@ -259,11 +260,40 @@ describe('makeHotspotSystemRequest', () => {
 
 		const error = (await rejection(
 			makeHotspotSystemRequest(KEY, { method: 'GET', path: '/ping' }),
-		)) as HotspotSystemAPIError;
+		)) as ApiError;
 
-		expect(error).toBeInstanceOf(HotspotSystemAPIError);
+		expect(error).toBeInstanceOf(ApiError);
 		expect(error.status).toBe(401);
 		expect(error.message).toBe('HotspotSystem 401: Invalid authentication!');
+	});
+
+	it('rethrows core ApiError with its rate-limit data and no query', async () => {
+		const http = await import('corsair/http');
+		jest.spyOn(http, 'request').mockRejectedValueOnce(
+			new http.ApiError(
+				{ method: 'GET', url: '/me', query: { fields: 'email' } },
+				{
+					url: 'https://api.hotspotsystem.com/v2.0/me',
+					ok: false,
+					status: 429,
+					statusText: 'Too Many Requests',
+					body: { error: 'slow down', echoed: 'customer@example.com' },
+				},
+				'Too Many Requests',
+				{ retryAfter: 3000, rateLimitRemaining: 0 },
+			),
+		);
+
+		const error = (await rejection(
+			makeHotspotSystemRequest(KEY, { method: 'GET', path: '/me' }),
+		)) as ApiError;
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error.status).toBe(429);
+		expect(error.retryAfter).toBe(3000);
+		expect(error.rateLimitRemaining).toBe(0);
+		expect(error.request).toEqual({ method: 'GET', url: '/me' });
+		expect(error.body).toEqual({ error: 'slow down' });
 	});
 
 	it('normalises a transport failure into the plugin error type', async () => {

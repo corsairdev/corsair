@@ -336,7 +336,7 @@ export function hotspotsystem<const T extends HotspotSystemPluginOptions>(
 export {
 	HOTSPOTSYSTEM_API_BASE,
 	HOTSPOTSYSTEM_API_KEY_HEADER,
-	HotspotSystemAPIError,
+	hotspotSystemApiError,
 	nextOffsetFromLinkHeader,
 } from './client';
 

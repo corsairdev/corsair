@@ -23,6 +23,14 @@ describe('nextOffsetFromLinkHeader', () => {
 		expect(nextOffsetFromLinkHeader(SELF)).toBeUndefined();
 	});
 
+	it('reads a header full of `<` in linear time', () => {
+		// CodeQL flagged the old `/<([^>]+)>/` as polynomial on this input.
+		const hostile = `${'<'.repeat(50_000)}; rel="next"`;
+		const started = Date.now();
+		expect(nextOffsetFromLinkHeader(hostile)).toBeUndefined();
+		expect(Date.now() - started).toBeLessThan(500);
+	});
+
 	it('returns nothing for an absent or empty header', () => {
 		expect(nextOffsetFromLinkHeader(undefined)).toBeUndefined();
 		expect(nextOffsetFromLinkHeader(null)).toBeUndefined();

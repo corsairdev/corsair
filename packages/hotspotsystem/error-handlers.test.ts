@@ -1,5 +1,6 @@
 import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
-import { HotspotSystemAPIError, HotspotSystemTransportError } from './client';
+import { ApiError } from 'corsair/http';
+import { HotspotSystemTransportError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
 type HandlerName = Exclude<keyof typeof errorHandlers, 'DEFAULT'>;
@@ -27,12 +28,19 @@ const context: ErrorContext = {
 function failure(
 	status: number | undefined,
 	options: { retryAfter?: number } = {},
-): HotspotSystemAPIError {
-	return new HotspotSystemAPIError('boom', {
-		status,
-		retryAfter: options.retryAfter,
-		method: 'GET',
-	});
+): ApiError {
+	return new ApiError(
+		{ method: 'GET', url: '/locations' },
+		{
+			url: 'https://api.hotspotsystem.com/v2.0/locations',
+			ok: false,
+			status: status ?? 0,
+			statusText: '',
+			body: undefined,
+		},
+		'boom',
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 /** Runs one named handler and returns its retry decision. */

@@ -91,30 +91,43 @@ export function readErrorMessage(
 }
 
 /**
- * A provider failure. `status` and the provider's message are kept because they
- * are what the handlers and the caller read; the body itself is dropped, since
- * HotspotSystem echoes the operator's own values into some messages.
+ * Builds the core `ApiError` for a provider failure. Core's `ApiError` is what
+ * the handlers and core itself match on (`status`, `retryAfter`), so it is kept
+ * as the error type. It is rebuilt rather than passed through so the request it
+ * carries holds only the method and path (no query) and the body only the
+ * documented `{ error }` message.
  */
-export class HotspotSystemAPIError extends Error {
-	readonly status?: number;
-	/** Milliseconds from `Retry-After`, when a gateway sent one. */
-	readonly retryAfter?: number;
-	readonly method: string;
-
-	constructor(
-		message: string,
-		options: {
-			status?: number;
-			retryAfter?: number;
-			method: string;
+export function hotspotSystemApiError(options: {
+	method: string;
+	path: string;
+	url: string;
+	status: number;
+	statusText: string;
+	body: JsonValue | undefined;
+	fallback: string;
+	rateLimit?: {
+		retryAfter?: number;
+		rateLimitReset?: number;
+		rateLimitRemaining?: number;
+		rateLimitLimit?: number;
+	};
+}): ApiError {
+	const message = readErrorMessage(options.body);
+	return new ApiError(
+		{
+			method: options.method as ApiRequestOptions['method'],
+			url: options.path,
 		},
-	) {
-		super(message);
-		this.name = 'HotspotSystemAPIError';
-		this.status = options.status;
-		this.retryAfter = options.retryAfter;
-		this.method = options.method;
-	}
+		{
+			url: options.url,
+			ok: false,
+			status: options.status,
+			statusText: options.statusText,
+			body: message === undefined ? undefined : { error: message },
+		},
+		describeFailure(options.status, options.body, options.fallback),
+		options.rateLimit,
+	);
 }
 
 /** Renders a failure for a message a person reads. */
@@ -144,8 +157,12 @@ export function nextOffsetFromLinkHeader(
 		// Anchored: an unanchored match accepts `rel="nextish"`, which is a
 		// different relation.
 		if (!/rel="?next"?(?:\s*;|\s*$)/.test(part)) continue;
-		const url = part.match(/<([^>]+)>/)?.[1];
-		if (!url) continue;
+		// indexOf rather than a regex: `/<([^>]+)>/` backtracks polynomially on a
+		// header full of `<` characters, and the header comes from the network.
+		const open = part.indexOf('<');
+		const close = open === -1 ? -1 : part.indexOf('>', open + 1);
+		if (close <= open + 1) continue;
+		const url = part.slice(open + 1, close);
 		const offset = /[?&]offset=([^&>\s]+)/.exec(url)?.[1];
 		if (offset === undefined) continue;
 		const value = Number(offset);
@@ -195,18 +212,21 @@ export async function makeHotspotSystemRequest(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
-			throw new HotspotSystemAPIError(
-				describeFailure(
-					error.status,
-					error.body,
-					error.statusText || error.message,
-				),
-				{
-					status: error.status,
+			throw hotspotSystemApiError({
+				method: request_.method,
+				path: request_.path,
+				url: error.url,
+				status: error.status,
+				statusText: error.statusText,
+				body: error.body,
+				fallback: error.statusText || error.message,
+				rateLimit: {
 					retryAfter: error.retryAfter,
-					method: request_.method,
+					rateLimitReset: error.rateLimitReset,
+					rateLimitRemaining: error.rateLimitRemaining,
+					rateLimitLimit: error.rateLimitLimit,
 				},
-			);
+			});
 		}
 		const exception =
 			error instanceof Error || error instanceof DOMException
@@ -303,18 +323,18 @@ export async function makeHotspotSystemPageRequest(
 	}
 
 	if (!response.ok) {
-		throw new HotspotSystemAPIError(
-			describeFailure(
-				response.status,
-				body as JsonValue,
-				response.statusText || `request failed`,
-			),
-			{
-				status: response.status,
+		throw hotspotSystemApiError({
+			method: 'GET',
+			path: request_.path,
+			url: `${config.BASE}${request_.path}`,
+			status: response.status,
+			statusText: response.statusText,
+			body: body as JsonValue,
+			fallback: response.statusText || 'request failed',
+			rateLimit: {
 				retryAfter: parseRetryAfter(response.headers.get('retry-after')),
-				method: 'GET',
 			},
-		);
+		});
 	}
 
 	return {

@@ -1,8 +1,9 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { HotspotSystemAPIError, HotspotSystemTransportError } from './client';
+import { ApiError } from 'corsair/http';
+import { HotspotSystemTransportError } from './client';
 
-function failure(error: Error): HotspotSystemAPIError | undefined {
-	return error instanceof HotspotSystemAPIError ? error : undefined;
+function failure(error: Error): ApiError | undefined {
+	return error instanceof ApiError ? error : undefined;
 }
 
 function statusOf(error: Error): number | undefined {
