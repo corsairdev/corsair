@@ -1,0 +1,92 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+# `pnpm validate:plugins` fails until the TODO is replaced.
+displayName: "Paystack"
+description: "Paystack is a payments platform for African markets. This plugin starts checkouts and verifies transactions, manages customers including risk actions, creates and updates plans, subscribes customers and enables or disables subscriptions, issues refunds, and receives charge and transfer webhooks verified under either documented HMAC-SHA512 signature scheme."
+domain: paystack.com
+recommendedAuth: api_key
+overviewNote: >
+  Authenticate with the secret key from Developers > API Keys & Webhooks
+  (sk_test_ for test, sk_live_ for live); the plugin sends it as an
+  Authorization Bearer token. Amounts are in the currency subunit (kobo for
+  NGN, pesewas for GHS).
+
+  Paystack answers some validation failures with HTTP 200 and status false
+  in the body; the plugin turns those into errors so a caller never reads
+  them as data. Some routes documented on the site (charge authorization,
+  partial debit, timeline, totals, export, customer identification and
+  direct debit, transfers, verification, payment pages) are not part of
+  this plugin.
+
+  Webhook deliveries come in two documented schemes: the legacy
+  x-paystack-signature header (HMAC-SHA512 of the raw body keyed with your
+  secret key) and the current Paystack-Signature header (t=...,v1=..., keyed
+  with the whsec_ signing secret, 300-second timestamp tolerance). The
+  plugin verifies whichever scheme a delivery uses; pass the matching
+  secret as webhookSecret. Paystack delivers only from
+  52.31.139.75, 52.49.173.169 and 52.214.14.220.
+
+  Every operation is described in the official docs:
+  https://paystack.com/docs/api/
+examples:
+  read:
+    path: transactions.verify
+    title: Verify a transaction
+    args:
+      reference: 7PVGX8MEk85tgeEpVDtD
+  write:
+    path: transactions.initialize
+    title: Start a checkout
+    args:
+      amount: '10000'
+      email: john.doe@example.com
+apiExamples:
+  transactions.initialize:
+    call: '{ amount: "10000", email: "john.doe@example.com", callback_url: "https://example.com/callback" }'
+  transactions.verify:
+    call: '{ reference: "7PVGX8MEk85tgeEpVDtD" }'
+  transactions.list:
+    call: '{ perPage: 25, page: 1, status: "success" }'
+  transactions.get:
+    call: '{ transactionId: 30920911 }'
+  customers.create:
+    call: '{ email: "john.doe@example.com", first_name: "John", last_name: "Doe" }'
+  customers.list:
+    call: '{ perPage: 25, page: 1 }'
+  customers.get:
+    call: '{ emailOrCode: "john.doe@example.com" }'
+  customers.update:
+    call: '{ code: "CUS_1idh4psjybv", first_name: "Jane", last_name: "Doe" }'
+  customers.setRiskAction:
+    call: '{ customer: "CUS_1idh4psjybv", risk_action: "allow" }'
+  plans.create:
+    call: '{ name: "Monthly Retainer", amount: 50000, interval: "monthly" }'
+  plans.list:
+    call: '{ perPage: 25, interval: "monthly" }'
+  plans.get:
+    call: '{ idOrCode: "PLN_0peioxfhpn" }'
+  plans.update:
+    call: '{ idOrCode: "PLN_0peioxfhpn", name: "Monthly Retainer", amount: 60000, interval: "monthly" }'
+  subscriptions.create:
+    call: '{ customer: "john.doe@example.com", plan: "PLN_0peioxfhpn" }'
+  subscriptions.list:
+    call: '{ perPage: 25, page: 1 }'
+  subscriptions.get:
+    call: '{ idOrCode: "SUB_vsy260vl9vvrcv9" }'
+  subscriptions.enable:
+    call: '{ code: "SUB_vsy260vl9vvrcv9", token: "uhslf0re31yqu1w2x21d" }'
+  subscriptions.disable:
+    call: '{ code: "SUB_vsy260vl9vvrcv9", token: "uhslf0re31yqu1w2x21d" }'
+  refunds.create:
+    call: '{ transaction: "7PVGX8MEk85tgeEpVDtD", amount: 5000, merchant_note: "damaged goods" }'
+  refunds.list:
+    call: '{ perPage: 25, page: 1 }'
+  refunds.get:
+    call: '{ refundId: 1088 }'
+apiNotes:
+  transactions.initialize: 'The answer carries authorization_url (redirect the customer), access_code (inline JS) and reference. Amount is in the currency subunit.'
+  transactions.list: 'Status filter accepts failed, success or abandoned; meta.next holds the next page URL.'
+  customers.get: 'Accepts the email address or the customer code in the path.'
+  customers.setRiskAction: 'allow whitelists the customer, deny blacklists, default resets.'
+  plans.update: 'update_existing_subscriptions defaults to true; pass false to leave running subscriptions untouched.'
+  subscriptions.enable: 'Both the subscription code and the email token are required; the token is in the subscription record.'
+  refunds.create: 'Amount defaults to the full transaction amount; reference must be 8-64 characters of letters, digits, underscores or hyphens.'

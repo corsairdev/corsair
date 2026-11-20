@@ -1,0 +1,1216 @@
+---
+title: "Paystack API reference"
+sidebarTitle: "API"
+description: "API reference for the Paystack plugin in Corsair: every `paystack.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Customers
+
+### create
+
+`customers.create`
+
+Create a customer
+
+**Risk:** `write`
+
+```ts
+await corsair.paystack.api.customers.create({ email: "john.doe@example.com", first_name: "John", last_name: "Doe" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | Customer email address |
+| `first_name` | `string` | Yes | Customer first name |
+| `last_name` | `string` | Yes | Customer last name |
+| `phone` | `string` | No | Customer phone number |
+| `metadata` | `Record<string, unknown>` | No | Custom data stored with the customer |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | Yes | — |
+| `message` | `string` | Yes | — |
+| `data` | `object` | Yes | A Paystack customer |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  email: string,
+  customer_code?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  phone?: string | null,
+  risk_action?: string | null,
+  created_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`customers.get`
+
+Read one customer by email address or code
+
+**Risk:** `read`
+
+```ts
+await corsair.paystack.api.customers.get({ emailOrCode: "john.doe@example.com" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailOrCode` | `string` | Yes | Customer email address or code (sent in the path) |
+
+Accepts the email address or the customer code in the path.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | Yes | — |
+| `message` | `string` | Yes | — |
+| `data` | `object` | Yes | A Paystack customer |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  email: string,
+  customer_code?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  phone?: string | null,
+  risk_action?: string | null,
+  created_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`customers.list`
+
+List customers, paged and filtered by creation date
+
+**Risk:** `read`
+
+```ts
+await corsair.paystack.api.customers.list({ perPage: 25, page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `perPage` | `number` | No | Records per page; default 50 |
+| `page` | `number` | No | Page number |
+| `from` | `string` | No | Customers created from this datetime |
+| `to` | `string` | No | Customers created to this datetime |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | Yes | Whether the request succeeded |
+| `message` | `string` | Yes | Response summary |
+| `data` | `object[]` | Yes | Customers on this page |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  email: string,
+  customer_code?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  phone?: string | null,
+  risk_action?: string | null,
+  created_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number | null,
+  page?: number | null,
+  perPage?: number | null,
+  pageCount?: number | null,
+  next?: string | null,
+  previous?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setRiskAction
+
+`customers.setRiskAction`
+
+Whitelist, blacklist or reset a customer
+
+**Risk:** `write`
+
+```ts
+await corsair.paystack.api.customers.setRiskAction({ customer: "CUS_1idh4psjybv", risk_action: "allow" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer` | `string` | Yes | Customer code or email address |
+| `risk_action` | `default \| allow \| deny` | No | allow whitelists, deny blacklists, default resets |
+
+allow whitelists the customer, deny blacklists, default resets.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | Yes | — |
+| `message` | `string` | Yes | — |
+| `data` | `object` | Yes | A Paystack customer |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  email: string,
+  customer_code?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  phone?: string | null,
+  risk_action?: string | null,
+  created_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`customers.update`
+
+Update a customer name and contact details
+
+**Risk:** `write`
+
+```ts
+await corsair.paystack.api.customers.update({ code: "CUS_1idh4psjybv", first_name: "Jane", last_name: "Doe" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | Customer code |
+| `first_name` | `string` | Yes | Customer first name |
+| `last_name` | `string` | Yes | Customer last name |
+| `phone` | `string` | No | Customer phone number |
+| `metadata` | `Record<string, unknown>` | No | Custom data stored with the customer |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | Yes | — |
+| `message` | `string` | Yes | — |
+| `data` | `object` | Yes | A Paystack customer |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  email: string,
+  customer_code?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  phone?: string | null,
+  risk_action?: string | null,
+  created_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Plans
+
+### create
+
+`plans.create`
+
+Create a payment plan
+
+**Risk:** `write`
+
+```ts
+await corsair.paystack.api.plans.create({ name: "Monthly Retainer", amount: 50000, interval: "monthly" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Plan name |
+| `amount` | `number` | Yes | Amount in the currency subunit |
+| `interval` | `daily \| weekly \| monthly \| quarterly \| biannually \| annually` | Yes | Billing interval |
+| `description` | `string` | No | Plan description |
+| `currency` | `string` | No | Plan currency |
+| `send_invoices` | `boolean` | No | Email invoices to customers |
+| `send_sms` | `boolean` | No | Send SMS receipts to customers |
+| `invoice_limit` | `number` | No | Number of invoices to send during subscription |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | Yes | — |
+| `message` | `string` | Yes | — |
+| `data` | `object` | Yes | A Paystack plan |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  plan_code?: string | null,
+  name?: string | null,
+  amount?: number | null,
+  interval?: string | null,
+  description?: string | null,
+  currency?: string | null,
+  created_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`plans.get`
+
+Read one plan by id or code
+
+**Risk:** `read`
+
+```ts
+await corsair.paystack.api.plans.get({ idOrCode: "PLN_0peioxfhpn" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `idOrCode` | `string` | Yes | Plan id or code |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | Yes | — |
+| `message` | `string` | Yes | — |
+| `data` | `object` | Yes | A Paystack plan |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  plan_code?: string | null,
+  name?: string | null,
+  amount?: number | null,
+  interval?: string | null,
+  description?: string | null,
+  currency?: string | null,
+  created_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`plans.list`
+
+List payment plans, filtered by interval and amount
+
+**Risk:** `read`
+
+```ts
+await corsair.paystack.api.plans.list({ perPage: 25, interval: "monthly" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `perPage` | `number` | No | Records per page; default 50 |
+| `page` | `number` | No | Page number |
+| `status` | `string` | No | Filter by plan status |
+| `interval` | `daily \| weekly \| monthly \| quarterly \| biannually \| annually` | No | Filter by billing interval |
+| `amount` | `number` | No | Filter by amount in the currency subunit |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | Yes | Whether the request succeeded |
+| `message` | `string` | Yes | Response summary |
+| `data` | `object[]` | Yes | Plans on this page |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  plan_code?: string | null,
+  name?: string | null,
+  amount?: number | null,
+  interval?: string | null,
+  description?: string | null,
+  currency?: string | null,
+  created_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number | null,
+  page?: number | null,
+  perPage?: number | null,
+  pageCount?: number | null,
+  next?: string | null,
+  previous?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`plans.update`
+
+Update a plan, optionally applying the changes to existing subscriptions
+
+**Risk:** `write`
+
+```ts
+await corsair.paystack.api.plans.update({ idOrCode: "PLN_0peioxfhpn", name: "Monthly Retainer", amount: 60000, interval: "monthly" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `idOrCode` | `string` | Yes | Plan id or code |
+| `name` | `string` | Yes | Plan name |
+| `amount` | `number` | Yes | Amount in the currency subunit |
+| `interval` | `daily \| weekly \| monthly \| quarterly \| biannually \| annually` | Yes | Billing interval |
+| `description` | `string` | No | Plan description |
+| `currency` | `string` | No | Plan currency |
+| `send_invoices` | `boolean` | No | Email invoices to customers |
+| `invoice_limit` | `number` | No | Number of invoices to send |
+| `update_existing_subscriptions` | `boolean` | No | Apply the changes to existing subscriptions (defaults to true) |
+
+update_existing_subscriptions defaults to true; pass false to leave running subscriptions untouched.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | Yes | — |
+| `message` | `string` | Yes | — |
+| `data` | `object` | Yes | A Paystack plan |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  plan_code?: string | null,
+  name?: string | null,
+  amount?: number | null,
+  interval?: string | null,
+  description?: string | null,
+  currency?: string | null,
+  created_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Refunds
+
+### create
+
+`refunds.create`
+
+Refund a transaction fully or partially; money leaves the account and refunds cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.paystack.api.refunds.create({ transaction: "7PVGX8MEk85tgeEpVDtD", amount: 5000, merchant_note: "damaged goods" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction` | `string` | Yes | Transaction reference or id to refund |
+| `amount` | `number` | No | Amount in the currency subunit; defaults to the full amount |
+| `currency` | `string` | No | Refund currency |
+| `customer_note` | `string` | No | Note shown to the customer |
+| `merchant_note` | `string` | No | Note recorded for the merchant |
+| `reference` | `string` | No | Your reference for the refund |
+
+Amount defaults to the full transaction amount; reference must be 8-64 characters of letters, digits, underscores or hyphens.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | Yes | — |
+| `message` | `string` | Yes | — |
+| `data` | `object` | Yes | A Paystack refund |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  transaction_reference?: string | null,
+  amount?: number | null,
+  currency?: string | null,
+  status?: string | null,
+  customer_note?: string | null,
+  merchant_note?: string | null,
+  created_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`refunds.get`
+
+Read one refund by id
+
+**Risk:** `read`
+
+```ts
+await corsair.paystack.api.refunds.get({ refundId: 1088 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `refundId` | `number` | Yes | Refund id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | Yes | — |
+| `message` | `string` | Yes | — |
+| `data` | `object` | Yes | A Paystack refund |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  transaction_reference?: string | null,
+  amount?: number | null,
+  currency?: string | null,
+  status?: string | null,
+  customer_note?: string | null,
+  merchant_note?: string | null,
+  created_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`refunds.list`
+
+List refunds, filtered by transaction, currency and dates
+
+**Risk:** `read`
+
+```ts
+await corsair.paystack.api.refunds.list({ perPage: 25, page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction` | `string` | No | Filter by transaction id |
+| `currency` | `string` | No | Filter by currency |
+| `reference` | `string` | No | Filter by refund reference |
+| `from` | `string` | No | Refunds from this date, e.g. 2016-09-21 |
+| `to` | `string` | No | Refunds to this date |
+| `perPage` | `number` | No | Records per page; default 50 |
+| `page` | `number` | No | Page number |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | Yes | Whether the request succeeded |
+| `message` | `string` | Yes | Response summary |
+| `data` | `object[]` | Yes | Refunds on this page |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  transaction_reference?: string | null,
+  amount?: number | null,
+  currency?: string | null,
+  status?: string | null,
+  customer_note?: string | null,
+  merchant_note?: string | null,
+  created_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number | null,
+  page?: number | null,
+  perPage?: number | null,
+  pageCount?: number | null,
+  next?: string | null,
+  previous?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Subscriptions
+
+### create
+
+`subscriptions.create`
+
+Subscribe a customer to a plan
+
+**Risk:** `write`
+
+```ts
+await corsair.paystack.api.subscriptions.create({ customer: "john.doe@example.com", plan: "PLN_0peioxfhpn" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer` | `string` | Yes | Customer email address or code |
+| `plan` | `string` | Yes | Plan code |
+| `authorization` | `string` | No | Authorization to charge; defaults to the customer most recent |
+| `start_date` | `string` | No | First debit date, ISO 8601 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | Yes | — |
+| `message` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  email_token?: string | null,
+  subscription_code?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### disable
+
+`subscriptions.disable`
+
+Disable a subscription with its email token; debits stop until it is enabled again
+
+**Risk:** `write`
+
+```ts
+await corsair.paystack.api.subscriptions.disable({ code: "SUB_vsy260vl9vvrcv9", token: "uhslf0re31yqu1w2x21d" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | Subscription code |
+| `token` | `string` | Yes | Email token of the subscription |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### enable
+
+`subscriptions.enable`
+
+Enable a subscription with its email token
+
+**Risk:** `write`
+
+```ts
+await corsair.paystack.api.subscriptions.enable({ code: "SUB_vsy260vl9vvrcv9", token: "uhslf0re31yqu1w2x21d" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | Subscription code |
+| `token` | `string` | Yes | Email token of the subscription |
+
+Both the subscription code and the email token are required; the token is in the subscription record.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`subscriptions.get`
+
+Read one subscription by id or code
+
+**Risk:** `read`
+
+```ts
+await corsair.paystack.api.subscriptions.get({ idOrCode: "SUB_vsy260vl9vvrcv9" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `idOrCode` | `string` | Yes | Subscription id or code |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | Yes | — |
+| `message` | `string` | Yes | — |
+| `data` | `object` | Yes | A Paystack subscription |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  subscription_code?: string | null,
+  status?: string | null,
+  next_payment_date?: string | null,
+  email_token?: string | null,
+  customer?: {
+    id?: number | null,
+    email?: string | null
+  } | null,
+  plan?: {
+    id: number,
+    plan_code?: string | null,
+    name?: string | null,
+    amount?: number | null,
+    interval?: string | null,
+    description?: string | null,
+    currency?: string | null,
+    created_at?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`subscriptions.list`
+
+List subscriptions, filtered by customer and plan
+
+**Risk:** `read`
+
+```ts
+await corsair.paystack.api.subscriptions.list({ perPage: 25, page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `perPage` | `number` | No | Records per page; default 50 |
+| `page` | `number` | No | Page number |
+| `customer` | `number` | No | Filter by customer id |
+| `plan` | `number` | No | Filter by plan id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | Yes | Whether the request succeeded |
+| `message` | `string` | Yes | Response summary |
+| `data` | `object[]` | Yes | Subscriptions on this page |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  subscription_code?: string | null,
+  status?: string | null,
+  next_payment_date?: string | null,
+  email_token?: string | null,
+  customer?: {
+    id?: number | null,
+    email?: string | null
+  } | null,
+  plan?: {
+    id: number,
+    plan_code?: string | null,
+    name?: string | null,
+    amount?: number | null,
+    interval?: string | null,
+    description?: string | null,
+    currency?: string | null,
+    created_at?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number | null,
+  page?: number | null,
+  perPage?: number | null,
+  pageCount?: number | null,
+  next?: string | null,
+  previous?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Transactions
+
+### get
+
+`transactions.get`
+
+Read one transaction by id
+
+**Risk:** `read`
+
+```ts
+await corsair.paystack.api.transactions.get({ transactionId: 30920911 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transactionId` | `number` | Yes | Transaction id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | Yes | — |
+| `message` | `string` | Yes | — |
+| `data` | `object` | Yes | A Paystack transaction |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  reference?: string | null,
+  amount?: number | null,
+  currency?: string | null,
+  status?: string | null,
+  gateway_response?: string | null,
+  channel?: string | null,
+  customer?: {
+    id?: number | null,
+    email?: string | null
+  } | null,
+  authorization?: {
+    authorization_code?: string | null
+  } | null,
+  created_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### initialize
+
+`transactions.initialize`
+
+Start a checkout and get the authorization_url to redirect the customer to
+
+**Risk:** `write`
+
+```ts
+await corsair.paystack.api.transactions.initialize({ amount: "10000", email: "john.doe@example.com", callback_url: "https://example.com/callback" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `amount` | `string` | Yes | Amount in the currency subunit |
+| `email` | `string` | Yes | Customer email address |
+| `channels` | `(card \| bank \| apple_pay \| ussd \| qr \| mobile_money \| bank_transfer \| eft \| capitec_pay \| payattitude)[]` | No | Payment channels to allow |
+| `currency` | `string` | No | Currency the transaction is charged in |
+| `reference` | `string` | No | Your unique transaction reference |
+| `callback_url` | `string` | No | Where the checkout redirects after payment |
+| `plan` | `string` | No | Plan code to charge the customer for |
+| `metadata` | `Record<string, unknown>` | No | Custom data returned with the transaction |
+
+The answer carries authorization_url (redirect the customer), access_code (inline JS) and reference. Amount is in the currency subunit.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | Yes | — |
+| `message` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  authorization_url: string,
+  access_code: string,
+  reference: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`transactions.list`
+
+List transactions, filtered by customer, status and dates
+
+**Risk:** `read`
+
+```ts
+await corsair.paystack.api.transactions.list({ perPage: 25, page: 1, status: "success" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `perPage` | `number` | No | Records per page; default 50 |
+| `page` | `number` | No | Page number |
+| `customer` | `number` | No | Filter by customer id |
+| `status` | `failed \| success \| abandoned` | No | Filter by transaction status |
+| `from` | `string` | No | Transactions from this datetime |
+| `to` | `string` | No | Transactions to this datetime |
+| `amount` | `number` | No | Filter by amount in the currency subunit |
+
+Status filter accepts failed, success or abandoned; meta.next holds the next page URL.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | Yes | Whether the request succeeded |
+| `message` | `string` | Yes | Response summary |
+| `data` | `object[]` | Yes | Transactions on this page |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  reference?: string | null,
+  amount?: number | null,
+  currency?: string | null,
+  status?: string | null,
+  gateway_response?: string | null,
+  channel?: string | null,
+  customer?: {
+    id?: number | null,
+    email?: string | null
+  } | null,
+  authorization?: {
+    authorization_code?: string | null
+  } | null,
+  created_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number | null,
+  page?: number | null,
+  perPage?: number | null,
+  pageCount?: number | null,
+  next?: string | null,
+  previous?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### verify
+
+`transactions.verify`
+
+Verify a transaction by its reference and read its final status
+
+**Risk:** `read`
+
+```ts
+await corsair.paystack.api.transactions.verify({ reference: "7PVGX8MEk85tgeEpVDtD" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reference` | `string` | Yes | Transaction reference to verify |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | Yes | — |
+| `message` | `string` | Yes | — |
+| `data` | `object` | Yes | A Paystack transaction |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  reference?: string | null,
+  amount?: number | null,
+  currency?: string | null,
+  status?: string | null,
+  gateway_response?: string | null,
+  channel?: string | null,
+  customer?: {
+    id?: number | null,
+    email?: string | null
+  } | null,
+  authorization?: {
+    authorization_code?: string | null
+  } | null,
+  created_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
