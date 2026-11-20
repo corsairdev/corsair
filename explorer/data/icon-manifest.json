@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-20T17:37:18.489Z",
+  "generatedAt": "2026-11-20T17:55:02.035Z",
   "primarySource": "https://twenty-icons.com",
   "fallbackSource": "https://www.google.com/s2/favicons",
   "size": 128,
   "format": "png",
   "total": 744,
-  "succeeded": 743,
-  "failed": 1,
+  "succeeded": 744,
+  "failed": 0,
   "domains": {
     "ably": "ably.io",
     "abstract": "abstractapi.com",
@@ -1062,7 +1062,7 @@
     "godial": "url-override",
     "gong": "curated",
     "googleaddressvalidation": "curated",
-    "googleads": "twenty-icons",
+    "googleads": "url-override",
     "googleanalytics": "curated",
     "googlebigquery": "curated",
     "googlecalendar": "curated",
@@ -1074,7 +1074,7 @@
     "googlemaps": "curated",
     "googlemeet": "curated",
     "googlephotos": "twenty-icons",
-    "googlesearchconsole": "twenty-icons",
+    "googlesearchconsole": "url-override",
     "googlesheets": "curated",
     "googleslides": "twenty-icons",
     "googletasks": "curated",
@@ -1122,6 +1122,7 @@
     "instagram": "curated",
     "instantly": "twenty-icons",
     "intercom": "curated",
+    "interzoid": "url-override",
     "ip2proxy": "curated",
     "ip2whois": "curated",
     "jigsawstack": "twenty-icons",
@@ -1805,11 +1806,5 @@
     "writer",
     "zendesk"
   ],
-  "failures": [
-    {
-      "id": "interzoid",
-      "domain": "interzoid.com",
-      "error": "twenty-icons returned no PNG; google-favicon HTTP 404"
-    }
-  ]
+  "failures": []
 }
