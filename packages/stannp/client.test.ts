@@ -1,3 +1,4 @@
+import { ApiError } from 'corsair/http';
 import {
 	encodeStannpForm,
 	makeStannpRequest,
@@ -172,6 +173,12 @@ describe('makeStannpRequest', () => {
 		expect(error.status).toBe(401);
 		expect(error.message).toBe(`Stannp 401: ${badKey.error}`);
 		expect(error.method).toBe('POST');
+		// Core's ApiError, so the 429 handler and core read status/retryAfter,
+		// rebuilt without the form body that carries recipient data.
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error.request.body).toBeUndefined();
+		expect(JSON.stringify(error)).not.toContain('John');
+		expect(error.cause).toBeUndefined();
 	});
 
 	it('keeps the replayed success body on a 409 idempotent conflict', async () => {
@@ -218,19 +225,17 @@ describe('makeStannpRequest', () => {
 		);
 	});
 
-	it('keeps a transport failure replayable with its method', async () => {
-		fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
+	it('lets a transport failure through unchanged', async () => {
+		const transport = new TypeError('fetch failed');
+		fetchMock.mockRejectedValueOnce(transport);
 
-		const error = await failure(
+		await expect(
 			makeStannpRequest(API_KEY, {
 				method: 'GET',
 				base: STANNP_HOSTS.us,
 				path: '/v1/accounts/balance',
 			}),
-		);
-		expect(error.message).toBe('fetch failed');
-		expect(error.method).toBe('GET');
-		expect(error.status).toBeUndefined();
+		).rejects.toBe(transport);
 	});
 });
 

@@ -42,36 +42,49 @@ const STANNP_RATE_LIMIT_CONFIG: RateLimitConfig = {
  * The only documented exception under the same host is `/v2/balance`, a
  * separate Laravel-style API with a different envelope; this plugin stays on
  * the v1 surface and does not call it.
+ *
+ * A failed call throws this: core's `ApiError` (R8: core and the 429 handler
+ * read `status` and `retryAfter` from it), rebuilt without the request body
+ * and query. Those carry recipient names and addresses, which core's own
+ * ApiError keeps on `request.body`. The response body stays, because a 409
+ * idempotent replay returns the original success envelope there.
  */
-export class StannpAPIError extends Error {
-	readonly status?: number;
-	/** The unmodified response body, when there was one. */
-	// unknown: error bodies can be the v1 envelope, an idempotent replay's
-	// original success envelope, or non-JSON from a proxy.
-	readonly body?: unknown;
-	/** Milliseconds to wait before retrying, from X-RateLimit-Reset. */
-	readonly retryAfter?: number;
+export class StannpAPIError extends ApiError {
 	/** The HTTP method of the failed request, for replay-safety decisions. */
-	readonly method?: string;
+	readonly method: string;
 
 	constructor(
 		message: string,
 		options: {
-			cause?: Error;
-			status?: number;
-			// unknown: same open body as the field above.
+			method: string;
+			/** Request path, without query. */
+			path: string;
+			/** 200 for a 2xx answer whose body still said error. */
+			status: number;
+			statusText?: string;
+			// unknown: error bodies can be the v1 envelope, an idempotent
+			// replay's original success envelope, or non-JSON from a proxy.
 			body?: unknown;
 			retryAfter?: number;
-			method?: string;
-		} = {},
+		},
 	) {
-		super(message, options.cause ? { cause: options.cause } : undefined);
+		super(
+			{
+				method: options.method as ApiRequestOptions['method'],
+				url: options.path,
+			},
+			{
+				url: options.path,
+				ok: false,
+				status: options.status,
+				statusText: options.statusText ?? '',
+				body: options.body,
+			},
+			message,
+			{ retryAfter: options.retryAfter },
+		);
 		this.name = 'StannpAPIError';
-		const cause = options.cause instanceof ApiError ? options.cause : undefined;
-		this.status = options.status ?? cause?.status;
-		this.body = options.body ?? cause?.body;
-		this.retryAfter = options.retryAfter ?? cause?.retryAfter;
-		this.method = options.method ?? cause?.request.method;
+		this.method = options.method;
 	}
 }
 
@@ -199,8 +212,10 @@ export async function makeStannpRequest(
 					? record.error
 					: 'Stannp request failed';
 			throw new StannpAPIError(describeStannpError(undefined, raw, message), {
-				body: raw,
 				method,
+				path,
+				status: 200,
+				body: raw,
 			});
 		}
 		// unknown: the endpoint's output schema validates whatever `data` holds;
@@ -208,22 +223,24 @@ export async function makeStannpRequest(
 		const envelope = asRecord(raw);
 		return envelope && 'data' in envelope ? envelope.data : raw;
 	} catch (error) {
-		// Rethrow our own error untouched; the branch below would re-wrap it
-		// and drop its body.
 		if (error instanceof StannpAPIError) throw error;
 		if (error instanceof ApiError) {
-			// A duplicate idempotent request replays the ORIGINAL success
-			// envelope with a 409, so keep the body reachable for the caller.
+			// Rebuilt without the request (recipient data in the form body);
+			// status, retryAfter and the response body carry over.
 			throw new StannpAPIError(
 				describeStannpError(error.status, error.body, error.message),
-				{ cause: error, status: error.status, body: error.body, method },
+				{
+					method,
+					path,
+					status: error.status,
+					statusText: error.statusText,
+					body: error.body,
+					retryAfter: error.retryAfter,
+				},
 			);
 		}
-		// DOMException (fetch timeouts) can fail instanceof Error across realms.
-		if (error instanceof Error || error instanceof DOMException) {
-			throw new StannpAPIError(error.message, { cause: error, method });
-		}
-		throw new StannpAPIError('Unknown Stannp error', { method });
+		// Timeouts and network failures carry no request data; let them through.
+		throw error;
 	}
 }
 
