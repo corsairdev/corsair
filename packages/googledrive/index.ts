@@ -2,6 +2,7 @@ import type {
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
+	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
 	CorsairWebhook,
@@ -28,6 +29,7 @@ import {
 	GoogleDriveEndpointInputSchemas,
 	GoogleDriveEndpointOutputSchemas,
 } from './endpoints/types';
+import { errorHandlers } from './error-handlers';
 import { GoogleDriveSchema } from './schema';
 import { googledriveSubscribe } from './subscribe';
 import type {
@@ -68,6 +70,7 @@ export type GoogleDriveEndpoints = {
 	filesDownload: GoogleDriveEndpoint<'filesDownload'>;
 	filesExport: GoogleDriveEndpoint<'filesExport'>;
 	filesShare: GoogleDriveEndpoint<'filesShare'>;
+	filesExportText: GoogleDriveEndpoint<'filesExportText'>;
 	foldersCreate: GoogleDriveEndpoint<'foldersCreate'>;
 	foldersGet: GoogleDriveEndpoint<'foldersGet'>;
 	foldersList: GoogleDriveEndpoint<'foldersList'>;
@@ -116,6 +119,7 @@ const googleDriveEndpointsNested = {
 		download: FilesEndpoints.download,
 		export: FilesEndpoints.export,
 		share: FilesEndpoints.share,
+		exportText: FilesEndpoints.exportText,
 	},
 	folders: {
 		create: FoldersEndpoints.create,
@@ -184,6 +188,10 @@ export const googledriveEndpointSchemas = {
 		input: GoogleDriveEndpointInputSchemas.filesShare,
 		output: GoogleDriveEndpointOutputSchemas.filesShare,
 	},
+	'files.exportText': {
+		input: GoogleDriveEndpointInputSchemas.filesExportText,
+		output: GoogleDriveEndpointOutputSchemas.filesExportText,
+	},
 	'folders.create': {
 		input: GoogleDriveEndpointInputSchemas.foldersCreate,
 		output: GoogleDriveEndpointOutputSchemas.foldersCreate,
@@ -249,6 +257,7 @@ export type GoogleDrivePluginOptions = {
 	 * Overrides use dot-notation paths from the Google Drive endpoint tree — invalid paths are type errors.
 	 */
 	permissions?: PluginPermissionsConfig<typeof googleDriveEndpointsNested>;
+	errorHandlers?: CorsairErrorHandler;
 };
 
 export type GoogleDriveKeyBuilderContext =
@@ -316,6 +325,11 @@ const googleDriveEndpointMeta = {
 	'files.share': {
 		riskLevel: 'write',
 		description: 'Share a file by granting permissions to users',
+	},
+	'files.exportText': {
+		riskLevel: 'read',
+		description:
+			'Get the plain text of a Google Doc across all of its tabs and store it',
 	},
 	'folders.create': { riskLevel: 'write', description: 'Create a new folder' },
 	'folders.get': {
@@ -414,6 +428,10 @@ export function googledrive<const T extends GoogleDrivePluginOptions>(
 		endpointMeta: googleDriveEndpointMeta,
 		endpointSchemas: googledriveEndpointSchemas,
 		webhookSchemas: googledriveWebhookSchemas,
+		errorHandlers: {
+			...errorHandlers,
+			...options.errorHandlers,
+		},
 		keyBuilder: async (ctx: GoogleDriveKeyBuilderContext) => {
 			const authType = ctx.authType;
 

@@ -95,6 +95,7 @@ export type SlackEndpoints = {
 	channelsCreate: SlackEndpoint<'channelsCreate'>;
 	channelsGet: SlackEndpoint<'channelsGet'>;
 	channelsList: SlackEndpoint<'channelsList'>;
+	channelsListMine: SlackEndpoint<'channelsListMine'>;
 	channelsGetHistory: SlackEndpoint<'channelsGetHistory'>;
 	channelsInvite: SlackEndpoint<'channelsInvite'>;
 	channelsJoin: SlackEndpoint<'channelsJoin'>;
@@ -144,6 +145,7 @@ const slackEndpointsNested = {
 		create: Channels.create,
 		get: Channels.get,
 		list: Channels.list,
+		listMine: Channels.listMine,
 		getHistory: Channels.getHistory,
 		invite: Channels.invite,
 		join: Channels.join,
@@ -221,6 +223,10 @@ export const slackEndpointSchemas = {
 	'channels.list': {
 		input: SlackEndpointInputSchemas.channelsList,
 		output: SlackEndpointOutputSchemas.channelsList,
+	},
+	'channels.listMine': {
+		input: SlackEndpointInputSchemas.channelsListMine,
+		output: SlackEndpointOutputSchemas.channelsListMine,
 	},
 	'channels.getHistory': {
 		input: SlackEndpointInputSchemas.channelsGetHistory,
@@ -461,6 +467,11 @@ const slackEndpointMeta = {
 		description: 'Remove a user from a channel',
 	},
 	'channels.leave': { riskLevel: 'write', description: 'Leave a channel' },
+	'channels.listMine': {
+		riskLevel: 'read',
+		description:
+			"List the connected user's own conversations (needs a user token)",
+	},
 	'channels.getMembers': {
 		riskLevel: 'read',
 		description: 'List members of a channel',
@@ -641,11 +652,12 @@ export const slackAuthConfig = {
 	api_key: {
 		account: ['team_id'] as const,
 	},
+	// user_token: the connecting user's xoxp token (search, DMs, private channels).
 	oauth_2: {
-		account: ['team_id'] as const,
+		account: ['team_id', 'user_token'] as const,
 	},
 	managed: {
-		account: ['team_id'] as const,
+		account: ['team_id', 'user_token'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 

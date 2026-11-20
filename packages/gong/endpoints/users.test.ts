@@ -3,6 +3,7 @@ import { getUser, getUserHistory, listMultipleUsers, listUsers } from './users';
 import { GongUsersInputSchemas, GongUsersOutputSchemas } from './users-types';
 
 jest.mock('corsair/http', () => ({
+	...jest.requireActual('corsair/http'),
 	ApiError: class ApiError extends Error {},
 	request: jest.fn(),
 }));

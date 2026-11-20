@@ -288,7 +288,7 @@ const cloudlayerEndpointMeta = {
 	'template.toPdf': {
 		riskLevel: 'destructive',
 		description:
-			'Render a gallery or base64 Nunjucks template with caller data to a PDF using JSON or multipart upload; v2 async:false returns a completed JSON job. Docs: https://cloudlayer.io/docs/template-to-pdf/',
+			'Render a gallery or base64 Nunjucks template with caller data to a PDF using JSON or multipart upload; v2 async:false returns a completed JSON job. A multipart upload takes the template file as a public link, base64 or a Blob; on Corsair, pass a Files id. Docs: https://cloudlayer.io/docs/template-to-pdf/',
 	},
 	'template.toPdfV1': {
 		riskLevel: 'destructive',
@@ -298,7 +298,7 @@ const cloudlayerEndpointMeta = {
 	'template.toImage': {
 		riskLevel: 'destructive',
 		description:
-			'Render a gallery or base64 Nunjucks template with caller data to an image using JSON or multipart upload; v2 async:false returns a completed JSON job. Docs: https://cloudlayer.io/docs/template-to-image/',
+			'Render a gallery or base64 Nunjucks template with caller data to an image using JSON or multipart upload; v2 async:false returns a completed JSON job. A multipart upload takes the template file as a public link, base64 or a Blob; on Corsair, pass a Files id. Docs: https://cloudlayer.io/docs/template-to-image/',
 	},
 	'template.toImageV1': {
 		riskLevel: 'destructive',

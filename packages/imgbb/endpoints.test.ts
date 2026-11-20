@@ -36,7 +36,12 @@ jest.mock('corsair/http', () => {
 		}
 	}
 
-	return { ApiError: MockApiError, request: jest.fn() };
+	// The schemas use core's FileInputSchema, so the rest of the module is real.
+	return {
+		...(jest.requireActual('corsair/http') as object),
+		ApiError: MockApiError,
+		request: jest.fn(),
+	};
 });
 
 const requestMock = request as unknown as jest.Mock<
@@ -143,6 +148,26 @@ describe('Images.upload Input Validation', () => {
 				.success,
 		).toBe(false);
 	});
+
+	it("accepts core's {url} and {base64} file objects, but not other objects", () => {
+		expect(
+			UploadImageInputSchema.safeParse({
+				image: { url: 'https://example.com/cat.png', filename: 'cat.png' },
+			}).success,
+		).toBe(true);
+		expect(
+			UploadImageInputSchema.safeParse({
+				image: { base64: 'R0lGODlhAQABAAAAACw=', contentType: 'image/gif' },
+			}).success,
+		).toBe(true);
+		expect(
+			UploadImageInputSchema.safeParse({ image: { path: '/tmp/cat.png' } })
+				.success,
+		).toBe(false);
+		expect(
+			UploadImageInputSchema.safeParse({ image: { url: '' } }).success,
+		).toBe(false);
+	});
 });
 
 describe('Images.upload', () => {
@@ -227,6 +252,64 @@ describe('Images.upload', () => {
 			name: 'buffer-upload',
 		});
 		expect(lastCall().options.formData?.image).toBe(buffer);
+	});
+
+	it('sends a {url} object as the url string for ImgBB to fetch, its filename as the name', async () => {
+		requestMock.mockResolvedValue(envelope);
+
+		// On Corsair a Files id arrives here already swapped for a short-lived link.
+		await call(Images.upload, createContext('my-key'), {
+			image: {
+				url: 'https://files.example.com/f/cat.png?token=abc',
+				filename: 'cat.png',
+				contentType: 'image/png',
+			},
+		});
+		expect(requestMock).toHaveBeenCalledTimes(1);
+		expect(lastCall().options.formData).toEqual({
+			image: 'https://files.example.com/f/cat.png?token=abc',
+			name: 'cat.png',
+		});
+		// The file's own name goes to ImgBB but not into the event.
+		expect(mockLog).toHaveBeenLastCalledWith(
+			expect.anything(),
+			'imgbb.images.upload',
+			{ name: undefined },
+			'completed',
+		);
+
+		// An explicit name wins over the file's own.
+		await call(Images.upload, createContext('my-key'), {
+			image: { url: 'https://example.com/cat.png', filename: 'cat.png' },
+			name: 'kitten',
+		});
+		expect(lastCall().options.formData).toEqual({
+			image: 'https://example.com/cat.png',
+			name: 'kitten',
+		});
+	});
+
+	it('sends a {base64} object as the base64 string', async () => {
+		requestMock.mockResolvedValue(envelope);
+
+		await call(Images.upload, createContext('my-key'), {
+			image: {
+				base64: 'R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+				filename: 'pixel.gif',
+				contentType: 'image/gif',
+			},
+		});
+		expect(lastCall().options.formData).toEqual({
+			image: 'R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+			name: 'pixel.gif',
+		});
+
+		await call(Images.upload, createContext('my-key'), {
+			image: { base64: 'R0lGODlhAQABAAAAACw=' },
+		});
+		expect(lastCall().options.formData).toEqual({
+			image: 'R0lGODlhAQABAAAAACw=',
+		});
 	});
 
 	it('passes expiration as a query param when provided', async () => {

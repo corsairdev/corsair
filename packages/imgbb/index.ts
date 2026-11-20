@@ -86,7 +86,7 @@ const imgBBEndpointMeta = {
 	'images.upload': {
 		riskLevel: 'write',
 		description:
-			'Upload an image to ImgBB and return the hosted image URLs and metadata',
+			'Upload an image to ImgBB and return the hosted image URLs and metadata. Takes the image as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 } satisfies RequiredPluginEndpointMeta<typeof imgBBEndpointsNested>;
 

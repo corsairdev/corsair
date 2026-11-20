@@ -16,6 +16,7 @@ export const FilesEndpoints = {
 	download: Files.download,
 	export: Files.exportFile,
 	share: Files.share,
+	exportText: Files.exportText,
 };
 
 export const FoldersEndpoints = {

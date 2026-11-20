@@ -1,4 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
+import type { FileInput } from 'corsair/http';
+import { resolveFileInput } from 'corsair/http';
 import type { ConversiontoolsEndpoints } from '..';
 import {
 	CONVERSIONTOOLS_API_BASE,
@@ -7,7 +9,11 @@ import {
 	makeConversiontoolsRequest,
 	parseJsonTextResponse,
 } from '../client';
-import { DEFAULT_TRANSFER_TIMEOUT_MS } from '../limits';
+import {
+	DEFAULT_TRANSFER_TIMEOUT_MS,
+	MAX_SESSION_UPLOAD_LINK_BYTES,
+	MAX_UPLOAD_LINK_BYTES,
+} from '../limits';
 import type {
 	FilesCreateDownloadLinkResponse,
 	FilesCreateUploadSessionResponse,
@@ -20,17 +26,25 @@ import {
 	ConversiontoolsEndpointOutputSchemas,
 } from './types';
 
+/** A link or base64 becomes the file here; a Blob is sent as it was given. */
+async function uploadFile(file: FileInput, maxBytes: number): Promise<Blob> {
+	if (file instanceof Blob) return file;
+	return (await resolveFileInput(file, { maxBytes, fallbackName: 'upload' }))
+		.file;
+}
+
 const upload: ConversiontoolsEndpoints['files']['upload'] = async (
 	ctx,
 	input,
 ) => {
 	const parsedInput =
 		ConversiontoolsEndpointInputSchemas.filesUpload.parse(input);
+	const file = await uploadFile(parsedInput.file, MAX_UPLOAD_LINK_BYTES);
 	const response = await makeConversiontoolsRequest<
 		FilesUploadResponse | string
 	>('/files', ctx.key, {
 		method: 'POST',
-		formData: { file: parsedInput.file },
+		formData: { file },
 		timeoutMs: ctx.options?.transferTimeoutMs ?? DEFAULT_TRANSFER_TIMEOUT_MS,
 	});
 	const parsed = ConversiontoolsEndpointOutputSchemas.filesUpload.parse(
@@ -180,13 +194,18 @@ const uploadToSession: ConversiontoolsEndpoints['files']['uploadToSession'] =
 		) {
 			throw new Error('Invalid Conversion Tools upload session URL');
 		}
+		// Fetched only once the session URL is known to be the provider's.
+		const file = await uploadFile(
+			parsedInput.file,
+			MAX_SESSION_UPLOAD_LINK_BYTES,
+		);
 		const response =
 			await makeConversiontoolsRequest<FilesUploadToSessionResponse>(
 				uploadUrl.pathname,
 				undefined,
 				{
 					method: 'PUT',
-					body: parsedInput.file,
+					body: file,
 					baseUrl: uploadUrl.origin,
 					timeoutMs:
 						ctx.options?.transferTimeoutMs ?? DEFAULT_TRANSFER_TIMEOUT_MS,

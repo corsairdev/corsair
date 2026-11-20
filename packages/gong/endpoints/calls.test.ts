@@ -10,6 +10,7 @@ import {
 import { GongCallsInputSchemas, GongCallsOutputSchemas } from './calls-types';
 
 jest.mock('corsair/http', () => ({
+	...jest.requireActual('corsair/http'),
 	ApiError: class ApiError extends Error {},
 	request: jest.fn(),
 }));

@@ -1,3 +1,4 @@
+import { FileOutputSchema } from 'corsair/http';
 import { z } from 'zod';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -342,8 +343,13 @@ const FilesRemoteListResponseSchema = paginated({
 
 const FilesDownloadResponseSchema = slackResponse({
 	file: SlackFileSchema.optional(),
-	/** Base64-encoded bytes of the downloaded file. */
-	content: z.string(),
+	...FileOutputSchema.omit({ contentBase64: true, text: true }).shape,
+	content: z
+		.string()
+		.optional()
+		.describe(
+			'The file, base64-encoded. Missing when contentOmitted is set, or when a host kept a file too large to return inline (fileId).',
+		),
 	content_type: z.string().optional(),
 	byte_size: z.number(),
 });

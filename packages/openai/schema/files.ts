@@ -1,5 +1,6 @@
 import { FileOutputSchema } from 'corsair/http';
 import { z } from 'zod';
+import { openaiFileInput } from './file-input';
 
 export const FilePurposeSchema = z.enum([
 	'assistants',
@@ -26,7 +27,7 @@ const FileObjectSchema = z.object({
 export type FileObject = z.infer<typeof FileObjectSchema>;
 
 export const FilesUploadInputSchema = z.object({
-	file: z.union([z.instanceof(Blob), z.string()]),
+	file: openaiFileInput('The file to upload, up to 512 MB'),
 	fileName: z.string(),
 	purpose: FilePurposeSchema,
 });
