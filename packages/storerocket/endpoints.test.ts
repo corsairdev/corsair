@@ -338,7 +338,34 @@ describe('locations', () => {
 		});
 	});
 
-	it('replace PUTs the full contract and rejects a partial week', async () => {
+	it('replace PUTs the full contract with the ids kept out of the body', async () => {
+		respond({ data: location, geocoding });
+
+		await expect(
+			invoke(Locations.replace, {
+				projectId: 'PROJECT_ID',
+				locationId: 'LOCATION_ID',
+				name: 'Downtown Store',
+				city: 'Seattle',
+				visible: false,
+				hours: location.hours,
+			}),
+		).resolves.toEqual({ data: location, geocoding });
+		const sent = lastRequest();
+		expect(sent).toMatchObject({
+			method: 'PUT',
+			path: '/api/v2/projects/PROJECT_ID/locations/LOCATION_ID',
+		});
+		expect(sent.headers.get('content-type')).toContain('application/json');
+		expect(JSON.parse(sent.body as string)).toEqual({
+			name: 'Downtown Store',
+			city: 'Seattle',
+			visible: false,
+			hours: location.hours,
+		});
+	});
+
+	it('replace rejects a partial week', async () => {
 		respond({ data: location, geocoding });
 
 		await expect(
