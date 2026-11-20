@@ -394,6 +394,7 @@ export const BaseProviders = [
 	'kanbanize',
 	'keen',
 	'keenable',
+	'kernel',
 	'keyword',
 	'kibana',
 	'kickbox',
@@ -1132,6 +1133,7 @@ export const ProviderDisplayNames = {
 	kanbanize: 'Kanbanize',
 	keen: 'Keen',
 	keenable: 'Keenable',
+	kernel: 'Kernel',
 	keyword: 'Keyword',
 	kibana: 'Kibana',
 	kickbox: 'Kickbox',
@@ -1877,6 +1879,7 @@ export type AllProviders =
 	| 'kanbanize'
 	| 'keen'
 	| 'keenable'
+	| 'kernel'
 	| 'keyword'
 	| 'kibana'
 	| 'kickbox'
