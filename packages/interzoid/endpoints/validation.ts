@@ -63,7 +63,7 @@ export const Validation = {
 		const parsed = GetEmailInfoOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getEmailInfo', {
 			endpoint: '/getemailinfo',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -83,7 +83,7 @@ export const Validation = {
 		const parsed = GetEmailTrustScoreOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getEmailTrustScore', {
 			endpoint: '/emailtrustscore',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -103,7 +103,7 @@ export const Validation = {
 		const parsed = GetEmailDomainTypeOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getEmailDomainType', {
 			endpoint: '/getemaildomaintype',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -123,7 +123,7 @@ export const Validation = {
 		const parsed = GetIpProfileOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getIpProfile', {
 			endpoint: '/getipprofile',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -143,7 +143,7 @@ export const Validation = {
 		const parsed = GetPhoneProfileOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getPhoneProfile', {
 			endpoint: '/getphoneprofile',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -163,7 +163,7 @@ export const Validation = {
 		const parsed = GetGlobalNumberInfoOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getGlobalNumberInfo', {
 			endpoint: '/getglobalnumberinfo',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -183,7 +183,7 @@ export const Validation = {
 		const parsed = GetAreaCodeFromNumberOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getAreaCodeFromNumber', {
 			endpoint: '/getareacodefromnumber',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -203,7 +203,7 @@ export const Validation = {
 		const parsed = GetAreaCodeOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getAreaCode', {
 			endpoint: '/getareacode',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -223,7 +223,7 @@ export const Validation = {
 		const parsed = GetZipCodeInfoOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getZipCodeInfo', {
 			endpoint: '/getzipcodeinfo',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -243,7 +243,7 @@ export const Validation = {
 		const parsed = AddressParseOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_addressParse', {
 			endpoint: '/addressparse',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},

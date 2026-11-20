@@ -1225,6 +1225,7 @@ describe('Interzoid Schemas', () => {
 		it('validates valid input and output', () => {
 			const parsedInput = InterzoidEndpointInputSchemas.getCustomData.parse({
 				topic: 'detailed information about IBM',
+				lookup: 'IBM',
 				output: 'headquarters,ceo,website',
 			});
 			expect(parsedInput).toBeDefined();
@@ -1239,10 +1240,22 @@ describe('Interzoid Schemas', () => {
 			expect(() => {
 				InterzoidEndpointInputSchemas.getCustomData.parse({
 					topic: 'detailed information about IBM',
+					lookup: 'IBM',
 					output: 'headquarters,ceo,website',
 					unexpected_field: 'disallowed',
 				});
 			}).toThrow();
+		});
+	});
+
+	describe('getGlobalNumberInfo', () => {
+		it('keeps Language1, the field the live API sends', () => {
+			const parsed = InterzoidEndpointOutputSchemas.getGlobalNumberInfo.parse({
+				Country: 'Germany',
+				Language1: 'German',
+				Code: 'Success',
+			});
+			expect(parsed.Language1).toBe('German');
 		});
 	});
 

@@ -2096,6 +2096,7 @@ describe('Interzoid Endpoints', () => {
 			});
 			const result = await Intelligence.getCustomData(mockContext, {
 				topic: 'detailed information about IBM',
+				lookup: 'IBM',
 				output: 'headquarters,ceo,website',
 			});
 			expect(mockedMakeRequest).toHaveBeenCalledWith(
@@ -2105,6 +2106,7 @@ describe('Interzoid Endpoints', () => {
 					method: 'GET',
 					query: expect.objectContaining({
 						topic: 'detailed information about IBM',
+						lookup: 'IBM',
 						output: 'headquarters,ceo,website',
 					}),
 				}),
@@ -2124,10 +2126,24 @@ describe('Interzoid Endpoints', () => {
 			// `unknown` because a rejection value has no static type; assertions below narrow it.
 			const caught: unknown = await Intelligence.getCustomData(mockContext, {
 				topic: '',
+				lookup: '',
 				output: '',
 				model: 'test',
 			}).then(expectedRejection, (e: unknown) => e);
 			expect(caught).toBeDefined();
+			expect(mockedMakeRequest).not.toHaveBeenCalled();
+		});
+	});
+
+	describe('intelligence.getCustomData lookup', () => {
+		// Interzoid answers 400 "Insufficient parameters: lookup is required"
+		// without it (probed 11-20), so the schema refuses the call first.
+		it('refuses a call without lookup before any request', async () => {
+			const caught: unknown = await Intelligence.getCustomData(mockContext, {
+				topic: 'company headquarters',
+				output: 'city,country',
+			} as never).then(expectedRejection, (e: unknown) => e);
+			expect(String(caught)).toContain('lookup');
 			expect(mockedMakeRequest).not.toHaveBeenCalled();
 		});
 	});

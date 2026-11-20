@@ -177,6 +177,7 @@ apiExamples:
   intelligence.getCustomData:
     args:
       topic: "detailed information about IBM"
+      lookup: "IBM"
       output: "headquarters,ceo,website"
   validation.getEmailInfo:
     args:

@@ -47,7 +47,7 @@ export const Standardization = {
 		const parsed = GetOrgStandardOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getOrgStandard', {
 			endpoint: '/getorgstandard',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -67,7 +67,7 @@ export const Standardization = {
 		const parsed = GetCountryStandardOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getCountryStandard', {
 			endpoint: '/getcountrystandard',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -87,7 +87,7 @@ export const Standardization = {
 		const parsed = GetCountryInfoOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getCountryInfo', {
 			endpoint: '/getcountryinfo',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -107,7 +107,7 @@ export const Standardization = {
 		const parsed = GetStateAbbreviationOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getStateAbbreviation', {
 			endpoint: '/getstateabbreviation',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -127,7 +127,7 @@ export const Standardization = {
 		const parsed = GetCityStandardOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getCityStandard', {
 			endpoint: '/getcitystandard',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -147,7 +147,7 @@ export const Standardization = {
 		const parsed = GetOfficialNameOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getOfficialName', {
 			endpoint: '/getofficialname',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},

@@ -84,7 +84,7 @@ export const Matching = {
 		const parsed = GetCompanyMatchAdvancedOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getCompanyMatchAdvanced', {
 			endpoint: '/getcompanymatchadvanced',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -104,7 +104,7 @@ export const Matching = {
 		const parsed = GetFullNameMatchOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getFullNameMatch', {
 			endpoint: '/getfullnamematch',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -125,7 +125,7 @@ export const Matching = {
 		const parsed = GetAddressMatchAdvancedOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getAddressMatchAdvanced', {
 			endpoint: '/getaddressmatchadvanced',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -146,7 +146,7 @@ export const Matching = {
 		const parsed = GetAddressAndFullNameMatchOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getAddressAndFullNameMatch', {
 			endpoint: '/getaddressandfullnamematch',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -167,7 +167,7 @@ export const Matching = {
 		const parsed = GetCompanyAndAddressMatchOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getCompanyAndAddressMatch', {
 			endpoint: '/getcompanyandaddressmatch',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -188,7 +188,7 @@ export const Matching = {
 		const parsed = GetCompanyAndFullNameMatchOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getCompanyAndFullNameMatch', {
 			endpoint: '/getcompanyandfullnamematch',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -208,7 +208,7 @@ export const Matching = {
 		const parsed = GetGlobalAddressMatchOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getGlobalAddressMatch', {
 			endpoint: '/getglobaladdressmatch',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -228,7 +228,7 @@ export const Matching = {
 		const parsed = GetProductMatchOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getProductMatch', {
 			endpoint: '/getproductmatch',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -248,7 +248,7 @@ export const Matching = {
 		const parsed = GetOrgMatchScoreOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getOrgMatchScore', {
 			endpoint: '/getorgmatchscore',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -268,7 +268,7 @@ export const Matching = {
 		const parsed = GetFullNameMatchScoreOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getFullNameMatchScore', {
 			endpoint: '/getfullnamematchscore',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -288,7 +288,7 @@ export const Matching = {
 		const parsed = GetCompanyMatchOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getCompanyMatch', {
 			endpoint: '/getcompanymatch',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -308,7 +308,7 @@ export const Matching = {
 		const parsed = GetAddressMatchOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getAddressMatch', {
 			endpoint: '/getaddressmatch',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -329,7 +329,7 @@ export const Matching = {
 		const parsed = GetFullNameParsedMatchOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getFullNameParsedMatch', {
 			endpoint: '/getfullnameparsedmatch',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -349,7 +349,7 @@ export const Matching = {
 		const parsed = GetCityMatchOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getCityMatch', {
 			endpoint: '/getcitymatch',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -369,7 +369,7 @@ export const Matching = {
 		const parsed = GetCountryMatchOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getCountryMatch', {
 			endpoint: '/getcountrymatch',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},

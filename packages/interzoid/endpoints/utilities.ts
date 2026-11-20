@@ -79,7 +79,7 @@ export const Utilities = {
 		const parsed = GetEntityTypeOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getEntityType', {
 			endpoint: '/getentitytype',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -99,7 +99,7 @@ export const Utilities = {
 		const parsed = GetGenderOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getGender', {
 			endpoint: '/getgender',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -119,7 +119,7 @@ export const Utilities = {
 		const parsed = GetNameOriginOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getNameOrigin', {
 			endpoint: '/getnameorigin',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -139,7 +139,7 @@ export const Utilities = {
 		const parsed = IdentifyLanguageOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_identifyLanguage', {
 			endpoint: '/identifylanguage',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -159,7 +159,7 @@ export const Utilities = {
 		const parsed = TranslateToEnglishOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_translateToEnglish', {
 			endpoint: '/translatetoenglish',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -179,7 +179,7 @@ export const Utilities = {
 		const parsed = TranslateToAnyOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_translateToAny', {
 			endpoint: '/translatetoany',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -199,7 +199,7 @@ export const Utilities = {
 		const parsed = GetGlobalLatencyOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getGlobalLatency', {
 			endpoint: '/globallatency',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -219,7 +219,7 @@ export const Utilities = {
 		const parsed = GetGlobalPageLoadOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getGlobalPageLoad', {
 			endpoint: '/globalpageload',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -239,7 +239,7 @@ export const Utilities = {
 		const parsed = GetCurrencyRateOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getCurrencyRate', {
 			endpoint: '/getcurrencyrate',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -259,7 +259,7 @@ export const Utilities = {
 		const parsed = ConvertCurrencyOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_convertCurrency', {
 			endpoint: '/convertcurrency',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -279,7 +279,7 @@ export const Utilities = {
 		const parsed = GetWeatherZipCodeOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getWeatherZipCode', {
 			endpoint: '/getweatherzipcode',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -299,7 +299,7 @@ export const Utilities = {
 		const parsed = GetGlobalWeatherOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getGlobalWeather', {
 			endpoint: '/getglobalweather',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -319,7 +319,7 @@ export const Utilities = {
 		const parsed = GetGlobalTimeOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getGlobalTime', {
 			endpoint: '/getglobaltime',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -338,7 +338,7 @@ export const Utilities = {
 		const parsed = GetRemainingCreditsOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getRemainingCredits', {
 			endpoint: '/getremainingcredits',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},

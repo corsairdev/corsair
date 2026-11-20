@@ -143,7 +143,7 @@ export const Intelligence = {
 		const parsed = GetBusinessInfoOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getBusinessInfo', {
 			endpoint: '/getbusinessinfo',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -163,7 +163,7 @@ export const Intelligence = {
 		const parsed = GetParentCompanyInfoOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getParentCompanyInfo', {
 			endpoint: '/getparentcompanyinfo',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -183,7 +183,7 @@ export const Intelligence = {
 		const parsed = GetExecutiveProfileOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getExecutiveProfile', {
 			endpoint: '/getexecutiveprofile',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -203,7 +203,7 @@ export const Intelligence = {
 		const parsed = GetBusinessInfoDomainOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getBusinessInfoDomain', {
 			endpoint: '/getbusinessinfodomain',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -223,7 +223,7 @@ export const Intelligence = {
 		const parsed = GetBusinessInfoNameOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getBusinessInfoName', {
 			endpoint: '/getbusinessinfoname',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -244,7 +244,7 @@ export const Intelligence = {
 		const parsed = GetCompanyVerificationOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getCompanyVerification', {
 			endpoint: '/getcompanyverification',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -264,7 +264,7 @@ export const Intelligence = {
 		const parsed = GetStockInfoOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getStockInfo', {
 			endpoint: '/getstockinfo',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -284,7 +284,7 @@ export const Intelligence = {
 		const parsed = GetIndustryCodesOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getIndustryCodes', {
 			endpoint: '/getindustrycodes',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -304,7 +304,7 @@ export const Intelligence = {
 		const parsed = GetSicCodesOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getSicCodes', {
 			endpoint: '/getsiccodes',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -324,7 +324,7 @@ export const Intelligence = {
 		const parsed = GetUniversityInfoOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getUniversityInfo', {
 			endpoint: '/getuniversityinfo',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -344,7 +344,7 @@ export const Intelligence = {
 		const parsed = GetProductRecallInfoOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getProductRecallInfo', {
 			endpoint: '/getproductrecallinfo',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -364,7 +364,7 @@ export const Intelligence = {
 		const parsed = GetTechStackOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getTechStack', {
 			endpoint: '/gettechstack',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -384,7 +384,7 @@ export const Intelligence = {
 		const parsed = GetCompetitorAnalysisOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getCompetitorAnalysis', {
 			endpoint: '/getcompetitoranalysis',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -404,7 +404,7 @@ export const Intelligence = {
 		const parsed = GetBuyingSignalsOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getBuyingSignals', {
 			endpoint: '/getbuyingsignals',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -425,7 +425,7 @@ export const Intelligence = {
 		const parsed = GetPrivateCompanyDealIntelOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getPrivateCompanyDealIntel', {
 			endpoint: '/getprivatecompanydealintel',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -445,7 +445,7 @@ export const Intelligence = {
 		const parsed = GetNearestCoffeeShopsOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getNearestCoffeeShops', {
 			endpoint: '/getnearestcoffeeshops',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -465,7 +465,7 @@ export const Intelligence = {
 		const parsed = GetUserXHandleOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getUserXHandle', {
 			endpoint: '/getuserxhandle',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -485,7 +485,7 @@ export const Intelligence = {
 		const parsed = GetXUserProfileOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getXUserProfile', {
 			endpoint: '/getxuserprofile',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -505,7 +505,7 @@ export const Intelligence = {
 		const parsed = GetXLast3OutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getXLast3', {
 			endpoint: '/getxlast3',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -525,7 +525,7 @@ export const Intelligence = {
 		const parsed = GetEsgProfileOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getEsgProfile', {
 			endpoint: '/getesgprofile',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -545,7 +545,7 @@ export const Intelligence = {
 		const parsed = GetGovContractsOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getGovContracts', {
 			endpoint: '/getgovcontracts',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -565,7 +565,7 @@ export const Intelligence = {
 		const parsed = GetFacilitiesProfileOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getFacilitiesProfile', {
 			endpoint: '/getfacilitiesprofile',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -585,7 +585,7 @@ export const Intelligence = {
 		const parsed = GetBuildingProfileOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getBuildingProfile', {
 			endpoint: '/getbuildingprofile',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -605,7 +605,7 @@ export const Intelligence = {
 		const parsed = GetPropertyHistoryOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getPropertyHistory', {
 			endpoint: '/getpropertyhistory',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -625,7 +625,7 @@ export const Intelligence = {
 		const parsed = GetSalesUseTaxRatesOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getSalesUseTaxRates', {
 			endpoint: '/getsalesusetaxrates',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -645,7 +645,7 @@ export const Intelligence = {
 		const parsed = GetIrsPerDiemRatesOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getIrsPerDiemRates', {
 			endpoint: '/getirsperdiemrates',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -665,7 +665,7 @@ export const Intelligence = {
 		const parsed = GetEuVatRatesOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getEuVatRates', {
 			endpoint: '/geteuvatrates',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -685,7 +685,7 @@ export const Intelligence = {
 		const parsed = GetCustomsDutyRatesOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getCustomsDutyRates', {
 			endpoint: '/getcustomsdutyrates',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -705,7 +705,7 @@ export const Intelligence = {
 		const parsed = GetMuniIssuerProfileOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getMuniIssuerProfile', {
 			endpoint: '/getmuniissuerprofile',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
@@ -725,7 +725,7 @@ export const Intelligence = {
 		const parsed = GetCustomDataOutputSchema.parse(rawResponse);
 		logEventFromContext(ctx, 'interzoid_getCustomData', {
 			endpoint: '/getcustom',
-			status: typeof parsed.Code === 'string' ? parsed.Code : 'Success',
+			status: typeof parsed.Code === 'string' ? parsed.Code : 'missing',
 		});
 		return parsed;
 	},
