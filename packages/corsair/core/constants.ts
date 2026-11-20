@@ -622,6 +622,7 @@ export const BaseProviders = [
 	'statuscake',
 	'storeganise',
 	'storerocket',
+	'stormboard',
 	'stormglass',
 	'strava',
 	'streamtime',
@@ -1366,6 +1367,7 @@ export const ProviderDisplayNames = {
 	statuscake: 'StatusCake',
 	storeganise: 'Storeganise',
 	storerocket: 'Storerocket',
+	stormboard: 'Stormboard',
 	stormglass: 'Stormglass',
 	strava: 'Strava',
 	streamtime: 'Streamtime',
@@ -2117,6 +2119,7 @@ export type AllProviders =
 	| 'statuscake'
 	| 'storeganise'
 	| 'storerocket'
+	| 'stormboard'
 	| 'stormglass'
 	| 'strava'
 	| 'streamtime'

@@ -5149,6 +5149,14 @@
                 ]
               },
               {
+                "group": "Stormboard",
+                "pages": [
+                  "plugins/stormboard/overview",
+                  "plugins/stormboard/api",
+                  "plugins/stormboard/database"
+                ]
+              },
+              {
                 "group": "Stormglass",
                 "pages": [
                   "plugins/stormglass/overview",
