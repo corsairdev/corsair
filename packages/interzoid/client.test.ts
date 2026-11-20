@@ -8,6 +8,11 @@ import {
 } from './client';
 import { errorHandlers } from './error-handlers';
 
+/** A `then` handler for calls that must reject: a resolved call fails the test. */
+const expectedRejection = (): never => {
+	throw new Error('expected the call to reject');
+};
+
 jest.mock('corsair/http', () => {
 	const actual = jest.requireActual('corsair/http');
 	return { ...actual, request: jest.fn() };
@@ -81,7 +86,7 @@ describe('makeInterzoidRequest', () => {
 		const caught: unknown = await makeInterzoidRequest(
 			'/getremainingcredits',
 			'',
-		).catch((e: unknown) => e);
+		).then(expectedRejection, (e: unknown) => e);
 
 		expect(caught).toBeInstanceOf(AuthMissingError);
 		expect(mockedRequest).not.toHaveBeenCalled();
@@ -92,13 +97,13 @@ describe('makeInterzoidRequest', () => {
 		const caught: unknown = await makeInterzoidRequest(
 			'/getremainingcredits',
 			undefined,
-		).catch((e: unknown) => e);
+		).then(expectedRejection, (e: unknown) => e);
 
 		expect(caught).toBeInstanceOf(AuthMissingError);
 		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 
-	it('rethrows ApiError intact so status and retryAfter survive', async () => {
+	it('rethrows ApiError with its status and retryAfter', async () => {
 		const rateLimit = makeApiError(429, 'Too Many Requests', 2500);
 		mockedRequest.mockRejectedValue(rateLimit);
 
@@ -106,14 +111,46 @@ describe('makeInterzoidRequest', () => {
 		const caught: unknown = await makeInterzoidRequest(
 			'/getremainingcredits',
 			'test-key',
-		).catch((e: unknown) => e);
+		).then(expectedRejection, (e: unknown) => e);
 
-		expect(caught).toBe(rateLimit);
 		expect(caught).toBeInstanceOf(ApiError);
 		if (caught instanceof ApiError) {
 			expect(caught.status).toBe(429);
 			expect(caught.retryAfter).toBe(2500);
 			expect(errorHandlers.RATE_LIMIT_ERROR.match(caught)).toBe(true);
+		}
+	});
+
+	it('keeps the lookup value out of a rebuilt ApiError', async () => {
+		const email = 'person@example.com';
+		mockedRequest.mockRejectedValue(
+			new ApiError(
+				{ method: 'GET', url: '/getemailinfo', query: { email } },
+				{
+					url: `https://api.interzoid.com/getemailinfo?email=${email}`,
+					ok: false,
+					status: 400,
+					statusText: 'Bad Request',
+					body: 'Bad Request',
+				},
+				'Bad Request',
+				{ rateLimitRemaining: 7 },
+			),
+		);
+
+		const caught: unknown = await makeInterzoidRequest(
+			'/getemailinfo',
+			'test-key',
+			{ method: 'GET', query: { email } },
+		).then(expectedRejection, (e: unknown) => e);
+
+		expect(caught).toBeInstanceOf(ApiError);
+		if (caught instanceof ApiError) {
+			expect(caught.status).toBe(400);
+			expect(caught.rateLimitRemaining).toBe(7);
+			expect(caught.url).toBe('https://api.interzoid.com/getemailinfo');
+			expect(caught.request).toEqual({ method: 'GET', url: '/getemailinfo' });
+			expect(JSON.stringify(caught)).not.toContain(email);
 		}
 	});
 
@@ -124,7 +161,7 @@ describe('makeInterzoidRequest', () => {
 		const caught: unknown = await makeInterzoidRequest(
 			'/getremainingcredits',
 			'test-key',
-		).catch((e: unknown) => e);
+		).then(expectedRejection, (e: unknown) => e);
 
 		expect(caught).toBeInstanceOf(InterzoidAPIError);
 		if (caught instanceof InterzoidAPIError) {
@@ -172,7 +209,7 @@ describe('makeInterzoidRequest', () => {
 					url: '/getremainingcredits',
 				},
 				{ rateLimitConfig },
-			).catch((e: unknown) => e);
+			).then(expectedRejection, (e: unknown) => e);
 
 			expect(global.fetch).toHaveBeenCalledTimes(1);
 			expect(caught).toBeInstanceOf(ApiError);

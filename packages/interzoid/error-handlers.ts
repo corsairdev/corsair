@@ -21,8 +21,7 @@ export const errorHandlers = {
 			return (
 				msg.includes('too many requests') ||
 				msg.includes('rate_limited') ||
-				msg.includes('rate limit') ||
-				msg.includes('429')
+				msg.includes('rate limit')
 			);
 		},
 		// corsair/http owns 429 retries and honors Retry-After; do not retry again here.

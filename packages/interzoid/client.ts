@@ -1,6 +1,6 @@
 import { AuthMissingError } from 'corsair/core';
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class InterzoidAPIError extends Error {
 	constructor(
@@ -56,9 +56,42 @@ export async function makeInterzoidRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
+		if (error instanceof ApiError) {
+			throw withoutLookupValues(error, method, endpoint);
+		}
 		if (error instanceof Error) {
 			throw error;
 		}
 		throw new InterzoidAPIError('Unknown error');
 	}
+}
+
+/**
+ * Every lookup travels in the query string (an email, a phone number, a
+ * person's name), and core's `ApiError` keeps it in `url` and `request.query`.
+ * The error is rebuilt with the path only, keeping status, message, body and
+ * the rate-limit fields core and the handlers read.
+ */
+function withoutLookupValues(
+	error: ApiError,
+	method: 'GET' | 'POST',
+	endpoint: string,
+): ApiError {
+	return new ApiError(
+		{ method, url: endpoint },
+		{
+			url: `${INTERZOID_API_BASE}${endpoint}`,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
+		},
+		error.message,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
 }
