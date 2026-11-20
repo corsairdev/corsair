@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 
 import { IntegrationLogo } from '@/components/integrations/integration-logo';
@@ -41,64 +42,91 @@ function ProjectCard({ project }: { project: BuiltWithProject }) {
 	const repoUrl = `https://github.com/${project.repo}`;
 	const isRepo = project.url.replace(/\/$/, '') === repoUrl;
 	return (
-		<article className="flex flex-col gap-3 rounded-lg border border-[#1c1c1c]/10 bg-white p-5">
-			<div className="flex items-center justify-between gap-3">
-				<span className="inline-flex items-center gap-1.5">
-					{shown.map((id) => (
-						<IntegrationLogo
-							key={id}
-							id={id}
-							displayName={builtWithAppName(id)}
-							size={20}
-							className="rounded-[4px]"
-						/>
-					))}
-					{more > 0 ? (
-						<span className="text-[12px] text-[#1c1c1c66]">+{more}</span>
-					) : null}
-					<span className="sr-only">
-						Uses {apps.map(builtWithAppName).join(', ')}
-					</span>
-				</span>
-				<span className="font-[family-name:var(--landing-font-mono)] text-[11px] uppercase tracking-wider text-[#1c1c1c66]">
-					{project.hosted ? 'Live app' : 'Open source'}
-				</span>
-			</div>
-			<h3 className="text-[17px] font-medium tracking-[-0.01em] text-[#1c1c1c]">
+		<article className="flex flex-col overflow-hidden rounded-lg border border-[#1c1c1c]/10 bg-white">
+			{project.image ? (
+				// The title below is the link people and screen readers use; the picture is a larger target for the same page.
 				<a
 					href={project.url}
 					target="_blank"
 					rel="ugc noopener noreferrer"
-					className="text-[#1c1c1c] no-underline hover:underline"
+					tabIndex={-1}
+					aria-hidden="true"
+					className="block border-b border-[#1c1c1c]/10 bg-white"
 				>
-					{project.name}
-					<span className="sr-only"> (opens in a new tab)</span>
+					<Image
+						src={project.image.src}
+						width={project.image.width}
+						height={project.image.height}
+						alt=""
+						sizes="(min-width: 1024px) 380px, (min-width: 640px) 50vw, 100vw"
+						className={
+							// GitHub's repo cards are 2:1 with text near the edges: shown whole. App screenshots fill the frame from the top.
+							project.image.width / project.image.height > 1.7
+								? 'aspect-[16/10] w-full object-contain'
+								: 'aspect-[16/10] w-full object-cover object-top'
+						}
+					/>
 				</a>
-			</h3>
-			<p className="flex-1 text-[14px] leading-relaxed text-[#1c1c1c99]">
-				{project.description}
-			</p>
-			<div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[12.5px] text-[#1c1c1c80]">
-				{project.author ? <span>{project.author}</span> : null}
-				{project.event ? (
-					<span className="rounded-full border border-[#4a38f5]/20 bg-[#4a38f5]/[0.06] px-2 py-0.5 text-[#3d2ee0]">
-						{project.event}
+			) : null}
+			<div className="flex flex-1 flex-col gap-3 p-5">
+				<div className="flex items-center justify-between gap-3">
+					<span className="inline-flex items-center gap-1.5">
+						{shown.map((id) => (
+							<IntegrationLogo
+								key={id}
+								id={id}
+								displayName={builtWithAppName(id)}
+								size={20}
+								className="rounded-[4px]"
+							/>
+						))}
+						{more > 0 ? (
+							<span className="text-[12px] text-[#1c1c1c66]">+{more}</span>
+						) : null}
+						<span className="sr-only">
+							Uses {apps.map(builtWithAppName).join(', ')}
+						</span>
 					</span>
-				) : null}
-				{isRepo ? null : (
+					<span className="font-[family-name:var(--landing-font-mono)] text-[11px] uppercase tracking-wider text-[#1c1c1c66]">
+						{project.hosted ? 'Live app' : 'Open source'}
+					</span>
+				</div>
+				<h3 className="text-[17px] font-medium tracking-[-0.01em] text-[#1c1c1c]">
 					<a
-						href={repoUrl}
+						href={project.url}
 						target="_blank"
 						rel="ugc noopener noreferrer"
-						className="ml-auto font-medium text-[#4a38f5] no-underline hover:underline"
+						className="text-[#1c1c1c] no-underline hover:underline"
 					>
-						Code
-						<span className="sr-only">
-							{' '}
-							for {project.name} (opens in a new tab)
-						</span>
+						{project.name}
+						<span className="sr-only"> (opens in a new tab)</span>
 					</a>
-				)}
+				</h3>
+				<p className="flex-1 text-[14px] leading-relaxed text-[#1c1c1c99]">
+					{project.description}
+				</p>
+				<div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[12.5px] text-[#1c1c1c80]">
+					{project.author ? <span>{project.author}</span> : null}
+					{project.event ? (
+						<span className="rounded-full border border-[#4a38f5]/20 bg-[#4a38f5]/[0.06] px-2 py-0.5 text-[#3d2ee0]">
+							{project.event}
+						</span>
+					) : null}
+					{isRepo ? null : (
+						<a
+							href={repoUrl}
+							target="_blank"
+							rel="ugc noopener noreferrer"
+							className="ml-auto font-medium text-[#4a38f5] no-underline hover:underline"
+						>
+							Code
+							<span className="sr-only">
+								{' '}
+								for {project.name} (opens in a new tab)
+							</span>
+						</a>
+					)}
+				</div>
 			</div>
 		</article>
 	);

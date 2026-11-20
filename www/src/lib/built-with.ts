@@ -4,12 +4,15 @@
 
 export const BUILT_WITH_REPO = 'https://github.com/corsairdev/awesome-corsair';
 export const BUILT_WITH_SUBMIT = `${BUILT_WITH_REPO}/blob/main/CONTRIBUTING.md#how-to-submit`;
-const DATA_URL =
-	'https://raw.githubusercontent.com/corsairdev/awesome-corsair/main/data/built-with.json';
+const RAW = 'https://raw.githubusercontent.com/corsairdev/awesome-corsair/main';
+const DATA_URL = `${RAW}/data/built-with.json`;
 /** Seconds between re-reads of the list. */
 export const BUILT_WITH_REVALIDATE = 3600;
 
 export type BuiltWithCategory = { id: string; title: string; blurb: string };
+
+/** A screenshot of the live app, or GitHub's card for the repo; its size lets the card hold its space while it loads. */
+export type BuiltWithImage = { src: string; width: number; height: number };
 
 export type BuiltWithProject = {
 	id: string;
@@ -26,6 +29,7 @@ export type BuiltWithProject = {
 	hosted: boolean;
 	added: string;
 	verified: boolean;
+	image: BuiltWithImage | null;
 };
 
 export type BuiltWith = {
@@ -74,6 +78,7 @@ function toProject(row: unknown): BuiltWithProject | null {
 		hosted: o.hosted === true,
 		added: isString(o.added) ? o.added : '',
 		verified: o.verified === true,
+		image: toImage(o.image),
 	};
 }
 
@@ -84,6 +89,25 @@ function toCategory(row: unknown): BuiltWithCategory | null {
 	const o = row as Record<string, unknown>;
 	if (!isString(o.id) || !isString(o.title)) return null;
 	return { id: o.id, title: o.title, blurb: isString(o.blurb) ? o.blurb : '' };
+}
+
+const isSize = (v: unknown): v is number =>
+	typeof v === 'number' && Number.isInteger(v) && v > 0 && v <= 4000;
+
+// Takes unknown like toProject: the image field can be any JSON value. Only a picture in the repo's
+// data/shots folder is used, so the page never loads an image from anywhere else.
+function toImage(v: unknown): BuiltWithImage | null {
+	if (!v || typeof v !== 'object') return null;
+	// A JSON object's fields are unknown until each one is checked below.
+	const o = v as Record<string, unknown>;
+	if (
+		!isString(o.path) ||
+		!/^data\/shots\/[a-z0-9-]+\.(jpg|png)$/.test(o.path) ||
+		!isSize(o.width) ||
+		!isSize(o.height)
+	)
+		return null;
+	return { src: `${RAW}/${o.path}`, width: o.width, height: o.height };
 }
 
 const kept = <T>(rows: (T | null)[]): T[] =>

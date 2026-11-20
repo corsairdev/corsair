@@ -88,6 +88,44 @@ describe('parseBuiltWith', () => {
 		assert.deepEqual(builtWithApps(messy!).map(builtWithAppName), ['Gmail']);
 	});
 
+	it('uses only a picture from the repo, with a real size', () => {
+		const image = (v: unknown) =>
+			parseBuiltWith({
+				categories: [{ id: 'email-calendar', title: 'E', blurb: '' }],
+				projects: [project({ image: v })],
+			})!.projects[0]!.image;
+		assert.deepEqual(
+			image({ path: 'data/shots/p.jpg', width: 1280, height: 800 }),
+			{
+				src: 'https://raw.githubusercontent.com/corsairdev/awesome-corsair/main/data/shots/p.jpg',
+				width: 1280,
+				height: 800,
+			},
+		);
+		assert.equal(image(null), null);
+		assert.equal(image(undefined), null);
+		assert.equal(
+			image({ path: 'https://evil.example/x.jpg', width: 10, height: 10 }),
+			null,
+		);
+		assert.equal(
+			image({ path: 'data/shots/../../x.png', width: 10, height: 10 }),
+			null,
+		);
+		assert.equal(
+			image({ path: 'data/shots/p.svg', width: 10, height: 10 }),
+			null,
+		);
+		assert.equal(
+			image({ path: 'data/shots/p.png', width: 0, height: 10 }),
+			null,
+		);
+		assert.equal(
+			image({ path: 'data/shots/p.png', width: '1280', height: 800 }),
+			null,
+		);
+	});
+
 	it('returns null for a file that is not the list', () => {
 		assert.equal(parseBuiltWith({ hello: 'world' }), null);
 		assert.equal(parseBuiltWith(null), null);
