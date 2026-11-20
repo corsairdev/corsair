@@ -389,7 +389,7 @@ const stannpEndpointMeta = {
 	'letters.post': {
 		riskLevel: 'destructive',
 		description:
-			'Post an already mail-merged letter PDF whose address the API reads with OCR',
+			'Post an already mail-merged letter PDF whose address the API reads with OCR; test mode renders a PDF proof without posting or charging',
 	},
 	'letters.get': {
 		riskLevel: 'read',
@@ -518,7 +518,7 @@ const stannpEndpointMeta = {
 	'reporting.list': {
 		riskLevel: 'read',
 		description:
-			'List mailpieces in a date range, optionally filtered by status or tag',
+			'List mailpieces in a date range, optionally filtered by status, or by status and tag (a tag needs a status)',
 	},
 	'files.upload': {
 		riskLevel: 'write',

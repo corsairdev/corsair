@@ -38,7 +38,7 @@ pnpm add @corsair-dev/stannp
 | `letters.cancel` | `stannp.api.letters.cancel` | `destructive` | Cancel a letter that has not started processing yet |
 | `letters.create` | `stannp.api.letters.create` | `destructive` | Create and mail a letter merged from a template or PDF; test mode renders a PDF proof without posting or charging |
 | `letters.get` | `stannp.api.letters.get` | `read` | Get one letter mailpiece with its status, tracking and cost |
-| `letters.post` | `stannp.api.letters.post` | `destructive` | Post an already mail-merged letter PDF whose address the API reads with OCR |
+| `letters.post` | `stannp.api.letters.post` | `destructive` | Post an already mail-merged letter PDF whose address the API reads with OCR; test mode renders a PDF proof without posting or charging |
 | `postcards.cancel` | `stannp.api.postcards.cancel` | `destructive` | Cancel a postcard that has not started processing yet |
 | `postcards.create` | `stannp.api.postcards.create` | `destructive` | Create and mail a postcard to one recipient; test mode renders a PDF proof without posting or charging |
 | `postcards.get` | `stannp.api.postcards.get` | `read` | Get one postcard mailpiece with its status, tracking and cost |
@@ -47,7 +47,7 @@ pnpm add @corsair-dev/stannp
 | `recipients.get` | `stannp.api.recipients.get` | `read` | Get one recipient by id |
 | `recipients.import` | `stannp.api.recipients.import` | `write` | Import a CSV or XLS data file into a group, with column remapping and duplicate handling |
 | `recipients.list` | `stannp.api.recipients.list` | `read` | List recipients with their addresses and blacklist flag, filtered by group and paged with offset and limit |
-| `reporting.list` | `stannp.api.reporting.list` | `read` | List mailpieces in a date range, optionally filtered by status or tag |
+| `reporting.list` | `stannp.api.reporting.list` | `read` | List mailpieces in a date range, optionally filtered by status, or by status and tag (a tag needs a status) |
 | `reporting.summary` | `stannp.api.reporting.summary` | `read` | Count mailpieces per delivery status within a date range |
 | `selections.create` | `stannp.api.selections.create` | `write` | Create an auto-filter selection that targets a subset of a group |
 | `sms.create` | `stannp.api.sms.create` | `destructive` | Send an SMS to a phone number or stored recipient; test mode builds it without sending or charging |

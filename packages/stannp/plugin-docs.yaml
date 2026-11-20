@@ -1,5 +1,5 @@
 displayName: Stannp
-description: Direct mail with Stannp - send postcards, letters and SMS, manage recipients, groups and campaigns, validate addresses, read delivery reporting and receive mailpiece and campaign webhooks. Webhook deliveries are verified, not just registered.
+description: Direct mail with Stannp - send postcards, letters and SMS, manage recipients, groups and campaigns, validate addresses, read delivery reporting and receive mailpiece and campaign webhooks. Webhook deliveries are verified when the webhook has a secret and Corsair has the same one.
 domain: stannp.com
 recommendedAuth: api_key
 overviewNote: |
