@@ -1,0 +1,810 @@
+{
+  "id": "tomba",
+  "displayName": "Tomba",
+  "description": "Find, verify and enrich B2B email addresses and phone numbers, and read company and domain data.",
+  "npmPackageName": "@corsair-dev/tomba",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 22,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "api_secret"]
+    }
+  ],
+  "api": [
+    {
+      "path": "tomba.api.account.get",
+      "shortPath": "account.get",
+      "description": "Read the account plan and the remaining search, verification and count credits for this usage window",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ first_name?: string | null, last_name?: string | null, email?: string | null, country?: string | null, confirmed?: boolean | null, blocked?: boolean | null, deleted?: boolean | null, created_at?: string | null, expired?: string | null, expired_subscription?: string | null, requests?: { domains?: { available: number, used: number } | null, verifications?: { available: number, used: number } | null, count?: { available: number, used: number } | null } | null, credits?: Record<string, { plan?: number | null, used?: number | null, packs?: number | null, remaining?: number | null }> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tomba.api.account.rateLimits",
+      "shortPath": "account.rateLimits",
+      "description": "Read the per-route request limits on the current plan",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, { limits?: { rps?: number | null, rpm?: number | null, daily?: number | null } | null, usage?: { rpm_used?: number | null, daily_used?: number | null } | null }> | null",
+            "description": "Limits and usage keyed by route, such as email-finder"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tomba.api.combined.find",
+      "shortPath": "combined.find",
+      "description": "Read the person and their company from one email address",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ person?: { name?: { fullName?: string | null, givenName?: string | null, familyName?: string | null } | null, email?: string | null, location?: string | null, gender?: string | null, geo?: { city?: string | null, state?: string | null, country?: string | null, countryCode?: string | null } | null, bio?: string | null, site?: string | null, avatar?: string | null, employment?: { domain?: string | null, name?: string | null, title?: string | null, role?: string | null, subRole?: string | null, seniority?: string | null } | null, facebook?: { handle?: string | null } | null, github?: { handle?: string | null } | null, twitter?: { handle?: string | null } | null, linkedin?: { handle?: string | null } | null, verification?: { date?: string | null, status?: string | null } | null, phone?: boolean | null } | null, company?: { name?: string | null, legalName?: string | null, domain?: string | null, domainAliases?: string[] | null, site?: { phoneNumbers?: string[] | null, emailAddresses?: string[] | null } | null, category?: { sector?: string | null, industryGroup?: string | null, industry?: string | null, subIndustry?: string | null, sicCode?: string | null, naicsCode?: string | null } | null, tags?: string[] | null, description?: string | null, foundedYear?: number | string | null, location?: string | null, geo?: { city?: string | null, state?: string | null, country?: string | null, countryCode?: string | null } | null, logo?: string | null, facebook?: { handle?: string | null } | null, linkedin?: { handle?: string | null } | null, twitter?: { handle?: string | null } | null, type?: string | null, metrics?: { employees?: number | string | null, annualRevenue?: number | string | null, estimatedAnnualRevenue?: number | string | null } | null, tech?: string[] | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tomba.api.company.find",
+      "shortPath": "company.find",
+      "description": "Read a company profile from its domain",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name?: string | null, legalName?: string | null, domain?: string | null, domainAliases?: string[] | null, site?: { phoneNumbers?: string[] | null, emailAddresses?: string[] | null } | null, category?: { sector?: string | null, industryGroup?: string | null, industry?: string | null, subIndustry?: string | null, sicCode?: string | null, naicsCode?: string | null } | null, tags?: string[] | null, description?: string | null, foundedYear?: number | string | null, location?: string | null, geo?: { city?: string | null, state?: string | null, country?: string | null, countryCode?: string | null } | null, logo?: string | null, facebook?: { handle?: string | null } | null, linkedin?: { handle?: string | null } | null, twitter?: { handle?: string | null } | null, type?: string | null, metrics?: { employees?: number | string | null, annualRevenue?: number | string | null, estimatedAnnualRevenue?: number | string | null } | null, tech?: string[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tomba.api.company.search",
+      "shortPath": "company.search",
+      "description": "Search the company database with a plain-language query or structured filters, 50 per page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "Plain-language query; filters are generated from it and any `filters` sent are ignored"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "Record<string, { include?: string[] | null, exclude?: string[] | null } | string | string[]>",
+            "description": "Structured filters, keyed by field such as industry or location_city"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "50 companies per page"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ companies: { name?: string | null, description?: string | null, website_url?: string | null, industry?: string | null, company_size?: string | null, type?: string | null, founded?: number | string | null, country?: string | null, state?: string | null, city?: string | null, street_address?: string | null, postal_code?: string | null, revenue?: number | string | null, total_emails?: number | null, total_similar?: number | null, phone_number?: boolean | null, linkedin_url?: string | null, facebook_url?: string | null, twitter_url?: string | null }[] }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total?: number | null, page?: number | null, limit?: number | null, pages?: number | null, filters?: Record<string, any> | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tomba.api.domain.emailCount",
+      "shortPath": "domain.emailCount",
+      "description": "How many addresses Tomba holds for a domain, by department and seniority",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "all | personal | generic",
+            "description": "Count only one address type; default all"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ website_id?: number | null, total?: number | null, personal_emails?: number | null, generic_emails?: number | null, department?: Record<string, number> | null, seniority?: Record<string, number> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tomba.api.domain.emailFormat",
+      "shortPath": "domain.emailFormat",
+      "description": "Read the address patterns a company uses and their share",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ format?: string | null, percentage?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tomba.api.domain.emailSources",
+      "shortPath": "domain.emailSources",
+      "description": "List the public pages where Tomba found an email address, with first and last seen dates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "The address whose sources to list"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uri?: string | null, website_url?: string | null, extracted_on?: string | null, last_seen_on?: string | null, still_on_page?: boolean | null }[]",
+            "description": "Up to 20 pages; empty, with HTTP 201, when there are none"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tomba.api.domain.location",
+      "shortPath": "domain.location",
+      "description": "Where a company's people are, by country",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name?: string | null, total?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tomba.api.domain.similar",
+      "shortPath": "domain.similar",
+      "description": "Find companies similar to a domain, with their industry",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Default 1"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "10 | 20 | 50 | 100 | 150 | 200 | 250",
+            "description": "Companies per page, default 10; 1 search credit per 10"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ website_url?: string | null, name?: string | null, industries?: string | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total?: number | null, pageSize?: number | null, current?: number | null, total_pages?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tomba.api.domain.status",
+      "shortPath": "domain.status",
+      "description": "Read Tomba's reachability verdict for a domain",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "webmail",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "disposable",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tomba.api.domain.suggestions",
+      "shortPath": "domain.suggestions",
+      "description": "Suggest alternative domains related to a company",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "Company name or domain to match, such as stripe"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name?: string | null, domain?: string | null, email_count?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tomba.api.domain.technology",
+      "shortPath": "domain.technology",
+      "description": "Read the technologies a website runs, by category",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ slug?: string | null, name?: string | null, icon?: string | null, website?: string | null, description?: string | null, categories?: { id?: number | string | null, slug?: string | null, name?: string | null }[] | null }[] | null",
+            "description": "null when Tomba has no technology data for the domain"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tomba.api.finder.author",
+      "shortPath": "finder.author",
+      "description": "Find the email of the person who wrote an article",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "URL of the article"
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string",
+            "description": "Also POST the result to this URL when the lookup finishes"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ email?: string | null, first_name?: string | null, last_name?: string | null, full_name?: string | null, company?: string | null, position?: string | null, department?: string | null, country?: string | null, gender?: string | null, linkedin?: string | null, twitter?: string | null, website_url?: string | null, pattern?: string | null, score?: number | null, accept_all?: boolean | null, phone_number?: boolean | null, type?: string | null, verification?: { date?: string | null, status?: string | null } | null, sources?: { uri?: string | null, website_url?: string | null, extracted_on?: string | null, last_seen_on?: string | null, still_on_page?: boolean | null }[] | null, phone_data?: { carrier?: string | null, country_code?: string | null, e164_format?: string | null, intl_format?: string | null, local_format?: string | null, line_type?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tomba.api.finder.domainSearch",
+      "shortPath": "finder.domainSearch",
+      "description": "List a company's known email addresses with each person's role, department and verification status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "Company domain, such as stripe.com"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Default 1"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Addresses per page; the credit cost follows this value"
+          },
+          {
+            "key": "department",
+            "optional": true,
+            "type": "string",
+            "description": "Only this department, such as engineering"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter country code"
+          },
+          {
+            "key": "enrich_mobile",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also return phone numbers; costs extra search credits"
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string",
+            "description": "Also POST the result to this URL when the lookup finishes"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ organization?: { website_url?: string | null, organization?: string | null, location?: { country?: string | null, city?: string | null, state?: string | null, street_address?: string | null, postal_code?: string | null } | null, social_links?: Record<string, string | null> | null, disposable?: boolean | null, webmail?: boolean | null, phone_number?: boolean | null, industries?: string | null, founded?: number | string | null, company_size?: string | null, company_type?: string | null, revenue?: number | string | null, accept_all?: boolean | null, description?: string | null, pattern?: string | null, total_similar?: number | null, keywords?: string[] | null, last_updated?: string | null } | null, emails: { email?: string | null, first_name?: string | null, last_name?: string | null, full_name?: string | null, company?: string | null, position?: string | null, department?: string | null, country?: string | null, gender?: string | null, linkedin?: string | null, twitter?: string | null, website_url?: string | null, pattern?: string | null, score?: number | null, accept_all?: boolean | null, phone_number?: boolean | null, type?: string | null, verification?: { date?: string | null, status?: string | null } | null, sources?: { uri?: string | null, website_url?: string | null, extracted_on?: string | null, last_seen_on?: string | null, still_on_page?: boolean | null }[] | null, phone_data?: { carrier?: string | null, country_code?: string | null, e164_format?: string | null, intl_format?: string | null, local_format?: string | null, line_type?: string | null }[] | null }[] }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total?: number | null, pageSize?: number | null, current?: number | null, total_pages?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tomba.api.finder.email",
+      "shortPath": "finder.email",
+      "description": "Find one person's work email from their name and the company domain or name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string",
+            "description": "Company domain, or use `company`"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string",
+            "description": "Company name, when the domain is unknown"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "full_name",
+            "optional": true,
+            "type": "string",
+            "description": "Used when first and last are absent"
+          },
+          {
+            "key": "enrich_mobile",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also return phone numbers; costs extra search credits"
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string",
+            "description": "Also POST the result to this URL when the lookup finishes"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ email?: string | null, first_name?: string | null, last_name?: string | null, full_name?: string | null, company?: string | null, position?: string | null, department?: string | null, country?: string | null, gender?: string | null, linkedin?: string | null, twitter?: string | null, website_url?: string | null, pattern?: string | null, score?: number | null, accept_all?: boolean | null, phone_number?: boolean | null, type?: string | null, verification?: { date?: string | null, status?: string | null } | null, sources?: { uri?: string | null, website_url?: string | null, extracted_on?: string | null, last_seen_on?: string | null, still_on_page?: boolean | null }[] | null, phone_data?: { carrier?: string | null, country_code?: string | null, e164_format?: string | null, intl_format?: string | null, local_format?: string | null, line_type?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tomba.api.finder.enrich",
+      "shortPath": "finder.enrich",
+      "description": "Turn an email address into a profile: name, role, company and social links",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "enrich_mobile",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also return phone numbers; costs extra search credits"
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string",
+            "description": "Also POST the result to this URL when the lookup finishes"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ email?: string | null, first_name?: string | null, last_name?: string | null, full_name?: string | null, company?: string | null, position?: string | null, department?: string | null, country?: string | null, gender?: string | null, linkedin?: string | null, twitter?: string | null, website_url?: string | null, pattern?: string | null, score?: number | null, accept_all?: boolean | null, phone_number?: boolean | null, type?: string | null, verification?: { date?: string | null, status?: string | null } | null, sources?: { uri?: string | null, website_url?: string | null, extracted_on?: string | null, last_seen_on?: string | null, still_on_page?: boolean | null }[] | null, phone_data?: { carrier?: string | null, country_code?: string | null, e164_format?: string | null, intl_format?: string | null, local_format?: string | null, line_type?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tomba.api.finder.linkedin",
+      "shortPath": "finder.linkedin",
+      "description": "Find the work email behind a LinkedIn profile URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The LinkedIn profile URL"
+          },
+          {
+            "key": "enrich_mobile",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also return phone numbers; costs extra search credits"
+          },
+          {
+            "key": "full",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the full record instead of the minimal one"
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string",
+            "description": "Also POST the result to this URL when the lookup finishes"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ email?: string | null, first_name?: string | null, last_name?: string | null, full_name?: string | null, company?: string | null, position?: string | null, department?: string | null, country?: string | null, gender?: string | null, linkedin?: string | null, twitter?: string | null, website_url?: string | null, pattern?: string | null, score?: number | null, accept_all?: boolean | null, phone_number?: boolean | null, type?: string | null, verification?: { date?: string | null, status?: string | null } | null, sources?: { uri?: string | null, website_url?: string | null, extracted_on?: string | null, last_seen_on?: string | null, still_on_page?: boolean | null }[] | null, phone_data?: { carrier?: string | null, country_code?: string | null, e164_format?: string | null, intl_format?: string | null, local_format?: string | null, line_type?: string | null }[] | null } | { email?: string | null, first_name?: string | null, last_name?: string | null, full_name?: string | null, company?: string | null, position?: string | null, department?: string | null, country?: string | null, gender?: string | null, linkedin?: string | null, twitter?: string | null, website_url?: string | null, pattern?: string | null, score?: number | null, accept_all?: boolean | null, phone_number?: boolean | null, type?: string | null, verification?: { date?: string | null, status?: string | null } | null, sources?: { uri?: string | null, website_url?: string | null, extracted_on?: string | null, last_seen_on?: string | null, still_on_page?: boolean | null }[] | null, phone_data?: { carrier?: string | null, country_code?: string | null, e164_format?: string | null, intl_format?: string | null, local_format?: string | null, line_type?: string | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tomba.api.finder.phone",
+      "shortPath": "finder.phone",
+      "description": "Find phone numbers from an email address, a domain or a LinkedIn URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "full",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string",
+            "description": "Also POST the result to this URL when the lookup finishes"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ email?: string | null, domain?: string | null, valid?: boolean | null, local_format?: string | null, intl_format?: string | null, e164_format?: string | null, rfc3966_format?: string | null, country_code?: string | null, line_type?: string | null, carrier?: string | null, region?: { name?: string | null, code?: string | null } | null, timezones?: string[] | null } | { email?: string | null, domain?: string | null, valid?: boolean | null, local_format?: string | null, intl_format?: string | null, e164_format?: string | null, rfc3966_format?: string | null, country_code?: string | null, line_type?: string | null, carrier?: string | null, region?: { name?: string | null, code?: string | null } | null, timezones?: string[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tomba.api.person.find",
+      "shortPath": "person.find",
+      "description": "Read a person profile from their work email",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name?: { fullName?: string | null, givenName?: string | null, familyName?: string | null } | null, email?: string | null, location?: string | null, gender?: string | null, geo?: { city?: string | null, state?: string | null, country?: string | null, countryCode?: string | null } | null, bio?: string | null, site?: string | null, avatar?: string | null, employment?: { domain?: string | null, name?: string | null, title?: string | null, role?: string | null, subRole?: string | null, seniority?: string | null } | null, facebook?: { handle?: string | null } | null, github?: { handle?: string | null } | null, twitter?: { handle?: string | null } | null, linkedin?: { handle?: string | null } | null, verification?: { date?: string | null, status?: string | null } | null, phone?: boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tomba.api.verifier.email",
+      "shortPath": "verifier.email",
+      "description": "Check whether an address can receive mail, with format, MX, SMTP and catch-all results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "enrich_mobile",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also return phone numbers; costs extra search credits"
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string",
+            "description": "Also POST the result to this URL when the lookup finishes"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ email: { email?: string | null, status?: string | null, result?: string | null, score?: number | null, regex?: boolean | null, gibberish?: boolean | null, disposable?: boolean | null, accept_all?: boolean | null, block?: boolean | null, greylisted?: boolean | null, mx_check?: boolean | null, smtp_check?: boolean | null, smtp_server?: boolean | null, smtp_provider?: string | null, mx?: { records?: string[] | null } | null, phone_number?: boolean | null } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tomba.api.verifier.phone",
+      "shortPath": "verifier.phone",
+      "description": "Check a phone number and report its line type and carrier",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "phone",
+            "optional": false,
+            "type": "string",
+            "description": "Number to validate, ideally in E.164 form"
+          },
+          {
+            "key": "country_code",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter code, used when the number has no country prefix"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ email?: string | null, domain?: string | null, valid?: boolean | null, local_format?: string | null, intl_format?: string | null, e164_format?: string | null, rfc3966_format?: string | null, country_code?: string | null, line_type?: string | null, carrier?: string | null, region?: { name?: string | null, code?: string | null } | null, timezones?: string[] | null } | { email?: string | null, domain?: string | null, valid?: boolean | null, local_format?: string | null, intl_format?: string | null, e164_format?: string | null, rfc3966_format?: string | null, country_code?: string | null, line_type?: string | null, carrier?: string | null, region?: { name?: string | null, code?: string | null } | null, timezones?: string[] | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

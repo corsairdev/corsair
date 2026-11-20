@@ -1,0 +1,93 @@
+displayName: Labs64 NetLicensing
+description: Manage NetLicensing products, product modules, license templates, licensees and licenses, validate a licensee at run time, and read transactions.
+domain: netlicensing.io
+recommendedAuth: api_key
+overviewNote: |
+  Create an API key in the NetLicensing console under Settings > API Access. Its role decides what the plugin can do: a Licensee key only validates and transfers its own licensee, Analytics reads everything, Operation also writes licensees and licenses, and Maintenance also writes products, modules and templates. The key is sent as HTTP Basic with the username `apiKey`.
+
+  Things to know:
+
+  - **How the pieces fit.** A product has product modules; each module has a licensing model (TryAndBuy, Subscription, Floating, PayPerUse, ...) and license templates. A licensee is one of your customers under a product, and a license is created for a licensee from a template.
+  - **Every value is a string.** NetLicensing returns each entity as a list of properties. `get`, `create` and `update` return `item` with `number`, `active` and `name` lifted out and every property, custom ones included, in `properties`; nested lists such as product discounts are in `lists`.
+  - **Custom properties.** Any field NetLicensing does not know is stored as a custom property: pass them in `customProperties`.
+  - **Paging.** List calls take `filter`, `;`-separated `key=value` pairs such as `page=0;items=50`, and return `page` (pageNumber, totalPages, totalItems, hasNext).
+  - **Validation changes state.** `licensees.validate` checks out floating sessions and uses up pay-per-use and quota amounts unless `dryRun` is true, so it is `destructive`; it also clears the licensee's `markedForTransfer` flag.
+  - **Deletes.** `forceCascade: true` also deletes what depends on the entity (a product's modules, templates, licensees and licenses). Deletes can't be undone.
+examples:
+  read:
+    path: licensees.list
+    title: List licensees
+    args:
+      filter: page=0;items=20
+  write:
+    path: licensees.create
+    title: Create a licensee
+    args:
+      productNumber: P001
+      name: Acme Corp
+apiExamples:
+  products.list:
+    call: "{}"
+  products.get:
+    call: "{ productNumber: 'P001' }"
+  products.create:
+    call: "{ name: 'My App', version: '1.0', licenseeAutoCreate: true }"
+  products.update:
+    call: "{ productNumber: 'P001', version: '1.1' }"
+  products.delete:
+    call: "{ productNumber: 'P001', forceCascade: true }"
+  productModules.list:
+    call: "{ filter: 'page=0;items=50' }"
+  productModules.get:
+    call: "{ productModuleNumber: 'M001' }"
+  productModules.create:
+    call: "{ productNumber: 'P001', name: 'Core features', licensingModel: 'Subscription' }"
+  productModules.update:
+    call: "{ productModuleNumber: 'M001', name: 'Core' }"
+  productModules.delete:
+    call: "{ productModuleNumber: 'M001' }"
+  licenseTemplates.list:
+    call: "{}"
+  licenseTemplates.get:
+    call: "{ licenseTemplateNumber: 'E001' }"
+  licenseTemplates.create:
+    call: "{ productModuleNumber: 'M001', name: 'Monthly', licenseType: 'TIMEVOLUME', timeVolume: '1', timeVolumePeriod: 'MONTH', price: '9.99', currency: 'EUR' }"
+  licenseTemplates.update:
+    call: "{ licenseTemplateNumber: 'E001', price: '12.99' }"
+  licenseTemplates.delete:
+    call: "{ licenseTemplateNumber: 'E001' }"
+  licensees.list:
+    call: "{ filter: 'page=0;items=20' }"
+  licensees.get:
+    call: "{ licenseeNumber: 'I001' }"
+  licensees.create:
+    call: "{ productNumber: 'P001', name: 'Acme Corp' }"
+  licensees.update:
+    call: "{ licenseeNumber: 'I001', active: false }"
+  licensees.delete:
+    call: "{ licenseeNumber: 'I001', forceCascade: true }"
+  licensees.validate:
+    call: "{ licenseeNumber: 'I001', dryRun: true }"
+  licensees.transfer:
+    call: "{ licenseeNumber: 'I002', sourceLicenseeNumber: 'I001' }"
+  licenses.list:
+    call: "{}"
+  licenses.get:
+    call: "{ licenseNumber: 'L001' }"
+  licenses.create:
+    call: "{ licenseeNumber: 'I001', licenseTemplateNumber: 'E001' }"
+  licenses.update:
+    call: "{ licenseNumber: 'L001', active: false }"
+  licenses.delete:
+    call: "{ licenseNumber: 'L001' }"
+  transactions.list:
+    call: "{ filter: 'licenseeNumber=I001' }"
+  transactions.get:
+    call: "{ transactionNumber: 'T001' }"
+apiNotes:
+  licenses.list: GET /license. Returns number and active for each license, and stores them locally.
+  products.list: GET /product. Returns number, active, name and version, and stores them locally.
+  licenseTemplates.create: '`licenseType` must fit the module model: FEATURE or TIMEVOLUME for TryAndBuy and Rental, TIMEVOLUME for Subscription, FLOATING for Floating, QUANTITY for PayPerUse, Quota and NodeLocked. A price above 0 needs `currency`.'
+  licensees.validate: Returns one entry per product module with its licensing model and validity, plus `ttl`, the time until which the result can be reused. Pass module parameters (sessionId and action for Floating, usedQuantity for PayPerUse, nodeSecret for NodeLocked) in `parameters`. A product with no active module answers 404.
+  licensees.transfer: The source licensee needs `markedForTransfer` set (licensees.update) and both licensees must belong to the same product. Validating the source clears the flag. After the move NetLicensing removes the source licensee.
+  transactions.list: Newest first. `filter` takes licenseeNumber=<n> or shopOnly=true.

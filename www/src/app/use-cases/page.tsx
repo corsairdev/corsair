@@ -88,7 +88,7 @@ export default function UseCasesPage() {
 							Your job isn&apos;t here?
 						</p>
 						<p className="mt-1.5 max-w-2xl text-[15px] leading-relaxed text-[#1c1c1c99]">
-							Corsair connects 400+ apps. Describe the job to your agent in
+							Corsair connects 700+ apps. Describe the job to your agent in
 							plain words, the same way these prompts do.{' '}
 							<Link
 								href="/integrations"

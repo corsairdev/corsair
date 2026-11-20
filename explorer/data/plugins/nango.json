@@ -1,0 +1,1714 @@
+{
+  "id": "nango",
+  "displayName": "Nango",
+  "description": "Manage Nango integrations, connections, Connect sessions, syncs and synced records, call tools, and proxy requests to your end users' APIs.",
+  "npmPackageName": "@corsair-dev/nango",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 35,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "nango.api.actions.trigger",
+      "shortPath": "actions.trigger",
+      "description": "Run a legacy action for a connection synchronously. Actions can write to the end customer's account.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "connection_id",
+            "optional": false,
+            "type": "string",
+            "description": "The connection ID."
+          },
+          {
+            "key": "provider_config_key",
+            "optional": false,
+            "type": "string",
+            "description": "The integration ID (unique key) the connection belongs to."
+          },
+          {
+            "key": "action_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "input",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "nango.api.connections.delete",
+      "shortPath": "connections.delete",
+      "description": "Delete a connection and its stored credentials.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "connectionId",
+            "optional": false,
+            "type": "string",
+            "description": "The connection ID."
+          },
+          {
+            "key": "provider_config_key",
+            "optional": false,
+            "type": "string",
+            "description": "The integration ID (unique key) the connection belongs to."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nango.api.connections.get",
+      "shortPath": "connections.get",
+      "description": "Get one connection. Pass include_credentials: true to also return its live third-party credentials (access token, API key, password); they are dropped otherwise.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "connectionId",
+            "optional": false,
+            "type": "string",
+            "description": "The connection ID."
+          },
+          {
+            "key": "provider_config_key",
+            "optional": false,
+            "type": "string",
+            "description": "The integration ID (unique key) the connection belongs to."
+          },
+          {
+            "key": "include_credentials",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the connection credentials (access tokens, API keys, passwords). Off by default; the plugin drops them from the result unless this is true."
+          },
+          {
+            "key": "force_refresh",
+            "optional": true,
+            "type": "boolean",
+            "description": "Refresh the access token even if it has not expired."
+          },
+          {
+            "key": "refresh_token",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also return the refresh token (needs include_credentials)."
+          },
+          {
+            "key": "refresh_github_app_jwt_token",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "connection_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "provider_config_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "provider",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "{ type: string, log_id?: string }[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "connection_config",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_fetched_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "webhook_url_override",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "end_user",
+            "optional": true,
+            "type": "{ id: string, email?: string | null, display_name?: string | null, tags?: Record<string, any> | null, organization?: { id: string, display_name?: string | null } | null } | null"
+          },
+          {
+            "key": "credentials",
+            "optional": true,
+            "type": "{ type?: string, access_token?: string, refresh_token?: string, apiKey?: string, username?: string, password?: string, token?: string, expires_at?: string | null, raw?: Record<string, any> }",
+            "description": "Only present when include_credentials is true. Holds live third-party secrets."
+          }
+        ]
+      }
+    },
+    {
+      "path": "nango.api.connections.import",
+      "shortPath": "connections.import",
+      "description": "Create a connection from credentials you already hold, or overwrite an existing connection's credentials when connection_id matches. The credentials are not returned.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "provider_config_key",
+            "optional": false,
+            "type": "string",
+            "description": "The integration ID (unique key) the connection belongs to."
+          },
+          {
+            "key": "credentials",
+            "optional": false,
+            "type": "{ type: OAUTH1, oauth_token: string, oauth_token_secret: string } | { type: OAUTH2, access_token: string, config_override?: { client_id?: string, client_secret?: string }, expires_at?: string, refresh_token?: string } | { type: BASIC, username: string, password: string } | { type: API_KEY, apiKey: string } | { type: OAUTH2_CC, client_id: string, client_secret: string, token: string, expires_at?: string } | { type: NONE } | { type: TBA, token_id: string, token_secret: string, config_override: { client_id?: string, client_secret?: string } } | { type: APP, app_id: string, installation_id: string }"
+          },
+          {
+            "key": "connection_id",
+            "optional": true,
+            "type": "string",
+            "description": "Connection ID to create or overwrite. Nango generates one when omitted."
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "connection_config",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "webhook_url_override",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Connection tags (key/value strings, at most 10). Keys are lowercased by Nango."
+          },
+          {
+            "key": "end_user",
+            "optional": true,
+            "type": "{ id: string, email?: string, display_name?: string, tags?: Record<string, string> }",
+            "description": "Deprecated by Nango; use tags instead."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "connection_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "provider_config_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "provider",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "{ type: string, log_id?: string }[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "connection_config",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_fetched_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "webhook_url_override",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "end_user",
+            "optional": true,
+            "type": "{ id: string, email?: string | null, display_name?: string | null, tags?: Record<string, any> | null, organization?: { id: string, display_name?: string | null } | null } | null"
+          },
+          {
+            "key": "credentials",
+            "optional": true,
+            "type": "{ type?: string, access_token?: string, refresh_token?: string, apiKey?: string, username?: string, password?: string, token?: string, expires_at?: string | null, raw?: Record<string, any> }",
+            "description": "Only present when include_credentials is true. Holds live third-party secrets."
+          }
+        ]
+      }
+    },
+    {
+      "path": "nango.api.connections.list",
+      "shortPath": "connections.list",
+      "description": "List connections (no credentials), filtered by connection ID or tags, with page and limit.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "connectionId",
+            "optional": true,
+            "type": "string",
+            "description": "Exact connection ID; can match one connection per integration."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Only connections carrying all of these tags."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Deprecated by Nango; prefer tags."
+          },
+          {
+            "key": "endUserId",
+            "optional": true,
+            "type": "string",
+            "description": "Deprecated by Nango; prefer tags."
+          },
+          {
+            "key": "endUserOrganizationId",
+            "optional": true,
+            "type": "string",
+            "description": "Deprecated by Nango; prefer tags."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "connections",
+            "optional": false,
+            "type": "{ id: number, connection_id: string, provider: string, provider_config_key: string, created?: string, metadata?: Record<string, any> | null, tags?: Record<string, string> | null, errors?: { type: string, log_id?: string }[], end_user?: { id: string, email?: string | null, display_name?: string | null, tags?: Record<string, any> | null, organization?: { id: string, display_name?: string | null } | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nango.api.connections.patch",
+      "shortPath": "connections.patch",
+      "description": "Edit a connection: replace its tags or set a webhook URL override.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "connectionId",
+            "optional": false,
+            "type": "string",
+            "description": "The connection ID."
+          },
+          {
+            "key": "provider_config_key",
+            "optional": false,
+            "type": "string",
+            "description": "The integration ID (unique key) the connection belongs to."
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ tags?: Record<string, string>, webhook_url_override?: string, end_user?: { id: string, email?: string, display_name?: string, tags?: Record<string, string> } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nango.api.connections.setMetadata",
+      "shortPath": "connections.setMetadata",
+      "description": "Replace the whole metadata object of one or more connections; keys not passed are removed.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "connection_id",
+            "optional": false,
+            "type": "string | string[]",
+            "description": "One connection ID or a list; a bad ID aborts the whole call."
+          },
+          {
+            "key": "provider_config_key",
+            "optional": false,
+            "type": "string",
+            "description": "The integration ID (unique key) the connection belongs to."
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "connection_id",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "provider_config_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nango.api.connections.updateMetadata",
+      "shortPath": "connections.updateMetadata",
+      "description": "Merge keys into the metadata of one or more connections.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "connection_id",
+            "optional": false,
+            "type": "string | string[]",
+            "description": "One connection ID or a list; a bad ID aborts the whole call."
+          },
+          {
+            "key": "provider_config_key",
+            "optional": false,
+            "type": "string",
+            "description": "The integration ID (unique key) the connection belongs to."
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "connection_id",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "provider_config_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nango.api.environment.getVariables",
+      "shortPath": "environment.getVariables",
+      "description": "Get the environment variables set in the Nango dashboard, values in plain text (they often hold secrets).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ name: string, value?: string | null }[]"
+      }
+    },
+    {
+      "path": "nango.api.functions.delete",
+      "shortPath": "functions.delete",
+      "description": "Delete a deployed function, e.g. a catalog sync enabled in the dashboard; functions deployed from a repo with the nango CLI cannot be deleted here.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uniqueKey",
+            "optional": false,
+            "type": "string",
+            "description": "The integration ID (unique_key)."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The function name."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "action | sync | tool | function"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nango.api.functions.get",
+      "shortPath": "functions.get",
+      "description": "Get one function of an integration, with its schema and deployment state.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uniqueKey",
+            "optional": false,
+            "type": "string",
+            "description": "The integration ID (unique_key)."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The function name."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "sync | on-event | tool",
+            "description": "Pick one function when several share the name."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name: string, type: string, description?: string, id?: number | null, enabled?: boolean, last_deployed?: string | null, source?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nango.api.functions.getCode",
+      "shortPath": "functions.getCode",
+      "description": "Get a function's TypeScript source code.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uniqueKey",
+            "optional": false,
+            "type": "string",
+            "description": "The integration ID (unique_key)."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The function name."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "sync | on-event | tool",
+            "description": "Pick one function when several share the name."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nango.api.functions.list",
+      "shortPath": "functions.list",
+      "description": "List an integration's functions (syncs, tools, on-event functions), including Nango catalog tools.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uniqueKey",
+            "optional": false,
+            "type": "string",
+            "description": "The integration ID (unique_key)."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "sync | on-event | tool"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name: string, type: string, description?: string, id?: number | null, enabled?: boolean, last_deployed?: string | null, source?: string }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nango.api.integrations.create",
+      "shortPath": "integrations.create",
+      "description": "Create an integration for a provider, optionally with developer app credentials or integration_config.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "unique_key",
+            "optional": false,
+            "type": "string",
+            "description": "A unique integration ID you choose."
+          },
+          {
+            "key": "provider",
+            "optional": false,
+            "type": "string",
+            "description": "The provider name, as returned by providers.list."
+          },
+          {
+            "key": "display_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "forward_webhooks",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "credentials",
+            "optional": true,
+            "type": "{ type: string, client_id?: string, client_secret?: string, scopes?: string, webhook_secret?: string, app_id?: string, app_link?: string, private_key?: string }",
+            "description": "Developer app credentials. Omit to add them later."
+          },
+          {
+            "key": "integration_config",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Config for providers that declare an integration_config schema (e.g. private-api-generic baseUrl)."
+          },
+          {
+            "key": "custom",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Free-form settings for providers without an integration_config schema."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ unique_key: string, display_name?: string, provider: string, logo?: string, created_at?: string, updated_at?: string, forward_webhooks?: boolean, missing_fields?: string[], webhook_url?: string | null, credentials?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nango.api.integrations.delete",
+      "shortPath": "integrations.delete",
+      "description": "Delete an integration and every connection that uses it.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uniqueKey",
+            "optional": false,
+            "type": "string",
+            "description": "The integration ID (unique_key)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nango.api.integrations.get",
+      "shortPath": "integrations.get",
+      "description": "Get an integration. include: [\"credentials\"] also returns the developer app client secret and private key.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uniqueKey",
+            "optional": false,
+            "type": "string",
+            "description": "The integration ID (unique_key)."
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "(webhook | credentials)[]",
+            "description": "Extra data to return. \"credentials\" returns the developer app client secret and private key."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ unique_key: string, display_name?: string, provider: string, logo?: string, created_at?: string, updated_at?: string, forward_webhooks?: boolean, missing_fields?: string[], webhook_url?: string | null, credentials?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nango.api.integrations.list",
+      "shortPath": "integrations.list",
+      "description": "List the integrations configured in this environment.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ unique_key: string, display_name?: string, provider: string, logo?: string, created_at?: string, updated_at?: string, forward_webhooks?: boolean, missing_fields?: string[], webhook_url?: string | null, credentials?: Record<string, any> | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nango.api.integrations.update",
+      "shortPath": "integrations.update",
+      "description": "Edit an integration; fields left out keep their value.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uniqueKey",
+            "optional": false,
+            "type": "string",
+            "description": "The integration ID (unique_key)."
+          },
+          {
+            "key": "unique_key",
+            "optional": true,
+            "type": "string",
+            "description": "Rename the integration ID."
+          },
+          {
+            "key": "display_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "forward_webhooks",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "credentials",
+            "optional": true,
+            "type": "{ type: string, client_id?: string, client_secret?: string, scopes?: string, webhook_secret?: string, app_id?: string, app_link?: string, private_key?: string }",
+            "description": "Developer app credentials. Omit to add them later."
+          },
+          {
+            "key": "integration_config",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Config for providers that declare an integration_config schema (e.g. private-api-generic baseUrl)."
+          },
+          {
+            "key": "custom",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Free-form settings for providers without an integration_config schema."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ unique_key: string, display_name?: string, provider: string, logo?: string, created_at?: string, updated_at?: string, forward_webhooks?: boolean, missing_fields?: string[], webhook_url?: string | null, credentials?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nango.api.providers.get",
+      "shortPath": "providers.get",
+      "description": "Get one provider's auth mode, proxy settings and required connection fields.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "provider",
+            "optional": false,
+            "type": "string",
+            "description": "The provider name, e.g. github."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name?: string, display_name: string, auth_mode: string, categories?: string[], docs?: string, logo_url?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nango.api.providers.list",
+      "shortPath": "providers.list",
+      "description": "List the APIs Nango supports; filter with search (the full list has over 1,000).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by name. Without it the list has over 1,000 providers."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name?: string, display_name: string, auth_mode: string, categories?: string[], docs?: string, logo_url?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nango.api.proxy.delete",
+      "shortPath": "proxy.delete",
+      "description": "Send a DELETE through Nango's proxy to the end customer's API with the connection's credentials.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "connection_id",
+            "optional": false,
+            "type": "string",
+            "description": "The connection ID."
+          },
+          {
+            "key": "provider_config_key",
+            "optional": false,
+            "type": "string",
+            "description": "The integration ID (unique key) the connection belongs to."
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string",
+            "description": "Path on the end customer's API, relative to the provider's base URL, e.g. /v1/users."
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Headers passed on to the external API (sent as Nango-Proxy-<name>)."
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any",
+            "description": "JSON body sent to the external API."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "nango.api.proxy.get",
+      "shortPath": "proxy.get",
+      "description": "Send a GET through Nango's proxy to the end customer's API with the connection's credentials.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "connection_id",
+            "optional": false,
+            "type": "string",
+            "description": "The connection ID."
+          },
+          {
+            "key": "provider_config_key",
+            "optional": false,
+            "type": "string",
+            "description": "The integration ID (unique key) the connection belongs to."
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string",
+            "description": "Path on the end customer's API, relative to the provider's base URL, e.g. /v1/users."
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Headers passed on to the external API (sent as Nango-Proxy-<name>)."
+          },
+          {
+            "key": "retries",
+            "optional": true,
+            "type": "number",
+            "description": "Retries Nango makes on a 5xx or network error, with back-off (GET only)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "nango.api.proxy.patch",
+      "shortPath": "proxy.patch",
+      "description": "Send a PATCH through Nango's proxy to the end customer's API with the connection's credentials.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "connection_id",
+            "optional": false,
+            "type": "string",
+            "description": "The connection ID."
+          },
+          {
+            "key": "provider_config_key",
+            "optional": false,
+            "type": "string",
+            "description": "The integration ID (unique key) the connection belongs to."
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string",
+            "description": "Path on the end customer's API, relative to the provider's base URL, e.g. /v1/users."
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Headers passed on to the external API (sent as Nango-Proxy-<name>)."
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any",
+            "description": "JSON body sent to the external API."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "nango.api.proxy.post",
+      "shortPath": "proxy.post",
+      "description": "Send a POST through Nango's proxy to the end customer's API with the connection's credentials.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "connection_id",
+            "optional": false,
+            "type": "string",
+            "description": "The connection ID."
+          },
+          {
+            "key": "provider_config_key",
+            "optional": false,
+            "type": "string",
+            "description": "The integration ID (unique key) the connection belongs to."
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string",
+            "description": "Path on the end customer's API, relative to the provider's base URL, e.g. /v1/users."
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Headers passed on to the external API (sent as Nango-Proxy-<name>)."
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any",
+            "description": "JSON body sent to the external API."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "nango.api.proxy.put",
+      "shortPath": "proxy.put",
+      "description": "Send a PUT through Nango's proxy to the end customer's API with the connection's credentials.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "connection_id",
+            "optional": false,
+            "type": "string",
+            "description": "The connection ID."
+          },
+          {
+            "key": "provider_config_key",
+            "optional": false,
+            "type": "string",
+            "description": "The integration ID (unique key) the connection belongs to."
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string",
+            "description": "Path on the end customer's API, relative to the provider's base URL, e.g. /v1/users."
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Headers passed on to the external API (sent as Nango-Proxy-<name>)."
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any",
+            "description": "JSON body sent to the external API."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "nango.api.records.list",
+      "shortPath": "records.list",
+      "description": "List the records a sync stored for a connection and model, paginated with next_cursor.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "provider_config_key",
+            "optional": false,
+            "type": "string",
+            "description": "The integration ID (unique key) the connection belongs to."
+          },
+          {
+            "key": "connection_id",
+            "optional": false,
+            "type": "string",
+            "description": "The connection ID."
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string",
+            "description": "The data model the sync writes."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "next_cursor from the previous page, or a record’s _nango_metadata.cursor."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Default 100."
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "added | updated | deleted"
+          },
+          {
+            "key": "modified_after",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 timestamp."
+          },
+          {
+            "key": "ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "variant",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "records",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nango.api.scripts.getConfig",
+      "shortPath": "scripts.getConfig",
+      "description": "Get the configuration of every deployed function in the environment, in Nango or OpenAI tool format.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "format",
+            "optional": true,
+            "type": "nango | openai",
+            "description": "\"openai\" returns tool definitions in OpenAI function format."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>[] | Record<string, any>"
+      }
+    },
+    {
+      "path": "nango.api.sessions.create",
+      "shortPath": "sessions.create",
+      "description": "Create a Connect session; returns a short-lived token and a connect link an end user opens to authorize an integration.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Connection tags (key/value strings, at most 10). Keys are lowercased by Nango."
+          },
+          {
+            "key": "end_user",
+            "optional": true,
+            "type": "{ id: string, email?: string, display_name?: string, tags?: Record<string, string> }",
+            "description": "Deprecated by Nango; use tags instead."
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "{ id: string, display_name?: string }",
+            "description": "Deprecated by Nango; use tags instead."
+          },
+          {
+            "key": "integrations_config_defaults",
+            "optional": true,
+            "type": "Record<string, { user_scopes?: string, authorization_params?: Record<string, string>, connection_config?: { oauth_scopes_override?: string, oauth_client_id_override?: string, oauth_client_secret_override?: string } }>",
+            "description": "Per-integration defaults for the Connect UI, keyed by integration ID."
+          },
+          {
+            "key": "overrides",
+            "optional": true,
+            "type": "Record<string, { docs_connect?: string }>"
+          },
+          {
+            "key": "webhook_url_override",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "allowed_integrations",
+            "optional": true,
+            "type": "string[]",
+            "description": "Integration IDs the end user may connect."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ token: string, expires_at: string, connect_link?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nango.api.sessions.reconnect",
+      "shortPath": "sessions.reconnect",
+      "description": "Create a Connect session that re-authorizes an existing connection, keeping its connection ID.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Connection tags (key/value strings, at most 10). Keys are lowercased by Nango."
+          },
+          {
+            "key": "end_user",
+            "optional": true,
+            "type": "{ id: string, email?: string, display_name?: string, tags?: Record<string, string> }",
+            "description": "Deprecated by Nango; use tags instead."
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "{ id: string, display_name?: string }",
+            "description": "Deprecated by Nango; use tags instead."
+          },
+          {
+            "key": "integrations_config_defaults",
+            "optional": true,
+            "type": "Record<string, { user_scopes?: string, authorization_params?: Record<string, string>, connection_config?: { oauth_scopes_override?: string, oauth_client_id_override?: string, oauth_client_secret_override?: string } }>",
+            "description": "Per-integration defaults for the Connect UI, keyed by integration ID."
+          },
+          {
+            "key": "overrides",
+            "optional": true,
+            "type": "Record<string, { docs_connect?: string }>"
+          },
+          {
+            "key": "webhook_url_override",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connection_id",
+            "optional": false,
+            "type": "string",
+            "description": "The connection ID."
+          },
+          {
+            "key": "integration_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ token: string, expires_at: string, connect_link?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nango.api.syncs.pause",
+      "shortPath": "syncs.pause",
+      "description": "Pause the schedule of syncs for one connection or all.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "provider_config_key",
+            "optional": false,
+            "type": "string",
+            "description": "The integration ID (unique key) the connection belongs to."
+          },
+          {
+            "key": "connection_id",
+            "optional": true,
+            "type": "string",
+            "description": "Limit to one connection; omit for every connection."
+          },
+          {
+            "key": "syncs",
+            "optional": false,
+            "type": "string[] | { name: string, variant: string }[]",
+            "description": "Sync names, or { name, variant } objects (variant is required; the default is \"base\")."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nango.api.syncs.start",
+      "shortPath": "syncs.start",
+      "description": "Start the schedule of syncs for one connection or all; they run now and then on their frequency.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "provider_config_key",
+            "optional": false,
+            "type": "string",
+            "description": "The integration ID (unique key) the connection belongs to."
+          },
+          {
+            "key": "connection_id",
+            "optional": true,
+            "type": "string",
+            "description": "Limit to one connection; omit for every connection."
+          },
+          {
+            "key": "syncs",
+            "optional": false,
+            "type": "string[] | { name: string, variant: string }[]",
+            "description": "Sync names, or { name, variant } objects (variant is required; the default is \"base\")."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nango.api.syncs.status",
+      "shortPath": "syncs.status",
+      "description": "Get the status, schedule, last result and record counts of syncs.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "provider_config_key",
+            "optional": false,
+            "type": "string",
+            "description": "The integration ID (unique key) the connection belongs to."
+          },
+          {
+            "key": "syncs",
+            "optional": false,
+            "type": "string",
+            "description": "Comma-separated sync names, \"*\" for all, name::variant for variants."
+          },
+          {
+            "key": "connection_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "syncs",
+            "optional": false,
+            "type": "{ id?: string, connection_id?: string, name?: string, variant?: string, status?: string, finishedAt?: string | null, nextScheduledSyncAt?: string | null, frequency?: string | null, latestResult?: Record<string, any> | null, recordCount?: Record<string, any> | null, checkpoint?: Record<string, any> | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nango.api.syncs.trigger",
+      "shortPath": "syncs.trigger",
+      "description": "Run syncs once now, for one connection or all; reset starts from scratch.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "provider_config_key",
+            "optional": false,
+            "type": "string",
+            "description": "The integration ID (unique key) the connection belongs to."
+          },
+          {
+            "key": "connection_id",
+            "optional": true,
+            "type": "string",
+            "description": "Limit to one connection; omit for every connection."
+          },
+          {
+            "key": "syncs",
+            "optional": false,
+            "type": "string[] | { name: string, variant: string }[]",
+            "description": "Sync names, or { name, variant } objects (variant is required; the default is \"base\")."
+          },
+          {
+            "key": "opts",
+            "optional": true,
+            "type": "{ reset?: boolean, emptyCache?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nango.api.syncs.updateFrequency",
+      "shortPath": "syncs.updateFrequency",
+      "description": "Override a sync's frequency for one connection, or restore the default with null.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "provider_config_key",
+            "optional": false,
+            "type": "string",
+            "description": "The integration ID (unique key) the connection belongs to."
+          },
+          {
+            "key": "connection_id",
+            "optional": false,
+            "type": "string",
+            "description": "The connection ID."
+          },
+          {
+            "key": "sync_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sync_variant",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "frequency",
+            "optional": false,
+            "type": "string | null",
+            "description": "e.g. \"every hour\" (min 30 seconds); null restores the default."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "frequency",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nango.api.tools.call",
+      "shortPath": "tools.call",
+      "description": "Call a deployed tool for a connection and return its output. Tools can write to the end customer's account.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "connectionId",
+            "optional": false,
+            "type": "string",
+            "description": "The connection ID."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The tool name on the integration."
+          },
+          {
+            "key": "provider_config_key",
+            "optional": true,
+            "type": "string",
+            "description": "Needed when several integrations share the connection ID."
+          },
+          {
+            "key": "input",
+            "optional": true,
+            "type": "any",
+            "description": "Input matching the tool's schema."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

@@ -1,11 +1,27 @@
 import { logEventFromContext } from 'corsair/core';
-import { multipartOpenaiRequest, requestOpenaiBinary } from '../client';
+import { toFileOutput } from 'corsair/http';
+import {
+	DOWNLOAD_MAX_BYTES,
+	multipartOpenaiRequest,
+	OPENAI_UPLOAD_MAX_BYTES,
+	requestOpenaiBinary,
+} from '../client';
 import type { OpenaiEndpoints } from '../index';
 import type {
 	AudioCreateSpeechResponse,
 	AudioCreateTranscriptionResponse,
 	AudioCreateTranslationResponse,
 } from '../schema/audio';
+
+/** Media type of each speech format OpenAI returns. */
+const SPEECH_TYPES = {
+	mp3: 'audio/mpeg',
+	opus: 'audio/opus',
+	aac: 'audio/aac',
+	flac: 'audio/flac',
+	wav: 'audio/wav',
+	pcm: 'audio/pcm',
+} as const;
 
 export const createSpeech: OpenaiEndpoints['audioCreateSpeech'] = async (
 	ctx,
@@ -21,7 +37,6 @@ export const createSpeech: OpenaiEndpoints['audioCreateSpeech'] = async (
 			instructions: input.instructions,
 		},
 	});
-	const audioBase64 = Buffer.from(buffer).toString('base64');
 
 	await logEventFromContext(
 		ctx,
@@ -29,9 +44,17 @@ export const createSpeech: OpenaiEndpoints['audioCreateSpeech'] = async (
 		{ model: input.model, voice: input.voice },
 		'completed',
 	);
+	const format = input.responseFormat ?? 'mp3';
+	// The audio keeps its own key, audioBase64; everything else is core's file output.
+	const { contentBase64, ...file } = toFileOutput(
+		new Uint8Array(buffer),
+		SPEECH_TYPES[format],
+		{ filename: `speech.${format}`, maxBytes: DOWNLOAD_MAX_BYTES, text: false },
+	);
 	const result: AudioCreateSpeechResponse = {
-		audioBase64,
-		format: input.responseFormat ?? 'mp3',
+		...file,
+		...(contentBase64 !== undefined ? { audioBase64: contentBase64 } : {}),
+		format,
 	};
 	return result;
 };
@@ -44,7 +67,12 @@ export const createTranscription: OpenaiEndpoints['audioCreateTranscription'] =
 				ctx.key,
 				{
 					files: [
-						{ field: 'file', file: input.file, fileName: input.fileName },
+						{
+							field: 'file',
+							file: input.file,
+							fileName: input.fileName,
+							maxBytes: OPENAI_UPLOAD_MAX_BYTES.audio,
+						},
 					],
 					fields: {
 						model: input.model,
@@ -77,7 +105,14 @@ export const createTranslation: OpenaiEndpoints['audioCreateTranslation'] =
 			'audio/translations',
 			ctx.key,
 			{
-				files: [{ field: 'file', file: input.file, fileName: input.fileName }],
+				files: [
+					{
+						field: 'file',
+						file: input.file,
+						fileName: input.fileName,
+						maxBytes: OPENAI_UPLOAD_MAX_BYTES.audio,
+					},
+				],
 				fields: {
 					model: input.model,
 					prompt: input.prompt,

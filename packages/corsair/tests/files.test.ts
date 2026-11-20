@@ -4,6 +4,7 @@ import {
 	FileInputSchema,
 	FileOutputSchema,
 	resolveFileInput,
+	setFileSink,
 	toFileOutput,
 } from '../async-core/files';
 import type {
@@ -535,6 +536,85 @@ describe('toFileOutput', () => {
 				.contentBase64,
 		).toBeDefined();
 	});
+
+	it('returns a text file as text, so a CSV reads without decoding base64', () => {
+		const csv = new TextEncoder().encode('name,city\nAnaïs,Zürich\n');
+		const out = toFileOutput(csv, 'text/csv; charset=utf-8', {
+			filename: 'people.csv',
+		});
+		expect(out).toEqual({
+			text: 'name,city\nAnaïs,Zürich\n',
+			contentType: 'text/csv',
+			byteLength: csv.byteLength,
+			filename: 'people.csv',
+		});
+		expect(FileOutputSchema.safeParse(out).success).toBe(true);
+		// JSON, XML, YAML, SVG and the +json/+xml types are text too.
+		for (const type of [
+			'application/json',
+			'application/ld+json',
+			'application/xml',
+			'application/atom+xml',
+			'application/x-yaml',
+			'image/svg+xml',
+			'Text/Markdown',
+		]) {
+			expect(toFileOutput(csv, type).text).toBe('name,city\nAnaïs,Zürich\n');
+		}
+	});
+
+	it('reads a text file as text when the server sends only a generic type but the name says text', () => {
+		const csv = new TextEncoder().encode('a,b\n1,2\n');
+		// Dropbox serves every file as application/octet-stream.
+		expect(
+			toFileOutput(csv, 'application/octet-stream', { filename: 'q3.csv' })
+				.text,
+		).toBe('a,b\n1,2\n');
+		expect(toFileOutput(csv, null, { filename: 'NOTES.MD' }).text).toBe(
+			'a,b\n1,2\n',
+		);
+		// A specific type from the server wins over the name, and a binary name stays base64.
+		expect(
+			toFileOutput(csv, 'image/png', { filename: 'q3.csv' }).text,
+		).toBeUndefined();
+		expect(
+			toFileOutput(csv, 'application/octet-stream', { filename: 'q3.pdf' })
+				.text,
+		).toBeUndefined();
+		expect(toFileOutput(csv, 'application/octet-stream').text).toBeUndefined();
+	});
+
+	it('keeps the bytes exact: a byte-order mark stays in the text', () => {
+		const withBom = new Uint8Array([0xef, 0xbb, 0xbf, 0x61]);
+		const { text } = toFileOutput(withBom, 'text/plain');
+		expect(text).toBe('﻿a');
+		expect(new TextEncoder().encode(text)).toEqual(withBom);
+	});
+
+	it('falls back to base64 when the bytes are not UTF-8, the type is not text, or text is turned off', () => {
+		const latin1 = new Uint8Array([0x63, 0x61, 0x66, 0xe9]); // "café" in Latin-1
+		expect(toFileOutput(latin1, 'text/plain')).toEqual({
+			contentBase64: Buffer.from(latin1).toString('base64'),
+			contentType: 'text/plain',
+			byteLength: 4,
+		});
+		const ascii = new TextEncoder().encode('hello');
+		expect(
+			toFileOutput(ascii, 'application/octet-stream').text,
+		).toBeUndefined();
+		expect(toFileOutput(ascii, null).text).toBeUndefined();
+		expect(toFileOutput(ascii, 'text/plain', { text: false })).toEqual({
+			contentBase64: Buffer.from(ascii).toString('base64'),
+			contentType: 'text/plain',
+			byteLength: 5,
+		});
+		// The limit applies to text as it does to base64.
+		expect(toFileOutput(ascii, 'text/plain', { maxBytes: 4 })).toEqual({
+			contentType: 'text/plain',
+			byteLength: 5,
+			contentOmitted: 'over_limit',
+		});
+	});
 });
 
 describe("request with responseType 'binary'", () => {
@@ -599,5 +679,140 @@ describe("request with responseType 'binary'", () => {
 				responseType: 'binary',
 			}),
 		).rejects.toMatchObject({ status: 404, body: { message: 'No such file' } });
+	});
+});
+
+describe('setFileSink', () => {
+	afterEach(() => setFileSink(() => undefined));
+
+	it("hands a host the bytes of a file over the limit, and the output carries the host's id", () => {
+		const big = new Uint8Array(FILE_OUTPUT_MAX_BYTES + 1).fill(7);
+		const held: Array<{
+			bytes: Uint8Array;
+			contentType: string;
+			filename?: string;
+		}> = [];
+		setFileSink(() => (file) => {
+			held.push(file);
+			return 'held_1';
+		});
+		const out = toFileOutput(big, 'video/mp4; codecs=avc1', {
+			filename: 'clip.mp4',
+		});
+		expect(out).toEqual({
+			contentType: 'video/mp4',
+			byteLength: FILE_OUTPUT_MAX_BYTES + 1,
+			filename: 'clip.mp4',
+			fileId: 'held_1',
+		});
+		expect(held).toHaveLength(1);
+		expect(held[0]!.bytes).toBe(big);
+		expect(held[0]!).toMatchObject({
+			contentType: 'video/mp4',
+			filename: 'clip.mp4',
+		});
+		expect(FileOutputSchema.parse(out)).toEqual(out);
+	});
+
+	it('leaves the content out as before when no sink is set or the sink declines', () => {
+		const big = new Uint8Array(FILE_OUTPUT_MAX_BYTES + 1);
+		const omitted = {
+			contentType: 'video/mp4',
+			byteLength: big.byteLength,
+			contentOmitted: 'over_limit',
+		};
+		expect(toFileOutput(big, 'video/mp4')).toEqual(omitted);
+		setFileSink(() => () => null);
+		expect(toFileOutput(big, 'video/mp4')).toEqual(omitted);
+	});
+
+	it('is never asked for a file that fits or content nobody asked for', () => {
+		const sink = jest.fn(() => 'held_1');
+		setFileSink(() => sink);
+		expect(toFileOutput(PDF, 'application/pdf').contentBase64).toBeDefined();
+		const big = new Uint8Array(FILE_OUTPUT_MAX_BYTES + 1);
+		expect(
+			toFileOutput(big, 'video/mp4', { includeContent: false }).contentOmitted,
+		).toBe('not_requested');
+		expect(sink).not.toHaveBeenCalled();
+	});
+
+	it("caps a raised maxBytes at the host's limit, and keeps it where no sink is set", () => {
+		const mid = new Uint8Array(FILE_OUTPUT_MAX_BYTES + 1);
+		const raised = { maxBytes: FILE_OUTPUT_MAX_BYTES * 2 };
+		expect(toFileOutput(mid, 'video/mp4', raised).contentBase64).toBeDefined();
+
+		const sink = jest.fn(() => 'held_1');
+		setFileSink(() => sink);
+		expect(toFileOutput(mid, 'video/mp4', raised)).toEqual({
+			contentType: 'video/mp4',
+			byteLength: mid.byteLength,
+			fileId: 'held_1',
+		});
+		expect(sink).toHaveBeenCalledTimes(1);
+
+		// A finder that has no sink for this call leaves the endpoint's limit alone.
+		setFileSink(() => undefined);
+		expect(toFileOutput(mid, 'video/mp4', raised).contentBase64).toBeDefined();
+	});
+
+	it("takes the host's inlineMaxBytes, and an endpoint's lower maxBytes still wins", () => {
+		const sink = jest.fn(() => 'held_1');
+		setFileSink(() => sink, { inlineMaxBytes: 100 });
+		expect(toFileOutput(new Uint8Array(101), 'image/png').fileId).toBe(
+			'held_1',
+		);
+		expect(
+			toFileOutput(new Uint8Array(100), 'image/png').contentBase64,
+		).toBeDefined();
+		expect(
+			toFileOutput(new Uint8Array(60), 'image/png', { maxBytes: 50 }).fileId,
+		).toBe('held_1');
+		expect(sink).toHaveBeenCalledTimes(2);
+		expect(() => setFileSink(() => sink, { inlineMaxBytes: 1.5 })).toThrow(
+			RangeError,
+		);
+	});
+
+	it('with everyFile, keeps a file that fits too and returns its content beside the id', () => {
+		const held: string[] = [];
+		const sink = jest.fn((file: { contentType: string }) => {
+			held.push(file.contentType);
+			return `held_${held.length}`;
+		});
+		setFileSink(() => sink, { everyFile: true });
+		expect(toFileOutput(PDF, 'application/pdf')).toEqual({
+			contentType: 'application/pdf',
+			byteLength: PDF.byteLength,
+			fileId: 'held_1',
+			contentBase64: Buffer.from(PDF).toString('base64'),
+		});
+		const csv = new TextEncoder().encode('a,b\n1,2\n');
+		expect(toFileOutput(csv, 'text/csv', { filename: 'rows.csv' })).toEqual({
+			contentType: 'text/csv',
+			byteLength: csv.byteLength,
+			filename: 'rows.csv',
+			fileId: 'held_2',
+			text: 'a,b\n1,2\n',
+		});
+		const big = new Uint8Array(FILE_OUTPUT_MAX_BYTES + 1);
+		expect(toFileOutput(big, 'video/mp4')).toEqual({
+			contentType: 'video/mp4',
+			byteLength: big.byteLength,
+			fileId: 'held_3',
+		});
+		expect(
+			toFileOutput(PDF, 'application/pdf', { includeContent: false }),
+		).toEqual({
+			contentType: 'application/pdf',
+			byteLength: PDF.byteLength,
+			contentOmitted: 'not_requested',
+		});
+		expect(sink).toHaveBeenCalledTimes(3);
+
+		setFileSink(() => () => null, { everyFile: true });
+		const declined = toFileOutput(PDF, 'application/pdf');
+		expect(declined.contentBase64).toBeDefined();
+		expect('fileId' in declined).toBe(false);
 	});
 });

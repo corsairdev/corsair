@@ -1,0 +1,2375 @@
+{
+  "id": "twittrapi",
+  "displayName": "TwittrAPI",
+  "description": "Read public X (Twitter) data through TwittrAPI (twittrapi.com) and get new tweets of the accounts you watch by signed webhook.",
+  "npmPackageName": "@corsair-dev/twittrapi",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 42,
+    "webhooks": 2,
+    "db": 10
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "webhook_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "twittrapi.api.balance.get",
+      "shortPath": "balance.get",
+      "description": "Get the API key balance (free, not billed)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "balance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "price_per_call",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.communities.getById",
+      "shortPath": "communities.getById",
+      "description": "Get community details by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "communityId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, description: string, createdAt: string | null, memberCount: number, moderatorCount: number, joinPolicy: string | null, nsfw: boolean, topic: string | null, bannerUrl: string | null, creator: { id: string, username: string } | null, rules: { id: string, name: string, description: string }[] } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.communities.getMembers",
+      "shortPath": "communities.getMembers",
+      "description": "Get members of a community",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "communityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean }[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previousCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "hasNextPage",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.communities.getModerators",
+      "shortPath": "communities.getModerators",
+      "description": "Get moderators of a community",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "communityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean }[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previousCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "hasNextPage",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.communities.getTweets",
+      "shortPath": "communities.getTweets",
+      "description": "Get tweets posted in a community",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "communityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "({ id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | null } | { id: string, unavailable: true } | null, retweetOf?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | null } | { id: string, unavailable: true })[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previousCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "hasNextPage",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.communities.search",
+      "shortPath": "communities.search",
+      "description": "Search X communities by keyword",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "searchTerm",
+            "optional": false,
+            "type": "string",
+            "description": "Keyword, URL-encoded by the client"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, description: string, createdAt: string | null, memberCount: number, moderatorCount: number, joinPolicy: string | null, nsfw: boolean, topic: string | null, bannerUrl: string | null, creator: { id: string, username: string } | null, rules: { id: string, name: string, description: string }[] }[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previousCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "hasNextPage",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.lists.getDetails",
+      "shortPath": "lists.getDetails",
+      "description": "Get X list details by list ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, description: string, createdAt: string | null, memberCount: number, followerCount: number, private: boolean, bannerUrl: string | null, owner: { id: string, username: string } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.lists.getFollowers",
+      "shortPath": "lists.getFollowers",
+      "description": "Get followers of an X list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean }[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previousCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "hasNextPage",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.lists.getMembers",
+      "shortPath": "lists.getMembers",
+      "description": "Get members of an X list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean }[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previousCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "hasNextPage",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.lists.getTweets",
+      "shortPath": "lists.getTweets",
+      "description": "Get tweets from an X list timeline",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "({ id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | null } | { id: string, unavailable: true } | null, retweetOf?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | null } | { id: string, unavailable: true })[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previousCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "hasNextPage",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.monitors.addAccounts",
+      "shortPath": "monitors.addAccounts",
+      "description": "Watch X accounts for new tweets (up to 100 per request)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string",
+            "description": "Single handle to watch"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string",
+            "description": "Single numeric user ID to watch"
+          },
+          {
+            "key": "usernames",
+            "optional": true,
+            "type": "string[]",
+            "description": "Handles to watch, up to 100 per request"
+          },
+          {
+            "key": "userIds",
+            "optional": true,
+            "type": "string[]",
+            "description": "Numeric user IDs to watch, up to 100 per request"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ input: string, userId?: string, username?: string, status?: string, error?: string }[]"
+          },
+          {
+            "key": "plan",
+            "optional": true,
+            "type": "{ planId?: string, maxAccounts?: number, usedAccounts?: number, latencyClass?: string, status?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.monitors.createWebhook",
+      "shortPath": "monitors.createWebhook",
+      "description": "Add a webhook for watched-account tweet events",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public https URL, no redirects"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "accounts",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "X user IDs to forward. Null (default) = all watched accounts"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ id: number, url: string, label?: string | null, accounts?: string[] | null, secret?: string, active: boolean, failureCount?: number, disabledAt?: string | null, disabledReason?: string | null, lastSuccessAt?: string | null, lastFailureAt?: string | null, createdAt?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.monitors.deleteWebhook",
+      "shortPath": "monitors.deleteWebhook",
+      "description": "Remove an account-monitoring webhook",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "twittrapi.api.monitors.getDeliveries",
+      "shortPath": "monitors.getDeliveries",
+      "description": "Show latest monitor events with delivery status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ event: string, id: string, monitoredUserId: string, tweetId: string, tweetCreatedAt: string, detectedAt: string, tweet?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | null } | { id: string, unavailable: true } | null, retweetOf?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | null }, webhookId?: string | number, status?: string, attempts?: number, deliveredAt?: string | null, lastError?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.monitors.getEvents",
+      "shortPath": "monitors.getEvents",
+      "description": "Pull monitor events after an event ID (7-day retention)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string",
+            "description": "Event ID (exclusive) or RFC 3339 time. Oldest kept events when omitted"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ event: string, id: string, monitoredUserId: string, tweetId: string, tweetCreatedAt: string, detectedAt: string, tweet?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | null } | { id: string, unavailable: true } | null, retweetOf?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | null }, status?: string, attempts?: number, deliveredAt?: string | null, lastError?: string | null }[]"
+          },
+          {
+            "key": "nextSince",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hasMore",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.monitors.getPlan",
+      "shortPath": "monitors.getPlan",
+      "description": "Get the account-monitoring plan and webhooks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "plan",
+            "optional": true,
+            "type": "{ planId?: string, maxAccounts?: number, usedAccounts?: number, latencyClass?: string, status?: string }"
+          },
+          {
+            "key": "webhooks",
+            "optional": true,
+            "type": "{ id: number, url: string, label?: string | null, accounts?: string[] | null, secret?: string, active: boolean, failureCount?: number, disabledAt?: string | null, disabledReason?: string | null, lastSuccessAt?: string | null, lastFailureAt?: string | null, createdAt?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.monitors.getWebhook",
+      "shortPath": "monitors.getWebhook",
+      "description": "Get one account-monitoring webhook",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ id: number, url: string, label?: string | null, accounts?: string[] | null, secret?: string, active: boolean, failureCount?: number, disabledAt?: string | null, disabledReason?: string | null, lastSuccessAt?: string | null, lastFailureAt?: string | null, createdAt?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.monitors.listAccounts",
+      "shortPath": "monitors.listAccounts",
+      "description": "List watched X accounts and plan usage",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ userId: string, username: string, state: string, stage?: string, latencyClass?: string, subscribedAt?: string, monitoringSince?: string | null, filters?: { replies: boolean, retweets: boolean, quotes: boolean } }[]"
+          },
+          {
+            "key": "plan",
+            "optional": true,
+            "type": "{ planId?: string, maxAccounts?: number, usedAccounts?: number, latencyClass?: string, status?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.monitors.listWebhooks",
+      "shortPath": "monitors.listWebhooks",
+      "description": "List account-monitoring webhooks, oldest first",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, url: string, label?: string | null, accounts?: string[] | null, secret?: string, active: boolean, failureCount?: number, disabledAt?: string | null, disabledReason?: string | null, lastSuccessAt?: string | null, lastFailureAt?: string | null, createdAt?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.monitors.removeAccount",
+      "shortPath": "monitors.removeAccount",
+      "description": "Stop watching an X account",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "usernameOrId",
+            "optional": false,
+            "type": "string",
+            "description": "Watched handle or numeric user ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "twittrapi.api.monitors.testWebhook",
+      "shortPath": "monitors.testWebhook",
+      "description": "Send a signed test event to a webhook",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "statusCode",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "latencyMs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.monitors.updateAccount",
+      "shortPath": "monitors.updateAccount",
+      "description": "Change a watched account's reply/retweet/quote filters",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "usernameOrId",
+            "optional": false,
+            "type": "string",
+            "description": "Watched handle or numeric user ID"
+          },
+          {
+            "key": "filters",
+            "optional": false,
+            "type": "{ replies?: boolean, retweets?: boolean, quotes?: boolean }",
+            "description": "Reply/retweet/quote filters. Omitted fields keep their value"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ userId: string, username: string, state: string, stage?: string, latencyClass?: string, subscribedAt?: string, monitoringSince?: string | null, filters?: { replies: boolean, retweets: boolean, quotes: boolean } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.monitors.updateWebhook",
+      "shortPath": "monitors.updateWebhook",
+      "description": "Change a webhook URL, filter, secret, or active flag",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string | number",
+            "description": "Webhook ID"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "accounts",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "rotateSecret",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ id: number, url: string, label?: string | null, accounts?: string[] | null, secret?: string, active: boolean, failureCount?: number, disabledAt?: string | null, disabledReason?: string | null, lastSuccessAt?: string | null, lastFailureAt?: string | null, createdAt?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.trends.getByLocation",
+      "shortPath": "trends.getByLocation",
+      "description": "Get trending topics by location (WOEID, 1 = worldwide)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "locationId",
+            "optional": false,
+            "type": "string",
+            "description": "Yahoo WOEID. 1 = worldwide, 23424977 = United States"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name: string, query: string, url: string, tweetVolume: number | null }[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previousCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "hasNextPage",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.trends.getLocations",
+      "shortPath": "trends.getLocations",
+      "description": "List available trend locations (WOEIDs)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ woeid: number, name: string, country: string, countryCode: string | null, placeType: string, parentId: number | null }[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "previousCursor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hasNextPage",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.tweets.getById",
+      "shortPath": "tweets.getById",
+      "description": "Get a single tweet by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tweetId",
+            "optional": false,
+            "type": "string",
+            "description": "Numeric tweet ID at the end of the tweet URL"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | null } | { id: string, unavailable: true } | null, retweetOf?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | null } | { id: string, unavailable: true } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.tweets.getQuotes",
+      "shortPath": "tweets.getQuotes",
+      "description": "Get quote tweets for a tweet",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tweetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "({ id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | null } | { id: string, unavailable: true } | null, retweetOf?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | null } | { id: string, unavailable: true })[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previousCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "hasNextPage",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.tweets.getReplies",
+      "shortPath": "tweets.getReplies",
+      "description": "Get a tweet with its replies in display order",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tweetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "rankingMode",
+            "optional": true,
+            "type": "Relevance | Recency | Likes"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "({ id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | null } | { id: string, unavailable: true } | null, retweetOf?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | null } | { id: string, unavailable: true })[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previousCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "hasNextPage",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.tweets.getRetweeters",
+      "shortPath": "tweets.getRetweeters",
+      "description": "Get users who retweeted a tweet",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tweetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean }[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previousCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "hasNextPage",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.tweets.search",
+      "shortPath": "tweets.search",
+      "description": "Search X tweets (Top, Latest, Photos, Videos tabs)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "searchItem",
+            "optional": false,
+            "type": "string",
+            "description": "Search query, e.g. \"from:jack lang:en\""
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "Top | Latest | Photos | Videos",
+            "description": "Search tab. Defaults to Top"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "nextCursor from the previous page"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "({ id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | null } | { id: string, unavailable: true } | null, retweetOf?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | null } | { id: string, unavailable: true })[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previousCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "hasNextPage",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.users.batchGetByIds",
+      "shortPath": "users.batchGetByIds",
+      "description": "Batch fetch up to 500 user profiles by IDs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string",
+            "description": "Comma-separated numeric user IDs, at most 500"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean }[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previousCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "hasNextPage",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.users.getById",
+      "shortPath": "users.getById",
+      "description": "Get a user profile by numeric ID (or handle via username)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string",
+            "description": "Numeric user ID, or \"-1\" with username to resolve by handle"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string",
+            "description": "Handle with or without @. Used instead of userId when set"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.users.getByUsername",
+      "shortPath": "users.getByUsername",
+      "description": "Get a user profile by handle",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "Handle with or without @"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.users.getFollowers",
+      "shortPath": "users.getFollowers",
+      "description": "Get a user's followers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string",
+            "description": "Numeric user ID, or \"-1\" with username to resolve by handle"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string",
+            "description": "Handle with or without @. Used instead of userId when set"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean }[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previousCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "hasNextPage",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.users.getFollowings",
+      "shortPath": "users.getFollowings",
+      "description": "Get users that a user is following",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string",
+            "description": "Numeric user ID, or \"-1\" with username to resolve by handle"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string",
+            "description": "Handle with or without @. Used instead of userId when set"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean }[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previousCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "hasNextPage",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.users.getFriendship",
+      "shortPath": "users.getFriendship",
+      "description": "Show the relationship between two accounts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sourceScreenName",
+            "optional": false,
+            "type": "string",
+            "description": "First handle, with or without @"
+          },
+          {
+            "key": "targetScreenName",
+            "optional": false,
+            "type": "string",
+            "description": "Second handle, with or without @"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ source: { id: string, username: string }, target: { id: string, username: string }, following: boolean, followedBy: boolean, canDm: boolean | null, blocking: boolean | null, blockedBy: boolean | null, muting: boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.users.getLikes",
+      "shortPath": "users.getLikes",
+      "description": "Get a user's liked tweets",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string",
+            "description": "Numeric user ID, or \"-1\" with username to resolve by handle"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string",
+            "description": "Handle with or without @. Used instead of userId when set"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "({ id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | null } | { id: string, unavailable: true } | null, retweetOf?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | null } | { id: string, unavailable: true })[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previousCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "hasNextPage",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.users.getMedia",
+      "shortPath": "users.getMedia",
+      "description": "Get media tweets from a user's timeline",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string",
+            "description": "Numeric user ID, or \"-1\" with username to resolve by handle"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string",
+            "description": "Handle with or without @. Used instead of userId when set"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "({ id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | null } | { id: string, unavailable: true } | null, retweetOf?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | null } | { id: string, unavailable: true })[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previousCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "hasNextPage",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.users.getTweets",
+      "shortPath": "users.getTweets",
+      "description": "Get a user's tweets",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string",
+            "description": "Numeric user ID, or \"-1\" with username to resolve by handle"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string",
+            "description": "Handle with or without @. Used instead of userId when set"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "({ id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | null } | { id: string, unavailable: true } | null, retweetOf?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | null } | { id: string, unavailable: true })[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previousCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "hasNextPage",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.users.getTweetsAndReplies",
+      "shortPath": "users.getTweetsAndReplies",
+      "description": "Get a user's tweets and replies",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string",
+            "description": "Numeric user ID, or \"-1\" with username to resolve by handle"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string",
+            "description": "Handle with or without @. Used instead of userId when set"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "({ id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | null } | { id: string, unavailable: true } | null, retweetOf?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | null } | { id: string, unavailable: true })[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previousCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "hasNextPage",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.users.getVerifiedFollowers",
+      "shortPath": "users.getVerifiedFollowers",
+      "description": "Get a user's verified followers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string",
+            "description": "Numeric user ID, or \"-1\" with username to resolve by handle"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string",
+            "description": "Handle with or without @. Used instead of userId when set"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean }[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previousCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "hasNextPage",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twittrapi.api.users.resolveIds",
+      "shortPath": "users.resolveIds",
+      "description": "Resolve up to 100 handles to user IDs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "usernames",
+            "optional": false,
+            "type": "string",
+            "description": "Handles separated by commas, with or without @, at most 100"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ userIds: Record<string, string>, errors?: { username: string, error: string, message?: string }[] }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "twittrapi.webhooks.tweets.test",
+      "shortPath": "tweets.test",
+      "description": "Test event sent from POST /monitors/webhooks/{id}/test",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "test"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "monitoredUserId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tweetId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tweetCreatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "detectedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tweet",
+            "optional": true,
+            "type": "{ id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | null } | { id: string, unavailable: true } | null, retweetOf?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | null }"
+          }
+        ]
+      },
+      "responseType": "{ event: test, id: string, monitoredUserId?: string, tweetId?: string, tweetCreatedAt?: string, detectedAt?: string, tweet?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | null } | { id: string, unavailable: true } | null, retweetOf?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | null } }",
+      "usageExample": "twittrapi({\n    webhookHooks: {\n        tweets: {\n            test: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "twittrapi.webhooks.tweets.tweet",
+      "shortPath": "tweets.tweet",
+      "description": "A watched X account posted a new tweet",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "tweet"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "monitoredUserId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tweetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tweetCreatedAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "detectedAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tweet",
+            "optional": true,
+            "type": "{ id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | null } | { id: string, unavailable: true } | null, retweetOf?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | null }"
+          }
+        ]
+      },
+      "responseType": "{ event: tweet, id: string, monitoredUserId: string, tweetId: string, tweetCreatedAt: string, detectedAt: string, tweet?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | null } | { id: string, unavailable: true } | null, retweetOf?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: { id: string, url: string, text: string, createdAt: string | null, lang: string | null, author: { id: string, username: string, name: string, description: string, location: string, url: string | null, createdAt: string | null, avatarUrl: string | null, bannerUrl: string | null, verified: boolean, verifiedType: string | null, protected: boolean, counts: { followers: number, following: number, tweets: number, likes: number, media: number, listed: number }, pinnedTweetIds: string[], isAutomated: boolean } | null, counts: { likes: number, retweets: number, replies: number, quotes: number, bookmarks: number, views: number | null }, media: { type: string, url: string, previewUrl: string, width: number, height: number, altText: string | null, durationMs: number | null }[], urls: string[], hashtags: string[], mentions: { id: string, username: string }[], replyTo: { tweetId: string, userId: string, username: string } | null, conversationId: string | null, isPinned: boolean, source: string | null, quoted?: (recursive) | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | { id: string, unavailable: true } | null, retweetOf?: (recursive) | null } | null } }",
+      "usageExample": "twittrapi({\n    webhookHooks: {\n        tweets: {\n            tweet: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "twittrapi.db.communities.search",
+      "entityName": "communities",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "memberCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "moderatorCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "joinPolicy",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "nsfw",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "topic",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "bannerUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "twittrapi.db.friendships.search",
+      "entityName": "friendships",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "following",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "followedBy",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "canDm",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "blocking",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "blockedBy",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "muting",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "twittrapi.db.lists.search",
+      "entityName": "lists",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "memberCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "followerCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "private",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "bannerUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "twittrapi.db.monitoredAccounts.search",
+      "entityName": "monitoredAccounts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "userId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "username",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "stage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "latencyClass",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subscribedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "monitoringSince",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "twittrapi.db.monitorEvents.search",
+      "entityName": "monitorEvents",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "event",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "monitoredUserId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tweetId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tweetCreatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "detectedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "twittrapi.db.monitorWebhooks.search",
+      "entityName": "monitorWebhooks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "label",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "secret",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "active",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "failureCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "disabledAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "disabledReason",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastSuccessAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastFailureAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "twittrapi.db.trendLocations.search",
+      "entityName": "trendLocations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "woeid",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "countryCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "placeType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parentId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "twittrapi.db.trends.search",
+      "entityName": "trends",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "query",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tweetVolume",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "twittrapi.db.tweets.search",
+      "entityName": "tweets",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lang",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "conversationId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isPinned",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "source",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "twittrapi.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "username",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "location",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "avatarUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "bannerUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "verified",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "verifiedType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "protected",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isAutomated",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    }
+  ]
+}

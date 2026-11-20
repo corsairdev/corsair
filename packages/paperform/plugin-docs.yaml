@@ -1,0 +1,126 @@
+displayName: Paperform
+description: Read Paperform forms, fields and submissions, and manage a form's products, coupons and webhooks.
+domain: paperform.co
+recommendedAuth: api_key
+overviewNote: |
+  Create an access token under Account settings > Access tokens in Paperform; it is sent as a Bearer token. The API comes with Paperform's paid plans and its free trial. Two tiers matter: the Standard API covers reads, submissions, partial submissions, coupons and file links; `products.update`, `webhooks.create` and `webhooks.delete` need the Business API and answer 402 on other plans.
+  Forms are addressed by slug, custom slug or id (`form`). Submission answers (`data`) are keyed by field key; `fields.list` maps each key to its question title and type. `forms.list`, `spaces.list`, `translations.list`, `submissions.list`, `partialSubmissions.list` and `webhooks.list` return 20 rows by default; page them with `limit` (up to 100) and `skip`, or filter with `afterDate`, `beforeDate`, `afterId` and `beforeId`. `fields.list`, `products.list`, `coupons.list` and `spaces.forms` return everything in one response.
+  Only form, space, translation and submission metadata is stored locally. Submission answers, device details and IP addresses are returned to the caller but not stored, and are kept out of events.
+  Paperform sends space ids as numbers and product prices as strings; the plugin returns ids as strings and prices as sent.
+references:
+  - title: Paperform API reference
+    url: https://paperform.readme.io/reference/getting-started-1
+examples:
+  read:
+    path: submissions.list
+    title: List this week's submissions
+    args:
+      form: eqadkzns
+      afterDate: '2026-11-10'
+      limit: 50
+  write:
+    path: coupons.create
+    title: Create a 10% coupon
+    args:
+      form: eqadkzns
+      code: WELCOME10
+      enabled: true
+      discountPercentage: 10
+apiNotes:
+  forms.list: |
+    `GET /v1/forms`. Stores id, title, slug, space id, live flag and submission count.
+  forms.get: |
+    `GET /v1/forms/{slug_or_id}`.
+  fields.list: |
+    `GET /v1/forms/{slug_or_id}/fields`.
+  submissions.list: |
+    `GET /v1/forms/{slug_or_id}/submissions`. Stores id, form id and created date only.
+  submissions.get: |
+    `GET /v1/forms/{slug_or_id}/submissions/{id}`.
+  submissions.delete: |
+    `DELETE /v1/forms/{slug_or_id}/submissions/{id}`. The local row goes only after Paperform confirms.
+  partialSubmissions.list: |
+    `GET /v1/forms/{slug_or_id}/partial-submissions`.
+  partialSubmissions.get: |
+    `GET /v1/forms/{slug_or_id}/partial-submissions/{id}`.
+  products.list: |
+    `GET /v1/forms/{slug_or_id}/products`.
+  products.get: |
+    `GET /v1/forms/{slug_or_id}/products/{sku}`.
+  products.update: |
+    `PUT /v1/forms/{slug_or_id}/products/{sku}`. Business API.
+  coupons.list: |
+    `GET /v1/forms/{slug_or_id}/coupons`.
+  coupons.get: |
+    `GET /v1/forms/{slug_or_id}/coupons/{code}`.
+  coupons.create: |
+    `POST /v1/forms/{slug_or_id}/coupons`.
+  coupons.update: |
+    `PUT /v1/forms/{slug_or_id}/coupons/{code}`.
+  coupons.delete: |
+    `DELETE /v1/forms/{slug_or_id}/coupons/{code}`.
+  webhooks.list: |
+    `GET /v1/forms/{slug_or_id}/webhooks`.
+  webhooks.create: |
+    `POST /v1/forms/{slug_or_id}/webhooks`. Business API. The target URL stays out of events.
+  webhooks.delete: |
+    `DELETE /v1/webhooks/{id}`. Business API.
+  files.sign: |
+    `POST /v1/files/sign`. Only works for files uploaded to your own forms.
+  spaces.list: |
+    `GET /v1/spaces`.
+  spaces.get: |
+    `GET /v1/spaces/{id}`.
+  spaces.forms: |
+    `GET /v1/spaces/{id}/forms`.
+  translations.list: |
+    `GET /v1/translations`. Stores id, title and language; not the mapping.
+apiExamples:
+  forms.list:
+    call: "{ search: 'order', limit: 20 }"
+  forms.get:
+    call: "{ form: 'eqadkzns' }"
+  fields.list:
+    call: "{ form: 'eqadkzns' }"
+  submissions.list:
+    call: "{ form: 'eqadkzns', afterDate: '2026-11-01', sort: 'DESC' }"
+  submissions.get:
+    call: "{ form: 'eqadkzns', id: '6afc3d806e698e3d810e785b' }"
+  submissions.delete:
+    call: "{ form: 'eqadkzns', id: '6afc3d806e698e3d810e785b' }"
+  partialSubmissions.list:
+    call: "{ form: 'eqadkzns' }"
+  partialSubmissions.get:
+    call: "{ form: 'eqadkzns', id: '6afc3d79939666bf340d8a77' }"
+  products.list:
+    call: "{ form: 'eqadkzns' }"
+  products.get:
+    call: "{ form: 'eqadkzns', sku: 'tshirt-small' }"
+  products.update:
+    call: "{ form: 'eqadkzns', sku: 'tshirt-small', quantity: 20 }"
+  coupons.list:
+    call: "{ form: 'eqadkzns' }"
+  coupons.get:
+    call: "{ form: 'eqadkzns', code: 'WELCOME10' }"
+  coupons.create:
+    call: "{ form: 'eqadkzns', code: 'WELCOME10', enabled: true, target: 'price', discountPercentage: 10 }"
+  coupons.update:
+    call: "{ form: 'eqadkzns', code: 'WELCOME10', enabled: false }"
+  coupons.delete:
+    call: "{ form: 'eqadkzns', code: 'WELCOME10' }"
+  webhooks.list:
+    call: "{ form: 'eqadkzns' }"
+  webhooks.create:
+    call: "{ form: 'eqadkzns', targetUrl: 'https://example.com/paperform', triggers: ['submission'] }"
+  webhooks.delete:
+    call: "{ id: '5d40fdaf174b4c0007043072' }"
+  files.sign:
+    call: "{ url: 'https://paperform.co/file/s3.amazonaws.com/paperform/u-1/1/2019-04-14/58p3u6p/file.pdf' }"
+  spaces.list:
+    call: "{}"
+  spaces.get:
+    call: "{ id: '10001131833' }"
+  spaces.forms:
+    call: "{ id: '10001131833' }"
+  translations.list:
+    call: "{}"

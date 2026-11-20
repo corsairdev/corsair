@@ -101,7 +101,7 @@
     {
       "path": "dropbox.api.files.download",
       "shortPath": "files.download",
-      "description": "Download a file",
+      "description": "Download a file. A text file comes back as text, any other file as base64, up to about 700 KB; size and type are always returned.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -117,24 +117,46 @@
         "kind": "object",
         "fields": [
           {
-            "key": "content",
+            "key": "contentBase64",
+            "optional": true,
+            "type": "string",
+            "description": "The file, base64-encoded. Missing when the file came back as text or contentOmitted is set."
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string",
+            "description": "The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8."
+          },
+          {
+            "key": "contentType",
             "optional": false,
-            "type": "string"
+            "type": "string",
+            "description": "Media type of the file, for example application/pdf."
           },
           {
-            "key": "name",
-            "optional": true,
-            "type": "string"
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the file in bytes."
           },
           {
-            "key": "size",
+            "key": "filename",
             "optional": true,
-            "type": "number"
+            "type": "string",
+            "description": "The file name, when known."
           },
           {
-            "key": "path_lower",
+            "key": "contentOmitted",
             "optional": true,
-            "type": "string"
+            "type": "not_requested | over_limit",
+            "description": "Set when the content was left out: the caller did not ask for it, or the file was over the limit."
+          },
+          {
+            "key": "fileId",
+            "optional": true,
+            "type": "string",
+            "description": "Where the host saved the file, in place of its content, when it was over the limit. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text."
           }
         ]
       }

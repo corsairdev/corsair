@@ -275,10 +275,60 @@ export const klingEndpointSchemas = {
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
+// Every create starts a task Kling finishes later. Where its id and status
+// sit depends on the API style the group uses (endpoints/tasks.ts). The task
+// schema types status as a plain string, so the values come from each
+// style's docs, and jobs.test.ts checks the paths against the documented
+// responses. submitted and processing are still going. The plugin has no
+// cancel.
+//
+// The /v1 groups answer `{ data: { task_id, task_status } }` on create and on
+// GET <path>/{task_id}, and spell success `succeed`.
+const v1TaskJob = (op: string) =>
+	({
+		idPath: 'data.task_id',
+		status: {
+			op,
+			idArg: 'task_id',
+			statusPath: 'data.task_status',
+			done: ['succeed'],
+			failed: ['failed'],
+		},
+	}) as const;
+
+// Versioned video groups create with `{ data: { id, status } }` and are read
+// through GET /tasks?task_ids=, which answers the queried tasks as a `data`
+// array, so the one task asked for is `data.0`. Success is `succeeded`.
+const versionedTaskJob = (op: string) =>
+	({
+		idPath: 'data.id',
+		status: {
+			op,
+			idArg: 'task_id',
+			statusPath: 'data.0.status',
+			done: ['succeeded'],
+			failed: ['failed'],
+		},
+	}) as const;
+
+// Virtual try-on creates with `task_id` and is read through /solutions, which
+// answers a `data` array like /tasks but spells success `succeed`.
+const TRY_ON_JOB = {
+	idPath: 'data.task_id',
+	status: {
+		op: 'virtualTryOn.get',
+		idArg: 'task_id',
+		statusPath: 'data.0.status',
+		done: ['succeed'],
+		failed: ['failed'],
+	},
+} as const;
+
 const klingEndpointMeta = {
 	'textToVideo.create': {
 		riskLevel: 'write',
 		description: 'Create a text-to-video generation task',
+		job: versionedTaskJob('textToVideo.get'),
 	},
 	'textToVideo.get': {
 		riskLevel: 'read',
@@ -291,6 +341,7 @@ const klingEndpointMeta = {
 	'imageToVideo.create': {
 		riskLevel: 'write',
 		description: 'Create an image-to-video generation task',
+		job: versionedTaskJob('imageToVideo.get'),
 	},
 	'imageToVideo.get': {
 		riskLevel: 'read',
@@ -303,6 +354,7 @@ const klingEndpointMeta = {
 	'omniVideo.create': {
 		riskLevel: 'write',
 		description: 'Create an omni-video generation task',
+		job: versionedTaskJob('omniVideo.get'),
 	},
 	'omniVideo.get': {
 		riskLevel: 'read',
@@ -315,6 +367,7 @@ const klingEndpointMeta = {
 	'motionControl.create': {
 		riskLevel: 'write',
 		description: 'Create a motion-control task from a motion reference',
+		job: versionedTaskJob('motionControl.get'),
 	},
 	'motionControl.get': {
 		riskLevel: 'read',
@@ -327,6 +380,7 @@ const klingEndpointMeta = {
 	'imageGeneration.create': {
 		riskLevel: 'write',
 		description: 'Create a text-to-image or image-to-image task',
+		job: v1TaskJob('imageGeneration.get'),
 	},
 	'imageGeneration.get': {
 		riskLevel: 'read',
@@ -339,6 +393,7 @@ const klingEndpointMeta = {
 	'multiImageToImage.create': {
 		riskLevel: 'write',
 		description: 'Create a multi-image (subject, scene, style) task',
+		job: v1TaskJob('multiImageToImage.get'),
 	},
 	'multiImageToImage.get': {
 		riskLevel: 'read',
@@ -351,6 +406,7 @@ const klingEndpointMeta = {
 	'omniImage.create': {
 		riskLevel: 'write',
 		description: 'Create an omni-image generation task',
+		job: v1TaskJob('omniImage.get'),
 	},
 	'omniImage.get': {
 		riskLevel: 'read',
@@ -363,6 +419,7 @@ const klingEndpointMeta = {
 	'outpainting.create': {
 		riskLevel: 'write',
 		description: 'Create an image outpainting (expand) task',
+		job: v1TaskJob('outpainting.get'),
 	},
 	'outpainting.get': {
 		riskLevel: 'read',
@@ -379,6 +436,7 @@ const klingEndpointMeta = {
 	'lipSync.create': {
 		riskLevel: 'write',
 		description: 'Create a lip-sync task for a detected face',
+		job: v1TaskJob('lipSync.get'),
 	},
 	'lipSync.get': {
 		riskLevel: 'read',
@@ -391,6 +449,7 @@ const klingEndpointMeta = {
 	'videoEffects.create': {
 		riskLevel: 'write',
 		description: 'Create a video effect task from a scene template',
+		job: v1TaskJob('videoEffects.get'),
 	},
 	'videoEffects.get': {
 		riskLevel: 'read',
@@ -403,6 +462,7 @@ const klingEndpointMeta = {
 	'virtualTryOn.create': {
 		riskLevel: 'write',
 		description: 'Create a virtual try-on task for a product and person',
+		job: TRY_ON_JOB,
 	},
 	'virtualTryOn.get': {
 		riskLevel: 'read',

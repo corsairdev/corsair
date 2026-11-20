@@ -5,6 +5,7 @@
     "types": ["node", "jest"],
     "module": "ESNext",
     "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
     "outDir": "./dist",
     "rootDir": "./",
     "composite": true,
@@ -14,7 +15,7 @@
     "declarationMap": true,
     "skipLibCheck": true
   },
-  "include": ["./**/*"],
+  "include": ["./**/*", "./litescrape-manifest.json"],
   "exclude": ["dist", "node_modules"],
   "references": []
 }

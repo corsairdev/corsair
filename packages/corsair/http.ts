@@ -20,6 +20,8 @@ export type { ApiResult } from './async-core/ApiResult';
 export type {
 	FileInput,
 	FileOutput,
+	FileSink,
+	FileSinkOptions,
 	ResolvedFile,
 	ResolveFileOptions,
 } from './async-core/files';
@@ -28,6 +30,7 @@ export {
 	FileInputSchema,
 	FileOutputSchema,
 	resolveFileInput,
+	setFileSink,
 	toFileOutput,
 } from './async-core/files';
 export type { OpenAPIConfig } from './async-core/OpenAPI';

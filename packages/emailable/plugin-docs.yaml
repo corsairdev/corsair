@@ -1,0 +1,42 @@
+displayName: Emailable
+description: Verify email addresses one at a time or in bulk batches with Emailable, and read the account's credits.
+domain: emailable.com
+recommendedAuth: api_key
+overviewNote: |
+  Create a secret API key under API in Emailable. It is sent as a Bearer token, so it never appears in a URL or request body. A test key (starts with `test_`) returns sample results and spends no credits; with it, addresses such as deliverable@example.com, risky@example.com or disposable@example.com return that result.
+  `verifications.verify` uses one credit per address. When Emailable needs more time it answers HTTP 249; the plugin then returns `pending: true`, and calling again within 5 minutes costs nothing extra. `batches.create` verifies up to 50,000 addresses for one credit each and is marked destructive; poll `batches.get` until `done` is true.
+  Only credits, a verification's state, score and reason (keyed by address), and batch ids are stored. Names Emailable guesses from an address are returned but not stored. Verified addresses are kept out of events and are removed from propagated errors.
+references:
+  - title: Emailable API docs
+    url: https://emailable.com/docs/api/
+examples:
+  read:
+    path: verifications.verify
+    title: Verify one address
+    args:
+      email: deliverable@example.com
+  write:
+    path: batches.create
+    title: Verify a list of addresses
+    args:
+      emails:
+        - deliverable@example.com
+        - risky@example.com
+apiNotes:
+  account.get: |
+    `GET /v1/account`. Stores available credits. The owner email is not stored.
+  verifications.verify: |
+    `GET /v1/verify`. Stores the address, state, score, and reason. HTTP 249 returns pending.
+  batches.create: |
+    `POST /v1/batch` with a JSON body. Stores the batch id and message.
+  batches.get: |
+    `GET /v1/batch`. Results per address for batches up to 1,000, a download link above that.
+apiExamples:
+  account.get:
+    call: "{}"
+  verifications.verify:
+    call: "{ email: 'deliverable@example.com', smtp: true, timeout: 5 }"
+  batches.create:
+    call: "{ emails: ['deliverable@example.com', 'risky@example.com'], url: 'https://example.com/emailable-results' }"
+  batches.get:
+    call: "{ id: '6afc45aa1b2c3d4e5f607182' }"

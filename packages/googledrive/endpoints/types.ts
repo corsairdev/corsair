@@ -1,6 +1,9 @@
+import type { FileOutput } from 'corsair/http';
+import { FileOutputSchema } from 'corsair/http';
 import { z } from 'zod';
 import type {
 	File,
+	FileContents,
 	FileList,
 	Permission,
 	SharedDrive,
@@ -21,6 +24,7 @@ const FilesListInputSchema = z.object({
 	supportsAllDrives: z.boolean().optional(),
 	supportsTeamDrives: z.boolean().optional(),
 	teamDriveId: z.string().optional(),
+	fields: z.string().optional(),
 });
 
 const FilesGetInputSchema = z.object({
@@ -29,6 +33,7 @@ const FilesGetInputSchema = z.object({
 	supportsAllDrives: z.boolean().optional(),
 	supportsTeamDrives: z.boolean().optional(),
 	includePermissionsForView: z.string().optional(),
+	fields: z.string().optional(),
 });
 
 const FilesCreateFromTextInputSchema = z.object({
@@ -86,6 +91,22 @@ const FilesMoveInputSchema = z.object({
 const FilesDownloadInputSchema = z.object({
 	fileId: z.string(),
 	acknowledgeAbuse: z.boolean().optional(),
+});
+
+const FilesExportInputSchema = z.object({
+	fileId: z
+		.string()
+		.describe('The Google Docs, Sheets, Slides or Drawings file.'),
+	mimeType: z
+		.string()
+		.optional()
+		.describe(
+			'The format to export to, for example application/pdf or application/vnd.openxmlformats-officedocument.wordprocessingml.document. Defaults to Markdown for Docs, CSV (first sheet only) for Sheets, PDF for Slides and PNG for Drawings.',
+		),
+});
+
+const FilesExportTextInputSchema = z.object({
+	fileId: z.string(),
 });
 
 const FilesShareInputSchema = z.object({
@@ -246,7 +267,9 @@ export const GoogleDriveEndpointInputSchemas = {
 	filesCopy: FilesCopyInputSchema,
 	filesMove: FilesMoveInputSchema,
 	filesDownload: FilesDownloadInputSchema,
+	filesExport: FilesExportInputSchema,
 	filesShare: FilesShareInputSchema,
+	filesExportText: FilesExportTextInputSchema,
 	foldersCreate: FoldersCreateInputSchema,
 	foldersGet: FoldersGetInputSchema,
 	foldersList: FoldersListInputSchema,
@@ -266,6 +289,15 @@ export type GoogleDriveEndpointInputs = {
 		(typeof GoogleDriveEndpointInputSchemas)[K]
 	>;
 };
+
+const UserSchema = z.object({
+	kind: z.string().optional(),
+	displayName: z.string().optional(),
+	photoLink: z.string().optional(),
+	me: z.boolean().optional(),
+	permissionId: z.string().optional(),
+	emailAddress: z.string().optional(),
+});
 
 const FileSchema = z.object({
 	id: z.string().optional(),
@@ -294,6 +326,7 @@ const FileSchema = z.object({
 	modifiedByMe: z.boolean().optional(),
 	shared: z.boolean().optional(),
 	ownedByMe: z.boolean().optional(),
+	owners: z.array(UserSchema).optional(),
 	permissionIds: z.array(z.string()).optional(),
 	hasAugmentedPermissions: z.boolean().optional(),
 	folderColorRgb: z.string().optional(),
@@ -308,6 +341,16 @@ const FileSchema = z.object({
 	resourceKey: z.string().optional(),
 	sha1Checksum: z.string().optional(),
 	sha256Checksum: z.string().optional(),
+});
+
+const FileContentsSchema = z.object({
+	id: z.string(),
+	name: z.string().optional(),
+	mimeType: z.string().optional(),
+	createdTime: z.string().optional(),
+	modifiedTime: z.string().optional(),
+	webViewLink: z.string().optional(),
+	text: z.string(),
 });
 
 const FileListSchema = z.object({
@@ -373,8 +416,10 @@ export const GoogleDriveEndpointOutputSchemas = {
 	filesDelete: z.void(),
 	filesCopy: FileSchema,
 	filesMove: FileSchema,
-	filesDownload: z.any(), // Using any because download returns a raw binary stream whose shape depends on file type
+	filesDownload: FileOutputSchema,
+	filesExport: FileOutputSchema,
 	filesShare: PermissionSchema,
+	filesExportText: FileContentsSchema,
 	foldersCreate: FileSchema,
 	foldersGet: FileSchema,
 	foldersList: FileListSchema,
@@ -398,8 +443,10 @@ export type GoogleDriveEndpointOutputs = {
 	filesDelete: void;
 	filesCopy: File;
 	filesMove: File;
-	filesDownload: any;
+	filesDownload: FileOutput;
+	filesExport: FileOutput;
 	filesShare: Permission;
+	filesExportText: FileContents;
 	foldersCreate: File;
 	foldersGet: File;
 	foldersList: FileList;

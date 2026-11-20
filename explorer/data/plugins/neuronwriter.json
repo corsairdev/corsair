@@ -1,0 +1,438 @@
+{
+  "id": "neuronwriter",
+  "displayName": "NEURONwriter",
+  "description": "List NEURONwriter projects, start and poll content analyses, read their target word count, terms, questions and SERP competitors, and read, import or score article content.",
+  "npmPackageName": "@corsair-dev/neuronwriter",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 7,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "neuronwriter.api.analysis.get",
+      "shortPath": "analysis.get",
+      "description": "Poll one analysis: the status alone while it runs, then the target word count, terms, questions and SERP competitors",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "The query id, from analysis.start."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metrics",
+            "optional": true,
+            "type": "{ word_count?: { median?: number | null, target?: number | null } | null, readability?: { median?: number | null, target?: number | null } | null } | null"
+          },
+          {
+            "key": "terms",
+            "optional": true,
+            "type": "{ title?: { t?: string | null, usage_pc?: number | null, sugg_usage?: number[] | null }[] | null, desc?: { t?: string | null, usage_pc?: number | null, sugg_usage?: number[] | null }[] | null, h1?: { t?: string | null, usage_pc?: number | null, sugg_usage?: number[] | null }[] | null, h2?: { t?: string | null, usage_pc?: number | null, sugg_usage?: number[] | null }[] | null, content_basic?: { t?: string | null, usage_pc?: number | null, sugg_usage?: number[] | null }[] | null, content_extended?: { t?: string | null, usage_pc?: number | null, sugg_usage?: number[] | null }[] | null, entities?: { t?: string | null, importance?: number | null, relevance?: number | null, confidence?: number | null, links?: string[][] | null }[] | null } | null"
+          },
+          {
+            "key": "terms_txt",
+            "optional": true,
+            "type": "{ title?: string | null, desc_title?: string | null, h1?: string | null, h2?: string | null, content_basic?: string | null, content_extended?: string | null } | null"
+          },
+          {
+            "key": "ideas",
+            "optional": true,
+            "type": "{ suggest_questions?: { q?: string | null }[] | null, people_also_ask?: { q?: string | null }[] | null, content_questions?: { q?: string | null }[] | null } | null"
+          },
+          {
+            "key": "competitors",
+            "optional": true,
+            "type": "{ rank?: number | null, url?: string | null, title?: string | null, desc?: string | null, content_score?: number | string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "neuronwriter.api.analysis.start",
+      "shortPath": "analysis.start",
+      "description": "Queue a content analysis for a keyword, spending one Content Writer analysis from the monthly limit; poll analysis.get for the recommendations",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string",
+            "description": "The project id, from the project's URL: app.neuronwriter.com/project/view/{id}."
+          },
+          {
+            "key": "keyword",
+            "optional": false,
+            "type": "string",
+            "description": "The keyword to analyse."
+          },
+          {
+            "key": "engine",
+            "optional": false,
+            "type": "string",
+            "description": "The search engine, e.g. google.co.uk."
+          },
+          {
+            "key": "language",
+            "optional": false,
+            "type": "string",
+            "description": "The content language, e.g. English."
+          },
+          {
+            "key": "competitors_mode",
+            "optional": true,
+            "type": "top10 | top30 | top-intent",
+            "description": "Which competitors to analyse: top10 (the default), top30, or top-intent for up to ten pages matching the dominant intent."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "share_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "readonly_url",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "neuronwriter.api.content.evaluate",
+      "shortPath": "content.evaluate",
+      "description": "Score content against its analysis without saving a revision, so a draft can be checked before it is written back",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "The query id, from analysis.start."
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string",
+            "description": "The HTML to send."
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "A page to fetch and parse instead of sending HTML."
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string",
+            "description": "Overrides the title found in the HTML or page."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Overrides the meta description found in the HTML or page."
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string",
+            "description": "The element id holding the content, when importing from a url."
+          },
+          {
+            "key": "class",
+            "optional": true,
+            "type": "string",
+            "description": "The element class holding the content, when importing from a url."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "content_score",
+            "optional": true,
+            "type": "number | null",
+            "description": "The content score of the imported or evaluated text."
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null",
+            "description": "The reason an import or evaluation failed, when one did."
+          }
+        ]
+      }
+    },
+    {
+      "path": "neuronwriter.api.content.get",
+      "shortPath": "content.get",
+      "description": "Read a query's last saved content revision, or the latest autosave as well",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "The query id, from analysis.start."
+          },
+          {
+            "key": "revision_type",
+            "optional": true,
+            "type": "manual | all",
+            "description": "manual for the last saved revision, all to include autosaves. NEURONwriter defaults to manual."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "neuronwriter.api.content.import",
+      "shortPath": "content.import",
+      "description": "Replace the editor content from HTML or a fetched URL, saving it as a new revision",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "The query id, from analysis.start."
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string",
+            "description": "The HTML to send."
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "A page to fetch and parse instead of sending HTML."
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string",
+            "description": "Overrides the title found in the HTML or page."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Overrides the meta description found in the HTML or page."
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string",
+            "description": "The element id holding the content, when importing from a url."
+          },
+          {
+            "key": "class",
+            "optional": true,
+            "type": "string",
+            "description": "The element class holding the content, when importing from a url."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "content_score",
+            "optional": true,
+            "type": "number | null",
+            "description": "The content score of the imported or evaluated text."
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null",
+            "description": "The reason an import or evaluation failed, when one did."
+          }
+        ]
+      }
+    },
+    {
+      "path": "neuronwriter.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List the account's projects with the id, language and search engine each one uses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projects",
+            "optional": false,
+            "type": "{ project?: string | null, name?: string | null, language?: string | null, engine?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "neuronwriter.api.queries.list",
+      "shortPath": "queries.list",
+      "description": "List the queries in a project, filterable by status, source, keyword, language, engine, dates and tags",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string",
+            "description": "The project id, from the project's URL: app.neuronwriter.com/project/view/{id}."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "not found | waiting | in progress | ready",
+            "description": "Only queries in this state."
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "neuron | neuron-api",
+            "description": "Only queries created in the app or through the API."
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string",
+            "description": "Only queries created at this instant."
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string",
+            "description": "Only queries last updated at this instant."
+          },
+          {
+            "key": "keyword",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "engine",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string | string[]",
+            "description": "Only queries carrying these tags. Every tag must be present."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "queries",
+            "optional": false,
+            "type": "{ query?: string | null, created?: string | null, updated?: string | null, keyword?: string | null, language?: string | null, engine?: string | null, source?: string | null, tags?: string[] | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

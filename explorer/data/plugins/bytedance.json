@@ -230,6 +230,16 @@
       "shortPath": "video.create",
       "description": "Start a Seedance video generation task from text, frames, or reference media; returns a task id",
       "riskLevel": "write",
+      "job": {
+        "idPath": "id",
+        "status": {
+          "op": "tasks.get",
+          "idArg": "id",
+          "statusPath": "status",
+          "done": ["succeeded"],
+          "failed": ["failed", "cancelled", "expired"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [

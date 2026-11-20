@@ -19,6 +19,7 @@ import {
 	reportManagedJobCall,
 } from '../../hub/managed-pricing-jobs';
 import { reportPluginConnectionStatusFromBinding } from '../../hub/report-connection-status';
+import { AccountSelectionError, accountNames } from '../account-lookup';
 import { throwAuthMissingEndpointError } from '../auth/auth-missing-message';
 import { AuthMissingError } from '../auth/errors/auth-missing';
 import { CorsairKekMissingError } from '../auth/errors/kek-missing';
@@ -27,15 +28,19 @@ import type { EndpointManualConfig } from '../config/manual-connect';
 import { recordConnectRequestBestEffort } from '../connect-request/store';
 import type { CorsairErrorHandler } from '../errors';
 import { handleCorsairError } from '../errors/handler';
+import type { AccountNames } from '../permissions';
 import {
+	accountMode,
 	activeMode,
 	assertReadonlyAllowed,
 	enforcePermission,
 	evaluatePermission,
+	hasAccountModes,
 	parseDurationMs,
 	resolveAsyncApprovalMessage,
 	stricterMode,
 	stricterPolicy,
+	strictestMode,
 } from '../permissions';
 import { PermissionRequiredError } from '../permissions/errors/permission-required';
 import type {
@@ -48,6 +53,7 @@ import type {
 	PermissionPolicy,
 } from '../plugins';
 import { getPluginAuthType } from '../utils/plugin-auth';
+import { saveManagedResult } from './managed-result';
 
 const managedPricingCacheByPlugin = new Map<string, object>();
 
@@ -139,6 +145,7 @@ export function bindEndpointsRecursively({
 	permissionsConfig?: {
 		mode: PermissionMode;
 		overrides?: Record<string, PermissionPolicy>;
+		accounts?: Record<string, PermissionMode>;
 	};
 	/** Risk level metadata per dot-notation endpoint path. Defaults riskLevel to 'write' when missing. */
 	endpointMeta?: Record<string, EndpointMetaEntry>;
@@ -170,6 +177,13 @@ export function bindEndpointsRecursively({
 			const boundFn = async (args: unknown = {}) => {
 				const endpointMetaEntry = endpointMeta?.[operationPath];
 
+				// Who the call is for, looked up only when some mode is set per account.
+				const names =
+					Object.keys(permissionsConfig?.accounts ?? {}).length > 0 ||
+					hasAccountModes(pluginId)
+						? await callAccountNames(ctx, database, kek)
+						: undefined;
+
 				// ── Readonly scope guard ──────────────────────────────────────────────────────────
 				// Enforced ahead of (and independent of) the developer's permission config: when the
 				// call runs inside a runReadonly() scope, any non-read endpoint throws immediately.
@@ -177,6 +191,8 @@ export function bindEndpointsRecursively({
 				assertReadonlyAllowed(
 					operationPath,
 					endpointMetaEntry?.riskLevel ?? 'write',
+					pluginId,
+					names,
 				);
 
 				// With encryptDataAtRest on, every call stores or logs encrypted data
@@ -191,8 +207,13 @@ export function bindEndpointsRecursively({
 				let onPermissionComplete: (() => Promise<void>) | undefined;
 				// A mode only tightens, so a caller naming one cannot relax what the
 				// server configured.
-				const callerMode = activeMode();
-				const configMode = permissionsConfig?.mode;
+				const callerMode = activeMode(pluginId, names);
+				// An account's own mode stands in for the plugin's. An account whose
+				// identity couldn't be read takes the strictest any account has.
+				const configMode = names
+					? (accountMode(permissionsConfig?.accounts, names) ??
+						permissionsConfig?.mode)
+					: strictestMode(permissionsConfig?.accounts, permissionsConfig?.mode);
 				const mode = stricterMode(callerMode, configMode);
 				if (mode) {
 					const meta = endpointMetaEntry;
@@ -429,6 +450,30 @@ export function bindEndpointsRecursively({
 						answer.units,
 					);
 				};
+				// Search reads what a paid call returned. A job keeps only its start
+				// result; job reads and calls scoped to a job are not saved.
+				// unknown: the arguments the provider got and what it returned.
+				const saveResult = async (callArgs: unknown, result: unknown) => {
+					if (
+						!meteredCall ||
+						answer.failure !== undefined ||
+						managedJob?.role === 'status' ||
+						managedJob?.role === 'scoped'
+					)
+						return;
+					await saveManagedResult({
+						database,
+						getAccountId: ctx.$getAccountId as
+							| (() => Promise<string>)
+							| undefined,
+						kek,
+						encryptDataAtRest,
+						idempotencyKey: meteredCall.idempotencyKey,
+						operation: operationPath,
+						args: callArgs,
+						result,
+					});
+				};
 				// The keyBuilder adds `_refreshAuth` to this ctx, and an OAuth
 				// plugin calls it to refresh the token after a 401. The endpoint
 				// must get this ctx, not a new copy of the original one.
@@ -616,6 +661,7 @@ export function bindEndpointsRecursively({
 						await reportIfCharged(error);
 						throw error;
 					}
+					await saveResult(args, res);
 					await reportUsage();
 					if (plugin && hubConfig) {
 						reportPluginConnectionStatusFromBinding({
@@ -633,6 +679,7 @@ export function bindEndpointsRecursively({
 
 				const ctxWithKey = { ...endpointCtx, key };
 				let res: Awaited<ReturnType<typeof call>>;
+				let sentArgs: unknown = args;
 				try {
 					const beforeResult = endpointHooks.before
 						? await endpointHooks.before(ctxWithKey, args)
@@ -663,6 +710,7 @@ export function bindEndpointsRecursively({
 							);
 						}
 					}
+					sentArgs = beforeResult.args;
 					res = await callWithAuthRetry(beforeResult.ctx, beforeResult.args);
 					readAnswer(res);
 					await reportJob(beforeResult.args, res);
@@ -676,6 +724,7 @@ export function bindEndpointsRecursively({
 					await reportIfCharged(error);
 					throw error;
 				}
+				await saveResult(sentArgs, res);
 				await reportUsage();
 				if (plugin && hubConfig) {
 					reportPluginConnectionStatusFromBinding({
@@ -722,4 +771,24 @@ export function bindEndpointsRecursively({
 			tree[key] = nestedTree;
 		}
 	}
+}
+
+// The names a call's account answers to.
+async function callAccountNames(
+	// The plugin context is an open bag; only $getAccountId is read, and checked.
+	ctx: Record<string, unknown>,
+	database: CorsairDatabase | undefined,
+	kek: string | undefined,
+): Promise<AccountNames | undefined> {
+	const getAccountId = ctx.$getAccountId as (() => Promise<string>) | undefined;
+	if (!getAccountId || !database) return undefined;
+	// Naming no account among several is refused here; a missing account is
+	// left to the call itself, which reports it as auth-missing.
+	const names = await getAccountId()
+		.then((id) => accountNames(database.db, id, kek))
+		.catch((err) => {
+			if (err instanceof AccountSelectionError) throw err;
+			return undefined;
+		});
+	return names?.ref ? names : undefined;
 }

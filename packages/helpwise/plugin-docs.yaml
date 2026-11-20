@@ -1,0 +1,129 @@
+displayName: Helpwise
+description: Shared team inboxes, conversations, messages, contacts, tags, and analytics for Helpwise.
+domain: helpwise.io
+overviewNote: >-
+  Helpwise authentication requires both an API Key and API Secret from Helpwise
+  Settings > API (HTTP Basic auth header formatted as `API_KEY:API_SECRET`).
+  Run the Corsair database migration once before passing the connection to
+  `createCorsair`; creating a SQLite file does not create Corsair's tables.
+  Before creating a tenant connect link, mount a Hub delivery handler as described
+  in [Connect / OAuth](/management/connect). A call for a tenant with no stored
+  key fails with `AuthMissingError`, which carries a connect link when Hub is
+  configured.
+factory:
+  note: >-
+    A call with no stored key fails with `AuthMissingError` and a connect link
+    when Hub is configured. To skip that, connect the tenant through Hub below
+    or store the credentials with `tenant.helpwise.keys.set_api_key(...)` and
+    `tenant.helpwise.keys.set_api_secret(...)` first.
+examples:
+  read:
+    path: conversations.list
+    title: List conversations
+    args:
+      limit: 10
+  write:
+    path: messages.sendEmail
+    title: Send an email
+    args:
+      mailbox_id: 101
+      to: customer@example.com
+      subject: Support inquiry response
+      body: <p>Thank you for reaching out to us.</p>
+apiExamples:
+  conversations.close:
+    ids:
+      - 101
+  conversations.moveToInbox:
+    ids:
+      - 101
+  conversations.spam:
+    ids:
+      - 101
+  conversations.trash:
+    ids:
+      - 101
+  conversations.delete:
+    ids:
+      - 101
+  conversations.get:
+    inboxId: 10
+    conversationId: 101
+  conversations.assign:
+    mailbox_id: 10
+    thread_id: 101
+    assigned_to: 20
+  messages.sendEmail:
+    mailbox_id: 10
+    to: customer@example.com
+    subject: Support follow-up
+    body: <p>Hello from support</p>
+  messages.listEmails:
+    mailboxId: 10
+    threadId: 101
+  messages.sendSms:
+    inboxId: 10
+    clientNumber: '+15551234567'
+    body: Your ticket has been updated
+  messages.sendWhatsApp:
+    inboxId: 10
+    clientNumber: '+15551234567'
+    body: Your ticket has been updated
+  messages.sendChat:
+    mailbox_id: 10
+    thread_id: 101
+    message: How may I assist you today?
+  inboxes.get:
+    id: 10
+  contacts.get:
+    contactId: 50
+  contacts.create:
+    firstname: Alex
+    emails:
+      - alex@example.com
+  contacts.update:
+    contactId: 50
+    firstname: Alex
+  contacts.search:
+    term: Alex
+  tags.get:
+    tagId: 5
+  tags.apply:
+    threadIds:
+      - 101
+    tagIds:
+      - 5
+  tags.remove:
+    threadIds:
+      - 101
+    tagIds:
+      - 5
+  customFields.get:
+    fieldId: 12
+  customFields.create:
+    name: VIP Tier
+    description: Customer VIP level
+  customFields.update:
+    fieldId: 12
+    name: VIP Tier Updated
+  customFields.delete:
+    fieldId: 12
+  customFields.listByInbox:
+    inboxId: 10
+  customFields.updateByInbox:
+    inboxId: 10
+    hideIds:
+      - 12
+  notes.create:
+    mailbox_id: 10
+    thread_id: 101
+    message: Internal review completed
+  whatsapp.listTemplates:
+    mailbox_id: 10
+  reports.getOverall:
+    start: '2025-01-01'
+    end: '2025-01-31'
+  reports.getTags:
+    inboxId: 10
+    start: '2025-01-01'
+    end: '2025-01-31'

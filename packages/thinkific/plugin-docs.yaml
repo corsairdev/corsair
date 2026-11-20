@@ -1,0 +1,208 @@
+displayName: Thinkific
+description: Manage Thinkific users, enrollments, courses, products, groups,
+  orders, promotions, and related Admin API v1 resources.
+recommendedAuth: api_key
+overviewNote: This plugin uses the documented Admin API v1 at
+  https://api.thinkific.com/api/public/v1. Configure an API key and the
+  Thinkific site subdomain (acme for acme.thinkific.com). It sends
+  X-Auth-API-Key and X-Auth-Subdomain headers. Admin API v2 is not verified.
+  Webhook management/receivers and OAuth-only Site Scripts operations are
+  excluded.
+references:
+  - title: Thinkific Admin API reference
+    url: https://developers.thinkific.com/api/api-documentation
+  - title: Official Admin API v1 OpenAPI export
+    url: https://developers.thinkific.com/openapi/thinkific-admin-api-v1.yaml
+  - title: API key authorization
+    url: https://support.thinkific.dev/hc/en-us/articles/4422657425431
+  - title: REST response format and pagination
+    url: https://support.thinkific.dev/hc/en-us/articles/4422657182743
+  - title: REST rate limits
+    url: https://support.thinkific.dev/hc/en-us/articles/4422684774935
+examples:
+  read:
+    path: courses.list
+    title: List Thinkific courses
+    args:
+      query:
+        page: 1
+        limit: 25
+  write:
+    path: users.create
+    title: Create a Thinkific user
+    args:
+      body:
+        first_name: Sample
+        last_name: Learner
+        email: learner@example.com
+apiExamples:
+  bundles.get:
+    call: '{ path: {"id":1} }'
+  bundles.listCourses:
+    call: '{ path: {"id":1}, query: {"page":1,"limit":25} }'
+  bundles.listEnrollments:
+    call: '{ path: {"id":1}, query: {"page":1,"limit":25} }'
+  bundles.createEnrollment:
+    call: '{ path: {"id":1}, body: {"user_id":1} }'
+  bundles.updateEnrollments:
+    call: '{ path: {"id":1}, body: {"user_id":1} }'
+  chapters.get:
+    call: '{ path: {"id":1} }'
+  chapters.listContents:
+    call: '{ path: {"id":1}, query: {"page":1,"limit":25} }'
+  categories.list:
+    call: '{ query: {"page":1,"limit":25} }'
+  categories.create:
+    call: '{ body: {"description":"sample","name":"sample","slug":"sample"} }'
+  categories.get:
+    call: '{ path: {"id":1} }'
+  categories.update:
+    call: '{ path: {"id":1}, body:
+      {"description":"sample","name":"sample","slug":"sample"} }'
+  categories.remove:
+    call: '{ path: {"id":1} }'
+  categories.listProducts:
+    call: '{ path: {"id":1}, query: {"page":1,"limit":25} }'
+  categoryMemberships.addProducts:
+    call: '{ path: {"id":1}, body: {"product_ids":[1]} }'
+  categoryMemberships.removeProducts:
+    call: '{ path: {"id":1}, body: {"product_ids":[1]} }'
+  coupons.list:
+    call: '{ query: {"promotion_id":1,"page":1,"limit":25} }'
+  coupons.create:
+    call: '{ query: {"promotion_id":1}, body: {"code":"sample"} }'
+  coupons.bulkCreate:
+    call: '{ query: {"promotion_id":1}, body:
+      {"bulk_quantity_per_coupon":1,"bulk_coupon_code_length":8,"bulk_quantity":2}
+      }'
+  coupons.get:
+    call: '{ path: {"id":1} }'
+  coupons.update:
+    call: '{ path: {"id":1}, body: {"code":"sample"} }'
+  coupons.remove:
+    call: '{ path: {"id":1} }'
+  contents.get:
+    call: '{ path: {"id":1} }'
+  courses.list:
+    call: '{ query: {"page":1,"limit":25} }'
+  courses.get:
+    call: '{ path: {"id":1} }'
+  courses.listChapters:
+    call: '{ path: {"id":1}, query: {"page":1,"limit":25} }'
+  customProfileFields.list:
+    call: '{ query: {"page":1,"limit":25} }'
+  enrollments.list:
+    call: '{ query: {"page":1,"limit":25} }'
+  enrollments.create:
+    call: '{ body: {"course_id":1,"user_id":1} }'
+  enrollments.get:
+    call: '{ path: {"id":1} }'
+  enrollments.update:
+    call: '{ path: {"id":1}, body:
+      {"activated_at":"2026-01-01T00:00:00.000Z","expiry_date":"2027-01-01T00:00:00.000Z"}
+      }'
+  externalOrders.create:
+    call: '{ body:
+      {"payment_provider":"sample","user_id":1,"product_id":1,"order_type":"one-time"}
+      }'
+  externalOrders.refund:
+    call: '{ path: {"id":1}, body: {"amount":10000,"currency":"USD"} }'
+  externalOrders.purchase:
+    call: '{ path: {"id":"sample"}, body: {"amount":10000,"currency":"USD"} }'
+  groups.list:
+    call: '{ query: {"page":1,"limit":25} }'
+  groups.create:
+    call: '{ body: {"name":"sample"} }'
+  groups.get:
+    call: '{ path: {"id":1} }'
+  groups.remove:
+    call: '{ path: {"id":1} }'
+  groups.listAnalysts:
+    call: '{ path: {"group_id":1} }'
+  groups.assignAnalysts:
+    call: '{ path: {"group_id":1}, body: {"user_ids":[1]} }'
+  groups.removeAnalyst:
+    call: '{ path: {"group_id":1,"user_id":1} }'
+  groupAnalysts.addGroup:
+    call: '{ path: {"user_id":1}, body: {"group_ids":[1]} }'
+  groupAnalysts.removeGroup:
+    call: '{ path: {"user_id":1,"group_id":1} }'
+  instructors.list:
+    call: '{ query: {"page":1,"limit":25} }'
+  instructors.create:
+    call: '{ body: {"first_name":"sample","last_name":"sample","slug":"sample"} }'
+  instructors.get:
+    call: '{ path: {"id":1} }'
+  instructors.update:
+    call: '{ path: {"id":1}, body:
+      {"first_name":"sample","last_name":"sample","slug":"sample"} }'
+  instructors.remove:
+    call: '{ path: {"id":1} }'
+  orders.list:
+    call: '{ query: {"page":1,"limit":25} }'
+  orders.get:
+    call: '{ path: {"id":1} }'
+  groupUsers.addUsers:
+    call: '{ body: {"group_names":["sample"],"user_id":1} }'
+  productPublishRequests.list:
+    call: '{ query: {"page":1,"limit":25} }'
+  productPublishRequests.get:
+    call: '{ path: {"id":1} }'
+  productPublishRequests.approve:
+    call: '{ path: {"id":1}, body: {"user_id":1} }'
+  productPublishRequests.deny:
+    call: '{ path: {"id":1}, body: {"user_id":1} }'
+  products.list:
+    call: '{ query: {"page":1,"limit":25} }'
+  products.get:
+    call: '{ path: {"id":1} }'
+  products.listRelated:
+    call: '{ path: {"id":1}, query: {"page":1,"limit":25} }'
+  promotions.list:
+    call: '{ query: {"page":1,"limit":25} }'
+  promotions.create:
+    call: '{ body: {"amount":1,"discount_type":"fixed","name":"sample"} }'
+  promotions.get:
+    call: '{ path: {"id":1} }'
+  promotions.update:
+    call: '{ path: {"id":1}, body:
+      {"amount":1,"discount_type":"fixed","name":"sample"} }'
+  promotions.remove:
+    call: '{ path: {"id":1} }'
+  promotions.getByCoupon:
+    call: '{ query: {"product_id":1,"coupon_code":"sample"} }'
+  courseReviews.list:
+    call: '{ query: {"course_id":1,"page":1,"limit":25} }'
+  courseReviews.create:
+    call: '{ query: {"course_id":1}, body:
+      {"approved":false,"rating":1,"review_text":"sample","title":"sample","user_id":1}
+      }'
+  courseReviews.get:
+    call: '{ path: {"id":1} }'
+  users.list:
+    call: '{ query: {"page":1,"limit":25} }'
+  users.create:
+    call: '{ body:
+      {"email":"learner@example.com","first_name":"sample","last_name":"sample"}
+      }'
+  users.get:
+    call: '{ path: {"id":"sample"} }'
+  users.update:
+    call: '{ path: {"id":"sample"}, body: {"first_name":"Updated"} }'
+  users.remove:
+    call: '{ path: {"id":"sample"} }'
+  users.getAuthentication:
+    call: '{ path: {"id":"sample","provider":"SSO"} }'
+  users.createExpressSignInLink:
+    call: '{ path: {"id":1} }'
+apiNotes:
+  bundles.createEnrollment: Thinkific documents both 201 synchronous and 202
+    asynchronous creation responses without a response body schema; this
+    operation validates an empty response rather than inventing a job payload.
+  users.createExpressSignInLink: The returned Express Sign In URL is
+    password-equivalent and must be treated as a secret. Do not copy it into
+    logs or share it outside the intended learner.
+  productPublishRequests.list: The published OpenAPI response component points its
+    items to PromotionResponse, but the operation returns Product Publish
+    Requests. This plugin validates items with ProductPublishRequest, matching
+    the documented detail route.

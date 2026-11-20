@@ -1,0 +1,411 @@
+---
+title: "NEURONwriter API reference"
+sidebarTitle: "API"
+description: "API reference for the NEURONwriter plugin in Corsair: every `neuronwriter.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Analysis
+
+### get
+
+`analysis.get`
+
+Poll one analysis: the status alone while it runs, then the target word count, terms, questions and SERP competitors
+
+**Risk:** `read`
+
+```ts
+await corsair.neuronwriter.api.analysis.get({ query: '32dee2a89374a722' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | The query id, from analysis.start. |
+
+Answers only a status until it is ready; the metrics, terms, ideas and competitors appear only then.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `metrics` | `object \| null` | No | — |
+| `terms` | `object \| null` | No | — |
+| `terms_txt` | `object \| null` | No | — |
+| `ideas` | `object \| null` | No | — |
+| `competitors` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="metrics full type">
+
+```ts
+{
+  word_count?: {
+    median?: number | null,
+    target?: number | null
+  } | null,
+  readability?: {
+    median?: number | null,
+    target?: number | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="terms full type">
+
+```ts
+{
+  title?: {
+    t?: string | null,
+    usage_pc?: number | null,
+    sugg_usage?: number[] | null
+  }[] | null,
+  desc?: {
+    t?: string | null,
+    usage_pc?: number | null,
+    sugg_usage?: number[] | null
+  }[] | null,
+  h1?: {
+    t?: string | null,
+    usage_pc?: number | null,
+    sugg_usage?: number[] | null
+  }[] | null,
+  h2?: {
+    t?: string | null,
+    usage_pc?: number | null,
+    sugg_usage?: number[] | null
+  }[] | null,
+  content_basic?: {
+    t?: string | null,
+    usage_pc?: number | null,
+    sugg_usage?: number[] | null
+  }[] | null,
+  content_extended?: {
+    t?: string | null,
+    usage_pc?: number | null,
+    sugg_usage?: number[] | null
+  }[] | null,
+  entities?: {
+    t?: string | null,
+    importance?: number | null,
+    relevance?: number | null,
+    confidence?: number | null,
+    links?: string[][] | null
+  }[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="terms_txt full type">
+
+```ts
+{
+  title?: string | null,
+  desc_title?: string | null,
+  h1?: string | null,
+  h2?: string | null,
+  content_basic?: string | null,
+  content_extended?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="ideas full type">
+
+```ts
+{
+  suggest_questions?: {
+    q?: string | null
+  }[] | null,
+  people_also_ask?: {
+    q?: string | null
+  }[] | null,
+  content_questions?: {
+    q?: string | null
+  }[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="competitors full type">
+
+```ts
+{
+  rank?: number | null,
+  url?: string | null,
+  title?: string | null,
+  desc?: string | null,
+  content_score?: number | string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### start
+
+`analysis.start`
+
+Queue a content analysis for a keyword, spending one Content Writer analysis from the monthly limit; poll analysis.get for the recommendations
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.neuronwriter.api.analysis.start({ project: 'c2fe46bce8019bff', keyword: 'trail running shoes', engine: 'google.co.uk', language: 'English', competitors_mode: 'top10' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | The project id, from the project's URL: app.neuronwriter.com/project/view/&#123;id&#125;. |
+| `keyword` | `string` | Yes | The keyword to analyse. |
+| `engine` | `string` | Yes | The search engine, e.g. google.co.uk. |
+| `language` | `string` | Yes | The content language, e.g. English. |
+| `competitors_mode` | `top10 \| top30 \| top-intent` | No | Which competitors to analyse: top10 (the default), top30, or top-intent for up to ten pages matching the dominant intent. |
+
+Spends one Content Writer analysis from the monthly limit, and answers before the recommendations exist.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `query_url` | `string \| null` | No | — |
+| `share_url` | `string \| null` | No | — |
+| `readonly_url` | `string \| null` | No | — |
+
+
+
+---
+
+## Content
+
+### evaluate
+
+`content.evaluate`
+
+Score content against its analysis without saving a revision, so a draft can be checked before it is written back
+
+**Risk:** `read`
+
+```ts
+await corsair.neuronwriter.api.content.evaluate({ query: '32dee2a89374a722', url: 'https://example.com/draft', id: 'main-content' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | The query id, from analysis.start. |
+| `html` | `string` | No | The HTML to send. |
+| `url` | `string` | No | A page to fetch and parse instead of sending HTML. |
+| `title` | `string` | No | Overrides the title found in the HTML or page. |
+| `description` | `string` | No | Overrides the meta description found in the HTML or page. |
+| `id` | `string` | No | The element id holding the content, when importing from a url. |
+| `class` | `string` | No | The element class holding the content, when importing from a url. |
+
+Scores the content without saving a revision, so it costs no revision history.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `content_score` | `number \| null` | No | The content score of the imported or evaluated text. |
+| `error` | `string \| null` | No | The reason an import or evaluation failed, when one did. |
+
+
+
+---
+
+### get
+
+`content.get`
+
+Read a query's last saved content revision, or the latest autosave as well
+
+**Risk:** `read`
+
+```ts
+await corsair.neuronwriter.api.content.get({ query: '32dee2a89374a722', revision_type: 'all' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | The query id, from analysis.start. |
+| `revision_type` | `manual \| all` | No | manual for the last saved revision, all to include autosaves. NEURONwriter defaults to manual. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+
+
+
+---
+
+### import
+
+`content.import`
+
+Replace the editor content from HTML or a fetched URL, saving it as a new revision
+
+**Risk:** `write`
+
+```ts
+await corsair.neuronwriter.api.content.import({ query: '32dee2a89374a722', html: '<h1>Best Trail Running Shoes</h1><p>...</p>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | The query id, from analysis.start. |
+| `html` | `string` | No | The HTML to send. |
+| `url` | `string` | No | A page to fetch and parse instead of sending HTML. |
+| `title` | `string` | No | Overrides the title found in the HTML or page. |
+| `description` | `string` | No | Overrides the meta description found in the HTML or page. |
+| `id` | `string` | No | The element id holding the content, when importing from a url. |
+| `class` | `string` | No | The element class holding the content, when importing from a url. |
+
+Saves a new revision. Takes html or url, never both.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `content_score` | `number \| null` | No | The content score of the imported or evaluated text. |
+| `error` | `string \| null` | No | The reason an import or evaluation failed, when one did. |
+
+
+
+---
+
+## Projects
+
+### list
+
+`projects.list`
+
+List the account's projects with the id, language and search engine each one uses
+
+**Risk:** `read`
+
+```ts
+await corsair.neuronwriter.api.projects.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projects` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="projects full type">
+
+```ts
+{
+  project?: string | null,
+  name?: string | null,
+  language?: string | null,
+  engine?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Queries
+
+### list
+
+`queries.list`
+
+List the queries in a project, filterable by status, source, keyword, language, engine, dates and tags
+
+**Risk:** `read`
+
+```ts
+await corsair.neuronwriter.api.queries.list({ project: 'c2fe46bce8019bff', status: 'ready', tags: ['Done'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | The project id, from the project's URL: app.neuronwriter.com/project/view/&#123;id&#125;. |
+| `status` | `not found \| waiting \| in progress \| ready` | No | Only queries in this state. |
+| `source` | `neuron \| neuron-api` | No | Only queries created in the app or through the API. |
+| `created` | `string` | No | Only queries created at this instant. |
+| `updated` | `string` | No | Only queries last updated at this instant. |
+| `keyword` | `string` | No | — |
+| `language` | `string` | No | — |
+| `engine` | `string` | No | — |
+| `tags` | `string \| string[]` | No | Only queries carrying these tags. Every tag must be present. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `queries` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="queries full type">
+
+```ts
+{
+  query?: string | null,
+  created?: string | null,
+  updated?: string | null,
+  keyword?: string | null,
+  language?: string | null,
+  engine?: string | null,
+  source?: string | null,
+  tags?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

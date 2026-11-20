@@ -722,6 +722,20 @@
       "shortPath": "batches.create",
       "description": "Create a batch job",
       "riskLevel": "write",
+      "job": {
+        "idPath": "id",
+        "status": {
+          "op": "batches.retrieve",
+          "idArg": "batchId",
+          "statusPath": "status",
+          "done": ["completed"],
+          "failed": ["failed", "expired", "cancelled"]
+        },
+        "cancel": {
+          "op": "batches.cancel",
+          "idArg": "batchId"
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
@@ -3726,6 +3740,20 @@
       "shortPath": "fineTuning.createJob",
       "description": "Create a fine-tuning job",
       "riskLevel": "write",
+      "job": {
+        "idPath": "id",
+        "status": {
+          "op": "fineTuning.retrieveJob",
+          "idArg": "jobId",
+          "statusPath": "status",
+          "done": ["succeeded"],
+          "failed": ["failed", "cancelled"]
+        },
+        "cancel": {
+          "op": "fineTuning.cancelJob",
+          "idArg": "jobId"
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
@@ -7904,6 +7932,16 @@
       "shortPath": "videos.create",
       "description": "Generate a video from a prompt",
       "riskLevel": "write",
+      "job": {
+        "idPath": "id",
+        "status": {
+          "op": "videos.retrieve",
+          "idArg": "videoId",
+          "statusPath": "status",
+          "done": ["completed"],
+          "failed": ["failed"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
@@ -8000,6 +8038,16 @@
       "shortPath": "videos.createRemix",
       "description": "Create a remix of an existing video",
       "riskLevel": "write",
+      "job": {
+        "idPath": "id",
+        "status": {
+          "op": "videos.retrieve",
+          "idArg": "videoId",
+          "statusPath": "status",
+          "done": ["completed"],
+          "failed": ["failed"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [

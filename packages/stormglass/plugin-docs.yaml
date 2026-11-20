@@ -1,0 +1,62 @@
+displayName: Stormglass
+description: Global weather, marine, tide, astronomy, solar, bio and elevation data for any coordinate, from the Stormglass API.
+domain: stormglass.io
+recommendedAuth: api_key
+overviewNote: |
+  The plugin covers the whole Stormglass v2 API: hourly weather and marine forecasts, historical weather back to 2014, tide extremes and hourly sea levels, tide stations, astronomy, solar, bio and elevation.
+  Get a key from the Stormglass dashboard; it is sent as the Authorization header with no Bearer prefix. Every call counts against the account's daily request quota (10 a day on the free plan); each response's `quota` shows the limit and how many requests were used today. A 402 means the quota is used up.
+  Hourly ops return `values` (one number per parameter: the first source you asked for, else Stormglass's own `sg` blend) and `sources` (every source's value). Times are UTC; `start` and `end` take UNIX seconds or ISO strings such as 2024-01-01 or 2024-01-01T06, and one call covers at most 10 days.
+  Tide data is astronomical tide from the nearest tide station; `station` in the result names it and its distance. Coordinates are not written to events.
+references:
+  - title: Stormglass API documentation
+    url: https://docs.stormglass.io/
+examples:
+  read:
+    path: weather.get
+    title: Get the wind and wave forecast
+    args:
+      lat: 58.7984
+      lng: 17.8081
+      params: windSpeed,waveHeight
+apiNotes:
+  stations.list: |
+    GET /v2/tide/stations. Stores each station with source:name as the id.
+  stations.area: |
+    GET /v2/tide/stations/area. box is the top-right and bottom-left corners, lat,lng:lat,lng.
+  elevation.get: |
+    GET /v2/elevation/point. Meters; negative at sea. Stored per coordinate.
+  tides.extremes: |
+    GET /v2/tide/extremes/point. High and low tides from the nearest station; datum sets the zero level (default MSL). Stored with station, datum, time and type as the id.
+  tides.seaLevel: |
+    GET /v2/tide/sea-level/point. Hourly sea level relative to the datum. Heights are relative levels, not water depth.
+  astronomy.get: |
+    GET /v2/astronomy/point. One entry per day. Rise and set times are null on days they don't happen.
+  solar.get: |
+    GET /v2/solar/point. params: uvIndex, solarDownwardRadiationFlux, surfaceNetShortwaveRadiationDownwardsFlux.
+  bio.get: |
+    GET /v2/bio/point. params: chlorophyll, iron, nitrate, oxygen, ph, phosphate, phyto, phytoplankton, salinity, silicate, surfaceTemperature, soilMoisture and soilTemperature (each also at 10cm, 40cm, 100cm). Air and water temperature come from weather.get.
+  weather.get: |
+    GET /v2/weather/point. params such as airTemperature, windSpeed, gust, waveHeight, swellHeight, waterTemperature, precipitation, cloudCover. Forecasts reach 10 days ahead and 14 days back.
+  weather.historical: |
+    GET /v2/historical/point. ERA5 reanalysis from 2014 until about a week ago. Needs start or end.
+apiExamples:
+  stations.list:
+    call: "{}"
+  stations.area:
+    call: "{ box: '59.0,18.0:58.0,17.0' }"
+  elevation.get:
+    call: "{ lat: 58.7984, lng: 17.8081 }"
+  tides.extremes:
+    call: "{ lat: 60.936, lng: 5.114, start: '2024-06-01', end: '2024-06-03', datum: 'MLLW' }"
+  tides.seaLevel:
+    call: "{ lat: 60.936, lng: 5.114, start: '2024-06-01', end: '2024-06-02' }"
+  astronomy.get:
+    call: "{ lat: 58.7984, lng: 17.8081, start: '2024-06-21', end: '2024-06-23' }"
+  solar.get:
+    call: "{ lat: 58.7984, lng: 17.8081, params: 'uvIndex' }"
+  bio.get:
+    call: "{ lat: 58.7984, lng: 17.8081, params: 'salinity,ph' }"
+  weather.get:
+    call: "{ lat: 58.7984, lng: 17.8081, params: 'airTemperature,windSpeed,waveHeight', source: 'sg' }"
+  weather.historical:
+    call: "{ lat: 58.7984, lng: 17.8081, params: 'airTemperature', start: '2023-01-01', end: '2023-01-02' }"

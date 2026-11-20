@@ -814,6 +814,47 @@ export const openaiEndpointSchemas = {
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
+// Videos, batches and fine-tuning jobs run after the call that starts them
+// returns. Status values are the output schemas' (schema/videos.ts,
+// schema/batches.ts, schema/fine-tuning.ts); jobs.test.ts keeps them in step.
+// OpenAI can't stop a video render (videos.delete only removes it).
+const VIDEO_JOB = {
+	idPath: 'id',
+	status: {
+		op: 'videos.retrieve',
+		idArg: 'videoId',
+		statusPath: 'status',
+		done: ['completed'],
+		failed: ['failed'],
+	},
+} as const;
+
+// A batch past its completion window is expired: it ended without finishing
+// every request, and only the finished ones are in its output file.
+const BATCH_JOB = {
+	idPath: 'id',
+	status: {
+		op: 'batches.retrieve',
+		idArg: 'batchId',
+		statusPath: 'status',
+		done: ['completed'],
+		failed: ['failed', 'expired', 'cancelled'],
+	},
+	cancel: { op: 'batches.cancel', idArg: 'batchId' },
+} as const;
+
+const FINE_TUNING_JOB = {
+	idPath: 'id',
+	status: {
+		op: 'fineTuning.retrieveJob',
+		idArg: 'jobId',
+		statusPath: 'status',
+		done: ['succeeded'],
+		failed: ['failed', 'cancelled'],
+	},
+	cancel: { op: 'fineTuning.cancelJob', idArg: 'jobId' },
+} as const;
+
 const openaiEndpointMeta = {
 	'models.list': { riskLevel: 'read', description: 'List available models' },
 	'models.retrieve': {
@@ -838,7 +879,8 @@ const openaiEndpointMeta = {
 	},
 	'files.upload': {
 		riskLevel: 'write',
-		description: 'Upload a file to OpenAI',
+		description:
+			'Upload a file to OpenAI. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'files.list': { riskLevel: 'read', description: 'List uploaded files' },
 	'files.retrieve': {
@@ -848,7 +890,8 @@ const openaiEndpointMeta = {
 	'files.delete': { riskLevel: 'destructive', description: 'Delete a file' },
 	'files.downloadContent': {
 		riskLevel: 'read',
-		description: 'Download the contents of a file',
+		description:
+			'Download the contents of a file. On Corsair up to about 700 KB comes back inline and a larger file comes back as fileId, a Files id; without a host that keeps files the content comes back inline up to 100 MB, or contentOmitted.',
 	},
 	'assistants.create': {
 		riskLevel: 'write',
@@ -978,15 +1021,18 @@ const openaiEndpointMeta = {
 	},
 	'audio.createSpeech': {
 		riskLevel: 'write',
-		description: 'Generate spoken audio from text',
+		description:
+			'Generate spoken audio from text. On Corsair the audio comes back as audioBase64 up to about 700 KB and a longer clip comes back as fileId, a Files id; without a host that keeps files audioBase64 holds up to 100 MB, or contentOmitted is set.',
 	},
 	'audio.createTranscription': {
 		riskLevel: 'write',
-		description: 'Transcribe audio into text',
+		description:
+			'Transcribe audio into text. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'audio.createTranslation': {
 		riskLevel: 'write',
-		description: 'Translate audio into English text',
+		description:
+			'Translate audio into English text. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'images.create': {
 		riskLevel: 'write',
@@ -994,15 +1040,19 @@ const openaiEndpointMeta = {
 	},
 	'images.createEdit': {
 		riskLevel: 'write',
-		description: 'Edit an image given a prompt and mask',
+		description:
+			'Edit an image given a prompt and mask. Takes the image and mask as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'images.createVariation': {
 		riskLevel: 'write',
-		description: 'Create variations of an image',
+		description:
+			'Create variations of an image. Takes the image as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'videos.create': {
 		riskLevel: 'write',
-		description: 'Generate a video from a prompt',
+		description:
+			'Generate a video from a prompt. Takes an optional inputReference image or video as a public link, base64 or a Blob; on Corsair, pass a Files id.',
+		job: VIDEO_JOB,
 	},
 	'videos.list': { riskLevel: 'read', description: 'List generated videos' },
 	'videos.retrieve': { riskLevel: 'read', description: 'Retrieve a video' },
@@ -1013,10 +1063,12 @@ const openaiEndpointMeta = {
 	'videos.createRemix': {
 		riskLevel: 'write',
 		description: 'Create a remix of an existing video',
+		job: VIDEO_JOB,
 	},
 	'videos.download': {
 		riskLevel: 'read',
-		description: 'Download the rendered content of a video',
+		description:
+			'Download the rendered content of a video. On Corsair up to about 700 KB comes back inline and a larger file comes back as fileId, a Files id; without a host that keeps files the content comes back inline up to 100 MB, or contentOmitted.',
 	},
 	'realtime.createCall': {
 		riskLevel: 'write',
@@ -1048,7 +1100,8 @@ const openaiEndpointMeta = {
 	},
 	'skills.create': {
 		riskLevel: 'write',
-		description: 'Upload a skill',
+		description:
+			'Upload a skill. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'skills.list': { riskLevel: 'read', description: 'List skills' },
 	'skills.delete': {
@@ -1070,7 +1123,8 @@ const openaiEndpointMeta = {
 	},
 	'containerFiles.create': {
 		riskLevel: 'write',
-		description: 'Add a file to a container',
+		description:
+			'Add a file to a container, by fileId or as a new upload. Takes the upload as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'containerFiles.list': {
 		riskLevel: 'read',
@@ -1082,7 +1136,8 @@ const openaiEndpointMeta = {
 	},
 	'containerFiles.retrieveContent': {
 		riskLevel: 'read',
-		description: 'Download the contents of a container file',
+		description:
+			'Download the contents of a container file. On Corsair up to about 700 KB comes back inline and a larger file comes back as fileId, a Files id; without a host that keeps files the content comes back inline up to 100 MB, or contentOmitted.',
 	},
 	'containerFiles.delete': {
 		riskLevel: 'destructive',
@@ -1119,6 +1174,7 @@ const openaiEndpointMeta = {
 	'fineTuning.createJob': {
 		riskLevel: 'write',
 		description: 'Create a fine-tuning job',
+		job: FINE_TUNING_JOB,
 	},
 	'fineTuning.listJobs': {
 		riskLevel: 'read',
@@ -1230,6 +1286,7 @@ const openaiEndpointMeta = {
 	'batches.create': {
 		riskLevel: 'write',
 		description: 'Create a batch job',
+		job: BATCH_JOB,
 	},
 	'batches.retrieve': {
 		riskLevel: 'read',
@@ -1246,7 +1303,8 @@ const openaiEndpointMeta = {
 	},
 	'uploads.addPart': {
 		riskLevel: 'write',
-		description: 'Add a part of file data to an upload',
+		description:
+			'Add a part of file data to an upload. Takes the part as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'uploads.complete': {
 		riskLevel: 'write',

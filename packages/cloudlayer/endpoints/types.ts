@@ -1,3 +1,4 @@
+import { FileInputSchema } from 'corsair/http';
 import { z } from 'zod';
 
 // Shapes mirror documented generation and resource operations under
@@ -444,13 +445,26 @@ export type UrlToImageQuickV1Output = z.infer<
  * Nunjucks render data. One of `templateId` (gallery template) or `template`
  * (base64 HTML) is required and the docs forbid sending both
  * (https://cloudlayer.io/docs/template-to-pdf/#template-parameters).
+ *
+ * The multipart form uploads the template as a file. An agent holds no bytes,
+ * so the file may be a link or base64 (core's FileInput); a Blob or File still
+ * works from TypeScript. A bare base64 string is still the JSON body's inline
+ * template, since the JSON form is tried first.
  */
-const TemplateMultipartInputSchema = z
+export const TemplateMultipartInputSchema = z
 	.object({
-		template: z.instanceof(Blob),
+		template: z
+			.union([FileInputSchema, z.instanceof(Blob)])
+			.describe(
+				'The template file: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). A bare base64 string is sent as the inline JSON template instead.',
+			),
 		data: JsonObjectSchema,
 	})
 	.strict();
+
+export type TemplateMultipartInput = z.infer<
+	typeof TemplateMultipartInputSchema
+>;
 
 export const TemplateToPdfJsonInputSchema = z
 	.object({

@@ -1,0 +1,4354 @@
+---
+title: "Honeybadger API reference"
+sidebarTitle: "API"
+description: "API reference for the Honeybadger plugin in Corsair: every `honeybadger.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### get
+
+`account.get`
+
+Read the account the token belongs to, with its name and primary email
+
+**Risk:** `read`
+
+```ts
+await corsair.honeybadger.api.account.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  email?: string | null,
+  active?: boolean | null,
+  parked?: boolean | null,
+  created_at?: string | null,
+  links?: {
+    web: string
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### usage
+
+`account.usage`
+
+Read the account quota and how much of it is used, for errors, uptime and check-ins
+
+**Risk:** `read`
+
+```ts
+await corsair.honeybadger.api.account.usage({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  quota: {
+    errors_limit: number,
+    errors_consumed: number,
+    uptime_limit?: number | null,
+    uptime_consumed: number,
+    check_ins_limit?: number | null,
+    check_ins_consumed: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Check Ins
+
+### create
+
+`checkIns.create`
+
+Create a check-in on a simple period or a cron schedule; a simple schedule needs `report_period` and a cron schedule needs `cron_schedule`
+
+**Risk:** `write`
+
+```ts
+await corsair.honeybadger.api.checkIns.create({ project_id: 'Xk9mZp', name: 'Nightly billing', slug: 'nightly-billing', report_period: '1 day', grace_period: '15 minutes' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `name` | `string \| null` | No | Display name. Null clears it; an unnamed check-in shows its ID. |
+| `slug` | `string \| null` | No | Short identifier used in the check-in's reporting URL. Renaming it breaks jobs reporting to `…/check_in/<ingestion key>/<slug>`. |
+| `schedule_type` | `simple \| cron` | No | `simple` expects a report every `report_period`; `cron` expects reports on a cron schedule and requires `cron_schedule`. Switching to `simple` clears `cron_schedule`; switching to `cron` clears `report_period`. Defaults to `simple` on create. |
+| `report_period` | `string \| null` | No | How often a report is expected, for `simple` schedules. Required unless `schedule_type` is `cron`, and may not be zero. Returned in long form. |
+| `grace_period` | `string \| null` | No | How long after the expected time before the check-in counts as missing. Null resets it to zero. |
+| `cron_schedule` | `string \| null` | No | Cron expression, required when `schedule_type` is `cron`. |
+| `cron_timezone` | `string \| null` | No | Timezone the cron schedule is evaluated in, as the web app lists it (`Central Time (US & Canada)`), not an IANA identifier. Null resets it to `UTC`. |
+
+A `simple` schedule needs `report_period`. A `cron` schedule needs `cron_schedule` and takes the web app timezone name, not an IANA identifier.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  project_id: string,
+  name?: string | null,
+  slug?: string | null,
+  schedule_type?: string | null,
+  state?: string | null,
+  reported_at?: string | null,
+  expected_at?: string | null,
+  missed_count?: number | null,
+  grace_period?: string | null,
+  report_url?: string | null,
+  cron_schedule?: string | null,
+  cron_timezone?: string | null,
+  report_period?: string | null,
+  created_at?: string | null,
+  links?: {
+    web: string
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`checkIns.delete`
+
+Delete a check-in, which stops monitoring that scheduled job
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.honeybadger.api.checkIns.delete({ project_id: 'Xk9mZp', check_in_id: 'Ci5xWq' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `check_in_id` | `string` | Yes | The check-in ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `project_id` | `string` | Yes | — |
+| `check_in_id` | `string` | Yes | — |
+
+
+
+---
+
+### events
+
+`checkIns.events`
+
+List a check-in's state changes newest first, paging backwards on a timestamp
+
+**Risk:** `read`
+
+```ts
+await corsair.honeybadger.api.checkIns.events({ project_id: 'Xk9mZp', check_in_id: 'Ci5xWq', limit: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `check_in_id` | `string` | Yes | The check-in ID. |
+| `limit` | `number` | No | Maximum items to return, 1 to 100. Defaults to 25. |
+| `created_before` | `number` | No | Only items created before this Unix timestamp. Take it from `links.older`; fractional seconds count. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  check_in_id: string,
+  state: string,
+  created_at?: string | null,
+  payload?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  limit?: number,
+  has_older?: boolean,
+  has_newer?: boolean,
+  oldest_cursor?: string | null,
+  newest_cursor?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string,
+  older?: string | null,
+  newer?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`checkIns.get`
+
+Read one check-in with its schedule, last report and next expected report
+
+**Risk:** `read`
+
+```ts
+await corsair.honeybadger.api.checkIns.get({ project_id: 'Xk9mZp', check_in_id: 'Ci5xWq' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `check_in_id` | `string` | Yes | The check-in ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  project_id: string,
+  name?: string | null,
+  slug?: string | null,
+  schedule_type?: string | null,
+  state?: string | null,
+  reported_at?: string | null,
+  expected_at?: string | null,
+  missed_count?: number | null,
+  grace_period?: string | null,
+  report_url?: string | null,
+  cron_schedule?: string | null,
+  cron_timezone?: string | null,
+  report_period?: string | null,
+  created_at?: string | null,
+  links?: {
+    web: string
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`checkIns.list`
+
+List a project's check-ins with their state and next expected report
+
+**Risk:** `read`
+
+```ts
+await corsair.honeybadger.api.checkIns.list({ project_id: 'Xk9mZp' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `page` | `number` | No | Page number, 1-indexed. Defaults to 1. |
+| `per_page` | `number` | No | Items per page, 1 to 100. Defaults to 25. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+| `links` | `object \| null` | No | Root-relative paths, to be resolved against the API host. |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  project_id: string,
+  name?: string | null,
+  slug?: string | null,
+  schedule_type?: string | null,
+  state?: string | null,
+  reported_at?: string | null,
+  expected_at?: string | null,
+  missed_count?: number | null,
+  grace_period?: string | null,
+  report_url?: string | null,
+  cron_schedule?: string | null,
+  cron_timezone?: string | null,
+  report_period?: string | null,
+  created_at?: string | null,
+  links?: {
+    web: string
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number,
+  per_page?: number
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string,
+  first?: string | null,
+  prev?: string | null,
+  next?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### replace
+
+`checkIns.replace`
+
+Replace the project's whole set of check-ins by slug; every check-in the list does not name is deleted
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.honeybadger.api.checkIns.replace({ project_id: 'Xk9mZp', check_ins: [{ slug: 'nightly-billing', name: 'Nightly billing', report_period: '1 day' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `check_ins` | `object[]` | Yes | The project's complete set of check-ins. Any check-in this list does not name is deleted. |
+
+This replaces the whole set: every check-in the list does not name is deleted.
+
+<AccordionGroup>
+<Accordion title="check_ins full type">
+
+```ts
+{
+  name?: string | null,
+  slug: string,
+  schedule_type?: simple | cron,
+  report_period?: string | null,
+  grace_period?: string | null,
+  cron_schedule?: string | null,
+  cron_timezone?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  operation: create | update | delete,
+  slug: string,
+  success: true
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`checkIns.update`
+
+Change a check-in's name, slug, schedule or grace period; switching schedule type clears the other one's fields
+
+**Risk:** `write`
+
+```ts
+await corsair.honeybadger.api.checkIns.update({ project_id: 'Xk9mZp', check_in_id: 'Ci5xWq', grace_period: '30 minutes' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `check_in_id` | `string` | Yes | The check-in ID. |
+| `name` | `string \| null` | No | Display name. Null clears it; an unnamed check-in shows its ID. |
+| `slug` | `string \| null` | No | Short identifier used in the check-in's reporting URL. Renaming it breaks jobs reporting to `…/check_in/<ingestion key>/<slug>`. |
+| `schedule_type` | `simple \| cron` | No | `simple` expects a report every `report_period`; `cron` expects reports on a cron schedule and requires `cron_schedule`. Switching to `simple` clears `cron_schedule`; switching to `cron` clears `report_period`. Defaults to `simple` on create. |
+| `report_period` | `string \| null` | No | How often a report is expected, for `simple` schedules. Required unless `schedule_type` is `cron`, and may not be zero. Returned in long form. |
+| `grace_period` | `string \| null` | No | How long after the expected time before the check-in counts as missing. Null resets it to zero. |
+| `cron_schedule` | `string \| null` | No | Cron expression, required when `schedule_type` is `cron`. |
+| `cron_timezone` | `string \| null` | No | Timezone the cron schedule is evaluated in, as the web app lists it (`Central Time (US & Canada)`), not an IANA identifier. Null resets it to `UTC`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  project_id: string,
+  name?: string | null,
+  slug?: string | null,
+  schedule_type?: string | null,
+  state?: string | null,
+  reported_at?: string | null,
+  expected_at?: string | null,
+  missed_count?: number | null,
+  grace_period?: string | null,
+  report_url?: string | null,
+  cron_schedule?: string | null,
+  cron_timezone?: string | null,
+  report_period?: string | null,
+  created_at?: string | null,
+  links?: {
+    web: string
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Comments
+
+### create
+
+`comments.create`
+
+Comment on a fault; `@mentions` notify the named project members
+
+**Risk:** `write`
+
+```ts
+await corsair.honeybadger.api.comments.create({ project_id: 'Xk9mZp', fault_id: '12345', body: 'Rolled back, watching.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `fault_id` | `string` | Yes | The fault ID. |
+| `body` | `string` | Yes | The comment text. `@mentions` notify the named project members. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  fault_id: string,
+  author?: {
+    id?: string | null,
+    name?: string | null,
+    email?: string | null
+  } | null,
+  body?: string | null,
+  source?: string | null,
+  event?: string | null,
+  created_at?: string | null,
+  links?: {
+    web: string
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`comments.delete`
+
+Permanently delete a comment from a fault
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.honeybadger.api.comments.delete({ project_id: 'Xk9mZp', fault_id: '12345', comment_id: 'Cm7pLx' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `fault_id` | `string` | Yes | The fault ID. |
+| `comment_id` | `string` | Yes | The comment ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `project_id` | `string` | Yes | — |
+| `fault_id` | `string` | Yes | — |
+| `comment_id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`comments.get`
+
+Read one comment on a fault, with its author and body
+
+**Risk:** `read`
+
+```ts
+await corsair.honeybadger.api.comments.get({ project_id: 'Xk9mZp', fault_id: '12345', comment_id: 'Cm7pLx' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `fault_id` | `string` | Yes | The fault ID. |
+| `comment_id` | `string` | Yes | The comment ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  fault_id: string,
+  author?: {
+    id?: string | null,
+    name?: string | null,
+    email?: string | null
+  } | null,
+  body?: string | null,
+  source?: string | null,
+  event?: string | null,
+  created_at?: string | null,
+  links?: {
+    web: string
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`comments.list`
+
+List a fault's comments newest first, paging backwards with a cursor
+
+**Risk:** `read`
+
+```ts
+await corsair.honeybadger.api.comments.list({ project_id: 'Xk9mZp', fault_id: '12345' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `fault_id` | `string` | Yes | The fault ID. |
+| `limit` | `number` | No | Maximum items to return, 1 to 100. Defaults to 25. |
+| `before` | `string` | No | Cursor for older comments. |
+| `after` | `string` | No | Cursor for newer comments. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  fault_id: string,
+  author?: {
+    id?: string | null,
+    name?: string | null,
+    email?: string | null
+  } | null,
+  body?: string | null,
+  source?: string | null,
+  event?: string | null,
+  created_at?: string | null,
+  links?: {
+    web: string
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  limit?: number,
+  has_older?: boolean,
+  has_newer?: boolean,
+  oldest_cursor?: string | null,
+  newest_cursor?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string,
+  older?: string | null,
+  newer?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`comments.update`
+
+Replace the text of a comment on a fault; other comment fields cannot be changed
+
+**Risk:** `write`
+
+```ts
+await corsair.honeybadger.api.comments.update({ project_id: 'Xk9mZp', fault_id: '12345', comment_id: 'Cm7pLx', body: 'Fixed in 2.4.1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `fault_id` | `string` | Yes | The fault ID. |
+| `comment_id` | `string` | Yes | The comment ID. |
+| `body` | `string` | Yes | The new comment text. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  fault_id: string,
+  author?: {
+    id?: string | null,
+    name?: string | null,
+    email?: string | null
+  } | null,
+  body?: string | null,
+  source?: string | null,
+  event?: string | null,
+  created_at?: string | null,
+  links?: {
+    web: string
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Deploys
+
+### delete
+
+`deploys.delete`
+
+Delete a deploy record; the deploy is not re-read anywhere
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.honeybadger.api.deploys.delete({ project_id: 'Xk9mZp', deploy_id: 'Dp2yNk' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `deploy_id` | `string` | Yes | The deploy ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `project_id` | `string` | Yes | — |
+| `deploy_id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`deploys.get`
+
+Read one deploy record, with its environment, revision and author
+
+**Risk:** `read`
+
+```ts
+await corsair.honeybadger.api.deploys.get({ project_id: 'Xk9mZp', deploy_id: 'Dp2yNk' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `deploy_id` | `string` | Yes | The deploy ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  project_id: string,
+  environment?: string | null,
+  revision?: string | null,
+  repository?: string | null,
+  local_username?: string | null,
+  created_at?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`deploys.list`
+
+List deploys oldest-page-first with cursors, optionally by exact environment or deploy username
+
+**Risk:** `read`
+
+```ts
+await corsair.honeybadger.api.deploys.list({ project_id: 'Xk9mZp', environment: 'production' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `limit` | `number` | No | Maximum items to return, 1 to 100. Defaults to 25. |
+| `before` | `string` | No | Cursor for older deploys. |
+| `after` | `string` | No | Cursor for newer deploys. |
+| `environment` | `string` | No | Exact environment name to match. Ignored when blank. |
+| `local_username` | `string` | No | Exact deploy username to match. Ignored when blank; combines with `environment`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  project_id: string,
+  environment?: string | null,
+  revision?: string | null,
+  repository?: string | null,
+  local_username?: string | null,
+  created_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  limit?: number,
+  has_older?: boolean,
+  has_newer?: boolean,
+  oldest_cursor?: string | null,
+  newest_cursor?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string,
+  older?: string | null,
+  newer?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Environments
+
+### bulkDelete
+
+`environments.bulkDelete`
+
+Delete several environments at once; if any ID is not one of the project's, nothing is deleted
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.honeybadger.api.environments.bulkDelete({ project_id: 'Xk9mZp', environment_ids: ['En6tRm'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `environment_ids` | `string[]` | Yes | IDs of the environments to change. If any ID is not one of the project's environments, nothing changes. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  count: number
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bulkUpdate
+
+`environments.bulkUpdate`
+
+Turn notifications on or off for several environments at once; if any ID is not one of the project's, nothing changes
+
+**Risk:** `write`
+
+```ts
+await corsair.honeybadger.api.environments.bulkUpdate({ project_id: 'Xk9mZp', environment_ids: ['En6tRm'], notifications: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `environment_ids` | `string[]` | Yes | IDs of the environments to change. If any ID is not one of the project's environments, nothing changes. |
+| `notifications` | `boolean` | Yes | Whether notifications should fire for these environments. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  count: number
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`environments.create`
+
+Create an environment; names are unique per project and case-sensitive
+
+**Risk:** `write`
+
+```ts
+await corsair.honeybadger.api.environments.create({ project_id: 'Xk9mZp', name: 'staging' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `name` | `string` | Yes | Environment name. Unique per project, and case-sensitive. |
+| `notifications` | `boolean \| null` | No | Whether errors in this environment notify. Null means the default, true. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  project_id: string,
+  name: string,
+  notifications?: boolean | null,
+  created_at?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`environments.delete`
+
+Delete an environment; its faults and notices stay, and the next notice under that name recreates it with notifications on
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.honeybadger.api.environments.delete({ project_id: 'Xk9mZp', environment_id: 'En6tRm' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `environment_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `project_id` | `string` | Yes | — |
+| `environment_id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`environments.get`
+
+Read one environment and whether its errors send notifications
+
+**Risk:** `read`
+
+```ts
+await corsair.honeybadger.api.environments.get({ project_id: 'Xk9mZp', environment_id: 'En6tRm' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `environment_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  project_id: string,
+  name: string,
+  notifications?: boolean | null,
+  created_at?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`environments.list`
+
+List a project's environments and whether each sends notifications
+
+**Risk:** `read`
+
+```ts
+await corsair.honeybadger.api.environments.list({ project_id: 'Xk9mZp' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `page` | `number` | No | Page number, 1-indexed. Defaults to 1. |
+| `per_page` | `number` | No | Items per page, 1 to 100. Defaults to 25. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+| `links` | `object \| null` | No | Root-relative paths, to be resolved against the API host. |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  project_id: string,
+  name: string,
+  notifications?: boolean | null,
+  created_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number,
+  per_page?: number
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string,
+  first?: string | null,
+  prev?: string | null,
+  next?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`environments.update`
+
+Change whether an environment notifies; an environment cannot be renamed
+
+**Risk:** `write`
+
+```ts
+await corsair.honeybadger.api.environments.update({ project_id: 'Xk9mZp', environment_id: 'En6tRm', notifications: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `environment_id` | `string` | Yes | — |
+| `notifications` | `boolean \| null` | No | Whether errors in this environment notify. Null resets it to true. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  project_id: string,
+  name: string,
+  notifications?: boolean | null,
+  created_at?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Faults
+
+### affectedUsers
+
+`faults.affectedUsers`
+
+Read the 500 users a fault affected most, ranked by notice count
+
+**Risk:** `read`
+
+```ts
+await corsair.honeybadger.api.faults.affectedUsers({ project_id: 'Xk9mZp', fault_id: '12345' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `fault_id` | `string` | Yes | The fault ID. |
+| `q` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  user: string,
+  count: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### assign
+
+`faults.assign`
+
+Assign a fault to a project member, who is notified of it
+
+**Risk:** `write`
+
+```ts
+await corsair.honeybadger.api.faults.assign({ project_id: 'Xk9mZp', fault_id: '12345', assignee_id: 'Uz4wKm' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `fault_id` | `string` | Yes | The fault ID. |
+| `assignee_id` | `string` | Yes | ID of a user on the project. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  project_id: string,
+  message: string,
+  klass?: string | null,
+  component?: string | null,
+  action?: string | null,
+  environment?: string | null,
+  resolved?: boolean | null,
+  ignored?: boolean | null,
+  created_at?: string | null,
+  last_notice_at?: string | null,
+  notices_count?: number | null,
+  comments_count?: number | null,
+  tags?: string[] | null,
+  assignee_id?: string | null,
+  snoozed?: boolean | null,
+  assignee?: {
+    id: string,
+    name?: string | null,
+    email?: string | null
+  } | null,
+  last_notice_deploy?: Record<string, JsonValue> | null,
+  tickets?: {
+    url: string,
+    integration_id: string
+  }[] | null,
+  resolve_on_deploy?: boolean | null,
+  recording_paused_until?: string | null,
+  notices_count_in_range?: number | null,
+  links?: {
+    web: string
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`faults.delete`
+
+Permanently delete a fault; its notices stay readable by ID until retention removes them
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.honeybadger.api.faults.delete({ project_id: 'Xk9mZp', fault_id: '12345' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `fault_id` | `string` | Yes | The fault ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `project_id` | `string` | Yes | — |
+| `fault_id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`faults.get`
+
+Read one fault by ID; a merged fault redirects to the fault it was merged into
+
+**Risk:** `read`
+
+```ts
+await corsair.honeybadger.api.faults.get({ project_id: 'Xk9mZp', fault_id: '12345' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `fault_id` | `string` | Yes | The fault ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  project_id: string,
+  message: string,
+  klass?: string | null,
+  component?: string | null,
+  action?: string | null,
+  environment?: string | null,
+  resolved?: boolean | null,
+  ignored?: boolean | null,
+  created_at?: string | null,
+  last_notice_at?: string | null,
+  notices_count?: number | null,
+  comments_count?: number | null,
+  tags?: string[] | null,
+  assignee_id?: string | null,
+  snoozed?: boolean | null,
+  assignee?: {
+    id: string,
+    name?: string | null,
+    email?: string | null
+  } | null,
+  last_notice_deploy?: Record<string, JsonValue> | null,
+  tickets?: {
+    url: string,
+    integration_id: string
+  }[] | null,
+  resolve_on_deploy?: boolean | null,
+  recording_paused_until?: string | null,
+  notices_count_in_range?: number | null,
+  links?: {
+    web: string
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### ignore
+
+`faults.ignore`
+
+Ignore faults, which stops data collection for them, by ID or by query with `all: true`
+
+**Risk:** `write`
+
+```ts
+await corsair.honeybadger.api.faults.ignore({ project_id: 'Xk9mZp', fault_ids: ['12345'], dry_run: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `fault_ids` | `string[]` | No | IDs of the faults to change. If any ID is not a fault in this project, nothing changes. |
+| `all` | `boolean` | No | Apply to every fault the other filters match. Required to make an unbounded change explicit; ignored when `fault_ids` is set. |
+| `dry_run` | `boolean` | No | Report what the request would change without changing it. The response has the same shape, with `dry_run` echoed back. |
+| `q` | `string` | No | Search query applied when `fault_ids` is left out. |
+| `created_after` | `number` | No | Applied when `fault_ids` is left out, alongside `q`. |
+| `occurred_after` | `number` | No | Applied when `fault_ids` is left out, alongside `q`. |
+| `occurred_before` | `number` | No | Applied when `fault_ids` is left out, alongside `q`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  count: number,
+  dry_run: boolean,
+  fault_ids: string[],
+  fault_ids_truncated?: boolean | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`faults.list`
+
+List faults with error search, sorting and time filters; occurrence counts cover the requested window
+
+**Risk:** `read`
+
+```ts
+await corsair.honeybadger.api.faults.list({ project_id: 'Xk9mZp', order: 'recent', per_page: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `q` | `string` | No | Search query in the web UI's error search syntax, such as `environment:production`, `is:resolved` or `class:ArgumentError`. Prefix a filter with `-` to negate it. |
+| `created_after` | `number` | No | Only faults first seen after this Unix timestamp. |
+| `occurred_after` | `number` | No | Only occurrences after this Unix timestamp. A value before the project's retention window is moved up to it. |
+| `occurred_before` | `number` | No | Only occurrences before this Unix timestamp. |
+| `order` | `recent \| frequent` | No | `recent` sorts by last occurrence, `frequent` by occurrence count. Omitted sorts by creation time. |
+| `sort` | `asc \| desc` | No | Direction for `order`. Defaults to `desc` for `recent` and `frequent`, `asc` for creation time. |
+| `page` | `number` | No | Page number, 1-indexed. Defaults to 1. |
+| `per_page` | `number` | No | Items per page, 1 to 100. Defaults to 25. |
+
+`q` uses the web UI error search syntax. `occurred_after` also narrows the occurrence counts each fault reports.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+| `links` | `object \| null` | No | Root-relative paths, to be resolved against the API host. |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  project_id: string,
+  message: string,
+  klass?: string | null,
+  component?: string | null,
+  action?: string | null,
+  environment?: string | null,
+  resolved?: boolean | null,
+  ignored?: boolean | null,
+  created_at?: string | null,
+  last_notice_at?: string | null,
+  notices_count?: number | null,
+  comments_count?: number | null,
+  tags?: string[] | null,
+  assignee_id?: string | null,
+  snoozed?: boolean | null,
+  assignee?: {
+    id: string,
+    name?: string | null,
+    email?: string | null
+  } | null,
+  last_notice_deploy?: Record<string, JsonValue> | null,
+  tickets?: {
+    url: string,
+    integration_id: string
+  }[] | null,
+  resolve_on_deploy?: boolean | null,
+  recording_paused_until?: string | null,
+  notices_count_in_range?: number | null,
+  links?: {
+    web: string
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number,
+  per_page?: number
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string,
+  first?: string | null,
+  prev?: string | null,
+  next?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### merge
+
+`faults.merge`
+
+Merge one fault into another in the background; the merged fault keeps its tags, assignee and state on neither side, and its ID redirects for the retention period
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.honeybadger.api.faults.merge({ project_id: 'Xk9mZp', fault_id: '12345', target_fault_id: '67890' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `fault_id` | `string` | Yes | The fault that is merged away into `target_fault_id`. |
+| `target_fault_id` | `string` | Yes | The fault to keep. The fault in the path is merged into it. |
+
+Answers 202 with a `batch_id`; the merge runs in the background. Until it finishes the old fault is readable, then reads redirect.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  batch_id: string,
+  source_id: string,
+  target_id: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### occurrences
+
+`faults.occurrences`
+
+Read occurrence counts for one fault over a window, one bucket per interval including empty ones
+
+**Risk:** `read`
+
+```ts
+await corsair.honeybadger.api.faults.occurrences({ project_id: 'Xk9mZp', fault_id: '12345' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `fault_id` | `string` | Yes | The fault ID. |
+| `occurred_after` | `number` | No | Start of the window. With neither bound the window is the last hour; with only `occurred_before`, the hour before it. |
+| `occurred_before` | `number` | No | End of the window. |
+| `q` | `string` | No | Search query to narrow the counts. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  timestamp: number,
+  count: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string,
+  window?: {
+    occurred_after: number,
+    occurred_before: number
+  } | null,
+  interval_seconds?: number | null,
+  retention_truncated?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pauseRecording
+
+`faults.pauseRecording`
+
+Stop recording a fault for an hour, a day or a week, discarding notices during the pause
+
+**Risk:** `write`
+
+```ts
+await corsair.honeybadger.api.faults.pauseRecording({ project_id: 'Xk9mZp', fault_id: '12345', time: 'hour' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `fault_id` | `string` | Yes | The fault ID. |
+| `time` | `hour \| day \| week` | Yes | How long notices are discarded. Pausing again replaces the end time. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  project_id: string,
+  message: string,
+  klass?: string | null,
+  component?: string | null,
+  action?: string | null,
+  environment?: string | null,
+  resolved?: boolean | null,
+  ignored?: boolean | null,
+  created_at?: string | null,
+  last_notice_at?: string | null,
+  notices_count?: number | null,
+  comments_count?: number | null,
+  tags?: string[] | null,
+  assignee_id?: string | null,
+  snoozed?: boolean | null,
+  assignee?: {
+    id: string,
+    name?: string | null,
+    email?: string | null
+  } | null,
+  last_notice_deploy?: Record<string, JsonValue> | null,
+  tickets?: {
+    url: string,
+    integration_id: string
+  }[] | null,
+  resolve_on_deploy?: boolean | null,
+  recording_paused_until?: string | null,
+  notices_count_in_range?: number | null,
+  links?: {
+    web: string
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### resolve
+
+`faults.resolve`
+
+Resolve named faults, or every fault a query and time filter match with `all: true`; `dry_run` reports what would change
+
+**Risk:** `write`
+
+```ts
+await corsair.honeybadger.api.faults.resolve({ project_id: 'Xk9mZp', fault_ids: ['12345'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `fault_ids` | `string[]` | No | IDs of the faults to change. If any ID is not a fault in this project, nothing changes. |
+| `all` | `boolean` | No | Apply to every fault the other filters match. Required to make an unbounded change explicit; ignored when `fault_ids` is set. |
+| `dry_run` | `boolean` | No | Report what the request would change without changing it. The response has the same shape, with `dry_run` echoed back. |
+| `q` | `string` | No | Search query applied when `fault_ids` is left out. |
+| `created_after` | `number` | No | Applied when `fault_ids` is left out, alongside `q`. |
+| `occurred_after` | `number` | No | Applied when `fault_ids` is left out, alongside `q`. |
+| `occurred_before` | `number` | No | Applied when `fault_ids` is left out, alongside `q`. |
+
+Answers the number changed, which counts what changed rather than what matched: resolving a hundred faults of which ninety were already resolved reports ten.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  count: number,
+  dry_run: boolean,
+  fault_ids: string[],
+  fault_ids_truncated?: boolean | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### resumeRecording
+
+`faults.resumeRecording`
+
+Resume recording a fault; a fault that is not paused is unchanged
+
+**Risk:** `write`
+
+```ts
+await corsair.honeybadger.api.faults.resumeRecording({ project_id: 'Xk9mZp', fault_id: '12345' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `fault_id` | `string` | Yes | The fault ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  project_id: string,
+  message: string,
+  klass?: string | null,
+  component?: string | null,
+  action?: string | null,
+  environment?: string | null,
+  resolved?: boolean | null,
+  ignored?: boolean | null,
+  created_at?: string | null,
+  last_notice_at?: string | null,
+  notices_count?: number | null,
+  comments_count?: number | null,
+  tags?: string[] | null,
+  assignee_id?: string | null,
+  snoozed?: boolean | null,
+  assignee?: {
+    id: string,
+    name?: string | null,
+    email?: string | null
+  } | null,
+  last_notice_deploy?: Record<string, JsonValue> | null,
+  tickets?: {
+    url: string,
+    integration_id: string
+  }[] | null,
+  resolve_on_deploy?: boolean | null,
+  recording_paused_until?: string | null,
+  notices_count_in_range?: number | null,
+  links?: {
+    web: string
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### snooze
+
+`faults.snooze`
+
+Snooze notifications for a duration or an occurrence count, replacing any existing snooze
+
+**Risk:** `write`
+
+```ts
+await corsair.honeybadger.api.faults.snooze({ project_id: 'Xk9mZp', fault_id: '12345', time: 'day' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `fault_id` | `string` | Yes | The fault ID. |
+| `time` | `hour \| day \| week` | No | Snooze for this long. Send one of `time` or `count`. |
+| `count` | `10 \| 100 \| 1000` | No | Snooze until this many further occurrences have arrived. Send one of `time` or `count`. |
+
+Send exactly one of `time` or `count`. `count` is one of 10, 100 or 1000.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  project_id: string,
+  message: string,
+  klass?: string | null,
+  component?: string | null,
+  action?: string | null,
+  environment?: string | null,
+  resolved?: boolean | null,
+  ignored?: boolean | null,
+  created_at?: string | null,
+  last_notice_at?: string | null,
+  notices_count?: number | null,
+  comments_count?: number | null,
+  tags?: string[] | null,
+  assignee_id?: string | null,
+  snoozed?: boolean | null,
+  assignee?: {
+    id: string,
+    name?: string | null,
+    email?: string | null
+  } | null,
+  last_notice_deploy?: Record<string, JsonValue> | null,
+  tickets?: {
+    url: string,
+    integration_id: string
+  }[] | null,
+  resolve_on_deploy?: boolean | null,
+  recording_paused_until?: string | null,
+  notices_count_in_range?: number | null,
+  links?: {
+    web: string
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### summary
+
+`faults.summary`
+
+Read fault counts grouped by environment and resolved or ignored state, with the same filters as the fault list
+
+**Risk:** `read`
+
+```ts
+await corsair.honeybadger.api.faults.summary({ project_id: 'Xk9mZp' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `q` | `string` | No | Search query in the web UI's error search syntax, such as `environment:production`, `is:resolved` or `class:ArgumentError`. Prefix a filter with `-` to negate it. |
+| `created_after` | `number` | No | Only faults first seen after this Unix timestamp. |
+| `occurred_after` | `number` | No | Only occurrences after this Unix timestamp. A value before the project's retention window is moved up to it. |
+| `occurred_before` | `number` | No | Only occurrences before this Unix timestamp. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  total: number,
+  environments: {
+    environment?: string | null,
+    resolved: boolean,
+    ignored: boolean,
+    count: number
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unassign
+
+`faults.unassign`
+
+Remove the assignment from a fault, leaving it unowned
+
+**Risk:** `write`
+
+```ts
+await corsair.honeybadger.api.faults.unassign({ project_id: 'Xk9mZp', fault_id: '12345' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `fault_id` | `string` | Yes | The fault ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  project_id: string,
+  message: string,
+  klass?: string | null,
+  component?: string | null,
+  action?: string | null,
+  environment?: string | null,
+  resolved?: boolean | null,
+  ignored?: boolean | null,
+  created_at?: string | null,
+  last_notice_at?: string | null,
+  notices_count?: number | null,
+  comments_count?: number | null,
+  tags?: string[] | null,
+  assignee_id?: string | null,
+  snoozed?: boolean | null,
+  assignee?: {
+    id: string,
+    name?: string | null,
+    email?: string | null
+  } | null,
+  last_notice_deploy?: Record<string, JsonValue> | null,
+  tickets?: {
+    url: string,
+    integration_id: string
+  }[] | null,
+  resolve_on_deploy?: boolean | null,
+  recording_paused_until?: string | null,
+  notices_count_in_range?: number | null,
+  links?: {
+    web: string
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unignore
+
+`faults.unignore`
+
+Stop ignoring faults, so collection resumes, by ID or by query with `all: true`
+
+**Risk:** `write`
+
+```ts
+await corsair.honeybadger.api.faults.unignore({ project_id: 'Xk9mZp', fault_ids: ['12345'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `fault_ids` | `string[]` | No | IDs of the faults to change. If any ID is not a fault in this project, nothing changes. |
+| `all` | `boolean` | No | Apply to every fault the other filters match. Required to make an unbounded change explicit; ignored when `fault_ids` is set. |
+| `dry_run` | `boolean` | No | Report what the request would change without changing it. The response has the same shape, with `dry_run` echoed back. |
+| `q` | `string` | No | Search query applied when `fault_ids` is left out. |
+| `created_after` | `number` | No | Applied when `fault_ids` is left out, alongside `q`. |
+| `occurred_after` | `number` | No | Applied when `fault_ids` is left out, alongside `q`. |
+| `occurred_before` | `number` | No | Applied when `fault_ids` is left out, alongside `q`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  count: number,
+  dry_run: boolean,
+  fault_ids: string[],
+  fault_ids_truncated?: boolean | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unresolve
+
+`faults.unresolve`
+
+Mark faults unresolved, by ID or by query with `all: true`; `dry_run` reports what would change
+
+**Risk:** `write`
+
+```ts
+await corsair.honeybadger.api.faults.unresolve({ project_id: 'Xk9mZp', fault_ids: ['12345'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `fault_ids` | `string[]` | No | IDs of the faults to change. If any ID is not a fault in this project, nothing changes. |
+| `all` | `boolean` | No | Apply to every fault the other filters match. Required to make an unbounded change explicit; ignored when `fault_ids` is set. |
+| `dry_run` | `boolean` | No | Report what the request would change without changing it. The response has the same shape, with `dry_run` echoed back. |
+| `q` | `string` | No | Search query applied when `fault_ids` is left out. |
+| `created_after` | `number` | No | Applied when `fault_ids` is left out, alongside `q`. |
+| `occurred_after` | `number` | No | Applied when `fault_ids` is left out, alongside `q`. |
+| `occurred_before` | `number` | No | Applied when `fault_ids` is left out, alongside `q`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  count: number,
+  dry_run: boolean,
+  fault_ids: string[],
+  fault_ids_truncated?: boolean | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unsnooze
+
+`faults.unsnooze`
+
+Remove a fault's snooze, so notifications resume from the next occurrence
+
+**Risk:** `write`
+
+```ts
+await corsair.honeybadger.api.faults.unsnooze({ project_id: 'Xk9mZp', fault_id: '12345' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `fault_id` | `string` | Yes | The fault ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  project_id: string,
+  message: string,
+  klass?: string | null,
+  component?: string | null,
+  action?: string | null,
+  environment?: string | null,
+  resolved?: boolean | null,
+  ignored?: boolean | null,
+  created_at?: string | null,
+  last_notice_at?: string | null,
+  notices_count?: number | null,
+  comments_count?: number | null,
+  tags?: string[] | null,
+  assignee_id?: string | null,
+  snoozed?: boolean | null,
+  assignee?: {
+    id: string,
+    name?: string | null,
+    email?: string | null
+  } | null,
+  last_notice_deploy?: Record<string, JsonValue> | null,
+  tickets?: {
+    url: string,
+    integration_id: string
+  }[] | null,
+  resolve_on_deploy?: boolean | null,
+  recording_paused_until?: string | null,
+  notices_count_in_range?: number | null,
+  links?: {
+    web: string
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`faults.update`
+
+Change a fault resolved or ignored state, assignee, tags, or whether it resolves on the next deploy
+
+**Risk:** `write`
+
+```ts
+await corsair.honeybadger.api.faults.update({ project_id: 'Xk9mZp', fault_id: '12345', resolved: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `fault_id` | `string` | Yes | The fault ID. |
+| `resolved` | `boolean` | No | Mark the fault resolved. |
+| `ignored` | `boolean` | No | Ignore the fault, which stops data collection for it. |
+| `assignee_id` | `string \| null` | No | ID of a user on the project. Null unassigns. |
+| `tags` | `string[] \| null` | No | Tags for the fault. Null clears them. |
+| `resolve_on_deploy` | `boolean` | No | Resolve the fault when the project's next deploy is recorded, in any environment. Cancelled by resolving or ignoring the fault first. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  project_id: string,
+  message: string,
+  klass?: string | null,
+  component?: string | null,
+  action?: string | null,
+  environment?: string | null,
+  resolved?: boolean | null,
+  ignored?: boolean | null,
+  created_at?: string | null,
+  last_notice_at?: string | null,
+  notices_count?: number | null,
+  comments_count?: number | null,
+  tags?: string[] | null,
+  assignee_id?: string | null,
+  snoozed?: boolean | null,
+  assignee?: {
+    id: string,
+    name?: string | null,
+    email?: string | null
+  } | null,
+  last_notice_deploy?: Record<string, JsonValue> | null,
+  tickets?: {
+    url: string,
+    integration_id: string
+  }[] | null,
+  resolve_on_deploy?: boolean | null,
+  recording_paused_until?: string | null,
+  notices_count_in_range?: number | null,
+  links?: {
+    web: string
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Insights
+
+### query
+
+`insights.query`
+
+Run a BadgerQL query over the project event streams and return its rows; a POST that changes nothing
+
+**Risk:** `read`
+
+```ts
+await corsair.honeybadger.api.insights.query({ project_id: 'Xk9mZp', query: '@size > 0 | limit 10', ts: '1h' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `query` | `string` | Yes | BadgerQL query. |
+| `stream_ids` | `string[]` | No | Streams to search. Omitted or empty searches every stream on the project. |
+| `ts` | `string` | No | Time range for the query, such as `1h`. |
+| `timezone` | `string` | No | Timezone for time bucketing and display, such as `UTC`. |
+
+A POST that changes nothing, so it is a read and safe to replay. The `data` columns depend on the query.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
+| `links` | `object \| null` | No | Links into the Honeybadger web UI. |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  web: string
+} | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Notices
+
+### get
+
+`notices.get`
+
+Read one notice by its UUID, without naming its project or fault
+
+**Risk:** `read`
+
+```ts
+await corsair.honeybadger.api.notices.get({ uuid: '1e2ba1f0-4f3c-4b1a-9c7e-6f2f5c0f1a3b' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | The notice UUID, which addresses it without its project or fault. |
+| `unmapped` | `boolean` | No | Return the backtrace as the client reported it instead of source-mapped. Defaults to false. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  fault_id: string,
+  project_id: string,
+  environment?: string | null,
+  message?: string | null,
+  created_at?: string | null,
+  request?: {
+    url?: string | null,
+    component?: string | null,
+    action?: string | null,
+    params?: Record<string, JsonValue> | null,
+    session?: Record<string, JsonValue> | null
+  } | null,
+  context?: Record<string, JsonValue> | null,
+  backtrace?: {
+    file?: string | null,
+    line?: number | null,
+    column?: number | null,
+    method?: string | null,
+    in_app?: boolean | null,
+    mapping?: string | null,
+    source?: {
+      first_line: number,
+      lines: string[]
+    }[] | null
+  }[] | null,
+  backtrace_mode?: string | null,
+  backtrace_total_frames?: number | null,
+  backtrace_truncated?: boolean | null,
+  request_fields_removed?: string[] | null,
+  links?: {
+    web: string
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`notices.list`
+
+List a fault's notices newest first, with source-mapped backtraces unless `unmapped` is set
+
+**Risk:** `read`
+
+```ts
+await corsair.honeybadger.api.notices.list({ project_id: 'Xk9mZp', fault_id: '12345', limit: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `fault_id` | `string` | Yes | The fault ID. |
+| `limit` | `number` | No | Maximum items to return, 1 to 100. Defaults to 25. |
+| `before` | `string` | No | Cursor for older notices, taken from `links.older` or `pagination.oldest_cursor`. |
+| `after` | `string` | No | Cursor for newer notices, taken from `pagination.newest_cursor`. |
+| `unmapped` | `boolean` | No | Return the backtrace as the client reported it instead of source-mapped. Defaults to false. |
+
+The first page is the newest notices. Follow `links.older` for earlier ones; `links.newer` is always null here.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  fault_id: string,
+  project_id: string,
+  environment?: string | null,
+  message?: string | null,
+  created_at?: string | null,
+  request?: {
+    url?: string | null,
+    component?: string | null,
+    action?: string | null,
+    params?: Record<string, JsonValue> | null,
+    session?: Record<string, JsonValue> | null
+  } | null,
+  context?: Record<string, JsonValue> | null,
+  backtrace?: {
+    file?: string | null,
+    line?: number | null,
+    column?: number | null,
+    method?: string | null,
+    in_app?: boolean | null,
+    mapping?: string | null,
+    source?: {
+      first_line: number,
+      lines: string[]
+    }[] | null
+  }[] | null,
+  backtrace_mode?: string | null,
+  backtrace_total_frames?: number | null,
+  backtrace_truncated?: boolean | null,
+  request_fields_removed?: string[] | null,
+  links?: {
+    web: string
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  limit?: number,
+  has_older?: boolean,
+  has_newer?: boolean,
+  oldest_cursor?: string | null,
+  newest_cursor?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string,
+  older?: string | null,
+  newer?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Occurrences
+
+### list
+
+`occurrences.list`
+
+Read notice counts for every project the token can see, ordered by project name
+
+**Risk:** `read`
+
+```ts
+await corsair.honeybadger.api.occurrences.list({ period: 'week' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `period` | `hour \| day \| week \| month` | No | Window to report over. `hour` gives 61 one-minute buckets, `day` 25 hourly, `week` 8 daily, `month` 31 daily. Defaults to `hour`. |
+| `environment` | `string` | No | Only count notices from faults in this environment. |
+| `page` | `number` | No | Page number, 1-indexed. Defaults to 1. |
+| `per_page` | `number` | No | Items per page, 1 to 100. Defaults to 25. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+| `links` | `object \| null` | No | Root-relative paths, to be resolved against the API host. |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  project_id: string,
+  buckets: {
+    timestamp: number,
+    count: number
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number,
+  per_page?: number
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string,
+  first?: string | null,
+  prev?: string | null,
+  next?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Projects
+
+### create
+
+`projects.create`
+
+Create a project, optionally in a team; `team_id` requires `team:write` and rejects the whole request without it
+
+**Risk:** `write`
+
+```ts
+await corsair.honeybadger.api.projects.create({ name: 'Billing API', language: 'ruby' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Project name. |
+| `resolve_errors_on_deploy` | `boolean \| null` | No | Resolve every open fault when a deploy is recorded. Null resets it to true. |
+| `disable_public_links` | `boolean \| null` | No | Disallow shareable public fault links. Null resets it to false. |
+| `language` | `string \| null` | No | Primary language, used to format backtraces. Null clears it. |
+| `user_url` | `string \| null` | No | Template linking an affected user into your own system. `[user_id]` and `[user_email]` are substituted. Null clears it. |
+| `source_url` | `string \| null` | No | Template linking a backtrace line to your source host. `[file]` and `[line]` are substituted. Null clears it. |
+| `user_search_field` | `string \| null` | No | Context key identifying the affected user when it is not `context.user_email` or `context.user_id`. Null clears it. |
+| `asana_workspace_id` | `string \| null` | No | Asana workspace used by the project's Asana integration. Null clears it. |
+| `customer_throttle` | `number \| null` | No | Notices accepted per minute before throttling. Null clears it. |
+| `purge_days` | `number \| null` | No | Days to retain notices. Changing it requires custom retention on the account; without it only the current value is accepted. Null clears it. |
+| `team_id` | `string` | No | Puts the new project in this team. Create-only, and needs `team:write` in addition to `projects:create`. |
+| `disable_email_notifications` | `boolean` | No | Create-only. Members added with the project get email notifications switched off. Not stored or returned. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  account_id: string,
+  name: string,
+  active?: boolean | null,
+  disable_public_links?: boolean | null,
+  environments?: string[] | null,
+  resolve_errors_on_deploy?: boolean | null,
+  user_url?: string | null,
+  source_url?: string | null,
+  user_search_field?: string | null,
+  asana_workspace_id?: string | null,
+  customer_throttle?: number | null,
+  language?: string | null,
+  fault_count?: number | null,
+  unresolved_fault_count?: number | null,
+  last_notice_at?: string | null,
+  earliest_notice_at?: string | null,
+  purge_days?: number | null,
+  created_at?: string | null,
+  links?: {
+    web: string
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`projects.delete`
+
+Permanently delete a project and all its data
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.honeybadger.api.projects.delete({ project_id: 'Xk9mZp' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `project_id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`projects.get`
+
+Read one project by ID, including its fault counts and environment names
+
+**Risk:** `read`
+
+```ts
+await corsair.honeybadger.api.projects.get({ project_id: 'Xk9mZp' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  account_id: string,
+  name: string,
+  active?: boolean | null,
+  disable_public_links?: boolean | null,
+  environments?: string[] | null,
+  resolve_errors_on_deploy?: boolean | null,
+  user_url?: string | null,
+  source_url?: string | null,
+  user_search_field?: string | null,
+  asana_workspace_id?: string | null,
+  customer_throttle?: number | null,
+  language?: string | null,
+  fault_count?: number | null,
+  unresolved_fault_count?: number | null,
+  last_notice_at?: string | null,
+  earliest_notice_at?: string | null,
+  purge_days?: number | null,
+  created_at?: string | null,
+  links?: {
+    web: string
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`projects.list`
+
+List projects the token can reach, optionally filtered by exact name, with paging
+
+**Risk:** `read`
+
+```ts
+await corsair.honeybadger.api.projects.list({ per_page: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | Exact project name to match. Omitted lists every project. |
+| `page` | `number` | No | Page number, 1-indexed. Defaults to 1. |
+| `per_page` | `number` | No | Items per page, 1 to 100. Defaults to 25. |
+
+Returns `data` and `pagination`. `name` is an exact match, not a search.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+| `links` | `object \| null` | No | Root-relative paths, to be resolved against the API host. |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  account_id: string,
+  name: string,
+  active?: boolean | null,
+  disable_public_links?: boolean | null,
+  environments?: string[] | null,
+  resolve_errors_on_deploy?: boolean | null,
+  user_url?: string | null,
+  source_url?: string | null,
+  user_search_field?: string | null,
+  asana_workspace_id?: string | null,
+  customer_throttle?: number | null,
+  language?: string | null,
+  fault_count?: number | null,
+  unresolved_fault_count?: number | null,
+  last_notice_at?: string | null,
+  earliest_notice_at?: string | null,
+  purge_days?: number | null,
+  created_at?: string | null,
+  links?: {
+    web: string
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number,
+  per_page?: number
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string,
+  first?: string | null,
+  prev?: string | null,
+  next?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### occurrences
+
+`projects.occurrences`
+
+Read notice counts for one project over an hour, day, week or month, one count per interval
+
+**Risk:** `read`
+
+```ts
+await corsair.honeybadger.api.projects.occurrences({ project_id: 'Xk9mZp', period: 'day' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `period` | `hour \| day \| week \| month` | No | Window to report over. `hour` gives 61 one-minute buckets, `day` 25 hourly, `week` 8 daily, `month` 31 daily. Defaults to `hour`. |
+| `environment` | `string` | No | Only count notices from faults in this environment. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  project_id: string,
+  buckets: {
+    timestamp: number,
+    count: number
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string,
+  period?: string | null,
+  interval?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### stats
+
+`projects.stats`
+
+Read a project fault and notice counts for the last day, week and month
+
+**Risk:** `read`
+
+```ts
+await corsair.honeybadger.api.projects.stats({ project_id: 'Xk9mZp' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  fault_count: number,
+  unresolved_fault_count: number,
+  notice_count_today: number,
+  notice_count_week: number,
+  notice_count_month: number
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`projects.update`
+
+Change a project's settings; a null clears a nullable field and a field left out keeps its value
+
+**Risk:** `write`
+
+```ts
+await corsair.honeybadger.api.projects.update({ project_id: 'Xk9mZp', resolve_errors_on_deploy: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `name` | `string` | No | Project name. |
+| `resolve_errors_on_deploy` | `boolean \| null` | No | Resolve every open fault when a deploy is recorded. Null resets it to true. |
+| `disable_public_links` | `boolean \| null` | No | Disallow shareable public fault links. Null resets it to false. |
+| `language` | `string \| null` | No | Primary language, used to format backtraces. Null clears it. |
+| `user_url` | `string \| null` | No | Template linking an affected user into your own system. `[user_id]` and `[user_email]` are substituted. Null clears it. |
+| `source_url` | `string \| null` | No | Template linking a backtrace line to your source host. `[file]` and `[line]` are substituted. Null clears it. |
+| `user_search_field` | `string \| null` | No | Context key identifying the affected user when it is not `context.user_email` or `context.user_id`. Null clears it. |
+| `asana_workspace_id` | `string \| null` | No | Asana workspace used by the project's Asana integration. Null clears it. |
+| `customer_throttle` | `number \| null` | No | Notices accepted per minute before throttling. Null clears it. |
+| `purge_days` | `number \| null` | No | Days to retain notices. Changing it requires custom retention on the account; without it only the current value is accepted. Null clears it. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  account_id: string,
+  name: string,
+  active?: boolean | null,
+  disable_public_links?: boolean | null,
+  environments?: string[] | null,
+  resolve_errors_on_deploy?: boolean | null,
+  user_url?: string | null,
+  source_url?: string | null,
+  user_search_field?: string | null,
+  asana_workspace_id?: string | null,
+  customer_throttle?: number | null,
+  language?: string | null,
+  fault_count?: number | null,
+  unresolved_fault_count?: number | null,
+  last_notice_at?: string | null,
+  earliest_notice_at?: string | null,
+  purge_days?: number | null,
+  created_at?: string | null,
+  links?: {
+    web: string
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sites
+
+### checks
+
+`sites.checks`
+
+List a site's individual uptime check results, newest page first
+
+**Risk:** `read`
+
+```ts
+await corsair.honeybadger.api.sites.checks({ project_id: 'Xk9mZp', site_id: '9f8b6d2e-4c1a-4b7f-9e35-2a6c8d0f1b47', limit: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `site_id` | `string` | Yes | The uptime site ID, a UUID. |
+| `limit` | `number` | No | Maximum items to return, 1 to 100. Defaults to 25. |
+| `created_after` | `number` | No | A Unix timestamp in seconds, not an ISO 8601 string. |
+| `created_before` | `number` | No | A Unix timestamp in seconds, not an ISO 8601 string. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  created_at?: string | null,
+  duration?: number | null,
+  location?: string | null,
+  up?: boolean | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  limit?: number,
+  has_older?: boolean,
+  has_newer?: boolean,
+  oldest_cursor?: string | null,
+  newest_cursor?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string,
+  older?: string | null,
+  newer?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`sites.create`
+
+Create an uptime site; `match` is required for every match type except `success`, which refuses it, and `timeout` must be shorter than the check interval
+
+**Risk:** `write`
+
+```ts
+await corsair.honeybadger.api.sites.create({ project_id: 'Xk9mZp', url: 'https://www.example.com/health', name: 'Marketing site' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `url` | `string` | Yes | URL to monitor. |
+| `name` | `string` | No | Name shown for the site in Honeybadger and on status pages. |
+| `match_type` | `success \| exact \| include \| exclude \| jmespath \| null` | No | How a check decides the site is up. Null resets it to `success`. |
+| `match` | `string \| null` | No | What `match_type` compares against. Required unless `match_type` is `success`, and refused with `success`. Null clears it. |
+| `request_method` | `GET \| POST \| PUT \| PATCH \| DELETE \| null` | No | HTTP method each check sends. Null resets it to `GET`. |
+| `validate_ssl` | `boolean \| null` | No | Fail the check when the TLS certificate does not validate. Null resets it to true. |
+| `request_body` | `string \| null` | No | Body to send with the request, up to 32 KB. Null clears it. |
+| `request_headers` | `Record<string, string> \| null` | No | Headers to send with the request. Replaces the stored headers; null or `{}` clears them. |
+| `frequency` | `1 \| 2 \| 5 \| 15 \| null` | No | Minutes between checks. The plan sets the most frequent allowed. Null resets it to 5. |
+| `locations` | `(Virginia \| Frankfurt \| Singapore \| London \| Oregon)[] \| null` | No | Locations checks run from. Null or empty means every location. |
+| `outage_threshold` | `number \| null` | No | Consecutive failures before an outage is declared. Null means down once failures reach half the locations. |
+| `active` | `boolean \| null` | No | Whether monitoring is active. Null resets it to true. |
+| `timeout` | `number \| null` | No | Request timeout in seconds, 1 to 120, and less than the frequency in seconds. Requires the uptime timeout feature on the account. |
+
+`match` is required for every match type except `success`, which refuses it. `timeout` must be less than the frequency in seconds.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  project_id: string,
+  name?: string | null,
+  url?: string | null,
+  active?: boolean | null,
+  state?: string | null,
+  last_checked_at?: string | null,
+  match_type?: string | null,
+  match?: string | null,
+  request_method?: string | null,
+  frequency?: number | null,
+  locations?: string[] | null,
+  validate_ssl?: boolean | null,
+  request_headers?: Record<string, string> | null,
+  request_body?: string | null,
+  outage_threshold?: number | null,
+  timeout?: number | null,
+  created_at?: string | null,
+  links?: {
+    web: string
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`sites.delete`
+
+Delete an uptime site and stop monitoring it
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.honeybadger.api.sites.delete({ project_id: 'Xk9mZp', site_id: '9f8b6d2e-4c1a-4b7f-9e35-2a6c8d0f1b47' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `site_id` | `string` | Yes | The uptime site ID, a UUID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `project_id` | `string` | Yes | — |
+| `site_id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`sites.get`
+
+Read one uptime site with its URL, match rule and current state
+
+**Risk:** `read`
+
+```ts
+await corsair.honeybadger.api.sites.get({ project_id: 'Xk9mZp', site_id: '9f8b6d2e-4c1a-4b7f-9e35-2a6c8d0f1b47' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `site_id` | `string` | Yes | The uptime site ID, a UUID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  project_id: string,
+  name?: string | null,
+  url?: string | null,
+  active?: boolean | null,
+  state?: string | null,
+  last_checked_at?: string | null,
+  match_type?: string | null,
+  match?: string | null,
+  request_method?: string | null,
+  frequency?: number | null,
+  locations?: string[] | null,
+  validate_ssl?: boolean | null,
+  request_headers?: Record<string, string> | null,
+  request_body?: string | null,
+  outage_threshold?: number | null,
+  timeout?: number | null,
+  created_at?: string | null,
+  links?: {
+    web: string
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`sites.list`
+
+List a project's uptime monitoring sites with their URLs and current state
+
+**Risk:** `read`
+
+```ts
+await corsair.honeybadger.api.sites.list({ project_id: 'Xk9mZp' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `page` | `number` | No | Page number, 1-indexed. Defaults to 1. |
+| `per_page` | `number` | No | Items per page, 1 to 100. Defaults to 25. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+| `links` | `object \| null` | No | Root-relative paths, to be resolved against the API host. |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  project_id: string,
+  name?: string | null,
+  url?: string | null,
+  active?: boolean | null,
+  state?: string | null,
+  last_checked_at?: string | null,
+  match_type?: string | null,
+  match?: string | null,
+  request_method?: string | null,
+  frequency?: number | null,
+  locations?: string[] | null,
+  validate_ssl?: boolean | null,
+  request_headers?: Record<string, string> | null,
+  request_body?: string | null,
+  outage_threshold?: number | null,
+  timeout?: number | null,
+  created_at?: string | null,
+  links?: {
+    web: string
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number,
+  per_page?: number
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string,
+  first?: string | null,
+  prev?: string | null,
+  next?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### outages
+
+`sites.outages`
+
+List a site's outage periods, with the status and reason each failed
+
+**Risk:** `read`
+
+```ts
+await corsair.honeybadger.api.sites.outages({ project_id: 'Xk9mZp', site_id: '9f8b6d2e-4c1a-4b7f-9e35-2a6c8d0f1b47' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `site_id` | `string` | Yes | The uptime site ID, a UUID. |
+| `limit` | `number` | No | Maximum items to return, 1 to 100. Defaults to 25. |
+| `created_after` | `number` | No | A Unix timestamp in seconds, not an ISO 8601 string. |
+| `created_before` | `number` | No | A Unix timestamp in seconds, not an ISO 8601 string. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  site_id: string,
+  down_at?: string | null,
+  up_at?: string | null,
+  status?: number | null,
+  reason?: string | null,
+  headers?: Record<string, string> | null,
+  duration_seconds?: number | null,
+  created_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  limit?: number,
+  has_older?: boolean,
+  has_newer?: boolean,
+  oldest_cursor?: string | null,
+  newest_cursor?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string,
+  older?: string | null,
+  newer?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`sites.update`
+
+Change an uptime site's URL, matching, headers, locations, frequency or active state
+
+**Risk:** `write`
+
+```ts
+await corsair.honeybadger.api.sites.update({ project_id: 'Xk9mZp', site_id: '9f8b6d2e-4c1a-4b7f-9e35-2a6c8d0f1b47', frequency: 15 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `site_id` | `string` | Yes | The uptime site ID, a UUID. |
+| `url` | `string` | No | URL to monitor. |
+| `name` | `string` | No | Name shown for the site in Honeybadger and on status pages. |
+| `match_type` | `success \| exact \| include \| exclude \| jmespath \| null` | No | How a check decides the site is up. Null resets it to `success`. |
+| `match` | `string \| null` | No | What `match_type` compares against. Required unless `match_type` is `success`, and refused with `success`. Null clears it. |
+| `request_method` | `GET \| POST \| PUT \| PATCH \| DELETE \| null` | No | HTTP method each check sends. Null resets it to `GET`. |
+| `validate_ssl` | `boolean \| null` | No | Fail the check when the TLS certificate does not validate. Null resets it to true. |
+| `request_body` | `string \| null` | No | Body to send with the request, up to 32 KB. Null clears it. |
+| `request_headers` | `Record<string, string> \| null` | No | Headers to send with the request. Replaces the stored headers; null or `{}` clears them. |
+| `frequency` | `1 \| 2 \| 5 \| 15 \| null` | No | Minutes between checks. The plan sets the most frequent allowed. Null resets it to 5. |
+| `locations` | `(Virginia \| Frankfurt \| Singapore \| London \| Oregon)[] \| null` | No | Locations checks run from. Null or empty means every location. |
+| `outage_threshold` | `number \| null` | No | Consecutive failures before an outage is declared. Null means down once failures reach half the locations. |
+| `active` | `boolean \| null` | No | Whether monitoring is active. Null resets it to true. |
+| `timeout` | `number \| null` | No | Request timeout in seconds, 1 to 120, and less than the frequency in seconds. Requires the uptime timeout feature on the account. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  project_id: string,
+  name?: string | null,
+  url?: string | null,
+  active?: boolean | null,
+  state?: string | null,
+  last_checked_at?: string | null,
+  match_type?: string | null,
+  match?: string | null,
+  request_method?: string | null,
+  frequency?: number | null,
+  locations?: string[] | null,
+  validate_ssl?: boolean | null,
+  request_headers?: Record<string, string> | null,
+  request_body?: string | null,
+  outage_threshold?: number | null,
+  timeout?: number | null,
+  created_at?: string | null,
+  links?: {
+    web: string
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Streams
+
+### list
+
+`streams.list`
+
+List event streams; the ID is what `insights.query` takes in `stream_ids`
+
+**Risk:** `read`
+
+```ts
+await corsair.honeybadger.api.streams.list({ project_id: 'Xk9mZp' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project ID. |
+| `page` | `number` | No | Page number, 1-indexed. Defaults to 1. |
+| `per_page` | `number` | No | Items per page, 1 to 100. Defaults to 25. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+| `links` | `object \| null` | No | Root-relative paths, to be resolved against the API host. |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  slug?: string | null,
+  internal?: boolean | null,
+  project_id?: string | null,
+  created_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number,
+  per_page?: number
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string,
+  first?: string | null,
+  prev?: string | null,
+  next?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Token
+
+### get
+
+`token.get`
+
+Report what the current token is: its kind, scopes, account and the projects it can reach. Needs no scope
+
+**Risk:** `read`
+
+```ts
+await corsair.honeybadger.api.token.get({});
+```
+
+**Input:** _empty object_
+
+Needs no scope, so it is the cheapest way to check that a token works and which region it belongs to.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | Request metadata. Quote `request_id` when contacting support. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  kind?: string | null,
+  name?: string | null,
+  scopes?: string[] | null,
+  account_id?: string | null,
+  project_ids?: string[] | null,
+  expires_at?: string | null,
+  last_used_at?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

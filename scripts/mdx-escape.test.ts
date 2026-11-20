@@ -35,6 +35,52 @@ test('does not open a code span at an escaped backtick', () => {
 	assert.equal(escapeMdxText('`a\\` <b>'), '`a\\` &lt;b&gt;');
 });
 
+test('shows a bare address that is not a valid URL as code', () => {
+	assert.equal(
+		escapeMdxText('A proxy URL (e.g. http://user:pass@host:port) works.'),
+		'A proxy URL (e.g. `http://user:pass@host:port`) works.',
+	);
+	assert.equal(
+		escapeMdxText('Send to https://x.test:port.'),
+		'Send to `https://x.test:port`.',
+	);
+});
+
+test('leaves valid addresses, code spans and words containing http alone', () => {
+	assert.equal(
+		escapeMdxText(
+			'See https://example.com/a_(b)?q=1, then (https://example.com).',
+		),
+		'See https://example.com/a_(b)?q=1, then (https://example.com).',
+	);
+	assert.equal(
+		escapeMdxText('Use `http://user:pass@host:port`.'),
+		'Use `http://user:pass@host:port`.',
+	);
+	assert.equal(escapeMdxText('xhttp://a:b'), 'xhttp://a:b');
+	// GFM doesn't autolink after a backtick, a quote or a letter, so neither do we.
+	assert.equal(
+		escapeMdxText('``x``https://a.test:port'),
+		'``x``https://a.test:port',
+	);
+	assert.equal(escapeMdxText('"https://a.test:port"'), '"https://a.test:port"');
+	assert.equal(
+		escapeMdxText('Full page URL, including https://'),
+		'Full page URL, including https://',
+	);
+});
+
+test('keeps a wrapped address apart from a code span right after it', () => {
+	assert.equal(
+		escapeMdxText('https://x.test:port``a ` {a: 1}``'),
+		'`https://x.test:port` ``a ` {a: 1}``',
+	);
+	assert.equal(
+		escapeMdxText('_https://x.test:port_'),
+		'_`https://x.test:port`_',
+	);
+});
+
 test('returns an empty string for missing input', () => {
 	assert.equal(escapeMdxText(undefined), '');
 	assert.equal(escapeMdxText(''), '');

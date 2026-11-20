@@ -1,0 +1,240 @@
+{
+  "id": "identitycheck",
+  "displayName": "IdentityCheck",
+  "description": "Start StackGo identity verifications and retrieve their results.",
+  "npmPackageName": "@corsair-dev/identitycheck",
+  "authTypes": ["api_key"],
+  "counts": {
+    "api": 6,
+    "webhooks": 1,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "identitycheck.api.verification.create",
+      "shortPath": "verification.create",
+      "description": "Start an individual verification; it uses plan credit, and with emailUser \"Yes\" StackGo emails the person an invitation",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "Request body sent to StackGo as-is. StackGo has not published the field list; its quickstart uses firstName, lastName, email, emailUser (\"Yes\" emails the person an invitation), type (e.g. \"kyc\"), triggeredBy (\"direct\") and active (true)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "identitycheck.api.verification.get",
+      "shortPath": "verification.get",
+      "description": "Retrieve a verification and result",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "identitycheck.api.verification.image",
+      "shortPath": "verification.image",
+      "description": "Download a document or selfie image captured during a verification (needs the verification.image key scope)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "verificationId",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the verification the image belongs to"
+          },
+          {
+            "key": "imageId",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the captured document or selfie image"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentBase64",
+            "optional": true,
+            "type": "string",
+            "description": "The file, base64-encoded. Missing when the file came back as text or contentOmitted is set."
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string",
+            "description": "The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "Media type of the file, for example application/pdf."
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the file in bytes."
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string",
+            "description": "The file name, when known."
+          },
+          {
+            "key": "contentOmitted",
+            "optional": true,
+            "type": "not_requested | over_limit",
+            "description": "Set when the content was left out: the caller did not ask for it, or the file was over the limit."
+          },
+          {
+            "key": "fileId",
+            "optional": true,
+            "type": "string",
+            "description": "Where the host saved the file, in place of its content, when it was over the limit. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text."
+          }
+        ]
+      }
+    },
+    {
+      "path": "identitycheck.api.verification.kyb",
+      "shortPath": "verification.kyb",
+      "description": "Start a business KYB check; it uses plan credit",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "Request body sent to StackGo as-is. StackGo has not published the field list; its quickstart uses firstName, lastName, email, emailUser (\"Yes\" emails the person an invitation), type (e.g. \"kyc\"), triggeredBy (\"direct\") and active (true)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "identitycheck.api.verification.sms",
+      "shortPath": "verification.sms",
+      "description": "Start a verification and invite the person by SMS; it uses plan credit",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "Request body sent to StackGo as-is. StackGo has not published the field list; its quickstart uses firstName, lastName, email, emailUser (\"Yes\" emails the person an invitation), type (e.g. \"kyc\"), triggeredBy (\"direct\") and active (true)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "identitycheck.api.verification.tranche2",
+      "shortPath": "verification.tranche2",
+      "description": "Start a Tranche 2 workflow; it uses plan credit",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "Request body sent to StackGo as-is. StackGo has not published the field list; its quickstart uses firstName, lastName, email, emailUser (\"Yes\" emails the person an invitation), type (e.g. \"kyc\"), triggeredBy (\"direct\") and active (true)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "identitycheck.webhooks.verification.decision",
+      "shortPath": "verification.decision",
+      "description": "A verification has a decision",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "verification.decision"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "adverse_media_results",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "sanctions_results",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "result_info",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "responseType": "{ type: verification.decision, id: string, result: string, adverse_media_results?: Record<string, any>, sanctions_results?: Record<string, any>, result_info?: Record<string, any> }",
+      "usageExample": "identitycheck({\n    webhookHooks: {\n        verification: {\n            decision: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": []
+}

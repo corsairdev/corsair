@@ -1,0 +1,558 @@
+---
+title: "Ecologi API reference"
+sidebarTitle: "API"
+description: "API reference for the Ecologi plugin in Corsair: every `ecologi.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Carbon Offsets
+
+### get
+
+`carbonOffsets.get`
+
+Read the CO2e avoided by an Ecologi username.
+
+**Risk:** `read`
+
+```ts
+await corsair.ecologi.api.carbonOffsets.get({ username: 'ecologi' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+
+GET /users/&#123;username&#125;/carbon-offset. Stored fields are total and pending.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="total full type">
+
+```ts
+{
+  id: string,
+  total: number,
+  pending: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### purchase
+
+`carbonOffsets.purchase`
+
+Buy carbon avoidance by the kg or tonne (GBP 9.45 a tonne). Billed monthly; test: true charges nothing.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.ecologi.api.carbonOffsets.purchase({ number: 10, units: 'KG', test: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `number` | `number` | Yes | Amount to buy, at least 1 kg (0.001 tonnes). |
+| `units` | `KG \| Tonnes` | Yes | — |
+| `name` | `string` | No | "Funded by" label on the Ecologi profile. Public if the profile is public; never send a customer name without permission. |
+| `test` | `boolean` | No | true returns the expected response without charging or adding it to the profile. |
+| `recipientEmail` | `string` | No | Sends this address a templated email about the purchase (not in test mode). |
+| `idempotencyKey` | `string` | No | Sent as the Idempotency-Key header so a retried request is not bought twice. |
+
+POST /impact/carbon with `units` KG or Tonnes, at least 1 kg. Funding may be split across projects.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `amount` | `number` | No | — |
+| `currency` | `string` | No | — |
+| `number` | `number` | No | — |
+| `units` | `string` | No | — |
+| `numberInTonnes` | `number` | No | — |
+| `treeUrl` | `string` | No | — |
+| `tileUrl` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `recipientEmail` | `string` | No | — |
+| `projectDetails` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="projectDetails full type">
+
+```ts
+{
+  name?: string,
+  projectUrl?: string,
+  splitPercentage?: number,
+  splitAmountTrees?: number,
+  splitAmountTonnes?: number,
+  quantity?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Carbon Removals
+
+### get
+
+`carbonRemovals.get`
+
+Read the CO2e removed by an Ecologi username.
+
+**Risk:** `read`
+
+```ts
+await corsair.ecologi.api.carbonRemovals.get({ username: 'ecologi' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+
+GET /users/&#123;username&#125;/carbon-removal. Stored fields are total and pending.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="total full type">
+
+```ts
+{
+  id: string,
+  total: number,
+  pending: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### purchase
+
+`carbonRemovals.purchase`
+
+Buy permanent carbon removal by the kg (GBP 150 a tonne). Billed monthly; test: true charges nothing.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.ecologi.api.carbonRemovals.purchase({ number: 10, test: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `number` | `number` | Yes | Kilograms of carbon removal, at least 1. |
+| `name` | `string` | No | "Funded by" label on the Ecologi profile. Public if the profile is public; never send a customer name without permission. |
+| `test` | `boolean` | No | true returns the expected response without charging or adding it to the profile. |
+| `recipientEmail` | `string` | No | Sends this address a templated email about the purchase (not in test mode). |
+| `idempotencyKey` | `string` | No | Sent as the Idempotency-Key header so a retried request is not bought twice. |
+
+POST /impact/carbon-removal, in kilograms, at least 1 kg.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `amount` | `number` | No | — |
+| `currency` | `string` | No | — |
+| `number` | `number` | No | — |
+| `units` | `string` | No | — |
+| `numberInTonnes` | `number` | No | — |
+| `treeUrl` | `string` | No | — |
+| `tileUrl` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `recipientEmail` | `string` | No | — |
+| `projectDetails` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="projectDetails full type">
+
+```ts
+{
+  name?: string,
+  projectUrl?: string,
+  splitPercentage?: number,
+  splitAmountTrees?: number,
+  splitAmountTonnes?: number,
+  quantity?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Habitats
+
+### get
+
+`habitats.get`
+
+Read the habitat restored by an Ecologi username.
+
+**Risk:** `read`
+
+```ts
+await corsair.ecologi.api.habitats.get({ username: 'ecologi' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+
+GET /users/&#123;username&#125;/habitat-restoration. Stored fields are total and pending.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="total full type">
+
+```ts
+{
+  id: string,
+  total: number,
+  pending: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### purchase
+
+`habitats.purchase`
+
+Buy habitat restoration by the square metre (GBP 5.55 each). Billed monthly; test: true charges nothing.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.ecologi.api.habitats.purchase({ number: 5.5, test: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `number` | `number` | Yes | Square metres to restore, at least 0.1, one decimal place. |
+| `name` | `string` | No | "Funded by" label on the Ecologi profile. Public if the profile is public; never send a customer name without permission. |
+| `test` | `boolean` | No | true returns the expected response without charging or adding it to the profile. |
+| `recipientEmail` | `string` | No | Sends this address a templated email about the purchase (not in test mode). |
+| `idempotencyKey` | `string` | No | Sent as the Idempotency-Key header so a retried request is not bought twice. |
+
+POST /impact/habitat-restoration, in square metres, at least 0.1 with one decimal place.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `amount` | `number` | No | — |
+| `currency` | `string` | No | — |
+| `number` | `number` | No | — |
+| `units` | `string` | No | — |
+| `numberInTonnes` | `number` | No | — |
+| `treeUrl` | `string` | No | — |
+| `tileUrl` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `recipientEmail` | `string` | No | — |
+| `projectDetails` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="projectDetails full type">
+
+```ts
+{
+  name?: string,
+  projectUrl?: string,
+  splitPercentage?: number,
+  splitAmountTrees?: number,
+  splitAmountTonnes?: number,
+  quantity?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Impacts
+
+### get
+
+`impacts.get`
+
+Read the combined impact for an Ecologi username.
+
+**Risk:** `read`
+
+```ts
+await corsair.ecologi.api.impacts.get({ username: 'ecologi' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+
+GET /users/&#123;username&#125;/impact. Stores the four totals and the four pending totals.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `impact` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="impact full type">
+
+```ts
+{
+  id: string,
+  trees: number,
+  carbonOffset: number,
+  carbonRemoval: number,
+  habitatRestoration: number,
+  pendingTrees: number,
+  pendingCarbonOffset: number,
+  pendingCarbonRemoval: number,
+  pendingHabitatRestoration: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Trees
+
+### get
+
+`trees.get`
+
+Read the trees funded by an Ecologi username.
+
+**Risk:** `read`
+
+```ts
+await corsair.ecologi.api.trees.get({ username: 'ecologi' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+
+GET /users/&#123;username&#125;/trees. Stored fields are total and pending.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="total full type">
+
+```ts
+{
+  id: string,
+  total: number,
+  pending: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### purchase
+
+`trees.purchase`
+
+Buy trees (GBP 0.60 each) for the Ecologi forest. Billed monthly; test: true charges nothing.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.ecologi.api.trees.purchase({ number: 3, name: 'Order 1042', test: true, idempotencyKey: 'order-1042-trees' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `number` | `number` | Yes | Trees to buy, 1 to 250,000. |
+| `name` | `string` | No | "Funded by" label on the Ecologi profile. Public if the profile is public; never send a customer name without permission. |
+| `test` | `boolean` | No | true returns the expected response without charging or adding it to the profile. |
+| `recipientEmail` | `string` | No | Sends this address a templated email about the purchase (not in test mode). |
+| `idempotencyKey` | `string` | No | Sent as the Idempotency-Key header so a retried request is not bought twice. |
+
+POST /impact/trees, 1 to 250,000 trees at GBP 0.60 each. Trees stay pending until the monthly invoice is paid. Same-name purchases within 24 hours share one tile.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `amount` | `number` | No | — |
+| `currency` | `string` | No | — |
+| `number` | `number` | No | — |
+| `units` | `string` | No | — |
+| `numberInTonnes` | `number` | No | — |
+| `treeUrl` | `string` | No | — |
+| `tileUrl` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `recipientEmail` | `string` | No | — |
+| `projectDetails` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="projectDetails full type">
+
+```ts
+{
+  name?: string,
+  projectUrl?: string,
+  splitPercentage?: number,
+  splitAmountTrees?: number,
+  splitAmountTonnes?: number,
+  quantity?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### purchaseLocal
+
+`trees.purchaseLocal`
+
+Buy trees planted in the UK, US, Australia or Brazil. Billed monthly; test: true charges nothing.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.ecologi.api.trees.purchaseLocal({ number: 2, country: 'UK', test: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `number` | `number` | Yes | Trees to buy. |
+| `country` | `UK \| US \| AU \| BR` | Yes | Where the trees are planted. |
+| `name` | `string` | No | "Funded by" label on the Ecologi profile. Public if the profile is public; never send a customer name without permission. |
+| `test` | `boolean` | No | true returns the expected response without charging or adding it to the profile. |
+| `recipientEmail` | `string` | No | Sends this address a templated email about the purchase (not in test mode). |
+| `idempotencyKey` | `string` | No | Sent as the Idempotency-Key header so a retried request is not bought twice. |
+
+POST /impact/local-trees with `country` UK, US, AU or BR; each country has its own project and price.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `amount` | `number` | No | — |
+| `currency` | `string` | No | — |
+| `number` | `number` | No | — |
+| `units` | `string` | No | — |
+| `numberInTonnes` | `number` | No | — |
+| `treeUrl` | `string` | No | — |
+| `tileUrl` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `recipientEmail` | `string` | No | — |
+| `projectDetails` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="projectDetails full type">
+
+```ts
+{
+  name?: string,
+  projectUrl?: string,
+  splitPercentage?: number,
+  splitAmountTrees?: number,
+  splitAmountTonnes?: number,
+  quantity?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

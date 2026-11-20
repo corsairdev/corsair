@@ -173,6 +173,45 @@ describe('createCorsair with a ck_cloud_ key', () => {
 		).resolves.toBeDefined();
 	});
 
+	it('withTenant passes the bound account on call and db requests', async () => {
+		const fetchMock = jest.fn(
+			async () => new Response(JSON.stringify({ data: [] }), { status: 200 }),
+		);
+		const corsair = createCorsair({
+			plugins: [slack()],
+			multiTenancy: true,
+			hub: {
+				projectApiKey: 'ck_cloud_x',
+				baseUrl: 'https://vm/p/api/corsair',
+			},
+		});
+		const prev = global.fetch;
+		global.fetch = fetchMock as unknown as typeof fetch;
+		try {
+			const t = corsair.withTenant('acme', { accounts: { slack: 'a@x.com' } });
+			await t.slack.api.messages.post({ channel: '#g', text: 'hi' });
+			await t.slack.db.messages.list();
+			await corsair
+				.withTenant('acme')
+				.slack.api.messages.post({ channel: '#g', text: 'hi' });
+		} finally {
+			global.fetch = prev;
+		}
+		const bodies = fetchMock.mock.calls.map(
+			(c: unknown[]) =>
+				JSON.parse(String((c[1] as RequestInit).body)) as Record<
+					string,
+					unknown
+				>,
+		);
+		expect(bodies[0]).toMatchObject({ account: 'a@x.com' });
+		expect(bodies[1]).toMatchObject({ account: 'a@x.com' });
+		expect(bodies[2]).not.toHaveProperty('account');
+		await expect(
+			corsair.withTenant('acme').slack.accounts.list(),
+		).rejects.toThrow(/not supported in cloud mode/);
+	});
+
 	it('multi-tenant connectionStatus.get() throws without a tenantId', () => {
 		const corsair = createCorsair({
 			plugins: [slack()],
@@ -256,6 +295,27 @@ describe('corsairCloud', () => {
 		expect((init.headers as Record<string, string>).authorization).toBe(
 			'Bearer ck_cloud_x',
 		);
+	});
+
+	it('withInstance().withTenant() passes the bound account on a call', async () => {
+		jest.spyOn(globalThis, 'fetch').mockImplementation(async (url) => {
+			if (String(url) === 'https://vm/p/instances') {
+				return instanceResolve('users', 'https://vm/users');
+			}
+			return new Response(JSON.stringify({ data: {} }), { status: 200 });
+		});
+		const corsair = corsairCloud({
+			apiKey: 'ck_cloud_x',
+			url: 'https://vm/p/api/corsair',
+		});
+
+		await corsair
+			.withInstance('users')
+			.withTenant('acme', { accounts: { gmail: 'b@x.com' } })
+			.gmail.api.messages.list({});
+
+		const [, init] = (globalThis.fetch as jest.Mock).mock.calls[1];
+		expect(JSON.parse(init.body)).toMatchObject({ account: 'b@x.com' });
 	});
 
 	it('accepts any plugin id dynamically (the VM is the authority)', async () => {

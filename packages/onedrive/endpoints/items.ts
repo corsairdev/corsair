@@ -1,4 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
+import type { BinaryResponse } from 'corsair/http';
+import { toFileOutput } from 'corsair/http';
 import { makeOnedriveRequest } from '../client';
 import type { OnedriveEndpoints } from '../index';
 import type { OnedriveEndpointOutputs } from './types';
@@ -525,16 +527,19 @@ export const download: OnedriveEndpoints['itemsDownload'] = async (
 	ctx,
 	input,
 ) => {
-	const { item_id, drive_id, user_id, format, if_none_match } = input;
+	const { item_id, drive_id, user_id, format, if_none_match, file_name } =
+		input;
 
 	const url = buildItemUrl(item_id, drive_id, undefined, user_id);
 	const query: Record<string, string | undefined> = {};
 	if (format) query.format = format;
 	if (if_none_match) query['if-none-match'] = if_none_match;
 
-	const result = await makeOnedriveRequest<
-		OnedriveEndpointOutputs['itemsDownload']
-	>(`${url}/content`, ctx.key, { method: 'GET', query });
+	const { bytes, contentType } = await makeOnedriveRequest<BinaryResponse>(
+		`${url}/content`,
+		ctx.key,
+		{ method: 'GET', query, responseType: 'binary' },
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -542,18 +547,20 @@ export const download: OnedriveEndpoints['itemsDownload'] = async (
 		{ item_id },
 		'completed',
 	);
-	return result;
+	return toFileOutput(bytes, contentType, { filename: file_name });
 };
 
 export const downloadByPath: OnedriveEndpoints['itemsDownloadByPath'] = async (
 	ctx,
 	input,
 ) => {
-	const { item_path } = input;
+	const { item_path, file_name } = input;
 
-	const result = await makeOnedriveRequest<
-		OnedriveEndpointOutputs['itemsDownloadByPath']
-	>(`me/drive/root:/${item_path}:/content`, ctx.key, { method: 'GET' });
+	const { bytes, contentType } = await makeOnedriveRequest<BinaryResponse>(
+		`me/drive/root:/${item_path}:/content`,
+		ctx.key,
+		{ method: 'GET', responseType: 'binary' },
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -561,19 +568,18 @@ export const downloadByPath: OnedriveEndpoints['itemsDownloadByPath'] = async (
 		{ item_path },
 		'completed',
 	);
-	return result;
+	return toFileOutput(bytes, contentType, { filename: file_name });
 };
 
 export const downloadAsFormat: OnedriveEndpoints['itemsDownloadAsFormat'] =
 	async (ctx, input) => {
-		const { path_and_filename, format } = input;
+		const { path_and_filename, format, file_name } = input;
 
-		const result = await makeOnedriveRequest<
-			OnedriveEndpointOutputs['itemsDownloadAsFormat']
-		>(`me/drive/root:/${path_and_filename}:/content`, ctx.key, {
-			method: 'GET',
-			query: { format },
-		});
+		const { bytes, contentType } = await makeOnedriveRequest<BinaryResponse>(
+			`me/drive/root:/${path_and_filename}:/content`,
+			ctx.key,
+			{ method: 'GET', query: { format }, responseType: 'binary' },
+		);
 
 		await logEventFromContext(
 			ctx,
@@ -581,17 +587,19 @@ export const downloadAsFormat: OnedriveEndpoints['itemsDownloadAsFormat'] =
 			{ path_and_filename, format },
 			'completed',
 		);
-		return result;
+		return toFileOutput(bytes, contentType, { filename: file_name });
 	};
 
 export const downloadVersion: OnedriveEndpoints['itemsDownloadVersion'] =
 	async (ctx, input) => {
-		const { item_id, version_id, drive_id } = input;
+		const { item_id, version_id, drive_id, file_name } = input;
 
 		const url = buildItemUrl(item_id, drive_id);
-		const result = await makeOnedriveRequest<
-			OnedriveEndpointOutputs['itemsDownloadVersion']
-		>(`${url}/versions/${version_id}/content`, ctx.key, { method: 'GET' });
+		const { bytes, contentType } = await makeOnedriveRequest<BinaryResponse>(
+			`${url}/versions/${version_id}/content`,
+			ctx.key,
+			{ method: 'GET', responseType: 'binary' },
+		);
 
 		await logEventFromContext(
 			ctx,
@@ -599,7 +607,7 @@ export const downloadVersion: OnedriveEndpoints['itemsDownloadVersion'] =
 			{ item_id, version_id },
 			'completed',
 		);
-		return result;
+		return toFileOutput(bytes, contentType, { filename: file_name });
 	};
 
 export const updateContent: OnedriveEndpoints['itemsUpdateContent'] = async (

@@ -1,5 +1,12 @@
 import { ManagementApiError } from '../management/errors';
-import { activeMode } from '../permissions';
+import { activeMode, currentModeScopes } from '../permissions';
+
+// Header values must be Latin-1; \uXXXX escapes keep the JSON valid and ASCII.
+const asciiJson = (value: unknown): string =>
+	JSON.stringify(value).replace(
+		/[\u0080-\uffff]/g,
+		(c) => `\\u${c.charCodeAt(0).toString(16).padStart(4, '0')}`,
+	);
 
 export type CloudTransport = {
 	baseUrl: string;
@@ -58,7 +65,13 @@ export async function cloudRequest<T>(
 	path: string,
 	body?: unknown,
 ): Promise<T> {
+	// Without the account, the strictest mode any account could get: a server
+	// that predates per-account modes reads only this one.
 	const mode = activeMode();
+	const scopes = currentModeScopes();
+	const perAccount = scopes.some(
+		(s) => typeof s !== 'string' && s.accounts !== undefined,
+	);
 	const doFetch = transport.fetch ?? globalThis.fetch;
 	const timeoutMs = transport.timeoutMs ?? DEFAULT_TIMEOUT_MS;
 	const controller = new AbortController();
@@ -80,6 +93,7 @@ export async function cloudRequest<T>(
 				// The scope is process-local, so the mode travels for the server to
 				// judge an operation by it.
 				...(mode ? { 'x-corsair-mode': mode } : {}),
+				...(perAccount ? { 'x-corsair-mode-scopes': asciiJson(scopes) } : {}),
 			},
 			body: body === undefined ? undefined : JSON.stringify(body),
 			signal: controller.signal,

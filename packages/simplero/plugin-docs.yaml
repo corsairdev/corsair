@@ -1,0 +1,95 @@
+displayName: Simplero
+description: Email marketing and online courses from Simplero - manage contacts, email lists, tags and products, read purchases and subscriptions, and tag contacts or unsubscribe them from a list.
+domain: simplero.com
+recommendedAuth: api_key
+overviewNote: |
+  Create an API key in Simplero under Settings, then Integrations. Pass it as the plugin's `key` option or store it on the account; the plugin sends it as the `X-API-Key` header.
+
+  Simplero documents 1134 routes across every part of the platform. This plugin wraps a working set around contacts and what they buy: contacts, email lists, tags, products, purchases and subscriptions. Pages, courses, funnels, automations and the rest are not wrapped.
+
+  Things to know before you write:
+
+  - **Contact creates need both required fields.** Simplero requires `email` and `lead_score` on a contact, so a create must send a score. Sending a score replaces it.
+  - **`adjustLeadScore` is not `update`.** The action adds `amount` (negative to subtract) to the stored score and records it, with an optional `explanation`, in the contact's history; `customers.update` replaces the score outright.
+  - **Tag actions take one or many.** `customers.addTag` and `customers.removeTag` accept `tag_id` or `tag_ids`, never both and never neither; the schema rejects either mistake. Tag changes can start or stop the automations attached to that tag.
+  - **PATCH changes only what it sends.** An omitted field keeps its stored value, unlike a PUT. `purchases.update` and `subscriptions.update` are limited to buyer details and tracking data.
+  - **Subscription state is an action, not a field.** `subscriptions.update` cannot subscribe or unsubscribe anyone; that is `subscriptions.unsubscribe` and `subscriptions.resubscribe`, and unsubscribing is reversible.
+  - **Money movements are not wrapped.** Refunding, cancelling, capturing and changing a purchase price are separate Simplero actions that move funds, so they are deliberately left out.
+  - **Paging.** `page` counts from 1 and `per_page` is 1 to 100, defaulting to 20. `after` is the cursor form: pass `pagination.next_after` and `total` and `total_pages` come back null, because counting is skipped.
+  - **Errors.** A 401 is `{ "error": "Bad API key" }`; a 422 is `{ "errors": ["…"] }`, which the plugin joins into one message. A 503 can mean the idempotency store could not be checked, in which case nothing ran.
+examples:
+  read:
+    path: customers.list
+    title: List contacts on a list
+    args:
+      list_id: 7
+      per_page: 50
+  write:
+    path: customers.addTag
+    title: Tag a contact
+    args:
+      id: 12
+      tag_id: 5
+apiExamples:
+  customers.list:
+    call: "{ list_id: 7, per_page: 50 }"
+  customers.get:
+    call: "{ id: 12 }"
+  customers.create:
+    call: "{ email: 'alex@example.com', lead_score: 0, first_names: 'Alex', last_name: 'Doe' }"
+  customers.update:
+    call: "{ id: 12, first_names: 'Alexandra', phone_number: '+15551234567' }"
+  customers.addTag:
+    call: "{ id: 12, tag_id: 5 }"
+  customers.removeTag:
+    call: "{ id: 12, tag_ids: [5, 6] }"
+  customers.adjustLeadScore:
+    call: "{ id: 12, amount: 5, explanation: 'Attended the webinar' }"
+  lists.list:
+    call: "{ per_page: 100 }"
+  lists.get:
+    call: "{ id: 7 }"
+  lists.create:
+    call: "{ name: 'Newsletter', internal_name: 'newsletter' }"
+  lists.update:
+    call: "{ id: 7, name: 'Weekly newsletter' }"
+  tags.list: {}
+  tags.get:
+    call: "{ id: 5 }"
+  tags.create:
+    call: "{ name: 'VIP', color: '#ff0000' }"
+  tags.update:
+    call: "{ id: 5, name: 'Very VIP' }"
+  products.list:
+    call: "{ recurring: false }"
+  products.get:
+    call: "{ id: 34 }"
+  products.create:
+    call: "{ name: 'Course', internal_name: 'course' }"
+  products.update:
+    call: "{ id: 34, summary: 'Updated summary' }"
+  purchases.list:
+    call: "{ customer_id: 12, state: 'complete' }"
+  purchases.get:
+    call: "{ id: 99 }"
+  purchases.update:
+    call: "{ id: 99, first_names: 'Alexandra', city: 'Berlin' }"
+  subscriptions.list:
+    call: "{ list_id: 7 }"
+  subscriptions.get:
+    call: "{ id: 55 }"
+  subscriptions.update:
+    call: "{ id: 55, utm_source: 'newsletter' }"
+  subscriptions.unsubscribe:
+    call: "{ id: 55 }"
+  subscriptions.resubscribe:
+    call: "{ id: 55 }"
+apiNotes:
+  customers.create: 'Simplero requires both email and lead_score on a contact, so a create must send a score. Sending it replaces the stored score; use customers.adjustLeadScore to add to it instead.'
+  customers.addTag: 'Send exactly one of tag_id or tag_ids. A tag change can start or stop the automations attached to that tag.'
+  customers.update: 'PATCH changes only the fields sent. An omitted field keeps its stored value.'
+  subscriptions.update: 'Tracking data only. Whether a contact is subscribed changes through unsubscribe or resubscribe, not this body.'
+  purchases.update: 'Buyer details and marketing preferences only. Refunds, cancellations, captures and price changes are separate Simplero actions and are not wrapped.'
+  customers.list: 'Page by number with per_page up to 100, or pass pagination.next_after as after. With after, total and total_pages are null because counting is skipped.'
+  lists.create: 'Name and internal_name are both required by Simplero.'
+  products.create: 'Name and internal_name are both required by Simplero.'

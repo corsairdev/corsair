@@ -1,0 +1,183 @@
+displayName: OpenSEO
+description: "Open-source SEO platform with 85 operations: keyword research and metrics, live Google SERPs, domain and backlink analysis, rank tracking, local SEO and Google Business Profiles, site audits, AI visibility tracking across ChatGPT, Claude, Gemini and Perplexity, Search Console, Google Analytics, IndexNow and saved reports."
+overviewNote: "Calls go to OpenSEO's hosted MCP server with an `oseo_` API key (OpenSEO > Settings > API keys). Most operations take a `projectId` from `projects.list`. Research lookups spend OpenSEO credits (the reply's `meta.creditsCharged`); `account.whoami` shows the balance. Search Console and Google Analytics operations read the Google accounts connected inside OpenSEO."
+examples:
+  read:
+    path: keywords.research
+    title: Research keywords
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "seeds": [{"seed": "coffee subscription"}], "resultLimit": 150}
+  write:
+    path: keywords.save
+    title: Save keywords to a project
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "keywords": ["coffee subscription", "best coffee beans"], "tags": ["subscriptions"]}
+apiExamples:
+  account.whoami:
+    args: {}
+  aiVisibility.completeResearchSetup:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31"}
+  aiVisibility.estimateCost:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "scheduleInterval": "weekly"}
+  aiVisibility.explorePrompt:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "prompt": "What is the best coffee subscription?", "models": ["chat_gpt"], "highlightBrand": "Acme Coffee"}
+  aiVisibility.export:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "format": "csv", "includeHistory": true}
+  aiVisibility.generatePrompts:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "topic": "Coffee subscriptions", "locationCode": 2840, "languageCode": "en"}
+  aiVisibility.getAnswer:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "observationId": "e4b8c2a6-1d3f-4a97-8c5e-2f6a0b9d7e13"}
+  aiVisibility.getResults:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "competitorGap": true, "limit": 20}
+  aiVisibility.getRun:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "runId": "c7a3d9e1-5b2f-4c86-a0d4-9e1f3b7c5a28"}
+  aiVisibility.getSources:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "groupBy": "domain", "ownership": "competitor", "limit": 20}
+  aiVisibility.getTracker:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31"}
+  aiVisibility.getTrend:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "days": 28}
+  aiVisibility.researchPrompts:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "keyword": "coffee subscription"}
+  aiVisibility.runCheck:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "maxCostUsd": 0.5}
+  aiVisibility.saveTracker:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "engines": ["chatgpt", "perplexity"], "prompts": [{"text": "What is the best coffee subscription?", "topic": "Coffee subscriptions"}]}
+  aiVisibility.setSchedule:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "enabled": true, "scheduleInterval": "weekly", "scheduleTime": {"weekday": 1, "hour": 9, "minute": 0, "timeZone": "America/New_York"}}
+  aiVisibility.updateResearchKeywords:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "add": ["coffee subscription"], "remove": ["coffee pods"]}
+  backlinks.list:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "target": "bluebottlecoffee.com", "pageSize": 50, "sortField": "rank", "sortOrder": "desc"}
+  backlinks.overview:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "target": "bluebottlecoffee.com"}
+  domains.keywords:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "domain": "bluebottlecoffee.com"}
+  domains.overview:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "domain": "bluebottlecoffee.com"}
+  domains.rankedKeywords:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "target": "bluebottlecoffee.com", "maxRank": 10, "limit": 50}
+  googleAnalytics.audienceBreakdown:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "breakdown": "device"}
+  googleAnalytics.ecommercePerformance:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "breakdown": "item", "limit": 20}
+  googleAnalytics.keyEvents:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "breakdown": "event", "comparePreviousPeriod": true}
+  googleAnalytics.listProperties:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31"}
+  googleAnalytics.measurementHealth:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31"}
+  googleAnalytics.organicLandingPages:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "limit": 20}
+  googleAnalytics.organicOverview:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "trend": "weekly"}
+  googleAnalytics.pagePerformance:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "channel": "organic_search", "limit": 20}
+  googleAnalytics.setProperty:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "propertyId": "properties/412345678", "ga4AccountId": "f3c9a1e7-2d5b-4f80-9b6e-4a2d8c0f6e35"}
+  googleAnalytics.siteSearch:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "limit": 20}
+  googleAnalytics.trafficAcquisition:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "breakdown": "channel_group"}
+  indexNow.submitUrls:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "urls": ["https://acmecoffee.com/blog/cold-brew-guide"]}
+  keywords.listSaved:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "limit": 50}
+  keywords.metrics:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "keywords": ["coffee subscription", "whole bean coffee"]}
+  keywords.removeSaved:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "savedKeywordIds": ["b2f6e0d4-8a1c-4f3e-9d27-5c4a1e8b3f60"]}
+  keywords.research:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "seeds": [{"seed": "coffee subscription"}], "resultLimit": 150}
+  keywords.save:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "keywords": ["coffee subscription", "best coffee beans"], "tags": ["subscriptions"]}
+  keywords.suggestions:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31"}
+  local.businessProfile:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "businessName": "Houndstooth Coffee", "near": {"latitude": 30.2672, "longitude": -97.7431, "radiusKm": 10}}
+  local.businessQuestions:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "businessName": "Houndstooth Coffee", "near": {"latitude": 30.2672, "longitude": -97.7431, "radiusKm": 10}}
+  local.businessReviews:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "businessName": "Houndstooth Coffee", "near": {"latitude": 30.2672, "longitude": -97.7431, "radiusKm": 10}, "depth": 20, "sortBy": "newest"}
+  local.businessUpdates:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "businessName": "Houndstooth Coffee", "near": {"latitude": 30.2672, "longitude": -97.7431, "radiusKm": 10}}
+  local.listCategories:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "query": "coffee", "limit": 10}
+  local.rankGrid:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "keyword": "coffee shop", "target": {"name": "Houndstooth Coffee"}, "center": {"latitude": 30.2672, "longitude": -97.7431}, "gridSize": 3, "spacingKm": 1}
+  local.searchBusinesses:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "query": "coffee shop", "near": {"latitude": 30.2672, "longitude": -97.7431, "radiusKm": 5}, "minRating": 4, "limit": 20}
+  local.serpResults:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "keyword": "coffee shop", "near": {"latitude": 30.2672, "longitude": -97.7431}, "searchType": "maps"}
+  projects.create:
+    args: {"name": "Acme Coffee", "domain": "acmecoffee.com", "locationCode": 2840, "languageCode": "en"}
+  projects.getContext:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31"}
+  projects.list:
+    args: {}
+  projects.researchWebsite:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "website": "https://acmecoffee.com"}
+  projects.saveWebsiteSetup:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "name": "Acme Coffee", "domain": "acmecoffee.com", "overview": "Specialty coffee roaster selling beans and subscriptions online.", "competitors": [{"name": "Blue Bottle", "domain": "bluebottlecoffee.com"}]}
+  projects.updateContext:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "updates": [{"section": "current_goal", "content": "Rank in the top 3 for coffee subscription keywords by Q2."}]}
+  rankTracking.addKeywords:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "trackerId": "a9d2f4b6-7c1e-4e38-b5a0-3d8c6f2e1b94", "keywords": ["coffee subscription", "best coffee beans"]}
+  rankTracking.create:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "devices": "desktop", "scheduleInterval": "manual"}
+  rankTracking.estimateCost:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "trackerId": "a9d2f4b6-7c1e-4e38-b5a0-3d8c6f2e1b94", "additionalKeywords": ["coffee gift box"]}
+  rankTracking.get:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31"}
+  rankTracking.history:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "trackerId": "a9d2f4b6-7c1e-4e38-b5a0-3d8c6f2e1b94", "device": "desktop", "runs": 10}
+  rankTracking.pinKeywords:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "trackerId": "a9d2f4b6-7c1e-4e38-b5a0-3d8c6f2e1b94", "keywordIds": ["d1e5a3c7-9b4f-4d26-8e0a-6c2b8f4d1a57"], "pinned": true}
+  rankTracking.removeKeywords:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "trackerId": "a9d2f4b6-7c1e-4e38-b5a0-3d8c6f2e1b94", "keywordIds": ["d1e5a3c7-9b4f-4d26-8e0a-6c2b8f4d1a57"]}
+  rankTracking.run:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "trackerId": "a9d2f4b6-7c1e-4e38-b5a0-3d8c6f2e1b94", "maxCostCredits": 50}
+  reports.delete:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "reportId": "9c4e8a2d-6f1b-4d53-b7e9-1a5c3f8d2b06"}
+  reports.deleteTemplate:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "templateId": "2d7f1b5e-9a3c-4e60-8f2b-6c0e4a8d1f79"}
+  reports.get:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "reportId": "9c4e8a2d-6f1b-4d53-b7e9-1a5c3f8d2b06"}
+  reports.list:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "limit": 10}
+  reports.listTemplates:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31"}
+  reports.save:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "title": "November SEO check-in", "summary": "Organic clicks up 12%; three pages lost their snippets.", "html": "<!doctype html><html><head><meta charset=\"utf-8\"><title>November SEO check-in</title></head><body><h1>November SEO check-in</h1><p>Organic clicks up 12%.</p></body></html>"}
+  reports.saveTemplate:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "name": "Monthly client check-in", "description": "One-page monthly summary for the client.", "instructions": "Start with organic clicks and conversions, then the top three wins and the top three fixes."}
+  reports.setSharing:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "reportId": "9c4e8a2d-6f1b-4d53-b7e9-1a5c3f8d2b06", "public": true}
+  searchConsole.inspectUrls:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "urls": ["https://acmecoffee.com/subscriptions"]}
+  searchConsole.listSites:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31"}
+  searchConsole.opportunities:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "limit": 10}
+  searchConsole.performance:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "dimensions": ["query"], "dateRange": "last_28_days", "rowLimit": 25}
+  searchConsole.setSite:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "siteUrl": "sc-domain:acmecoffee.com", "gscAccountId": "f3c9a1e7-2d5b-4f80-9b6e-4a2d8c0f6e35"}
+  serp.competitors:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "keywords": ["coffee subscription", "best coffee beans", "whole bean coffee"], "limit": 20}
+  serp.results:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "queries": [{"keyword": "coffee subscription", "device": "desktop"}]}
+  serp.searchLocations:
+    args: {"query": "Austin", "countryCode": "US"}
+  siteAudits.delete:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "auditId": "b8e2d6f0-4a9c-4b17-a3e5-7f1c9d3b5e82"}
+  siteAudits.issues:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "severity": "critical"}
+  siteAudits.lighthouse:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "device": "mobile"}
+  siteAudits.list:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31"}
+  siteAudits.pages:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "fetchClass": "error", "limit": 25}
+  siteAudits.run:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31", "url": "https://acmecoffee.com", "maxPages": 50}
+  siteAudits.status:
+    args: {"projectId": "6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31"}

@@ -1,0 +1,1575 @@
+---
+title: "Labs64 NetLicensing API reference"
+sidebarTitle: "API"
+description: "API reference for Labs64 NetLicensing: every `labs64netlicensing.api.*` operation with input and output types."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Licensees
+
+### create
+
+`licensees.create`
+
+Create a licensee for a product.
+
+**Risk:** `write`
+
+```ts
+await corsair.labs64netlicensing.api.licensees.create({ productNumber: 'P001', name: 'Acme Corp' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `productNumber` | `string` | Yes | — |
+| `number` | `string` | No | Licensee number; generated when left out |
+| `active` | `boolean` | No | — |
+| `name` | `string` | No | — |
+| `aliases` | `string` | No | — |
+| `markedForTransfer` | `boolean` | No | Allow moving this licensee’s licenses away |
+| `customProperties` | `Record<string, string>` | No | Extra fields NetLicensing stores as custom properties |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  type?: string,
+  number?: string,
+  active?: boolean,
+  name?: string,
+  properties: Record<string, string>,
+  lists?: {
+    name?: string,
+    properties: Record<string, string>,
+    lists?: (recursive)[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`licensees.delete`
+
+Delete a licensee; forceCascade also deletes its licenses.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.labs64netlicensing.api.licensees.delete({ licenseeNumber: 'I001', forceCascade: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `licenseeNumber` | `string` | Yes | — |
+| `forceCascade` | `boolean` | No | Also delete everything that depends on the entity |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `number` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`licensees.get`
+
+Get one licensee by number.
+
+**Risk:** `read`
+
+```ts
+await corsair.labs64netlicensing.api.licensees.get({ licenseeNumber: 'I001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `licenseeNumber` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  type?: string,
+  number?: string,
+  active?: boolean,
+  name?: string,
+  properties: Record<string, string>,
+  lists?: {
+    name?: string,
+    properties: Record<string, string>,
+    lists?: (recursive)[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`licensees.list`
+
+List licensees (the vendor's customers).
+
+**Risk:** `read`
+
+```ts
+await corsair.labs64netlicensing.api.licensees.list({ filter: 'page=0;items=20' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `page` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  type?: string,
+  number?: string,
+  active?: boolean,
+  name?: string,
+  properties: Record<string, string>,
+  lists?: {
+    name?: string,
+    properties: Record<string, string>,
+    lists?: (recursive)[]
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  pageNumber?: number,
+  totalPages?: number,
+  totalItems?: number,
+  hasNext?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### transfer
+
+`licensees.transfer`
+
+Move every license of a source licensee (marked for transfer) to this licensee; NetLicensing then removes the source licensee.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.labs64netlicensing.api.licensees.transfer({ licenseeNumber: 'I002', sourceLicenseeNumber: 'I001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `licenseeNumber` | `string` | Yes | Licensee that receives the licenses |
+| `sourceLicenseeNumber` | `string` | Yes | Licensee whose licenses move; must be markedForTransfer |
+
+The source licensee needs `markedForTransfer` set (licensees.update) and both licensees must belong to the same product. Validating the source clears the flag. After the move NetLicensing removes the source licensee.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transferred` | `true` | Yes | — |
+| `licenseeNumber` | `string` | Yes | — |
+| `sourceLicenseeNumber` | `string` | Yes | — |
+
+
+
+---
+
+### update
+
+`licensees.update`
+
+Update a licensee.
+
+**Risk:** `write`
+
+```ts
+await corsair.labs64netlicensing.api.licensees.update({ licenseeNumber: 'I001', active: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `licenseeNumber` | `string` | Yes | — |
+| `number` | `string` | No | New number for the entity (renames it) |
+| `active` | `boolean` | No | — |
+| `name` | `string` | No | — |
+| `aliases` | `string` | No | — |
+| `markedForTransfer` | `boolean` | No | Allow moving this licensee’s licenses away |
+| `customProperties` | `Record<string, string>` | No | Extra fields NetLicensing stores as custom properties |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  type?: string,
+  number?: string,
+  active?: boolean,
+  name?: string,
+  properties: Record<string, string>,
+  lists?: {
+    name?: string,
+    properties: Record<string, string>,
+    lists?: (recursive)[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### validate
+
+`licensees.validate`
+
+Check which product modules a licensee may use; floating checkouts and pay-per-use counts change unless dryRun is true.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.labs64netlicensing.api.licensees.validate({ licenseeNumber: 'I001', dryRun: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `licenseeNumber` | `string` | Yes | Licensee number or alias |
+| `productNumber` | `string` | No | Needed when the licensee does not exist yet and the product auto-creates licensees |
+| `licenseeName` | `string` | No | — |
+| `dryRun` | `boolean` | No | Validate without saving any change |
+| `forOfflineUse` | `boolean` | No | — |
+| `parameters` | `Record<string, string>` | No | Per-module parameters as NetLicensing names them, e.g. &#123; productModuleNumber: "M001", sessionId: "abc", action: "checkOut" &#125; |
+
+Returns one entry per product module with its licensing model and validity, plus `ttl`, the time until which the result can be reused. Pass module parameters (sessionId and action for Floating, usedQuantity for PayPerUse, nodeSecret for NodeLocked) in `parameters`. A product with no active module answers 404.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ttl` | `string` | No | Reuse this result until this time, then validate again |
+| `validations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="validations full type">
+
+```ts
+{
+  type?: string,
+  number?: string,
+  active?: boolean,
+  name?: string,
+  properties: Record<string, string>,
+  lists?: {
+    name?: string,
+    properties: Record<string, string>,
+    lists?: (recursive)[]
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Licenses
+
+### create
+
+`licenses.create`
+
+Create a license for a licensee from a license template.
+
+**Risk:** `write`
+
+```ts
+await corsair.labs64netlicensing.api.licenses.create({ licenseeNumber: 'I001', licenseTemplateNumber: 'E001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `number` | `string` | No | License number; generated when left out |
+| `licenseeNumber` | `string` | Yes | — |
+| `licenseTemplateNumber` | `string` | Yes | — |
+| `active` | `boolean` | No | — |
+| `transactionNumber` | `string` | No | — |
+| `name` | `string` | No | — |
+| `hidden` | `boolean` | No | — |
+| `startDate` | `string` | No | — |
+| `parentFeature` | `string` | No | — |
+| `timeVolume` | `string` | No | — |
+| `timeVolumePeriod` | `DAY \| WEEK \| MONTH \| YEAR` | No | — |
+| `maxSessions` | `string` | No | — |
+| `quantity` | `string` | No | — |
+| `usedQuantity` | `string` | No | — |
+| `gracePeriod` | `boolean` | No | — |
+| `customProperties` | `Record<string, string>` | No | Extra fields NetLicensing stores as custom properties |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  type?: string,
+  number?: string,
+  active?: boolean,
+  name?: string,
+  properties: Record<string, string>,
+  lists?: {
+    name?: string,
+    properties: Record<string, string>,
+    lists?: (recursive)[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`licenses.delete`
+
+Delete a license.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.labs64netlicensing.api.licenses.delete({ licenseNumber: 'L001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `licenseNumber` | `string` | Yes | — |
+| `forceCascade` | `boolean` | No | Also delete everything that depends on the entity |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `number` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`licenses.get`
+
+Get one license by number.
+
+**Risk:** `read`
+
+```ts
+await corsair.labs64netlicensing.api.licenses.get({ licenseNumber: 'L001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `licenseNumber` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  type?: string,
+  number?: string,
+  active?: boolean,
+  name?: string,
+  properties: Record<string, string>,
+  lists?: {
+    name?: string,
+    properties: Record<string, string>,
+    lists?: (recursive)[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`licenses.list`
+
+List the vendor's licenses.
+
+**Risk:** `read`
+
+```ts
+await corsair.labs64netlicensing.api.licenses.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+
+GET /license. Returns number and active for each license, and stores them locally.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `licenses` | `object[]` | Yes | — |
+| `page` | `object` | Yes | Paging from NetLicensing; ask for the next page with filter |
+
+<AccordionGroup>
+<Accordion title="licenses full type">
+
+```ts
+{
+  number: string,
+  active?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  pageNumber?: number,
+  totalPages?: number,
+  totalItems?: number,
+  hasNext?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`licenses.update`
+
+Update a license, for example to deactivate it.
+
+**Risk:** `write`
+
+```ts
+await corsair.labs64netlicensing.api.licenses.update({ licenseNumber: 'L001', active: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `licenseNumber` | `string` | Yes | — |
+| `number` | `string` | No | New number for the entity (renames it) |
+| `licenseeNumber` | `string` | No | — |
+| `licenseTemplateNumber` | `string` | No | — |
+| `active` | `boolean` | No | — |
+| `transactionNumber` | `string` | No | — |
+| `name` | `string` | No | — |
+| `hidden` | `boolean` | No | — |
+| `startDate` | `string` | No | — |
+| `parentFeature` | `string` | No | — |
+| `timeVolume` | `string` | No | — |
+| `timeVolumePeriod` | `DAY \| WEEK \| MONTH \| YEAR` | No | — |
+| `maxSessions` | `string` | No | — |
+| `quantity` | `string` | No | — |
+| `usedQuantity` | `string` | No | — |
+| `gracePeriod` | `boolean` | No | — |
+| `customProperties` | `Record<string, string>` | No | Extra fields NetLicensing stores as custom properties |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  type?: string,
+  number?: string,
+  active?: boolean,
+  name?: string,
+  properties: Record<string, string>,
+  lists?: {
+    name?: string,
+    properties: Record<string, string>,
+    lists?: (recursive)[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## License Templates
+
+### create
+
+`licenseTemplates.create`
+
+Create a license template in a product module.
+
+**Risk:** `write`
+
+```ts
+await corsair.labs64netlicensing.api.licenseTemplates.create({ productModuleNumber: 'M001', name: 'Monthly', licenseType: 'TIMEVOLUME', timeVolume: '1', timeVolumePeriod: 'MONTH', price: '9.99', currency: 'EUR' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `number` | `string` | No | Template number; generated when left out |
+| `productModuleNumber` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `licenseType` | `FEATURE \| TIMEVOLUME \| FLOATING \| QUANTITY` | Yes | Must fit the module licensing model |
+| `active` | `boolean` | No | — |
+| `price` | `string` | No | Decimal price; above 0 needs currency |
+| `currency` | `EUR \| USD` | No | — |
+| `automatic` | `boolean` | No | Give every new licensee one license |
+| `hidden` | `boolean` | No | — |
+| `hideLicenses` | `boolean` | No | — |
+| `timeVolume` | `string` | No | — |
+| `timeVolumePeriod` | `DAY \| WEEK \| MONTH \| YEAR` | No | — |
+| `maxSessions` | `string` | No | — |
+| `quantity` | `string` | No | — |
+| `gracePeriod` | `boolean` | No | — |
+| `promoCode` | `string` | No | — |
+| `discountType` | `PERCENT \| FIX` | No | — |
+| `discountAmount` | `string` | No | — |
+| `discountCurrency` | `string` | No | — |
+| `minCartTotal` | `string` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `customProperties` | `Record<string, string>` | No | Extra fields NetLicensing stores as custom properties |
+
+`licenseType` must fit the module model: FEATURE or TIMEVOLUME for TryAndBuy and Rental, TIMEVOLUME for Subscription, FLOATING for Floating, QUANTITY for PayPerUse, Quota and NodeLocked. A price above 0 needs `currency`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  type?: string,
+  number?: string,
+  active?: boolean,
+  name?: string,
+  properties: Record<string, string>,
+  lists?: {
+    name?: string,
+    properties: Record<string, string>,
+    lists?: (recursive)[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`licenseTemplates.delete`
+
+Delete a license template; forceCascade also deletes its licenses.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.labs64netlicensing.api.licenseTemplates.delete({ licenseTemplateNumber: 'E001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `licenseTemplateNumber` | `string` | Yes | — |
+| `forceCascade` | `boolean` | No | Also delete everything that depends on the entity |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `number` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`licenseTemplates.get`
+
+Get one license template by number.
+
+**Risk:** `read`
+
+```ts
+await corsair.labs64netlicensing.api.licenseTemplates.get({ licenseTemplateNumber: 'E001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `licenseTemplateNumber` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  type?: string,
+  number?: string,
+  active?: boolean,
+  name?: string,
+  properties: Record<string, string>,
+  lists?: {
+    name?: string,
+    properties: Record<string, string>,
+    lists?: (recursive)[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`licenseTemplates.list`
+
+List license templates.
+
+**Risk:** `read`
+
+```ts
+await corsair.labs64netlicensing.api.licenseTemplates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `page` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  type?: string,
+  number?: string,
+  active?: boolean,
+  name?: string,
+  properties: Record<string, string>,
+  lists?: {
+    name?: string,
+    properties: Record<string, string>,
+    lists?: (recursive)[]
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  pageNumber?: number,
+  totalPages?: number,
+  totalItems?: number,
+  hasNext?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`licenseTemplates.update`
+
+Update a license template.
+
+**Risk:** `write`
+
+```ts
+await corsair.labs64netlicensing.api.licenseTemplates.update({ licenseTemplateNumber: 'E001', price: '12.99' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `licenseTemplateNumber` | `string` | Yes | — |
+| `number` | `string` | No | New number for the entity (renames it) |
+| `productModuleNumber` | `string` | No | — |
+| `name` | `string` | No | — |
+| `licenseType` | `FEATURE \| TIMEVOLUME \| FLOATING \| QUANTITY` | No | Must fit the module licensing model |
+| `active` | `boolean` | No | — |
+| `price` | `string` | No | Decimal price; above 0 needs currency |
+| `currency` | `EUR \| USD` | No | — |
+| `automatic` | `boolean` | No | Give every new licensee one license |
+| `hidden` | `boolean` | No | — |
+| `hideLicenses` | `boolean` | No | — |
+| `timeVolume` | `string` | No | — |
+| `timeVolumePeriod` | `DAY \| WEEK \| MONTH \| YEAR` | No | — |
+| `maxSessions` | `string` | No | — |
+| `quantity` | `string` | No | — |
+| `gracePeriod` | `boolean` | No | — |
+| `promoCode` | `string` | No | — |
+| `discountType` | `PERCENT \| FIX` | No | — |
+| `discountAmount` | `string` | No | — |
+| `discountCurrency` | `string` | No | — |
+| `minCartTotal` | `string` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `customProperties` | `Record<string, string>` | No | Extra fields NetLicensing stores as custom properties |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  type?: string,
+  number?: string,
+  active?: boolean,
+  name?: string,
+  properties: Record<string, string>,
+  lists?: {
+    name?: string,
+    properties: Record<string, string>,
+    lists?: (recursive)[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Product Modules
+
+### create
+
+`productModules.create`
+
+Create a product module with a licensing model.
+
+**Risk:** `write`
+
+```ts
+await corsair.labs64netlicensing.api.productModules.create({ productNumber: 'P001', name: 'Core features', licensingModel: 'Subscription' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `number` | `string` | No | Module number; generated when left out |
+| `productNumber` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `licensingModel` | `string` | Yes | TryAndBuy, Rental, Subscription, Floating, MultiFeature, PayPerUse, PricingTable, Quota, NodeLocked or Discount |
+| `active` | `boolean` | No | — |
+| `maxCheckoutValidity` | `string` | No | Floating: max session time in seconds |
+| `yellowThreshold` | `string` | No | — |
+| `redThreshold` | `string` | No | — |
+| `nodeSecretMode` | `PREDEFINED \| CLIENT` | No | — |
+| `customProperties` | `Record<string, string>` | No | Extra fields NetLicensing stores as custom properties |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  type?: string,
+  number?: string,
+  active?: boolean,
+  name?: string,
+  properties: Record<string, string>,
+  lists?: {
+    name?: string,
+    properties: Record<string, string>,
+    lists?: (recursive)[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`productModules.delete`
+
+Delete a product module; forceCascade also deletes what depends on it.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.labs64netlicensing.api.productModules.delete({ productModuleNumber: 'M001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `productModuleNumber` | `string` | Yes | — |
+| `forceCascade` | `boolean` | No | Also delete everything that depends on the entity |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `number` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`productModules.get`
+
+Get one product module by number.
+
+**Risk:** `read`
+
+```ts
+await corsair.labs64netlicensing.api.productModules.get({ productModuleNumber: 'M001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `productModuleNumber` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  type?: string,
+  number?: string,
+  active?: boolean,
+  name?: string,
+  properties: Record<string, string>,
+  lists?: {
+    name?: string,
+    properties: Record<string, string>,
+    lists?: (recursive)[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`productModules.list`
+
+List product modules.
+
+**Risk:** `read`
+
+```ts
+await corsair.labs64netlicensing.api.productModules.list({ filter: 'page=0;items=50' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `page` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  type?: string,
+  number?: string,
+  active?: boolean,
+  name?: string,
+  properties: Record<string, string>,
+  lists?: {
+    name?: string,
+    properties: Record<string, string>,
+    lists?: (recursive)[]
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  pageNumber?: number,
+  totalPages?: number,
+  totalItems?: number,
+  hasNext?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`productModules.update`
+
+Update a product module.
+
+**Risk:** `write`
+
+```ts
+await corsair.labs64netlicensing.api.productModules.update({ productModuleNumber: 'M001', name: 'Core' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `productModuleNumber` | `string` | Yes | — |
+| `number` | `string` | No | New number for the entity (renames it) |
+| `productNumber` | `string` | No | — |
+| `name` | `string` | No | — |
+| `licensingModel` | `string` | No | TryAndBuy, Rental, Subscription, Floating, MultiFeature, PayPerUse, PricingTable, Quota, NodeLocked or Discount |
+| `active` | `boolean` | No | — |
+| `maxCheckoutValidity` | `string` | No | Floating: max session time in seconds |
+| `yellowThreshold` | `string` | No | — |
+| `redThreshold` | `string` | No | — |
+| `nodeSecretMode` | `PREDEFINED \| CLIENT` | No | — |
+| `customProperties` | `Record<string, string>` | No | Extra fields NetLicensing stores as custom properties |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  type?: string,
+  number?: string,
+  active?: boolean,
+  name?: string,
+  properties: Record<string, string>,
+  lists?: {
+    name?: string,
+    properties: Record<string, string>,
+    lists?: (recursive)[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Products
+
+### create
+
+`products.create`
+
+Create a product.
+
+**Risk:** `write`
+
+```ts
+await corsair.labs64netlicensing.api.products.create({ name: 'My App', version: '1.0', licenseeAutoCreate: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `number` | `string` | No | Product number; generated when left out |
+| `active` | `boolean` | No | — |
+| `name` | `string` | Yes | Product name |
+| `version` | `string` | No | — |
+| `licenseeAutoCreate` | `boolean` | No | Create an unknown licensee on its first validation |
+| `description` | `string` | No | — |
+| `licensingInfo` | `string` | No | — |
+| `discount` | `string[]` | No | Volume discounts as totalPrice;currency;amount (amount% for a percentage) |
+| `licenseeSecretMode` | `PREDEFINED \| CLIENT` | No | — |
+| `vatMode` | `GROSS \| NET` | No | — |
+| `customProperties` | `Record<string, string>` | No | Extra fields NetLicensing stores as custom properties |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  type?: string,
+  number?: string,
+  active?: boolean,
+  name?: string,
+  properties: Record<string, string>,
+  lists?: {
+    name?: string,
+    properties: Record<string, string>,
+    lists?: (recursive)[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`products.delete`
+
+Delete a product; forceCascade also deletes its modules, templates, licensees and licenses.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.labs64netlicensing.api.products.delete({ productNumber: 'P001', forceCascade: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `productNumber` | `string` | Yes | — |
+| `forceCascade` | `boolean` | No | Also delete everything that depends on the entity |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `number` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`products.get`
+
+Get one product by number.
+
+**Risk:** `read`
+
+```ts
+await corsair.labs64netlicensing.api.products.get({ productNumber: 'P001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `productNumber` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  type?: string,
+  number?: string,
+  active?: boolean,
+  name?: string,
+  properties: Record<string, string>,
+  lists?: {
+    name?: string,
+    properties: Record<string, string>,
+    lists?: (recursive)[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`products.list`
+
+List the vendor's products.
+
+**Risk:** `read`
+
+```ts
+await corsair.labs64netlicensing.api.products.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+
+GET /product. Returns number, active, name and version, and stores them locally.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `products` | `object[]` | Yes | — |
+| `page` | `object` | Yes | Paging from NetLicensing; ask for the next page with filter |
+
+<AccordionGroup>
+<Accordion title="products full type">
+
+```ts
+{
+  number: string,
+  active?: boolean,
+  name?: string,
+  version?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  pageNumber?: number,
+  totalPages?: number,
+  totalItems?: number,
+  hasNext?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`products.update`
+
+Update a product; fields left out stay as they are.
+
+**Risk:** `write`
+
+```ts
+await corsair.labs64netlicensing.api.products.update({ productNumber: 'P001', version: '1.1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `productNumber` | `string` | Yes | — |
+| `number` | `string` | No | New number for the entity (renames it) |
+| `active` | `boolean` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `licenseeAutoCreate` | `boolean` | No | Create an unknown licensee on its first validation |
+| `description` | `string` | No | — |
+| `licensingInfo` | `string` | No | — |
+| `discount` | `string[]` | No | Volume discounts as totalPrice;currency;amount (amount% for a percentage) |
+| `licenseeSecretMode` | `PREDEFINED \| CLIENT` | No | — |
+| `vatMode` | `GROSS \| NET` | No | — |
+| `customProperties` | `Record<string, string>` | No | Extra fields NetLicensing stores as custom properties |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  type?: string,
+  number?: string,
+  active?: boolean,
+  name?: string,
+  properties: Record<string, string>,
+  lists?: {
+    name?: string,
+    properties: Record<string, string>,
+    lists?: (recursive)[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Transactions
+
+### get
+
+`transactions.get`
+
+Get one transaction by number.
+
+**Risk:** `read`
+
+```ts
+await corsair.labs64netlicensing.api.transactions.get({ transactionNumber: 'T001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transactionNumber` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  type?: string,
+  number?: string,
+  active?: boolean,
+  name?: string,
+  properties: Record<string, string>,
+  lists?: {
+    name?: string,
+    properties: Record<string, string>,
+    lists?: (recursive)[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`transactions.list`
+
+List transactions, newest first.
+
+**Risk:** `read`
+
+```ts
+await corsair.labs64netlicensing.api.transactions.list({ filter: 'licenseeNumber=I001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+
+Newest first. `filter` takes licenseeNumber=&lt;n&gt; or shopOnly=true.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `page` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  type?: string,
+  number?: string,
+  active?: boolean,
+  name?: string,
+  properties: Record<string, string>,
+  lists?: {
+    name?: string,
+    properties: Record<string, string>,
+    lists?: (recursive)[]
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  pageNumber?: number,
+  totalPages?: number,
+  totalItems?: number,
+  hasNext?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
