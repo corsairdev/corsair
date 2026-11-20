@@ -79,6 +79,8 @@ describe('errors (R8)', () => {
 			}),
 		);
 		expect(error.message).not.toContain('jane@example.com');
+		expect(JSON.stringify(error)).not.toContain('jane@example.com');
+		expect(error.body).toEqual({ errors: { email: '[email] is taken' } });
 	});
 
 	it('let a transport failure through unchanged', async () => {

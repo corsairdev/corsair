@@ -63,6 +63,24 @@ export class StoreganiseAPIError extends ApiError {
 	}
 }
 
+const EMAIL = /[^\s@"'<>(),;:]+@[^\s@"'<>(),;:]+\.[a-z]{2,}/gi;
+
+/**
+ * Validation errors can echo what was sent (a 400 naming the email that is
+ * taken), so every string in an error body or message has email addresses
+ * replaced before it goes on the error. Structure and other text stay.
+ */
+// unknown: error bodies are arbitrary JSON; the same shape comes back.
+export function maskEmails<T>(value: T): T {
+	if (typeof value === 'string') return value.replace(EMAIL, '[email]') as T;
+	if (Array.isArray(value)) return value.map((item) => maskEmails(item)) as T;
+	const record = asRecord(value);
+	if (!record) return value;
+	return Object.fromEntries(
+		Object.entries(record).map(([key, item]) => [key, maskEmails(item)]),
+	) as T;
+}
+
 /**
  * Extracts the readable part of a Storeganise error body. Errors are
  * `{"error":{"type":"Unauthorized","message":"Not authorized"}}` (verified
@@ -172,14 +190,17 @@ export async function makeStoreganiseRequest(
 				error.body,
 				textBody || error.statusText || 'request failed',
 			);
-			throw new StoreganiseAPIError(`Storeganise ${error.status}: ${detail}`, {
-				method,
-				path,
-				status: error.status,
-				statusText: error.statusText,
-				body: error.body,
-				retryAfter: error.retryAfter,
-			});
+			throw new StoreganiseAPIError(
+				`Storeganise ${error.status}: ${maskEmails(detail)}`,
+				{
+					method,
+					path,
+					status: error.status,
+					statusText: error.statusText,
+					body: maskEmails(error.body),
+					retryAfter: error.retryAfter,
+				},
+			);
 		}
 		// Timeouts and network failures carry no request data; let them through.
 		throw error;

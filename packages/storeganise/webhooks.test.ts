@@ -190,6 +190,32 @@ describe('event handler', () => {
 		}
 	});
 
+	it('acknowledges a delivery after the wait even when logging never finishes', async () => {
+		jest.useFakeTimers();
+		let rejectLog: (error: Error) => void = () => undefined;
+		mockLog.mockImplementationOnce(
+			() =>
+				new Promise((_, reject) => {
+					rejectLog = reject;
+				}),
+		);
+		const delivered = request(webhookPayload, {
+			[SG_SIGNATURE_HEADER]: signature(webhookPayload, SECRET),
+		});
+		const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+		try {
+			const pending = event.handler(ctx(SECRET), delivered as never);
+			await jest.advanceTimersByTimeAsync(5_000);
+			await expect(pending).resolves.toMatchObject({ success: true });
+			// A late failure of the stalled log write is caught, not thrown.
+			rejectLog(new Error('insert failed'));
+			await jest.advanceTimersByTimeAsync(0);
+		} finally {
+			warn.mockRestore();
+			jest.useRealTimers();
+		}
+	});
+
 	it('accepts a signed delivery and returns the parsed event', async () => {
 		const delivered = request(webhookPayload, {
 			[SG_SIGNATURE_HEADER]: signature(webhookPayload, SECRET),
