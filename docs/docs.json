@@ -3011,6 +3011,14 @@
                 ]
               },
               {
+                "group": "HotspotSystem",
+                "pages": [
+                  "plugins/hotspotsystem/overview",
+                  "plugins/hotspotsystem/api",
+                  "plugins/hotspotsystem/database"
+                ]
+              },
+              {
                 "group": "HTML to Image",
                 "pages": [
                   "plugins/htmltoimage/overview",
@@ -3282,6 +3290,14 @@
                   "plugins/keenable/overview",
                   "plugins/keenable/api",
                   "plugins/keenable/database"
+                ]
+              },
+              {
+                "group": "Kernel",
+                "pages": [
+                  "plugins/kernel/overview",
+                  "plugins/kernel/api",
+                  "plugins/kernel/database"
                 ]
               },
               {
@@ -5104,6 +5120,23 @@
                   "plugins/statuscake/overview",
                   "plugins/statuscake/api",
                   "plugins/statuscake/database"
+                ]
+              },
+              {
+                "group": "Storeganise",
+                "pages": [
+                  "plugins/storeganise/overview",
+                  "plugins/storeganise/api",
+                  "plugins/storeganise/database",
+                  "plugins/storeganise/webhooks"
+                ]
+              },
+              {
+                "group": "Storerocket",
+                "pages": [
+                  "plugins/storerocket/overview",
+                  "plugins/storerocket/api",
+                  "plugins/storerocket/database"
                 ]
               },
               {

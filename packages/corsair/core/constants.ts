@@ -360,6 +360,7 @@ export const BaseProviders = [
 	'honeybadger',
 	'honeyhive',
 	'hookdeck',
+	'hotspotsystem',
 	'htmltoimage',
 	'hubplanner',
 	'hubspot',
@@ -394,6 +395,7 @@ export const BaseProviders = [
 	'kanbanize',
 	'keen',
 	'keenable',
+	'kernel',
 	'keyword',
 	'kibana',
 	'kickbox',
@@ -617,6 +619,8 @@ export const BaseProviders = [
 	'stackexchange',
 	'starton',
 	'statuscake',
+	'storeganise',
+	'storerocket',
 	'stormglass',
 	'strava',
 	'streamtime',
@@ -1099,6 +1103,7 @@ export const ProviderDisplayNames = {
 	honeybadger: 'Honeybadger',
 	honeyhive: 'HoneyHive',
 	hookdeck: 'Hookdeck',
+	hotspotsystem: 'HotspotSystem',
 	htmltoimage: 'HtmlToImage',
 	hubplanner: 'Hub Planner',
 	hubspot: 'HubSpot',
@@ -1133,6 +1138,7 @@ export const ProviderDisplayNames = {
 	kanbanize: 'Kanbanize',
 	keen: 'Keen',
 	keenable: 'Keenable',
+	kernel: 'Kernel',
 	keyword: 'Keyword',
 	kibana: 'Kibana',
 	kickbox: 'Kickbox',
@@ -1356,6 +1362,8 @@ export const ProviderDisplayNames = {
 	stackexchange: 'Stack Exchange',
 	starton: 'Starton',
 	statuscake: 'StatusCake',
+	storeganise: 'Storeganise',
+	storerocket: 'Storerocket',
 	stormglass: 'Stormglass',
 	strava: 'Strava',
 	streamtime: 'Streamtime',
@@ -1845,6 +1853,7 @@ export type AllProviders =
 	| 'honeybadger'
 	| 'honeyhive'
 	| 'hookdeck'
+	| 'hotspotsystem'
 	| 'htmltoimage'
 	| 'hubplanner'
 	| 'hubspot'
@@ -1879,6 +1888,7 @@ export type AllProviders =
 	| 'kanbanize'
 	| 'keen'
 	| 'keenable'
+	| 'kernel'
 	| 'keyword'
 	| 'kibana'
 	| 'kickbox'
@@ -2102,6 +2112,8 @@ export type AllProviders =
 	| 'stackexchange'
 	| 'starton'
 	| 'statuscake'
+	| 'storeganise'
+	| 'storerocket'
 	| 'stormglass'
 	| 'strava'
 	| 'streamtime'

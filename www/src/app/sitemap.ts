@@ -48,6 +48,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 			changeFrequency: 'weekly',
 			priority: 0.8,
 		},
+		{
+			url: 'https://corsair.dev/built-with',
+			changeFrequency: 'weekly',
+			priority: 0.7,
+		},
 		...USE_CASES.map((useCase) => ({
 			url: `https://corsair.dev/use-cases/${useCase.slug}`,
 			changeFrequency: 'monthly' as const,
