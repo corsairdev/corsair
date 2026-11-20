@@ -1,5 +1,6 @@
 import { createAccountKeyManager, createCorsair } from '../core';
 import type { CorsairPlugin } from '../core/plugins';
+import { getCallableProperty } from '../core/utils/callable';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
 import { setupCorsair } from '../setup';
 import { createTestDatabase } from './setup-db';
@@ -33,6 +34,7 @@ const linearByo = {
 	authConfig: { oauth_2: { account: [] as const } },
 } as unknown as CorsairPlugin;
 
+// A stand-in plugin with only the fields delivery reads; a full CorsairPlugin needs endpoints and schemas this test never touches.
 const userScoped = {
 	id: 'userscoped',
 	options: { authType: 'managed' as const },
@@ -141,12 +143,11 @@ describe('processManagedOAuthDelivery — BYO (oauth_2) mode', () => {
 			kek: KEK,
 			database,
 			extraAccountFields: ['team_id', 'user_token'],
-		}) as unknown as {
-			get_access_token: () => Promise<string | null>;
-			get_user_token: () => Promise<string | null>;
-		};
+		});
 		expect(await userKm.get_access_token()).toBe('app-token');
-		expect(await userKm.get_user_token()).toBe('user-token');
+		expect(await getCallableProperty(userKm, 'get_user_token')?.()).toBe(
+			'user-token',
+		);
 
 		await processManagedOAuthDelivery(corsair, {
 			plugin: 'linear',
