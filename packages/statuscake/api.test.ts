@@ -5,9 +5,13 @@ import { statuscake } from './index';
 // Read-only live smoke. Runs only with STATUSCAKE_API_TOKEN set (the
 // variable the StatusCake docs and SDKs use); everything else skips. No
 // writes: creates and updates would change real monitoring.
-const describeIfToken = process.env.STATUSCAKE_API_TOKEN
-	? describe
-	: describe.skip;
+const hasToken = Boolean(process.env.STATUSCAKE_API_TOKEN);
+if (!hasToken) {
+	console.warn(
+		'Skipping statuscake live tests: STATUSCAKE_API_TOKEN is not set.',
+	);
+}
+const describeIfToken = hasToken ? describe : describe.skip;
 
 describeIfToken('statuscake live API', () => {
 	async function createClient() {

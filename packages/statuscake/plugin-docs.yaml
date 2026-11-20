@@ -11,7 +11,7 @@ overviewNote: |
   - **Two paging styles.** Resource lists (`uptime.list`, `ssl.list` and the rest) take `page` and `limit` and answer `metadata.page_count` and `total_count`. Record lists (`uptime.history`, `uptime.periods`, `uptime.alerts`, `pagespeed.history`) take `limit`, `before` and `after` Unix seconds, answer newest first, and put the continuation point in `links.next`, which is absent on the last page.
   - **Rate limits.** Free accounts may make 60 requests per minute and every account has a burst limit of 5 per second. Responses carry `x-ratelimit-limit`, `x-ratelimit-remaining` and `x-ratelimit-reset` (seconds until the window lifts); the plugin retries a 429 up to three times, waiting the reset time. The quota is shared by every client using the account's tokens.
   - **Bad tokens.** A wrong or deleted token is denied before the request reaches the API, so the error carries no body; the plugin reports it as an authentication failure.
-  - **No webhooks.** StatusCake alert webhooks are configured per contact group in the dashboard (the `ping_url` field), not through this API, so the plugin does not receive deliveries.
+  - **No webhook receiver.** StatusCake sends alert callbacks to a contact group's `ping_url`, which `contactGroups.create` and `contactGroups.update` can set. The plugin does not receive those deliveries.
 examples:
   read:
     path: uptime.list
