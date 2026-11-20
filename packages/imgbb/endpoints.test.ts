@@ -271,7 +271,12 @@ describe('Images.upload', () => {
 			name: 'cat.png',
 		});
 		// The file's own name goes to ImgBB but not into the event.
-		expect(mockLog.mock.calls.at(-1)?.[2]).toEqual({ name: undefined });
+		expect(mockLog).toHaveBeenLastCalledWith(
+			expect.anything(),
+			'imgbb.images.upload',
+			{ name: undefined },
+			'completed',
+		);
 
 		// An explicit name wins over the file's own.
 		await call(Images.upload, createContext('my-key'), {

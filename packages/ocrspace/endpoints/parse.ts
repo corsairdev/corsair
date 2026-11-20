@@ -50,7 +50,8 @@ async function uploadFile(
 		!TYPED_EXTENSION.test(resolved.filename)
 	) {
 		throw new Error(
-			`Neither the file's name nor its type (${resolved.contentType}) says what it is. Set filetype.`,
+			// A fixed message: a caller's name or media type parameters could carry personal data.
+			"Neither the file's name nor its type says what it is. Set filetype.",
 		);
 	}
 	return resolved.file;

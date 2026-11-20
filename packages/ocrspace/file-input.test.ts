@@ -175,6 +175,16 @@ describe('ocr.parse file input', () => {
 		}).catch((e: Error) => e);
 		expect(String(error)).toMatch(/Set filetype/);
 		expect(String(error)).not.toMatch(/Jane_Doe/);
+
+		// A name tucked into the media type stays out of it too.
+		const typed = await parse(createContext(), {
+			file: {
+				url: 'https://files.example.com/Jane_Doe_record',
+				contentType: 'application/octet-stream; name=Jane_Doe_record',
+			},
+		}).catch((e: Error) => e);
+		expect(String(typed)).toMatch(/Set filetype/);
+		expect(String(typed)).not.toMatch(/Jane_Doe/);
 	});
 
 	it('refuses a private address before any request to OCR.space', async () => {
