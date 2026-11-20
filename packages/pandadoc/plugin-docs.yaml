@@ -1,0 +1,110 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+# `pnpm validate:plugins` fails until the TODO is replaced.
+displayName: "PandaDoc"
+description: "PandaDoc is a document automation and e-signature platform. This plugin creates documents from templates or PDFs, sends them for signing, tracks their status, downloads the signed PDFs, and manages templates, contacts, folders and webhook subscriptions."
+domain: pandadoc.com
+recommendedAuth: api_key
+overviewNote: >
+  Authenticate with an API key from the PandaDoc Developer Dashboard
+  (app.pandadoc.com/developers/); sandbox keys work the same way. The header
+  is `Authorization: API-Key <key>`, which the plugin sets for you.
+
+  Creating a document from a template or PDF URL is asynchronous: the create
+  call answers immediately with `document.create_pending`, and the document
+  reaches `document.draft` a few seconds later. Listen for the
+  `document_state_changed` webhook (subscribe with webhooks.createSubscription,
+  and store the subscription's shared_key) or poll documents.get.
+
+  Document creation by file upload (multipart) and the OAuth flow are not part
+  of this plugin; neither are the member, workspace, content-library, catalog,
+  section, quote and notarization endpoints.
+
+  Every operation is described in PandaDoc's API reference:
+  https://developers.pandadoc.com/reference/about
+examples:
+  read:
+    path: documents.get
+    title: Read a document
+    args:
+      id: RsXrKarV524iCpjci9CMGa
+  write:
+    path: documents.create
+    title: Create a document from a template
+    args:
+      template_uuid: ustHNnVaPCD6MzuoNBbZ8L
+      name: Contract for Acme Corp
+      recipients:
+        - email: jane@example.com
+          first_name: Jane
+          last_name: Roe
+          role: Signer
+apiExamples:
+  documents.list:
+    call: '{ status: 2, count: 25, page: 1 }'
+  documents.get:
+    call: '{ id: "RsXrKarV524iCpjci9CMGa" }'
+  documents.create:
+    call: '{ template_uuid: "ustHNnVaPCD6MzuoNBbZ8L", name: "Contract for Acme Corp", recipients: [{ email: "jane@example.com", first_name: "Jane", last_name: "Roe", role: "Signer" }] }'
+  documents.send:
+    call: '{ id: "RsXrKarV524iCpjci9CMGa", message: "Please sign the attached contract.", subject: "Contract for Acme Corp" }'
+  documents.update:
+    call: '{ id: "RsXrKarV524iCpjci9CMGa", name: "Contract for Acme Corp (v2)" }'
+  documents.delete:
+    call: '{ id: "RsXrKarV524iCpjci9CMGa" }'
+  documents.download:
+    call: '{ id: "RsXrKarV524iCpjci9CMGa" }'
+  documents.downloadProtected:
+    call: '{ id: "RsXrKarV524iCpjci9CMGa" }'
+  documents.listFields:
+    call: '{ id: "RsXrKarV524iCpjci9CMGa" }'
+  documents.createFields:
+    call: '{ id: "RsXrKarV524iCpjci9CMGa", fields: [{ type: "signature", layout: { page: 1, position: { offset_x: 10, offset_y: 20, anchor_point: "top_left" }, style: { width: 10, height: 5 } } }] }'
+  documents.move:
+    call: '{ id: "RsXrKarV524iCpjci9CMGa", folderId: "Zugfh5DZNREisAVyLcVyCJ" }'
+  templates.list:
+    call: '{ q: "nda", count: 25 }'
+  templates.get:
+    call: '{ id: "ustHNnVaPCD6MzuoNBbZ8L" }'
+  templates.delete:
+    call: '{ id: "ustHNnVaPCD6MzuoNBbZ8L" }'
+  contacts.list:
+    call: '{ email: "jane@example.com" }'
+  contacts.get:
+    call: '{ id: "SyoufNkJiHRn24LpuJ7RXb" }'
+  contacts.create:
+    call: '{ email: "jane@example.com", first_name: "Jane", last_name: "Roe" }'
+  contacts.update:
+    call: '{ id: "SyoufNkJiHRn24LpuJ7RXb", job_title: "Director" }'
+  contacts.delete:
+    call: '{ id: "SyoufNkJiHRn24LpuJ7RXb" }'
+  folders.list:
+    call: '{}'
+  folders.create:
+    call: '{ name: "Contracts" }'
+  folders.rename:
+    call: '{ id: "Zugfh5DZNREisAVyLcVyCJ", name: "Signed" }'
+  webhooks.listSubscriptions:
+    call: '{}'
+  webhooks.createSubscription:
+    call: '{ name: "Deal desk deliveries", url: "https://example.com/webhooks/pandadoc", triggers: ["document_state_changed", "recipient_completed"] }'
+  webhooks.deleteSubscription:
+    call: '{ id: "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5e" }'
+  webhooks.getEvent:
+    call: '{ id: "d0c1b2a3-4e5f-6a7b-8c9d-0e1f2a3b4c5f" }'
+apiNotes:
+  documents.list: 'Status filters are numeric codes (0 = document.draft, 1 = document.sent, 2 = document.completed, 3 = document.uploaded, 4 = document.error, 5 = document.viewed, 6 = document.waiting_approval). Metadata filters take the documented `metadata_key=value` format, one array entry per filter.'
+  documents.create: 'Two creation bodies: from a template (template_uuid plus recipients) or from a public HTTPS PDF (url plus name). The answer is 201 with the document in document.create_pending while it renders.'
+  documents.send: 'Sends the document to its recipients by email. This cannot be recalled.'
+  documents.delete: 'Answers 204 with no body. With forever: true the document is deleted permanently instead of moved to deleted documents.'
+  documents.download: 'Answers a PDF; while the document is still rendering the API answers 202 and the operation reports pending: true instead of an empty file.'
+  documents.downloadProtected: 'Answers the flattened PDF of a completed document; 202 while it renders, reported as pending: true.'
+  documents.move: 'Answers 204 with no body.'
+  templates.delete: 'Answers 204 with no body.'
+  contacts.list: 'The email filter matches the exact address.'
+  contacts.update: 'The API does not change the email of an existing contact.'
+  contacts.delete: 'Answers 204 with no body.'
+  folders.create: 'Answer carries the folder uuid used to place documents and parents.'
+  folders.rename: 'Answers 204-level success as a folder object; pass the uuid, not the name.'
+  webhooks.createSubscription: 'The answer carries the subscription''s shared_key: store it (keys.set_webhook_signature) so deliveries can be verified.'
+  webhooks.deleteSubscription: 'Answers 204 with no body.'
+  webhooks.getEvent: 'The id comes from the X-PandaDoc-Webhook-Event-Id header of a delivery.'

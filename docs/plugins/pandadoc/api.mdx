@@ -1,0 +1,1290 @@
+---
+title: "PandaDoc API reference"
+sidebarTitle: "API"
+description: "API reference for the PandaDoc plugin in Corsair: every `pandadoc.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Create a contact
+
+**Risk:** `write`
+
+```ts
+await corsair.pandadoc.api.contacts.create({ email: "jane@example.com", first_name: "Jane", last_name: "Roe" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | Contact email address |
+| `first_name` | `string \| null` | No | Contact first name |
+| `last_name` | `string \| null` | No | Contact last name |
+| `company` | `string \| null` | No | Contact company |
+| `job_title` | `string \| null` | No | Contact job title |
+| `phone` | `string \| null` | No | Contact phone number |
+| `country` | `string \| null` | No | Contact country |
+| `state` | `string \| null` | No | Contact state |
+| `street_address` | `string \| null` | No | Contact street address |
+| `city` | `string \| null` | No | Contact city |
+| `postal_code` | `string \| null` | No | Contact postal code |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Contact id |
+| `email` | `string \| null` | No | Contact email address |
+| `first_name` | `string \| null` | No | Contact first name |
+| `last_name` | `string \| null` | No | Contact last name |
+| `company` | `string \| null` | No | Contact company |
+| `job_title` | `string \| null` | No | Contact job title |
+| `phone` | `string \| null` | No | Contact phone number |
+| `country` | `string \| null` | No | Contact country |
+| `state` | `string \| null` | No | Contact state |
+| `street_address` | `string \| null` | No | Contact street address |
+| `city` | `string \| null` | No | Contact city |
+| `postal_code` | `string \| null` | No | Contact postal code |
+
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Delete a contact
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.pandadoc.api.contacts.delete({ id: "SyoufNkJiHRn24LpuJ7RXb" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Contact id |
+
+Answers 204 with no body.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Deleted contact id |
+| `success` | `boolean` | Yes | Whether the delete succeeded |
+
+
+
+---
+
+### get
+
+`contacts.get`
+
+Read one contact by id
+
+**Risk:** `read`
+
+```ts
+await corsair.pandadoc.api.contacts.get({ id: "SyoufNkJiHRn24LpuJ7RXb" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Contact id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Contact id |
+| `email` | `string \| null` | No | Contact email address |
+| `first_name` | `string \| null` | No | Contact first name |
+| `last_name` | `string \| null` | No | Contact last name |
+| `company` | `string \| null` | No | Contact company |
+| `job_title` | `string \| null` | No | Contact job title |
+| `phone` | `string \| null` | No | Contact phone number |
+| `country` | `string \| null` | No | Contact country |
+| `state` | `string \| null` | No | Contact state |
+| `street_address` | `string \| null` | No | Contact street address |
+| `city` | `string \| null` | No | Contact city |
+| `postal_code` | `string \| null` | No | Contact postal code |
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+List contacts, optionally filtered by exact email address
+
+**Risk:** `read`
+
+```ts
+await corsair.pandadoc.api.contacts.list({ email: "jane@example.com" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | Filter contacts by exact email address |
+
+The email filter matches the exact address.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | Contacts matching the filter |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  email?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  company?: string | null,
+  job_title?: string | null,
+  phone?: string | null,
+  country?: string | null,
+  state?: string | null,
+  street_address?: string | null,
+  city?: string | null,
+  postal_code?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Update a contact
+
+**Risk:** `write`
+
+```ts
+await corsair.pandadoc.api.contacts.update({ id: "SyoufNkJiHRn24LpuJ7RXb", job_title: "Director" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Contact id |
+| `first_name` | `string \| null` | No | Contact first name |
+| `last_name` | `string \| null` | No | Contact last name |
+| `company` | `string \| null` | No | Contact company |
+| `job_title` | `string \| null` | No | Contact job title |
+| `phone` | `string \| null` | No | Contact phone number |
+| `country` | `string \| null` | No | Contact country |
+| `state` | `string \| null` | No | Contact state |
+| `street_address` | `string \| null` | No | Contact street address |
+| `city` | `string \| null` | No | Contact city |
+| `postal_code` | `string \| null` | No | Contact postal code |
+
+The API does not change the email of an existing contact.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Contact id |
+| `email` | `string \| null` | No | Contact email address |
+| `first_name` | `string \| null` | No | Contact first name |
+| `last_name` | `string \| null` | No | Contact last name |
+| `company` | `string \| null` | No | Contact company |
+| `job_title` | `string \| null` | No | Contact job title |
+| `phone` | `string \| null` | No | Contact phone number |
+| `country` | `string \| null` | No | Contact country |
+| `state` | `string \| null` | No | Contact state |
+| `street_address` | `string \| null` | No | Contact street address |
+| `city` | `string \| null` | No | Contact city |
+| `postal_code` | `string \| null` | No | Contact postal code |
+
+
+
+---
+
+## Documents
+
+### create
+
+`documents.create`
+
+Create a draft document from a template or from a public PDF URL
+
+**Risk:** `write`
+
+```ts
+await corsair.pandadoc.api.documents.create({ template_uuid: "ustHNnVaPCD6MzuoNBbZ8L", name: "Contract for Acme Corp", recipients: [{ email: "jane@example.com", first_name: "Jane", last_name: "Roe", role: "Signer" }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_uuid` | `string` | No | Create from this template |
+| `url` | `string` | No | Create from a publicly accessible HTTPS PDF |
+| `name` | `string` | No | Document name; required when creating from a PDF URL |
+| `recipients` | `object[]` | No | Recipients; required when creating from a template |
+| `fields` | `Record<string, unknown>` | No | Prefilled fields, keyed by field name or uuid; values are strings, booleans or arrays |
+| `tokens` | `object[]` | No | Token replacements |
+| `metadata` | `Record<string, string>` | No | Arbitrary metadata key/value pairs, filterable on documents.list |
+| `tags` | `string[]` | No | Tags for the document |
+| `folder_uuid` | `string` | No | Place the document in this folder |
+| `owner` | `object` | No | Create the document on a member’s behalf |
+| `parse_form_fields` | `boolean` | No | Convert native PDF form fields into PandaDoc fields (PDF creation only) |
+| `editable` | `boolean` | No | Let recipients edit the uploaded PDF (PDF creation only) |
+
+Two creation bodies: from a template (template_uuid plus recipients) or from a public HTTPS PDF (url plus name). The answer is 201 with the document in document.create_pending while it renders.
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  email: string,
+  first_name?: string | null,
+  last_name?: string | null,
+  phone?: string | null,
+  role?: string | null,
+  signing_order?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="tokens full type">
+
+```ts
+{
+  token: string,
+  value: string
+}[]
+```
+</Accordion>
+
+<Accordion title="owner full type">
+
+```ts
+{
+  membership_id?: string | null,
+  email?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Document id |
+| `name` | `string \| null` | No | Document name |
+| `status` | `string \| null` | No | Document lifecycle status, e.g. document.draft, document.sent, document.completed |
+| `uuid` | `string \| null` | No | Document uuid |
+| `version` | `string \| null` | No | Document version |
+| `date_created` | `string \| null` | No | Creation timestamp |
+| `recipients` | `object[] \| null` | No | Recipients as stored |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  email: string,
+  first_name?: string | null,
+  last_name?: string | null,
+  phone?: string | null,
+  role?: string | null,
+  signing_order?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createFields
+
+`documents.createFields`
+
+Place new fields on a document
+
+**Risk:** `write`
+
+```ts
+await corsair.pandadoc.api.documents.createFields({ id: "RsXrKarV524iCpjci9CMGa", fields: [{ type: "signature", layout: { page: 1, position: { offset_x: 10, offset_y: 20, anchor_point: "top_left" }, style: { width: 10, height: 5 } } }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Document id |
+| `fields` | `object[]` | Yes | Fields to place on the document |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  type: checkbox | collect_file | date | dropdown | initials | payment_details | radio_buttons | signature | stamp | text,
+  layout: {
+    page: number,
+    position: {
+      offset_x: number,
+      offset_y: number,
+      anchor_point: top_left | top_center | top_right | middle_left | middle_center | middle_right | bottom_left | bottom_center | bottom_right
+    },
+    style: {
+      width: number,
+      height: number
+    }
+  },
+  field_id?: string | null,
+  merge_field?: string | null,
+  assigned_to?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `object[]` | Yes | All fields on the document after the change |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null,
+  type?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`documents.delete`
+
+Delete a document, optionally permanently (forever)
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.pandadoc.api.documents.delete({ id: "RsXrKarV524iCpjci9CMGa" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Document id |
+| `forever` | `boolean` | No | Delete permanently instead of moving to deleted documents |
+
+Answers 204 with no body. With forever: true the document is deleted permanently instead of moved to deleted documents.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Deleted document id |
+| `success` | `boolean` | Yes | Whether the delete succeeded |
+
+
+
+---
+
+### download
+
+`documents.download`
+
+Download a document as PDF, with optional watermarking
+
+**Risk:** `read`
+
+```ts
+await corsair.pandadoc.api.documents.download({ id: "RsXrKarV524iCpjci9CMGa" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Document id |
+| `watermark_color` | `string` | No | Watermark color, e.g. #FF0000 |
+| `watermark_font_size` | `number` | No | Watermark font size |
+| `watermark_opacity` | `number` | No | Watermark opacity, 0-100 |
+| `watermark_text` | `string` | No | Watermark text |
+| `separate_files` | `boolean` | No | Return a zip of per-recipient files instead of one PDF |
+
+Answers a PDF; while the document is still rendering the API answers 202 and the operation reports pending: true instead of an empty file.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentType` | `string` | Yes | Media type, for example application/pdf |
+| `byteLength` | `number` | Yes | Size of the file in bytes |
+| `contentBase64` | `string` | No | The PDF, base64-encoded; missing while the render is pending |
+| `pending` | `boolean` | Yes | True when PandaDoc answered 202 and the file is still rendering |
+
+
+
+---
+
+### downloadProtected
+
+`documents.downloadProtected`
+
+Download a completed document as a protected (flattened) PDF
+
+**Risk:** `read`
+
+```ts
+await corsair.pandadoc.api.documents.downloadProtected({ id: "RsXrKarV524iCpjci9CMGa" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Document id |
+| `separate_files` | `boolean` | No | Return a zip of per-recipient files instead of one PDF |
+
+Answers the flattened PDF of a completed document; 202 while it renders, reported as pending: true.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentType` | `string` | Yes | Media type, for example application/pdf |
+| `byteLength` | `number` | Yes | Size of the file in bytes |
+| `contentBase64` | `string` | No | The PDF, base64-encoded; missing while the render is pending |
+| `pending` | `boolean` | Yes | True when PandaDoc answered 202 and the file is still rendering |
+
+
+
+---
+
+### get
+
+`documents.get`
+
+Read one document with its recipients, status and metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.pandadoc.api.documents.get({ id: "RsXrKarV524iCpjci9CMGa" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Document id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Document id |
+| `name` | `string` | Yes | Document name |
+| `status` | `string` | Yes | Document lifecycle status, e.g. document.draft, document.sent, document.completed |
+| `uuid` | `string \| null` | No | Document uuid |
+| `version` | `string \| null` | No | Document version |
+| `folder_uuid` | `string \| null` | No | Folder the document lives in |
+| `ref_number` | `string \| null` | No | Reference number from the template |
+| `date_created` | `string \| null` | No | Creation timestamp |
+| `date_modified` | `string \| null` | No | Last modification timestamp |
+| `date_sent` | `string \| null` | No | Sent timestamp; null until sent |
+| `date_completed` | `string \| null` | No | Completion timestamp |
+| `expiration_date` | `string \| null` | No | Expiration timestamp |
+
+
+
+---
+
+### list
+
+`documents.list`
+
+List documents, filtered by status, folder, contact, dates or metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.pandadoc.api.documents.list({ status: 2, count: 25, page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | Results per page; default 50, maximum 100 |
+| `page` | `number` | No | Page number, starting at 1 |
+| `status` | `number` | No | Filter by numeric status: 0 document.draft, 1 document.sent, 2 document.completed, 3 document.uploaded, 4 document.error, 5 document.viewed, 6 document.waiting_approval |
+| `statusNe` | `number` | No | Exclude this numeric status (sent as status__ne) |
+| `deleted` | `boolean` | No | Return only deleted documents |
+| `q` | `string` | No | Filter by name or reference number |
+| `id` | `string` | No | Search for a document by its id |
+| `folderUuid` | `string` | No | Filter by folder (sent as folder_uuid) |
+| `templateId` | `string` | No | Filter by template (sent as template_id) |
+| `contactId` | `string` | No | Filter by contact (sent as contact_id) |
+| `orderBy` | `name \| date_created \| date_status_changed \| date_of_last_action \| date_modified \| date_sent \| date_completed \| date_expiration \| date_declined \| status \| -name \| -date_created \| -date_status_changed \| -date_of_last_action \| -date_modified \| -date_sent \| -date_completed \| -date_expiration \| -date_declined \| -status` | No | Sort field (sent as order_by) |
+| `createdFrom` | `string` | No | Created at or after (sent as created_from) |
+| `createdTo` | `string` | No | Created at or before (sent as created_to) |
+| `completedFrom` | `string` | No | Completed at or after (sent as completed_from) |
+| `completedTo` | `string` | No | Completed at or before (sent as completed_to) |
+| `modifiedFrom` | `string` | No | Modified at or after (sent as modified_from) |
+| `modifiedTo` | `string` | No | Modified at or before (sent as modified_to) |
+| `metadata` | `string[]` | No | Metadata filters, repeated once per entry |
+| `tag` | `string` | No | Filter by tag |
+
+Status filters are numeric codes (0 = document.draft, 1 = document.sent, 2 = document.completed, 3 = document.uploaded, 4 = document.error, 5 = document.viewed, 6 = document.waiting_approval). Metadata filters take the documented `metadata_key=value` format, one array entry per filter.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | Documents on this page |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  status: string,
+  uuid?: string | null,
+  version?: string | null,
+  folder_uuid?: string | null,
+  ref_number?: string | null,
+  date_created?: string | null,
+  date_modified?: string | null,
+  date_sent?: string | null,
+  date_completed?: string | null,
+  expiration_date?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listFields
+
+`documents.listFields`
+
+Read the fields placed on a document with their coordinates
+
+**Risk:** `read`
+
+```ts
+await corsair.pandadoc.api.documents.listFields({ id: "RsXrKarV524iCpjci9CMGa" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Document id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `object[]` | Yes | Fields placed on the document, with their coordinates |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null,
+  type?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### move
+
+`documents.move`
+
+Move a document into a folder
+
+**Risk:** `write`
+
+```ts
+await corsair.pandadoc.api.documents.move({ id: "RsXrKarV524iCpjci9CMGa", folderId: "Zugfh5DZNREisAVyLcVyCJ" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Document id |
+| `folderId` | `string` | Yes | Destination folder uuid (sent in the path as folder_id) |
+
+Answers 204 with no body.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Moved document id |
+| `folderId` | `string` | Yes | Folder the document now lives in |
+| `success` | `boolean` | Yes | Whether the move succeeded |
+
+
+
+---
+
+### send
+
+`documents.send`
+
+Send a document to its recipients for signing; emails go out that cannot be recalled
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.pandadoc.api.documents.send({ id: "RsXrKarV524iCpjci9CMGa", message: "Please sign the attached contract.", subject: "Contract for Acme Corp" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Document id |
+| `message` | `string` | No | Email body for the recipients |
+| `subject` | `string` | No | Email subject for the recipients |
+| `silent` | `boolean` | No | Send the email silently, without notifications to the account owner |
+| `reply_to` | `string` | No | Reply-to email address |
+| `sender` | `object` | No | Override the sender identity |
+| `forwarding_settings` | `object` | No | Control whether recipients can forward the document |
+
+Sends the document to its recipients by email. This cannot be recalled.
+
+<AccordionGroup>
+<Accordion title="sender full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="forwarding_settings full type">
+
+```ts
+{
+  enabled?: boolean | null,
+  forward_once?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Document id |
+| `name` | `string \| null` | No | Document name |
+| `status` | `string \| null` | No | Document lifecycle status, e.g. document.draft, document.sent, document.completed |
+| `uuid` | `string \| null` | No | Document uuid |
+| `version` | `string \| null` | No | Document version |
+| `recipients` | `object[] \| null` | No | Recipients the document was sent to |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  email: string,
+  first_name?: string | null,
+  last_name?: string | null,
+  phone?: string | null,
+  role?: string | null,
+  signing_order?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`documents.update`
+
+Update a draft document: name, recipients, fields, tokens, metadata or tags
+
+**Risk:** `write`
+
+```ts
+await corsair.pandadoc.api.documents.update({ id: "RsXrKarV524iCpjci9CMGa", name: "Contract for Acme Corp (v2)" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Document id |
+| `name` | `string` | No | New document name |
+| `recipients` | `object[]` | No | Replace the recipients |
+| `fields` | `Record<string, unknown>` | No | Updated prefilled field values |
+| `tokens` | `object[]` | No | Token replacements |
+| `metadata` | `Record<string, string>` | No | Metadata key/value pairs |
+| `tags` | `string[]` | No | Tags for the document |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  email: string,
+  first_name?: string | null,
+  last_name?: string | null,
+  phone?: string | null,
+  role?: string | null,
+  signing_order?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="tokens full type">
+
+```ts
+{
+  token: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Document id |
+| `name` | `string \| null` | No | Document name |
+| `status` | `string \| null` | No | Document lifecycle status, e.g. document.draft, document.sent, document.completed |
+
+
+
+---
+
+## Folders
+
+### create
+
+`folders.create`
+
+Create a documents folder
+
+**Risk:** `write`
+
+```ts
+await corsair.pandadoc.api.folders.create({ name: "Contracts" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Folder name |
+| `parent_uuid` | `string` | No | Create the folder inside this parent folder |
+
+Answer carries the folder uuid used to place documents and parents.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | Folder uuid |
+| `name` | `string` | Yes | Folder name |
+| `parent_uuid` | `string \| null` | No | Parent folder uuid |
+| `date_created` | `string \| null` | No | Creation timestamp |
+
+
+
+---
+
+### list
+
+`folders.list`
+
+List document folders, optionally under one parent folder
+
+**Risk:** `read`
+
+```ts
+await corsair.pandadoc.api.folders.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parentUuid` | `string` | No | List children of this folder (sent as parent_uuid) |
+| `count` | `number` | No | Results per page; default 50, maximum 100 |
+| `page` | `number` | No | Page number, starting at 1 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | Folders on this page |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  uuid: string,
+  name: string,
+  parent_uuid?: string | null,
+  date_created?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### rename
+
+`folders.rename`
+
+Rename a documents folder
+
+**Risk:** `write`
+
+```ts
+await corsair.pandadoc.api.folders.rename({ id: "Zugfh5DZNREisAVyLcVyCJ", name: "Signed" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Folder uuid |
+| `name` | `string` | Yes | New folder name |
+
+Answers 204-level success as a folder object; pass the uuid, not the name.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | Folder uuid |
+| `name` | `string` | Yes | Folder name |
+| `parent_uuid` | `string \| null` | No | Parent folder uuid |
+| `date_created` | `string \| null` | No | Creation timestamp |
+
+
+
+---
+
+## Templates
+
+### delete
+
+`templates.delete`
+
+Delete a template
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.pandadoc.api.templates.delete({ id: "ustHNnVaPCD6MzuoNBbZ8L" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Template id |
+
+Answers 204 with no body.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Deleted template id |
+| `success` | `boolean` | Yes | Whether the delete succeeded |
+
+
+
+---
+
+### get
+
+`templates.get`
+
+Read one template with its fields, tokens and roles
+
+**Risk:** `read`
+
+```ts
+await corsair.pandadoc.api.templates.get({ id: "ustHNnVaPCD6MzuoNBbZ8L" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Template id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Template id |
+| `name` | `string` | Yes | Template name |
+| `folder_uuid` | `string \| null` | No | Folder the template lives in |
+| `date_created` | `string \| null` | No | Creation timestamp |
+| `date_modified` | `string \| null` | No | Last modification timestamp |
+| `tokens` | `object[] \| null` | No | Tokens the template declares |
+| `fields` | `Record<string, unknown>[] \| null` | No | Fields the template places on documents |
+| `roles` | `object[] \| null` | No | Signing roles the template defines |
+| `tags` | `string[] \| null` | No | Tags on the template |
+| `metadata` | `Record<string, unknown> \| null` | No | Template metadata |
+
+<AccordionGroup>
+<Accordion title="tokens full type">
+
+```ts
+{
+  name?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="roles full type">
+
+```ts
+{
+  name?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`templates.list`
+
+List templates, filtered by name, folder, tag or shared state
+
+**Risk:** `read`
+
+```ts
+await corsair.pandadoc.api.templates.list({ q: "nda", count: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | Results per page; default 50, maximum 100 |
+| `page` | `number` | No | Page number, starting at 1 |
+| `q` | `string` | No | Filter by template name |
+| `id` | `string` | No | Search for a template by its id |
+| `folderUuid` | `string` | No | Filter by folder (sent as folder_uuid) |
+| `deleted` | `boolean` | No | Return only deleted templates |
+| `shared` | `boolean` | No | Return templates shared with the workspace |
+| `tag` | `string` | No | Filter by tag |
+| `fields` | `boolean` | No | Include template fields in the response |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | Templates on this page |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  status?: string | null,
+  folder_uuid?: string | null,
+  date_created?: string | null,
+  date_modified?: string | null,
+  tags?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### createSubscription
+
+`webhooks.createSubscription`
+
+Create a webhook subscription for the events you choose
+
+**Risk:** `write`
+
+```ts
+await corsair.pandadoc.api.webhooks.createSubscription({ name: "Deal desk deliveries", url: "https://example.com/webhooks/pandadoc", triggers: ["document_state_changed", "recipient_completed"] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Subscription name |
+| `url` | `string` | Yes | Endpoint deliveries are posted to |
+| `triggers` | `string[]` | Yes | Event names to subscribe to, e.g. document_state_changed, recipient_completed, document_deleted, document_updated, document_creation_failed, document_completed_pdf_ready, quote_updated, template_created, template_updated, template_deleted |
+| `active` | `boolean` | No | Whether deliveries start active |
+| `payload` | `(metadata \| fields \| products \| tokens \| pricing)[]` | No | Extra payload sections to include in every delivery |
+
+The answer carries the subscription's shared_key: store it (keys.set_webhook_signature) so deliveries can be verified.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | Subscription id |
+| `name` | `string` | Yes | Subscription name |
+| `url` | `string` | Yes | Endpoint deliveries are posted to |
+| `active` | `boolean \| null` | No | Whether deliveries are active |
+| `triggers` | `string[]` | Yes | Event names the subscription delivers |
+| `payload` | `(metadata \| fields \| products \| tokens \| pricing)[] \| null` | No | Extra payload sections the subscription asks for |
+| `workspace_id` | `string \| null` | No | Workspace the subscription belongs to |
+| `shared_key` | `string \| null` | No | Key used to verify delivery signatures (HMAC-SHA256 over the raw body, hex, in the signature query parameter) |
+| `status` | `ACTIVE \| INACTIVE \| DEACTIVATED \| null` | No | Subscription status |
+
+
+
+---
+
+### deleteSubscription
+
+`webhooks.deleteSubscription`
+
+Delete a webhook subscription; deliveries stop until it is created again
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.pandadoc.api.webhooks.deleteSubscription({ id: "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5e" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Subscription uuid |
+
+Answers 204 with no body.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Deleted subscription id |
+| `success` | `boolean` | Yes | Whether the delete succeeded |
+
+
+
+---
+
+### getEvent
+
+`webhooks.getEvent`
+
+Read one webhook event by the id a delivery carries
+
+**Risk:** `read`
+
+```ts
+await corsair.pandadoc.api.webhooks.getEvent({ id: "d0c1b2a3-4e5f-6a7b-8c9d-0e1f2a3b4c5f" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Webhook event id (from the X-PandaDoc-Webhook-Event-Id delivery header) |
+
+The id comes from the X-PandaDoc-Webhook-Event-Id header of a delivery.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Event id |
+| `event` | `string \| null` | No | Event name |
+| `created_on` | `string \| null` | No | When the event happened |
+| `data` | `Record<string, unknown> \| null` | No | Event payload |
+
+
+
+---
+
+### listSubscriptions
+
+`webhooks.listSubscriptions`
+
+List the workspace webhook subscriptions, including their shared keys
+
+**Risk:** `read`
+
+```ts
+await corsair.pandadoc.api.webhooks.listSubscriptions({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | Subscriptions in the workspace |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  uuid: string,
+  name: string,
+  url: string,
+  active?: boolean | null,
+  triggers: string[],
+  payload?: (metadata | fields | products | tokens | pricing)[] | null,
+  workspace_id?: string | null,
+  shared_key?: string | null,
+  status?: ACTIVE | INACTIVE | DEACTIVATED | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
