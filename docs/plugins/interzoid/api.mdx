@@ -16,7 +16,7 @@ description: "API reference for the Interzoid plugin in Corsair: every `interzoi
 
 Retrieve commercial building intelligence, class, square footage, and tenants
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.intelligence.getBuildingProfile({ address: '415 Mission St, San Francisco, CA 94105' });
@@ -27,6 +27,7 @@ await corsair.interzoid.api.intelligence.getBuildingProfile({ address: '415 Miss
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `address` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
 
 
 
@@ -59,7 +60,7 @@ await corsair.interzoid.api.intelligence.getBuildingProfile({ address: '415 Miss
 
 Retrieve comprehensive business intelligence and firmographic profile
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.intelligence.getBusinessInfo({ lookup: 'Cisco' });
@@ -70,6 +71,7 @@ await corsair.interzoid.api.intelligence.getBusinessInfo({ lookup: 'Cisco' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
 
 
 
@@ -99,7 +101,7 @@ await corsair.interzoid.api.intelligence.getBusinessInfo({ lookup: 'Cisco' });
 
 Resolve company name, ticker, or brand into primary internet domain
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.intelligence.getBusinessInfoDomain({ lookup: 'Microsoft' });
@@ -131,7 +133,7 @@ await corsair.interzoid.api.intelligence.getBusinessInfoDomain({ lookup: 'Micros
 
 Resolve domain or brand name into standard company name
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.intelligence.getBusinessInfoName({ lookup: 'Microsoft' });
@@ -142,6 +144,7 @@ await corsair.interzoid.api.intelligence.getBusinessInfoName({ lookup: 'Microsof
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
 
 
 
@@ -163,7 +166,7 @@ await corsair.interzoid.api.intelligence.getBusinessInfoName({ lookup: 'Microsof
 
 Retrieve real-time B2B purchase intent signals and expansion indicators
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.intelligence.getBuyingSignals({ lookup: 'SpaceX' });
@@ -174,6 +177,7 @@ await corsair.interzoid.api.intelligence.getBuyingSignals({ lookup: 'SpaceX' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
 
 
 
@@ -207,7 +211,7 @@ await corsair.interzoid.api.intelligence.getBuyingSignals({ lookup: 'SpaceX' });
 
 Verify the legitimacy, existence, and reputability of a company
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.intelligence.getCompanyVerification({ lookup: 'Microsoft Corporation' });
@@ -218,6 +222,7 @@ await corsair.interzoid.api.intelligence.getCompanyVerification({ lookup: 'Micro
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
 
 
 
@@ -240,7 +245,7 @@ await corsair.interzoid.api.intelligence.getCompanyVerification({ lookup: 'Micro
 
 Retrieve structured competitive intelligence, advantages, and market dynamics
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.intelligence.getCompetitorAnalysis({ lookup: 'Databricks' });
@@ -251,6 +256,7 @@ await corsair.interzoid.api.intelligence.getCompetitorAnalysis({ lookup: 'Databr
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
 
 
 
@@ -280,10 +286,10 @@ await corsair.interzoid.api.intelligence.getCompetitorAnalysis({ lookup: 'Databr
 
 Query custom AI-powered dataset attributes specified by topic and requested columns
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
-await corsair.interzoid.api.intelligence.getCustomData({ topic: 'detailed information about IBM', output: 'headquarters,ceo,website' });
+await corsair.interzoid.api.intelligence.getCustomData({ topic: 'detailed information about IBM', lookup: 'IBM', output: 'headquarters,ceo,website' });
 ```
 
 **Input**
@@ -291,8 +297,9 @@ await corsair.interzoid.api.intelligence.getCustomData({ topic: 'detailed inform
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `topic` | `string` | Yes | — |
+| `lookup` | `string` | Yes | The record to look up for this topic, such as a company name. Interzoid refuses a call without it. |
 | `output` | `string` | Yes | — |
-| `model` | `string` | No | — |
+| `model` | `string` | No | Interzoid AI model, such as `model-a` (1 credit). The `-premium` models cost 10 to 25 credits per call. |
 
 
 
@@ -307,7 +314,7 @@ await corsair.interzoid.api.intelligence.getCustomData({ topic: 'detailed inform
 
 Retrieve international customs duty rates based on origin, destination, and HS code
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.intelligence.getCustomsDutyRates({ origin: 'China', lookup: 'United States', hscode: '8471.30.00' });
@@ -320,6 +327,7 @@ await corsair.interzoid.api.intelligence.getCustomsDutyRates({ origin: 'China', 
 | `origin` | `string` | Yes | — |
 | `lookup` | `string` | Yes | — |
 | `hscode` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
 
 
 
@@ -356,7 +364,7 @@ await corsair.interzoid.api.intelligence.getCustomsDutyRates({ origin: 'China', 
 
 Retrieve ESG, carbon scope emissions, and corporate sustainability intelligence
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.intelligence.getEsgProfile({ lookup: 'Microsoft' });
@@ -367,6 +375,7 @@ await corsair.interzoid.api.intelligence.getEsgProfile({ lookup: 'Microsoft' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
 
 
 
@@ -399,7 +408,7 @@ await corsair.interzoid.api.intelligence.getEsgProfile({ lookup: 'Microsoft' });
 
 Retrieve European VAT tax rates, standard/reduced categories, and thresholds
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.intelligence.getEuVatRates({ lookup: 'Germany' });
@@ -410,6 +419,7 @@ await corsair.interzoid.api.intelligence.getEuVatRates({ lookup: 'Germany' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
 
 
 
@@ -443,7 +453,7 @@ await corsair.interzoid.api.intelligence.getEuVatRates({ lookup: 'Germany' });
 
 Retrieve executive profile details based on company name and title
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.intelligence.getExecutiveProfile({ lookup: 'Amazon Web Services CEO' });
@@ -454,6 +464,7 @@ await corsair.interzoid.api.intelligence.getExecutiveProfile({ lookup: 'Amazon W
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
 
 
 
@@ -480,7 +491,7 @@ await corsair.interzoid.api.intelligence.getExecutiveProfile({ lookup: 'Amazon W
 
 Retrieve corporate facilities and real estate portfolio intelligence
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.intelligence.getFacilitiesProfile({ lookup: 'Amazon' });
@@ -491,6 +502,7 @@ await corsair.interzoid.api.intelligence.getFacilitiesProfile({ lookup: 'Amazon'
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
 
 
 
@@ -523,7 +535,7 @@ await corsair.interzoid.api.intelligence.getFacilitiesProfile({ lookup: 'Amazon'
 
 Retrieve US federal government contracting intelligence and major awards
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.intelligence.getGovContracts({ lookup: 'Lockheed Martin' });
@@ -534,6 +546,7 @@ await corsair.interzoid.api.intelligence.getGovContracts({ lookup: 'Lockheed Mar
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
 
 
 
@@ -566,7 +579,7 @@ await corsair.interzoid.api.intelligence.getGovContracts({ lookup: 'Lockheed Mar
 
 Retrieve NAICS and SIC industry classification codes for a company
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.intelligence.getIndustryCodes({ lookup: 'Oracle Corporation' });
@@ -577,6 +590,7 @@ await corsair.interzoid.api.intelligence.getIndustryCodes({ lookup: 'Oracle Corp
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
 
 
 
@@ -607,7 +621,7 @@ await corsair.interzoid.api.intelligence.getIndustryCodes({ lookup: 'Oracle Corp
 
 Retrieve official IRS per diem reimbursement rates for travel
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.intelligence.getIrsPerDiemRates({ lookup: 'New York, NY' });
@@ -618,6 +632,7 @@ await corsair.interzoid.api.intelligence.getIrsPerDiemRates({ lookup: 'New York,
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
 
 
 
@@ -651,7 +666,7 @@ await corsair.interzoid.api.intelligence.getIrsPerDiemRates({ lookup: 'New York,
 
 Retrieve municipal bond issuer profiles and credit diligence intelligence
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.intelligence.getMuniIssuerProfile({ lookup: 'State of California' });
@@ -662,6 +677,7 @@ await corsair.interzoid.api.intelligence.getMuniIssuerProfile({ lookup: 'State o
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
 
 
 
@@ -695,7 +711,7 @@ await corsair.interzoid.api.intelligence.getMuniIssuerProfile({ lookup: 'State o
 
 Find nearest coffee shops and proximity data for a location
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.intelligence.getNearestCoffeeShops({ lookup: 'Union Square, San Francisco' });
@@ -742,7 +758,7 @@ await corsair.interzoid.api.intelligence.getNearestCoffeeShops({ lookup: 'Union 
 
 Retrieve corporate ownership and ultimate parent company intelligence
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.intelligence.getParentCompanyInfo({ lookup: 'Informatica' });
@@ -753,6 +769,7 @@ await corsair.interzoid.api.intelligence.getParentCompanyInfo({ lookup: 'Informa
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
 
 
 
@@ -780,7 +797,7 @@ await corsair.interzoid.api.intelligence.getParentCompanyInfo({ lookup: 'Informa
 
 Retrieve venture capital and private equity deal intelligence for private firms
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.intelligence.getPrivateCompanyDealIntel({ lookup: 'Anthropic' });
@@ -791,6 +808,7 @@ await corsair.interzoid.api.intelligence.getPrivateCompanyDealIntel({ lookup: 'A
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
 
 
 
@@ -825,7 +843,7 @@ await corsair.interzoid.api.intelligence.getPrivateCompanyDealIntel({ lookup: 'A
 
 Retrieve consumer safety recall intelligence for products and brands
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.intelligence.getProductRecallInfo({ lookup: 'Kirkland Signature Prosecco' });
@@ -866,7 +884,7 @@ await corsair.interzoid.api.intelligence.getProductRecallInfo({ lookup: 'Kirklan
 
 Retrieve historical real estate property sales, deeds, and mortgages
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.intelligence.getPropertyHistory({ address: '600 Montgomery St, San Francisco, CA 94111' });
@@ -877,6 +895,7 @@ await corsair.interzoid.api.intelligence.getPropertyHistory({ address: '600 Mont
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `address` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
 
 
 
@@ -909,7 +928,7 @@ await corsair.interzoid.api.intelligence.getPropertyHistory({ address: '600 Mont
 
 Retrieve US sales and use tax rates by address, zip code, or city
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.intelligence.getSalesUseTaxRates({ lookup: 'Beverly Hills, CA' });
@@ -920,6 +939,7 @@ await corsair.interzoid.api.intelligence.getSalesUseTaxRates({ lookup: 'Beverly 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
 
 
 
@@ -953,7 +973,7 @@ await corsair.interzoid.api.intelligence.getSalesUseTaxRates({ lookup: 'Beverly 
 
 Retrieve primary and secondary SIC codes with SEC filing provenance
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.intelligence.getSicCodes({ lookup: 'Safeway Inc.' });
@@ -993,7 +1013,7 @@ await corsair.interzoid.api.intelligence.getSicCodes({ lookup: 'Safeway Inc.' })
 
 Retrieve financial stock metrics, market cap, and analyst consensus for a ticker
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.intelligence.getStockInfo({ lookup: 'NVDA' });
@@ -1004,6 +1024,7 @@ await corsair.interzoid.api.intelligence.getStockInfo({ lookup: 'NVDA' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
 
 
 
@@ -1034,7 +1055,7 @@ await corsair.interzoid.api.intelligence.getStockInfo({ lookup: 'NVDA' });
 
 Retrieve technology stack and web infrastructure detected for a domain
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.intelligence.getTechStack({ lookup: 'shopify.com' });
@@ -1045,6 +1066,7 @@ await corsair.interzoid.api.intelligence.getTechStack({ lookup: 'shopify.com' })
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
 
 
 
@@ -1076,7 +1098,7 @@ await corsair.interzoid.api.intelligence.getTechStack({ lookup: 'shopify.com' })
 
 Retrieve comprehensive higher education profile and statistics for a university
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.intelligence.getUniversityInfo({ lookup: 'The Ohio State University' });
@@ -1087,6 +1109,7 @@ await corsair.interzoid.api.intelligence.getUniversityInfo({ lookup: 'The Ohio S
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
 
 
 
@@ -1119,7 +1142,7 @@ await corsair.interzoid.api.intelligence.getUniversityInfo({ lookup: 'The Ohio S
 
 Lookup X/Twitter handle for a person, company, or team
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.intelligence.getUserXHandle({ lookup: 'San Francisco 49ers' });
@@ -1130,6 +1153,7 @@ await corsair.interzoid.api.intelligence.getUserXHandle({ lookup: 'San Francisco
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
 
 
 
@@ -1152,7 +1176,7 @@ await corsair.interzoid.api.intelligence.getUserXHandle({ lookup: 'San Francisco
 
 Retrieve the latest three posts from an X/Twitter account
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.intelligence.getXLast3({ handle: 'Google' });
@@ -1190,7 +1214,7 @@ await corsair.interzoid.api.intelligence.getXLast3({ handle: 'Google' });
 
 Retrieve public profile statistics and bio for an X/Twitter handle
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.intelligence.getXUserProfile({ handle: 'lexfridman' });
@@ -1232,7 +1256,7 @@ await corsair.interzoid.api.intelligence.getXUserProfile({ handle: 'lexfridman' 
 
 Generate a composite similarity key based on both address and full name
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.matching.getAddressAndFullNameMatch({ address: '100 Main St', fullname: 'James Kelly' });
@@ -1265,7 +1289,7 @@ await corsair.interzoid.api.matching.getAddressAndFullNameMatch({ address: '100 
 
 Generate a standard similarity key for street address matching and deduplication
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.matching.getAddressMatch({ address: '500 Oak Drive' });
@@ -1298,7 +1322,7 @@ await corsair.interzoid.api.matching.getAddressMatch({ address: '500 Oak Drive' 
 
 Generate an AI-powered similarity key for a street address to identify duplicates
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.matching.getAddressMatchAdvanced({ address: '400 East Broadway', algorithm: 'model-v3-narrow' });
@@ -1310,6 +1334,7 @@ await corsair.interzoid.api.matching.getAddressMatchAdvanced({ address: '400 Eas
 |------|------|----------|-------------|
 | `address` | `string` | Yes | — |
 | `algorithm` | `string` | No | — |
+| `zip` | `string` | No | ZIP code of the address; optional, makes the match more precise. |
 
 
 
@@ -1331,7 +1356,7 @@ await corsair.interzoid.api.matching.getAddressMatchAdvanced({ address: '400 Eas
 
 Generate a similarity key for city name matching and deduplication
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.matching.getCityMatch({ city: 'San Francisco' });
@@ -1364,7 +1389,7 @@ await corsair.interzoid.api.matching.getCityMatch({ city: 'San Francisco' });
 
 Generate a composite similarity key based on both company name and street address
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.matching.getCompanyAndAddressMatch({ company: 'IBM Corp', address: '1 New Orchard Road' });
@@ -1397,7 +1422,7 @@ await corsair.interzoid.api.matching.getCompanyAndAddressMatch({ company: 'IBM C
 
 Generate a composite similarity key based on both company name and individual full name
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.matching.getCompanyAndFullNameMatch({ company: 'IBM Corp', fullname: 'James Kelly' });
@@ -1430,7 +1455,7 @@ await corsair.interzoid.api.matching.getCompanyAndFullNameMatch({ company: 'IBM 
 
 Generate a standard similarity key for company name matching and deduplication
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.matching.getCompanyMatch({ company: 'International Business Machines' });
@@ -1463,7 +1488,7 @@ await corsair.interzoid.api.matching.getCompanyMatch({ company: 'International B
 
 Generate an AI-powered similarity key for a company or organization name to identify duplicates
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.matching.getCompanyMatchAdvanced({ company: 'IBM Corporation', algorithm: 'model-v4-wide' });
@@ -1496,7 +1521,7 @@ await corsair.interzoid.api.matching.getCompanyMatchAdvanced({ company: 'IBM Cor
 
 Generate a similarity key for country name matching and deduplication
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.matching.getCountryMatch({ country: 'United States' });
@@ -1529,7 +1554,7 @@ await corsair.interzoid.api.matching.getCountryMatch({ country: 'United States' 
 
 Generate an AI-powered similarity key for an individual full name to identify duplicates
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.matching.getFullNameMatch({ fullname: 'James Kelly' });
@@ -1561,7 +1586,7 @@ await corsair.interzoid.api.matching.getFullNameMatch({ fullname: 'James Kelly' 
 
 Calculate a match similarity score between two individual names (0-100)
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.matching.getFullNameMatchScore({ fullname1: 'James Kelly', fullname2: 'Jim Kelly' });
@@ -1594,7 +1619,7 @@ await corsair.interzoid.api.matching.getFullNameMatchScore({ fullname1: 'James K
 
 Generate a similarity key from separate first and last names
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.matching.getFullNameParsedMatch({ firstname: 'James', lastname: 'Kelly' });
@@ -1628,7 +1653,7 @@ await corsair.interzoid.api.matching.getFullNameParsedMatch({ firstname: 'James'
 
 Generate an AI-powered similarity key for global addresses worldwide
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.matching.getGlobalAddressMatch({ address: 'Piazza del Colosseo, 1, Rome, Italy' });
@@ -1661,7 +1686,7 @@ await corsair.interzoid.api.matching.getGlobalAddressMatch({ address: 'Piazza de
 
 Calculate a match similarity score between two organization names (0-100)
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.matching.getOrgMatchScore({ org1: 'Amazon.com', org2: 'Amazon Inc.' });
@@ -1694,7 +1719,7 @@ await corsair.interzoid.api.matching.getOrgMatchScore({ org1: 'Amazon.com', org2
 
 Generate an AI-powered similarity key for product names to detect duplicate items
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.matching.getProductMatch({ product: 'Dell OptiPlex 7020 Desktop Computer' });
@@ -1729,7 +1754,7 @@ await corsair.interzoid.api.matching.getProductMatch({ product: 'Dell OptiPlex 7
 
 Standardize a city name to its canonical form
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.standardization.getCityStandard({ city: 'NYC' });
@@ -1741,6 +1766,7 @@ await corsair.interzoid.api.standardization.getCityStandard({ city: 'NYC' });
 |------|------|----------|-------------|
 | `city` | `string` | Yes | — |
 | `algorithm` | `string` | No | — |
+| `state` | `string` | No | State or province of the city; optional, makes the result more precise. |
 
 
 
@@ -1762,7 +1788,7 @@ await corsair.interzoid.api.standardization.getCityStandard({ city: 'NYC' });
 
 Get standardized country metadata including ISO codes, currency, and calling code
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.standardization.getCountryInfo({ country: 'France' });
@@ -1804,7 +1830,7 @@ await corsair.interzoid.api.standardization.getCountryInfo({ country: 'France' }
 
 Standardize a country name or alias to canonical form
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.standardization.getCountryStandard({ country: 'Deutschland' });
@@ -1837,7 +1863,7 @@ await corsair.interzoid.api.standardization.getCountryStandard({ country: 'Deuts
 
 Resolve commercial or colloquial brand name into official legal entity registration
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.standardization.getOfficialName({ lookup: 'Apple' });
@@ -1882,7 +1908,7 @@ await corsair.interzoid.api.standardization.getOfficialName({ lookup: 'Apple' })
 
 Standardize an organization name to its canonical English form
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.standardization.getOrgStandard({ org: 'b.o.a.' });
@@ -1914,7 +1940,7 @@ await corsair.interzoid.api.standardization.getOrgStandard({ org: 'b.o.a.' });
 
 Standardize a US state or Canadian province name into its two-letter abbreviation
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.standardization.getStateAbbreviation({ state: 'California' });
@@ -1950,7 +1976,7 @@ await corsair.interzoid.api.standardization.getStateAbbreviation({ state: 'Calif
 
 Convert an amount from one foreign currency into another
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.utilities.convertCurrency({ from: 'USD', to: 'EUR', amount: '100' });
@@ -1985,7 +2011,7 @@ await corsair.interzoid.api.utilities.convertCurrency({ from: 'USD', to: 'EUR', 
 
 Retrieve live USD foreign exchange rate for a currency symbol
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.utilities.getCurrencyRate({ symbol: 'EUR' });
@@ -2020,7 +2046,7 @@ await corsair.interzoid.api.utilities.getCurrencyRate({ symbol: 'EUR' });
 
 Classify text into entity type (Location, Organization, Individual, or Text)
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.utilities.getEntityType({ text: 'Argentina' });
@@ -2052,7 +2078,7 @@ await corsair.interzoid.api.utilities.getEntityType({ text: 'Argentina' });
 
 Infer the likely gender from an individual first name
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.utilities.getGender({ name: 'Pierre' });
@@ -2084,7 +2110,7 @@ await corsair.interzoid.api.utilities.getGender({ name: 'Pierre' });
 
 Measure website or API URL latency from a specified worldwide location
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.utilities.getGlobalLatency({ origin: 'Singapore', url: 'https://example.com' });
@@ -2120,7 +2146,7 @@ await corsair.interzoid.api.utilities.getGlobalLatency({ origin: 'Singapore', ur
 
 Measure browser page load performance from a specified global geography
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.utilities.getGlobalPageLoad({ origin: 'London', url: 'https://example.com' });
@@ -2156,7 +2182,7 @@ await corsair.interzoid.api.utilities.getGlobalPageLoad({ origin: 'London', url:
 
 Retrieve current date and time for a global city or locale
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.utilities.getGlobalTime({ locale: 'Tokyo' });
@@ -2201,7 +2227,7 @@ await corsair.interzoid.api.utilities.getGlobalTime({ locale: 'Tokyo' });
 
 Retrieve current weather conditions for worldwide city locations
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.utilities.getGlobalWeather({ location: 'Madrid' });
@@ -2237,7 +2263,7 @@ await corsair.interzoid.api.utilities.getGlobalWeather({ location: 'Madrid' });
 
 Infer the likely geographic country or region of origin from a personal name
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.utilities.getNameOrigin({ name: 'Pierre' });
@@ -2269,7 +2295,7 @@ await corsair.interzoid.api.utilities.getNameOrigin({ name: 'Pierre' });
 
 Retrieve the remaining API credits balance for the active API license key
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.utilities.getRemainingCredits({});
@@ -2295,7 +2321,7 @@ await corsair.interzoid.api.utilities.getRemainingCredits({});
 
 Retrieve current live weather conditions for a US ZIP code
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.utilities.getWeatherZipCode({ zip: '94105' });
@@ -2338,7 +2364,7 @@ await corsair.interzoid.api.utilities.getWeatherZipCode({ zip: '94105' });
 
 Detect the natural language of a text string
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.utilities.identifyLanguage({ text: 'Bonjour, comment allez-vous?' });
@@ -2370,7 +2396,7 @@ await corsair.interzoid.api.utilities.identifyLanguage({ text: 'Bonjour, comment
 
 Translate text from any language into a specified target language
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.utilities.translateToAny({ text: 'Hello', to: 'French' });
@@ -2403,7 +2429,7 @@ await corsair.interzoid.api.utilities.translateToAny({ text: 'Hello', to: 'Frenc
 
 Translate non-English text to English
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.utilities.translateToEnglish({ text: 'Bonjour' });
@@ -2437,7 +2463,7 @@ await corsair.interzoid.api.utilities.translateToEnglish({ text: 'Bonjour' });
 
 Parse a free-form address string into structured postal components
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.validation.addressParse({ address: '922 N 5th St Ste 100A, Phoenix, AZ 85004' });
@@ -2483,7 +2509,7 @@ await corsair.interzoid.api.validation.addressParse({ address: '922 N 5th St Ste
 
 Retrieve geographic locale and city for a telephone area code
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.validation.getAreaCode({ areacode: '415' });
@@ -2518,7 +2544,7 @@ await corsair.interzoid.api.validation.getAreaCode({ areacode: '415' });
 
 Extract area code and locale information from a telephone number
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.validation.getAreaCodeFromNumber({ number: '415-555-1234' });
@@ -2553,7 +2579,7 @@ await corsair.interzoid.api.validation.getAreaCodeFromNumber({ number: '415-555-
 
 Classify email domain into Business, Government, Education, Generic, or Disposable
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.validation.getEmailDomainType({ email: 'user@example.com' });
@@ -2585,7 +2611,7 @@ await corsair.interzoid.api.validation.getEmailDomainType({ email: 'user@example
 
 Validate and enrich an email address with deliverability and demographic details
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.validation.getEmailInfo({ email: 'info@example.com' });
@@ -2637,7 +2663,7 @@ await corsair.interzoid.api.validation.getEmailInfo({ email: 'info@example.com' 
 
 Compute a trust and quality score for an email address
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.validation.getEmailTrustScore({ lookup: 'contact@example.com' });
@@ -2648,6 +2674,7 @@ await corsair.interzoid.api.validation.getEmailTrustScore({ lookup: 'contact@exa
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
 
 
 
@@ -2671,7 +2698,7 @@ await corsair.interzoid.api.validation.getEmailTrustScore({ lookup: 'contact@exa
 
 Retrieve demographic and geographic information for an international phone number
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.validation.getGlobalNumberInfo({ intlnumber: '+442071838750' });
@@ -2689,6 +2716,7 @@ await corsair.interzoid.api.validation.getGlobalNumberInfo({ intlnumber: '+44207
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `Language1` | `string` | No | — |
 | `Code` | `string` | No | — |
 | `Country` | `string` | No | — |
 | `Credits` | `number \| string` | No | — |
@@ -2710,7 +2738,7 @@ await corsair.interzoid.api.validation.getGlobalNumberInfo({ intlnumber: '+44207
 
 Retrieve IP intelligence, geolocation, ASN, and reputation profile
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.validation.getIpProfile({ lookup: '8.8.8.8' });
@@ -2721,6 +2749,7 @@ await corsair.interzoid.api.validation.getIpProfile({ lookup: '8.8.8.8' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
 
 
 
@@ -2749,7 +2778,7 @@ await corsair.interzoid.api.validation.getIpProfile({ lookup: '8.8.8.8' });
 
 Retrieve phone number intelligence, carrier, time zone, and risk assessment
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.validation.getPhoneProfile({ lookup: '+16502530000' });
@@ -2760,6 +2789,7 @@ await corsair.interzoid.api.validation.getPhoneProfile({ lookup: '+16502530000' 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
 
 
 
@@ -2789,7 +2819,7 @@ await corsair.interzoid.api.validation.getPhoneProfile({ lookup: '+16502530000' 
 
 Retrieve detailed demographics, city, state, and geographic data for a US ZIP code
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.interzoid.api.validation.getZipCodeInfo({ zip: '94105' });
