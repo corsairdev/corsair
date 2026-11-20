@@ -71,8 +71,10 @@ export type StoreganiseContext = CorsairPluginContext<
 	typeof storeganiseAuthConfig
 >;
 
-export type StoreganiseKeyBuilderContext =
-	KeyBuilderContext<StoreganisePluginOptions>;
+export type StoreganiseKeyBuilderContext = KeyBuilderContext<
+	StoreganisePluginOptions,
+	typeof storeganiseAuthConfig
+>;
 
 export type StoreganiseBoundEndpoints = BindEndpoints<
 	typeof storeganiseEndpointsNested
@@ -325,6 +327,20 @@ export function storeganise<const T extends StoreganisePluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
+				// A key without a business code can't reach any Storeganise host.
+				// Failing here, not in the endpoint, lets core hand back a connect
+				// link.
+				if (
+					res &&
+					!options.businessCode &&
+					!(await ctx.keys.get_business_code())
+				) {
+					throw new AuthMissingError(
+						'storeganise',
+						'api_key',
+						'Storeganise business code is not set: connect the account with its business code (acme for acme.storeganise.com) or set the businessCode option.',
+					);
+				}
 				if (res) return res;
 			}
 
