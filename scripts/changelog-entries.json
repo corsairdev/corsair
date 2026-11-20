@@ -10482,5 +10482,21 @@
     "package": "cloud",
     "version": "0.2.15",
     "changes": []
+  },
+  {
+    "date": "2026-11-20",
+    "package": "@corsair-dev/googledrive",
+    "dir": "packages/googledrive",
+    "name": "Google Drive",
+    "version": "0.1.8",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 1943,
+        "title": "Fields passthrough and Google Docs text export"
+      }
+    ]
   }
 ]
