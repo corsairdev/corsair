@@ -218,6 +218,27 @@ describe('makeStannpRequest', () => {
 		expect(JSON.stringify(error)).not.toContain('Jane');
 	});
 
+	it('keeps the receipt of a replayed top-up', async () => {
+		respond(
+			{ success: true, data: { receipt_pdf: 'https://example.com/r.pdf' } },
+			409,
+		);
+
+		const error = await failure(
+			makeStannpRequest(API_KEY, {
+				method: 'POST',
+				base: STANNP_HOSTS.us,
+				path: '/v1/accounts/topup',
+				form: { net: '10.00' },
+				idempotencyKey: 'k1',
+			}),
+		);
+		expect(error.body).toEqual({
+			success: true,
+			data: { receipt_pdf: 'https://example.com/r.pdf' },
+		});
+	});
+
 	it('keeps the replayed success body on a 409 idempotent conflict', async () => {
 		respond({ success: true, data: { id: '41' } }, 409);
 

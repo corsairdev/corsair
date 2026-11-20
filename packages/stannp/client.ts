@@ -247,8 +247,10 @@ export async function makeStannpRequest(
 	}
 }
 
-// Fields of a replayed create that identify the result without naming the
-// recipient. Live mailpieces also carry the recipient's name and address.
+// Fields of a replayed write that identify the result without naming the
+// recipient: mailpiece creates (live ones also carry the recipient's name
+// and address, which are dropped), recipients/new (id, valid) and
+// accounts/topup (receipt_pdf).
 const REPLAY_FIELDS = [
 	'id',
 	'status',
@@ -257,6 +259,8 @@ const REPLAY_FIELDS = [
 	'cost',
 	'pdf',
 	'type',
+	'valid',
+	'receipt_pdf',
 ] as const;
 
 /**
