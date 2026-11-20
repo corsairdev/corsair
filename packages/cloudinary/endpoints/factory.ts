@@ -1,8 +1,10 @@
 import type { AccountKeyManagerFor, CorsairEndpoint } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
+import { resolveFileInput } from 'corsair/http';
 import type { cloudinaryAuthConfig } from '../auth-config';
 import type { CloudinaryCredentials } from '../client';
 import {
+	CloudinaryAPIError,
 	makeCloudinaryAdminRequest,
 	makeCloudinaryLiveRequest,
 	makeCloudinaryUploadRequest,
@@ -218,14 +220,72 @@ function uploadResourceType(
 	);
 }
 
-function uploadBody(
+/**
+ * Most bytes a link or base64 upload is read into. Cloudinary takes one file
+ * of up to 100 MB in a single request and wants larger files in chunks
+ * (https://cloudinary.com/documentation/upload_images#chunked_asset_upload).
+ */
+export const UPLOAD_MAX_BYTES = 100 * 1024 * 1024;
+
+/**
+ * The `file` form value for an upload. A Blob or Buffer is sent as given. A
+ * string (an http(s), s3, gs or ftp URL, or a data URI) and `{ url }` go
+ * through as text, because Cloudinary fetches or reads them itself
+ * (https://cloudinary.com/documentation/image_upload_api_reference#upload_required_parameters).
+ * `{ base64 }` becomes a file with its name and type. A chunk carries a byte
+ * range of the file, so it must be bytes: there a link is downloaded first.
+ */
+async function uploadFileValue(
+	file: CloudinaryEndpointInput['file'],
+	chunked: boolean,
+): Promise<unknown> {
+	if (
+		file === undefined ||
+		file instanceof Blob ||
+		// unknown: a Buffer is still accepted from untyped callers, as before.
+		(typeof Buffer !== 'undefined' && Buffer.isBuffer(file as unknown))
+	) {
+		return file;
+	}
+	if (!chunked && typeof file === 'string') return file;
+	// unknown: the endpoint takes its input unparsed, so the shape is checked here.
+	const given: unknown = file;
+	if (
+		typeof given !== 'string' &&
+		!(
+			typeof given === 'object' &&
+			given !== null &&
+			('url' in given || 'base64' in given)
+		)
+	) {
+		throw new CloudinaryAPIError(
+			'[cloudinary] file must be a URL, {url}, {base64}, Blob, or Buffer',
+		);
+	}
+	if (!chunked && typeof file === 'object' && 'url' in file) return file.url;
+	return (
+		await resolveFileInput(file, {
+			maxBytes: UPLOAD_MAX_BYTES,
+			fallbackName: 'upload',
+		})
+	).file;
+}
+
+async function uploadBody(
+	operation: CloudinaryOperation,
 	input: CloudinaryEndpointInput,
 	baseBody: Record<string, unknown> | undefined,
-): Record<string, unknown> {
+): Promise<Record<string, unknown>> {
 	const body: Record<string, unknown> = { ...(baseBody ?? {}) };
+	const chunked =
+		operation.key === 'uploadChunk' ||
+		(typeof input.content_range === 'string' && input.content_range.length > 0);
 	for (const key of ['file', 'content_range', 'x_unique_upload_id'] as const) {
 		if (input[key] !== undefined) {
-			body[key] = input[key];
+			body[key] =
+				key === 'file'
+					? await uploadFileValue(input.file, chunked)
+					: input[key];
 		}
 	}
 	return body;
@@ -277,7 +337,7 @@ async function requestOperation(
 			uploadResourceType(operation, input),
 			{
 				method: 'POST',
-				body: uploadBody(input, body),
+				body: await uploadBody(operation, input, body),
 				bodyKind: operation.bodyKind === 'multipart' ? 'multipart' : 'form',
 				headers: uploadHeaders(input),
 			},

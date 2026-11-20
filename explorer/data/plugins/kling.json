@@ -23,6 +23,16 @@
       "shortPath": "imageGeneration.create",
       "description": "Create a text-to-image or image-to-image task",
       "riskLevel": "write",
+      "job": {
+        "idPath": "data.task_id",
+        "status": {
+          "op": "imageGeneration.get",
+          "idArg": "task_id",
+          "statusPath": "data.task_status",
+          "done": ["succeed"],
+          "failed": ["failed"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
@@ -216,6 +226,16 @@
       "shortPath": "imageToVideo.create",
       "description": "Create an image-to-video generation task",
       "riskLevel": "write",
+      "job": {
+        "idPath": "data.id",
+        "status": {
+          "op": "imageToVideo.get",
+          "idArg": "task_id",
+          "statusPath": "data.0.status",
+          "done": ["succeeded"],
+          "failed": ["failed"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
@@ -374,6 +394,16 @@
       "shortPath": "lipSync.create",
       "description": "Create a lip-sync task for a detected face",
       "riskLevel": "write",
+      "job": {
+        "idPath": "data.task_id",
+        "status": {
+          "op": "lipSync.get",
+          "idArg": "task_id",
+          "statusPath": "data.task_status",
+          "done": ["succeed"],
+          "failed": ["failed"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
@@ -568,6 +598,16 @@
       "shortPath": "motionControl.create",
       "description": "Create a motion-control task from a motion reference",
       "riskLevel": "write",
+      "job": {
+        "idPath": "data.id",
+        "status": {
+          "op": "motionControl.get",
+          "idArg": "task_id",
+          "statusPath": "data.0.status",
+          "done": ["succeeded"],
+          "failed": ["failed"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
@@ -726,6 +766,16 @@
       "shortPath": "multiImageToImage.create",
       "description": "Create a multi-image (subject, scene, style) task",
       "riskLevel": "write",
+      "job": {
+        "idPath": "data.task_id",
+        "status": {
+          "op": "multiImageToImage.get",
+          "idArg": "task_id",
+          "statusPath": "data.task_status",
+          "done": ["succeed"],
+          "failed": ["failed"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
@@ -899,6 +949,16 @@
       "shortPath": "omniImage.create",
       "description": "Create an omni-image generation task",
       "riskLevel": "write",
+      "job": {
+        "idPath": "data.task_id",
+        "status": {
+          "op": "omniImage.get",
+          "idArg": "task_id",
+          "statusPath": "data.task_status",
+          "done": ["succeed"],
+          "failed": ["failed"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
@@ -1082,6 +1142,16 @@
       "shortPath": "omniVideo.create",
       "description": "Create an omni-video generation task",
       "riskLevel": "write",
+      "job": {
+        "idPath": "data.id",
+        "status": {
+          "op": "omniVideo.get",
+          "idArg": "task_id",
+          "statusPath": "data.0.status",
+          "done": ["succeeded"],
+          "failed": ["failed"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
@@ -1240,6 +1310,16 @@
       "shortPath": "outpainting.create",
       "description": "Create an image outpainting (expand) task",
       "riskLevel": "write",
+      "job": {
+        "idPath": "data.task_id",
+        "status": {
+          "op": "outpainting.get",
+          "idArg": "task_id",
+          "statusPath": "data.task_status",
+          "done": ["succeed"],
+          "failed": ["failed"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
@@ -1413,6 +1493,16 @@
       "shortPath": "textToVideo.create",
       "description": "Create a text-to-video generation task",
       "riskLevel": "write",
+      "job": {
+        "idPath": "data.id",
+        "status": {
+          "op": "textToVideo.get",
+          "idArg": "task_id",
+          "statusPath": "data.0.status",
+          "done": ["succeeded"],
+          "failed": ["failed"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
@@ -1571,6 +1661,16 @@
       "shortPath": "videoEffects.create",
       "description": "Create a video effect task from a scene template",
       "riskLevel": "write",
+      "job": {
+        "idPath": "data.task_id",
+        "status": {
+          "op": "videoEffects.get",
+          "idArg": "task_id",
+          "statusPath": "data.task_status",
+          "done": ["succeed"],
+          "failed": ["failed"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
@@ -1714,6 +1814,16 @@
       "shortPath": "virtualTryOn.create",
       "description": "Create a virtual try-on task for a product and person",
       "riskLevel": "write",
+      "job": {
+        "idPath": "data.task_id",
+        "status": {
+          "op": "virtualTryOn.get",
+          "idArg": "task_id",
+          "statusPath": "data.0.status",
+          "done": ["succeed"],
+          "failed": ["failed"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [

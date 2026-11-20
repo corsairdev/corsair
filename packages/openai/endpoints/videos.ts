@@ -1,5 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
+import { toFileOutput } from 'corsair/http';
 import {
+	DOWNLOAD_MAX_BYTES,
 	downloadOpenaiFile,
 	makeOpenaiRequest,
 	multipartOpenaiRequest,
@@ -156,11 +158,10 @@ export const download: OpenaiEndpoints['videosDownload'] = async (
 	ctx,
 	input,
 ) => {
-	const buffer = await downloadOpenaiFile(
+	const file = await downloadOpenaiFile(
 		`videos/${input.videoId}/content`,
 		ctx.key,
 	);
-	const contentBase64 = Buffer.from(buffer).toString('base64');
 
 	await logEventFromContext(
 		ctx,
@@ -168,5 +169,11 @@ export const download: OpenaiEndpoints['videosDownload'] = async (
 		{ ...input },
 		'completed',
 	);
-	return { videoId: input.videoId, contentBase64 };
+	return {
+		videoId: input.videoId,
+		...toFileOutput(file.bytes, file.contentType ?? 'video/mp4', {
+			filename: file.filename ?? `${input.videoId}.mp4`,
+			maxBytes: DOWNLOAD_MAX_BYTES,
+		}),
+	};
 };

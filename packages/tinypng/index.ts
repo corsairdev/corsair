@@ -125,12 +125,13 @@ const tinypngEndpointMeta = {
 	},
 	'images.output': {
 		riskLevel: 'read',
-		description: 'Download a compressed image by its Tinify image ID as base64',
+		description:
+			'Download a compressed image by its Tinify image ID. On Corsair up to about 700 KB comes back inline as base64 and a larger image comes back as fileId, a Files id; without a host that keeps files the image comes back inline as base64 up to 100 MB, or contentOmitted beyond it.',
 	},
 	'images.transform': {
 		riskLevel: 'write',
 		description:
-			'Resize, convert, fill the background of, or preserve metadata on a compressed image, optionally storing it on S3 or GCS',
+			'Resize, convert, fill the background of, or preserve metadata on a compressed image, optionally storing it on S3 or GCS. A returned image comes back like images.output: inline up to about 700 KB on Corsair, as fileId beyond it.',
 	},
 	'images.compressAndStoreInAzure': {
 		riskLevel: 'write',

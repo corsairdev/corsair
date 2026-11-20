@@ -1,3 +1,4 @@
+import { FileInputSchema } from 'corsair/http';
 import { z } from 'zod';
 import { cloudinaryOperations } from '../operations';
 import type { CloudinaryOperation } from './operation-types';
@@ -21,7 +22,15 @@ export const CloudinaryEndpointInputBaseSchema = z
 	.object({
 		query: QuerySchema.optional(),
 		body: z.unknown().optional(),
-		file: z.instanceof(Blob).optional(),
+		// An agent holds no bytes, so the upload takes core's FileInput: a link or
+		// data URI (which Cloudinary fetches or reads itself) or base64; a Blob or
+		// File still works from TypeScript.
+		file: z
+			.union([FileInputSchema, z.instanceof(Blob)])
+			.optional()
+			.describe(
+				'The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first.',
+			),
 		resource_type: z.enum(['image', 'video', 'raw', 'auto']).optional(),
 		upload_resource_type: z.enum(['image', 'video', 'raw', 'auto']).optional(),
 	})

@@ -188,7 +188,7 @@ Send `downloadMediaUrl` with the call, or upload the recording afterwards with `
 
 `calls.addRecording`
 
-Upload media for a previously created Gong call.
+Upload media for a previously created Gong call. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -201,7 +201,24 @@ await corsair.gong.api.calls.addRecording({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `mediaFile` | `custom` | Yes | — |
+| `mediaFile` | `string \| object \| custom` | Yes | The recording (WAV, MP3, MP4, MKV or FLAC, up to 1.5 GB): a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). |
+
+<AccordionGroup>
+<Accordion title="mediaFile full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -796,7 +813,7 @@ await corsair.gong.api.crm.registerIntegration({});
 
 `crm.uploadObjects`
 
-Upload CRM objects from a data file.
+Upload CRM objects from a data file. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -811,9 +828,26 @@ await corsair.gong.api.crm.uploadObjects({});
 | `integrationId` | `number` | Yes | — |
 | `objectType` | `ACCOUNT \| CONTACT \| DEAL \| LEAD \| BUSINESS_USER \| STAGE` | Yes | — |
 | `clientRequestId` | `string` | Yes | — |
-| `dataFile` | `custom` | Yes | — |
+| `dataFile` | `string \| object \| custom` | Yes | The LDJSON data file, one object per line, up to 200 MB: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). |
 
 `dataFile` is an LDJSON file with one object per line and one object type per file, up to 200 MB. The upload is asynchronous: check it with `crm.getRequestStatus` and the same `clientRequestId`.
+
+<AccordionGroup>
+<Accordion title="dataFile full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -2575,7 +2609,7 @@ await corsair.gong.api.targets.listDefinitions({ workspaceId: '623457276584334' 
 
 `targets.uploadAssignments`
 
-Upload target assignments.
+Upload target assignments. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -2590,9 +2624,26 @@ await corsair.gong.api.targets.uploadAssignments({});
 | `targetId` | `string` | Yes | — |
 | `workspaceId` | `string \| number` | Yes | — |
 | `validateOnly` | `boolean` | No | — |
-| `file` | `custom` | Yes | — |
+| `file` | `string \| object \| custom` | Yes | The CSV file of target assignments: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). |
 
 `file` is a CSV of up to 10,000 rows. Set `validateOnly` to check the file without saving it.
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
