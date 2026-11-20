@@ -270,7 +270,8 @@ const filevineEndpointMeta = {
 	},
 	'documents.upload': {
 		riskLevel: 'write',
-		description: 'Upload a document to a project',
+		description:
+			'Upload a document to a project. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'notes.list': { riskLevel: 'read', description: 'List notes for a project' },
 	'notes.create': {

@@ -100,6 +100,20 @@ describe('openai downloads return a file output', () => {
 		expect(asked[0]?.url).toContain('/containers/cntr_1/files/cfile_1/content');
 	});
 
+	it('audio.createSpeech: an empty clip comes back as empty audioBase64, not as nothing', async () => {
+		serve(new Uint8Array(0), { 'Content-Type': 'audio/mpeg' });
+		const out = await createSpeech(ctx, {
+			model: 'gpt-4o-mini-tts',
+			input: '',
+			voice: 'alloy',
+		});
+		expect(out).toMatchObject({
+			audioBase64: '',
+			byteLength: 0,
+			format: 'mp3',
+		});
+	});
+
 	it('audio.createSpeech: keeps audioBase64 and adds the type, size and a name', async () => {
 		serve(MP4, { 'Content-Type': 'audio/mpeg' });
 		const out = await createSpeech(ctx, {

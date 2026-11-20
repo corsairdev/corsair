@@ -2198,7 +2198,7 @@ await corsair.strava.api.segments.star({});
 
 `uploads.create`
 
-Upload an activity file (FIT, TCX, GPX)
+Upload an activity file (FIT, TCX, GPX). Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -2210,13 +2210,30 @@ await corsair.strava.api.uploads.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `file` | `custom` | Yes | — |
+| `file` | `string \| object \| custom` | Yes | The activity file (FIT, TCX or GPX, optionally gzipped; data_type says which): a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). |
 | `data_type` | `fit \| fit.gz \| tcx \| tcx.gz \| gpx \| gpx.gz` | Yes | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
 | `trainer` | `string` | No | — |
 | `commute` | `string` | No | — |
 | `external_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 

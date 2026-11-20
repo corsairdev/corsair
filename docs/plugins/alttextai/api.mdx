@@ -141,7 +141,7 @@ await corsair.alttextai.api.account.update({});
 
 `images.bulkCreate`
 
-Upload a CSV of image URLs for batch alt text generation
+Upload a CSV of image URLs for batch alt text generation. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -153,8 +153,25 @@ await corsair.alttextai.api.images.bulkCreate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `file` | `custom` | Yes | CSV file with image URLs to process |
+| `file` | `string \| object \| custom` | Yes | The CSV of image URLs to process: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). |
 | `email` | `string` | No | Optional email for bulk upload results |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 

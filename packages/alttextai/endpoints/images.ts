@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeAltTextAiRequest } from '../client';
 import type { AltTextAiEndpoints } from '../index';
-import { cacheImageRecord, toCsvUploadFile } from './shared';
+import { cacheImageRecord, toBulkCsvFile } from './shared';
 import type { AltTextAiEndpointOutputs } from './types';
 
 export const list: AltTextAiEndpoints['list'] = async (ctx, input) => {
@@ -138,8 +138,9 @@ export const bulkCreate: AltTextAiEndpoints['bulkCreate'] = async (
 	input,
 ) => {
 	const formData: Record<string, unknown> = {
-		// API requires a filename on the multipart part; bare Blobs 422.
-		file: toCsvUploadFile(input.file),
+		// API requires a filename on the multipart part; bare Blobs 422. A link
+		// or base64 is fetched or decoded here.
+		file: await toBulkCsvFile(input.file),
 	};
 	if (input.email !== undefined) {
 		formData.email = input.email;

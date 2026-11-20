@@ -1,3 +1,4 @@
+import { FileInputSchema } from 'corsair/http';
 import { z } from 'zod';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -423,12 +424,20 @@ export const UploadProjectDocumentInputSchema = z.object({
 	tags: z.array(z.string()).optional(),
 	sharedToPortal: z.boolean().optional(),
 	// Explicit binary union — no unknown/any on this public input surface.
-	// Accepts Blob (browser/Node), Buffer/Uint8Array (Node binary), ArrayBuffer,
-	// or string. String handling is explicit via fileEncoding (no heuristic):
-	// 'text' (default) uploads literally, 'base64' decodes to bytes first.
+	// Accepts core's FileInput (a link, {url}, or {base64}) so an agent that
+	// holds no bytes can upload, plus Blob (browser/Node), Buffer/Uint8Array
+	// (Node binary), ArrayBuffer, or string content. A string is a link only
+	// when it starts with http(s):// and fileEncoding is not set; otherwise
+	// fileEncoding decides: 'text' (default) uploads literally, 'base64'
+	// decodes to bytes first.
 	file: z
 		.union([
-			z.string().describe('Text content or base64 payload (see fileEncoding)'),
+			z
+				.string()
+				.describe(
+					'A public http(s) URL to the file when fileEncoding is not set; otherwise text content or a base64 payload (see fileEncoding)',
+				),
+			FileInputSchema,
 			z
 				.instanceof(Uint8Array)
 				.describe('Node binary: Buffer (extends Uint8Array) or Uint8Array'),
@@ -437,7 +446,7 @@ export const UploadProjectDocumentInputSchema = z.object({
 		])
 		.optional()
 		.describe(
-			'File content: string | Uint8Array (incl. Buffer) | ArrayBuffer | Blob (see fileEncoding)',
+			'The file: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; Uint8Array (incl. Buffer), ArrayBuffer, Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). A string starting with http:// or https:// is fetched as a link when fileEncoding is not set; with fileEncoding, a string is text or base64 content as before.',
 		),
 	fileEncoding: z
 		.enum(['base64', 'text'])

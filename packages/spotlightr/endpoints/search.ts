@@ -1,5 +1,5 @@
 import type { SpotlightrEndpoints } from '..';
-import { call } from './call';
+import { call, uploadFile } from './call';
 import {
 	SpotlightrEndpointInputSchemas,
 	SpotlightrEndpointOutputSchemas,
@@ -27,8 +27,11 @@ export const search: SpotlightrEndpoints['search'] = async (ctx, input) =>
 export const uploadAsset: SpotlightrEndpoints['assetsUpload'] = async (
 	ctx,
 	input,
-) =>
-	call(
+) => {
+	// The file as sent, for the log: a link's type and size are known only
+	// once it is fetched.
+	let sent: Blob | undefined;
+	return call(
 		ctx,
 		{
 			event: 'assets.upload',
@@ -36,15 +39,10 @@ export const uploadAsset: SpotlightrEndpoints['assetsUpload'] = async (
 			output: SpotlightrEndpointOutputSchemas.uploadAsset,
 		},
 		input,
-		(parsed) => ({
-			method: 'POST',
-			path: 'assets',
-			formData: { file: parsed.file },
-		}),
-		{
-			log: (parsed) => ({
-				file_type: parsed.file.type,
-				file_size: parsed.file.size,
-			}),
+		async (parsed) => {
+			sent = await uploadFile(parsed.file, 'asset');
+			return { method: 'POST', path: 'assets', formData: { file: sent } };
 		},
+		{ log: () => ({ file_type: sent?.type, file_size: sent?.size }) },
 	);
+};
