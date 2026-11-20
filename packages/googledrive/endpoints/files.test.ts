@@ -1,6 +1,8 @@
 import { ApiError, request } from 'corsair/http';
 import { GoogleDriveFile, GoogleDriveFileContents } from '../schema/database';
-import { exportText, get, list } from './files';
+import type { File } from '../types';
+import type { DocsTab } from './files';
+import { deleteFile, exportText, get, list } from './files';
 import { GoogleDriveEndpointInputSchemas } from './types';
 
 jest.mock('corsair/http', () => {
@@ -16,7 +18,7 @@ const mockRequest = request as jest.Mock;
 const LIST_FIELDS =
 	'nextPageToken,files(id,name,mimeType,createdTime,modifiedTime,owners,webViewLink,parents)';
 
-const driveFile = {
+const driveFile: File = {
 	id: 'file-1',
 	name: 'Meeting notes',
 	mimeType: 'application/vnd.google-apps.document',
@@ -27,20 +29,35 @@ const driveFile = {
 	parents: ['folder-1'],
 };
 
+// Stored rows are kept as the schemas parse them; `unknown` is the honest input
+// type for an upsert, since each test checks the row against the real schema.
+type Row = Record<string, unknown>;
+
 function ctx() {
-	const stored: Record<string, Record<string, unknown>> = {};
+	const stored: Record<string, Row> = {};
 	const files = {
+		findByEntityId: jest.fn(async (id: string) =>
+			stored[id] ? { data: stored[id] } : null,
+		),
 		upsertByEntityId: jest.fn(async (id: string, data: unknown) => {
 			stored[id] = GoogleDriveFile.parse(data);
+		}),
+		deleteByEntityId: jest.fn(async (id: string) => {
+			delete stored[id];
 		}),
 	};
 	const fileContents = {
 		upsertByEntityId: jest.fn(async (id: string, data: unknown) => {
 			stored[`contents:${id}`] = GoogleDriveFileContents.parse(data);
 		}),
+		deleteByEntityId: jest.fn(async (id: string) => {
+			delete stored[`contents:${id}`];
+		}),
 	};
 	return {
 		stored,
+		// The endpoints read only key, db and the account id; a full plugin context
+		// carries the whole runtime, so this stand-in is cast once, here.
 		ctx: {
 			key: 'test-token',
 			db: { files, fileContents, folders: { upsertByEntityId: jest.fn() } },
@@ -119,13 +136,44 @@ describe('files fields passthrough', () => {
 		);
 		expect(stored['file-1']?.owners).toEqual(driveFile.owners);
 	});
+
+	it('lays a partial read over the saved row instead of erasing it', async () => {
+		const { ctx: c, stored } = ctx();
+		mockRequest.mockResolvedValue(driveFile);
+		await get(c, { fileId: 'file-1' });
+
+		mockRequest.mockResolvedValue({ id: 'file-1', name: 'Renamed' });
+		await get(c, { fileId: 'file-1', fields: 'id,name' });
+
+		expect(stored['file-1']).toMatchObject({
+			name: 'Renamed',
+			owners: driveFile.owners,
+			webViewLink: driveFile.webViewLink,
+		});
+	});
+
+	it('deletes the saved Docs text with its file', async () => {
+		const { ctx: c, stored } = ctx();
+		stored['file-1'] = { id: 'file-1' };
+		stored['contents:file-1'] = { id: 'file-1', text: 'secret' };
+		mockRequest.mockResolvedValue({});
+
+		await deleteFile(c, { fileId: 'file-1' });
+
+		expect(stored['file-1']).toBeUndefined();
+		expect(stored['contents:file-1']).toBeUndefined();
+	});
 });
 
 function paragraph(text: string) {
 	return { paragraph: { elements: [{ textRun: { content: text } }] } };
 }
 
-function tab(title: string, lines: string[], childTabs: unknown[] = []) {
+function tab(
+	title: string,
+	lines: string[],
+	childTabs: DocsTab[] = [],
+): DocsTab {
 	return {
 		tabProperties: { title },
 		documentTab: { body: { content: lines.map(paragraph) } },
@@ -133,7 +181,7 @@ function tab(title: string, lines: string[], childTabs: unknown[] = []) {
 	};
 }
 
-function mockDoc(tabs: unknown[], meta: Record<string, unknown> = driveFile) {
+function mockDoc(tabs: DocsTab[], meta: File = driveFile) {
 	mockRequest.mockImplementation(async (config: { BASE: string }) =>
 		config.BASE === 'https://docs.googleapis.com/v1' ? { tabs } : meta,
 	);
@@ -192,6 +240,27 @@ describe('files.exportText', () => {
 		expect(text).toBe(
 			'# Notes\nSummary\n\n# Action items\nShip it\n\n# Transcript\nAda: hi\n',
 		);
+	});
+
+	it('keeps the text of a table of contents', async () => {
+		mockDoc([
+			{
+				tabProperties: { title: 'Notes' },
+				documentTab: {
+					body: {
+						content: [
+							{ tableOfContents: { content: [paragraph('1. Intro\n')] } },
+							paragraph('Intro body\n'),
+						],
+					},
+				},
+			},
+		]);
+		const { ctx: c } = ctx();
+
+		const { text } = await exportText(c, { fileId: 'file-1' });
+
+		expect(text).toBe('# Notes\n1. Intro\nIntro body\n');
 	});
 
 	it('keeps the text of person, rich link and date chips', async () => {

@@ -14,6 +14,25 @@ import {
 	GoogleDriveEndpointOutputSchemas,
 } from './types';
 
+// A fields mask returns part of a file. Upsert replaces the stored row, so a
+// partial response is laid over what is already saved instead of erasing it.
+async function saveFile<T extends { id: string }>(
+	table:
+		| {
+				findByEntityId(id: string): Promise<{ data: T } | null | undefined>;
+				upsertByEntityId(id: string, data: T): Promise<unknown>;
+		  }
+		| undefined,
+	data: T,
+	partial: boolean,
+): Promise<void> {
+	if (!table) return;
+	const prior = partial
+		? (await table.findByEntityId(data.id))?.data
+		: undefined;
+	await table.upsertByEntityId(data.id, { ...prior, ...data });
+}
+
 export const list: GoogleDriveEndpoints['filesList'] = async (ctx, input) => {
 	const result = await makeAuthenticatedGoogleDriveRequest<
 		GoogleDriveEndpointOutputs['filesList']
@@ -35,19 +54,12 @@ export const list: GoogleDriveEndpoints['filesList'] = async (ctx, input) => {
 				if (file.id) {
 					const isFolder =
 						file.mimeType === 'application/vnd.google-apps.folder';
-					if (isFolder && ctx.db.folders) {
-						await ctx.db.folders.upsertByEntityId(file.id, {
-							...file,
-							id: file.id,
-							createdAt: new Date(),
-						});
-					} else if (!isFolder) {
-						await ctx.db.files.upsertByEntityId(file.id, {
-							...file,
-							id: file.id,
-							createdAt: new Date(),
-						});
-					}
+					const row = { ...file, id: file.id, createdAt: new Date() };
+					await saveFile(
+						isFolder ? ctx.db.folders : ctx.db.files,
+						row,
+						Boolean(input.fields),
+					);
 				}
 			}
 		} catch (error) {
@@ -75,19 +87,12 @@ export const get: GoogleDriveEndpoints['filesGet'] = async (ctx, input) => {
 	if (result.id) {
 		const isFolder = result.mimeType === 'application/vnd.google-apps.folder';
 		try {
-			if (isFolder && ctx.db.folders) {
-				await ctx.db.folders.upsertByEntityId(result.id, {
-					...result,
-					id: result.id,
-					createdAt: new Date(),
-				});
-			} else if (!isFolder && ctx.db.files) {
-				await ctx.db.files.upsertByEntityId(result.id, {
-					...result,
-					id: result.id,
-					createdAt: new Date(),
-				});
-			}
+			const row = { ...result, id: result.id, createdAt: new Date() };
+			await saveFile(
+				isFolder ? ctx.db.folders : ctx.db.files,
+				row,
+				Boolean(input.fields),
+			);
 		} catch (error) {
 			console.warn('Failed to save file to database:', error);
 		}
@@ -216,6 +221,7 @@ export const deleteFile: GoogleDriveEndpoints['filesDelete'] = async (
 	if (ctx.db.files) {
 		try {
 			await ctx.db.files.deleteByEntityId(input.fileId);
+			await ctx.db.fileContents?.deleteByEntityId(input.fileId);
 		} catch (error) {
 			console.warn('Failed to delete file from database:', error);
 		}
@@ -483,12 +489,13 @@ const EXPORT_TEXT_MAX_CHARS = 500_000;
 type DocsParagraphElement = {
 	textRun?: { content?: string };
 	person?: { personProperties?: { name?: string; email?: string } };
-	richLink?: { richLinkProperties?: { title?: string } };
+	richLink?: { richLinkProperties?: { title?: string; uri?: string } };
 	dateElement?: { dateElementProperties?: { displayText?: string } };
 };
 
 type DocsStructuralElement = {
 	paragraph?: { elements?: DocsParagraphElement[] };
+	tableOfContents?: { content?: DocsStructuralElement[] };
 	table?: {
 		tableRows?: {
 			tableCells?: { content?: DocsStructuralElement[] }[];
@@ -496,7 +503,7 @@ type DocsStructuralElement = {
 	};
 };
 
-type DocsTab = {
+export type DocsTab = {
 	tabProperties?: { title?: string };
 	documentTab?: { body?: { content?: DocsStructuralElement[] } };
 	childTabs?: DocsTab[];
@@ -517,6 +524,9 @@ function elementsText(elements: DocsStructuralElement[] = []): string {
 							'',
 					)
 					.join('');
+			}
+			if (element.tableOfContents) {
+				return elementsText(element.tableOfContents.content);
 			}
 			return (element.table?.tableRows ?? [])
 				.flatMap((row) => row.tableCells ?? [])
@@ -567,9 +577,9 @@ export const exportText: GoogleDriveEndpoints['filesExportText'] = async (
 	} catch (error) {
 		// Google's message carries the "enable docs.googleapis.com" hint when the
 		// Docs API is off; the ApiError itself is kept so callers still see its status.
-		const message = (error as ApiError).body?.error?.message;
-		if (error instanceof ApiError && error.status === 403 && message) {
-			error.message = message;
+		if (error instanceof ApiError && error.status === 403) {
+			const message = error.body?.error?.message;
+			if (typeof message === 'string' && message) error.message = message;
 		}
 		throw error;
 	}
