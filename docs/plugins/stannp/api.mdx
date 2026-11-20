@@ -29,7 +29,7 @@ await corsair.stannp.api.account.balance({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `balance` | `string \| null` | No | Account balance, such as "214.4200". |
+| `balance` | `string \| number \| null` | No | Account balance, such as "214.4200". |
 
 
 
@@ -41,7 +41,7 @@ await corsair.stannp.api.account.balance({});
 
 Top up the account balance from the saved card; the amount is charged for real
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.stannp.api.account.topup({ net: '10.00' });
@@ -60,7 +60,7 @@ await corsair.stannp.api.account.topup({ net: '10.00' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `receipt_pdf` | `string \| null` | No | URL of the receipt. |
+| `receipt_pdf` | `string \| number \| null` | No | URL of the receipt. |
 
 
 
@@ -88,8 +88,8 @@ await corsair.stannp.api.addresses.validate({ address1: '1000 N West Street', ci
 | `address1` | `string` | Yes | Address line 1. |
 | `address2` | `string` | No | — |
 | `address3` | `string` | No | — |
-| `city` | `string` | No | Required when zipcode is not provided. |
-| `postcode` | `string` | No | Recommended for UK addresses. |
+| `city` | `string` | No | Required for US/CA addresses when zipcode is not provided. |
+| `postcode` | `string` | No | UK postcode; enough without a city for UK addresses. |
 | `state` | `string` | No | Two-letter US state abbreviation. |
 | `province` | `string` | No | Two-letter CA province abbreviation (ON, BC, QC). |
 | `zipcode` | `string` | No | US/CA. Required when city is not provided. |
@@ -101,16 +101,16 @@ await corsair.stannp.api.addresses.validate({ address1: '1000 N West Street', ci
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `address1` | `string \| null` | No | — |
-| `address2` | `string \| null` | No | — |
-| `address3` | `string \| null` | No | — |
-| `city` | `string \| null` | No | — |
-| `county` | `string \| null` | No | — |
-| `postcode` | `string \| null` | No | — |
-| `country` | `string \| null` | No | — |
-| `reference_id` | `number \| null` | No | — |
-| `dps` | `string \| null` | No | Delivery point suffix. |
-| `udprn` | `string \| null` | No | — |
+| `address1` | `string \| number \| null` | No | — |
+| `address2` | `string \| number \| null` | No | — |
+| `address3` | `string \| number \| null` | No | — |
+| `city` | `string \| number \| null` | No | — |
+| `county` | `string \| number \| null` | No | — |
+| `postcode` | `string \| number \| null` | No | — |
+| `country` | `string \| number \| null` | No | — |
+| `reference_id` | `number \| string \| null` | No | — |
+| `dps` | `string \| number \| null` | No | Delivery point suffix. |
+| `udprn` | `string \| number \| null` | No | — |
 | `is_valid` | `boolean \| null` | No | — |
 
 
@@ -125,7 +125,7 @@ await corsair.stannp.api.addresses.validate({ address1: '1000 N West Street', ci
 
 Approve a campaign, locking its design and recipient selection; the lock cannot be undone
 
-**Risk:** `write` · **Irreversible**
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.stannp.api.campaigns.approve({ id: 123 });
@@ -139,7 +139,7 @@ await corsair.stannp.api.campaigns.approve({ id: 123 });
 
 
 
-**Output:** `boolean`
+**Output:** `boolean \| number`
 
 
 ---
@@ -176,7 +176,7 @@ await corsair.stannp.api.campaigns.availableDates({ start: '2026-01-22', end: '2
 
 Book a campaign for dispatch on a date, paying from the balance; this starts a real mailing
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.stannp.api.campaigns.book({ id: 123, send_date: '2026-01-22', use_balance: true });
@@ -194,7 +194,7 @@ await corsair.stannp.api.campaigns.book({ id: 123, send_date: '2026-01-22', use_
 
 
 
-**Output:** `boolean`
+**Output:** `boolean \| number`
 
 
 ---
@@ -223,17 +223,17 @@ await corsair.stannp.api.campaigns.cost({ id: 123 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `rate` | `string \| null` | No | Per-piece rate for validated addresses. |
-| `non_valid_rate` | `string \| null` | No | — |
-| `delivery_rate` | `string \| null` | No | — |
-| `international_rate` | `string \| null` | No | — |
-| `valid` | `string \| null` | No | Total for validated recipients. |
-| `not_valid` | `string \| null` | No | Total for non-validated recipients. |
-| `international` | `string \| null` | No | — |
-| `delivery_charge` | `string \| null` | No | — |
-| `net` | `string \| null` | No | — |
-| `vat` | `string \| null` | No | — |
-| `total` | `string \| null` | No | — |
+| `rate` | `string \| number \| null` | No | Per-piece rate for validated addresses. |
+| `non_valid_rate` | `string \| number \| null` | No | — |
+| `delivery_rate` | `string \| number \| null` | No | — |
+| `international_rate` | `string \| number \| null` | No | — |
+| `valid` | `string \| number \| null` | No | Total for validated recipients. |
+| `not_valid` | `string \| number \| null` | No | Total for non-validated recipients. |
+| `international` | `string \| number \| null` | No | — |
+| `delivery_charge` | `string \| number \| null` | No | — |
+| `net` | `string \| number \| null` | No | — |
+| `vat` | `string \| number \| null` | No | — |
+| `total` | `string \| number \| null` | No | — |
 
 
 
@@ -270,12 +270,7 @@ await corsair.stannp.api.campaigns.create({ name: 'My Campaign', type: 'a6-postc
 
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string \| null` | No | The new campaign id, as a string. |
-
+**Output:** `unknown`
 
 
 ---
@@ -329,27 +324,27 @@ await corsair.stannp.api.campaigns.get({ id: 126 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string \| null` | No | — |
-| `account_id` | `string \| null` | No | — |
-| `name` | `string \| null` | No | — |
-| `template_id` | `string \| null` | No | — |
-| `type` | `string \| null` | No | — |
-| `trigger_date` | `string \| null` | No | — |
-| `send_date` | `string \| null` | No | — |
-| `trigger_offset` | `string \| null` | No | — |
-| `created` | `string \| null` | No | — |
-| `updated` | `string \| null` | No | — |
-| `status` | `string \| null` | No | — |
-| `recipients_group` | `string \| null` | No | — |
-| `recipients_filter` | `string \| null` | No | — |
-| `recipients_validated` | `string \| null` | No | — |
-| `recipients` | `string \| null` | No | — |
-| `recipients_not_valid` | `string \| null` | No | — |
-| `dispatched` | `string \| null` | No | — |
-| `cost` | `string \| null` | No | — |
-| `voucher_code` | `string \| null` | No | — |
-| `image` | `string \| null` | No | — |
-| `size` | `string \| null` | No | — |
+| `id` | `string \| number \| null` | No | — |
+| `account_id` | `string \| number \| null` | No | — |
+| `name` | `string \| number \| null` | No | — |
+| `template_id` | `string \| number \| null` | No | — |
+| `type` | `string \| number \| null` | No | — |
+| `trigger_date` | `string \| number \| null` | No | — |
+| `send_date` | `string \| number \| null` | No | — |
+| `trigger_offset` | `string \| number \| null` | No | — |
+| `created` | `string \| number \| null` | No | — |
+| `updated` | `string \| number \| null` | No | — |
+| `status` | `string \| number \| null` | No | — |
+| `recipients_group` | `string \| number \| null` | No | — |
+| `recipients_filter` | `string \| number \| null` | No | — |
+| `recipients_validated` | `string \| number \| null` | No | — |
+| `recipients` | `string \| number \| null` | No | — |
+| `recipients_not_valid` | `string \| number \| null` | No | — |
+| `dispatched` | `string \| number \| null` | No | — |
+| `cost` | `string \| number \| null` | No | — |
+| `voucher_code` | `string \| number \| null` | No | — |
+| `image` | `string \| number \| null` | No | — |
+| `size` | `string \| number \| null` | No | — |
 
 
 
@@ -377,27 +372,27 @@ await corsair.stannp.api.campaigns.list({});
 
 ```ts
 {
-  id?: string | null,
-  account_id?: string | null,
-  name?: string | null,
-  template_id?: string | null,
-  type?: string | null,
-  trigger_date?: string | null,
-  send_date?: string | null,
-  trigger_offset?: string | null,
-  created?: string | null,
-  updated?: string | null,
-  status?: string | null,
-  recipients_group?: string | null,
-  recipients_filter?: string | null,
-  recipients_validated?: string | null,
-  recipients?: string | null,
-  recipients_not_valid?: string | null,
-  dispatched?: string | null,
-  cost?: string | null,
-  voucher_code?: string | null,
-  image?: string | null,
-  size?: string | null
+  id?: string | number | null,
+  account_id?: string | number | null,
+  name?: string | number | null,
+  template_id?: string | number | null,
+  type?: string | number | null,
+  trigger_date?: string | number | null,
+  send_date?: string | number | null,
+  trigger_offset?: string | number | null,
+  created?: string | number | null,
+  updated?: string | number | null,
+  status?: string | number | null,
+  recipients_group?: string | number | null,
+  recipients_filter?: string | number | null,
+  recipients_validated?: string | number | null,
+  recipients?: string | number | null,
+  recipients_not_valid?: string | number | null,
+  dispatched?: string | number | null,
+  cost?: string | number | null,
+  voucher_code?: string | number | null,
+  image?: string | number | null,
+  size?: string | number | null
 }[]
 ```
 </Accordion>
@@ -459,7 +454,7 @@ await corsair.stannp.api.events.create({ recipient_id: '12345', name: 'PURCHASE'
 
 
 
-**Output:** `number`
+**Output:** `number \| string`
 
 
 ---
@@ -514,9 +509,9 @@ await corsair.stannp.api.files.listFolders({});
 
 ```ts
 {
-  id?: string | null,
-  name?: string | null,
-  created?: string | null
+  id?: string | number | null,
+  name?: string | number | null,
+  created?: string | number | null
 }[]
 ```
 </Accordion>
@@ -551,7 +546,7 @@ await corsair.stannp.api.files.upload({ file: 'https://www.stannp.com/assets/sam
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string \| null` | No | The new file id, as a string. |
+| `id` | `string \| number \| null` | No | The new file id, as a string. |
 
 
 
@@ -605,7 +600,7 @@ await corsair.stannp.api.groups.calculate({ group_id: 123 });
 
 
 
-**Output:** `boolean`
+**Output:** `boolean \| number`
 
 
 ---
@@ -631,7 +626,7 @@ await corsair.stannp.api.groups.create({ name: 'My Group' });
 
 
 
-**Output:** `string`
+**Output:** `string \| number`
 
 
 ---
@@ -658,7 +653,7 @@ await corsair.stannp.api.groups.delete({ id: 123 });
 
 
 
-**Output:** `boolean`
+**Output:** `boolean \| number`
 
 
 ---
@@ -691,17 +686,17 @@ await corsair.stannp.api.groups.list({ offset: 0, limit: 50 });
 
 ```ts
 {
-  id?: string | null,
-  account_id?: string | null,
-  name?: string | null,
-  created?: string | null,
-  recipients?: string | null,
-  valid?: string | null,
-  international?: string | null,
-  skipped?: string | null,
-  status?: string | null,
-  import_progress?: string | null,
-  is_seeds?: string | null
+  id?: string | number | null,
+  account_id?: string | number | null,
+  name?: string | number | null,
+  created?: string | number | null,
+  recipients?: string | number | null,
+  valid?: string | number | null,
+  international?: string | number | null,
+  skipped?: string | number | null,
+  status?: string | number | null,
+  import_progress?: string | number | null,
+  is_seeds?: string | number | null
 }[]
 ```
 </Accordion>
@@ -732,7 +727,7 @@ await corsair.stannp.api.groups.purge({ id: 123 });
 
 
 
-**Output:** `boolean`
+**Output:** `boolean \| number`
 
 
 ---
@@ -771,7 +766,7 @@ await corsair.stannp.api.groups.removeRecipients({ group_id: 39, recipients: [45
 
 Cancel a letter that has not started processing yet
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.stannp.api.letters.cancel({ id: 12345 });
@@ -796,7 +791,7 @@ await corsair.stannp.api.letters.cancel({ id: 12345 });
 
 Create and mail a letter merged from a template or PDF; test mode renders a PDF proof without posting or charging
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.stannp.api.letters.create({ test: true, file: 'https://www.stannp.com/assets/samples/letter-heading.pdf', recipient: { firstname: 'John', lastname: 'Smith', address1: '123 Sample Street', city: 'Sampletown', zipcode: '12345', country: 'US' }, addons: 'FIRST_CLASS' });
@@ -848,12 +843,12 @@ number | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pdf` | `string \| null` | No | URL of the merged PDF proof. |
-| `id` | `number \| null` | No | The new mailpiece id; 0 in test mode. |
-| `created` | `string \| null` | No | — |
-| `format` | `string \| null` | No | — |
-| `cost` | `string \| null` | No | — |
-| `status` | `string \| null` | No | "test" when test is set. |
+| `pdf` | `string \| number \| null` | No | URL of the merged PDF proof. |
+| `id` | `number \| string \| null` | No | The new mailpiece id; 0 in test mode. |
+| `created` | `string \| number \| null` | No | — |
+| `format` | `string \| number \| null` | No | — |
+| `cost` | `string \| number \| null` | No | — |
+| `status` | `string \| number \| null` | No | "test" when test is set. |
 
 
 
@@ -883,35 +878,35 @@ await corsair.stannp.api.letters.get({ id: 16818210 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number \| null` | No | — |
-| `account_id` | `number \| null` | No | — |
-| `timestamp` | `string \| null` | No | — |
-| `status` | `string \| null` | No | — |
-| `type` | `string \| null` | No | — |
-| `format` | `string \| null` | No | — |
-| `pdf_file` | `string \| null` | No | — |
-| `dispatched` | `string \| null` | No | — |
-| `country` | `string \| null` | No | — |
+| `id` | `number \| string \| null` | No | — |
+| `account_id` | `number \| string \| null` | No | — |
+| `timestamp` | `string \| number \| null` | No | — |
+| `status` | `string \| number \| null` | No | — |
+| `type` | `string \| number \| null` | No | — |
+| `format` | `string \| number \| null` | No | — |
+| `pdf_file` | `string \| number \| null` | No | — |
+| `dispatched` | `string \| number \| null` | No | — |
+| `country` | `string \| number \| null` | No | — |
 | `cost` | `number \| string \| null` | No | — |
-| `addons` | `string \| null` | No | — |
-| `tags` | `string \| null` | No | — |
-| `template_id` | `number \| null` | No | — |
-| `campaign_id` | `number \| null` | No | — |
-| `recipient_id` | `number \| null` | No | — |
-| `firstname` | `string \| null` | No | — |
-| `lastname` | `string \| null` | No | — |
-| `address1` | `string \| null` | No | — |
-| `address2` | `string \| null` | No | — |
-| `address3` | `string \| null` | No | — |
-| `city` | `string \| null` | No | — |
-| `county` | `string \| null` | No | — |
-| `postcode` | `string \| null` | No | — |
-| `zipcode` | `string \| null` | No | — |
-| `transactional` | `number \| null` | No | — |
-| `class` | `number \| null` | No | — |
-| `updated` | `string \| null` | No | — |
-| `mailpiece_id` | `number \| null` | No | — |
-| `tracking_ref` | `string \| null` | No | — |
+| `addons` | `string \| number \| null` | No | — |
+| `tags` | `string \| number \| null` | No | — |
+| `template_id` | `number \| string \| null` | No | — |
+| `campaign_id` | `number \| string \| null` | No | — |
+| `recipient_id` | `number \| string \| null` | No | — |
+| `firstname` | `string \| number \| null` | No | — |
+| `lastname` | `string \| number \| null` | No | — |
+| `address1` | `string \| number \| null` | No | — |
+| `address2` | `string \| number \| null` | No | — |
+| `address3` | `string \| number \| null` | No | — |
+| `city` | `string \| number \| null` | No | — |
+| `county` | `string \| number \| null` | No | — |
+| `postcode` | `string \| number \| null` | No | — |
+| `zipcode` | `string \| number \| null` | No | — |
+| `transactional` | `number \| string \| null` | No | — |
+| `class` | `number \| string \| null` | No | — |
+| `updated` | `string \| number \| null` | No | — |
+| `mailpiece_id` | `number \| string \| null` | No | — |
+| `tracking_ref` | `string \| number \| null` | No | — |
 | `tracking` | `Record<string, any>[] \| null` | No | — |
 
 
@@ -924,7 +919,7 @@ await corsair.stannp.api.letters.get({ id: 16818210 });
 
 Post an already mail-merged letter PDF whose address the API reads with OCR
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.stannp.api.letters.post({ test: true, country: 'GB', pdf: 'https://www.stannp.com/assets/samples/letter-sample.pdf' });
@@ -950,12 +945,12 @@ await corsair.stannp.api.letters.post({ test: true, country: 'GB', pdf: 'https:/
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pdf` | `string \| null` | No | URL of the merged PDF proof. |
-| `id` | `number \| null` | No | The new mailpiece id; 0 in test mode. |
-| `created` | `string \| null` | No | — |
-| `format` | `string \| null` | No | — |
-| `cost` | `string \| null` | No | — |
-| `status` | `string \| null` | No | "test" when test is set. |
+| `pdf` | `string \| number \| null` | No | URL of the merged PDF proof. |
+| `id` | `number \| string \| null` | No | The new mailpiece id; 0 in test mode. |
+| `created` | `string \| number \| null` | No | — |
+| `format` | `string \| number \| null` | No | — |
+| `cost` | `string \| number \| null` | No | — |
+| `status` | `string \| number \| null` | No | "test" when test is set. |
 
 
 
@@ -969,7 +964,7 @@ await corsair.stannp.api.letters.post({ test: true, country: 'GB', pdf: 'https:/
 
 Cancel a postcard that has not started processing yet
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.stannp.api.postcards.cancel({ id: 12345 });
@@ -994,7 +989,7 @@ await corsair.stannp.api.postcards.cancel({ id: 12345 });
 
 Create and mail a postcard to one recipient; test mode renders a PDF proof without posting or charging
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.stannp.api.postcards.create({ test: true, size: '4x6', front: 'https://www.stannp.com/assets/samples/a6-postcard-front.webp', back: 'https://www.stannp.com/assets/samples/signature-example.webp', message: 'hello world', recipient: { firstname: 'John', lastname: 'Smith', address1: '123 Sample Street', city: 'Sampletown', zipcode: '12345', country: 'US' }, tags: 'used.for.reporting' });
@@ -1050,12 +1045,12 @@ number | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pdf` | `string \| null` | No | URL of the merged PDF proof. |
-| `id` | `number \| null` | No | The new mailpiece id; 0 in test mode. |
-| `created` | `string \| null` | No | — |
-| `format` | `string \| null` | No | — |
-| `cost` | `string \| null` | No | — |
-| `status` | `string \| null` | No | "test" when test is set. |
+| `pdf` | `string \| number \| null` | No | URL of the merged PDF proof. |
+| `id` | `number \| string \| null` | No | The new mailpiece id; 0 in test mode. |
+| `created` | `string \| number \| null` | No | — |
+| `format` | `string \| number \| null` | No | — |
+| `cost` | `string \| number \| null` | No | — |
+| `status` | `string \| number \| null` | No | "test" when test is set. |
 
 
 
@@ -1085,35 +1080,35 @@ await corsair.stannp.api.postcards.get({ id: 16818211 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number \| null` | No | — |
-| `account_id` | `number \| null` | No | — |
-| `timestamp` | `string \| null` | No | — |
-| `status` | `string \| null` | No | — |
-| `type` | `string \| null` | No | — |
-| `format` | `string \| null` | No | — |
-| `pdf_file` | `string \| null` | No | — |
-| `dispatched` | `string \| null` | No | — |
-| `country` | `string \| null` | No | — |
+| `id` | `number \| string \| null` | No | — |
+| `account_id` | `number \| string \| null` | No | — |
+| `timestamp` | `string \| number \| null` | No | — |
+| `status` | `string \| number \| null` | No | — |
+| `type` | `string \| number \| null` | No | — |
+| `format` | `string \| number \| null` | No | — |
+| `pdf_file` | `string \| number \| null` | No | — |
+| `dispatched` | `string \| number \| null` | No | — |
+| `country` | `string \| number \| null` | No | — |
 | `cost` | `number \| string \| null` | No | — |
-| `addons` | `string \| null` | No | — |
-| `tags` | `string \| null` | No | — |
-| `template_id` | `number \| null` | No | — |
-| `campaign_id` | `number \| null` | No | — |
-| `recipient_id` | `number \| null` | No | — |
-| `firstname` | `string \| null` | No | — |
-| `lastname` | `string \| null` | No | — |
-| `address1` | `string \| null` | No | — |
-| `address2` | `string \| null` | No | — |
-| `address3` | `string \| null` | No | — |
-| `city` | `string \| null` | No | — |
-| `county` | `string \| null` | No | — |
-| `postcode` | `string \| null` | No | — |
-| `zipcode` | `string \| null` | No | — |
-| `transactional` | `number \| null` | No | — |
-| `class` | `number \| null` | No | — |
-| `updated` | `string \| null` | No | — |
-| `mailpiece_id` | `number \| null` | No | — |
-| `tracking_ref` | `string \| null` | No | — |
+| `addons` | `string \| number \| null` | No | — |
+| `tags` | `string \| number \| null` | No | — |
+| `template_id` | `number \| string \| null` | No | — |
+| `campaign_id` | `number \| string \| null` | No | — |
+| `recipient_id` | `number \| string \| null` | No | — |
+| `firstname` | `string \| number \| null` | No | — |
+| `lastname` | `string \| number \| null` | No | — |
+| `address1` | `string \| number \| null` | No | — |
+| `address2` | `string \| number \| null` | No | — |
+| `address3` | `string \| number \| null` | No | — |
+| `city` | `string \| number \| null` | No | — |
+| `county` | `string \| number \| null` | No | — |
+| `postcode` | `string \| number \| null` | No | — |
+| `zipcode` | `string \| number \| null` | No | — |
+| `transactional` | `number \| string \| null` | No | — |
+| `class` | `number \| string \| null` | No | — |
+| `updated` | `string \| number \| null` | No | — |
+| `mailpiece_id` | `number \| string \| null` | No | — |
+| `tracking_ref` | `string \| number \| null` | No | — |
 | `tracking` | `Record<string, any>[] \| null` | No | — |
 
 
@@ -1166,9 +1161,9 @@ await corsair.stannp.api.recipients.create({ group_id: 123, firstname: 'John', l
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string \| null` | No | The new recipient id, as a string. |
+| `id` | `string \| number \| null` | No | The new recipient id, as a string. |
 | `valid` | `boolean \| null` | No | Whether the address validated. |
-| `created` | `string \| null` | No | — |
+| `created` | `string \| number \| null` | No | — |
 
 
 
@@ -1194,7 +1189,7 @@ await corsair.stannp.api.recipients.delete({ id: 12345 });
 
 
 
-**Output:** `number`
+**Output:** `number \| string`
 
 
 ---
@@ -1223,28 +1218,28 @@ await corsair.stannp.api.recipients.get({ id: 1943 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string \| null` | No | — |
-| `account_id` | `string \| null` | No | — |
-| `title` | `string \| null` | No | — |
-| `firstname` | `string \| null` | No | — |
-| `lastname` | `string \| null` | No | — |
-| `company` | `string \| null` | No | — |
-| `job_title` | `string \| null` | No | — |
-| `address1` | `string \| null` | No | — |
-| `address2` | `string \| null` | No | — |
-| `address3` | `string \| null` | No | — |
-| `city` | `string \| null` | No | — |
-| `county` | `string \| null` | No | — |
-| `country` | `string \| null` | No | — |
-| `postcode` | `string \| null` | No | — |
-| `zipcode` | `string \| null` | No | — |
-| `dps` | `string \| null` | No | — |
-| `email` | `string \| null` | No | — |
-| `phone_number` | `string \| null` | No | — |
-| `ref_id` | `string \| null` | No | — |
+| `id` | `string \| number \| null` | No | — |
+| `account_id` | `string \| number \| null` | No | — |
+| `title` | `string \| number \| null` | No | — |
+| `firstname` | `string \| number \| null` | No | — |
+| `lastname` | `string \| number \| null` | No | — |
+| `company` | `string \| number \| null` | No | — |
+| `job_title` | `string \| number \| null` | No | — |
+| `address1` | `string \| number \| null` | No | — |
+| `address2` | `string \| number \| null` | No | — |
+| `address3` | `string \| number \| null` | No | — |
+| `city` | `string \| number \| null` | No | — |
+| `county` | `string \| number \| null` | No | — |
+| `country` | `string \| number \| null` | No | — |
+| `postcode` | `string \| number \| null` | No | — |
+| `zipcode` | `string \| number \| null` | No | — |
+| `dps` | `string \| number \| null` | No | — |
+| `email` | `string \| number \| null` | No | — |
+| `phone_number` | `string \| number \| null` | No | — |
+| `ref_id` | `string \| number \| null` | No | — |
 | `blacklist` | `string \| boolean \| null` | No | — |
-| `created` | `string \| null` | No | — |
-| `updated` | `string \| null` | No | — |
+| `created` | `string \| number \| null` | No | — |
+| `updated` | `string \| number \| null` | No | — |
 
 
 
@@ -1309,28 +1304,28 @@ await corsair.stannp.api.recipients.list({ group_id: 123, offset: 0, limit: 50 }
 
 ```ts
 {
-  id?: string | null,
-  account_id?: string | null,
-  title?: string | null,
-  firstname?: string | null,
-  lastname?: string | null,
-  company?: string | null,
-  job_title?: string | null,
-  address1?: string | null,
-  address2?: string | null,
-  address3?: string | null,
-  city?: string | null,
-  county?: string | null,
-  country?: string | null,
-  postcode?: string | null,
-  zipcode?: string | null,
-  dps?: string | null,
-  email?: string | null,
-  phone_number?: string | null,
-  ref_id?: string | null,
+  id?: string | number | null,
+  account_id?: string | number | null,
+  title?: string | number | null,
+  firstname?: string | number | null,
+  lastname?: string | number | null,
+  company?: string | number | null,
+  job_title?: string | number | null,
+  address1?: string | number | null,
+  address2?: string | number | null,
+  address3?: string | number | null,
+  city?: string | number | null,
+  county?: string | number | null,
+  country?: string | number | null,
+  postcode?: string | number | null,
+  zipcode?: string | number | null,
+  dps?: string | number | null,
+  email?: string | number | null,
+  phone_number?: string | number | null,
+  ref_id?: string | number | null,
   blacklist?: string | boolean | null,
-  created?: string | null,
-  updated?: string | null
+  created?: string | number | null,
+  updated?: string | number | null
 }[]
 ```
 </Accordion>
@@ -1360,7 +1355,7 @@ await corsair.stannp.api.reporting.list({ startdate: '2024-01-01', enddate: '202
 | `startdate` | `string` | Yes | Start of the reporting period. |
 | `enddate` | `string` | Yes | End of the reporting period. |
 | `status` | `string` | No | Only mailpieces in this status, such as delivered or returned. |
-| `tag` | `string` | No | Only mailpieces carrying this tag. |
+| `tag` | `string` | No | Only mailpieces carrying this tag. The tag is the path segment after status, so it needs a status too. |
 
 
 
@@ -1375,19 +1370,19 @@ await corsair.stannp.api.reporting.list({ startdate: '2024-01-01', enddate: '202
 
 ```ts
 {
-  id?: string | null,
-  timestamp?: string | null,
-  status?: string | null,
-  type?: string | null,
-  format?: string | null,
-  pdf_file?: string | null,
-  dispatched?: string | null,
-  country?: string | null,
-  cost?: string | null,
-  addons?: string | null,
-  tags?: string | null,
-  zipcode?: string | null,
-  address?: string | null
+  id?: string | number | null,
+  timestamp?: string | number | null,
+  status?: string | number | null,
+  type?: string | number | null,
+  format?: string | number | null,
+  pdf_file?: string | number | null,
+  dispatched?: string | number | null,
+  country?: string | number | null,
+  cost?: string | number | null,
+  addons?: string | number | null,
+  tags?: string | number | null,
+  zipcode?: string | number | null,
+  address?: string | number | null
 }[]
 ```
 </Accordion>
@@ -1422,14 +1417,14 @@ await corsair.stannp.api.reporting.summary({ startdate: '2024-01-01', enddate: '
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `total` | `number \| null` | No | — |
-| `received` | `number \| null` | No | Requests received. |
-| `printing` | `number \| null` | No | Printing or finishing. |
-| `handed_over` | `number \| null` | No | Handed to the delivery service. |
-| `local_delivery` | `number \| null` | No | At the final delivery office. |
-| `delivered` | `number \| null` | No | Estimated as delivered. |
-| `returned` | `number \| null` | No | Returned to sender. |
-| `cancelled` | `number \| null` | No | Cancelled before production. |
+| `total` | `number \| string \| null` | No | — |
+| `received` | `number \| string \| null` | No | Requests received. |
+| `printing` | `number \| string \| null` | No | Printing or finishing. |
+| `handed_over` | `number \| string \| null` | No | Handed to the delivery service. |
+| `local_delivery` | `number \| string \| null` | No | At the final delivery office. |
+| `delivered` | `number \| string \| null` | No | Estimated as delivered. |
+| `returned` | `number \| string \| null` | No | Returned to sender. |
+| `cancelled` | `number \| string \| null` | No | Cancelled before production. |
 
 
 
@@ -1460,15 +1455,15 @@ await corsair.stannp.api.selections.create({ group_id: 1, name: 'High spenders',
 
 
 
-**Output:** `object[]`
+**Output:** `object[] \| boolean`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
 {
-  id?: string | null
-}[]
+  id?: string | number | null
+}[] | boolean
 ```
 </Accordion>
 </AccordionGroup>
@@ -1484,7 +1479,7 @@ await corsair.stannp.api.selections.create({ group_id: 1, name: 'High spenders',
 
 Send an SMS to a phone number or stored recipient; test mode builds it without sending or charging
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.stannp.api.sms.create({ test: true, recipient_id: 12345, message: 'Hi {firstname}, your order has shipped' });
@@ -1507,21 +1502,21 @@ await corsair.stannp.api.sms.create({ test: true, recipient_id: 12345, message: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number \| null` | No | — |
-| `recipient_id` | `number \| null` | No | — |
-| `phone_number` | `string \| null` | No | — |
-| `from` | `string \| null` | No | — |
-| `profile_id` | `number \| null` | No | — |
-| `usage_campaign_id` | `number \| null` | No | — |
-| `profile_type` | `string \| null` | No | — |
-| `message` | `string \| null` | No | — |
-| `message_parts` | `number \| null` | No | — |
-| `cost` | `number \| null` | No | — |
-| `destination_country` | `string \| null` | No | — |
-| `status` | `string \| null` | No | "test" when test is set. |
-| `campaign_id` | `number \| null` | No | — |
-| `created` | `string \| null` | No | — |
-| `updated` | `string \| null` | No | — |
+| `id` | `number \| string \| null` | No | — |
+| `recipient_id` | `number \| string \| null` | No | — |
+| `phone_number` | `string \| number \| null` | No | — |
+| `from` | `string \| number \| null` | No | — |
+| `profile_id` | `number \| string \| null` | No | — |
+| `usage_campaign_id` | `number \| string \| null` | No | — |
+| `profile_type` | `string \| number \| null` | No | — |
+| `message` | `string \| number \| null` | No | — |
+| `message_parts` | `number \| string \| null` | No | — |
+| `cost` | `number \| string \| null` | No | — |
+| `destination_country` | `string \| number \| null` | No | — |
+| `status` | `string \| number \| null` | No | "test" when test is set. |
+| `campaign_id` | `number \| string \| null` | No | — |
+| `created` | `string \| number \| null` | No | — |
+| `updated` | `string \| number \| null` | No | — |
 
 
 
@@ -1577,25 +1572,25 @@ await corsair.stannp.api.tools.templates({});
 
 ```ts
 {
-  id?: string | null,
-  account_id?: string | null,
-  template_name?: string | null,
-  image?: string | null,
-  created?: string | null,
-  updated?: string | null,
-  size?: string | null,
-  page_count?: string | null,
-  duplex?: string | null,
-  back_image?: string | null,
-  template?: string | null,
-  is_public?: string | null,
-  is_template?: string | null,
-  version?: string | null,
-  is_hidden?: string | null,
-  shared?: string | null,
-  user_id?: string | null,
-  tags?: string | null,
-  versions?: string | null
+  id?: string | number | null,
+  account_id?: string | number | null,
+  template_name?: string | number | null,
+  image?: string | number | null,
+  created?: string | number | null,
+  updated?: string | number | null,
+  size?: string | number | null,
+  page_count?: string | number | null,
+  duplex?: string | number | null,
+  back_image?: string | number | null,
+  template?: string | number | null,
+  is_public?: string | number | null,
+  is_template?: string | number | null,
+  version?: string | number | null,
+  is_hidden?: string | number | null,
+  shared?: string | number | null,
+  user_id?: string | number | null,
+  tags?: string | number | null,
+  versions?: string | number | null
 }[]
 ```
 </Accordion>
