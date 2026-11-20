@@ -14,7 +14,7 @@ pnpm add @corsair-dev/lemlist
 |-----------|--------------|------|-------------|
 | `activities.deleteRecordingTranscript` | `lemlist.api.activities.deleteRecordingTranscript` | `destructive` | Delete call recording and transcript of an activity |
 | `activities.list` | `lemlist.api.activities.list` | `read` | Retrieve outreach activities across team or campaigns |
-| `campaigns.addAbmLeads` | `lemlist.api.campaigns.addAbmLeads` | `write` | Add People Database contacts to an ABM campaign |
+| `campaigns.addAbmLeads` | `lemlist.api.campaigns.addAbmLeads` | `destructive` | Add People Database contacts to an ABM campaign |
 | `campaigns.archive` | `lemlist.api.campaigns.archive` | `write` | Archive a campaign |
 | `campaigns.create` | `lemlist.api.campaigns.create` | `write` | Create a new campaign with schedule and settings |
 | `campaigns.duplicate` | `lemlist.api.campaigns.duplicate` | `write` | Duplicate an existing campaign with sequences and schedules |
@@ -28,7 +28,7 @@ pnpm add @corsair-dev/lemlist
 | `campaigns.getStatutes` | `lemlist.api.campaigns.getStatutes` | `read` | Retrieve validation statutes and launch blockers for a campaign |
 | `campaigns.list` | `lemlist.api.campaigns.list` | `read` | Retrieve a paginated list of all campaigns in team |
 | `campaigns.pause` | `lemlist.api.campaigns.pause` | `write` | Pause a running campaign |
-| `campaigns.setExportEmail` | `lemlist.api.campaigns.setExportEmail` | `write` | Configure email notification for campaign export completion |
+| `campaigns.setExportEmail` | `lemlist.api.campaigns.setExportEmail` | `destructive` | Email the campaign export download link to an address when the export completes |
 | `campaigns.skipStepForEveryone` | `lemlist.api.campaigns.skipStepForEveryone` | `destructive` | Skip one sequence step for every lead in campaign |
 | `campaigns.skipStepForLeads` | `lemlist.api.campaigns.skipStepForLeads` | `destructive` | Skip one sequence step for specific leads in campaign |
 | `campaigns.start` | `lemlist.api.campaigns.start` | `destructive` | Resume a paused campaign and allow its outreach messages to send |
@@ -38,7 +38,7 @@ pnpm add @corsair-dev/lemlist
 | `campaigns.updateSettings` | `lemlist.api.campaigns.updateSettings` | `write` | Update settings of a campaign |
 | `leads.addVariables` | `lemlist.api.leads.addVariables` | `write` | Add custom variables to a lead |
 | `leads.createInCampaign` | `lemlist.api.leads.createInCampaign` | `destructive` | Create a new lead and add it to a campaign |
-| `leads.deleteFromCampaign` | `lemlist.api.leads.deleteFromCampaign` | `destructive` | Delete or unsubscribe lead from a campaign by ID |
+| `leads.deleteFromCampaign` | `lemlist.api.leads.deleteFromCampaign` | `destructive` | Remove a lead from a campaign by ID (use `leads.unsubscribeFromCampaign` to unsubscribe) |
 | `leads.deleteVariables` | `lemlist.api.leads.deleteVariables` | `destructive` | Erase custom variables of a lead |
 | `leads.get` | `lemlist.api.leads.get` | `read` | Retrieve lead by email address or lead ID |
 | `leads.getByEmail` | `lemlist.api.leads.getByEmail` | `read` | Retrieve lead details by email address |
@@ -52,7 +52,7 @@ pnpm add @corsair-dev/lemlist
 | `leads.pause` | `lemlist.api.leads.pause` | `write` | Pause lead activity across campaigns or in a specific campaign |
 | `leads.personalizeStep` | `lemlist.api.leads.personalizeStep` | `write` | Personalize step message for a single lead |
 | `leads.resetStepPersonalization` | `lemlist.api.leads.resetStepPersonalization` | `destructive` | Reset step personalization for a single lead |
-| `leads.resume` | `lemlist.api.leads.resume` | `destructive` | Resume activity for a paused lead |
+| `leads.resume` | `lemlist.api.leads.resume` | `destructive` | Resume a paused lead in all campaigns or one campaign, allowing outreach to continue |
 | `leads.review` | `lemlist.api.leads.review` | `destructive` | Manually launch a lead into its campaign, allowing outreach to begin |
 | `leads.skipStep` | `lemlist.api.leads.skipStep` | `destructive` | Skip one step of a running campaign for a single lead |
 | `leads.unsubscribeFromCampaign` | `lemlist.api.leads.unsubscribeFromCampaign` | `destructive` | Unsubscribe a lead from a campaign by email |
@@ -63,7 +63,7 @@ pnpm add @corsair-dev/lemlist
 | `team.getCrmUsers` | `lemlist.api.team.getCrmUsers` | `read` | List team members connected to CRM |
 | `team.getSenders` | `lemlist.api.team.getSenders` | `read` | Retrieve all team members and their associated campaigns |
 | `unsubscribes.bulkUnsubscribeVariables` | `lemlist.api.unsubscribes.bulkUnsubscribeVariables` | `destructive` | Bulk unsubscribe variables up to 10,000 items |
-| `unsubscribes.exportContacts` | `lemlist.api.unsubscribes.exportContacts` | `read` | Export unsubscribed contacts in CSV or JSON format |
+| `unsubscribes.exportContacts` | `lemlist.api.unsubscribes.exportContacts` | `read` | Export all contacts with their subscription status (`doNotContact`) in CSV or JSON format |
 | `unsubscribes.exportVariables` | `lemlist.api.unsubscribes.exportVariables` | `read` | Export unsubscribed variables in CSV or JSON format |
 | `unsubscribes.getContactStatus` | `lemlist.api.unsubscribes.getContactStatus` | `read` | Get subscription status of a contact |
 | `unsubscribes.getVariable` | `lemlist.api.unsubscribes.getVariable` | `read` | Get unsubscribed status of a variable |

@@ -459,8 +459,9 @@ export const lemlistEndpointMeta = {
 		description: 'Check status of an asynchronous campaign export',
 	},
 	'campaigns.setExportEmail': {
-		riskLevel: 'write',
-		description: 'Configure email notification for campaign export completion',
+		riskLevel: 'destructive',
+		description:
+			'Email the campaign export download link to an address when the export completes',
 	},
 	'campaigns.exportLeads': {
 		riskLevel: 'read',
@@ -475,7 +476,7 @@ export const lemlistEndpointMeta = {
 		description: 'Skip one sequence step for specific leads in campaign',
 	},
 	'campaigns.addAbmLeads': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Add People Database contacts to an ABM campaign',
 	},
 	'leads.get': {
@@ -500,7 +501,8 @@ export const lemlistEndpointMeta = {
 	},
 	'leads.deleteFromCampaign': {
 		riskLevel: 'destructive',
-		description: 'Delete or unsubscribe lead from a campaign by ID',
+		description:
+			'Remove a lead from a campaign by ID (use leads.unsubscribeFromCampaign to unsubscribe)',
 	},
 	'leads.unsubscribeFromCampaign': {
 		riskLevel: 'destructive',
@@ -508,7 +510,8 @@ export const lemlistEndpointMeta = {
 	},
 	'leads.resume': {
 		riskLevel: 'destructive',
-		description: 'Resume activity for a paused lead',
+		description:
+			'Resume a paused lead in all campaigns or one campaign, allowing outreach to continue',
 	},
 	'leads.pause': {
 		riskLevel: 'write',
@@ -614,7 +617,8 @@ export const lemlistEndpointMeta = {
 	},
 	'unsubscribes.exportContacts': {
 		riskLevel: 'read',
-		description: 'Export unsubscribed contacts in CSV or JSON format',
+		description:
+			'Export all contacts with their subscription status (doNotContact) in CSV or JSON format',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof lemlistEndpointsNested>;
 
@@ -666,7 +670,7 @@ export function lemlist<const T extends LemlistPluginOptions>(
 		errorHandlers: orderedErrorHandlers,
 		keyBuilder: async (ctx: LemlistKeyBuilderContext, source) => {
 			if (source !== 'endpoint') return '';
-			if (options.key) return options.key;
+			if (options.key?.trim()) return options.key;
 			if (!ctx.keys) throw new AuthMissingError('lemlist', 'api_key');
 			const apiKey = await ctx.keys.get_api_key();
 			if (!apiKey || apiKey.trim().length === 0) {

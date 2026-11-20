@@ -9,7 +9,7 @@ overviewNote: |
   Things to know before calling:
   - **Identifiers:** Campaign IDs and Lead IDs follow Lemlist's internal identifier format (e.g., `cam_...`, `lea_...`).
   - **Rate Limiting:** Lemlist enforces API rate limits. The plugin automatically handles HTTP 429 responses and backs off according to the `Retry-After` header.
-  - **Campaign Lead Actions:** Most lead management operations (pause, resume, review, mark interested, personalize step) can be performed either globally or scoped to a specific campaign.
+  - **Campaign Lead Actions:** `leads.pause` and `leads.resume` act on every campaign unless you pass `campaignId`. Interest changes have separate global (`leads.markInterested`) and campaign (`leads.markInterestedInCampaign`) operations. Step operations (`leads.personalizeStep`, `leads.skipStep`) always need a campaign.
   - **Unsubscribes & Blacklist:** Contacts can be unsubscribed or resubscribed either by variable (such as `email` or `domain`) or via the contact management endpoints.
 
 references:
@@ -154,21 +154,24 @@ apiExamples:
     call: "{}"
 
 apiNotes:
+  campaigns.list: Returns one page as { campaigns, pagination }; use page and limit to walk the rest.
+  leads.get: Needs id or email; Lemlist uses the email when both are given.
+  leads.deleteFromCampaign: Always sends action=remove, which deletes the lead from the campaign. To unsubscribe a lead instead, use leads.unsubscribeFromCampaign.
   campaigns.getSettings: Requires the Lemlist Email Pro plan or higher.
   campaigns.updateSettings: Requires Email Pro; send only writable settings sections, and an empty update is rejected.
   campaigns.addAbmLeads: Requires the ABM beta. Input IDs are People Database IDs, and existing contacts on another company may be skipped.
   campaigns.startExport: Starts an asynchronous export. Poll the returned export ID until status is no longer pending; the download URL expires after 24 hours.
-  campaigns.getExportStatus: Export status is retained for two hours and files are available for 24 hours after completion.
-  campaigns.setExportEmail: The notification email is a required path parameter; the export continues asynchronously.
+  campaigns.getExportStatus: Export status is retained for two hours; an export still pending after two hours answers 404, so stop polling and report it as failed. Files are available for 24 hours after completion.
+  campaigns.setExportEmail: Lemlist emails the export's download link to this address when the export completes, so only use an address the account owner chose.
   campaigns.exportLeads: JSON output is an array; CSV output is returned as text. Use documented comma-separated state filters.
   campaigns.skipStepForEveryone: A skipped step cannot be restored. Condition steps are not skippable.
   campaigns.skipStepForLeads: Accepts up to 100 lead IDs or emails per request; the deprecated single-lead operation remains available at leads.skipStep.
-  leads.createInCampaign: Creates a new lead and never updates an existing lead. Additional string body keys are stored as custom variables. Enrichment query options may consume credits.
+  leads.createInCampaign: Needs an email or a LinkedIn URL. Always creates a new lead (a contact already in the campaign is refused), but the matched contact and company are updated with the fields you send; updateStrategy defaults to overwrite, use fillEmptyOnly to keep stored values. Additional string body keys are stored as custom variables. Enrichment query options (findEmail, verifyEmail, findPhone, linkedinEnrichment) consume credits.
   leads.review: Launches a single lead and may start outreach. The API key user, campaign, AI variables, and sender must satisfy Lemlist's launch guards.
   leads.skipStep: Deprecated by Lemlist in favor of campaigns.skipStepForLeads; skips cannot be undone.
   leads.personalizeStep: Only supported message steps can be personalized, and a lead that has reached the step cannot be changed.
   leads.importFromCrm: Links the campaign to a filter once and imports asynchronously; requested enrichment features consume credits.
-  unsubscribes.bulkUnsubscribeVariables: The API accepts up to 10,000 values and returns a text confirmation.
+  unsubscribes.bulkUnsubscribeVariables: The API accepts up to 10,000 values and returns the count plus the unsubscribed and skipped values.
   unsubscribes.resubscribeVariable: Lemlist protects unsubscribe records whose source is LEAD or ABUSE from re-subscription.
   unsubscribes.exportVariables: Returns CSV text by default or a JSON array with format=json.
-  unsubscribes.exportContacts: Returns CSV text by default or a JSON array with format=json.
+  unsubscribes.exportContacts: Returns every contact with its subscription status, not only opted-out ones; filter on doNotContact true for a suppression list. CSV text by default or a JSON array with format=json.
