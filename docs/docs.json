@@ -4095,6 +4095,15 @@
                 ]
               },
               {
+                "group": "Payhere",
+                "pages": [
+                  "plugins/payhere/overview",
+                  "plugins/payhere/api",
+                  "plugins/payhere/database",
+                  "plugins/payhere/webhooks"
+                ]
+              },
+              {
                 "group": "PDF-API.io",
                 "pages": [
                   "plugins/pdfapi/overview",
