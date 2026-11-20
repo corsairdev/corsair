@@ -168,7 +168,10 @@ describe('ocr.parse file input', () => {
 			type: 'application/octet-stream',
 		});
 		const error = await parse(createContext(), {
-			file: 'https://files.example.com/Jane_Doe_record',
+			file: {
+				url: 'https://files.example.com/Jane_Doe_record',
+				filename: 'Jane_Doe_record',
+			},
 		}).catch((e: Error) => e);
 		expect(String(error)).toMatch(/Set filetype/);
 		expect(String(error)).not.toMatch(/Jane_Doe/);
