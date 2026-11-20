@@ -3,18 +3,9 @@ import { ApiError } from 'corsair/http';
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) => {
-			// A provider response is a rate limit only when it is a 429: retrying a
-			// 5xx whose text mentions a limit could repeat a write that went through.
-			if (error instanceof ApiError) return error.status === 429;
-			const msg = error.message.toLowerCase();
-			return (
-				msg.includes('too many requests') ||
-				msg.includes('rate_limited') ||
-				msg.includes('rate limit') ||
-				msg.includes('429')
-			);
-		},
+		// Only a 429 from Lemlist is a rate limit. Matching message text could
+		// repeat a write that went through, so other errors never retry here.
+		match: (error: Error) => error instanceof ApiError && error.status === 429,
 		handler: async (error: Error) => {
 			let retryAfterMs: number | undefined;
 			if (error instanceof ApiError && error.retryAfter !== undefined) {

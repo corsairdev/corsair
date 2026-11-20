@@ -33,12 +33,10 @@ describe('error-handlers.ts', () => {
 			expect(errorHandlers.SERVER_ERROR.match(err)).toBe(true);
 		});
 
-		it('matches rate limit error messages', async () => {
-			const err = new Error('Rate limit exceeded');
-			expect(errorHandlers.RATE_LIMIT_ERROR.match(err)).toBe(true);
-
-			const result = await errorHandlers.RATE_LIMIT_ERROR.handler(err);
-			expect(result).toEqual({ maxRetries: 2, headersRetryAfterMs: undefined });
+		it('does not retry an error without an HTTP status, whatever its text', () => {
+			expect(
+				errorHandlers.RATE_LIMIT_ERROR.match(new Error('Rate limit exceeded')),
+			).toBe(false);
 		});
 	});
 
