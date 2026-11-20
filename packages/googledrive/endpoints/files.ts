@@ -9,6 +9,10 @@ import {
 import type { GoogleDriveBoundEndpoints, GoogleDriveEndpoints } from '../index';
 import type { File } from '../types';
 import type { GoogleDriveEndpointOutputs } from './types';
+import {
+	GoogleDriveEndpointInputSchemas,
+	GoogleDriveEndpointOutputSchemas,
+} from './types';
 
 export const list: GoogleDriveEndpoints['filesList'] = async (ctx, input) => {
 	const result = await makeAuthenticatedGoogleDriveRequest<
@@ -533,8 +537,9 @@ function tabsText(tabs: DocsTab[] = []): string[] {
 // (Gemini meeting notes keep the transcript in its own tab) via the Docs API.
 export const exportText: GoogleDriveEndpoints['filesExportText'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
+	const input = GoogleDriveEndpointInputSchemas.filesExportText.parse(rawInput);
 	const meta = await makeAuthenticatedGoogleDriveRequest<File>(
 		`/files/${input.fileId}`,
 		ctx,
@@ -560,10 +565,11 @@ export const exportText: GoogleDriveEndpoints['filesExportText'] = async (
 			},
 		);
 	} catch (error) {
-		// Carries Google's "enable docs.googleapis.com" hint when the Docs API is off.
+		// Google's message carries the "enable docs.googleapis.com" hint when the
+		// Docs API is off; the ApiError itself is kept so callers still see its status.
 		const message = (error as ApiError).body?.error?.message;
 		if (error instanceof ApiError && error.status === 403 && message) {
-			throw new GoogleDriveAPIError(message, 403);
+			error.message = message;
 		}
 		throw error;
 	}
@@ -572,7 +578,7 @@ export const exportText: GoogleDriveEndpoints['filesExportText'] = async (
 	const last = text.charCodeAt(text.length - 1);
 	if (last >= 0xd800 && last <= 0xdbff) text = text.slice(0, -1);
 
-	const result = {
+	const result = GoogleDriveEndpointOutputSchemas.filesExportText.parse({
 		id: meta.id ?? input.fileId,
 		name: meta.name,
 		mimeType: meta.mimeType,
@@ -580,7 +586,7 @@ export const exportText: GoogleDriveEndpoints['filesExportText'] = async (
 		modifiedTime: meta.modifiedTime,
 		webViewLink: meta.webViewLink,
 		text,
-	};
+	});
 
 	if (ctx.db.fileContents) {
 		try {

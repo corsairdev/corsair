@@ -273,11 +273,9 @@ describe('files.exportText', () => {
 		});
 		const { ctx: c } = ctx();
 
-		await expect(exportText(c, { fileId: 'file-1' })).rejects.toMatchObject({
-			name: 'GoogleDriveAPIError',
-			message,
-			code: 403,
-		});
+		const error = await exportText(c, { fileId: 'file-1' }).catch((e) => e);
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).toMatchObject({ message, status: 403 });
 	});
 
 	it('never ends the capped text on half a surrogate pair', async () => {
@@ -293,6 +291,15 @@ describe('files.exportText', () => {
 
 		expect(text).toHaveLength(499_999);
 		expect(text.endsWith('x')).toBe(true);
+	});
+
+	it('rejects input its schema does not allow', async () => {
+		const { ctx: c } = ctx();
+		// A wrong type on purpose: the schema, not TypeScript, must refuse it at runtime.
+		await expect(
+			exportText(c, { fileId: 42 as unknown as string }),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
 	it('rejects files that are not Google Docs', async () => {

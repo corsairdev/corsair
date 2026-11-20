@@ -2,6 +2,7 @@ import type {
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
+	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
 	CorsairWebhook,
@@ -28,6 +29,7 @@ import {
 	GoogleDriveEndpointInputSchemas,
 	GoogleDriveEndpointOutputSchemas,
 } from './endpoints/types';
+import { errorHandlers } from './error-handlers';
 import { GoogleDriveSchema } from './schema';
 import { googledriveSubscribe } from './subscribe';
 import type {
@@ -255,6 +257,7 @@ export type GoogleDrivePluginOptions = {
 	 * Overrides use dot-notation paths from the Google Drive endpoint tree — invalid paths are type errors.
 	 */
 	permissions?: PluginPermissionsConfig<typeof googleDriveEndpointsNested>;
+	errorHandlers?: CorsairErrorHandler;
 };
 
 export type GoogleDriveKeyBuilderContext =
@@ -425,6 +428,10 @@ export function googledrive<const T extends GoogleDrivePluginOptions>(
 		endpointMeta: googleDriveEndpointMeta,
 		endpointSchemas: googledriveEndpointSchemas,
 		webhookSchemas: googledriveWebhookSchemas,
+		errorHandlers: {
+			...errorHandlers,
+			...options.errorHandlers,
+		},
 		keyBuilder: async (ctx: GoogleDriveKeyBuilderContext) => {
 			const authType = ctx.authType;
 
