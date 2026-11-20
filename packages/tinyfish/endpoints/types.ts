@@ -682,14 +682,14 @@ export const GetStepScreenshotResponseSchema = FileOutputSchema.omit({
 	text: true,
 }).extend({
 	contentType: z.string().min(1),
+	// An empty screenshot is still a successful answer: '' and 0, not a parse failure.
 	base64: z
 		.string()
-		.min(1)
 		.optional()
 		.describe(
 			'The screenshot, base64-encoded. Missing when contentOmitted is set, or when a host kept a file too large to return inline (fileId).',
 		),
-	sizeBytes: z.number().int().min(1),
+	sizeBytes: z.number().int().min(0),
 });
 
 export type GetStepScreenshotResponse = z.infer<
