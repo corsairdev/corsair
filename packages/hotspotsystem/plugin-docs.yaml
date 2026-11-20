@@ -17,7 +17,7 @@ overviewNote: |
   - **A location ID can be a string or a number.** The Swagger types it as a string, while every transaction record returns `location_id` as a number, so the per-location operations accept either.
   - **Some transaction fields are documented only as `TODO`.** The Swagger leaves every `MacTransaction`, `PaidTransaction`, `SocialTransaction` and `VoucherTransaction` field undocumented, so nothing on them is required and the values are passed through exactly as sent, including `smscountry`.
   - **No pagination on `locations.options`.** It returns every location as `{ id, name }` with no `metadata` and no paging.
-  - **No inbound webhooks.** The API documents none, so this plugin registers no webhook route.
+  - **No inbound webhooks yet.** HotspotSystem can POST `customer.create`, `subscriber.create` and `transaction.*.create` events to a callback URL set up in the Control Center, signed with an HMAC-SHA256 header. This plugin does not register a webhook route for them, so new records are read with the list operations.
 references:
   - title: API notes, authentication and the Link header
     url: https://www.hotspotsystem.com/apidocs/api/notes/index.html
