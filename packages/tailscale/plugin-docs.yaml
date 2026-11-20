@@ -111,7 +111,7 @@ apiExamples:
   logging.streaming.set:
     args: {"logType": "configuration", "destinationType": "splunk", "url": "https://splunk.example.com:8088", "user": "tailscale", "token": "splunk-hec-token"}
   oauthApps.create:
-    args: {"name": "Internal agent", "redirectURIs": ["https://agent.example.com/callback"], "scopes": ["auth_keys:create:once"]}
+    args: {"name": "internal-agent", "redirectURIs": ["https://agent.example.com/callback"], "scopes": ["auth_keys:create:once"]}
   oauthApps.delete:
     args: {"appId": "a123456CNTRL"}
   oauthApps.get:
@@ -119,7 +119,7 @@ apiExamples:
   oauthApps.list:
     args: {}
   oauthApps.update:
-    args: {"appId": "a123456CNTRL", "name": "Internal agent", "redirectURIs": ["https://agent.example.com/callback"], "scopes": ["auth_keys:create:once"]}
+    args: {"appId": "a123456CNTRL", "name": "internal-agent", "redirectURIs": ["https://agent.example.com/callback"], "scopes": ["auth_keys:create:once"]}
   policyFile.get:
     args: {"format": "hujson"}
   policyFile.preview:

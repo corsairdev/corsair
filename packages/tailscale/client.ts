@@ -57,6 +57,30 @@ type CachedToken = { token: string; expiresAt: number };
 
 /** Access tokens from OAuth client secrets, by a hash of the secret. */
 const tokenCache = new Map<string, CachedToken>();
+
+/** At most this many tenants' tokens are kept; the oldest goes first. */
+export const TOKEN_CACHE_LIMIT = 500;
+
+/** Stores a token, dropping expired ones and the oldest past the limit. */
+function remember(cacheKey: string, value: CachedToken): void {
+	const now = Date.now();
+	for (const [key, entry] of tokenCache) {
+		if (entry.expiresAt <= now) tokenCache.delete(key);
+	}
+	// Re-inserting moves the key to the end, so insertion order is age order.
+	tokenCache.delete(cacheKey);
+	tokenCache.set(cacheKey, value);
+	while (tokenCache.size > TOKEN_CACHE_LIMIT) {
+		const oldest = tokenCache.keys().next().value;
+		if (oldest === undefined) break;
+		tokenCache.delete(oldest);
+	}
+}
+
+/** For tests: how many tokens are cached. */
+export function tailscaleTokenCacheSize(): number {
+	return tokenCache.size;
+}
 const pendingTokens = new Map<string, Promise<CachedToken>>();
 
 /** Fetch a new token this long before the cached one runs out. */
@@ -159,14 +183,24 @@ export async function tailscaleBearer(key: string): Promise<string> {
 		pendingTokens.set(cacheKey, pending);
 	}
 	const fresh = await pending;
-	tokenCache.set(cacheKey, fresh);
+	remember(cacheKey, fresh);
 	return fresh.token;
 }
 
-/** Drops the cached token for this key (after a 401: the client was revoked or rescoped). */
-export async function forgetTailscaleToken(key: string): Promise<void> {
+/**
+ * Drops the cached token for this key after a 401 (the client was revoked or
+ * rescoped), but only if it is still the token that failed: a slow call that
+ * used an older token must not throw away a newer one.
+ */
+export async function forgetTailscaleToken(
+	key: string,
+	failedToken: string,
+): Promise<void> {
 	if (!oauthClientIdFrom(key)) return;
-	tokenCache.delete(await cacheKeyFor(key));
+	const cacheKey = await cacheKeyFor(key);
+	if (tokenCache.get(cacheKey)?.token === failedToken) {
+		tokenCache.delete(cacheKey);
+	}
 }
 
 /** For tests: forget every cached token. */
@@ -313,8 +347,9 @@ export async function makeTailscaleRawRequest(
 			);
 			continue;
 		}
-		const text = await response.text().catch(() => '');
 		if (!response.ok) {
+			// An error body that can't be read still leaves the status to report.
+			const text = await response.text().catch(() => '');
 			// `unknown` because an error body is whatever JSON (or text) Tailscale sent.
 			let errorBody: unknown = text;
 			try {
@@ -337,14 +372,23 @@ export async function makeTailscaleRawRequest(
 				),
 			);
 		}
+		// A body that fails to arrive throws: an empty string here would read as
+		// an empty policy file or a passed validation.
+		const text = await response.text();
 		return { text, headers: response.headers };
 	}
 }
 
-function retryAfterMs(value: string | null): number | undefined {
+/** Retry-After as delay-seconds or an HTTP-date (RFC 9110 §10.2.3). */
+export function retryAfterMs(
+	value: string | null,
+	now: number = Date.now(),
+): number | undefined {
 	if (!value) return undefined;
-	const seconds = Number.parseInt(value, 10);
-	return Number.isNaN(seconds) ? undefined : seconds * 1000;
+	const trimmed = value.trim();
+	if (/^\d+$/.test(trimmed)) return Number.parseInt(trimmed, 10) * 1000;
+	const date = Date.parse(trimmed);
+	return Number.isNaN(date) ? undefined : Math.max(0, date - now);
 }
 
 /** The same URL core builds: encoded path values, repeated keys for arrays. */

@@ -32,6 +32,8 @@ const OperationSchema = z
 		response: z.enum(['json', 'policy', 'empty']),
 		/** The OAuth client scopes the route needs (from the spec's descriptions). */
 		scopes: z.array(z.string()).optional(),
+		/** Body fields Tailscale sets itself (readOnly): dropped before sending. */
+		serverSetFields: z.array(z.string()).optional(),
 		/** A 200 with no body means "nothing to report" and comes back as null. */
 		emptyMeansNone: z.literal(true).optional(),
 		input: OpenApiSchemaDocument,

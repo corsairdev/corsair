@@ -451,4 +451,60 @@ export function tailscaleInputFields(
 	return fields;
 }
 
+/** Shown in place of a map key (a domain, a device id, a tag) in an issue path. */
+export const MASKED_KEY = '<key>';
+
+/** The schemas a value may match: the schema itself, or each union member. */
+// `unknown` is necessary because the walk covers raw JSON Schema documents.
+function alternatives(value: unknown, depth = 0): OpenApiDocument[] {
+	const schema = resolve(value);
+	if (!isRecord(schema) || depth > 10) return [];
+	const members = [
+		...(Array.isArray(schema.anyOf) ? schema.anyOf : []),
+		...(Array.isArray(schema.oneOf) ? schema.oneOf : []),
+		...(Array.isArray(schema.allOf) ? schema.allOf : []),
+	];
+	return members.length > 0
+		? [schema, ...members.flatMap((member) => alternatives(member, depth + 1))]
+		: [schema];
+}
+
+/**
+ * A zod issue path with every map key masked: `domains.<key>.0` rather than
+ * `domains.alice-laptop.internal.0`. Field names the spec declares and list
+ * indexes stay, so the message still says which field is wrong.
+ */
+export function maskedIssuePath(
+	id: string,
+	path: readonly PropertyKey[],
+	mode: 'input' | 'output',
+): string {
+	const operation = tailscaleOperationFor(id);
+	// `unknown` is necessary because the walk covers raw JSON Schema documents.
+	let current: unknown = mode === 'input' ? operation.input : operation.output;
+	const parts: string[] = [];
+	for (const segment of path) {
+		const options = alternatives(current);
+		if (typeof segment === 'number') {
+			parts.push(String(segment));
+			current = options.find((option) => option.items !== undefined)?.items;
+			continue;
+		}
+		const key = String(segment);
+		const declared = options.find(
+			(option) => isRecord(option.properties) && key in option.properties,
+		);
+		if (declared && isRecord(declared.properties)) {
+			parts.push(key);
+			current = declared.properties[key];
+			continue;
+		}
+		parts.push(MASKED_KEY);
+		current = options.find((option) =>
+			isRecord(option.additionalProperties),
+		)?.additionalProperties;
+	}
+	return parts.join('.');
+}
+
 export type { TailscaleOpenApiSchema, TailscaleOperationDefinition };

@@ -8,9 +8,12 @@ import {
 	makeTailscaleRawRequest,
 	mediaTypeFor,
 	oauthClientIdFrom,
+	retryAfterMs,
 	TAILSCALE_TOKEN_URL,
+	TOKEN_CACHE_LIMIT,
 	tailscaleBearer,
 	tailscaleErrorMessage,
+	tailscaleTokenCacheSize,
 	withoutQuery,
 	withoutRequestData,
 } from './client';
@@ -96,9 +99,29 @@ describe('credentials', () => {
 		await expect(tailscaleBearer(SECRET)).resolves.toBe('tskey-api-one');
 		jest.setSystemTime(new Date('2026-11-20T00:56:00Z'));
 		await expect(tailscaleBearer(SECRET)).resolves.toBe('tskey-api-two');
-		await forgetTailscaleToken(SECRET);
+		// A 401 for an older token leaves the current one alone.
+		await forgetTailscaleToken(SECRET, 'tskey-api-one');
+		await expect(tailscaleBearer(SECRET)).resolves.toBe('tskey-api-two');
+		await forgetTailscaleToken(SECRET, 'tskey-api-two');
 		await expect(tailscaleBearer(SECRET)).resolves.toBe('tskey-api-three');
 		expect(fetchMock).toHaveBeenCalledTimes(3);
+	});
+
+	it('drops expired tokens and keeps at most TOKEN_CACHE_LIMIT', async () => {
+		jest.useFakeTimers({ now: new Date('2026-11-20T00:00:00Z') });
+		fetchMock.mockImplementation(async () =>
+			jsonResponse({ access_token: 'tskey-api-x', expires_in: 3600 }),
+		);
+		await tailscaleBearer('tskey-client-kOld1-secret');
+		expect(tailscaleTokenCacheSize()).toBe(1);
+		// Two hours later the first token has expired and goes on the next store.
+		jest.setSystemTime(new Date('2026-11-20T02:00:00Z'));
+		await tailscaleBearer('tskey-client-kNew1-secret');
+		expect(tailscaleTokenCacheSize()).toBe(1);
+		for (let i = 0; i < TOKEN_CACHE_LIMIT + 5; i++) {
+			await tailscaleBearer(`tskey-client-k${i}x-secret`);
+		}
+		expect(tailscaleTokenCacheSize()).toBe(TOKEN_CACHE_LIMIT);
 	});
 
 	it('reports a refused exchange with its status and reason, never the secret', async () => {
@@ -183,6 +206,42 @@ describe('the raw transport for the policy file', () => {
 		expect(headers.Authorization).toBe('Bearer tskey-api-test');
 		expect(headers['Content-Type']).toBe('application/hujson');
 		expect(headers['If-Match']).toBe('"e1"');
+	});
+
+	it('fails when a successful body cannot be read, instead of returning ""', async () => {
+		const broken = new Response('{}', { status: 200 });
+		jest
+			.spyOn(broken, 'text')
+			.mockRejectedValueOnce(new TypeError('terminated'));
+		fetchMock.mockResolvedValueOnce(broken);
+		await expect(makeTailscaleRawRequest(request)).rejects.toThrow(
+			'terminated',
+		);
+	});
+
+	it('still reports the status when an error body cannot be read', async () => {
+		const broken = new Response('x', {
+			status: 503,
+			statusText: 'Service Unavailable',
+		});
+		jest
+			.spyOn(broken, 'text')
+			.mockRejectedValueOnce(new TypeError('terminated'));
+		fetchMock.mockResolvedValueOnce(broken);
+		const error = (await makeTailscaleRawRequest(request).catch(
+			(e: unknown) => e,
+		)) as ApiError;
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error.status).toBe(503);
+	});
+
+	it('reads Retry-After as seconds or an HTTP-date', () => {
+		const now = Date.parse('2026-11-20T00:00:00Z');
+		expect(retryAfterMs('5', now)).toBe(5000);
+		expect(retryAfterMs('Fri, 20 Nov 2026 00:01:00 GMT', now)).toBe(60_000);
+		expect(retryAfterMs('Thu, 19 Nov 2026 23:00:00 GMT', now)).toBe(0);
+		expect(retryAfterMs('soon', now)).toBeUndefined();
+		expect(retryAfterMs(null, now)).toBeUndefined();
 	});
 
 	it('retries a 429 after Retry-After, then succeeds', async () => {

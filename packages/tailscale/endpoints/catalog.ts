@@ -295,7 +295,7 @@ export const tailscaleEndpointMeta = {
 		description: 'Email the verification link for a contact address again.',
 	},
 	'contacts.update': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Change the account, support or security contact email. Tailscale emails the new address to verify it.',
 	},
@@ -553,7 +553,7 @@ export const tailscaleEndpointMeta = {
 	'policyFile.preview': {
 		riskLevel: 'read',
 		description:
-			'Show which rules of a policy file (the current one or a draft) apply to a user (type "user", previewFor their email) or a destination (type "ipport", previewFor "100.101.102.103:443"), without saving anything.',
+			'Show which rules of the policy file you pass apply to a user (type "user", previewFor their email) or a destination (type "ipport", previewFor "100.101.102.103:443"), without saving anything. policy is required: pass a draft, or the text from policyFile.get to preview the current file.',
 	},
 	'policyFile.set': {
 		riskLevel: 'destructive',
@@ -714,7 +714,7 @@ export const tailscaleEndpointMeta = {
 	'webhooks.create': {
 		riskLevel: 'write',
 		description:
-			'Add a webhook endpoint for tailnet events (nodeCreated, nodeNeedsApproval, nodeKeyExpiringInOneDay, nodeDeleted, policyUpdate, userNeedsApproval, userRoleUpdated, ...). Tailscale signs each event with the secret (Tailscale-Webhook-Signature). providerType "slack", "discord", "mattermost" or "googlechat" formats the message for that chat app. The signing secret is returned once: keep it to verify events.',
+			'Add a webhook endpoint for tailnet events (nodeCreated, nodeNeedsApproval, nodeKeyExpiringInOneDay, nodeDeleted, policyUpdate, userNeedsApproval, userRoleUpdated, ...), or a whole category (categoryTailnetManagement, categoryDeviceMisconfigurations) that also takes events Tailscale adds later. Tailscale signs each event with the secret (Tailscale-Webhook-Signature). providerType "slack", "discord", "mattermost" or "googlechat" formats the message for that chat app; "" or none sends the generic format. The signing secret is returned once: keep it to verify events.',
 	},
 	'webhooks.delete': {
 		riskLevel: 'destructive',
@@ -739,9 +739,9 @@ export const tailscaleEndpointMeta = {
 			"Replace a webhook endpoint's signing secret. The new one is returned once; signatures made with the old one stop verifying.",
 	},
 	'webhooks.test': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Send a test event to a webhook endpoint to check it receives and accepts deliveries.',
+			'Send a test event to a webhook endpoint (a chat channel, for a Slack or Discord one) to check it receives and accepts deliveries.',
 	},
 	'webhooks.update': {
 		riskLevel: 'write',

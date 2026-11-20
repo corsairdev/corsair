@@ -107,7 +107,8 @@ describe.each(
 )('%s', (id, operation) => {
 	it('sends its apiExample to the documented route', async () => {
 		const args = docs.apiExamples[id]?.args ?? {};
-		if (operation.response === 'policy') {
+		const raw = operation.response === 'policy' || operation.emptyMeansNone;
+		if (raw) {
 			mockedRawRequest.mockResolvedValueOnce({
 				text: '{}',
 				headers: new Headers({ etag: '"abc"' }),
@@ -118,10 +119,9 @@ describe.each(
 
 		const result = await endpointFor(id)(buildCtx(), args);
 
-		const sent =
-			operation.response === 'policy'
-				? mockedRawRequest.mock.calls[0]?.[0]
-				: mockedRequest.mock.calls[0]?.[0];
+		const sent = raw
+			? mockedRawRequest.mock.calls[0]?.[0]
+			: mockedRequest.mock.calls[0]?.[0];
 		expect(sent?.method).toBe(operation.method);
 		expect(sent?.path).toBe(operation.path);
 		expect(sent?.token).toBe('bearer-for-tskey-api-test');
@@ -267,25 +267,39 @@ describe('routing', () => {
 	});
 
 	it('validates ACL tests or a draft, never both, never neither', async () => {
-		mockedRequest.mockResolvedValueOnce(undefined);
+		const reply = (text: string) =>
+			mockedRawRequest.mockResolvedValueOnce({ text, headers: new Headers() });
+		// No body at all: every test passed.
+		reply('');
 		await expect(
 			endpointFor('policyFile.validate')(buildCtx(), {
 				tests: [{ src: 'tag:agent', accept: ['tag:mcp:443'] }],
 			}),
 		).resolves.toBeNull();
-		expect(mockedRequest.mock.calls[0]?.[0].body).toEqual([
-			{ src: 'tag:agent', accept: ['tag:mcp:443'] },
-		]);
-		mockedRequest.mockResolvedValueOnce({
-			message: 'test(s) failed',
-			data: [{ user: 'tag:agent', errors: ['want: Accept, got: Drop'] }],
-		});
+		const sent = mockedRawRequest.mock.calls[0]?.[0];
+		expect(sent?.body).toEqual([{ src: 'tag:agent', accept: ['tag:mcp:443'] }]);
+		expect(sent?.headers?.Accept).toBe('application/json');
+		reply(
+			JSON.stringify({
+				message: 'test(s) failed',
+				data: [{ user: 'tag:agent', errors: ['want: Accept, got: Drop'] }],
+			}),
+		);
 		await expect(
 			endpointFor('policyFile.validate')(buildCtx(), { policy: '{}' }),
 		).resolves.toEqual({
 			message: 'test(s) failed',
 			data: [{ user: 'tag:agent', errors: ['want: Accept, got: Drop'] }],
 		});
+		// A body cut short is an error, never a pass.
+		reply('{"message": "test(s) fa');
+		await expect(
+			endpointFor('policyFile.validate')(buildCtx(), { policy: '{}' }),
+		).rejects.toThrow(SyntaxError);
+		mockedRawRequest.mockRejectedValueOnce(new TypeError('terminated'));
+		await expect(
+			endpointFor('policyFile.validate')(buildCtx(), { policy: '{}' }),
+		).rejects.toThrow('terminated');
 		await expect(
 			endpointFor('policyFile.validate')(buildCtx(), {
 				policy: '{}',
@@ -295,7 +309,31 @@ describe('routing', () => {
 		await expect(
 			endpointFor('policyFile.validate')(buildCtx(), {}),
 		).rejects.toThrow('give policy');
-		expect(mockedRequest).toHaveBeenCalledTimes(2);
+		expect(mockedRawRequest).toHaveBeenCalledTimes(4);
+		expect(mockedRequest).not.toHaveBeenCalled();
+	});
+
+	it('never sends fields Tailscale sets itself, even from an object it returned', async () => {
+		mockedRequest.mockResolvedValueOnce(null);
+		await endpointFor('tailnetSettings.update')(buildCtx(), {
+			routeSelection: 'regional-routing',
+			regionalRoutingOn: true,
+		});
+		expect(mockedRequest.mock.calls[0]?.[0].body).toEqual({
+			routeSelection: 'regional-routing',
+		});
+		mockedRequest.mockResolvedValueOnce({ id: 'p1' });
+		await endpointFor('postureIntegrations.update')(buildCtx(), {
+			id: 'p1',
+			cloudId: 'us-2',
+			configUpdated: '2026-11-20T00:00:00Z',
+			status: { lastSync: '2026-11-20T00:00:00Z' },
+			newField: 'kept',
+		});
+		const sent = mockedRequest.mock.calls[1]?.[0];
+		expect(sent?.pathParameters).toEqual({ id: 'p1' });
+		// A field Tailscale adds later still goes through.
+		expect(sent?.body).toEqual({ cloudId: 'us-2', newField: 'kept' });
 	});
 
 	it('names a Service in the body after its path value unless given', async () => {
@@ -335,6 +373,29 @@ describe('routing', () => {
 		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 
+	it('masks map keys and odd unknown keys in validation errors', async () => {
+		const error = (await endpointFor('dns.splitDns.update')(buildCtx(), {
+			domains: { 'alice-laptop.internal': [123] },
+		}).catch((e: unknown) => e)) as Error;
+		expect(error.message).toMatch(
+			/^Invalid input for tailscale dns\.splitDns\.update: domains\.<key>\.0: /,
+		);
+		expect(error.message).not.toContain('alice-laptop');
+		const unknown = (await endpointFor('devices.get')(buildCtx(), {
+			deviceId: 'n1',
+			device: 'n1',
+			'bob@example.com': 1,
+		}).catch((e: unknown) => e)) as Error;
+		expect(unknown.message).toContain('unknown field device, <key>');
+		expect(unknown.message).not.toContain('bob@example.com');
+		mockedRequest.mockResolvedValueOnce({ 'alice-laptop.internal': 'x' });
+		const output = (await endpointFor('dns.splitDns.get')(buildCtx(), {}).catch(
+			(e: unknown) => e,
+		)) as Error;
+		expect(output.message).toMatch(/response did not match .*: <key>: /);
+		expect(output.message).not.toContain('alice-laptop');
+	});
+
 	it('fails a response that breaks its documented shape instead of inventing one', async () => {
 		mockedRequest.mockResolvedValueOnce({ devices: 'not-a-list' });
 		await expect(endpointFor('devices.list')(buildCtx(), {})).rejects.toThrow(
@@ -362,7 +423,11 @@ describe('routing', () => {
 		await expect(
 			endpointFor('devices.get')(buildCtx(), { deviceId: 'n1' }),
 		).rejects.toBe(unauthorized);
-		expect(mockedForget).toHaveBeenCalledWith('tskey-api-test');
+		// Only the token this call used, so a newer one survives.
+		expect(mockedForget).toHaveBeenCalledWith(
+			'tskey-api-test',
+			'bearer-for-tskey-api-test',
+		);
 		const notFound = new ApiError(
 			{ method: 'GET', url: '/device/{deviceId}' },
 			{ url: 'x', ok: false, status: 404, statusText: 'Not Found', body: {} },

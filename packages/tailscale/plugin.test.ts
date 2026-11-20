@@ -197,6 +197,9 @@ describe('risk levels (PLUGIN_PR_RULES R8)', () => {
 			'userInvites.resend',
 			'devices.expireKey',
 			'policyFile.set',
+			// Email the new address; post an event to the endpoint (a chat channel).
+			'contacts.update',
+			'webhooks.test',
 		]) {
 			expect([id, meta[id]?.riskLevel]).toEqual([id, 'destructive']);
 		}

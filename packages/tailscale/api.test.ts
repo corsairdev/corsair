@@ -6,11 +6,22 @@
 // They read the whole tailnet and make only changes they undo: a short-lived
 // auth key and OAuth client, a webhook, a Service, an OAuth app, invite links
 // without an email (so nobody is emailed), one split DNS domain and one custom
-// posture attribute. Everything is named `corsair-plugin-test` and removed in
-// afterAll. The policy file is written back byte for byte with its etag, after
-// a write with a stale etag is refused. Devices, users, routes and nameservers
-// are never changed. Calls go through createCorsair, so the plugin's error
-// handlers and core's retries apply as in production.
+// posture attribute. Each run names its fixtures `corsair-plugin-test-<run>`,
+// registers each one for cleanup as soon as it exists, and removes only its
+// own in afterAll, so two runs on one tailnet don't touch each other's. The
+// policy file is written back byte for byte with its etag, after a write with
+// a stale etag is refused; the etag makes Tailscale refuse it if anyone changed
+// the file in between. Devices, users, routes and nameservers are never changed.
+//
+// With TAILSCALE_LIVE_TAILNET_WRITES=1 they also write the DNS search paths,
+// the MagicDNS setting and one tailnet setting back with the values just read.
+// Those writes have no version check, so an admin's change made between the
+// read and the write would be lost: set it only on a tailnet nobody else is
+// editing (a test tailnet).
+//
+// Calls go through createCorsair, so the plugin's error handlers and core's
+// retries apply as in production. Failing assertions never print a secret,
+// token or invite URL: those are checked as booleans.
 import { writeFileSync } from 'node:fs';
 import { createCorsair } from 'corsair/core';
 import { tailscale } from './index';
@@ -24,10 +35,18 @@ if (!hasKey) {
 }
 const live = hasKey ? describe : describe.skip;
 
-const NAME = 'corsair-plugin-test';
+const RUN = Date.now().toString(36);
+const NAME = `corsair-plugin-test-${RUN}`;
 const SERVICE = `svc:${NAME}`;
 const SPLIT_DOMAIN = `${NAME}.invalid`;
-const POSTURE_KEY = 'custom:corsairPluginTest';
+const POSTURE_KEY = `custom:corsairPluginTest${RUN}`;
+
+const tailnetWrites = process.env.TAILSCALE_LIVE_TAILNET_WRITES === '1';
+if (hasKey && !tailnetWrites) {
+	console.warn(
+		'[tailscale] DNS and settings write-backs skipped: set TAILSCALE_LIVE_TAILNET_WRITES=1 on a test tailnet to run them.',
+	);
+}
 
 /** Ops this file ran against the live API, for the PR's evidence. */
 const ran = new Set<string>();
@@ -323,8 +342,8 @@ live('Tailscale live API', () => {
 				},
 			},
 		});
-		expect(made.key).toMatch(/^tskey-auth-/);
 		created.keys.add(made.id ?? '');
+		expect(/^tskey-auth-/.test(made.key ?? '')).toBe(true);
 		const read = await api.keys.get({ keyId: made.id ?? '' });
 		expect(read.description).toBe(NAME);
 		expect(read.capabilities?.devices?.create?.ephemeral).toBe(true);
@@ -339,8 +358,8 @@ live('Tailscale live API', () => {
 			description: NAME,
 			scopes: ['devices:core:read', 'dns:read'],
 		});
-		expect(client.key).toMatch(/^tskey-client-/);
 		created.keys.add(client.id ?? '');
+		expect(/^tskey-client-/.test(client.key ?? '')).toBe(true);
 
 		const scoped = createCorsair({
 			plugins: [tailscale({ key: client.key ?? '' })],
@@ -365,13 +384,17 @@ live('Tailscale live API', () => {
 	});
 
 	it('manages a webhook endpoint', async () => {
+		// A whole category and the generic format (providerType ""), which the
+		// spec's enums leave out but Tailscale takes.
 		const hook = await api.webhooks.create({
 			endpointUrl: `https://example.com/${NAME}`,
-			subscriptions: ['nodeCreated'],
+			providerType: '',
+			subscriptions: ['categoryTailnetManagement'],
 		});
+		if (hook.endpointId) created.webhooks.add(hook.endpointId);
 		expect(hook.endpointId).toBeTruthy();
-		expect(hook.secret).toBeTruthy();
-		created.webhooks.add(hook.endpointId ?? '');
+		expect(Boolean(hook.secret)).toBe(true);
+		expect(hook.subscriptions).toContain('categoryTailnetManagement');
 		const endpointId = hook.endpointId ?? '';
 
 		expect((await api.webhooks.get({ endpointId })).endpointUrl).toBe(
@@ -386,8 +409,8 @@ live('Tailscale live API', () => {
 		);
 		expect(await api.webhooks.test({ endpointId })).toEqual({ success: true });
 		const rotated = await api.webhooks.rotateSecret({ endpointId });
-		expect(rotated.secret).toBeTruthy();
-		expect(rotated.secret).not.toBe(hook.secret);
+		expect(Boolean(rotated.secret)).toBe(true);
+		expect(rotated.secret !== hook.secret).toBe(true);
 
 		await api.webhooks.delete({ endpointId });
 		created.webhooks.delete(endpointId);
@@ -395,12 +418,16 @@ live('Tailscale live API', () => {
 	});
 
 	it('creates and deletes a Tailscale Service', async () => {
+		// This run's Service is new: never update and then delete someone's.
+		expect(await statusOf(api.services.get({ serviceName: SERVICE }))).toBe(
+			404,
+		);
+		created.service = true;
 		const service = await api.services.update({
 			serviceName: SERVICE,
 			comment: NAME,
 			ports: ['tcp:443'],
 		});
-		created.service = true;
 		expect(service.name).toBe(SERVICE);
 		expect((await api.services.get({ serviceName: SERVICE })).comment).toBe(
 			NAME,
@@ -428,8 +455,8 @@ live('Tailscale live API', () => {
 			redirectURIs: ['https://example.com/callback'],
 			scopes: ['auth_keys:create:once'],
 		});
+		if (app.id) created.oauthApps.add(app.id);
 		expect(app.id).toBeTruthy();
-		created.oauthApps.add(app.id ?? '');
 		const appId = app.id ?? '';
 		expect((await api.oauthApps.get({ appId })).name).toBe(NAME);
 		const changed = await api.oauthApps.update({
@@ -449,8 +476,8 @@ live('Tailscale live API', () => {
 			invites: [{ multiUse: false }],
 		});
 		const share = shares?.[0];
-		expect(share?.inviteUrl).toMatch(/^https:\/\//);
-		created.deviceInvites.add(share?.id ?? '');
+		if (share?.id) created.deviceInvites.add(share.id);
+		expect(/^https:\/\//.test(share?.inviteUrl ?? '')).toBe(true);
 		expect(
 			(await api.deviceInvites.get({ deviceInviteId: share?.id ?? '' })).id,
 		).toBe(share?.id);
@@ -461,8 +488,8 @@ live('Tailscale live API', () => {
 			invites: [{ role: 'member' }],
 		});
 		const invite = invites?.[0];
-		expect(invite?.inviteUrl).toMatch(/^https:\/\//);
-		created.userInvites.add(invite?.id ?? '');
+		if (invite?.id) created.userInvites.add(invite.id);
+		expect(/^https:\/\//.test(invite?.inviteUrl ?? '')).toBe(true);
 		expect(
 			(await api.userInvites.get({ userInviteId: invite?.id ?? '' })).role,
 		).toBe('member');
@@ -470,43 +497,51 @@ live('Tailscale live API', () => {
 		created.userInvites.delete(invite?.id ?? '');
 	});
 
-	it('adds and removes one split DNS domain, and writes back unchanged DNS settings', async () => {
+	it('adds and removes one split DNS domain', async () => {
+		// The domain is this run's own, so the update touches nothing else.
+		expect((await api.dns.splitDns.get({}))[SPLIT_DOMAIN]).toBeUndefined();
+		created.splitDomain = true;
 		const added = await api.dns.splitDns.update({
 			domains: { [SPLIT_DOMAIN]: ['1.1.1.1'] },
 		});
-		created.splitDomain = true;
 		expect(added[SPLIT_DOMAIN]).toEqual(['1.1.1.1']);
 		const removed = await api.dns.splitDns.update({
 			domains: { [SPLIT_DOMAIN]: null },
 		});
 		expect(removed[SPLIT_DOMAIN]).toBeUndefined();
 		created.splitDomain = false;
-
-		const paths = await api.dns.searchPaths.list({});
-		const samePaths = await api.dns.searchPaths.set({
-			searchPaths: (paths.searchPaths ?? []).filter(
-				(p): p is string => typeof p === 'string',
-			),
-		});
-		expect(samePaths.searchPaths ?? []).toEqual(paths.searchPaths ?? []);
-		const prefs = await api.dns.preferences.get({});
-		const samePrefs = await api.dns.preferences.set({
-			magicDNS: prefs.magicDNS ?? true,
-		});
-		expect(samePrefs.magicDNS).toBe(prefs.magicDNS);
-
-		const settings = await api.tailnetSettings.get({});
-		// Tailscale answers null here, so the call reports success only.
-		const sameSettings = await api.tailnetSettings.update({
-			devicesAutoUpdatesOn: settings.devicesAutoUpdatesOn ?? null,
-		});
-		expect(sameSettings).toEqual({ success: true });
-		expect((await api.tailnetSettings.get({})).devicesAutoUpdatesOn).toBe(
-			settings.devicesAutoUpdatesOn,
-		);
 	});
 
+	(tailnetWrites ? it : it.skip)(
+		'writes back unchanged DNS search paths, MagicDNS and a tailnet setting',
+		async () => {
+			const paths = await api.dns.searchPaths.list({});
+			const samePaths = await api.dns.searchPaths.set({
+				searchPaths: (paths.searchPaths ?? []).filter(
+					(p): p is string => typeof p === 'string',
+				),
+			});
+			expect(samePaths.searchPaths ?? []).toEqual(paths.searchPaths ?? []);
+			const prefs = await api.dns.preferences.get({});
+			const samePrefs = await api.dns.preferences.set({
+				magicDNS: prefs.magicDNS ?? true,
+			});
+			expect(samePrefs.magicDNS).toBe(prefs.magicDNS);
+
+			const settings = await api.tailnetSettings.get({});
+			// Tailscale answers null here, so the call reports success only.
+			const sameSettings = await api.tailnetSettings.update({
+				devicesAutoUpdatesOn: settings.devicesAutoUpdatesOn ?? null,
+			});
+			expect(sameSettings).toEqual({ success: true });
+			expect((await api.tailnetSettings.get({})).devicesAutoUpdatesOn).toBe(
+				settings.devicesAutoUpdatesOn,
+			);
+		},
+	);
+
 	it('sets and deletes a custom posture attribute (or reports the plan limit)', async () => {
+		created.postureOn = deviceId;
 		const attempt = await statusOf(
 			api.devices.postureAttributes.set({
 				deviceId,
@@ -518,11 +553,11 @@ live('Tailscale live API', () => {
 		// Custom posture attributes need a paid plan: 403 "feature not
 		// available on current billing plan" on Personal.
 		if (attempt === 403) {
+			created.postureOn = '';
 			console.warn('[tailscale] custom posture attributes: plan limit (403)');
 			return;
 		}
 		expect(attempt).toBe('ok');
-		created.postureOn = deviceId;
 		const read = await api.devices.postureAttributes.get({ deviceId });
 		expect(read.attributes?.[POSTURE_KEY]).toBe(true);
 		await api.devices.postureAttributes.delete({

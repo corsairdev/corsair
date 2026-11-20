@@ -1834,6 +1834,7 @@
       "request": "json",
       "response": "empty",
       "scopes": ["log_streaming"],
+      "serverSetFields": ["logType", "s3ExternalId"],
       "input": {
         "type": "object",
         "properties": {
@@ -2457,6 +2458,7 @@
       "request": "json",
       "response": "json",
       "scopes": ["feature_settings"],
+      "serverSetFields": ["id", "configUpdated", "status"],
       "input": {
         "type": "object",
         "properties": {
@@ -2587,6 +2589,7 @@
       "request": "json",
       "response": "json",
       "scopes": ["feature_settings"],
+      "serverSetFields": ["id", "configUpdated", "status"],
       "input": {
         "type": "object",
         "properties": {
@@ -2938,6 +2941,7 @@
         "networking_settings",
         "policy_file"
       ],
+      "serverSetFields": ["regionalRoutingOn"],
       "input": {
         "type": "object",
         "properties": {
@@ -5314,7 +5318,7 @@
     },
     "providerType": {
       "type": "string",
-      "enum": ["slack", "mattermost", "googlechat", "discord"],
+      "enum": ["", "slack", "mattermost", "googlechat", "discord"],
       "description": "The provider type for the webhook destination, or an empty string if none are applicable. Outgoing webhook events are sent in the format expected by the provider type if non-empty."
     },
     "redirectURIs": {
@@ -5353,7 +5357,9 @@
           "userApproved",
           "userRoleUpdated",
           "subnetIPForwardingNotEnabled",
-          "exitNodeIPForwardingNotEnabled"
+          "exitNodeIPForwardingNotEnabled",
+          "categoryTailnetManagement",
+          "categoryDeviceMisconfigurations"
         ]
       },
       "description": "The list of subscribed events that trigger POST requests to the configured endpoint URL. Learn more about [webhook events](https://tailscale.com/docs/features/webhooks#events)."

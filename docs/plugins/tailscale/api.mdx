@@ -114,7 +114,7 @@ await corsair.tailscale.api.contacts.resendVerificationEmail({ contactType: 'sec
 
 Change the account, support or security contact email. Tailscale emails the new address to verify it.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.tailscale.api.contacts.update({ contactType: 'security', email: 'security@example.com' });
@@ -2319,7 +2319,7 @@ Register an OAuth app in the tailnet with its redirect URIs and scopes. The clie
 
 ```ts
 await corsair.tailscale.api.oauthApps.create({
-	name: 'Internal agent',
+	name: 'internal-agent',
 	redirectURIs: ['https://agent.example.com/callback'],
 	scopes: ['auth_keys:create:once'],
 });
@@ -2486,7 +2486,7 @@ Replace an OAuth app's name, redirect URIs or scopes.
 ```ts
 await corsair.tailscale.api.oauthApps.update({
 	appId: 'a123456CNTRL',
-	name: 'Internal agent',
+	name: 'internal-agent',
 	redirectURIs: ['https://agent.example.com/callback'],
 	scopes: ['auth_keys:create:once'],
 });
@@ -2575,7 +2575,7 @@ string | {
 
 `policyFile.preview`
 
-Show which rules of a policy file (the current one or a draft) apply to a user (type "user", previewFor their email) or a destination (type "ipport", previewFor "100.101.102.103:443"), without saving anything.
+Show which rules of the policy file you pass apply to a user (type "user", previewFor their email) or a destination (type "ipport", previewFor "100.101.102.103:443"), without saving anything. policy is required: pass a draft, or the text from policyFile.get to preview the current file.
 
 **Risk:** `read`
 
@@ -3971,7 +3971,7 @@ await corsair.tailscale.api.users.updateRole({ userId: 'uS81iBWpBf11CNTRL', role
 
 `webhooks.create`
 
-Add a webhook endpoint for tailnet events (nodeCreated, nodeNeedsApproval, nodeKeyExpiringInOneDay, nodeDeleted, policyUpdate, userNeedsApproval, userRoleUpdated, ...). Tailscale signs each event with the secret (Tailscale-Webhook-Signature). providerType "slack", "discord", "mattermost" or "googlechat" formats the message for that chat app. The signing secret is returned once: keep it to verify events.
+Add a webhook endpoint for tailnet events (nodeCreated, nodeNeedsApproval, nodeKeyExpiringInOneDay, nodeDeleted, policyUpdate, userNeedsApproval, userRoleUpdated, ...), or a whole category (categoryTailnetManagement, categoryDeviceMisconfigurations) that also takes events Tailscale adds later. Tailscale signs each event with the secret (Tailscale-Webhook-Signature). providerType "slack", "discord", "mattermost" or "googlechat" formats the message for that chat app; "" or none sends the generic format. The signing secret is returned once: keep it to verify events.
 
 **Risk:** `write`
 
@@ -3989,8 +3989,8 @@ await corsair.tailscale.api.webhooks.create({
 |------|------|----------|-------------|
 | `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
 | `endpointUrl` | `string` | Yes | The endpoint that events are sent to from Tailscale via POST requests. |
-| `providerType` | `slack \| mattermost \| googlechat \| discord` | No | — |
-| `subscriptions` | `(nodeCreated \| nodeNeedsApproval \| nodeApproved \| nodeKeyExpiringInOneDay \| nodeKeyExpired \| nodeDeleted \| nodeSigned \| nodeNeedsSignature \| policyUpdate \| userCreated \| userNeedsApproval \| userSuspended \| userRestored \| userDeleted \| userApproved \| userRoleUpdated \| subnetIPForwardingNotEnabled \| exitNodeIPForwardingNotEnabled)[]` | Yes | — |
+| `providerType` | `"" \| slack \| mattermost \| googlechat \| discord` | No | — |
+| `subscriptions` | `(nodeCreated \| nodeNeedsApproval \| nodeApproved \| nodeKeyExpiringInOneDay \| nodeKeyExpired \| nodeDeleted \| nodeSigned \| nodeNeedsSignature \| policyUpdate \| userCreated \| userNeedsApproval \| userSuspended \| userRestored \| userDeleted \| userApproved \| userRoleUpdated \| subnetIPForwardingNotEnabled \| exitNodeIPForwardingNotEnabled \| categoryTailnetManagement \| categoryDeviceMisconfigurations)[]` | Yes | — |
 
 
 
@@ -4167,9 +4167,9 @@ await corsair.tailscale.api.webhooks.rotateSecret({ endpointId: 'w5S9wB4zAH11CNT
 
 `webhooks.test`
 
-Send a test event to a webhook endpoint to check it receives and accepts deliveries.
+Send a test event to a webhook endpoint (a chat channel, for a Slack or Discord one) to check it receives and accepts deliveries.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.tailscale.api.webhooks.test({ endpointId: 'w5S9wB4zAH11CNTRL' });
@@ -4213,7 +4213,7 @@ await corsair.tailscale.api.webhooks.update({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `endpointId` | `string` | Yes | ID for the webhook endpoint. |
-| `subscriptions` | `(nodeCreated \| nodeNeedsApproval \| nodeApproved \| nodeKeyExpiringInOneDay \| nodeKeyExpired \| nodeDeleted \| nodeSigned \| nodeNeedsSignature \| policyUpdate \| userCreated \| userNeedsApproval \| userSuspended \| userRestored \| userDeleted \| userApproved \| userRoleUpdated \| subnetIPForwardingNotEnabled \| exitNodeIPForwardingNotEnabled)[]` | No | — |
+| `subscriptions` | `(nodeCreated \| nodeNeedsApproval \| nodeApproved \| nodeKeyExpiringInOneDay \| nodeKeyExpired \| nodeDeleted \| nodeSigned \| nodeNeedsSignature \| policyUpdate \| userCreated \| userNeedsApproval \| userSuspended \| userRestored \| userDeleted \| userApproved \| userRoleUpdated \| subnetIPForwardingNotEnabled \| exitNodeIPForwardingNotEnabled \| categoryTailnetManagement \| categoryDeviceMisconfigurations)[]` | No | — |
 
 
 

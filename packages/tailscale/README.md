@@ -38,7 +38,9 @@ The 93 operations are every route in Tailscale's published OpenAPI spec
 - Zod schemas are built from the manifest on first use, one operation at a
   time (`endpoints/openapi-schema.ts`). Inputs keep the published contract;
   responses keep the documented types but let any field be missing or `null`.
-  Server-set fields (`readOnly` in the spec) are left out of request bodies.
+  Server-set fields (`readOnly` in the spec, such as a posture integration's
+  `status` or the settings' `regionalRoutingOn`) are dropped before sending,
+  even when a caller passes back an object it read.
 
 Shapes that don't fit one-field-per-parameter:
 
@@ -52,6 +54,11 @@ Shapes that don't fit one-field-per-parameter:
   `field=value` query parameters (a list becomes repeated keys).
 - **Whole bodies.** Invites (`invites: [...]`) and split DNS (`domains: {...}`)
   are a list or a map, so they go in one named field.
+
+The spec's enums leave out values Tailscale's own Go client sends, so the
+manifest adds them: `providerType: ""` (the generic webhook format) and the
+`categoryTailnetManagement` and `categoryDeviceMisconfigurations` webhook
+subscriptions. The live test creates a webhook with both.
 
 Found by the live tests (the spec says otherwise or nothing):
 
@@ -80,7 +87,7 @@ but receiving and verifying Tailscale's signed events is separate work.
 |-----------|--------------|------|-------------|
 | `contacts.get` | `tailscale.api.contacts.get` | `read` | Get the tailnet's account, support and security contact emails. |
 | `contacts.resendVerificationEmail` | `tailscale.api.contacts.resendVerificationEmail` | `destructive` | Email the verification link for a contact address again. |
-| `contacts.update` | `tailscale.api.contacts.update` | `write` | Change the account, support or security contact email. Tailscale emails the new address to verify it. |
+| `contacts.update` | `tailscale.api.contacts.update` | `destructive` | Change the account, support or security contact email. Tailscale emails the new address to verify it. |
 | `deviceInvites.accept` | `tailscale.api.deviceInvites.accept` | `write` | Accept a device share invite from another tailnet into this key's tailnet, by its invite URL or code. The shared device then appears in devices.list. Needs a user's API access token: a share belongs to a user, so an OAuth client can't accept one. |
 | `deviceInvites.create` | `tailscale.api.deviceInvites.create` | `destructive` | Share a device with people outside the tailnet. Each invite gives an invite URL to send; with email set, Tailscale emails the invite itself. allowExitNode lets the recipient use the device as an exit node; multiUse lets several people accept one link. deviceId is the device `id` or `nodeId` from devices.list. |
 | `deviceInvites.delete` | `tailscale.api.deviceInvites.delete` | `write` | Delete a device share invite; its link stops working. |
@@ -132,7 +139,7 @@ but receiving and verifying Tailscale's signed events is separate work.
 | `oauthApps.list` | `tailscale.api.oauthApps.list` | `read` | List the OAuth apps registered in the tailnet (apps people in the tailnet sign in to so it can act on their behalf). |
 | `oauthApps.update` | `tailscale.api.oauthApps.update` | `write` | Replace an OAuth app's name, redirect URIs or scopes. |
 | `policyFile.get` | `tailscale.api.policyFile.get` | `read` | Get the tailnet's policy file (ACLs or grants, groups, tagOwners, autoApprovers, postures, tests). format "hujson" (the default) keeps comments and returns the text; "json" returns an object without comments. etag is the version: pass it as ifMatch to policyFile.set so another edit made in between is not overwritten. details: true also returns warnings and errors. |
-| `policyFile.preview` | `tailscale.api.policyFile.preview` | `read` | Show which rules of a policy file (the current one or a draft) apply to a user (type "user", previewFor their email) or a destination (type "ipport", previewFor "100.101.102.103:443"), without saving anything. |
+| `policyFile.preview` | `tailscale.api.policyFile.preview` | `read` | Show which rules of the policy file you pass apply to a user (type "user", previewFor their email) or a destination (type "ipport", previewFor "100.101.102.103:443"), without saving anything. policy is required: pass a draft, or the text from policyFile.get to preview the current file. |
 | `policyFile.set` | `tailscale.api.policyFile.set` | `destructive` | Replace the tailnet's policy file, as HuJSON text (keeps comments) or a JSON object. It controls who can reach what across the whole tailnet, so run policyFile.validate first, and pass ifMatch with the etag from policyFile.get: Tailscale then refuses the write if the file changed since. Tests in the file must pass or nothing is saved. |
 | `policyFile.validate` | `tailscale.api.policyFile.validate` | `read` | Check a draft policy file without saving it: pass policy (HuJSON text or object) to parse it and run its tests, or tests (at least one) to run ACL tests against the current file. null or an empty message means everything passed. Problems still answer 200: message holds the parse error, or "test(s) failed" with each failing test in data. |
 | `postureIntegrations.create` | `tailscale.api.postureIntegrations.create` | `write` | Connect a device posture provider, so its attributes (compliance, risk score) can gate access in the policy file. |
@@ -164,12 +171,12 @@ but receiving and verifying Tailscale's signed events is separate work.
 | `users.restore` | `tailscale.api.users.restore` | `write` | Restore a suspended user and their access. |
 | `users.suspend` | `tailscale.api.users.suspend` | `write` | Suspend a user: they lose access to the tailnet until restored; their devices and settings are kept. A user's own token can't suspend that user. |
 | `users.updateRole` | `tailscale.api.users.updateRole` | `write` | Change a user's role (member, admin, it-admin, network-admin, billing-admin, auditor, owner). |
-| `webhooks.create` | `tailscale.api.webhooks.create` | `write` | Add a webhook endpoint for tailnet events (nodeCreated, nodeNeedsApproval, nodeKeyExpiringInOneDay, nodeDeleted, policyUpdate, userNeedsApproval, userRoleUpdated, ...). Tailscale signs each event with the secret (Tailscale-Webhook-Signature). providerType "slack", "discord", "mattermost" or "googlechat" formats the message for that chat app. The signing secret is returned once: keep it to verify events. |
+| `webhooks.create` | `tailscale.api.webhooks.create` | `write` | Add a webhook endpoint for tailnet events (nodeCreated, nodeNeedsApproval, nodeKeyExpiringInOneDay, nodeDeleted, policyUpdate, userNeedsApproval, userRoleUpdated, ...), or a whole category (categoryTailnetManagement, categoryDeviceMisconfigurations) that also takes events Tailscale adds later. Tailscale signs each event with the secret (Tailscale-Webhook-Signature). providerType "slack", "discord", "mattermost" or "googlechat" formats the message for that chat app; "" or none sends the generic format. The signing secret is returned once: keep it to verify events. |
 | `webhooks.delete` | `tailscale.api.webhooks.delete` | `destructive` | Delete a webhook endpoint; Tailscale stops sending it events. |
 | `webhooks.get` | `tailscale.api.webhooks.get` | `read` | Get a webhook endpoint: URL, provider type and subscribed events. |
 | `webhooks.list` | `tailscale.api.webhooks.list` | `read` | List the webhook endpoints that receive tailnet events (device added, needs approval, policy changed, user joined, ...). |
 | `webhooks.rotateSecret` | `tailscale.api.webhooks.rotateSecret` | `destructive` | Replace a webhook endpoint's signing secret. The new one is returned once; signatures made with the old one stop verifying. |
-| `webhooks.test` | `tailscale.api.webhooks.test` | `write` | Send a test event to a webhook endpoint to check it receives and accepts deliveries. |
+| `webhooks.test` | `tailscale.api.webhooks.test` | `destructive` | Send a test event to a webhook endpoint (a chat channel, for a Slack or Discord one) to check it receives and accepts deliveries. |
 | `webhooks.update` | `tailscale.api.webhooks.update` | `write` | Change which events a webhook endpoint receives. |
 
 ## Auth

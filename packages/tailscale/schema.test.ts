@@ -136,7 +136,7 @@ describe('zod schemas', () => {
 		expect(validate.safeParse({ policy: '{}' }).success).toBe(true);
 	});
 
-	it('leaves server-set fields out of request bodies', () => {
+	it('leaves server-set fields out of the input schema (endpoints.test.ts checks the sent body)', () => {
 		// PostureIntegration's id, status and configUpdated are readOnly.
 		const create = getTailscaleInputSchema(
 			'postureIntegrations.create',
@@ -149,6 +149,39 @@ describe('zod schemas', () => {
 			output.safeParse({ id: 'p1', status: { lastSync: '2026-11-20' } })
 				.success,
 		).toBe(true);
+	});
+
+	it('takes the generic webhook format and category subscriptions', () => {
+		const create = getTailscaleInputSchema('webhooks.create');
+		expect(
+			create.safeParse({
+				endpointUrl: 'https://example.com/hook',
+				providerType: '',
+				subscriptions: [
+					'categoryTailnetManagement',
+					'categoryDeviceMisconfigurations',
+				],
+			}).success,
+		).toBe(true);
+		expect(
+			create.safeParse({
+				endpointUrl: 'https://example.com/hook',
+				providerType: 'teams',
+				subscriptions: ['nodeCreated'],
+			}).success,
+		).toBe(false);
+	});
+
+	it('records which body fields Tailscale sets itself', () => {
+		const byId = new Map(tailscaleOperations.map((o) => [o.id, o]));
+		expect(byId.get('tailnetSettings.update')?.serverSetFields).toEqual([
+			'regionalRoutingOn',
+		]);
+		expect(byId.get('postureIntegrations.create')?.serverSetFields).toEqual([
+			'id',
+			'configUpdated',
+			'status',
+		]);
 	});
 
 	it('accepts the null Tailscale sends for an empty invite list', () => {

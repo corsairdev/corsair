@@ -12,6 +12,8 @@ import type { TailscaleContext } from '../index';
 import {
 	getTailscaleInputSchema,
 	getTailscaleOutputSchema,
+	MASKED_KEY,
+	maskedIssuePath,
 	tailscaleInputFields,
 	tailscaleOperationFor,
 } from './openapi-schema';
@@ -81,17 +83,41 @@ export function policyFileResult(
 	return { policy: format === 'json' ? JSON.parse(text) : text, etag };
 }
 
-function describeIssues(
-	issues: readonly { path: readonly PropertyKey[]; message: string }[],
-	fallback: string,
+/** A field name the caller typed for a route with no body: shown; anything else is masked. */
+const PLAIN_FIELD = /^[A-Za-z_][A-Za-z0-9_]{0,40}$/;
+
+type Issue = {
+	path: readonly PropertyKey[];
+	message: string;
+	code?: string;
+	keys?: readonly string[];
+};
+
+/**
+ * Issue paths and zod's messages, which name what was expected rather than the
+ * value sent. Map keys (domains, device ids, tags) are masked, and so are
+ * unknown keys that don't look like field names.
+ */
+export function describeIssues(
+	id: string,
+	issues: readonly Issue[],
+	mode: 'input' | 'output',
 	limit: number,
 ): string {
 	return issues
 		.slice(0, limit)
-		.map(
-			(issue) =>
-				`${issue.path.map(String).join('.') || fallback}: ${issue.message}`,
-		)
+		.map((issue) => {
+			const where =
+				maskedIssuePath(id, issue.path, mode) ||
+				(mode === 'input' ? 'input' : 'response');
+			const message =
+				issue.code === 'unrecognized_keys'
+					? `unknown field ${(issue.keys ?? [])
+							.map((key) => (PLAIN_FIELD.test(key) ? key : MASKED_KEY))
+							.join(', ')}`
+					: issue.message;
+			return `${where}: ${message}`;
+		})
 		.join('; ');
 }
 
@@ -109,7 +135,7 @@ export function createTailscaleOperation<Id extends TailscaleOperationId>(
 		if (!parsedInput.success) {
 			// Paths and messages only: zod's messages name what was expected, not the value sent.
 			throw new Error(
-				`Invalid input for tailscale ${id}: ${describeIssues(parsedInput.error.issues, 'input', 5)}`,
+				`Invalid input for tailscale ${id}: ${describeIssues(id, parsedInput.error.issues, 'input', 5)}`,
 			);
 		}
 		// Send what was validated, not the caller's object.
@@ -184,6 +210,9 @@ export function createTailscaleOperation<Id extends TailscaleOperationId>(
 			headers,
 			timeoutMs: timeoutFor(id),
 		};
+		// Fields Tailscale sets itself (an id, a sync status, regionalRoutingOn)
+		// never go back, even when the caller passes an object it read.
+		for (const name of operation.serverSetFields ?? []) delete valid[name];
 		if (id === 'services.update' && valid.name === undefined) {
 			// The body repeats the Service's name, and Tailscale refuses it without
 			// ("" is not a valid service name).
@@ -209,19 +238,20 @@ export function createTailscaleOperation<Id extends TailscaleOperationId>(
 					format,
 					details,
 				);
+			} else if (operation.emptyMeansNone) {
+				// The raw transport, so a body that fails to arrive is an error and
+				// only a fully read empty body means "nothing to report".
+				headers.Accept = 'application/json';
+				const raw = await makeTailscaleRawRequest(request);
+				response = raw.text.length === 0 ? null : JSON.parse(raw.text);
 			} else {
 				const body = await makeTailscaleRequest(request);
-				response =
-					operation.response === 'empty'
-						? { success: true }
-						: operation.emptyMeansNone && (body === undefined || body === '')
-							? null
-							: body;
+				response = operation.response === 'empty' ? { success: true } : body;
 			}
 		} catch (error) {
 			// A revoked or rescoped OAuth client: the next call exchanges the secret again.
 			if (error instanceof ApiError && error.status === 401) {
-				await forgetTailscaleToken(ctx.key);
+				await forgetTailscaleToken(ctx.key, token);
 			}
 			throw error;
 		}
@@ -231,7 +261,7 @@ export function createTailscaleOperation<Id extends TailscaleOperationId>(
 		const parsedOutput = getTailscaleOutputSchema(id).safeParse(response);
 		if (!parsedOutput.success) {
 			throw new Error(
-				`Tailscale ${id} response did not match its documented schema: ${describeIssues(parsedOutput.error.issues, 'response', 3)}`,
+				`Tailscale ${id} response did not match its documented schema: ${describeIssues(id, parsedOutput.error.issues, 'output', 3)}`,
 			);
 		}
 

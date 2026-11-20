@@ -161,6 +161,7 @@ export type TailscaleNameInput = string;
 
 /** The provider type for the webhook destination, or an empty string if none are applicable. Outgoing webhook events are sent in the format expected by the provider type if non-empty. */
 export type TailscaleProviderTypeInput =
+	| ''
 	| 'slack'
 	| 'mattermost'
 	| 'googlechat'
@@ -192,6 +193,8 @@ export type TailscaleSubscriptionsInput = Array<
 	| 'userRoleUpdated'
 	| 'subnetIPForwardingNotEnabled'
 	| 'exitNodeIPForwardingNotEnabled'
+	| 'categoryTailnetManagement'
+	| 'categoryDeviceMisconfigurations'
 >;
 
 /** An external ID for use in authenticating to AWS using role-based authentication. */
