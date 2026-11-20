@@ -3011,6 +3011,14 @@
                 ]
               },
               {
+                "group": "HotspotSystem",
+                "pages": [
+                  "plugins/hotspotsystem/overview",
+                  "plugins/hotspotsystem/api",
+                  "plugins/hotspotsystem/database"
+                ]
+              },
+              {
                 "group": "HTML to Image",
                 "pages": [
                   "plugins/htmltoimage/overview",

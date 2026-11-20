@@ -360,6 +360,7 @@ export const BaseProviders = [
 	'honeybadger',
 	'honeyhive',
 	'hookdeck',
+	'hotspotsystem',
 	'htmltoimage',
 	'hubplanner',
 	'hubspot',
@@ -1101,6 +1102,7 @@ export const ProviderDisplayNames = {
 	honeybadger: 'Honeybadger',
 	honeyhive: 'HoneyHive',
 	hookdeck: 'Hookdeck',
+	hotspotsystem: 'HotspotSystem',
 	htmltoimage: 'HtmlToImage',
 	hubplanner: 'Hub Planner',
 	hubspot: 'HubSpot',
@@ -1849,6 +1851,7 @@ export type AllProviders =
 	| 'honeybadger'
 	| 'honeyhive'
 	| 'hookdeck'
+	| 'hotspotsystem'
 	| 'htmltoimage'
 	| 'hubplanner'
 	| 'hubspot'
