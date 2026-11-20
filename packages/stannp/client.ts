@@ -225,16 +225,19 @@ export async function makeStannpRequest(
 	} catch (error) {
 		if (error instanceof StannpAPIError) throw error;
 		if (error instanceof ApiError) {
-			// Rebuilt without the request (recipient data in the form body);
-			// status, retryAfter and the response body carry over.
+			// Rebuilt without the request (recipient data in the form body).
+			// Core's fallback message embeds the whole response body, so the
+			// message comes from Stannp's `error` text or the status alone.
+			// status and retryAfter carry over.
+			const fallback = error.statusText || 'request failed';
 			throw new StannpAPIError(
-				describeStannpError(error.status, error.body, error.message),
+				describeStannpError(error.status, error.body, fallback),
 				{
 					method,
 					path,
 					status: error.status,
 					statusText: error.statusText,
-					body: error.body,
+					body: replayBody(error.status, error.body),
 					retryAfter: error.retryAfter,
 				},
 			);
@@ -242,6 +245,40 @@ export async function makeStannpRequest(
 		// Timeouts and network failures carry no request data; let them through.
 		throw error;
 	}
+}
+
+// Fields of a replayed create that identify the result without naming the
+// recipient. Live mailpieces also carry the recipient's name and address.
+const REPLAY_FIELDS = [
+	'id',
+	'status',
+	'created',
+	'format',
+	'cost',
+	'pdf',
+	'type',
+] as const;
+
+/**
+ * A 409 idempotent replay returns the ORIGINAL success envelope, which for a
+ * live mailpiece includes the recipient's name and address. The error keeps
+ * only the fields that identify the result; other error bodies are Stannp's
+ * `{ success: false, error }` and pass through.
+ */
+export function replayBody(
+	status: number,
+	// unknown: the body is untyped until asRecord narrows it.
+	body: unknown,
+): unknown {
+	if (status !== 409) return body;
+	const envelope = asRecord(body);
+	const data = asRecord(envelope?.data);
+	if (!envelope || !data) return body;
+	const kept: Record<string, unknown> = {};
+	for (const field of REPLAY_FIELDS) {
+		if (field in data) kept[field] = data[field];
+	}
+	return { success: envelope.success, data: kept };
 }
 
 /** Encodes one path segment. */

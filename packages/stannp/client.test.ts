@@ -50,7 +50,11 @@ function sentAuth() {
 }
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	// Queued responses come first; any request beyond them fails instead of
+	// reaching the real API.
+	fetchMock = jest
+		.spyOn(globalThis, 'fetch')
+		.mockRejectedValue(new Error('unexpected request in a unit test'));
 });
 
 afterEach(() => {
@@ -179,6 +183,39 @@ describe('makeStannpRequest', () => {
 		expect(error.request.body).toBeUndefined();
 		expect(JSON.stringify(error)).not.toContain('John');
 		expect(error.cause).toBeUndefined();
+	});
+
+	it('keeps only non-personal fields of a 409 replay, in the body and the message', async () => {
+		respond(
+			{
+				success: true,
+				data: {
+					id: 41,
+					status: 'received',
+					cost: '0.81',
+					firstname: 'Jane',
+					lastname: 'Doe',
+					address1: '1 Secret Lane',
+				},
+			},
+			409,
+		);
+
+		const error = await failure(
+			makeStannpRequest(API_KEY, {
+				method: 'POST',
+				base: STANNP_HOSTS.us,
+				path: '/v1/letters/create',
+				form: { test: false },
+			}),
+		);
+		expect(error.status).toBe(409);
+		expect(error.body).toEqual({
+			success: true,
+			data: { id: 41, status: 'received', cost: '0.81' },
+		});
+		expect(error.message).not.toContain('Secret Lane');
+		expect(JSON.stringify(error)).not.toContain('Jane');
 	});
 
 	it('keeps the replayed success body on a 409 idempotent conflict', async () => {
