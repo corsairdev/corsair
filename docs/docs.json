@@ -5107,6 +5107,14 @@
                 ]
               },
               {
+                "group": "Storerocket",
+                "pages": [
+                  "plugins/storerocket/overview",
+                  "plugins/storerocket/api",
+                  "plugins/storerocket/database"
+                ]
+              },
+              {
                 "group": "Stormglass",
                 "pages": [
                   "plugins/stormglass/overview",
