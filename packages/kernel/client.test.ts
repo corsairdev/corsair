@@ -141,13 +141,44 @@ describe('makeKernelRequest', () => {
 			"Kernel 400: no credential matches '[REDACTED]' for '[REDACTED]' (invalid_request)",
 		);
 		expect(error.request.query).toEqual({ search: '[REDACTED]' });
-		expect(error.url).toBe(
-			'https://api.onkernel.com/credentials?search=[REDACTED]',
-		);
+		expect(error.url).toBe('https://api.onkernel.com/credentials?[REDACTED]');
 		const serialized = JSON.stringify(error);
 		expect(serialized).not.toContain('person@example.com');
 		expect(serialized).not.toContain('person%40example.com');
 		expect(serialized).not.toContain('hunter22secret');
+	});
+
+	it('redacts a short secret Kernel quotes back, as a whole word only', async () => {
+		fetchMock.mockResolvedValue(
+			json(400, { message: "invalid password '1234' (min length 8, got 4)" }),
+		);
+		const error = (await makeKernelRequest({
+			apiKey: 'sk_test',
+			method: 'POST',
+			path: '/credentials',
+			body: { name: 'acme', values: { password: '1234' } },
+			// `unknown` because a rejected promise carries no type; it is cast to the ApiError the transport throws.
+		}).catch((caught: unknown) => caught)) as ApiError;
+		// The status prefix and other digits survive; only the password goes.
+		expect(error.message).toBe(
+			"Kernel 400: invalid password '[REDACTED]' (min length 8, got 4)",
+		);
+		expect(JSON.stringify(error.body)).not.toContain('1234');
+	});
+
+	it('keeps tag keys a caller chose out of the error URL', async () => {
+		fetchMock.mockResolvedValue(json(403, { message: 'forbidden' }));
+		const error = (await makeKernelRequest({
+			apiKey: 'sk_test',
+			method: 'GET',
+			path: '/browsers',
+			query: { tags: { 'person@example.com': 'vip' } },
+			// `unknown` because a rejected promise carries no type; it is cast to the ApiError the transport throws.
+		}).catch((caught: unknown) => caught)) as ApiError;
+		expect(error.url).toBe('https://api.onkernel.com/browsers?[REDACTED]');
+		expect(error.request.query).toEqual({ tags: '[REDACTED]' });
+		const serialized = JSON.stringify(error);
+		expect(serialized).not.toContain('person');
 	});
 
 	it('refuses to send a request without a key', async () => {

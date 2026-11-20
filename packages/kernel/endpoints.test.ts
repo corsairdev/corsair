@@ -446,6 +446,20 @@ describe('files', () => {
 				'application/json',
 			),
 		).toBe('profile-p.json');
+		expect(
+			fileNameFor(
+				'profiles.download',
+				{ id_or_name: 'p', format: 'tar' },
+				'Application/JSON; charset=utf-8',
+			),
+		).toBe('profile-p.json');
+		expect(
+			fileNameFor(
+				'profiles.download',
+				{ id_or_name: 'p', format: 'tar' },
+				'application/x-tar',
+			),
+		).toBe('profile-p.tar');
 		expect(fileNameFor('auditLogs.exportChunk', {})).toBe(
 			'audit-logs.jsonl.gz',
 		);
@@ -539,6 +553,20 @@ describe('outputs', () => {
 		await expect(
 			endpointFor('browsers.get')(ctx, { id_or_name: 'abc' }),
 		).rejects.toThrow(/did not match/);
+	});
+});
+
+describe('multipart file fields', () => {
+	it('downloads the file field and keeps an env var named file as text', async () => {
+		mockedRequest.mockResolvedValue({ id: 'dep_1' });
+		await endpointFor('deployments.create')(ctx, {
+			file: 'https://example.com/app.zip',
+			env_vars: { file: 'production' },
+		});
+		const form = mockedRequest.mock.calls[0]?.[0]?.body as FormData;
+		expect(form.get('file')).toBeInstanceOf(Blob);
+		expect(form.get('env_vars[file]')).toBe('production');
+		expect(mockLinks.fetched).toContain('https://example.com/app.zip');
 	});
 });
 

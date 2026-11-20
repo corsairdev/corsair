@@ -145,16 +145,19 @@ async function buildForm(
 	// `unknown` because the body fields are validated per operation.
 	body: Record<string, unknown>,
 ): Promise<FormData> {
-	const fileFields = fileFieldNames(operation);
+	const fileFields = fileFieldPaths(operation);
 	const dotted = DOTTED_FORMS.has(operation.id);
 	const form = new FormData();
+	// `path` is the schema path (property names, no list indexes), so an
+	// env var called `file` is never taken for the `file` upload.
 	// `unknown` because a multipart value is a validated scalar, file, list or object.
-	const add = async (key: string, value: unknown, leaf: string) => {
+	const add = async (key: string, value: unknown, path: string[]) => {
 		if (value === undefined || value === null) return;
+		const leaf = path[path.length - 1] ?? '';
 		// A bare string in a file field is a public URL (KernelFileInputSchema),
 		// so it is downloaded and sent as the file, never as text.
 		if (
-			fileFields.has(leaf) &&
+			fileFields.has(path.join('.')) &&
 			(isFileValue(value) || typeof value === 'string')
 		) {
 			const resolved = await resolveFileInput(value, {
@@ -174,38 +177,53 @@ async function buildForm(
 		}
 		if (Array.isArray(value)) {
 			for (const [index, item] of value.entries()) {
-				await add(dotted ? key : `${key}[${index}]`, item, leaf);
+				await add(dotted ? key : `${key}[${index}]`, item, path);
 			}
 			return;
 		}
 		if (typeof value === 'object') {
 			for (const [name, inner] of Object.entries(value)) {
-				await add(dotted ? `${key}.${name}` : `${key}[${name}]`, inner, name);
+				await add(dotted ? `${key}.${name}` : `${key}[${name}]`, inner, [
+					...path,
+					name,
+				]);
 			}
 		}
 	};
 	for (const [name, value] of Object.entries(body)) {
-		await add(name, value, name);
+		await add(name, value, [name]);
 	}
 	return form;
 }
 
-/** Names of the properties that hold a file anywhere in the operation's input. */
-function fileFieldNames(operation: KernelOperationDefinition): Set<string> {
-	const names = new Set<string>();
+/** Schema paths (`file`, `files.file`, `extensions.zip_file`) of the properties that hold a file. */
+export function fileFieldPaths(
+	operation: KernelOperationDefinition,
+): Set<string> {
+	const paths = new Set<string>();
 	// `unknown` because the walk covers raw JSON Schema documents.
-	const visit = (schema: unknown, name: string | undefined) => {
+	const visit = (schema: unknown, path: string[]) => {
 		if (typeof schema !== 'object' || schema === null) return;
 		const record = schema as Record<string, unknown>;
-		if (record.format === 'binary' && name) names.add(name);
+		if (record.format === 'binary' && path.length > 0) {
+			paths.add(path.join('.'));
+		}
 		const properties = record.properties;
 		if (typeof properties === 'object' && properties !== null) {
-			for (const [key, value] of Object.entries(properties)) visit(value, key);
+			for (const [key, value] of Object.entries(properties)) {
+				visit(value, [...path, key]);
+			}
 		}
-		if (record.items) visit(record.items, name);
+		if (record.items) visit(record.items, path);
 	};
-	visit(operation.input, undefined);
-	return names;
+	visit(operation.input, []);
+	return paths;
+}
+
+/** `application/json`, `Application/JSON; charset=utf-8`, `application/problem+json`. */
+function isJsonMediaType(contentType: string | null | undefined): boolean {
+	const media = (contentType ?? '').split(';')[0]?.trim().toLowerCase() ?? '';
+	return media === 'application/json' || media.endsWith('+json');
 }
 
 /** What to call a downloaded file, from the operation and the call's inputs. */
@@ -231,7 +249,7 @@ export function fileNameFor(
 		case 'profiles.download':
 			// A legacy profile comes back as JSON whatever format was asked for.
 			return `profile-${text(input.id_or_name, 'archive')}.${
-				contentType?.includes('json') ? 'json' : text(input.format, 'tar.zst')
+				isJsonMediaType(contentType) ? 'json' : text(input.format, 'tar.zst')
 			}`;
 		case 'extensions.download':
 			return `${text(input.id_or_name, 'extension')}.zip`;

@@ -706,7 +706,7 @@ export const kernelEndpointMeta = {
 	'browserPools.update': {
 		riskLevel: 'write',
 		description:
-			'Change a browser pool\'s size or browser configuration. To stop loading a profile, send profile: { id: "" }.',
+			'Change a browser pool\'s size or browser configuration. A change applies to browsers the pool creates afterwards: pass discard_all_idle: true to rebuild idle ones now, and release leased ones with reuse: false. To stop loading a profile, send profile: { id: "" }; browsers already in the pool keep the old profile until rebuilt.',
 	},
 	'browsers.computer.batch': {
 		riskLevel: 'write',

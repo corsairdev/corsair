@@ -267,10 +267,8 @@ const REDACTED = '[REDACTED]';
 export function withoutRequestData(error: ApiError): ApiError {
 	const sent = sentStrings(error.request);
 	const body = scrubSent(withoutEchoedValues(error.body), sent);
-	const message = scrubSent(
-		kernelErrorMessage(error.status, error.statusText, body),
-		sent,
-	);
+	// Built from the scrubbed body, so the reason is clean and the "Kernel 400" prefix is never touched.
+	const message = kernelErrorMessage(error.status, error.statusText, body);
 	return new ApiError(
 		{
 			...error.request,
@@ -281,13 +279,13 @@ export function withoutRequestData(error: ApiError): ApiError {
 			query: redactedValues(error.request.query),
 		},
 		{
-			url: withoutQueryValues(error.url),
+			url: withoutQuery(error.url),
 			ok: false,
 			status: error.status,
 			statusText: error.statusText,
 			body,
 		},
-		typeof message === 'string' ? message : String(message),
+		message,
 		{
 			retryAfter: error.retryAfter,
 			rateLimitReset: error.rateLimitReset,
@@ -328,49 +326,81 @@ export function kernelErrorMessage(
 	return text.length > 500 ? `${text.slice(0, 497)}...` : text;
 }
 
-/** Shorter strings are ids, enum values and flags, not secrets worth hiding. */
+/** Shorter strings are ids, enum values and flags, not secrets worth hiding... */
 const MIN_SCRUBBED_LENGTH = 6;
+/** ...unless they sit under a key like these (a 4-digit password, a PIN, a one-time code). */
+const SECRET_KEY =
+	/pass|secret|token|totp|otp|code|cvc|cvv|pin|credential|values?$|key$/i;
+
+type SentString = { text: string; wholeWord: boolean };
 
 /**
  * Every string this call sent (JSON body, form fields, query values), longest
- * first, so a Kernel message that quotes one back ("invalid value 'hunter22'")
- * loses it while keeping its reason.
+ * first, so a Kernel message that quotes one back ("invalid password '1234'")
+ * loses it while keeping its reason. Values under a secret-looking key count at
+ * any length and are matched as whole words, so a short one can't take out
+ * digits elsewhere in the text.
  */
-function sentStrings(request: ApiError['request']): string[] {
-	const found = new Set<string>();
+function sentStrings(request: ApiError['request']): SentString[] {
+	const found = new Map<string, boolean>();
 	// `unknown` because a sent value is any JSON value, form entry or file.
-	const visit = (value: unknown, depth: number) => {
+	const visit = (value: unknown, depth: number, secret: boolean) => {
 		if (depth > 8 || value === undefined || value === null) return;
 		if (typeof value === 'string') {
-			if (value.length >= MIN_SCRUBBED_LENGTH) found.add(value);
+			if (secret && value.length > 0) {
+				if (!found.has(value))
+					found.set(value, value.length < MIN_SCRUBBED_LENGTH);
+			} else if (value.length >= MIN_SCRUBBED_LENGTH) {
+				found.set(value, false);
+			}
 			return;
 		}
 		if (typeof Blob !== 'undefined' && value instanceof Blob) return;
 		if (typeof FormData !== 'undefined' && value instanceof FormData) {
-			for (const [, entry] of value.entries()) visit(entry, depth + 1);
+			for (const [key, entry] of value.entries()) {
+				visit(entry, depth + 1, secret || SECRET_KEY.test(key));
+			}
 			return;
 		}
 		if (Array.isArray(value)) {
-			for (const item of value) visit(item, depth + 1);
+			for (const item of value) visit(item, depth + 1, secret);
 			return;
 		}
 		if (typeof value === 'object') {
-			for (const inner of Object.values(value)) visit(inner, depth + 1);
+			for (const [key, inner] of Object.entries(value)) {
+				visit(inner, depth + 1, secret || SECRET_KEY.test(key));
+			}
 		}
 	};
-	visit(request.body, 0);
-	visit(request.formData, 0);
-	visit(request.query, 0);
-	return [...found].sort((a, b) => b.length - a.length);
+	visit(request.body, 0, false);
+	visit(request.formData, 0, false);
+	visit(request.query, 0, false);
+	return [...found]
+		.map(([text, wholeWord]) => ({ text, wholeWord }))
+		.sort((a, b) => b.text.length - a.text.length);
 }
 
-/** Replaces every sent string inside an error body or message with [REDACTED]. */
+function escapeRegExp(text: string): string {
+	return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/** Replaces every sent string inside an error body with [REDACTED]. */
 // `unknown` because an error body is whatever JSON (or text) Kernel sent.
-function scrubSent(value: unknown, sent: string[], depth = 0): unknown {
+function scrubSent(value: unknown, sent: SentString[], depth = 0): unknown {
 	if (sent.length === 0 || depth > 6) return value;
 	if (typeof value === 'string') {
 		let text = value;
-		for (const item of sent) text = text.split(item).join(REDACTED);
+		for (const item of sent) {
+			text = item.wholeWord
+				? text.replace(
+						new RegExp(
+							`(?<![A-Za-z0-9])${escapeRegExp(item.text)}(?![A-Za-z0-9])`,
+							'g',
+						),
+						REDACTED,
+					)
+				: text.split(item.text).join(REDACTED);
+		}
 		return text;
 	}
 	if (Array.isArray(value)) {
@@ -395,16 +425,13 @@ function redactedValues(
 	return Object.fromEntries(Object.keys(query).map((key) => [key, REDACTED]));
 }
 
-/** `https://…/audit_logs?search=a%40b.com` → `https://…/audit_logs?search=[REDACTED]`. */
-export function withoutQueryValues(url: string): string {
+/**
+ * `https://…/browsers?tags%5Bperson%40x.com%5D=1` → `https://…/browsers?[REDACTED]`.
+ * Parameter names go too: a tag map puts the caller's keys in them.
+ */
+export function withoutQuery(url: string): string {
 	const mark = url.indexOf('?');
-	if (mark === -1) return url;
-	const keys = url
-		.slice(mark + 1)
-		.split('&')
-		.filter((part) => part.length > 0)
-		.map((part) => `${part.split('=')[0]}=${REDACTED}`);
-	return `${url.slice(0, mark)}?${keys.join('&')}`;
+	return mark === -1 ? url : `${url.slice(0, mark)}?${REDACTED}`;
 }
 
 const ECHO_KEYS = new Set(['value', 'values', 'input', 'received']);

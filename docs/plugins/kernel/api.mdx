@@ -3886,7 +3886,7 @@ await corsair.kernel.api.browserPools.release({ id_or_name: 'my-pool', session_i
 
 `browserPools.update`
 
-Change a browser pool's size or browser configuration. To stop loading a profile, send profile: &#123; id: "" &#125;.
+Change a browser pool's size or browser configuration. A change applies to browsers the pool creates afterwards: pass discard_all_idle: true to rebuild idle ones now, and release leased ones with reuse: false. To stop loading a profile, send profile: &#123; id: "" &#125;; browsers already in the pool keep the old profile until rebuilt.
 
 **Risk:** `write`
 
