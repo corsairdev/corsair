@@ -4144,6 +4144,15 @@
                 ]
               },
               {
+                "group": "Persona",
+                "pages": [
+                  "plugins/persona/overview",
+                  "plugins/persona/api",
+                  "plugins/persona/database",
+                  "plugins/persona/webhooks"
+                ]
+              },
+              {
                 "group": "PhantomBuster",
                 "pages": [
                   "plugins/phantombuster/overview",

@@ -1,0 +1,1789 @@
+---
+title: "Persona API reference"
+sidebarTitle: "API"
+description: "API reference for the Persona plugin in Corsair: every `persona.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Accounts
+
+### addTag
+
+`accounts.addTag`
+
+Add a tag to an account
+
+**Risk:** `write`
+
+```ts
+await corsair.persona.api.accounts.addTag({ accountId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c72", tag: "vip" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | Account id |
+| `tag` | `string` | Yes | Tag name |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | Whether the tag change succeeded |
+
+
+
+---
+
+### create
+
+`accounts.create`
+
+Create an account
+
+**Risk:** `write`
+
+```ts
+await corsair.persona.api.accounts.create({ attributes: { name: "John Doe", email: "john.doe@example.com" } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attributes` | `object` | Yes | Account attributes |
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+  name?: string,
+  email?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | A Persona account |
+| `included` | `any[] \| null` | No | Related resources requested via include |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: account | null,
+  attributes?: {
+    name?: string | null,
+    email?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`accounts.get`
+
+Read one account by id
+
+**Risk:** `read`
+
+```ts
+await corsair.persona.api.accounts.get({ accountId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c72" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | Account id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | A Persona account |
+| `included` | `any[] \| null` | No | Related resources requested via include |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: account | null,
+  attributes?: {
+    name?: string | null,
+    email?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`accounts.list`
+
+List accounts, paged by cursor
+
+**Risk:** `read`
+
+```ts
+await corsair.persona.api.accounts.list({ pageSize: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageAfter` | `string` | No | Cursor of the next page (sent as page[after]) |
+| `pageSize` | `number` | No | Results per page (sent as page[size]) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `included` | `any[] \| null` | No | Related resources requested via include |
+| `meta` | `object \| null` | No | List metadata |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: account | null,
+  attributes?: {
+    name?: string | null,
+    email?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  totalEntries?: number | null,
+  page?: {
+    number?: number | null,
+    size?: number | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### redact
+
+`accounts.redact`
+
+Redact an account; the data is permanently removed
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.persona.api.accounts.redact({ accountId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c72" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | Account id |
+
+Answers 204 with no body; redaction is permanent.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | Whether the redaction succeeded |
+
+
+
+---
+
+### removeTag
+
+`accounts.removeTag`
+
+Remove a tag from an account
+
+**Risk:** `write`
+
+```ts
+await corsair.persona.api.accounts.removeTag({ accountId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c72", tag: "vip" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | Account id |
+| `tag` | `string` | Yes | Tag name |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | Whether the tag change succeeded |
+
+
+
+---
+
+### search
+
+`accounts.search`
+
+Search accounts by a query string
+
+**Risk:** `read`
+
+```ts
+await corsair.persona.api.accounts.search({ query: "John" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | Search string across account fields |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `included` | `any[] \| null` | No | Related resources requested via include |
+| `meta` | `object \| null` | No | List metadata |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: account | null,
+  attributes?: {
+    name?: string | null,
+    email?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  totalEntries?: number | null,
+  page?: {
+    number?: number | null,
+    size?: number | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`accounts.update`
+
+Update an account name or email
+
+**Risk:** `write`
+
+```ts
+await corsair.persona.api.accounts.update({ accountId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c72", attributes: { name: "Jane Doe" } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | Account id |
+| `attributes` | `object` | Yes | Account attributes to update |
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+  name?: string,
+  email?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | A Persona account |
+| `included` | `any[] \| null` | No | Related resources requested via include |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: account | null,
+  attributes?: {
+    name?: string | null,
+    email?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Inquiries
+
+### addTag
+
+`inquiries.addTag`
+
+Add a tag to an inquiry
+
+**Risk:** `write`
+
+```ts
+await corsair.persona.api.inquiries.addTag({ inquiryId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c71", tag: "follow-up" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inquiryId` | `string` | Yes | Inquiry id |
+| `tag` | `string` | Yes | Tag name |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | Whether the tag change succeeded |
+
+
+
+---
+
+### approve
+
+`inquiries.approve`
+
+Approve an inquiry; the decision is final and notifies the holder
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.persona.api.inquiries.approve({ inquiryId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c71" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attributes` | `object` | No | — |
+| `inquiryId` | `string` | Yes | Inquiry id |
+
+Final decision; notifies the holder.
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+  declineReasons?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | A Persona inquiry |
+| `included` | `any[] \| null` | No | Related resources requested via include |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: inquiry | null,
+  attributes?: {
+    status?: string | null,
+    inquiryTemplateId?: string | null,
+    referenceId?: string | null,
+    createdAt?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`inquiries.create`
+
+Create an inquiry from a template
+
+**Risk:** `write`
+
+```ts
+await corsair.persona.api.inquiries.create({ attributes: { "inquiry-template-id": "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c74", "reference-id": "user-42" } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attributes` | `object` | Yes | Inquiry attributes |
+
+Pass inquiry-template-id for itmpl_… templates or template-id for legacy tmpl_… flows; fields carries the template field values.
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+  inquiry-template-id: string,
+  account-id?: string,
+  reference-id?: string,
+  redirect-uri?: string,
+  note?: string,
+  fields?: Record<string, unknown>,
+  tags?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | A Persona inquiry |
+| `included` | `any[] \| null` | No | Related resources requested via include |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: inquiry | null,
+  attributes?: {
+    status?: string | null,
+    inquiryTemplateId?: string | null,
+    referenceId?: string | null,
+    createdAt?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### decline
+
+`inquiries.decline`
+
+Decline an inquiry with reasons; the decision is final
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.persona.api.inquiries.decline({ inquiryId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c71", attributes: { declineReasons: ["fraud"] } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attributes` | `object` | No | — |
+| `inquiryId` | `string` | Yes | Inquiry id |
+
+Final decision; declineReasons carries the documented decline reason strings.
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+  declineReasons?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | A Persona inquiry |
+| `included` | `any[] \| null` | No | Related resources requested via include |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: inquiry | null,
+  attributes?: {
+    status?: string | null,
+    inquiryTemplateId?: string | null,
+    referenceId?: string | null,
+    createdAt?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### generateOneTimeLink
+
+`inquiries.generateOneTimeLink`
+
+Generate a one-time link for an inquiry; anyone with the link can resume it
+
+**Risk:** `write`
+
+```ts
+await corsair.persona.api.inquiries.generateOneTimeLink({ inquiryId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c71" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inquiryId` | `string` | Yes | Inquiry id |
+
+The answer wraps a link reference; anyone with the link can resume the inquiry.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | A one-time inquiry link |
+| `included` | `any[] \| null` | No | Related resources requested via include |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  reference?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`inquiries.get`
+
+Read one inquiry by id
+
+**Risk:** `read`
+
+```ts
+await corsair.persona.api.inquiries.get({ inquiryId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c71" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inquiryId` | `string` | Yes | Inquiry id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | A Persona inquiry |
+| `included` | `any[] \| null` | No | Related resources requested via include |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: inquiry | null,
+  attributes?: {
+    status?: string | null,
+    inquiryTemplateId?: string | null,
+    referenceId?: string | null,
+    createdAt?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`inquiries.list`
+
+List inquiries, paged and filtered by status
+
+**Risk:** `read`
+
+```ts
+await corsair.persona.api.inquiries.list({ status: "completed", pageSize: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageAfter` | `string` | No | Cursor of the next page (sent as page[after]) |
+| `pageSize` | `number` | No | Results per page (sent as page[size]) |
+| `status` | `string` | No | Filter by inquiry status |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `included` | `any[] \| null` | No | Related resources requested via include |
+| `meta` | `object \| null` | No | List metadata |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: inquiry | null,
+  attributes?: {
+    status?: string | null,
+    inquiryTemplateId?: string | null,
+    referenceId?: string | null,
+    createdAt?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  totalEntries?: number | null,
+  page?: {
+    number?: number | null,
+    size?: number | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### markForReview
+
+`inquiries.markForReview`
+
+Mark an inquiry for manual review
+
+**Risk:** `write`
+
+```ts
+await corsair.persona.api.inquiries.markForReview({ inquiryId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c71" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inquiryId` | `string` | Yes | Inquiry id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | A Persona inquiry |
+| `included` | `any[] \| null` | No | Related resources requested via include |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: inquiry | null,
+  attributes?: {
+    status?: string | null,
+    inquiryTemplateId?: string | null,
+    referenceId?: string | null,
+    createdAt?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### redact
+
+`inquiries.redact`
+
+Redact an inquiry; the data is permanently removed
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.persona.api.inquiries.redact({ inquiryId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c71" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inquiryId` | `string` | Yes | Inquiry id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | Whether the redaction succeeded |
+
+
+
+---
+
+### removeTag
+
+`inquiries.removeTag`
+
+Remove a tag from an inquiry
+
+**Risk:** `write`
+
+```ts
+await corsair.persona.api.inquiries.removeTag({ inquiryId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c71", tag: "follow-up" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inquiryId` | `string` | Yes | Inquiry id |
+| `tag` | `string` | Yes | Tag name |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | Whether the tag change succeeded |
+
+
+
+---
+
+### update
+
+`inquiries.update`
+
+Update inquiry attributes
+
+**Risk:** `write`
+
+```ts
+await corsair.persona.api.inquiries.update({ inquiryId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c71", attributes: { note: "Updated" } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inquiryId` | `string` | Yes | Inquiry id |
+| `attributes` | `Record<string, unknown>` | Yes | Inquiry attributes to update |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | A Persona inquiry |
+| `included` | `any[] \| null` | No | Related resources requested via include |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: inquiry | null,
+  attributes?: {
+    status?: string | null,
+    inquiryTemplateId?: string | null,
+    referenceId?: string | null,
+    createdAt?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Inquiry Sessions
+
+### create
+
+`inquirySessions.create`
+
+Create an inquiry session
+
+**Risk:** `write`
+
+```ts
+await corsair.persona.api.inquirySessions.create({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | A Persona inquiry session |
+| `included` | `any[] \| null` | No | Related resources requested via include |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: inquiry-session | null,
+  attributes?: {
+    sessionStatus?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### expire
+
+`inquirySessions.expire`
+
+Expire one inquiry session
+
+**Risk:** `write`
+
+```ts
+await corsair.persona.api.inquirySessions.expire({ inquirySessionId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c73" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inquirySessionId` | `string` | Yes | Session id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | A Persona inquiry session |
+| `included` | `any[] \| null` | No | Related resources requested via include |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: inquiry-session | null,
+  attributes?: {
+    sessionStatus?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### expireAll
+
+`inquirySessions.expireAll`
+
+Expire every inquiry session of the account
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.persona.api.inquirySessions.expireAll({});
+```
+
+**Input:** _empty object_
+
+Expires every session of the environment; answers 204 with no body.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | Whether the expiry succeeded |
+
+
+
+---
+
+### generateOneTimeLink
+
+`inquirySessions.generateOneTimeLink`
+
+Generate a one-time link for an inquiry session
+
+**Risk:** `write`
+
+```ts
+await corsair.persona.api.inquirySessions.generateOneTimeLink({ inquirySessionId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c73" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inquirySessionId` | `string` | Yes | Session id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | A one-time inquiry link |
+| `included` | `any[] \| null` | No | Related resources requested via include |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  reference?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`inquirySessions.get`
+
+Read one inquiry session
+
+**Risk:** `read`
+
+```ts
+await corsair.persona.api.inquirySessions.get({ inquirySessionId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c73" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inquirySessionId` | `string` | Yes | Session id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | A Persona inquiry session |
+| `included` | `any[] \| null` | No | Related resources requested via include |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: inquiry-session | null,
+  attributes?: {
+    sessionStatus?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Inquiry Templates
+
+### get
+
+`inquiryTemplates.get`
+
+Read one inquiry template
+
+**Risk:** `read`
+
+```ts
+await corsair.persona.api.inquiryTemplates.get({ inquiryTemplateId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c74" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inquiryTemplateId` | `string` | Yes | Template id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | A Persona inquiry template |
+| `included` | `any[] \| null` | No | Related resources requested via include |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: inquiry-template | null,
+  attributes?: {
+    name?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`inquiryTemplates.list`
+
+List the inquiry templates
+
+**Risk:** `read`
+
+```ts
+await corsair.persona.api.inquiryTemplates.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `included` | `any[] \| null` | No | Related resources requested via include |
+| `meta` | `object \| null` | No | List metadata |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: inquiry-template | null,
+  attributes?: {
+    name?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  totalEntries?: number | null,
+  page?: {
+    number?: number | null,
+    size?: number | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listVersions
+
+`inquiryTemplates.listVersions`
+
+List the inquiry template versions
+
+**Risk:** `read`
+
+```ts
+await corsair.persona.api.inquiryTemplates.listVersions({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `included` | `any[] \| null` | No | Related resources requested via include |
+| `meta` | `object \| null` | No | List metadata |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  totalEntries?: number | null,
+  page?: {
+    number?: number | null,
+    size?: number | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### archive
+
+`webhooks.archive`
+
+Archive a webhook; archived webhooks cannot be re-enabled
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.persona.api.webhooks.archive({ webhookId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c75" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | Webhook id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | A Persona webhook configuration |
+| `included` | `any[] \| null` | No | Related resources requested via include |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: webhook-configuration | null,
+  attributes?: {
+    url?: string | null,
+    enabled?: boolean | null,
+    name?: string | null,
+    description?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`webhooks.create`
+
+Create a webhook configuration
+
+**Risk:** `write`
+
+```ts
+await corsair.persona.api.webhooks.create({ attributes: { name: "Main", url: "https://example.com/webhooks/persona", "enabled-events": ["inquiry.approved", "inquiry.declined"] } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attributes` | `object` | Yes | Webhook attributes |
+
+enabled-events lists the Persona event names to subscribe to, e.g. inquiry.approved, inquiry.declined, inquiry.created.
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+  name: string,
+  url: string,
+  enabled-events: string[],
+  description?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | A Persona webhook configuration |
+| `included` | `any[] \| null` | No | Related resources requested via include |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: webhook-configuration | null,
+  attributes?: {
+    url?: string | null,
+    enabled?: boolean | null,
+    name?: string | null,
+    description?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### disable
+
+`webhooks.disable`
+
+Disable a webhook; deliveries stop until it is enabled again
+
+**Risk:** `write`
+
+```ts
+await corsair.persona.api.webhooks.disable({ webhookId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c75" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | Webhook id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | A Persona webhook configuration |
+| `included` | `any[] \| null` | No | Related resources requested via include |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: webhook-configuration | null,
+  attributes?: {
+    url?: string | null,
+    enabled?: boolean | null,
+    name?: string | null,
+    description?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### enable
+
+`webhooks.enable`
+
+Enable a webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.persona.api.webhooks.enable({ webhookId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c75" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | Webhook id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | A Persona webhook configuration |
+| `included` | `any[] \| null` | No | Related resources requested via include |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: webhook-configuration | null,
+  attributes?: {
+    url?: string | null,
+    enabled?: boolean | null,
+    name?: string | null,
+    description?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`webhooks.get`
+
+Read one webhook configuration
+
+**Risk:** `read`
+
+```ts
+await corsair.persona.api.webhooks.get({ webhookId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c75" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | Webhook id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | A Persona webhook configuration |
+| `included` | `any[] \| null` | No | Related resources requested via include |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: webhook-configuration | null,
+  attributes?: {
+    url?: string | null,
+    enabled?: boolean | null,
+    name?: string | null,
+    description?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List the webhook configurations
+
+**Risk:** `read`
+
+```ts
+await corsair.persona.api.webhooks.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `included` | `any[] \| null` | No | Related resources requested via include |
+| `meta` | `object \| null` | No | List metadata |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: webhook-configuration | null,
+  attributes?: {
+    url?: string | null,
+    enabled?: boolean | null,
+    name?: string | null,
+    description?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  totalEntries?: number | null,
+  page?: {
+    number?: number | null,
+    size?: number | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### rotateSecret
+
+`webhooks.rotateSecret`
+
+Rotate the webhook signing secret; the old secret stops verifying immediately
+
+**Risk:** `write`
+
+```ts
+await corsair.persona.api.webhooks.rotateSecret({ webhookId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c75" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | Webhook id |
+
+The answer carries the new signing secret; store it with keys.set_webhook_signature.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `included` | `any[] \| null` | No | Related resources requested via include |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: webhook-configuration | null,
+  attributes?: {
+    secret?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchEvents
+
+`webhooks.searchEvents`
+
+Search recorded webhook events
+
+**Risk:** `read`
+
+```ts
+await corsair.persona.api.webhooks.searchEvents({ query: "inquiry.approved" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | Search across webhook events |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `included` | `any[] \| null` | No | Related resources requested via include |
+| `meta` | `object \| null` | No | List metadata |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  totalEntries?: number | null,
+  page?: {
+    number?: number | null,
+    size?: number | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Update a webhook URL, name or subscribed events
+
+**Risk:** `write`
+
+```ts
+await corsair.persona.api.webhooks.update({ webhookId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c75", attributes: { enabled: false } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | Webhook id |
+| `attributes` | `object` | Yes | Webhook attributes to update |
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+  name?: string,
+  url?: string,
+  enabled-events?: string[],
+  enabled?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | A Persona webhook configuration |
+| `included` | `any[] \| null` | No | Related resources requested via include |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: webhook-configuration | null,
+  attributes?: {
+    url?: string | null,
+    enabled?: boolean | null,
+    name?: string | null,
+    description?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
