@@ -805,6 +805,7 @@ await corsair.stannp.api.letters.create({ test: true, file: 'https://www.stannp.
 | `recipient` | `number \| object` | Yes | An existing recipient id, or a new recipient object. |
 | `template` | `number` | No | A template set up on the platform. |
 | `file` | `string` | No | URL of a PDF or DOC file to mail merge, instead of a template. Page limits apply per the docs. |
+| `pages` | `string` | No | Letter content as HTML with merge fields such as &#123;firstname&#125;, instead of a template or file. |
 | `size` | `A4 \| US-LETTER \| US-LETTER-XL-WINDOW` | No | Defaults to A4 for EU/UK accounts, US-LETTER for US accounts. |
 | `duplex` | `boolean` | No | Defaults to true. False prints front sides only. |
 | `clearzone` | `boolean` | No | Defaults to true. True overlays clear zones with white. |
@@ -917,7 +918,7 @@ await corsair.stannp.api.letters.get({ id: 16818210 });
 
 `letters.post`
 
-Post an already mail-merged letter PDF whose address the API reads with OCR
+Post an already mail-merged letter PDF whose address the API reads with OCR; test mode renders a PDF proof without posting or charging
 
 **Risk:** `destructive`
 
@@ -1144,6 +1145,7 @@ await corsair.stannp.api.recipients.create({ group_id: 123, firstname: 'John', l
 | `address3` | `string` | No | — |
 | `city` | `string` | No | — |
 | `county` | `string` | No | County or state; the API also accepts "state". |
+| `state` | `string` | No | US state; an alias for county, sent as county. |
 | `postcode` | `string` | No | The API also accepts "zipcode". |
 | `zipcode` | `string` | No | US zip code; the documented request example sends this name. |
 | `country` | `string` | No | ISO 3166-1 alpha-2. Defaults to the account region. |
@@ -1340,7 +1342,7 @@ await corsair.stannp.api.recipients.list({ group_id: 123, offset: 0, limit: 50 }
 
 `reporting.list`
 
-List mailpieces in a date range, optionally filtered by status or tag
+List mailpieces in a date range, optionally filtered by status, or by status and tag (a tag needs a status)
 
 **Risk:** `read`
 
@@ -1420,6 +1422,8 @@ await corsair.stannp.api.reporting.summary({ startdate: '2024-01-01', enddate: '
 | `total` | `number \| string \| null` | No | — |
 | `received` | `number \| string \| null` | No | Requests received. |
 | `printing` | `number \| string \| null` | No | Printing or finishing. |
+| `producing` | `number \| string \| null` | No | Being printed or finished. |
+| `in_transit` | `number \| string \| null` | No | In transit with the delivery service. |
 | `handed_over` | `number \| string \| null` | No | Handed to the delivery service. |
 | `local_delivery` | `number \| string \| null` | No | At the final delivery office. |
 | `delivered` | `number \| string \| null` | No | Estimated as delivered. |
