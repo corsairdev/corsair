@@ -90,7 +90,11 @@ function expectAuthenticated() {
 }
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	// Queued responses come first; any request beyond them fails instead of
+	// reaching the real API.
+	fetchMock = jest
+		.spyOn(globalThis, 'fetch')
+		.mockRejectedValue(new Error('unexpected request in a unit test'));
 	mockLog.mockClear();
 });
 
@@ -301,11 +305,11 @@ describe('letters', () => {
 		});
 	});
 
-	it('rejects a letter with neither template nor file', async () => {
+	it('rejects a letter with no template, file or pages', async () => {
 		respond({ success: true, data: mailpieceCreated });
 
 		await expect(invoke(Letters.create, { recipient: 1943 })).rejects.toThrow(
-			'Provide a template id or a file',
+			'Provide a template id, a file or pages',
 		);
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
@@ -523,15 +527,19 @@ describe('groups', () => {
 	});
 
 	it('removeRecipients POSTs to the remove route', async () => {
-		respond({ success: true, data: 2 });
+		respond({ success: true, data: 1 });
 
 		await expect(
 			invoke(Groups.removeRecipients, {
 				group_id: 39,
 				recipients: [45112],
 			}),
-		).resolves.toBe(2);
-		expect(lastRequest().path).toBe('/v1/groups/remove/39');
+		).resolves.toBe(1);
+		expect(lastRequest()).toMatchObject({
+			method: 'POST',
+			path: '/v1/groups/remove/39',
+			form: { recipients: '45112' },
+		});
 	});
 
 	it('purge POSTs the id and delete_recipients', async () => {

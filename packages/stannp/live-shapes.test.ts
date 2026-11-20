@@ -4,6 +4,7 @@ import {
 	Campaigns,
 	Events,
 	Groups,
+	Letters,
 	Recipients,
 	Reporting,
 	Selections,
@@ -22,6 +23,8 @@ jest.mock('corsair/core', () => ({
 
 const mockLog = jest.mocked(logEventFromContext);
 
+// unknown: this helper calls endpoints with different return types, so no
+// single endpoint output type fits every call.
 type AnyEndpoint = (ctx: never, input: never) => Promise<unknown>;
 
 // unknown: negative cases pass values no schema accepts.
@@ -42,7 +45,11 @@ function respond(body: unknown) {
 }
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	// Queued responses come first; any request beyond them fails instead of
+	// reaching the real API.
+	fetchMock = jest
+		.spyOn(globalThis, 'fetch')
+		.mockRejectedValue(new Error('unexpected request in a unit test'));
 	mockLog.mockClear();
 });
 
@@ -204,6 +211,49 @@ describe('input checks', () => {
 			country: 'GB',
 		});
 		expect(fetchMock).toHaveBeenCalledTimes(1);
+	});
+});
+
+describe('round 2 inputs', () => {
+	it('recipients.create sends the state alias as county', async () => {
+		respond({ success: true, data: { id: '1', valid: true } });
+
+		await invoke(Recipients.create, { firstname: 'A', state: 'NY' });
+
+		const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+		expect(new URLSearchParams(String(init.body)).get('county')).toBe('NY');
+	});
+
+	it('recipients.delete refuses a non-numeric confirmation', async () => {
+		respond({ success: true, data: 'unexpected' });
+
+		await expect(invoke(Recipients.remove, { id: 1 })).rejects.toThrow();
+	});
+
+	it('recipients.import needs mappings when no_headings is set', async () => {
+		await expect(
+			invoke(Recipients.importFile, {
+				file: 'https://example.com/r.csv',
+				group_id: 1,
+				no_headings: true,
+			}),
+		).rejects.toThrow(/mappings/);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('letters.create accepts inline pages instead of a template or file', async () => {
+		respond({ success: true, data: { id: 0, status: 'test' } });
+
+		await invoke(Letters.create, {
+			test: true,
+			recipient: 1943,
+			pages: '<p>Hello {firstname}</p>',
+		});
+
+		const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+		expect(new URLSearchParams(String(init.body)).get('pages')).toBe(
+			'<p>Hello {firstname}</p>',
+		);
 	});
 });
 

@@ -480,6 +480,12 @@ const LettersCreateInputSchema = z
 			.describe(
 				'URL of a PDF or DOC file to mail merge, instead of a template. Page limits apply per the docs.',
 			),
+		pages: z
+			.string()
+			.optional()
+			.describe(
+				'Letter content as HTML with merge fields such as {firstname}, instead of a template or file.',
+			),
 		size: LetterSizeSchema.optional().describe(
 			'Defaults to A4 for EU/UK accounts, US-LETTER for US accounts.',
 		),
@@ -505,11 +511,11 @@ const LettersCreateInputSchema = z
 		idempotencyKey: idempotencyKeyField(),
 	})
 	.superRefine((value, ctx) => {
-		if (value.template === undefined && !value.file) {
+		if (value.template === undefined && !value.file && !value.pages) {
 			ctx.addIssue({
 				code: 'custom',
 				message:
-					'Provide a template id or a file; the letter needs one of them.',
+					'Provide a template id, a file or pages; the letter needs one of them.',
 				path: ['file'],
 			});
 		}
@@ -599,6 +605,10 @@ const RecipientsCreateInputSchema = z
 			.string()
 			.optional()
 			.describe('County or state; the API also accepts "state".'),
+		state: z
+			.string()
+			.optional()
+			.describe('US state; an alias for county, sent as county.'),
 		postcode: z.string().optional().describe('The API also accepts "zipcode".'),
 		zipcode: z
 			.string()
@@ -678,35 +688,47 @@ const RecipientsDeleteInputSchema = z.object({
 });
 
 const RecipientsDeleteResponseSchema = z
-	.union([z.number(), z.string().transform(Number)])
+	.union([z.number(), z.string().regex(/^\d+$/).transform(Number)])
 	.describe('1 when the recipient was deleted.');
 
-const RecipientsImportInputSchema = z.object({
-	file: z
-		.string()
-		.min(1)
-		.describe('URL of a CSV or XLS file, or a base64 encoded CSV string.'),
-	group_id: positiveInt.describe('The group to import into.'),
-	duplicates: z
-		.enum(['update', 'ignore', 'duplicate'])
-		.optional()
-		.describe(
-			'What to do with duplicates. Defaults to update: the existing record gets the newest data.',
-		),
-	no_headings: z
-		.boolean()
-		.optional()
-		.describe(
-			'True when the CSV has no heading row; mappings must then be supplied.',
-		),
-	mappings: z
-		.string()
-		.optional()
-		.describe(
-			'Comma-separated headings remapping the CSV columns, such as title,firstname,lastname,company,address1,address2,city,postcode,country,custom,custom,skip.',
-		),
-	idempotencyKey: idempotencyKeyField(),
-});
+const RecipientsImportInputSchema = z
+	.object({
+		file: z
+			.string()
+			.min(1)
+			.describe('URL of a CSV or XLS file, or a base64 encoded CSV string.'),
+		group_id: positiveInt.describe('The group to import into.'),
+		duplicates: z
+			.enum(['update', 'ignore', 'duplicate'])
+			.optional()
+			.describe(
+				'What to do with duplicates. Defaults to update: the existing record gets the newest data.',
+			),
+		no_headings: z
+			.boolean()
+			.optional()
+			.describe(
+				'True when the CSV has no heading row; mappings must then be supplied.',
+			),
+		mappings: z
+			.string()
+			.optional()
+			.describe(
+				'Comma-separated headings remapping the CSV columns, such as title,firstname,lastname,company,address1,address2,city,postcode,country,custom,custom,skip.',
+			),
+		idempotencyKey: idempotencyKeyField(),
+	})
+	.superRefine((value, ctx) => {
+		// The docs: "If true, you must supply the mappings parameter."
+		if (value.no_headings && !value.mappings?.trim()) {
+			ctx.addIssue({
+				code: 'custom',
+				message:
+					'Set mappings when no_headings is true; the API needs the column names.',
+				path: ['mappings'],
+			});
+		}
+	});
 
 const RecipientsImportResponseSchema = z
 	.string()
@@ -1012,6 +1034,10 @@ const ReportingSummaryResponseSchema = z
 		total: num,
 		received: num.describe('Requests received.'),
 		printing: num.describe('Printing or finishing.'),
+		// Live (11-20) the summary answers producing and in_transit; the docs
+		// example shows printing.
+		producing: num.describe('Being printed or finished.'),
+		in_transit: num.describe('In transit with the delivery service.'),
 		handed_over: num.describe('Handed to the delivery service.'),
 		local_delivery: num.describe('At the final delivery office.'),
 		delivered: num.describe('Estimated as delivered.'),
