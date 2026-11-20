@@ -348,6 +348,17 @@ describe('request shape', () => {
 			'/v2.0/locations/a%2F..%2Fb%20c/customers',
 		);
 	});
+
+	// `..` survives encodeURIComponent and the URL parser resolves it, which
+	// would send a per-location read to the account-wide route.
+	it('refuses a dot-segment location ID before any request', async () => {
+		for (const location_id of ['.', '..']) {
+			await expect(
+				endpoints.locations.customers(makeContext(), { location_id }),
+			).rejects.toThrow('location_id cannot be');
+		}
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
 });
 
 describe('error translation', () => {

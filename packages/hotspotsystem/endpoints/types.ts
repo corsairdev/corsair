@@ -338,7 +338,17 @@ const LocationScopedShape = {
 	 * number in hand. Both are accepted and the path is built from either.
 	 */
 	location_id: z
-		.union([z.string().min(1), z.number().int()])
+		.union([
+			// `.` and `..` survive encodeURIComponent and the URL parser resolves
+			// them, so `..` would turn a per-location read into the account-wide one.
+			z
+				.string()
+				.min(1)
+				.refine((value) => value !== '.' && value !== '..', {
+					message: 'location_id cannot be `.` or `..`',
+				}),
+			z.number().int(),
+		])
 		.describe('The ID of a location, as `locations.list` returns it.'),
 	...ListQueryShape,
 } as const;
