@@ -1,0 +1,58 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+# `pnpm validate:plugins` fails until the TODO is replaced.
+displayName: "Pexels"
+description: "Pexels is a free stock photo and video library. This plugin searches photos and videos, reads their rendition URLs and metadata, lists the curated and popular feeds, and browses the media collections of the API key."
+domain: pexels.com
+recommendedAuth: api_key
+overviewNote: >
+  Authenticate with the API key from the Pexels API keys page; the plugin
+  sends it as the raw value of the Authorization header, without a Bearer
+  prefix, as the API expects. Photos live under /v1, videos at the root, and
+  the plugin handles both.
+
+  Every route is a GET and answers { photos|videos|collections, page,
+  per_page, total_results, next_page, prev_page }; follow next_page for the
+  next results page, or pass page and per_page (at most 80) yourself. The
+  default monthly quota is 20,000 requests; limits.get is not part of the
+  Pexels API, so watch the per-page X-Ratelimit-Remaining header if you need
+  quota tracking.
+
+  Every operation is described in the official docs:
+  https://www.pexels.com/api/documentation/
+examples:
+  read:
+    path: photos.search
+    title: Search photos
+    args:
+      query: nature
+      orientation: landscape
+  write:
+    path: videos.search
+    title: Search videos
+    args:
+      query: waves
+apiExamples:
+  photos.search:
+    call: '{ query: "nature", orientation: "landscape", per_page: 25 }'
+  photos.get:
+    call: '{ photoId: 2014422 }'
+  photos.curated:
+    call: '{ per_page: 25 }'
+  videos.search:
+    call: '{ query: "waves", orientation: "portrait" }'
+  videos.get:
+    call: '{ videoId: 2499611 }'
+  videos.popular:
+    call: '{ min_width: 1280, min_duration: 5 }'
+  collections.list:
+    call: '{ per_page: 25 }'
+  collections.listFeatured:
+    call: '{ per_page: 25 }'
+  collections.get:
+    call: '{ collectionId: "9nkrlyb" }'
+  collections.listMedia:
+    call: '{ collectionId: "9nkrlyb", per_page: 25 }'
+apiNotes:
+  photos.search: 'color takes a color name or a hex value; src carries all rendition URLs, original included. per_page is capped at 80 results per page across every list endpoint.'
+  videos.get: 'video_files lists every downloadable rendition with quality and file type.'
+  collections.listMedia: 'Returns mixed photos and videos; each item carries a type of Photo or Video and the corresponding object.'

@@ -4144,6 +4144,14 @@
                 ]
               },
               {
+                "group": "Pexels",
+                "pages": [
+                  "plugins/pexels/overview",
+                  "plugins/pexels/api",
+                  "plugins/pexels/database"
+                ]
+              },
+              {
                 "group": "PhantomBuster",
                 "pages": [
                   "plugins/phantombuster/overview",

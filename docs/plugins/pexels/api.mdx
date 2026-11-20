@@ -1,0 +1,649 @@
+---
+title: "Pexels API reference"
+sidebarTitle: "API"
+description: "API reference for the Pexels plugin in Corsair: every `pexels.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Collections
+
+### get
+
+`collections.get`
+
+Read one collection by id
+
+**Risk:** `read`
+
+```ts
+await corsair.pexels.api.collections.get({ collectionId: "9nkrlyb" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionId` | `string` | Yes | Collection id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Collection id |
+| `title` | `string \| null` | No | Collection title |
+| `description` | `string \| null` | No | Collection description |
+| `private` | `boolean \| null` | No | Whether the collection is private |
+| `itemsCount` | `number \| null` | No | Media items in the collection |
+| `mediaCount` | `number \| null` | No | Media items in the collection (alternate field) |
+| `photosCount` | `number \| null` | No | Photos in the collection |
+| `videosCount` | `number \| null` | No | Videos in the collection |
+
+
+
+---
+
+### list
+
+`collections.list`
+
+List the collections of the API key
+
+**Risk:** `read`
+
+```ts
+await corsair.pexels.api.collections.list({ per_page: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number |
+| `per_page` | `number` | No | Results per page, at most 80 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collections` | `object[]` | Yes | Collections on this page |
+| `page` | `number \| null` | No | Page returned |
+| `per_page` | `number \| null` | No | Results per page |
+| `total_results` | `number \| null` | No | Total collections |
+| `next_page` | `string \| null` | No | URL of the next page |
+| `prev_page` | `string \| null` | No | URL of the previous page |
+
+<AccordionGroup>
+<Accordion title="collections full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  description?: string | null,
+  private?: boolean | null,
+  itemsCount?: number | null,
+  mediaCount?: number | null,
+  photosCount?: number | null,
+  videosCount?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listFeatured
+
+`collections.listFeatured`
+
+List the featured collections
+
+**Risk:** `read`
+
+```ts
+await corsair.pexels.api.collections.listFeatured({ per_page: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number |
+| `per_page` | `number` | No | Results per page, at most 80 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collections` | `object[]` | Yes | Featured collections on this page |
+| `page` | `number \| null` | No | Page returned |
+| `per_page` | `number \| null` | No | Results per page |
+| `total_results` | `number \| null` | No | Total featured collections |
+| `next_page` | `string \| null` | No | URL of the next page |
+| `prev_page` | `string \| null` | No | URL of the previous page |
+
+<AccordionGroup>
+<Accordion title="collections full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  description?: string | null,
+  private?: boolean | null,
+  itemsCount?: number | null,
+  mediaCount?: number | null,
+  photosCount?: number | null,
+  videosCount?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listMedia
+
+`collections.listMedia`
+
+List the mixed photos and videos of a collection
+
+**Risk:** `read`
+
+```ts
+await corsair.pexels.api.collections.listMedia({ collectionId: "9nkrlyb", per_page: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionId` | `string` | Yes | Collection id |
+| `page` | `number` | No | Page number |
+| `per_page` | `number` | No | Results per page, at most 80 |
+
+Returns mixed photos and videos; each item carries a type of Photo or Video and the corresponding object.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `media` | `object[]` | Yes | Media items on this page |
+| `page` | `number \| null` | No | Page returned |
+| `per_page` | `number \| null` | No | Results per page |
+| `total_results` | `number \| null` | No | Total media items |
+| `next_page` | `string \| null` | No | URL of the next page |
+| `prev_page` | `string \| null` | No | URL of the previous page |
+
+<AccordionGroup>
+<Accordion title="media full type">
+
+```ts
+{
+  id?: number | null,
+  type?: Photo | Video | null,
+  photo?: {
+    id?: number | null,
+    width?: number | null,
+    height?: number | null,
+    url?: string | null,
+    photographer?: string | null,
+    photographerUrl?: string | null,
+    photographerId?: number | null,
+    src?: {
+      original?: string | null,
+      large2x?: string | null,
+      large?: string | null,
+      medium?: string | null,
+      small?: string | null,
+      landscape?: string | null,
+      portrait?: string | null,
+      tiny?: string | null
+    } | null,
+    liked?: boolean | null,
+    alt?: string | null
+  } | null,
+  video?: {
+    id?: number | null,
+    width?: number | null,
+    height?: number | null,
+    url?: string | null,
+    image?: string | null,
+    duration?: number | null,
+    user?: {
+      id?: number | null,
+      name?: string | null,
+      url?: string | null
+    } | null,
+    video_files?: {
+      id?: number | null,
+      quality?: string | null,
+      file_type?: string | null,
+      width?: number | null,
+      height?: number | null,
+      link?: string | null
+    }[] | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Photos
+
+### curated
+
+`photos.curated`
+
+List the curated photo feed
+
+**Risk:** `read`
+
+```ts
+await corsair.pexels.api.photos.curated({ per_page: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number |
+| `per_page` | `number` | No | Results per page, at most 80 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `photos` | `object[]` | Yes | Curated photos on this page |
+| `page` | `number \| null` | No | Page returned |
+| `per_page` | `number \| null` | No | Results per page |
+| `total_results` | `number \| null` | No | Total curated photos |
+| `next_page` | `string \| null` | No | URL of the next page |
+| `prev_page` | `string \| null` | No | URL of the previous page |
+
+<AccordionGroup>
+<Accordion title="photos full type">
+
+```ts
+{
+  id?: number | null,
+  width?: number | null,
+  height?: number | null,
+  url?: string | null,
+  photographer?: string | null,
+  photographerUrl?: string | null,
+  photographerId?: number | null,
+  src?: {
+    original?: string | null,
+    large2x?: string | null,
+    large?: string | null,
+    medium?: string | null,
+    small?: string | null,
+    landscape?: string | null,
+    portrait?: string | null,
+    tiny?: string | null
+  } | null,
+  liked?: boolean | null,
+  alt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`photos.get`
+
+Read one photo by id with its rendition URLs
+
+**Risk:** `read`
+
+```ts
+await corsair.pexels.api.photos.get({ photoId: 2014422 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `photoId` | `number` | Yes | Photo id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | Photo id |
+| `width` | `number \| null` | No | Width in pixels |
+| `height` | `number \| null` | No | Height in pixels |
+| `url` | `string \| null` | No | Photo page URL on Pexels |
+| `photographer` | `string \| null` | No | Photographer name |
+| `photographerUrl` | `string \| null` | No | Photographer profile URL |
+| `photographerId` | `number \| null` | No | Photographer id |
+| `src` | `object \| null` | No | Rendition URLs |
+| `liked` | `boolean \| null` | No | Whether the API key has liked the photo |
+| `alt` | `string \| null` | No | Alt text |
+
+<AccordionGroup>
+<Accordion title="src full type">
+
+```ts
+{
+  original?: string | null,
+  large2x?: string | null,
+  large?: string | null,
+  medium?: string | null,
+  small?: string | null,
+  landscape?: string | null,
+  portrait?: string | null,
+  tiny?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`photos.search`
+
+Search photos by query, orientation, size and color
+
+**Risk:** `read`
+
+```ts
+await corsair.pexels.api.photos.search({ query: "nature", orientation: "landscape", per_page: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | Search query |
+| `orientation` | `landscape \| portrait \| square` | No | Aspect orientation filter |
+| `size` | `large \| medium \| small` | No | Minimum size filter |
+| `color` | `string` | No | Dominant color filter: a color name or a hex value |
+| `page` | `number` | No | Page number |
+| `per_page` | `number` | No | Results per page, at most 80 |
+
+color takes a color name or a hex value; src carries all rendition URLs, original included. per_page is capped at 80 results per page across every list endpoint.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `photos` | `object[]` | Yes | Photos on this page |
+| `page` | `number \| null` | No | Page returned |
+| `per_page` | `number \| null` | No | Results per page |
+| `total_results` | `number \| null` | No | Total matching photos |
+| `next_page` | `string \| null` | No | URL of the next page |
+| `prev_page` | `string \| null` | No | URL of the previous page |
+
+<AccordionGroup>
+<Accordion title="photos full type">
+
+```ts
+{
+  id?: number | null,
+  width?: number | null,
+  height?: number | null,
+  url?: string | null,
+  photographer?: string | null,
+  photographerUrl?: string | null,
+  photographerId?: number | null,
+  src?: {
+    original?: string | null,
+    large2x?: string | null,
+    large?: string | null,
+    medium?: string | null,
+    small?: string | null,
+    landscape?: string | null,
+    portrait?: string | null,
+    tiny?: string | null
+  } | null,
+  liked?: boolean | null,
+  alt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Videos
+
+### get
+
+`videos.get`
+
+Read one video by id with its downloadable renditions
+
+**Risk:** `read`
+
+```ts
+await corsair.pexels.api.videos.get({ videoId: 2499611 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `videoId` | `number` | Yes | Video id |
+
+video_files lists every downloadable rendition with quality and file type.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | Video id |
+| `width` | `number \| null` | No | Width in pixels |
+| `height` | `number \| null` | No | Height in pixels |
+| `url` | `string \| null` | No | Video page URL on Pexels |
+| `image` | `string \| null` | No | Poster image URL |
+| `duration` | `number \| null` | No | Duration in seconds |
+| `user` | `object \| null` | No | Video creator |
+| `video_files` | `object[] \| null` | No | Downloadable renditions |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  url?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="video_files full type">
+
+```ts
+{
+  id?: number | null,
+  quality?: string | null,
+  file_type?: string | null,
+  width?: number | null,
+  height?: number | null,
+  link?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### popular
+
+`videos.popular`
+
+List the popular videos, filtered by size and duration
+
+**Risk:** `read`
+
+```ts
+await corsair.pexels.api.videos.popular({ min_width: 1280, min_duration: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `min_width` | `number` | No | Minimum width in pixels |
+| `min_height` | `number` | No | Minimum height in pixels |
+| `min_duration` | `number` | No | Minimum duration in seconds |
+| `max_duration` | `number` | No | Maximum duration in seconds |
+| `page` | `number` | No | Page number |
+| `per_page` | `number` | No | Results per page, at most 80 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `videos` | `object[]` | Yes | Popular videos on this page |
+| `page` | `number \| null` | No | Page returned |
+| `per_page` | `number \| null` | No | Results per page |
+| `total_results` | `number \| null` | No | Total popular videos |
+| `next_page` | `string \| null` | No | URL of the next page |
+| `prev_page` | `string \| null` | No | URL of the previous page |
+
+<AccordionGroup>
+<Accordion title="videos full type">
+
+```ts
+{
+  id?: number | null,
+  width?: number | null,
+  height?: number | null,
+  url?: string | null,
+  image?: string | null,
+  duration?: number | null,
+  user?: {
+    id?: number | null,
+    name?: string | null,
+    url?: string | null
+  } | null,
+  video_files?: {
+    id?: number | null,
+    quality?: string | null,
+    file_type?: string | null,
+    width?: number | null,
+    height?: number | null,
+    link?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`videos.search`
+
+Search videos by query and orientation
+
+**Risk:** `read`
+
+```ts
+await corsair.pexels.api.videos.search({ query: "waves", orientation: "portrait" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | Search query |
+| `orientation` | `landscape \| portrait \| square` | No | Aspect orientation filter |
+| `page` | `number` | No | Page number |
+| `per_page` | `number` | No | Results per page, at most 80 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `videos` | `object[]` | Yes | Videos on this page |
+| `page` | `number \| null` | No | Page returned |
+| `per_page` | `number \| null` | No | Results per page |
+| `total_results` | `number \| null` | No | Total matching videos |
+| `next_page` | `string \| null` | No | URL of the next page |
+| `prev_page` | `string \| null` | No | URL of the previous page |
+
+<AccordionGroup>
+<Accordion title="videos full type">
+
+```ts
+{
+  id?: number | null,
+  width?: number | null,
+  height?: number | null,
+  url?: string | null,
+  image?: string | null,
+  duration?: number | null,
+  user?: {
+    id?: number | null,
+    name?: string | null,
+    url?: string | null
+  } | null,
+  video_files?: {
+    id?: number | null,
+    quality?: string | null,
+    file_type?: string | null,
+    width?: number | null,
+    height?: number | null,
+    link?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
