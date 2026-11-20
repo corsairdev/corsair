@@ -1,18 +1,27 @@
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { StorerocketAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
-// unknown: handlers accept any thrown value until the status check narrows it.
+// The client throws HTTP failures as core's ApiError, so the handlers are
+// tested against that.
 function apiError(
-	status: number | undefined,
+	status: number,
 	method: 'GET' | 'POST' = 'GET',
 	retryAfter?: number,
-): StorerocketAPIError {
-	return new StorerocketAPIError('Storerocket error', {
-		status,
-		method,
-		retryAfter,
-	});
+): ApiError {
+	return new ApiError(
+		{ method, url: '/projects' },
+		{
+			url: 'https://storerocket.io/api/v2/projects',
+			ok: false,
+			status,
+			statusText: '',
+			body: null,
+		},
+		'Storerocket error',
+		{ retryAfter },
+	);
 }
 
 // Runs the map the way core does: first matching key wins.
@@ -64,6 +73,14 @@ describe('error handlers', () => {
 	it('does not replay a location create on a 5xx: the docs warn a retry can create a second location', async () => {
 		const decision = await verdict(apiError(502, 'POST'));
 		expect(decision?.maxRetries).toBe(0);
+	});
+
+	it('reads a StorerocketAPIError too (network failures)', async () => {
+		const error = new StorerocketAPIError('socket hang up', {
+			status: 503,
+			method: 'GET',
+		});
+		expect((await verdict(error))?.maxRetries).toBe(2);
 	});
 
 	it('does not retry anything else', async () => {

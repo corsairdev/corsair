@@ -1,8 +1,27 @@
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { StorerocketAPIError } from './client';
 
+// HTTP failures arrive as core's ApiError (rebuilt without the request body in
+// client.ts); StorerocketAPIError covers network failures and timeouts.
 function statusOf(error: Error): number | undefined {
-	return error instanceof StorerocketAPIError ? error.status : undefined;
+	if (error instanceof ApiError || error instanceof StorerocketAPIError) {
+		return error.status;
+	}
+	return undefined;
+}
+
+function retryAfterOf(error: Error): number | undefined {
+	if (error instanceof ApiError || error instanceof StorerocketAPIError) {
+		return error.retryAfter;
+	}
+	return undefined;
+}
+
+function methodOf(error: Error): string | undefined {
+	if (error instanceof ApiError) return error.request.method;
+	if (error instanceof StorerocketAPIError) return error.method;
+	return undefined;
 }
 
 // Status taxonomy from https://docs.storerocket.io/api/errors: 400 (query
@@ -15,8 +34,7 @@ export const errorHandlers = {
 		match: (error: Error) => statusOf(error) === 429,
 		handler: async (error: Error) => ({
 			maxRetries: 3,
-			headersRetryAfterMs:
-				error instanceof StorerocketAPIError ? error.retryAfter : undefined,
+			headersRetryAfterMs: retryAfterOf(error),
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
@@ -46,9 +64,7 @@ export const errorHandlers = {
 	// warn a retry can create a second location.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof StorerocketAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			methodOf(error) === 'GET' && (statusOf(error) ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

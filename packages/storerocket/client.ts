@@ -143,30 +143,45 @@ export async function makeStorerocketRequest(
 		// Rethrow our own error untouched; the branches below would re-wrap it
 		// and drop its fields.
 		if (error instanceof StorerocketAPIError) throw error;
-		if (error instanceof ApiError) {
-			// Rebuilt without the cause, per PLUGIN_PR_RULES R8: the cause
-			// retains request bodies (locations carry addresses and emails),
-			// and status and retryAfter stay on the rebuilt error for the
-			// handlers.
-			const detail = describeStorerocketError(error.body, error.message);
-			throw new StorerocketAPIError(
-				error.status === undefined
-					? detail
-					: `Storerocket ${error.status}: ${detail}`,
-				{
-					status: error.status,
-					body: error.body,
-					retryAfter: error.retryAfter,
-					method,
-				},
-			);
-		}
+		if (error instanceof ApiError) throw withoutRequestBody(error);
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
 			throw new StorerocketAPIError(error.message, { cause: error, method });
 		}
 		throw new StorerocketAPIError('Unknown Storerocket error', { method });
 	}
+}
+
+/**
+ * Rebuilds core's ApiError without the body we sent (PLUGIN_PR_RULES R8):
+ * locations carry addresses, phone numbers and emails. It stays an ApiError
+ * so core's management API reports the provider's status and body instead of
+ * a generic 500, and it keeps status, statusText, the response body and the
+ * rate-limit fields the error handlers read. The message is the provider's
+ * own text, with a 422's field errors.
+ */
+function withoutRequestBody(error: ApiError): ApiError {
+	const detail = describeStorerocketError(error.body, error.message);
+	return new ApiError(
+		{
+			...error.request,
+			body: error.request.body === undefined ? undefined : '[REDACTED]',
+		},
+		{
+			url: error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
+		},
+		`Storerocket ${error.status}: ${detail}`,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
 }
 
 /** Encodes one path segment. */

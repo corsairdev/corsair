@@ -1,3 +1,4 @@
+import { ApiError } from 'corsair/http';
 import {
 	describeStorerocketError,
 	makeStorerocketRequest,
@@ -29,12 +30,14 @@ function respond(
 }
 
 // unknown: a rejection can be any value until the instanceof check narrows it.
-async function failure(
-	promise: Promise<unknown>,
-): Promise<StorerocketAPIError> {
+async function failure(promise: Promise<unknown>): Promise<ApiError> {
 	const error = await promise.catch((caught: unknown) => caught);
-	expect(error).toBeInstanceOf(StorerocketAPIError);
-	if (!(error instanceof StorerocketAPIError)) throw error;
+	// Core's management API maps only errors named ApiError to the provider's
+	// status; anything else becomes a generic 500.
+	expect(error).toBeInstanceOf(ApiError);
+	expect(error).not.toBeInstanceOf(StorerocketAPIError);
+	if (!(error instanceof ApiError)) throw error;
+	expect(error.name).toBe('ApiError');
 	return error;
 }
 
@@ -124,7 +127,7 @@ describe('makeStorerocketRequest', () => {
 		);
 		expect(error.message).toBe('Storerocket 401: Unauthenticated.');
 		expect(error.status).toBe(401);
-		expect(error.method).toBe('GET');
+		expect(error.request.method).toBe('GET');
 	});
 
 	it('includes the field errors of a 422 in the message', async () => {
@@ -141,7 +144,21 @@ describe('makeStorerocketRequest', () => {
 			'Storerocket 422: The city field is required. (city: The city field is required.)',
 		);
 		expect(error.body).toEqual(validationError);
-		expect(error.method).toBe('POST');
+		expect(error.request.method).toBe('POST');
+	});
+
+	it('keeps the sent location out of the error', async () => {
+		respond(validationError, 422);
+
+		const error = await failure(
+			makeStorerocketRequest(TOKEN, {
+				method: 'POST',
+				path: '/projects/PROJECT_ID/locations',
+				body: { name: 'Downtown Store', email: 'owner@example.com' },
+			}),
+		);
+		expect(error.request.body).toBe('[REDACTED]');
+		expect(JSON.stringify(error)).not.toContain('owner@example.com');
 	});
 
 	it('keeps a non-JSON body readable', async () => {
