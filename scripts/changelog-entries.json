@@ -10188,5 +10188,277 @@
         "title": "Return downloaded files as file outputs in nine plugins"
       }
     ]
+  },
+  {
+    "date": "2026-11-20",
+    "package": "@corsair-dev/agentql",
+    "dir": "packages/agentql",
+    "name": "AgentQL",
+    "version": "0.1.3",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2644,
+        "title": "Take a file link or base64 where a Blob was required"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-20",
+    "package": "@corsair-dev/alttextai",
+    "dir": "packages/alttextai",
+    "name": "AltText.ai",
+    "version": "0.1.2",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2644,
+        "title": "Take a file link or base64 where a Blob was required"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-20",
+    "package": "@corsair-dev/aryn",
+    "dir": "packages/aryn",
+    "name": "Aryn",
+    "version": "0.1.1",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2644,
+        "title": "Take a file link or base64 where a Blob was required"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-20",
+    "package": "@corsair-dev/cloudinary",
+    "dir": "packages/cloudinary",
+    "name": "Cloudinary",
+    "version": "0.1.2",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2644,
+        "title": "Take a file link or base64 where a Blob was required"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-20",
+    "package": "@corsair-dev/cloudlayer",
+    "dir": "packages/cloudlayer",
+    "name": "Cloudlayer",
+    "version": "0.1.1",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2644,
+        "title": "Take a file link or base64 where a Blob was required"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-20",
+    "package": "@corsair-dev/conversiontools",
+    "dir": "packages/conversiontools",
+    "name": "Conversion Tools",
+    "version": "0.1.1",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2644,
+        "title": "Take a file link or base64 where a Blob was required"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-20",
+    "package": "@corsair-dev/elorus",
+    "dir": "packages/elorus",
+    "name": "Elorus",
+    "version": "0.1.2",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2644,
+        "title": "Take a file link or base64 where a Blob was required"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-20",
+    "package": "@corsair-dev/filevine",
+    "dir": "packages/filevine",
+    "name": "Filevine",
+    "version": "0.1.1",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2644,
+        "title": "Take a file link or base64 where a Blob was required"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-20",
+    "package": "@corsair-dev/gong",
+    "dir": "packages/gong",
+    "name": "Gong",
+    "version": "0.1.1",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2644,
+        "title": "Take a file link or base64 where a Blob was required"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-20",
+    "package": "@corsair-dev/imgbb",
+    "dir": "packages/imgbb",
+    "name": "ImgBB",
+    "version": "0.1.2",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2644,
+        "title": "Take a file link or base64 where a Blob was required"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-20",
+    "package": "@corsair-dev/ocrspace",
+    "dir": "packages/ocrspace",
+    "name": "OCR.space",
+    "version": "0.1.2",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2644,
+        "title": "Take a file link or base64 where a Blob was required"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-20",
+    "package": "@corsair-dev/ocrwebservice",
+    "dir": "packages/ocrwebservice",
+    "name": "OCR Web Service",
+    "version": "0.1.2",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2644,
+        "title": "Take a file link or base64 where a Blob was required"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-20",
+    "package": "@corsair-dev/pipedrive",
+    "dir": "packages/pipedrive",
+    "name": "Pipedrive",
+    "version": "0.1.1",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2644,
+        "title": "Take a file link or base64 where a Blob was required"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-20",
+    "package": "@corsair-dev/saperly",
+    "dir": "packages/saperly",
+    "name": "Saperly",
+    "version": "0.1.1",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2644,
+        "title": "Take a file link or base64 where a Blob was required"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-20",
+    "package": "@corsair-dev/spotlightr",
+    "dir": "packages/spotlightr",
+    "name": "Spotlightr",
+    "version": "0.1.1",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2644,
+        "title": "Take a file link or base64 where a Blob was required"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-20",
+    "package": "@corsair-dev/strava",
+    "dir": "packages/strava",
+    "name": "Strava",
+    "version": "0.1.5",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2644,
+        "title": "Take a file link or base64 where a Blob was required"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-20",
+    "package": "@corsair-dev/textit",
+    "dir": "packages/textit",
+    "name": "TextIt",
+    "version": "0.1.1",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2644,
+        "title": "Take a file link or base64 where a Blob was required"
+      }
+    ]
   }
 ]

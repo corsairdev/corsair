@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/alttextai",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "AltText.ai plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
