@@ -4,11 +4,10 @@ import { storeganise } from './index';
 import { unit } from './test-fixtures';
 
 /**
- * One retry layer: the transport does not retry (client.ts pins maxRetries:
- * 0) and error-handlers.ts decides the rest. Storeganise documents no
- * rate-limit contract, so a 429 fails immediately. Only reads are replayed
- * on 5xx: the one documented write sets rental custom fields, so a repeat
- * send has no documented idempotency contract.
+ * A 429 gets core's standard retries (Retry-After honoured). error-handlers.ts
+ * decides the rest: only reads are replayed on 5xx, because the one
+ * documented write sets rental custom fields with no documented idempotency
+ * contract.
  */
 async function createClient() {
 	const testDb = createTestDatabase();
@@ -51,21 +50,22 @@ afterEach(() => {
 });
 
 describe('retries through createCorsair', () => {
-	it('fails fast on a 429 instead of replaying on guesswork', async () => {
+	it("retries a 429 through core's standard rate-limit handling", async () => {
 		const { corsair, testDb } = await createClient();
 		try {
 			respond(
 				{ error: { type: 'TooManyRequests', message: 'Slow down' } },
 				429,
 				{
-					'Retry-After': '1',
+					'Retry-After': '0',
 				},
 			);
+			respond([unit]);
 
-			await expect(
-				corsair.storeganise.api.units.list({}),
-			).rejects.toMatchObject({ status: 429 });
-			expect(fetchMock).toHaveBeenCalledTimes(1);
+			await expect(corsair.storeganise.api.units.list({})).resolves.toEqual([
+				unit,
+			]);
+			expect(fetchMock).toHaveBeenCalledTimes(2);
 		} finally {
 			testDb.cleanup();
 		}

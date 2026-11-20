@@ -4,10 +4,14 @@ import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
 // unknown: handlers accept any thrown value until the status check narrows it.
 function apiError(
-	status: number | undefined,
+	status: number,
 	method: 'GET' | 'PUT' = 'GET',
 ): StoreganiseAPIError {
-	return new StoreganiseAPIError('Storeganise error', { status, method });
+	return new StoreganiseAPIError('Storeganise error', {
+		status,
+		method,
+		path: '/admin/units',
+	});
 }
 
 // Runs the map the way core does: first matching key wins. Handler

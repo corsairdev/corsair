@@ -163,8 +163,10 @@ describe('makeStoreganiseRequest', () => {
 		expect(error.message).toBe('Storeganise 404: Not Found');
 	});
 
-	it('copies retryAfter from the response onto the error without retrying, because no rate-limit contract is documented', async () => {
-		respond('Too Many Requests', 429, { 'Retry-After': '7' });
+	it('keeps retryAfter on the error once core has used its 429 retries', async () => {
+		for (let i = 0; i < 4; i++) {
+			respond('Too Many Requests', 429, { 'Retry-After': '0' });
+		}
 
 		const error = await failure(
 			makeStoreganiseRequest(API_KEY, {
@@ -174,8 +176,8 @@ describe('makeStoreganiseRequest', () => {
 			}),
 		);
 		expect(error.status).toBe(429);
-		expect(error.retryAfter).toBe(7000);
-		expect(fetchMock).toHaveBeenCalledTimes(1);
+		expect(error.retryAfter).toBe(0);
+		expect(fetchMock).toHaveBeenCalledTimes(4);
 	});
 });
 

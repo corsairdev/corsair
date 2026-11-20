@@ -7,48 +7,59 @@ import type {
 import { ApiError, request } from 'corsair/http';
 
 /**
- * Storeganise documents no rate-limit contract for the API, so the plugin
- * keeps one retry layer: the transport does not retry (maxRetries: 0, no
- * plugin handler for 429 either), and a 429 fails immediately. headerNames
- * stays filled so a real Retry-After still reaches the error for callers.
+ * Storeganise documents no rate-limit contract, so 429s get core's standard
+ * handling: up to three retries honouring Retry-After (R8: the plugin does
+ * not retry a 429 again on top). The provider refused those requests before
+ * running them, so a retry is safe for the one write too.
  */
 const RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 0,
+	maxRetries: 3,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: { retryAfter: 'retry-after' },
 };
 
-export class StoreganiseAPIError extends Error {
-	readonly status?: number;
-	/** The unmodified response body, when there was one. */
-	// unknown: error bodies can be the { error: { type, message } } envelope,
-	// a validation { errors } object, or non-JSON from a proxy.
-	readonly body?: unknown;
-	/** Milliseconds to wait before retrying, from Retry-After. */
-	readonly retryAfter?: number;
+/**
+ * A failed call throws this: core's `ApiError` (R8: core and the handlers
+ * read `status` and `retryAfter` from it), rebuilt without the request body
+ * and query. Unit-rental custom fields carry access codes, and user lookups
+ * carry email addresses, which core's own ApiError keeps on the request.
+ */
+export class StoreganiseAPIError extends ApiError {
 	/** The HTTP method of the failed request, for replay-safety decisions. */
-	readonly method?: string;
+	readonly method: string;
 
 	constructor(
 		message: string,
 		options: {
-			cause?: Error;
-			status?: number;
-			// unknown: same open body as the field above.
+			method: string;
+			/** Request path, without query. */
+			path: string;
+			status: number;
+			statusText?: string;
+			// unknown: error bodies can be the { error: { type, message } }
+			// envelope, a validation { errors } object, or non-JSON from a proxy.
 			body?: unknown;
 			retryAfter?: number;
-			method?: string;
-		} = {},
+		},
 	) {
-		super(message, options.cause ? { cause: options.cause } : undefined);
+		// users.get takes an email address as the id; keep it out of the URL.
+		const url = options.path.replace(/[^/]*(?:@|%40)[^/]*/g, '[email]');
+		super(
+			{ method: options.method as ApiRequestOptions['method'], url },
+			{
+				url,
+				ok: false,
+				status: options.status,
+				statusText: options.statusText ?? '',
+				body: options.body,
+			},
+			message,
+			{ retryAfter: options.retryAfter },
+		);
 		this.name = 'StoreganiseAPIError';
-		const cause = options.cause instanceof ApiError ? options.cause : undefined;
-		this.status = options.status ?? cause?.status;
-		this.body = options.body ?? cause?.body;
-		this.retryAfter = options.retryAfter ?? cause?.retryAfter;
-		this.method = options.method ?? cause?.request.method;
+		this.method = options.method;
 	}
 }
 
@@ -86,7 +97,7 @@ export function describeStoreganiseError(
  */
 export function baseForBusiness(businessCode: string): string {
 	if (!/^[a-z0-9][a-z0-9-]*$/i.test(businessCode)) {
-		throw new StoreganiseAPIError(
+		throw new Error(
 			`Invalid Storeganise business code: ${JSON.stringify(
 				businessCode,
 			)} is not a subdomain slug`,
@@ -148,31 +159,29 @@ export async function makeStoreganiseRequest(
 			rateLimitConfig: RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		// Rethrow our own error untouched; the branches below would re-wrap it
-		// and drop its fields.
-		if (error instanceof StoreganiseAPIError) throw error;
 		if (error instanceof ApiError) {
-			// Rebuilt without the cause, per PLUGIN_PR_RULES R8: the cause
-			// retains request bodies (unit-rental custom fields carry access
-			// codes), and status and retryAfter stay on the rebuilt error for
-			// the handlers.
-			const detail = describeStoreganiseError(error.body, error.message);
-			throw new StoreganiseAPIError(
-				error.status === undefined
-					? detail
-					: `Storeganise ${error.status}: ${detail}`,
-				{
-					status: error.status,
-					body: error.body,
-					retryAfter: error.retryAfter,
-					method,
-				},
+			// Rebuilt without the request (access codes in PUT bodies, emails in
+			// user paths). Core's fallback message embeds the whole response
+			// body, so the text comes from the provider's error or the status.
+			// A short plain-text body (the gateway's "Not Found") is shown as is.
+			const textBody =
+				typeof error.body === 'string' && error.body.length <= 200
+					? error.body
+					: undefined;
+			const detail = describeStoreganiseError(
+				error.body,
+				textBody || error.statusText || 'request failed',
 			);
+			throw new StoreganiseAPIError(`Storeganise ${error.status}: ${detail}`, {
+				method,
+				path,
+				status: error.status,
+				statusText: error.statusText,
+				body: error.body,
+				retryAfter: error.retryAfter,
+			});
 		}
-		// DOMException (fetch timeouts) can fail instanceof Error across realms.
-		if (error instanceof Error || error instanceof DOMException) {
-			throw new StoreganiseAPIError(error.message, { cause: error, method });
-		}
-		throw new StoreganiseAPIError('Unknown Storeganise error', { method });
+		// Timeouts and network failures carry no request data; let them through.
+		throw error;
 	}
 }
