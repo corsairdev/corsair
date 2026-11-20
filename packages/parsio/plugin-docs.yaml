@@ -1,0 +1,101 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+# `pnpm validate:plugins` fails until the TODO is replaced.
+displayName: "Parsio"
+description: "Parsio is an AI email and document parser that turns emails, PDFs and scans into structured JSON. This plugin manages mailboxes, parses HTML, text and uploaded files synchronously or asynchronously, reads parsed documents and collected data, and manages the webhooks that deliver parsed documents (HMAC-verified)."
+domain: parsio.io
+recommendedAuth: api_key
+overviewNote: >
+  Authenticate with the API key from your Parsio account; the plugin sends it
+  in the `X-API-Key` header. Mailbox ids look like 6xxxxxxxxxxxxxxx and are
+  visible in the app URL when a mailbox is open.
+
+  Synchronous imports (documents.createSync, documents.uploadSync) return the
+  parsed document in the same response whenever parsing finishes within the
+  timeout; asynchronous imports (documents.createAsync, documents.uploadAsync)
+  return parsing_in_progress true and are followed with documents.get, which
+  the plugin declares as a job so the agent can wait on it. doc-sync is
+  supported only by the template-based and GPT parsers; uploads work with all
+  parser types (sync: one file up to 20MB and no ZIP; async: one file up to
+  50MB, ZIPs included). Parsing consumes credits.
+
+  Webhook deliveries carry the parsed document and are signed in the
+  parsio-signature header (base64 HMAC-SHA256 of the raw payload with the
+  signing secret the Parsio app shows per webhook). Store that secret with
+  keys.set_webhook_signature so deliveries can be verified.
+
+  Template management (list, get, enable, disable, clone, delete) is
+  documented by Parsio but not part of this plugin; the docs publish its
+  parameters but not the response shapes.
+
+  Every operation is described in the official docs:
+  https://help.parsio.io/public-api/parsio-public-api
+examples:
+  read:
+    path: documents.get
+    title: Read a parsed document
+    args:
+      documentId: 65d1c0e4b8f2b3c4d5e6f7a8
+  write:
+    path: documents.createSync
+    title: Parse text content and wait for the result
+    args:
+      mailboxId: 65d1c0e4b8f2b3c4d5e6f7a8
+      text: Invoice number INV-42, total 120.00 EUR
+apiExamples:
+  mailboxes.list:
+    call: '{}'
+  mailboxes.get:
+    call: '{ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8" }'
+  mailboxes.create:
+    call: '{ name: "Invoices", preset: "invoice" }'
+  mailboxes.update:
+    call: '{ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8", process_attachments: true }'
+  mailboxes.delete:
+    call: '{ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8" }'
+  mailboxes.tableFields:
+    call: '{ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8" }'
+  documents.createSync:
+    call: '{ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8", html: "<p>Order 42</p>", __meta__: { source: "api" } }'
+  documents.createAsync:
+    call: '{ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8", text: "Order 42" }'
+  documents.uploadSync:
+    call: '{ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8", filename: "receipt.pdf", contentBase64: "<base64>" }'
+  documents.uploadAsync:
+    call: '{ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8", filename: "receipts.zip", contentBase64: "<base64>" }'
+  documents.list:
+    call: '{ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8", per_page: 100, from: "2026-04-01", status: ["parsed"] }'
+  documents.get:
+    call: '{ documentId: "65d1c0e4b8f2b3c4d5e6f7a8" }'
+  documents.reparse:
+    call: '{ documentId: "65d1c0e4b8f2b3c4d5e6f7a8" }'
+  documents.skipMany:
+    call: '{ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8", ids: ["65d1c0e4b8f2b3c4d5e6f7a8"] }'
+  webhooks.listForMailbox:
+    call: '{ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8" }'
+  webhooks.get:
+    call: '{ webhookId: "65d1c0e4b8f2b3c4d5e6f7a8" }'
+  webhooks.create:
+    call: '{ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8", url: "https://example.com/webhooks/parsio", event: "doc.parsed", enabled: true }'
+  webhooks.update:
+    call: '{ webhookId: "65d1c0e4b8f2b3c4d5e6f7a8", enabled: false }'
+  webhooks.delete:
+    call: '{ ids: ["65d1c0e4b8f2b3c4d5e6f7a8"] }'
+  data.getParsed:
+    call: '{ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8", from: "2026-04-01" }'
+  data.listEmails:
+    call: '{ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8" }'
+apiNotes:
+  mailboxes.create: 'preset picks the parser type; ml_model picks the OCR or AI model the mailbox uses.'
+  mailboxes.delete: 'Answers 204 with no body.'
+  documents.createSync: 'Supported only by the template-based and GPT-powered parsers; when parsing_in_progress is true, poll documents.get.'
+  documents.createAsync: 'Returns parsing_in_progress true with status parsing; the job wrapper follows it with documents.get until status is parsed.'
+  documents.uploadSync: 'One file per request, no ZIP, max 20MB; works with all parser types whose mailbox supports the file type.'
+  documents.uploadAsync: 'One file per request, ZIP supported, max 50MB.'
+  documents.list: 'per_page is capped at 500; status filters by document status.'
+  documents.reparse: 'Queues the document for reprocessing and consumes credits again.'
+  documents.skipMany: 'Answers 204 with no body.'
+  webhooks.create: 'Events: doc.parsed, doc.parsed.flat, doc.fail, doc.received, table.parsed. table_id is required only for table.parsed. The signing secret is shown in the Parsio app.'
+  webhooks.update: 'Takes the webhook id as _id in the body.'
+  webhooks.delete: 'Answers 204 with no body.'
+  data.getParsed: 'Paged parsed data for the mailbox documents.'
+  data.listEmails: 'Email addresses the mailbox collected automatically.'

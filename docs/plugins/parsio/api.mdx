@@ -1,0 +1,824 @@
+---
+title: "Parsio API reference"
+sidebarTitle: "API"
+description: "API reference for the Parsio plugin in Corsair: every `parsio.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Data
+
+### getParsed
+
+`data.getParsed`
+
+Read the parsed data records of a mailbox, paged by date
+
+**Risk:** `read`
+
+```ts
+await corsair.parsio.api.data.getParsed({ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8", from: "2026-04-01" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailboxId` | `string` | Yes | Mailbox id |
+| `page` | `number` | No | Page number |
+| `from` | `string` | No | Start date in YYYY-MM-DD format |
+| `to` | `string` | No | End date in YYYY-MM-DD format |
+
+Paged parsed data for the mailbox documents.
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  doc_id?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listEmails
+
+`data.listEmails`
+
+List the email addresses the mailbox collected
+
+**Risk:** `read`
+
+```ts
+await corsair.parsio.api.data.listEmails({ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailboxId` | `string` | Yes | Mailbox id |
+
+Email addresses the mailbox collected automatically.
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  email?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Documents
+
+### createAsync
+
+`documents.createAsync`
+
+Parse HTML or text content asynchronously; poll documents.get for the result
+
+**Risk:** `write`
+
+```ts
+await corsair.parsio.api.documents.createAsync({ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8", text: "Order 42" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailboxId` | `string` | Yes | Mailbox id that parses the document |
+| `html` | `string` | No | HTML content to parse; wins when both html and text are sent |
+| `text` | `string` | No | Plain text content to parse |
+| `__meta__` | `Record<string, unknown>` | No | Custom payload included in the parsed JSON as __meta__ |
+
+Returns parsing_in_progress true with status parsing; the job wrapper follows it with documents.get until status is parsed.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `doc_id` | `string` | Yes | Document id |
+| `parsing_in_progress` | `boolean` | Yes | Whether parsing is still running |
+| `status` | `string` | Yes | Document status, e.g. parsing, parsed |
+| `name` | `string \| null` | No | Document name; null while parsing |
+| `content_type` | `string \| null` | No | Media type of the source document |
+| `created_at` | `string \| null` | No | Creation timestamp |
+| `processed_at` | `string \| null` | No | When parsing finished |
+| `json` | `Record<string, unknown> \| null` | No | The parsed data |
+
+
+
+---
+
+### createSync
+
+`documents.createSync`
+
+Parse HTML or text content and wait for the result; template and GPT parsers only, each parse consumes credits
+
+**Risk:** `write`
+
+```ts
+await corsair.parsio.api.documents.createSync({ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8", html: "<p>Order 42</p>", __meta__: { source: "api" } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailboxId` | `string` | Yes | Mailbox id that parses the document |
+| `html` | `string` | No | HTML content to parse; wins when both html and text are sent |
+| `text` | `string` | No | Plain text content to parse |
+| `__meta__` | `Record<string, unknown>` | No | Custom payload included in the parsed JSON as __meta__ |
+
+Supported only by the template-based and GPT-powered parsers; when parsing_in_progress is true, poll documents.get.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `doc_id` | `string` | Yes | Document id |
+| `parsing_in_progress` | `boolean` | Yes | Whether parsing is still running |
+| `status` | `string` | Yes | Document status, e.g. parsing, parsed |
+| `name` | `string \| null` | No | Document name; null while parsing |
+| `content_type` | `string \| null` | No | Media type of the source document |
+| `created_at` | `string \| null` | No | Creation timestamp |
+| `processed_at` | `string \| null` | No | When parsing finished |
+| `json` | `Record<string, unknown> \| null` | No | The parsed data |
+
+
+
+---
+
+### get
+
+`documents.get`
+
+Read one parsed document; this is the payload Parsio webhooks deliver
+
+**Risk:** `read`
+
+```ts
+await corsair.parsio.api.documents.get({ documentId: "65d1c0e4b8f2b3c4d5e6f7a8" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | Document id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `doc_id` | `string` | Yes | Document id |
+| `parsing_in_progress` | `boolean` | Yes | Whether parsing is still running |
+| `status` | `string` | Yes | Document status, e.g. parsing, parsed |
+| `name` | `string \| null` | No | Document name; null while parsing |
+| `content_type` | `string \| null` | No | Media type of the source document |
+| `created_at` | `string \| null` | No | Creation timestamp |
+| `processed_at` | `string \| null` | No | When parsing finished |
+| `json` | `Record<string, unknown> \| null` | No | The parsed data |
+
+
+
+---
+
+### list
+
+`documents.list`
+
+List the documents of a mailbox, filtered by date, name or status
+
+**Risk:** `read`
+
+```ts
+await corsair.parsio.api.documents.list({ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8", per_page: 100, from: "2026-04-01", status: ["parsed"] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailboxId` | `string` | Yes | Mailbox id |
+| `page` | `number` | No | Page number |
+| `per_page` | `number` | No | Results per page, at most 500 |
+| `from` | `string` | No | Start date in YYYY-MM-DD format |
+| `to` | `string` | No | End date in YYYY-MM-DD format |
+| `q` | `string` | No | Search by document name |
+| `status` | `string[]` | No | Filter by document status, e.g. parsed, parsing |
+
+per_page is capped at 500; status filters by document status.
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  doc_id: string,
+  parsing_in_progress: boolean,
+  status: string,
+  name?: string | null,
+  content_type?: string | null,
+  created_at?: string | null,
+  processed_at?: string | null,
+  json?: Record<string, unknown> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### reparse
+
+`documents.reparse`
+
+Queue a document for reprocessing; each reparse consumes credits
+
+**Risk:** `write`
+
+```ts
+await corsair.parsio.api.documents.reparse({ documentId: "65d1c0e4b8f2b3c4d5e6f7a8" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | Document id |
+
+Queues the document for reprocessing and consumes credits again.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `doc_id` | `string` | Yes | Document id |
+| `parsing_in_progress` | `boolean` | Yes | Whether parsing is still running |
+| `status` | `string` | Yes | Document status, e.g. parsing, parsed |
+| `name` | `string \| null` | No | Document name; null while parsing |
+| `content_type` | `string \| null` | No | Media type of the source document |
+| `created_at` | `string \| null` | No | Creation timestamp |
+| `processed_at` | `string \| null` | No | When parsing finished |
+| `json` | `Record<string, unknown> \| null` | No | The parsed data |
+
+
+
+---
+
+### skipMany
+
+`documents.skipMany`
+
+Skip parsing for the given documents
+
+**Risk:** `write`
+
+```ts
+await corsair.parsio.api.documents.skipMany({ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8", ids: ["65d1c0e4b8f2b3c4d5e6f7a8"] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailboxId` | `string` | Yes | Mailbox id |
+| `ids` | `string[]` | Yes | Document ids to skip |
+
+Answers 204 with no body.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | Yes | Number of documents skipped |
+| `success` | `boolean` | Yes | Whether the skip succeeded |
+
+
+
+---
+
+### uploadAsync
+
+`documents.uploadAsync`
+
+Upload one file (max 50MB, ZIP supported) and parse it asynchronously
+
+**Risk:** `write`
+
+```ts
+await corsair.parsio.api.documents.uploadAsync({ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8", filename: "receipts.zip", contentBase64: "<base64>" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailboxId` | `string` | Yes | Mailbox id that parses the document |
+| `filename` | `string` | Yes | Name of the file, e.g. receipts.zip |
+| `contentBase64` | `string` | Yes | The file, base64-encoded; async upload accepts one file of at most 50MB, ZIPs included |
+
+One file per request, ZIP supported, max 50MB.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `doc_id` | `string` | Yes | Document id |
+| `parsing_in_progress` | `boolean` | Yes | Whether parsing is still running |
+| `status` | `string` | Yes | Document status, e.g. parsing, parsed |
+| `name` | `string \| null` | No | Document name; null while parsing |
+| `content_type` | `string \| null` | No | Media type of the source document |
+| `created_at` | `string \| null` | No | Creation timestamp |
+| `processed_at` | `string \| null` | No | When parsing finished |
+| `json` | `Record<string, unknown> \| null` | No | The parsed data |
+
+
+
+---
+
+### uploadSync
+
+`documents.uploadSync`
+
+Upload one file (max 20MB, no ZIP) and wait for the parsed result
+
+**Risk:** `write`
+
+```ts
+await corsair.parsio.api.documents.uploadSync({ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8", filename: "receipt.pdf", contentBase64: "<base64>" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailboxId` | `string` | Yes | Mailbox id that parses the document |
+| `filename` | `string` | Yes | Name of the file, e.g. receipt.pdf |
+| `contentBase64` | `string` | Yes | The file, base64-encoded; sync upload accepts one file of at most 20MB, no ZIP |
+
+One file per request, no ZIP, max 20MB; works with all parser types whose mailbox supports the file type.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `doc_id` | `string` | Yes | Document id |
+| `parsing_in_progress` | `boolean` | Yes | Whether parsing is still running |
+| `status` | `string` | Yes | Document status, e.g. parsing, parsed |
+| `name` | `string \| null` | No | Document name; null while parsing |
+| `content_type` | `string \| null` | No | Media type of the source document |
+| `created_at` | `string \| null` | No | Creation timestamp |
+| `processed_at` | `string \| null` | No | When parsing finished |
+| `json` | `Record<string, unknown> \| null` | No | The parsed data |
+
+
+
+---
+
+## Mailboxes
+
+### create
+
+`mailboxes.create`
+
+Create a mailbox with a parser preset
+
+**Risk:** `write`
+
+```ts
+await corsair.parsio.api.mailboxes.create({ name: "Invoices", preset: "invoice" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Mailbox name |
+| `preset` | `string` | No | Parser type or preset |
+| `ml_model` | `string` | No | OCR or AI model, depending on mailbox type |
+| `has_raw_data` | `boolean` | No | Keep the raw document content |
+| `parse_sig` | `boolean` | No | Parse email signatures |
+
+preset picks the parser type; ml_model picks the OCR or AI model the mailbox uses.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | Mailbox id |
+| `name` | `string \| null` | No | Mailbox name |
+| `preset` | `string \| null` | No | Parser type or preset |
+
+
+
+---
+
+### delete
+
+`mailboxes.delete`
+
+Delete a mailbox
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.parsio.api.mailboxes.delete({ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailboxId` | `string` | Yes | Mailbox id |
+
+Answers 204 with no body.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailboxId` | `string` | Yes | Deleted mailbox id |
+| `success` | `boolean` | Yes | Whether the delete succeeded |
+
+
+
+---
+
+### get
+
+`mailboxes.get`
+
+Read one mailbox with its settings and configuration
+
+**Risk:** `read`
+
+```ts
+await corsair.parsio.api.mailboxes.get({ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailboxId` | `string` | Yes | Mailbox id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | Mailbox id |
+| `name` | `string \| null` | No | Mailbox name |
+| `preset` | `string \| null` | No | Parser type or preset |
+
+
+
+---
+
+### list
+
+`mailboxes.list`
+
+List all mailboxes available to the authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.parsio.api.mailboxes.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  name?: string | null,
+  preset?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### tableFields
+
+`mailboxes.tableFields`
+
+List the table fields configured in a mailbox
+
+**Risk:** `read`
+
+```ts
+await corsair.parsio.api.mailboxes.tableFields({ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailboxId` | `string` | Yes | Mailbox id |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`mailboxes.update`
+
+Update mailbox settings: name, email prefix, attachments, alerts
+
+**Risk:** `write`
+
+```ts
+await corsair.parsio.api.mailboxes.update({ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8", process_attachments: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailboxId` | `string` | Yes | Mailbox id |
+| `name` | `string` | No | Mailbox name |
+| `email_prefix` | `string` | No | Prefix of the mailbox email address |
+| `process_attachments` | `boolean` | No | Store or ignore email attachments |
+| `collect_emails` | `boolean` | No | Collect email addresses automatically |
+| `alert_email_h` | `number` | No | Email alert frequency in hours |
+| `receive_email` | `boolean` | No | Whether the mailbox accepts incoming emails |
+| `preset` | `string` | No | Parser type or preset |
+| `ml_model` | `string` | No | OCR or AI model |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | Mailbox id |
+| `name` | `string \| null` | No | Mailbox name |
+| `preset` | `string \| null` | No | Parser type or preset |
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Create a webhook subscription for doc.parsed, doc.fail, doc.received or table.parsed events
+
+**Risk:** `write`
+
+```ts
+await corsair.parsio.api.webhooks.create({ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8", url: "https://example.com/webhooks/parsio", event: "doc.parsed", enabled: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailboxId` | `string` | Yes | Mailbox the webhook belongs to |
+| `name` | `string` | No | Webhook name |
+| `url` | `string` | Yes | Endpoint deliveries are posted to |
+| `event` | `doc.parsed \| doc.parsed.flat \| doc.fail \| doc.received \| table.parsed` | Yes | Event the webhook delivers |
+| `enabled` | `boolean` | No | Whether deliveries are active |
+| `table_id` | `string` | No | Required only when the event is table.parsed |
+
+Events: doc.parsed, doc.parsed.flat, doc.fail, doc.received, table.parsed. table_id is required only for table.parsed. The signing secret is shown in the Parsio app.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | Webhook id |
+| `name` | `string \| null` | No | Webhook name |
+| `url` | `string \| null` | No | Endpoint deliveries are posted to |
+| `event` | `string \| null` | No | Event the webhook delivers |
+| `enabled` | `boolean \| null` | No | Whether deliveries are active |
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Delete webhook subscriptions; deliveries stop until they are created again
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.parsio.api.webhooks.delete({ ids: ["65d1c0e4b8f2b3c4d5e6f7a8"] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | Webhook ids to delete |
+
+Answers 204 with no body.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | Deleted webhook ids |
+| `success` | `boolean` | Yes | Whether the delete succeeded |
+
+
+
+---
+
+### get
+
+`webhooks.get`
+
+Read one webhook subscription
+
+**Risk:** `read`
+
+```ts
+await corsair.parsio.api.webhooks.get({ webhookId: "65d1c0e4b8f2b3c4d5e6f7a8" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | Webhook id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | Webhook id |
+| `name` | `string \| null` | No | Webhook name |
+| `url` | `string \| null` | No | Endpoint deliveries are posted to |
+| `event` | `string \| null` | No | Event the webhook delivers |
+| `enabled` | `boolean \| null` | No | Whether deliveries are active |
+
+
+
+---
+
+### listForMailbox
+
+`webhooks.listForMailbox`
+
+List the webhook subscriptions of a mailbox
+
+**Risk:** `read`
+
+```ts
+await corsair.parsio.api.webhooks.listForMailbox({ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailboxId` | `string` | Yes | Mailbox id |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  name?: string | null,
+  url?: string | null,
+  event?: string | null,
+  enabled?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Update a webhook subscription
+
+**Risk:** `write`
+
+```ts
+await corsair.parsio.api.webhooks.update({ webhookId: "65d1c0e4b8f2b3c4d5e6f7a8", enabled: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | Webhook id (sent as _id) |
+| `name` | `string` | No | Webhook name |
+| `url` | `string` | No | Endpoint deliveries are posted to |
+| `event` | `doc.parsed \| doc.parsed.flat \| doc.fail \| doc.received \| table.parsed` | No | Event the webhook delivers |
+| `enabled` | `boolean` | No | Whether deliveries are active |
+| `table_id` | `string` | No | Required only when the event is table.parsed |
+
+Takes the webhook id as _id in the body.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | Webhook id |
+| `name` | `string \| null` | No | Webhook name |
+| `url` | `string \| null` | No | Endpoint deliveries are posted to |
+| `event` | `string \| null` | No | Event the webhook delivers |
+| `enabled` | `boolean \| null` | No | Whether deliveries are active |
+
+
+
+---
+
