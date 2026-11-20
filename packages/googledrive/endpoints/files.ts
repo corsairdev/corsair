@@ -20,6 +20,7 @@ async function saveFile<T extends { id: string }>(
 	table:
 		| {
 				findByEntityId(id: string): Promise<{ data: T } | null | undefined>;
+				// The upsert's result isn't read here, so its type is left open.
 				upsertByEntityId(id: string, data: T): Promise<unknown>;
 		  }
 		| undefined,
