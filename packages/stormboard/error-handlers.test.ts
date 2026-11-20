@@ -1,18 +1,27 @@
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { StormboardAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
-// unknown: handlers accept any thrown value until the status check narrows it.
+// The client throws HTTP failures as core's ApiError, so the handlers are
+// tested against that.
 function apiError(
-	status: number | undefined,
+	status: number,
 	method: 'GET' | 'POST' = 'GET',
 	retryAfter?: number,
-): StormboardAPIError {
-	return new StormboardAPIError('Stormboard error', {
-		status,
-		method,
-		retryAfter,
-	});
+): ApiError {
+	return new ApiError(
+		{ method, url: '/storms/list' },
+		{
+			url: 'https://api.stormboard.com/storms/list',
+			ok: false,
+			status,
+			statusText: '',
+			body: null,
+		},
+		'Stormboard error',
+		{ retryAfter },
+	);
 }
 
 // Runs the map the way core does: first matching key wins.
@@ -61,6 +70,14 @@ describe('error handlers', () => {
 
 	it('does not replay a create on a 5xx: creates have no idempotency contract', async () => {
 		expect((await verdict(apiError(502, 'POST')))?.maxRetries).toBe(0);
+	});
+
+	it('reads a StormboardAPIError too (network failures)', async () => {
+		const error = new StormboardAPIError('socket hang up', {
+			status: 503,
+			method: 'GET',
+		});
+		expect((await verdict(error))?.maxRetries).toBe(2);
 	});
 
 	it('does not retry anything else', async () => {

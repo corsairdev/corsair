@@ -1,8 +1,27 @@
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { StormboardAPIError } from './client';
 
+// HTTP failures arrive as core's ApiError (rebuilt without the request body in
+// client.ts); StormboardAPIError covers network failures and timeouts.
 function statusOf(error: Error): number | undefined {
-	return error instanceof StormboardAPIError ? error.status : undefined;
+	if (error instanceof ApiError || error instanceof StormboardAPIError) {
+		return error.status;
+	}
+	return undefined;
+}
+
+function retryAfterOf(error: Error): number | undefined {
+	if (error instanceof ApiError || error instanceof StormboardAPIError) {
+		return error.retryAfter;
+	}
+	return undefined;
+}
+
+function methodOf(error: Error): string | undefined {
+	if (error instanceof ApiError) return error.request.method;
+	if (error instanceof StormboardAPIError) return error.method;
+	return undefined;
 }
 
 // Status taxonomy from https://api.stormboard.com/docs: 400 (bad request
@@ -15,8 +34,7 @@ export const errorHandlers = {
 		match: (error: Error) => statusOf(error) === 429,
 		handler: async (error: Error) => ({
 			maxRetries: 3,
-			headersRetryAfterMs:
-				error instanceof StormboardAPIError ? error.retryAfter : undefined,
+			headersRetryAfterMs: retryAfterOf(error),
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
@@ -37,9 +55,7 @@ export const errorHandlers = {
 	// documented idempotency contract, so a repeat send could duplicate.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof StormboardAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			methodOf(error) === 'GET' && (statusOf(error) ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

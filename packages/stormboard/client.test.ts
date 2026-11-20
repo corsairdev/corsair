@@ -1,3 +1,4 @@
+import { ApiError } from 'corsair/http';
 import {
 	describeStormboardError,
 	makeStormboardRequest,
@@ -29,10 +30,14 @@ function respond(
 }
 
 // unknown: a rejection can be any value until the instanceof check narrows it.
-async function failure(promise: Promise<unknown>): Promise<StormboardAPIError> {
+async function failure(promise: Promise<unknown>): Promise<ApiError> {
 	const error = await promise.catch((caught: unknown) => caught);
-	expect(error).toBeInstanceOf(StormboardAPIError);
-	if (!(error instanceof StormboardAPIError)) throw error;
+	// Core's management API maps only errors named ApiError to the provider's
+	// status; anything else becomes a generic 500.
+	expect(error).toBeInstanceOf(ApiError);
+	expect(error).not.toBeInstanceOf(StormboardAPIError);
+	if (!(error instanceof ApiError)) throw error;
+	expect(error.name).toBe('ApiError');
 	return error;
 }
 
@@ -98,6 +103,23 @@ describe('makeStormboardRequest', () => {
 		expect(url).toContain('to_idea_id=1001');
 	});
 
+	it('sends a JSON body on DELETE when there is one', async () => {
+		respond({ message: 'Idea Connector deleted' }, 200);
+
+		await makeStormboardRequest(API_KEY, {
+			method: 'DELETE',
+			path: '/ideas/connector',
+			body: { from_idea_id: 1000, to_idea_id: 1001 },
+		});
+
+		const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+		expect(init.method).toBe('DELETE');
+		expect(new Headers(init.headers).get('content-type')).toBe(
+			'application/json',
+		);
+		expect(String(init.body)).toBe('{"from_idea_id":1000,"to_idea_id":1001}');
+	});
+
 	it('surfaces the 403 auth envelope as a typed error', async () => {
 		respond(noAuth, 403);
 
@@ -108,7 +130,7 @@ describe('makeStormboardRequest', () => {
 			'Stormboard 403: No authentication method set, it is required for this endpoint',
 		);
 		expect(error.status).toBe(403);
-		expect(error.method).toBe('GET');
+		expect(error.request.method).toBe('GET');
 	});
 
 	it('surfaces the 400 validation envelope as a typed error', async () => {
@@ -123,7 +145,11 @@ describe('makeStormboardRequest', () => {
 		);
 		expect(error.message).toBe('Stormboard 400: First name cannot be blank');
 		expect(error.body).toEqual(validationFailed);
-		expect(error.method).toBe('POST');
+		expect(error.request.method).toBe('POST');
+		// The sent body (here a profile; on updates it can hold a password)
+		// does not ride along on the error.
+		expect(JSON.stringify(error)).not.toContain('Dean');
+		expect(error.request.body).toBe('[REDACTED]');
 	});
 
 	it('keeps a non-JSON body readable', async () => {
