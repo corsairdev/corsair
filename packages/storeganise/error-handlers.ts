@@ -5,10 +5,9 @@ function statusOf(error: Error): number | undefined {
 	return error instanceof StoreganiseAPIError ? error.status : undefined;
 }
 
-// Storeganise documents no rate-limit contract for the API, so no
-// RATE_LIMIT_ERROR handler is built and the transport does not retry
-// either (client.ts pins maxRetries: 0): a 429 fails immediately instead
-// of being replayed on guesswork.
+// The client retries a 429 up to three times through core, honouring
+// Retry-After. No RATE_LIMIT_ERROR handler is needed here: DEFAULT adds no
+// retries after the client has used its attempts.
 // Documented statuses: 401 Unauthorized, 400 validation errors ("See the
 // errors object in the response for more info").
 // https://help.storeganise.com/article/331-system-error-list

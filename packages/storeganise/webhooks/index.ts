@@ -18,8 +18,13 @@ type LogFields = Record<string, string | number | boolean | undefined>;
  */
 const LOG_WAIT_MS = 5_000;
 
-function logWait(): Promise<void> {
-	return new Promise((resolve) => setTimeout(resolve, LOG_WAIT_MS));
+/** Resolves after LOG_WAIT_MS; `clear` stops the timer once the race ends. */
+function logWait(): { done: Promise<void>; clear: () => void } {
+	let timer: ReturnType<typeof setTimeout> | undefined;
+	const done = new Promise<void>((resolve) => {
+		timer = setTimeout(resolve, LOG_WAIT_MS);
+	});
+	return { done, clear: () => clearTimeout(timer) };
 }
 
 // A logging failure does not fail the delivery.
@@ -83,14 +88,20 @@ export const event: CorsairWebhook<
 			};
 		}
 
-		await Promise.race([
-			safeLog(ctx, 'storeganise.webhook.event', {
-				type: parsed.data.type,
-				deliveryId: parsed.data.id,
-				created: parsed.data.created,
-			}),
-			logWait(),
-		]);
+		const wait = logWait();
+		try {
+			await Promise.race([
+				safeLog(ctx, 'storeganise.webhook.event', {
+					type: parsed.data.type,
+					deliveryId: parsed.data.id,
+					created: parsed.data.created,
+				}),
+				wait.done,
+			]);
+		} finally {
+			// A finished log must not leave the timer holding the process open.
+			wait.clear();
+		}
 
 		return { success: true, data: parsed.data };
 	},

@@ -177,6 +177,19 @@ describe('event handler', () => {
 		expect(result.statusCode).toBe(400);
 	});
 
+	it('clears the log-wait timer once the log write finishes', async () => {
+		const clear = jest.spyOn(globalThis, 'clearTimeout');
+		const delivered = request(webhookPayload, {
+			[SG_SIGNATURE_HEADER]: signature(webhookPayload, SECRET),
+		});
+		try {
+			await event.handler(ctx(SECRET), delivered as never);
+			expect(clear).toHaveBeenCalled();
+		} finally {
+			clear.mockRestore();
+		}
+	});
+
 	it('accepts a signed delivery and returns the parsed event', async () => {
 		const delivered = request(webhookPayload, {
 			[SG_SIGNATURE_HEADER]: signature(webhookPayload, SECRET),
