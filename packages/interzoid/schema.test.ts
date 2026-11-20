@@ -30,12 +30,13 @@ describe('Interzoid Schemas', () => {
 		expect(metaKeys).toEqual(registeredKeys);
 	});
 
-	it('requires approval for every credit-consuming API operation', () => {
+	// Metered lookups stay `read` (R8): a call spends credits but changes nothing.
+	it('marks every metered lookup as read', () => {
 		const plugin = interzoid();
 		const endpointMeta = plugin.endpointMeta ?? {};
 
 		for (const metadata of Object.values(endpointMeta)) {
-			expect(metadata.riskLevel).toBe('destructive');
+			expect(metadata.riskLevel).toBe('read');
 		}
 	});
 
