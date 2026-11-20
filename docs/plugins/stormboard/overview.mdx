@@ -6,7 +6,7 @@ description: "Stormboard turns unstructured collaboration into data-rich workspa
 
 Use **Stormboard** through Corsair: one client, typed API calls.
 
-The API key sits on the API tab of the Stormboard account (stormboard.com/users/account#api) and authenticates with the X-API-Key header. Some operations need an active team subscription; the docs mark each route's availability (Public, Team Members, Team Owners). The API uses standard rate-limiting headers (RateLimit-Limit, RateLimit-Remaining, RateLimit-Reset) and answers 429 when the period quota is spent, which this plugin waits out before retrying. The two documented /templates routes answer an HTML 404 on the live API, so they are left out of this plugin; a team's template list is reachable through api.folders.list. Response examples mix numeric and string ids across routes, so id fields accept both.
+The API key sits on the API tab of the Stormboard account (stormboard.com/users/account#api) and authenticates with the X-API-Key header. Some operations need a paid subscription; the docs mark each route's availability (Public, Team Members, Team Owners), and on the free Personal plan storms.update, ideas.update, ideas.delete, votes and comments answer 401 "only available to Stormboard subscribers". The API uses standard rate-limiting headers (RateLimit-Limit, RateLimit-Remaining, RateLimit-Reset) and answers 429 when the period quota is spent, which this plugin waits out before retrying. The two documented /templates routes answer an HTML 404 on the live API, so they are left out of this plugin; a team's template list is reachable through api.folders.list. Response examples mix numeric and string ids across routes, so id fields accept both.
 
 **What you get:**
 

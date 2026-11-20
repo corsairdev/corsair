@@ -43,7 +43,7 @@ await corsair.stormboard.api.chat.create({ stormId: 1234, message: 'Example Chat
 ```ts
 {
   isnew?: boolean | null,
-  storm?: number | null,
+  storm?: number | string | null,
   user?: {
     id?: number | string | null,
     name?: string | null
@@ -91,7 +91,7 @@ await corsair.stormboard.api.chat.list({ stormId: 1234 });
 ```ts
 {
   isnew?: boolean | null,
-  storm?: number | null,
+  storm?: number | string | null,
   user?: {
     id?: number | string | null,
     name?: string | null
@@ -139,7 +139,7 @@ await corsair.stormboard.api.chat.listUnread({ stormId: 1234 });
 ```ts
 {
   isnew?: boolean | null,
-  storm?: number | null,
+  storm?: number | string | null,
   user?: {
     id?: number | string | null,
     name?: string | null
@@ -345,7 +345,7 @@ await corsair.stormboard.api.ideas.createComment({ ideaId: 1000000, comment: 'My
 
 ```ts
 {
-  id?: number | null,
+  id?: number | string | null,
   comment?: string | null,
   created?: string | null,
   user?: {
@@ -377,8 +377,8 @@ await corsair.stormboard.api.ideas.createConnector({ from_idea_id: 1000, to_idea
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `from_idea_id` | `number` | Yes | — |
-| `to_idea_id` | `number` | Yes | — |
+| `from_idea_id` | `number \| string` | Yes | The idea's numeric id or its uuid. |
+| `to_idea_id` | `number \| string` | Yes | The idea's numeric id or its uuid. |
 | `label` | `string` | No | — |
 | `color` | `string` | No | — |
 | `to_end_type` | `string` | No | — |
@@ -390,22 +390,27 @@ await corsair.stormboard.api.ideas.createConnector({ from_idea_id: 1000, to_idea
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number \| null` | No | — |
-| `from` | `number \| null` | No | — |
-| `to` | `number \| null` | No | — |
-| `label` | `string \| null` | No | — |
-| `style` | `object \| null` | No | — |
-| `points` | `unknown[] \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `connector` | `object` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="style full type">
+<Accordion title="connector full type">
 
 ```ts
 {
-  color?: string | null,
-  fromEndType?: string | null,
-  toEndType?: string | null
-} | null
+  id?: number | string | null,
+  from?: number | string | null,
+  to?: number | string | null,
+  from_uuid?: string | null,
+  to_uuid?: string | null,
+  label?: string | null,
+  style?: {
+    color?: string | null,
+    fromEndType?: string | null,
+    toEndType?: string | null
+  } | null,
+  points?: any[] | null
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -451,7 +456,7 @@ await corsair.stormboard.api.ideas.delete({ ideaId: 1000000 });
 
 Delete a comment on an idea
 
-**Risk:** `write`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.stormboard.api.ideas.deleteComment({ ideaId: 1000000, commentId: 1234 });
@@ -524,10 +529,10 @@ await corsair.stormboard.api.ideas.deleteConnectorBetween({ from_idea_id: 1000, 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `from_idea_id` | `number` | Yes | — |
-| `to_idea_id` | `number` | Yes | — |
+| `from_idea_id` | `number \| string` | Yes | The idea's numeric id or its uuid. |
+| `to_idea_id` | `number \| string` | Yes | The idea's numeric id or its uuid. |
 
-The documented delete-between route takes the two idea ids as request parameters, which travel as query parameters on a DELETE.
+The two ids go in the DELETE's JSON body; the API answers 400 when they come as query parameters. Either idea can be named by its numeric id or its uuid.
 
 
 
@@ -573,9 +578,10 @@ await corsair.stormboard.api.ideas.get({ ideaId: 1000000 });
 
 ```ts
 {
-  id?: number | null,
+  id?: number | string | null,
+  uuid?: string | null,
   storm?: {
-    id?: number | null,
+    id?: number | string | null,
     title?: string | null
   } | null,
   x?: number | null,
@@ -590,7 +596,7 @@ await corsair.stormboard.api.ideas.get({ ideaId: 1000000 });
     text?: string | null,
     name?: string | null
   } | null,
-  task?: Record<string, unknown> | null
+  task?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -633,7 +639,7 @@ await corsair.stormboard.api.ideas.listComments({ ideaId: 1000000, order: "asc" 
 
 ```ts
 {
-  id?: number | null,
+  id?: number | string | null,
   comment?: string | null,
   created?: string | null,
   user?: {
@@ -804,22 +810,27 @@ await corsair.stormboard.api.ideas.updateConnector({ connectorId: 9999, label: '
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number \| null` | No | — |
-| `from` | `number \| null` | No | — |
-| `to` | `number \| null` | No | — |
-| `label` | `string \| null` | No | — |
-| `style` | `object \| null` | No | — |
-| `points` | `unknown[] \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `connector` | `object` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="style full type">
+<Accordion title="connector full type">
 
 ```ts
 {
-  color?: string | null,
-  fromEndType?: string | null,
-  toEndType?: string | null
-} | null
+  id?: number | string | null,
+  from?: number | string | null,
+  to?: number | string | null,
+  from_uuid?: string | null,
+  to_uuid?: string | null,
+  label?: string | null,
+  style?: {
+    color?: string | null,
+    fromEndType?: string | null,
+    toEndType?: string | null
+  } | null,
+  points?: any[] | null
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1107,7 +1118,7 @@ await corsair.stormboard.api.storms.get({ stormId: 49999 });
 
 ```ts
 {
-  id?: number | null,
+  id?: number | string | null,
   key?: string | null,
   title?: string | null,
   description?: string | null,
@@ -1116,7 +1127,7 @@ await corsair.stormboard.api.storms.get({ stormId: 49999 });
   palette?: string | null,
   closed?: boolean | null,
   team?: {
-    id?: number | null
+    id?: number | string | null
   } | null,
   activity?: number | null,
   votesperuser?: number | null,
@@ -1184,7 +1195,29 @@ await corsair.stormboard.api.storms.getTemplate({ stormId: 49999 });
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="template full type">
+
+```ts
+{
+  index?: string | null,
+  name?: string | null,
+  description?: string | null,
+  character?: string | null,
+  color?: string | null,
+  type?: string | null,
+  subsections?: any | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -1208,7 +1241,7 @@ await corsair.stormboard.api.storms.invite({ stormId: 49999, participants: ["yod
 | `stormId` | `number` | Yes | — |
 | `participants` | `string[]` | Yes | Email addresses of the participants to invite. |
 | `message` | `string` | No | — |
-| `type` | `contributor \| admin \| viewer` | No | The access the invite grants; the API defaults to contributor. |
+| `type` | `contributor \| viewer` | No | The access the invite grants; the API defaults to contributor. |
 
 
 
@@ -1295,7 +1328,7 @@ List your Storms with search, ordering and paging
 **Risk:** `read`
 
 ```ts
-await corsair.stormboard.api.storms.list({ status: "active", order: "activity", results: 50 });
+await corsair.stormboard.api.storms.list({ status: "open", order: "activity", results: 50 });
 ```
 
 **Input**
@@ -1305,12 +1338,12 @@ await corsair.stormboard.api.storms.list({ status: "active", order: "activity", 
 | `team` | `number` | No | — |
 | `folder` | `number` | No | — |
 | `needle` | `string` | No | — |
-| `status` | `active \| closed` | No | Filter by Storm state; the API defaults to active. |
+| `status` | `open \| closed` | No | Filter by Storm state; the API defaults to open. |
 | `start` | `number` | No | — |
-| `order` | `activity \| created \| title` | No | Sort order; the API defaults to activity. |
+| `order` | `activity \| alpha \| frequency \| starred` | No | Sort order: activity (last active, the default), alpha (A-Z), frequency or starred. |
 | `results` | `number` | No | — |
 
-The list read pages with start and results and answers hasmore plus the storms array; walk it by advancing start until hasmore is false. Filters combine: team, folder and needle narrow the result, and the documented status values are active and closed.
+The list read pages with start and results and answers hasmore plus the storms array; walk it by advancing start until hasmore is false. Filters combine: team, folder and needle narrow the result. status is open (the default) or closed; order is activity (the default), alpha, frequency or starred.
 
 
 
@@ -1326,7 +1359,7 @@ The list read pages with start and results and answers hasmore plus the storms a
 
 ```ts
 {
-  id?: number | null,
+  id?: number | string | null,
   key?: string | null,
   title?: string | null,
   description?: string | null,
@@ -1335,7 +1368,7 @@ The list read pages with start and results and answers hasmore plus the storms a
   palette?: string | null,
   closed?: boolean | null,
   team?: {
-    id?: number | null
+    id?: number | string | null
   } | null,
   activity?: number | null,
   votesperuser?: number | null,
@@ -1383,16 +1416,18 @@ await corsair.stormboard.api.storms.listConnectors({ stormId: 49999 });
 
 ```ts
 {
-  id?: number | null,
-  from?: number | null,
-  to?: number | null,
+  id?: number | string | null,
+  from?: number | string | null,
+  to?: number | string | null,
+  from_uuid?: string | null,
+  to_uuid?: string | null,
   label?: string | null,
   style?: {
     color?: string | null,
     fromEndType?: string | null,
     toEndType?: string | null
   } | null,
-  points?: unknown[] | null
+  points?: any[] | null
 }[]
 ```
 </Accordion>
@@ -1434,9 +1469,10 @@ await corsair.stormboard.api.storms.listIdeas({ stormId: 49999, lastModifiedMin:
 
 ```ts
 {
-  id?: number | null,
+  id?: number | string | null,
+  uuid?: string | null,
   storm?: {
-    id?: number | null,
+    id?: number | string | null,
     title?: string | null
   } | null,
   x?: number | null,
@@ -1451,7 +1487,7 @@ await corsair.stormboard.api.storms.listIdeas({ stormId: 49999, lastModifiedMin:
     text?: string | null,
     name?: string | null
   } | null,
-  task?: Record<string, unknown> | null
+  task?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -1494,7 +1530,7 @@ await corsair.stormboard.api.storms.listInvites({});
 
 ```ts
 {
-  id?: number | null,
+  id?: number | string | null,
   key?: string | null,
   title?: string | null,
   description?: string | null,
@@ -1503,7 +1539,7 @@ await corsair.stormboard.api.storms.listInvites({});
   palette?: string | null,
   closed?: boolean | null,
   team?: {
-    id?: number | null
+    id?: number | string | null
   } | null,
   activity?: number | null,
   votesperuser?: number | null,
@@ -1704,7 +1740,7 @@ Update one section of a Storm
 **Risk:** `write`
 
 ```ts
-await corsair.stormboard.api.storms.updateSection({ stormId: 49999, sectionIndex: 1, name: 'New Section Title' });
+await corsair.stormboard.api.storms.updateSection({ stormId: 49999, sectionIndex: 'abcdef123456', name: 'New Section Title' });
 ```
 
 **Input**
@@ -1712,7 +1748,7 @@ await corsair.stormboard.api.storms.updateSection({ stormId: 49999, sectionIndex
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `stormId` | `number` | Yes | — |
-| `sectionIndex` | `number` | Yes | — |
+| `sectionIndex` | `string` | Yes | The section index from storms.getTemplate, such as "abcdef123456". |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
 | `character` | `string` | No | — |
@@ -1848,7 +1884,7 @@ await corsair.stormboard.api.tags.listForStorm({ stormId: 49999 });
 
 ```ts
 {
-  id?: number | null,
+  id?: number | string | null,
   name?: string | null,
   type?: string | null,
   status?: string | null
@@ -1867,9 +1903,9 @@ await corsair.stormboard.api.tags.listForStorm({ stormId: 49999 });
 
 `users.create`
 
-Create a Stormboard user and return its API key
+Create a Stormboard user, which emails them a verification code, and return its API key
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.stormboard.api.users.create({
@@ -1972,20 +2008,20 @@ await corsair.stormboard.api.users.getProfile({});
   auth?: {
     api_key?: string | null
   } | null,
-  id?: number | null,
+  id?: number | string | null,
   firstname?: string | null,
   lastname?: string | null,
   username?: string | null,
   email?: string | null,
   plan?: string | null,
   team?: {
-    id?: string | null,
+    id?: number | string | null,
     name?: string | null
-  } | null,
+  } | boolean | null,
   notifications?: {
-    dailyemail?: string | null,
-    newstormuser?: string | null,
-    newsletter?: string | null
+    dailyemail?: number | string | null,
+    newstormuser?: number | string | null,
+    newsletter?: number | string | null
   } | null
 }
 ```
