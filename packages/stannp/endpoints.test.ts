@@ -162,12 +162,12 @@ describe('addresses', () => {
 		});
 	});
 
-	it('rejects an address with neither city nor zipcode before sending', async () => {
+	it('rejects an address with no city, postcode or zipcode before sending', async () => {
 		respond({ success: true, data: validatedAddress });
 
 		await expect(
 			invoke(Addresses.validate, { address1: '1000 N west street' }),
-		).rejects.toThrow('Provide city or zipcode');
+		).rejects.toThrow('Provide city, postcode (UK) or zipcode');
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });

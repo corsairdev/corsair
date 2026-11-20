@@ -24,7 +24,7 @@ export const create: StannpEndpoints['selectionsCreate'] = (ctx, input) =>
 		{
 			log: ({ group_id }, result) => ({
 				groupId: group_id,
-				id: result[0]?.id ?? undefined,
+				id: Array.isArray(result) ? (result[0]?.id ?? undefined) : undefined,
 			}),
 		},
 	);

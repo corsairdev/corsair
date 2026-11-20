@@ -18,10 +18,21 @@ const isoDate = z
 	.regex(/^\d{4}-\d{2}-\d{2}$/, 'Expected YYYY-MM-DD')
 	.describe('A date in YYYY-MM-DD format.');
 
-// List responses carry ids as strings ("1943"); mailpiece reads carry them
-// as numbers (16818211). Matched to the documented examples per endpoint.
-const str = z.string().nullish();
-const num = z.number().nullish();
+// The docs show list ids as strings ("1943") and mailpiece ids as numbers,
+// but the live API mixes them: recipients.get and campaigns.get/list answer
+// numbers where the examples show strings, and recipientEvents/create
+// answers "0". Response fields accept either form and keep the documented
+// type: numbers become strings for `str`, numeric strings numbers for `num`.
+const str = z.union([z.string(), z.number().transform(String)]).nullish();
+const num = z
+	.union([
+		z.number(),
+		z
+			.string()
+			.regex(/^-?\d+(\.\d+)?$/)
+			.transform(Number),
+	])
+	.nullish();
 
 // Shared by the write operations the docs' idempotency section covers.
 function idempotencyKeyField() {
@@ -287,8 +298,11 @@ const AddressesValidateInputSchema = z
 		city: z
 			.string()
 			.optional()
-			.describe('Required when zipcode is not provided.'),
-		postcode: z.string().optional().describe('Recommended for UK addresses.'),
+			.describe('Required for US/CA addresses when zipcode is not provided.'),
+		postcode: z
+			.string()
+			.optional()
+			.describe('UK postcode; enough without a city for UK addresses.'),
 		state: z.string().optional().describe('Two-letter US state abbreviation.'),
 		province: z
 			.string()
@@ -303,10 +317,13 @@ const AddressesValidateInputSchema = z
 			.describe('ISO 3166-1 alpha-2. UK and US addresses only.'),
 	})
 	.superRefine((value, ctx) => {
-		if (!value.city && !value.zipcode) {
+		// UK addresses validate on address1 + postcode; US/CA ones need a city
+		// or a zipcode.
+		if (!value.city && !value.zipcode && !value.postcode) {
 			ctx.addIssue({
 				code: 'custom',
-				message: 'Provide city or zipcode; the API requires one of them.',
+				message:
+					'Provide city, postcode (UK) or zipcode (US/CA); the API needs one of them.',
 				path: ['city'],
 			});
 		}
@@ -661,7 +678,7 @@ const RecipientsDeleteInputSchema = z.object({
 });
 
 const RecipientsDeleteResponseSchema = z
-	.number()
+	.union([z.number(), z.string().transform(Number)])
 	.describe('1 when the recipient was deleted.');
 
 const RecipientsImportInputSchema = z.object({
@@ -718,7 +735,7 @@ const GroupsCreateInputSchema = z.object({
 });
 
 const GroupsCreateResponseSchema = z
-	.string()
+	.union([z.string(), z.number().transform(String)])
 	.describe('The new group id, as a string.');
 
 const GroupRecipientsInputSchema = z.object({
@@ -759,8 +776,10 @@ const GroupsDeleteInputSchema = z.object({
 	idempotencyKey: idempotencyKeyField(),
 });
 
+// Live: groups.delete answers `true` with delete_recipients and `1` without.
+// 1/0 map to true/false.
 const SuccessResponseSchema = z
-	.boolean()
+	.union([z.boolean(), z.number().transform((value) => value === 1)])
 	.describe('true when the change was applied.');
 
 // ── campaigns ─────────────────────────────────────────────────────────────
@@ -781,53 +800,75 @@ const CampaignsGetInputSchema = z.object({
 	id: positiveInt.describe('The campaign id.'),
 });
 
-const CampaignsCreateInputSchema = z.object({
-	name: z.string().min(1).describe('Name of the campaign, for reference.'),
-	type: CampaignTypeSchema.describe('The mailpiece this campaign sends.'),
-	template_id: z
-		.number()
-		.int()
-		.nonnegative()
-		.optional()
-		.describe(
-			'A template to copy. 0 or omitted uses a blank template of the format.',
-		),
-	file: z
-		.string()
-		.optional()
-		.describe('URL of a PDF to use as the design artwork.'),
-	front: z
-		.string()
-		.optional()
-		.describe('URL of a PDF or JPG for the front image.'),
-	back: z
-		.string()
-		.optional()
-		.describe('URL of a PDF or JPG for the back image.'),
-	size: z
-		.string()
-		.optional()
-		.describe('Required with file or front/back images, such as A4, A5 or A6.'),
-	save: z
-		.boolean()
-		.optional()
-		.describe('Save the uploaded artwork as a new design template.'),
-	group_id: positiveInt.describe('The group this campaign sends to.'),
-	what_recipients: z
-		.enum(['all', 'valid', 'not_valid', 'int'])
-		.optional()
-		.describe(
-			'all is every recipient in the group, valid and not_valid are UK validated and non-validated addresses, int is international addresses.',
-		),
-	addons: z.string().optional().describe('Addon code for the campaign.'),
-	idempotencyKey: idempotencyKeyField(),
-});
-
-const CampaignsCreateResponseSchema = z
+const CampaignsCreateInputSchema = z
 	.object({
-		id: str.describe('The new campaign id, as a string.'),
+		name: z.string().min(1).describe('Name of the campaign, for reference.'),
+		type: CampaignTypeSchema.describe('The mailpiece this campaign sends.'),
+		template_id: z
+			.number()
+			.int()
+			.nonnegative()
+			.optional()
+			.describe(
+				'A template to copy. 0 or omitted uses a blank template of the format.',
+			),
+		file: z
+			.string()
+			.optional()
+			.describe('URL of a PDF to use as the design artwork.'),
+		front: z
+			.string()
+			.optional()
+			.describe('URL of a PDF or JPG for the front image.'),
+		back: z
+			.string()
+			.optional()
+			.describe('URL of a PDF or JPG for the back image.'),
+		size: z
+			.string()
+			.optional()
+			.describe(
+				'Required with file or front/back images, such as A4, A5 or A6.',
+			),
+		save: z
+			.boolean()
+			.optional()
+			.describe('Save the uploaded artwork as a new design template.'),
+		group_id: positiveInt.describe('The group this campaign sends to.'),
+		what_recipients: z
+			.enum(['all', 'valid', 'not_valid', 'int'])
+			.optional()
+			.describe(
+				'all is every recipient in the group, valid and not_valid are UK validated and non-validated addresses, int is international addresses.',
+			),
+		addons: z.string().optional().describe('Addon code for the campaign.'),
+		idempotencyKey: idempotencyKeyField(),
 	})
-	.loose();
+	.superRefine((value, ctx) => {
+		// Live: front/back without size answers 400 "format  is invalid".
+		if ((value.file || value.front || value.back) && !value.size) {
+			ctx.addIssue({
+				code: 'custom',
+				message:
+					'Set size (A6, A5 or A4) when sending file or front/back artwork.',
+				path: ['size'],
+			});
+		}
+	});
+
+// The docs show { id: "266" }; the live API answers the bare id ("587001").
+// Both forms parse to { id }.
+const CampaignsCreateResponseSchema = z.preprocess(
+	(value) =>
+		typeof value === 'string' || typeof value === 'number'
+			? { id: value }
+			: value,
+	z
+		.object({
+			id: str.describe('The new campaign id, as a string.'),
+		})
+		.loose(),
+);
 
 const CampaignsSampleInputSchema = z.object({
 	id: positiveInt.describe('The campaign to sample.'),
@@ -933,8 +974,9 @@ const EventsCreateInputSchema = z.object({
 	idempotencyKey: idempotencyKeyField(),
 });
 
+// Documented as a number (266); the live API answers a string ("0").
 const EventsCreateResponseSchema = z
-	.number()
+	.union([z.number(), z.string()])
 	.describe('The id of the recorded event.');
 
 // ── selections ────────────────────────────────────────────────────────────
@@ -951,9 +993,12 @@ const SelectionsCreateInputSchema = z.object({
 	idempotencyKey: idempotencyKeyField(),
 });
 
+// Documented as [{ id }]; the live API answered `true`.
 const SelectionsCreateResponseSchema = z
-	.array(z.object({ id: str }).loose())
-	.describe('The created selection, as a list of id objects.');
+	.union([z.array(z.object({ id: str }).loose()), z.boolean()])
+	.describe(
+		'The created selection as a list of id objects, or true (what the live API returns).',
+	);
 
 // ── reporting ─────────────────────────────────────────────────────────────
 
@@ -975,15 +1020,36 @@ const ReportingSummaryResponseSchema = z
 	})
 	.loose();
 
-const ReportingListInputSchema = z.object({
-	startdate: isoDate.describe('Start of the reporting period.'),
-	enddate: isoDate.describe('End of the reporting period.'),
-	status: z
-		.string()
-		.optional()
-		.describe('Only mailpieces in this status, such as delivered or returned.'),
-	tag: z.string().optional().describe('Only mailpieces carrying this tag.'),
-});
+const ReportingListInputSchema = z
+	.object({
+		startdate: isoDate.describe('Start of the reporting period.'),
+		enddate: isoDate.describe('End of the reporting period.'),
+		status: z
+			.string()
+			.optional()
+			.describe(
+				'Only mailpieces in this status, such as delivered or returned.',
+			),
+		tag: z
+			.string()
+			.optional()
+			.describe(
+				'Only mailpieces carrying this tag. The tag is the path segment after status, so it needs a status too.',
+			),
+	})
+	.superRefine((value, ctx) => {
+		// The route is /list/:start/:end/[:status]/[:tag]: a tag without a
+		// status would land in the status slot, so it is refused rather than
+		// sent as the wrong filter or dropped.
+		if (value.tag !== undefined && value.status === undefined) {
+			ctx.addIssue({
+				code: 'custom',
+				message:
+					'Set status as well as tag; the API reads the tag only after a status.',
+				path: ['status'],
+			});
+		}
+	});
 
 const ReportingMailpieceSchema = z
 	.object({
