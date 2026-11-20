@@ -171,7 +171,7 @@ apiNotes:
   leads.skipStep: Deprecated by Lemlist in favor of campaigns.skipStepForLeads; skips cannot be undone.
   leads.personalizeStep: Only supported message steps can be personalized, and a lead that has reached the step cannot be changed.
   leads.importFromCrm: Links the campaign to a filter once and imports asynchronously; requested enrichment features consume credits.
-  unsubscribes.bulkUnsubscribeVariables: The API accepts up to 10,000 values and returns the count plus the unsubscribed and skipped values.
+  unsubscribes.bulkUnsubscribeVariables: The API accepts up to 10,000 values. It answered a summary object (message, count, values, skippedValues) in our tests, but its reference shows a plain text confirmation, so check for an object before reading the counts; text carries no per-value result.
   unsubscribes.resubscribeVariable: Lemlist protects unsubscribe records whose source is LEAD or ABUSE from re-subscription.
   unsubscribes.exportVariables: Returns CSV text by default or a JSON array with format=json.
   unsubscribes.exportContacts: Returns every contact with its subscription status, not only opted-out ones; filter on doNotContact true for a suppression list. CSV text by default or a JSON array with format=json.

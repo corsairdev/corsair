@@ -618,7 +618,7 @@ export const lemlistEndpointMeta = {
 	'unsubscribes.exportContacts': {
 		riskLevel: 'read',
 		description:
-			'Export all contacts with their subscription status (doNotContact) in CSV or JSON format',
+			'Export all contacts with their subscription status in CSV or JSON; filter for doNotContact true to get only opted-out contacts',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof lemlistEndpointsNested>;
 

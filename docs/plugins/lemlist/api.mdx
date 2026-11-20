@@ -3334,7 +3334,7 @@ await corsair.lemlist.api.unsubscribes.bulkUnsubscribeVariables({ values: ['lead
 |------|------|----------|-------------|
 | `values` | `string[]` | Yes | — |
 
-The API accepts up to 10,000 values and returns the count plus the unsubscribed and skipped values.
+The API accepts up to 10,000 values. It answered a summary object (message, count, values, skippedValues) in our tests, but its reference shows a plain text confirmation, so check for an object before reading the counts; text carries no per-value result.
 
 
 
@@ -3361,7 +3361,7 @@ The API accepts up to 10,000 values and returns the count plus the unsubscribed 
 
 `unsubscribes.exportContacts`
 
-Export all contacts with their subscription status (doNotContact) in CSV or JSON format
+Export all contacts with their subscription status in CSV or JSON; filter for doNotContact true to get only opted-out contacts
 
 **Risk:** `read`
 

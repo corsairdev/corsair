@@ -63,7 +63,7 @@ pnpm add @corsair-dev/lemlist
 | `team.getCrmUsers` | `lemlist.api.team.getCrmUsers` | `read` | List team members connected to CRM |
 | `team.getSenders` | `lemlist.api.team.getSenders` | `read` | Retrieve all team members and their associated campaigns |
 | `unsubscribes.bulkUnsubscribeVariables` | `lemlist.api.unsubscribes.bulkUnsubscribeVariables` | `destructive` | Bulk unsubscribe variables up to 10,000 items |
-| `unsubscribes.exportContacts` | `lemlist.api.unsubscribes.exportContacts` | `read` | Export all contacts with their subscription status (`doNotContact`) in CSV or JSON format |
+| `unsubscribes.exportContacts` | `lemlist.api.unsubscribes.exportContacts` | `read` | Export all contacts with their subscription status in CSV or JSON; filter for `doNotContact: true` to get only opted-out contacts |
 | `unsubscribes.exportVariables` | `lemlist.api.unsubscribes.exportVariables` | `read` | Export unsubscribed variables in CSV or JSON format |
 | `unsubscribes.getContactStatus` | `lemlist.api.unsubscribes.getContactStatus` | `read` | Get subscription status of a contact |
 | `unsubscribes.getVariable` | `lemlist.api.unsubscribes.getVariable` | `read` | Get unsubscribed status of a variable |
