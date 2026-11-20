@@ -107,7 +107,12 @@ describe('Interzoid errorHandlers', () => {
 			},
 		});
 
-		expect(plugin.errorHandlers).toBeDefined();
 		expect(plugin.errorHandlers?.CUSTOM_HANDLER).toBe(customRateLimit);
+		// Core tries handlers in key order, so the caller's must come first.
+		const order = Object.keys(plugin.errorHandlers ?? {});
+		expect(order.indexOf('CUSTOM_HANDLER')).toBeLessThan(
+			order.indexOf('RATE_LIMIT_ERROR'),
+		);
+		expect(order.at(-1)).toBe('DEFAULT');
 	});
 });
