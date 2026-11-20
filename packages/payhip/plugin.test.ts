@@ -10,10 +10,11 @@ type KeyBuilder = (
 	source: 'endpoint' | 'webhook',
 ) => string | Promise<string>;
 
-const keyBuilderOf = (candidate: { keyBuilder?: unknown }): KeyBuilder =>
+const keyBuilderOf = (candidate: {
 	// unknown: keyBuilder sits behind the plugin's optional type parameter, so
 	// the test widens it to the shape it actually runs as.
-	candidate.keyBuilder as KeyBuilder;
+	keyBuilder?: unknown;
+}): KeyBuilder => candidate.keyBuilder as KeyBuilder;
 
 function fixture(key?: string | null) {
 	// unknown: the runtime key manager carries many more methods than the
@@ -23,6 +24,8 @@ function fixture(key?: string | null) {
 		key: undefined,
 		keys: { get_api_key: () => Promise.resolve(key ?? null) },
 		tenantId: 'default',
+		// unknown: the runtime key manager carries many more methods than the
+		// fixture implements, so the object is widened through unknown.
 	} as unknown as Parameters<KeyBuilder>[0];
 }
 

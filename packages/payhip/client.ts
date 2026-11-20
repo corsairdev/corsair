@@ -117,6 +117,8 @@ export async function makePayhipRequest(
 	apiKey: string,
 	{ method, path, query, form, auth }: PayhipRequest,
 	productSecret: string | undefined,
+	// unknown: callers parse the response with the endpoint's zod output
+	// schema, so the client cannot name a stricter return type.
 ): Promise<unknown> {
 	const config: OpenAPIConfig = {
 		BASE: 'https://payhip.com',
@@ -141,6 +143,8 @@ export async function makePayhipRequest(
 	};
 
 	try {
+		// unknown: the parsed body is whatever the endpoint's output schema
+		// validates next; request() itself cannot name it.
 		return await request<unknown>(config, requestOptions, {
 			rateLimitConfig: RATE_LIMIT_CONFIG,
 		});
