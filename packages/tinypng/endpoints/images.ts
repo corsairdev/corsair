@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import { toFileOutput } from 'corsair/http';
 import type { TinifyResponse } from '../client';
 import {
 	imageIdFromLocation,
@@ -55,6 +56,43 @@ function imageFile(imageId: string, response: TinifyResponse) {
 	};
 }
 
+/**
+ * Most bytes of an image returned inline to a caller without a host. A host that
+ * keeps files (setFileSink) caps it at its own limit and gets a fileId instead.
+ */
+const IMAGE_MAX_BYTES = 100_000_000;
+
+const IMAGE_EXTENSIONS: Record<string, string> = {
+	'image/png': 'png',
+	'image/jpeg': 'jpg',
+	'image/webp': 'webp',
+	'image/avif': 'avif',
+};
+
+/**
+ * The image's bytes as core's file output, its content under the key this
+ * plugin always used (base64), so a host that keeps files gets a fileId for a
+ * large image instead.
+ */
+function imageBytes(imageId: string, response: TinifyResponse) {
+	const type =
+		response.headers.get('content-type') ?? 'application/octet-stream';
+	const extension = IMAGE_EXTENSIONS[type.split(';')[0]?.trim() ?? ''];
+	const { contentBase64, ...file } = toFileOutput(
+		new Uint8Array(response.body),
+		type,
+		{
+			...(extension ? { filename: `${imageId}.${extension}` } : {}),
+			maxBytes: IMAGE_MAX_BYTES,
+			text: false,
+		},
+	);
+	return {
+		...file,
+		...(contentBase64 !== undefined ? { base64: contentBase64 } : {}),
+	};
+}
+
 type OutputOptions = Pick<
 	CompressAndStoreInAzureInput,
 	'resize' | 'convert' | 'transform' | 'preserve'
@@ -104,7 +142,7 @@ export const output: TinypngEndpoints['output'] = async (ctx, input) => {
 	await logEventFromContext(ctx, 'tinypng.images.output', file, 'completed');
 	return OutputResponseSchema.parse({
 		...file,
-		base64: Buffer.from(response.body).toString('base64'),
+		...imageBytes(imageId, response),
 	});
 };
 
@@ -159,7 +197,7 @@ export const transform: TinypngEndpoints['transform'] = async (ctx, input) => {
 	return TransformResponseSchema.parse({
 		stored: false,
 		...file,
-		base64: Buffer.from(response.body).toString('base64'),
+		...imageBytes(imageId, response),
 	});
 };
 

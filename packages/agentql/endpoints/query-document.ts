@@ -1,14 +1,39 @@
 import { logEventFromContext } from 'corsair/core';
+import { resolveFileInput } from 'corsair/http';
 import { makeAgentQLRequest } from '../client';
 import type { AgentQLEndpoints } from '../index';
 import { buildQueryDocumentCacheKey, hashFileContent } from './cache-keys';
 import type { AgentQLQueryDocumentResponse } from './types';
 
+/**
+ * Most bytes taken from a link, base64 or a data: URL: core's download default,
+ * passed explicitly so inline base64 is held to it too (core caps it only when asked).
+ */
+const FILE_MAX_BYTES = 25 * 1024 * 1024;
+
 export const queryDocument: AgentQLEndpoints['queryDocument'] = async (
 	ctx,
 	input,
 ) => {
-	const fileHash = await hashFileContent(input.file);
+	// A link or base64 becomes the file here; a Blob is sent as it was given.
+	// AgentQL documents no size limit, so core's default download cap applies.
+	let file: Blob;
+	let linkedName: string | undefined;
+	if (input.file instanceof Blob) {
+		file = input.file;
+	} else {
+		const resolved = await resolveFileInput(input.file, {
+			maxBytes: FILE_MAX_BYTES,
+			fallbackName: 'document',
+		});
+		file = resolved.file;
+		linkedName = resolved.filename;
+	}
+	const fileName = input.fileName ?? linkedName;
+
+	// The bytes are hashed, not the input, so a link and the same file as a
+	// Blob give the same cache key.
+	const fileHash = await hashFileContent(file);
 
 	const body = JSON.stringify({
 		query: input.query,
@@ -22,7 +47,7 @@ export const queryDocument: AgentQLEndpoints['queryDocument'] = async (
 		{
 			method: 'POST',
 			formData: {
-				file: input.file,
+				file,
 				body,
 			},
 		},
@@ -32,10 +57,10 @@ export const queryDocument: AgentQLEndpoints['queryDocument'] = async (
 		try {
 			const entityId =
 				response.metadata?.request_id ??
-				buildQueryDocumentCacheKey(input, fileHash);
+				buildQueryDocumentCacheKey({ ...input, fileName }, fileHash);
 
 			await ctx.db.documentQueryResults.upsertByEntityId(entityId, {
-				fileName: input.fileName,
+				fileName,
 				query: input.query,
 				prompt: input.prompt,
 				data: response.data,
@@ -57,7 +82,7 @@ export const queryDocument: AgentQLEndpoints['queryDocument'] = async (
 		{
 			hasQuery: Boolean(input.query),
 			hasPrompt: Boolean(input.prompt),
-			fileName: input.fileName,
+			fileName,
 		},
 		'completed',
 	);

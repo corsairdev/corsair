@@ -482,11 +482,13 @@ const pipedriveEndpointMeta = {
 	},
 	'products.images.upload': {
 		riskLevel: 'write',
-		description: 'Upload a binary image for a product',
+		description:
+			'Upload a binary image for a product. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'products.images.update': {
 		riskLevel: 'write',
-		description: 'Replace a product image with binary data',
+		description:
+			'Replace a product image with binary data. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'products.images.delete': {
 		riskLevel: 'destructive',

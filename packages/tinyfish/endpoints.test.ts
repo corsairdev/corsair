@@ -1155,7 +1155,26 @@ describe('outputs', () => {
 		expect(
 			accepts(outputs.getStepScreenshot, {
 				contentType: 'image/jpeg',
+				byteLength: 3,
 				base64: 'AQID',
+				sizeBytes: 3,
+			}),
+		).toBe(true);
+		// An empty screenshot parses: base64 '' and size 0.
+		expect(
+			accepts(outputs.getStepScreenshot, {
+				contentType: 'image/jpeg',
+				byteLength: 0,
+				base64: '',
+				sizeBytes: 0,
+			}),
+		).toBe(true);
+		// A host that kept the screenshot returns its fileId in place of base64.
+		expect(
+			accepts(outputs.getStepScreenshot, {
+				contentType: 'image/jpeg',
+				byteLength: 3,
+				fileId: 'fil_1',
 				sizeBytes: 3,
 			}),
 		).toBe(true);
