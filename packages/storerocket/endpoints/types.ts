@@ -357,7 +357,11 @@ const WEEKDAY_ALIASES: Record<string, string> = {
 export function countHoursDays(hours: StorerocketHoursWrite): number {
 	const days = new Set<string>();
 	for (const key of Object.keys(hours)) {
-		const canonical = WEEKDAY_ALIASES[key.toLowerCase()];
+		// Own keys only: `constructor` and friends come from the prototype.
+		const lower = key.toLowerCase();
+		const canonical = Object.hasOwn(WEEKDAY_ALIASES, lower)
+			? WEEKDAY_ALIASES[lower]
+			: undefined;
 		if (canonical) days.add(canonical);
 	}
 	return days.size;

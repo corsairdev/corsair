@@ -165,10 +165,11 @@ function withoutRequestBody(error: ApiError): ApiError {
 	return new ApiError(
 		{
 			...error.request,
+			query: withoutFilterValues(error.request.query),
 			body: error.request.body === undefined ? undefined : '[REDACTED]',
 		},
 		{
-			url: error.url,
+			url: urlWithoutFilterValues(error.url),
 			ok: false,
 			status: error.status,
 			statusText: error.statusText,
@@ -182,6 +183,35 @@ function withoutRequestBody(error: ApiError): ApiError {
 			rateLimitLimit: error.rateLimitLimit,
 		},
 	);
+}
+
+// List filters (`address[like]=…`, `postalCode[eq]=…`) carry the caller's
+// search values, which can be street addresses; error copies keep the keys
+// and drop the values.
+const FILTER_KEY = /\[(eq|ne|like)\]$/;
+
+function withoutFilterValues(
+	query: Record<string, unknown> | undefined,
+): Record<string, unknown> | undefined {
+	if (!query) return query;
+	return Object.fromEntries(
+		Object.entries(query).map(([key, value]) => [
+			key,
+			FILTER_KEY.test(key) ? '[REDACTED]' : value,
+		]),
+	);
+}
+
+function urlWithoutFilterValues(url: string): string {
+	try {
+		const parsed = new URL(url);
+		for (const key of [...parsed.searchParams.keys()]) {
+			if (FILTER_KEY.test(key)) parsed.searchParams.set(key, '[REDACTED]');
+		}
+		return parsed.toString();
+	} catch {
+		return url;
+	}
 }
 
 /** Encodes one path segment. */

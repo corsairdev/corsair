@@ -214,6 +214,26 @@ describe('locations', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
+	it('create does not count an inherited key such as constructor as a day', async () => {
+		await expect(
+			invoke(Locations.create, {
+				projectId: 'PROJECT_ID',
+				name: 'Padded Week',
+				city: 'Seattle',
+				hours: {
+					mon: '09:00-17:00',
+					tue: '09:00-17:00',
+					wed: '09:00-17:00',
+					thu: '09:00-17:00',
+					fri: '09:00-17:00',
+					sat: '10:00-14:00',
+					constructor: 'closed',
+				} as never,
+			}),
+		).rejects.toThrow('all seven days');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('rejects a limit above the documented 100', async () => {
 		respond(listPage);
 

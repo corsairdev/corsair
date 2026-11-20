@@ -161,6 +161,24 @@ describe('makeStorerocketRequest', () => {
 		expect(JSON.stringify(error)).not.toContain('owner@example.com');
 	});
 
+	it('keeps list filter values out of the error', async () => {
+		respond({ message: 'Server Error' }, 500);
+
+		const error = await failure(
+			makeStorerocketRequest(TOKEN, {
+				method: 'GET',
+				path: '/projects/PROJECT_ID/locations',
+				query: { 'address[like]': '400 Broad St', page: 2 },
+			}),
+		);
+		expect(JSON.stringify(error)).not.toContain('Broad');
+		expect(error.url).not.toContain('Broad');
+		expect(error.request.query).toEqual({
+			'address[like]': '[REDACTED]',
+			page: 2,
+		});
+	});
+
 	it('keeps a non-JSON body readable', async () => {
 		respond('reduce query parameter nesting', 400);
 
