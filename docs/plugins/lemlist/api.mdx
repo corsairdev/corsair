@@ -107,7 +107,7 @@ await corsair.lemlist.api.activities.list({ limit: 20 });
 
 Add People Database contacts to an ABM campaign
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.lemlist.api.campaigns.addAbmLeads({ campaignId: 'cam_1234567890abcdef', leadIds: ['123456'] });
@@ -739,7 +739,7 @@ await corsair.lemlist.api.campaigns.getExportStatus({ campaignId: 'cam_123456789
 | `campaignId` | `string` | Yes | — |
 | `exportId` | `string` | Yes | — |
 
-Export status is retained for two hours and files are available for 24 hours after completion.
+Export status is retained for two hours; an export still pending after two hours answers 404, so stop polling and report it as failed. Files are available for 24 hours after completion.
 
 
 
@@ -1198,12 +1198,19 @@ await corsair.lemlist.api.campaigns.list({ limit: 10, version: 'v2' });
 | `status` | `running \| draft \| archived \| ended \| paused \| errors` | No | — |
 | `createdBy` | `string` | No | — |
 
+Returns one page as &#123; campaigns, pagination &#125;; use page and limit to walk the rest.
 
 
-**Output:** `object[]`
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaigns` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="campaigns full type">
 
 ```ts
 {
@@ -1292,7 +1299,20 @@ await corsair.lemlist.api.campaigns.list({ limit: 10, version: 'v2' });
 }[]
 ```
 </Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  totalRecords?: number,
+  currentPage?: number,
+  nextPage?: number,
+  totalPage?: number
+}
+```
+</Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -1333,9 +1353,9 @@ await corsair.lemlist.api.campaigns.pause({ campaignId: 'cam_1234567890abcdef' }
 
 `campaigns.setExportEmail`
 
-Configure email notification for campaign export completion
+Email the campaign export download link to an address when the export completes
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.lemlist.api.campaigns.setExportEmail({ campaignId: 'cam_1234567890abcdef', exportId: 'axp_1234567890abcdef', email: 'user@example.com' });
@@ -1349,7 +1369,7 @@ await corsair.lemlist.api.campaigns.setExportEmail({ campaignId: 'cam_1234567890
 | `exportId` | `string` | Yes | — |
 | `email` | `string` | Yes | — |
 
-The notification email is a required path parameter; the export continues asynchronously.
+Lemlist emails the export's download link to this address when the export completes, so only use an address the account owner chose.
 
 
 
@@ -2173,7 +2193,7 @@ await corsair.lemlist.api.leads.createInCampaign({ campaignId: 'cam_1234567890ab
 | `findPhone` | `boolean` | No | — |
 | `updateStrategy` | `overwrite \| overwriteIgnoreEmpty \| fillEmptyOnly` | No | — |
 
-Creates a new lead and never updates an existing lead. Additional string body keys are stored as custom variables. Enrichment query options may consume credits.
+Needs an email or a LinkedIn URL. Always creates a new lead (a contact already in the campaign is refused), but the matched contact and company are updated with the fields you send; updateStrategy defaults to overwrite, use fillEmptyOnly to keep stored values. Additional string body keys are stored as custom variables. Enrichment query options (findEmail, verifyEmail, findPhone, linkedinEnrichment) consume credits.
 
 
 
@@ -2194,7 +2214,7 @@ Creates a new lead and never updates an existing lead. Additional string body ke
 | `emailStatus` | `string` | No | — |
 | `state` | `string` | No | — |
 | `status` | `string` | No | — |
-| `variables` | `Record<string, string>` | No | — |
+| `variables` | `Record<string, any>` | No | — |
 
 
 
@@ -2204,7 +2224,7 @@ Creates a new lead and never updates an existing lead. Additional string body ke
 
 `leads.deleteFromCampaign`
 
-Delete or unsubscribe lead from a campaign by ID
+Remove a lead from a campaign by ID (use leads.unsubscribeFromCampaign to unsubscribe)
 
 **Risk:** `destructive`
 
@@ -2220,6 +2240,8 @@ await corsair.lemlist.api.leads.deleteFromCampaign({ campaignId: 'cam_1234567890
 | `leadId` | `string` | Yes | — |
 | `action` | `remove` | Yes | — |
 
+Always sends action=remove, which deletes the lead from the campaign. To unsubscribe a lead instead, use leads.unsubscribeFromCampaign.
+
 
 
 **Output**
@@ -2239,7 +2261,7 @@ await corsair.lemlist.api.leads.deleteFromCampaign({ campaignId: 'cam_1234567890
 | `emailStatus` | `string` | No | — |
 | `state` | `string` | No | — |
 | `status` | `string` | No | — |
-| `variables` | `Record<string, string>` | No | — |
+| `variables` | `Record<string, any>` | No | — |
 
 
 
@@ -2310,6 +2332,8 @@ await corsair.lemlist.api.leads.get({ id: 'lea_123456', version: 'v2' });
 | `email` | `string` | No | — |
 | `version` | `v2` | No | — |
 
+Needs id or email; Lemlist uses the email when both are given.
+
 
 
 **Output:** `object[]`
@@ -2332,7 +2356,7 @@ await corsair.lemlist.api.leads.get({ id: 'lea_123456', version: 'v2' });
   emailStatus?: string,
   state?: string,
   status?: string,
-  variables?: Record<string, string>
+  variables?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2382,7 +2406,7 @@ await corsair.lemlist.api.leads.getByEmail({ email: 'lead@example.com', version:
   emailStatus?: string,
   state?: string,
   status?: string,
-  variables?: Record<string, string>
+  variables?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2511,7 +2535,7 @@ await corsair.lemlist.api.leads.listInCampaign({ campaignId: 'cam_1234567890abcd
   emailStatus?: string,
   state?: string,
   status?: string,
-  variables?: Record<string, string>
+  variables?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2560,7 +2584,7 @@ await corsair.lemlist.api.leads.markInterested({ leadIdOrEmail: 'lea_123456' });
   emailStatus?: string,
   state?: string,
   status?: string,
-  variables?: Record<string, string>
+  variables?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2607,7 +2631,7 @@ await corsair.lemlist.api.leads.markInterestedInCampaign({ campaignId: 'cam_1234
 | `emailStatus` | `string` | No | — |
 | `state` | `string` | No | — |
 | `status` | `string` | No | — |
-| `variables` | `Record<string, string>` | No | — |
+| `variables` | `Record<string, any>` | No | — |
 
 
 
@@ -2653,7 +2677,7 @@ await corsair.lemlist.api.leads.markNotInterested({ leadIdOrEmail: 'lea_123456' 
   emailStatus?: string,
   state?: string,
   status?: string,
-  variables?: Record<string, string>
+  variables?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2700,7 +2724,7 @@ await corsair.lemlist.api.leads.markNotInterestedInCampaign({ campaignId: 'cam_1
 | `emailStatus` | `string` | No | — |
 | `state` | `string` | No | — |
 | `status` | `string` | No | — |
-| `variables` | `Record<string, string>` | No | — |
+| `variables` | `Record<string, any>` | No | — |
 
 
 
@@ -2747,7 +2771,7 @@ await corsair.lemlist.api.leads.pause({ leadId: 'lea_123456', campaignId: 'cam_1
   emailStatus?: string,
   state?: string,
   status?: string,
-  variables?: Record<string, string>
+  variables?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2853,7 +2877,7 @@ await corsair.lemlist.api.leads.resetStepPersonalization({ campaignId: 'cam_1234
 
 `leads.resume`
 
-Resume activity for a paused lead
+Resume a paused lead in all campaigns or one campaign, allowing outreach to continue
 
 **Risk:** `destructive`
 
@@ -2866,6 +2890,7 @@ await corsair.lemlist.api.leads.resume({ leadId: 'lea_123456' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `leadId` | `string` | Yes | — |
+| `campaignId` | `string` | No | — |
 
 
 
@@ -2889,7 +2914,7 @@ await corsair.lemlist.api.leads.resume({ leadId: 'lea_123456' });
   emailStatus?: string,
   state?: string,
   status?: string,
-  variables?: Record<string, string>
+  variables?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -3003,7 +3028,7 @@ await corsair.lemlist.api.leads.unsubscribeFromCampaign({ campaignId: 'cam_12345
 | `emailStatus` | `string` | No | — |
 | `state` | `string` | No | — |
 | `status` | `string` | No | — |
-| `variables` | `Record<string, string>` | No | — |
+| `variables` | `Record<string, any>` | No | — |
 
 
 
@@ -3053,7 +3078,7 @@ await corsair.lemlist.api.leads.updateInCampaign({ campaignId: 'cam_1234567890ab
 | `emailStatus` | `string` | No | — |
 | `state` | `string` | No | — |
 | `status` | `string` | No | — |
-| `variables` | `Record<string, string>` | No | — |
+| `variables` | `Record<string, any>` | No | — |
 
 
 
@@ -3309,11 +3334,25 @@ await corsair.lemlist.api.unsubscribes.bulkUnsubscribeVariables({ values: ['lead
 |------|------|----------|-------------|
 | `values` | `string[]` | Yes | — |
 
-The API accepts up to 10,000 values and returns a text confirmation.
+The API accepts up to 10,000 values and returns the count plus the unsubscribed and skipped values.
 
 
 
-**Output:** `string`
+**Output:** `object \| string`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  message?: string,
+  count?: number,
+  values?: string[],
+  skippedValues?: string[]
+} | string
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -3322,7 +3361,7 @@ The API accepts up to 10,000 values and returns a text confirmation.
 
 `unsubscribes.exportContacts`
 
-Export unsubscribed contacts in CSV or JSON format
+Export all contacts with their subscription status (doNotContact) in CSV or JSON format
 
 **Risk:** `read`
 
@@ -3336,7 +3375,7 @@ await corsair.lemlist.api.unsubscribes.exportContacts({});
 |------|------|----------|-------------|
 | `format` | `csv \| json` | No | — |
 
-Returns CSV text by default or a JSON array with format=json.
+Returns every contact with its subscription status, not only opted-out ones; filter on doNotContact true for a suppression list. CSV text by default or a JSON array with format=json.
 
 
 
@@ -3459,6 +3498,7 @@ await corsair.lemlist.api.unsubscribes.getVariable({ value: 'lead@example.com' }
 | `variable` | `string` | No | — |
 | `source` | `api \| bounced \| lead \| user \| abuse` | No | — |
 | `createdAt` | `string` | No | — |
+
 
 
 ---
@@ -3614,3 +3654,4 @@ await corsair.lemlist.api.unsubscribes.unsubscribeVariable({ value: 'lead@exampl
 
 
 ---
+

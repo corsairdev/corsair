@@ -6,13 +6,13 @@ description: "Sales engagement and cold email outreach platform for automating m
 
 Use **Lemlist** through Corsair: one client, typed API calls.
 
-Lemlist uses HTTP Basic authentication. Provide your Lemlist API key from your team settings (`Settings` -> `Integrations` -> `API`).
+Lemlist uses HTTP Basic authentication. Provide your Lemlist API key from your team settings (`Settings` -&gt; `Integrations` -&gt; `API`).
 The API key is passed as the password with an empty username (`Authorization: Basic base64(:apiKey)`).
 
 Things to know before calling:
 - **Identifiers:** Campaign IDs and Lead IDs follow Lemlist's internal identifier format (e.g., `cam_...`, `lea_...`).
 - **Rate Limiting:** Lemlist enforces API rate limits. The plugin automatically handles HTTP 429 responses and backs off according to the `Retry-After` header.
-- **Campaign Lead Actions:** Most lead management operations (pause, resume, review, mark interested, personalize step) can be performed either globally or scoped to a specific campaign.
+- **Campaign Lead Actions:** `leads.pause` and `leads.resume` act on every campaign unless you pass `campaignId`. Interest changes have separate global (`leads.markInterested`) and campaign (`leads.markInterestedInCampaign`) operations. Step operations (`leads.personalizeStep`, `leads.skipStep`) always need a campaign.
 - **Unsubscribes & Blacklist:** Contacts can be unsubscribed or resubscribed either by variable (such as `email` or `domain`) or via the contact management endpoints.
 
 **What you get:**
