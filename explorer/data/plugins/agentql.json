@@ -143,7 +143,7 @@
     {
       "path": "agentql.api.data.queryDocument",
       "shortPath": "data.queryDocument",
-      "description": "Tool to extract structured data from PDF or image documents using an AgentQL query or natural language prompt. Accepts a file upload plus query or prompt.",
+      "description": "Tool to extract structured data from PDF or image documents using an AgentQL query or natural language prompt. Accepts a file plus query or prompt. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -151,12 +151,14 @@
           {
             "key": "file",
             "optional": false,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The PDF or image (.pdf, .png, .jpg, .jpeg): a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…)."
           },
           {
             "key": "fileName",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "The name stored with the result. Defaults to the name of a linked or base64 file; a Blob's is not taken."
           },
           {
             "key": "query",

@@ -33,7 +33,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -73,7 +74,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -118,7 +120,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -163,7 +166,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -213,7 +217,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -264,7 +269,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -321,7 +327,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -368,7 +375,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -414,7 +422,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -527,7 +536,7 @@
     {
       "path": "cloudinary.api.asset.uploadAsset",
       "shortPath": "asset.uploadAsset",
-      "description": "Upload media asset",
+      "description": "Upload media asset. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -545,7 +554,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -676,7 +686,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -732,7 +743,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -770,7 +782,7 @@
     {
       "path": "cloudinary.api.chunk.uploadChunk",
       "shortPath": "chunk.uploadChunk",
-      "description": "Upload a file chunk for large uploads (requires content_range and x_unique_upload_id)",
+      "description": "Upload a file chunk for large uploads (requires content_range and x_unique_upload_id). Takes the chunk as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -788,7 +800,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -919,7 +932,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -965,7 +979,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -1005,7 +1020,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -1136,7 +1152,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -1202,7 +1219,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -1263,7 +1281,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -1315,7 +1334,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -1361,7 +1381,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -1412,7 +1433,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -1470,7 +1492,7 @@
     {
       "path": "cloudinary.api.file.uploadFileAutoDetect",
       "shortPath": "file.uploadFileAutoDetect",
-      "description": "Upload with auto resource type detection",
+      "description": "Upload with auto resource type detection. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -1488,7 +1510,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -1619,7 +1642,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -1681,7 +1705,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -1732,7 +1757,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -1803,7 +1829,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -1869,7 +1896,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -1945,7 +1973,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -2001,7 +2030,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -2041,7 +2071,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -2172,7 +2203,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -2288,7 +2320,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -2364,7 +2397,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -2435,7 +2469,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -2512,7 +2547,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -2564,7 +2600,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -2620,7 +2657,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -2696,7 +2734,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -2777,7 +2816,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -2832,7 +2872,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -2882,7 +2923,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -2958,7 +3000,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -3034,7 +3077,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -3115,7 +3159,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -3167,7 +3212,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -3218,7 +3264,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -3274,7 +3321,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -3330,7 +3378,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -3396,7 +3445,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -3467,7 +3517,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -3529,7 +3580,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -3581,7 +3633,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -3632,7 +3685,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -3708,7 +3762,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -3759,7 +3814,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -3805,7 +3861,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -3881,7 +3938,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -3957,7 +4015,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -4028,7 +4087,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -4083,7 +4143,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -4159,7 +4220,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -4235,7 +4297,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -4301,7 +4364,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -4432,7 +4496,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -4489,7 +4554,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -4540,7 +4606,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -4601,7 +4668,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -4662,7 +4730,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -4728,7 +4797,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -4844,7 +4914,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -4975,7 +5046,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -5106,7 +5178,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -5267,7 +5340,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -5433,7 +5507,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -5479,7 +5554,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -5610,7 +5686,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -5746,7 +5823,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -5887,7 +5965,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -5928,7 +6007,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -5975,7 +6055,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -6027,7 +6108,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -6078,7 +6160,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -6174,7 +6257,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -6275,7 +6359,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -6376,7 +6461,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -6462,7 +6548,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -6548,7 +6635,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -6639,7 +6727,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -6755,7 +6844,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -6886,7 +6976,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -7022,7 +7113,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -7153,7 +7245,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -7219,7 +7312,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -7350,7 +7444,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -7390,7 +7485,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -7431,7 +7527,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -7482,7 +7579,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -7527,7 +7625,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -7572,7 +7671,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -7633,7 +7733,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -7699,7 +7800,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -7766,7 +7868,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -7817,7 +7920,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -7883,7 +7987,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -7954,7 +8059,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -8025,7 +8131,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -8096,7 +8203,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -8177,7 +8285,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
@@ -8242,7 +8351,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first."
           },
           {
             "key": "resource_type",
