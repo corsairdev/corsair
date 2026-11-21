@@ -1,9 +1,0 @@
-export * as Campaigns from './campaigns';
-export * as DncDomains from './dnc-domains';
-export * as Events from './events';
-export * as LeadFields from './lead-fields';
-export * as LeadStatuses from './lead-statuses';
-export * as Leads from './leads';
-export * as Tags from './tags';
-export * as Users from './users';
-export * as Webhooks from './webhooks';
