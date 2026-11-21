@@ -58,7 +58,7 @@ apiExamples:
   vouchers.create:
     call: "{ type: 'purchaseinvoice', voucherNumber: 'PUR-2026-001', voucherDate: '2026-01-01', totalGrossAmount: 119, totalTaxAmount: 19, taxType: 'net', useCollectiveContact: true, voucherItems: [{ amount: 100, taxAmount: 19, taxRatePercent: 19, categoryId: 'efa82f49-fd85-11e1-a21f-0800200c9a66' }] }"
   vouchers.update:
-    call: "{ id: 'v-00000000-0000-4000-8000-000000000001', version: 1, files: [], type: 'purchaseinvoice', voucherNumber: 'PUR-2026-001', voucherDate: '2026-01-01', totalGrossAmount: 119, totalTaxAmount: 19, taxType: 'net', useCollectiveContact: true, voucherItems: [{ amount: 100, taxAmount: 19, taxRatePercent: 19, categoryId: 'efa82f49-fd85-11e1-a21f-0800200c9a66' }] }"
+    call: "{ id: 'v-00000000-0000-4000-8000-000000000001', version: 3, files: ['f-00000000-0000-4000-8000-000000000001'], type: 'purchaseinvoice', voucherNumber: 'PUR-2026-001', voucherDate: '2026-01-01', totalGrossAmount: 119, totalTaxAmount: 19, taxType: 'net', useCollectiveContact: true, voucherItems: [{ amount: 100, taxAmount: 19, taxRatePercent: 19, categoryId: 'efa82f49-fd85-11e1-a21f-0800200c9a66' }] }"
   vouchers.attachFile:
     call: "{ id: 'v-00000000-0000-4000-8000-000000000001', file: 'JVBERi0xLjQK', fileName: 'receipt.pdf', contentType: 'application/pdf' }"
   profile.get: {}
@@ -87,19 +87,19 @@ apiExamples:
     id: file-00000000-0000-4000-8000-000000000001
 apiNotes:
   voucherlist.list: |
-    voucherType and voucherStatus are required; use any or documented comma-separated values. Pagination is zero-based with a maximum size of 250. Invoice, credit-note, and down-payment invoice list operations use this route.
+    voucherType and voucherStatus are required; use any or documented comma-separated values. Pagination is zero-based with a maximum size of 250. Invoice, credit-note, and down-payment invoice list operations use this route. `overdue` must be used on its own; it cannot be combined with other statuses.
   vouchers.list: |
     This convenience operation filters bookkeeping voucher types and voucherStatus=any through the current /voucherlist route. Lexware's older /vouchers?voucherNumber filter is deprecated.
   invoices.render: |
     Lexware marks this document-ID route deprecated. Prefer invoices.download, which returns the document bytes directly. Draft invoices have no downloadable document.
   invoices.create: |
-    The operation can finalize a new invoice or pursue a preceding sales voucher; finalize and precedingSalesVoucherId are query parameters. Finalized invoices cannot be edited or deleted via the API. For custom, material, and service lines, name, quantity, unitName, and unitPrice are required; material/service lines also require id. Text lines accept only name and/or description. Net tax conditions require netAmount; gross tax conditions require grossAmount. Shipping conditions and their required dates are validated before sending.
+    The operation can finalize a new invoice or pursue a preceding sales voucher; finalize and precedingSalesVoucherId are query parameters. Finalized invoices cannot be edited or deleted via the API. For custom, material, and service lines, name, quantity, unitName, and unitPrice are required; material/service lines also require id. Text lines accept only name and/or description. Net tax conditions require netAmount; gross tax conditions require grossAmount. Shipping conditions and their required dates are validated before sending. `service` and `delivery` need `shippingDate`; `serviceperiod` and `deliveryperiod` need both `shippingDate` and `shippingEndDate`; `none` takes neither.
   invoices.download: |
     Returns the file bytes in base64 form. Lexware supports */*, application/pdf, and application/xml for sales invoices; XRechnung PDF output is a preview only.
   vouchers.create: |
-    For an open voucher, supply voucherNumber, totalGrossAmount, totalTaxAmount, each item's taxAmount, and either contactId or useCollectiveContact: true. If both contact fields are supplied, Lexware ignores contactId when useCollectiveContact is true. The purchase example uses the documented "Reisen (für Selbständige)" expense category; select an appropriate outgo category from postingCategories.list for the actual expense. Version is omitted unless explicitly provided because the provider's create documentation conflicts about its initial value.
+    For an open voucher, supply voucherNumber, totalGrossAmount, totalTaxAmount, each item's taxAmount, and either contactId or useCollectiveContact: true. If both contact fields are supplied, Lexware ignores contactId when useCollectiveContact is true. The purchase example uses the documented "Reisen (für Selbständige)" expense category; select an appropriate outgo category from postingCategories.list for the actual expense. Version is omitted unless explicitly provided because the provider's create documentation conflicts about its initial value. Leaving out `voucherStatus` creates an `open` voucher, which also needs `voucherDate` and at least one entry in `voucherItems`.
   vouchers.update: |
-    Updates require the latest version and the existing files array. Lexware warns that omitting existing file IDs permanently deletes those files. voucherStatus can only be changed from unchecked to open; this operation is classified destructive.
+    Updates require the latest version and the existing files array. Lexware warns that omitting existing file IDs permanently deletes those files. voucherStatus can only be changed from unchecked to open; this operation is classified destructive. `voucherDate` is written as YYYY-MM-DD: take the date part of the timestamp `vouchers.get` returns (for example `2026-11-21` from `2026-11-21T00:00:00.000+01:00`) without converting it to UTC. Read the voucher first and pass its `version` and every file ID in `files`.
   vouchers.attachFile: |
     Uploads a file to an existing voucher. This request has no type form field; use files.upload to create a voucher from an uploaded receipt.
   files.upload: |
@@ -111,11 +111,11 @@ apiNotes:
   creditNotes.create: |
     Credit notes can be finalized or pursued from an existing sales voucher; finalize and precedingSalesVoucherId are query parameters. A finalized credit note related to an invoice is immediately paid off and reduces the invoice's open amount. Credit notes do not support payment conditions, shipping conditions, or per-line discounts. For custom, material, and service lines, name, quantity, unitName, and unitPrice are required; material/service lines also require id.
   creditNotes.download: |
-    Returns the file bytes in base64 form. Lexware supports */*, application/pdf, and application/xml for sales credit notes.
+    Returns the file bytes in base64 form. Lexware supports */*, application/pdf, and application/xml for sales credit notes. For an XRechnung credit note, application/pdf returns only a preview; request application/xml for the e-invoice.
   downPaymentInvoices.get: |
     Down-payment invoices are read-only through this API. Their list metadata is available through voucherlist.list using voucherType=downpaymentinvoice.
   downPaymentInvoices.download: |
-    Returns document bytes as base64. Draft down-payment invoices do not have a downloadable document.
+    Returns document bytes as base64. Draft down-payment invoices do not have a downloadable document. For an XRechnung down-payment invoice, application/pdf returns only a preview; request application/xml for the e-invoice.
   payments.get: |
     Retrieves payment status for a voucher ID; the API documents this operation as read-only.
   profile.get: |
@@ -123,4 +123,4 @@ apiNotes:
   contacts.create: |
     New contacts are created with version 0 when omitted and must have exactly one of person or company plus at least one role. Only one entry per address/contact list and one company contact person can be written. XRechnung contacts require both buyerReference and vendorNumberAtCustomer. Personal contact fields are never included in plugin event logs or propagated provider error details.
   contacts.update: |
-    Updates require the current contact version. Personal contact fields are never included in plugin event logs or propagated provider error details.
+    Updates require the current contact version. Personal contact fields are never included in plugin event logs or propagated provider error details. The same write rules as contacts.create apply: exactly one of person or company, and at least one role.
