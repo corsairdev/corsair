@@ -1,17 +1,29 @@
-import type { CorsairErrorHandler } from 'corsair/core';
-import { Pdf4meAPIError } from './client';
+import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
+
+/** Operations that only return data, safe to send again after a 5xx. */
+const REPLAYABLE_OPERATIONS = new Set([
+	'pdf.getInfo',
+	'extract.tableFromPdf',
+	'extract.pdfFormData',
+	'jobs.status',
+]);
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof Pdf4meAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 // The client retries a 429 up to three times through core, honouring
-// Retry-After. No RATE_LIMIT_ERROR handler is needed here: DEFAULT adds no
-// retries after the client has used its attempts.
+// Retry-After. RATE_LIMIT_ERROR returns maxRetries 0 so a caller's root 429
+// handler cannot restart those attempts (R8: one retry layer).
 // Documented statuses: 400 invalid payload ("File is empty", "Invalid
 // Optimization Profile"), 401 invalid or missing API key (verified live,
 // empty body), 404 unknown action name, 429 rate limit, 500 processing.
 export const errorHandlers = {
+	RATE_LIMIT_ERROR: {
+		match: (error: Error) => statusOf(error) === 429,
+		handler: async () => ({ maxRetries: 0 }),
+	},
 	AUTH_ERROR: {
 		match: (error: Error) => statusOf(error) === 401 || statusOf(error) === 403,
 		handler: async () => ({ maxRetries: 0 }),
@@ -23,13 +35,14 @@ export const errorHandlers = {
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// Only reads are replayed: the processing writes charge credits per call,
-	// so a retried merge could bill twice.
+	// Only reads are replayed. Every PDF4me route is a POST, so the read
+	// operations are named: the processing writes charge credits per call,
+	// and a retried merge could bill twice.
 	SERVER_ERROR: {
-		match: (error: Error) =>
-			error instanceof Pdf4meAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+		match: (error: Error, context?: ErrorContext) =>
+			error instanceof ApiError &&
+			error.status >= 500 &&
+			REPLAYABLE_OPERATIONS.has(context?.operation ?? ''),
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

@@ -1,8 +1,5 @@
-import {
-	describePdf4meError,
-	makePdf4meRequest,
-	Pdf4meAPIError,
-} from './client';
+import { ApiError } from 'corsair/http';
+import { describePdf4meError, makePdf4meRequest } from './client';
 
 const API_KEY = 'pdf4me-test-key';
 
@@ -36,10 +33,10 @@ function respond(
 }
 
 // unknown: a rejection can be any value until the instanceof check narrows it.
-async function failure(promise: Promise<unknown>): Promise<Pdf4meAPIError> {
+async function failure(promise: Promise<unknown>): Promise<ApiError> {
 	const error = await promise.catch((caught: unknown) => caught);
-	expect(error).toBeInstanceOf(Pdf4meAPIError);
-	if (!(error instanceof Pdf4meAPIError)) throw error;
+	expect(error).toBeInstanceOf(ApiError);
+	if (!(error instanceof ApiError)) throw error;
 	return error;
 }
 
@@ -101,7 +98,7 @@ describe('makePdf4meRequest', () => {
 		);
 		expect(error.status).toBe(400);
 		expect(error.message).toContain('File is empty');
-		expect(error.name).toBe('Pdf4meAPIError');
+		expect(error.name).toBe('ApiError');
 	});
 
 	it('falls back to the status text for a plain-text error body', async () => {

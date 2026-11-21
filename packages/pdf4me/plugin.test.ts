@@ -63,13 +63,22 @@ describe('pdf4me plugin', () => {
 		}
 	});
 
-	it('marks page deletion destructive, processing writes as writes', () => {
+	it('marks every credit-billed file-producing call destructive (R8 paid jobs), metered reads read', () => {
 		const meta = pdf4me({}).endpointMeta!;
-		expect(meta['pdf.deletePages']).toMatchObject({
-			riskLevel: 'destructive',
-			irreversible: true,
-		});
-		expect(meta['pdf.merge']).toMatchObject({ riskLevel: 'write' });
+		for (const op of [
+			'pdf.merge',
+			'pdf.split',
+			'pdf.compress',
+			'pdf.extractPages',
+			'pdf.deletePages',
+			'convert.pdfToWord',
+			'convert.htmlToPdf',
+			'convert.ocrPdf',
+		] as const) {
+			expect(meta[op]).toMatchObject({ riskLevel: 'destructive' });
+		}
+		expect(meta['pdf.deletePages']).not.toHaveProperty('irreversible');
+		expect(meta['extract.tableFromPdf']).toMatchObject({ riskLevel: 'read' });
 		expect(meta['pdf.getInfo']).toMatchObject({ riskLevel: 'read' });
 		expect(meta['jobs.status']).toMatchObject({ riskLevel: 'read' });
 	});

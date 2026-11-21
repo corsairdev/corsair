@@ -135,43 +135,42 @@ export const pdf4meEndpointSchemas = {
 
 const pdf4meEndpointMeta = {
 	'pdf.merge': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Merge multiple PDFs into one; array order is the merge order',
 	},
 	'pdf.split': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Split a PDF by pages, text separator, barcode or Swiss QR code',
 	},
 	'pdf.compress': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Compress a PDF with a documented profile (Max, Web, Print, Default)',
 	},
 	'pdf.extractPages': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Extract the given pages into a new PDF',
 	},
 	'pdf.deletePages': {
 		riskLevel: 'destructive',
 		description:
-			'Delete the given pages from a PDF; the original document is not recoverable from the result',
-		irreversible: true,
+			'Return a copy of a PDF without the given pages; the source file is not changed',
 	},
 	'pdf.getInfo': {
 		riskLevel: 'read',
 		description: 'Read PDF metadata: page count, dimensions, author and more',
 	},
 	'convert.pdfToWord': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Convert a PDF to a Word document',
 	},
 	'convert.htmlToPdf': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Render HTML content into a PDF',
 	},
 	'convert.ocrPdf': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Run OCR on a scanned PDF to make its text editable',
 	},
 	'extract.tableFromPdf': {
@@ -246,8 +245,6 @@ export function pdf4me<const T extends Pdf4mePluginOptions>(
 		},
 	} satisfies InternalPdf4mePlugin;
 }
-
-export { Pdf4meAPIError } from './client';
 
 export type {
 	FileOutput,

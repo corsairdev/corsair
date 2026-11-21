@@ -74,12 +74,12 @@ describe('retries through createCorsair', () => {
 		const { corsair, testDb } = await createClient();
 		try {
 			respond({ message: 'Something went wrong' }, 503);
-			respond(pdfInfo);
+			respond({ jobId: 'job-1', isFinished: true, isSuccess: true });
 
 			await expect(
 				corsair.pdf4me.api.jobs.status({ jobId: 'job-1' }),
-			).rejects.toMatchObject({ status: 503 });
-			expect(fetchMock).toHaveBeenCalledTimes(1);
+			).resolves.toMatchObject({ jobId: 'job-1', isFinished: true });
+			expect(fetchMock).toHaveBeenCalledTimes(2);
 		} finally {
 			testDb.cleanup();
 		}
