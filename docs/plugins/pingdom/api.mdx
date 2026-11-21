@@ -596,7 +596,7 @@ await corsair.pingdom.api.checks.create({ name: "api", host: "example.com", type
 | `type` | `http \| httpcustom \| tcp \| ping \| dns \| udp \| smtp \| pop3 \| imap` | Yes | Type of check |
 | `typeSettings` | `Record<string, any>` | No | Type-specific settings as flat body fields, per the check type docs: http takes url/encryption/port/shouldcontain/shouldnotcontain/postdata/requestheaders/verify_certificate/ssl_down_days_before; tcp takes port/encryption/stringtoexpect; dns takes nameserver/expectedip; udp/smtp/pop3/imap take port/stringtoexpect |
 | `paused` | `boolean` | No | Create or leave the check paused |
-| `resolution` | `1 \| 5 \| 15 \| 30 \| 60` | Yes | Test interval in minutes (1, 5, 15, 30 or 60) |
+| `resolution` | `1 \| 5 \| 15 \| 30 \| 60 \| 1 \| 5 \| 15 \| 30 \| 60` | No | Test interval in minutes (1, 5, 15, 30 or 60) |
 | `userIds` | `number[]` | No | User ids to alert |
 | `teamIds` | `number[]` | No | Team ids to alert |
 | `integrationIds` | `number[]` | No | Integration ids to alert |
@@ -604,7 +604,7 @@ await corsair.pingdom.api.checks.create({ name: "api", host: "example.com", type
 | `notifyAgainEvery` | `number` | No | Re-notify every N failures |
 | `notifyWhenBackup` | `boolean` | No | Send an alert when the check recovers |
 | `tags` | `string` | No | Comma-separated tags for filtering |
-| `probeFilters` | `Record<string, any>[]` | No | Probe region filters, e.g. [&#123;"region":"EU"&#125;] or [&#123;"region":"NA"&#125;] |
+| `probeFilters` | `string[]` | No | Probe region filters, e.g. [&#123;"region":"EU"&#125;] or [&#123;"region":"NA"&#125;] |
 | `ipv6` | `boolean` | No | Test over IPv6 |
 | `responseTimeThreshold` | `number` | No | Response time threshold in ms |
 | `customMessage` | `string` | No | Custom alert message |
@@ -836,7 +836,7 @@ await corsair.pingdom.api.checks.update({ checkId: 100, name: "renamed" });
 | `type` | `http \| httpcustom \| tcp \| ping \| dns \| udp \| smtp \| pop3 \| imap` | No | New type of check |
 | `typeSettings` | `Record<string, any>` | No | Type-specific settings as flat body fields |
 | `paused` | `boolean` | No | Create or leave the check paused |
-| `resolution` | `1 \| 5 \| 15 \| 30 \| 60` | Yes | Test interval in minutes (1, 5, 15, 30 or 60) |
+| `resolution` | `1 \| 5 \| 15 \| 30 \| 60 \| 1 \| 5 \| 15 \| 30 \| 60` | No | Test interval in minutes (1, 5, 15, 30 or 60) |
 | `userIds` | `number[]` | No | User ids to alert |
 | `teamIds` | `number[]` | No | Team ids to alert |
 | `integrationIds` | `number[]` | No | Integration ids to alert |
@@ -844,7 +844,7 @@ await corsair.pingdom.api.checks.update({ checkId: 100, name: "renamed" });
 | `notifyAgainEvery` | `number` | No | Re-notify every N failures |
 | `notifyWhenBackup` | `boolean` | No | Send an alert when the check recovers |
 | `tags` | `string` | No | Comma-separated tags for filtering |
-| `probeFilters` | `Record<string, any>[]` | No | Probe region filters, e.g. [&#123;"region":"EU"&#125;] or [&#123;"region":"NA"&#125;] |
+| `probeFilters` | `string[]` | No | Probe region filters, e.g. [&#123;"region":"EU"&#125;] or [&#123;"region":"NA"&#125;] |
 | `ipv6` | `boolean` | No | Test over IPv6 |
 | `responseTimeThreshold` | `number` | No | Response time threshold in ms |
 | `customMessage` | `string` | No | Custom alert message |
@@ -870,7 +870,7 @@ Pause, unpause or re-time the listed checks at once
 **Risk:** `write`
 
 ```ts
-await corsair.pingdom.api.checks.updateMulti({ paused: true });
+await corsair.pingdom.api.checks.updateMulti({ checkIds: [1, 2, 3], paused: true });
 ```
 
 **Input**
@@ -879,9 +879,9 @@ await corsair.pingdom.api.checks.updateMulti({ paused: true });
 |------|------|----------|-------------|
 | `checkIds` | `number[]` | Yes | Checks to modify (sent as checkids); Pingdom changes every check in the account when the list is missing |
 | `paused` | `boolean` | No | Pause (true) or unpause (false) |
-| `resolution` | `1 \| 5 \| 15 \| 30 \| 60` | Yes | New test interval in minutes |
+| `resolution` | `1 \| 5 \| 15 \| 30 \| 60 \| 1 \| 5 \| 15 \| 30 \| 60` | No | New test interval in minutes (1, 5, 15, 30 or 60) |
 
-Pauses or unpauses every check, or changes the resolution of every check, in one call.
+Pauses, unpauses or re-times the checks listed in checkIds, in one call. Without checkIds Pingdom would change every check, so the plugin requires the list.
 
 
 
@@ -1535,7 +1535,7 @@ await corsair.pingdom.api.summaries.performance({ checkId: 100, resolution: "wee
 | `checkId` | `number` | Yes | The check id |
 | `from` | `number` | No | Start of the period, UNIX time |
 | `to` | `number` | No | End of the period, UNIX time |
-| `resolution` | `day \| week \| month` | No | Interval resolution |
+| `resolution` | `hour \| day \| week` | No | Interval size: hour (default), day or week |
 | `includeUptime` | `boolean` | No | Include uptime |
 | `probes` | `string` | No | Comma-separated probe ids to filter on |
 | `order` | `asc \| desc` | No | Interval order |
@@ -1725,7 +1725,15 @@ List the Pingdom probe servers
 await corsair.pingdom.api.tools.listProbes({});
 ```
 
-**Input:** _empty object_
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Probes to return |
+| `offset` | `number` | No | Offset for paging |
+| `onlyActive` | `boolean` | No | Only active probes (sent as onlyactive) |
+| `includeDeleted` | `boolean` | No | Include deleted probes (sent as includedeleted) |
+
 
 
 **Output**
