@@ -6,7 +6,7 @@ description: "Send documents to Docparser parsers and read the data they extract
 
 Use **Docparser** through Corsair: one client, typed API calls, local DB sync.
 
-Get the secret API key under Account > API in Docparser. It is sent as HTTP Basic with the key as the username and an empty password.
+Get the secret API key under Account &gt; API in Docparser. It is sent as HTTP Basic with the key as the username and an empty password.
 The usual flow: `parsers.list` to find the parser, `documents.fetch` (public URL) or `documents.upload` (base64) to send a document, `documents.status` until `done` is true (parsing takes a minute or more), then `results.get` for the extracted fields. Parsing rules are set up in the Docparser app; the API runs them.
 Importing a document uses parsing credits, one per 5 pages, charged only the first time it is parsed (the free trial has 50), so `documents.fetch` and `documents.upload` are destructive. `documents.reparse` costs nothing but replaces the parsed data with a run of the current rules, and `documents.reintegrate` sends the parsed data to the parser's integrations and webhooks again; both are destructive too.
 Results come back whole, with every field the parser extracted. Only parser, layout and result metadata (ids, file name, page count, dates) is stored locally; parsed values, media links and document URLs are not stored and stay out of events.

@@ -1,0 +1,177 @@
+displayName: Lemlist
+description: Sales engagement and cold email outreach platform for automating multi-channel campaigns, lead tracking, deliverability, and unsubscribes.
+domain: lemlist.com
+recommendedAuth: api_key
+overviewNote: |
+  Lemlist uses HTTP Basic authentication. Provide your Lemlist API key from your team settings (`Settings` -> `Integrations` -> `API`).
+  The API key is passed as the password with an empty username (`Authorization: Basic base64(:apiKey)`).
+
+  Things to know before calling:
+  - **Identifiers:** Campaign IDs and Lead IDs follow Lemlist's internal identifier format (e.g., `cam_...`, `lea_...`).
+  - **Rate Limiting:** Lemlist enforces API rate limits. The plugin automatically handles HTTP 429 responses and backs off according to the `Retry-After` header.
+  - **Campaign Lead Actions:** `leads.pause` and `leads.resume` act on every campaign unless you pass `campaignId`. Interest changes have separate global (`leads.markInterested`) and campaign (`leads.markInterestedInCampaign`) operations. Step operations (`leads.personalizeStep`, `leads.skipStep`) always need a campaign.
+  - **Unsubscribes & Blacklist:** Contacts can be unsubscribed or resubscribed either by variable (such as `email` or `domain`) or via the contact management endpoints.
+
+references:
+  - title: Lemlist API Reference
+    url: https://developer.lemlist.com/
+
+examples:
+  read:
+    path: campaigns.list
+    title: List campaigns
+    args:
+      limit: 10
+  write:
+    path: leads.createInCampaign
+    title: Add a lead to an outreach campaign
+    args:
+      campaignId: cam_1234567890abcdef
+      email: contact@example.com
+      firstName: Jane
+      lastName: Doe
+
+apiExamples:
+  team.get:
+    call: "{}"
+  team.getSenders:
+    call: "{}"
+  team.getCredits:
+    call: "{}"
+  team.getCrmUsers:
+    call: "{}"
+  campaigns.list:
+    call: "{ limit: 10, version: 'v2' }"
+  campaigns.create:
+    call: "{ name: 'Outreach Campaign' }"
+  campaigns.get:
+    call: "{ campaignId: 'cam_1234567890abcdef' }"
+  campaigns.update:
+    call: "{ campaignId: 'cam_1234567890abcdef', name: 'Updated Campaign Name' }"
+  campaigns.getSettings:
+    call: "{ campaignId: 'cam_1234567890abcdef' }"
+  campaigns.updateSettings:
+    call: "{ campaignId: 'cam_1234567890abcdef', tracking: { trackOpens: false } }"
+  campaigns.pause:
+    call: "{ campaignId: 'cam_1234567890abcdef' }"
+  campaigns.start:
+    call: "{ campaignId: 'cam_1234567890abcdef' }"
+  campaigns.archive:
+    call: "{ campaignId: 'cam_1234567890abcdef' }"
+  campaigns.unarchive:
+    call: "{ campaignId: 'cam_1234567890abcdef' }"
+  campaigns.duplicate:
+    call: "{ campaignId: 'cam_1234567890abcdef' }"
+  campaigns.getStatutes:
+    call: "{ campaignId: 'cam_1234567890abcdef' }"
+  campaigns.getStats:
+    call: "{ campaignId: 'cam_1234567890abcdef', startDate: '2025-01-01T00:00:00.000Z', endDate: '2025-01-31T23:59:59.999Z' }"
+  campaigns.getBatchStats:
+    call: "{ campaignIds: ['cam_1234567890abcdef'], startDate: '2025-01-01T00:00:00.000Z', endDate: '2025-01-31T23:59:59.999Z' }"
+  campaigns.getReports:
+    call: "{ campaignIds: 'cam_1234567890abcdef' }"
+  campaigns.startExport:
+    call: "{ campaignId: 'cam_1234567890abcdef' }"
+  campaigns.getExportStatus:
+    call: "{ campaignId: 'cam_1234567890abcdef', exportId: 'axp_1234567890abcdef' }"
+  campaigns.setExportEmail:
+    call: "{ campaignId: 'cam_1234567890abcdef', exportId: 'axp_1234567890abcdef', email: 'user@example.com' }"
+  campaigns.exportLeads:
+    call: "{ campaignId: 'cam_1234567890abcdef' }"
+  campaigns.skipStepForEveryone:
+    call: "{ campaignId: 'cam_1234567890abcdef', stepId: 'stp_123456' }"
+  campaigns.skipStepForLeads:
+    call: "{ campaignId: 'cam_1234567890abcdef', stepId: 'stp_123456', leads: ['lea_123456'] }"
+  campaigns.addAbmLeads:
+    call: "{ campaignId: 'cam_1234567890abcdef', leadIds: ['123456'] }"
+  leads.get:
+    call: "{ id: 'lea_123456', version: 'v2' }"
+  leads.getByEmail:
+    call: "{ email: 'lead@example.com', version: 'v2' }"
+  leads.listInCampaign:
+    call: "{ campaignId: 'cam_1234567890abcdef' }"
+  leads.createInCampaign:
+    call: "{ campaignId: 'cam_1234567890abcdef', email: 'lead@example.com', firstName: 'Jane' }"
+  leads.updateInCampaign:
+    call: "{ campaignId: 'cam_1234567890abcdef', leadId: 'lea_123456', companyName: 'Example Inc' }"
+  leads.deleteFromCampaign:
+    call: "{ campaignId: 'cam_1234567890abcdef', leadId: 'lea_123456', action: 'remove' }"
+  leads.unsubscribeFromCampaign:
+    call: "{ campaignId: 'cam_1234567890abcdef', email: 'lead@example.com' }"
+  leads.resume:
+    call: "{ leadId: 'lea_123456' }"
+  leads.pause:
+    call: "{ leadId: 'lea_123456', campaignId: 'cam_1234567890abcdef' }"
+  leads.review:
+    call: "{ leadId: 'lea_123456' }"
+  leads.markInterested:
+    call: "{ leadIdOrEmail: 'lea_123456' }"
+  leads.markNotInterested:
+    call: "{ leadIdOrEmail: 'lea_123456' }"
+  leads.markInterestedInCampaign:
+    call: "{ campaignId: 'cam_1234567890abcdef', leadIdOrEmail: 'lea_123456' }"
+  leads.markNotInterestedInCampaign:
+    call: "{ campaignId: 'cam_1234567890abcdef', leadIdOrEmail: 'lea_123456' }"
+  leads.skipStep:
+    call: "{ campaignId: 'cam_1234567890abcdef', leadIdOrEmail: 'lea_123456', stepId: 'stp_123456' }"
+  leads.personalizeStep:
+    call: "{ campaignId: 'cam_1234567890abcdef', leadIdOrEmail: 'lea_123456', stepId: 'stp_123456', message: 'Hello {{firstName}}' }"
+  leads.resetStepPersonalization:
+    call: "{ campaignId: 'cam_1234567890abcdef', leadIdOrEmail: 'lea_123456', stepId: 'stp_123456' }"
+  leads.addVariables:
+    call: "{ leadId: 'lea_123456', variables: { company: 'Example Inc' } }"
+  leads.updateVariables:
+    call: "{ leadId: 'lea_123456', variables: { title: 'Head of Growth' } }"
+  leads.deleteVariables:
+    call: "{ leadId: 'lea_123456', variableNames: ['tempVar'] }"
+  leads.importFromCrm:
+    call: "{ campaignId: 'cam_1234567890abcdef', filterId: '16' }"
+  leads.getCrmFilters:
+    call: "{}"
+  activities.list:
+    call: "{ limit: 20 }"
+  activities.deleteRecordingTranscript:
+    call: "{ activityId: 'act_123456' }"
+  unsubscribes.listVariables:
+    call: "{}"
+  unsubscribes.bulkUnsubscribeVariables:
+    call: "{ values: ['lead@example.com'] }"
+  unsubscribes.getVariable:
+    call: "{ value: 'lead@example.com' }"
+  unsubscribes.unsubscribeVariable:
+    call: "{ value: 'lead@example.com' }"
+  unsubscribes.resubscribeVariable:
+    call: "{ value: 'lead@example.com' }"
+  unsubscribes.getContactStatus:
+    call: "{ contactId: 'ctc_1234567890abcdef' }"
+  unsubscribes.unsubscribeContact:
+    call: "{ contactId: 'ctc_1234567890abcdef' }"
+  unsubscribes.resubscribeContact:
+    call: "{ contactId: 'ctc_1234567890abcdef' }"
+  unsubscribes.exportVariables:
+    call: "{}"
+  unsubscribes.exportContacts:
+    call: "{}"
+
+apiNotes:
+  campaigns.list: Returns one page as { campaigns, pagination }; use page and limit to walk the rest.
+  leads.get: Needs id or email; Lemlist uses the email when both are given.
+  leads.deleteFromCampaign: Always sends action=remove, which deletes the lead from the campaign. To unsubscribe a lead instead, use leads.unsubscribeFromCampaign.
+  campaigns.getSettings: Requires the Lemlist Email Pro plan or higher.
+  campaigns.updateSettings: Requires Email Pro; send only writable settings sections, and an empty update is rejected.
+  campaigns.addAbmLeads: Requires the ABM beta. Input IDs are People Database IDs, and existing contacts on another company may be skipped.
+  campaigns.startExport: Starts an asynchronous export. Poll the returned export ID until status is no longer pending; the download URL expires after 24 hours.
+  campaigns.getExportStatus: Export status is retained for two hours; an export still pending after two hours answers 404, so stop polling and report it as failed. Files are available for 24 hours after completion.
+  campaigns.setExportEmail: Lemlist emails the export's download link to this address when the export completes, so only use an address the account owner chose.
+  campaigns.exportLeads: JSON output is an array; CSV output is returned as text. Use documented comma-separated state filters.
+  campaigns.skipStepForEveryone: A skipped step cannot be restored. Condition steps are not skippable.
+  campaigns.skipStepForLeads: Accepts up to 100 lead IDs or emails per request; the deprecated single-lead operation remains available at leads.skipStep.
+  leads.createInCampaign: Needs an email or a LinkedIn URL. Always creates a new lead (a contact already in the campaign is refused), but the matched contact and company are updated with the fields you send; updateStrategy defaults to overwrite, use fillEmptyOnly to keep stored values. Additional string body keys are stored as custom variables. Enrichment query options (findEmail, verifyEmail, findPhone, linkedinEnrichment) consume credits.
+  leads.review: Launches a single lead and may start outreach. The API key user, campaign, AI variables, and sender must satisfy Lemlist's launch guards.
+  leads.skipStep: Deprecated by Lemlist in favor of campaigns.skipStepForLeads; skips cannot be undone.
+  leads.personalizeStep: Only supported message steps can be personalized, and a lead that has reached the step cannot be changed.
+  leads.importFromCrm: Links the campaign to a filter once and imports asynchronously; requested enrichment features consume credits.
+  unsubscribes.bulkUnsubscribeVariables: The API accepts up to 10,000 values. It answered a summary object (message, count, values, skippedValues) in our tests, but its reference shows a plain text confirmation, so check for an object before reading the counts; text carries no per-value result.
+  unsubscribes.resubscribeVariable: Lemlist protects unsubscribe records whose source is LEAD or ABUSE from re-subscription.
+  unsubscribes.exportVariables: Returns CSV text by default or a JSON array with format=json.
+  unsubscribes.exportContacts: Returns every contact with its subscription status, not only opted-out ones; filter on doNotContact true for a suppression list. CSV text by default or a JSON array with format=json.

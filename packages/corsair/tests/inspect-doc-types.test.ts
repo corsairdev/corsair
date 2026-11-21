@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import type { DocSchemaFieldRow } from '../core/inspect';
-import { introspectPluginForDocs } from '../core/inspect';
+import { getSchema, introspectPluginForDocs } from '../core/inspect';
 import type { CorsairPlugin } from '../core/plugins';
 
 const noop = async () => ({});
@@ -60,6 +60,12 @@ const plugin = {
 				first: z.number().int().default(10).describe('Page size'),
 				order: z.enum(['asc', 'desc']).default('asc'),
 				sort: z.string().default('name').describe('Sort key; default is name.'),
+				options: z
+					.object({ notify: z.boolean() })
+					.prefault({ notify: false })
+					.describe('Task options'),
+				pageSize: z.number().int().prefault(50),
+				big: z.coerce.number().prefault(1n).describe('Count'),
 			}),
 			output: z.object({
 				results: z.array(z.string()).nullable(),
@@ -166,6 +172,34 @@ describe('docs introspection types', () => {
 		expect(fieldsOf('things.get', 'output').get('limit')).not.toHaveProperty(
 			'description',
 		);
+	});
+
+	it('reads .prefault() like .default(): inner type, optional, the default value', () => {
+		const input = fieldsOf('things.get', 'input');
+		expect(input.get('options')).toMatchObject({
+			type: '{ notify: boolean }',
+			optional: true,
+			description: 'Task options. Defaults to {"notify":false}.',
+		});
+		expect(input.get('pageSize')).toMatchObject({
+			type: 'number',
+			optional: true,
+			description: 'Defaults to 50.',
+		});
+		// A prefault JSON can't write (BigInt) keeps its description; no throw.
+		expect(input.get('big')).toMatchObject({
+			optional: true,
+			description: 'Count',
+		});
+	});
+
+	it('get_schema shows defaulted and prefaulted inputs as optional, like the docs', () => {
+		// Review on #2629 (Greptile): getSchema rendered inputs as outputs.
+		const text = getSchema([plugin], 'doctypes.things.get');
+		expect(text).toContain('pageSize?: number  // Defaults to 50.');
+		expect(text).toContain('first?: number  // Page size. Defaults to 10.');
+		// Outputs keep a defaulted field required.
+		expect(text).toMatch(/output [^]*\n\s+limit: number/);
 	});
 
 	it('keeps | null on a nullish object that has a description', () => {

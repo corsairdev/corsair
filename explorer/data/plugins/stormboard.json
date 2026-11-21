@@ -1,0 +1,1970 @@
+{
+  "id": "stormboard",
+  "displayName": "Stormboard",
+  "description": "Stormboard turns unstructured collaboration into data-rich workspaces. This plugin manages storms and ideas with comments, votes, connectors, tags and tasks, handles chat and invitations, and reads the account profile behind the token.",
+  "npmPackageName": "@corsair-dev/stormboard",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 53,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "stormboard.api.chat.create",
+      "shortPath": "chat.create",
+      "description": "Post a chat message to a Storm",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stormId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "{ isnew?: boolean | null, storm?: number | string | null, user?: { id?: number | string | null, name?: string | null } | null, created?: string | null, msg?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.chat.list",
+      "shortPath": "chat.list",
+      "description": "List a Storm's chat messages",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stormId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ isnew?: boolean | null, storm?: number | string | null, user?: { id?: number | string | null, name?: string | null } | null, created?: string | null, msg?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.chat.listUnread",
+      "shortPath": "chat.listUnread",
+      "description": "List a Storm's unread chat messages",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stormId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ isnew?: boolean | null, storm?: number | string | null, user?: { id?: number | string | null, name?: string | null } | null, created?: string | null, msg?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.chat.markAllRead",
+      "shortPath": "chat.markAllRead",
+      "description": "Mark a Storm's chat messages as read",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stormId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.folders.list",
+      "shortPath": "folders.list",
+      "description": "List a team's folders",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "stormboard.api.ideas.addVote",
+      "shortPath": "ideas.addVote",
+      "description": "Add a vote to an idea",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ideaId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "idea",
+            "optional": true,
+            "type": "{ totalvotes?: number | null, myvotes?: number | string | null } | null"
+          },
+          {
+            "key": "storm",
+            "optional": true,
+            "type": "{ id?: number | string | null, title?: string | null, votesremaining?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.ideas.create",
+      "shortPath": "ideas.create",
+      "description": "Create an idea on a Storm",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stormid",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "yellow | light-orange | orange | red | light-green | green | teal | turquoise | light-blue | blue | light-purple | purple | brown | light-pink | pink | grey"
+          },
+          {
+            "key": "shape",
+            "optional": true,
+            "type": "standard | gem | hexagon | octagon | square | title | triangle"
+          },
+          {
+            "key": "sectionindex",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "y",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lock",
+            "optional": true,
+            "type": "0 | 1"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.ideas.createComment",
+      "shortPath": "ideas.createComment",
+      "description": "Comment on an idea",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ideaId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "comment",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "{ id?: number | string | null, comment?: string | null, created?: string | null, user?: { id?: number | string | null, name?: string | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.ideas.createConnector",
+      "shortPath": "ideas.createConnector",
+      "description": "Draw a line connector between two ideas",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from_idea_id",
+            "optional": false,
+            "type": "number | string",
+            "description": "The idea's numeric id or its uuid."
+          },
+          {
+            "key": "to_idea_id",
+            "optional": false,
+            "type": "number | string",
+            "description": "The idea's numeric id or its uuid."
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to_end_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_end_type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "connector",
+            "optional": false,
+            "type": "{ id?: number | string | null, from?: number | string | null, to?: number | string | null, from_uuid?: string | null, to_uuid?: string | null, label?: string | null, style?: { color?: string | null, fromEndType?: string | null, toEndType?: string | null } | null, points?: any[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.ideas.delete",
+      "shortPath": "ideas.delete",
+      "description": "Delete an idea",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ideaId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.ideas.deleteComment",
+      "shortPath": "ideas.deleteComment",
+      "description": "Delete a comment on an idea",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ideaId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "commentId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.ideas.deleteConnector",
+      "shortPath": "ideas.deleteConnector",
+      "description": "Delete a line connector",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "connectorId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.ideas.deleteConnectorBetween",
+      "shortPath": "ideas.deleteConnectorBetween",
+      "description": "Delete the connector between two ideas",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from_idea_id",
+            "optional": false,
+            "type": "number | string",
+            "description": "The idea's numeric id or its uuid."
+          },
+          {
+            "key": "to_idea_id",
+            "optional": false,
+            "type": "number | string",
+            "description": "The idea's numeric id or its uuid."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.ideas.get",
+      "shortPath": "ideas.get",
+      "description": "Read one idea",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ideaId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "idea",
+            "optional": false,
+            "type": "{ id?: number | string | null, uuid?: string | null, storm?: { id?: number | string | null, title?: string | null } | null, x?: number | null, y?: number | null, z?: number | null, color?: string | null, lock?: number | null, comments?: number | null, votes?: number | null, type?: string | null, data?: { text?: string | null, name?: string | null } | null, task?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.ideas.listComments",
+      "shortPath": "ideas.listComments",
+      "description": "List the comments on an idea",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ideaId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "avatars",
+            "optional": true,
+            "type": "0 | 1"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comments",
+            "optional": false,
+            "type": "{ id?: number | string | null, comment?: string | null, created?: string | null, user?: { id?: number | string | null, name?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.ideas.removeVote",
+      "shortPath": "ideas.removeVote",
+      "description": "Remove a vote from an idea",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ideaId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "idea",
+            "optional": true,
+            "type": "{ totalvotes?: number | null, myvotes?: number | string | null } | null"
+          },
+          {
+            "key": "storm",
+            "optional": true,
+            "type": "{ id?: number | string | null, title?: string | null, votesremaining?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.ideas.update",
+      "shortPath": "ideas.update",
+      "description": "Update an idea's text, position and style",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ideaId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "yellow | light-orange | orange | red | light-green | green | teal | turquoise | light-blue | blue | light-purple | purple | brown | light-pink | pink | grey"
+          },
+          {
+            "key": "shape",
+            "optional": true,
+            "type": "standard | gem | hexagon | octagon | square | title | triangle"
+          },
+          {
+            "key": "x",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "y",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lock",
+            "optional": true,
+            "type": "0 | 1"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.ideas.updateComment",
+      "shortPath": "ideas.updateComment",
+      "description": "Edit a comment on an idea",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ideaId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "commentId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "comment",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.ideas.updateConnector",
+      "shortPath": "ideas.updateConnector",
+      "description": "Update a line connector's label and style",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "connectorId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to_end_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_end_type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "connector",
+            "optional": false,
+            "type": "{ id?: number | string | null, from?: number | string | null, to?: number | string | null, from_uuid?: string | null, to_uuid?: string | null, label?: string | null, style?: { color?: string | null, fromEndType?: string | null, toEndType?: string | null } | null, points?: any[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.ideas.updateTask",
+      "shortPath": "ideas.updateTask",
+      "description": "Update an idea's task assignment and dates",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ideaId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "assigned_to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_due",
+            "optional": true,
+            "type": "string",
+            "description": "An ISO 8601 date; dates without a timezone are read as UTC."
+          },
+          {
+            "key": "date_completed",
+            "optional": true,
+            "type": "string",
+            "description": "An ISO 8601 date; dates without a timezone are read as UTC."
+          },
+          {
+            "key": "notify",
+            "optional": true,
+            "type": "0 | 1"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task",
+            "optional": false,
+            "type": "{ assignees?: { id?: number | string | null, name?: string | null }[] | null, date?: { due?: string | null, completed?: string | null } | null, status?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.storms.acceptInvite",
+      "shortPath": "storms.acceptInvite",
+      "description": "Accept a Storm invite for the token holder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stormId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.storms.close",
+      "shortPath": "storms.close",
+      "description": "Close a Storm; reopening restores it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stormId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.storms.create",
+      "shortPath": "storms.create",
+      "description": "Create a Storm",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "plan",
+            "optional": false,
+            "type": "personal | student | educator | team",
+            "description": "The plan to create the Storm under; student and educator need that plan, team needs team_id."
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "votesperuser",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "avatars",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "ideacreator",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.storms.declineInvite",
+      "shortPath": "storms.declineInvite",
+      "description": "Decline a Storm invite for the token holder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stormId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.storms.duplicate",
+      "shortPath": "storms.duplicate",
+      "description": "Duplicate a Storm",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stormId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "stormname",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "stormid",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "stormkey",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.storms.favorite",
+      "shortPath": "storms.favorite",
+      "description": "Star a Storm",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stormId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "stormboard.api.storms.get",
+      "shortPath": "storms.get",
+      "description": "Read one Storm's details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stormId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "thumbnail",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "storm",
+            "optional": false,
+            "type": "{ id?: number | string | null, key?: string | null, title?: string | null, description?: string | null, admin?: number | null, favorite?: number | null, palette?: string | null, closed?: boolean | null, team?: { id?: number | string | null } | null, activity?: number | null, votesperuser?: number | null, votesperadmin?: number | null, avatars?: number | null, ideacreator?: number | null, chatlocked?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.storms.getAccess",
+      "shortPath": "storms.getAccess",
+      "description": "Read the token holder's access to a Storm",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stormId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "administrator",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.storms.getTemplate",
+      "shortPath": "storms.getTemplate",
+      "description": "Read a Storm's template sections",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stormId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template",
+            "optional": true,
+            "type": "{ index?: string | null, name?: string | null, description?: string | null, character?: string | null, color?: string | null, type?: string | null, subsections?: any | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.storms.invite",
+      "shortPath": "storms.invite",
+      "description": "Invite participants to a Storm by email; sends mail that cannot be recalled",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stormId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "participants",
+            "optional": false,
+            "type": "string[]",
+            "description": "Email addresses of the participants to invite."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "contributor | viewer",
+            "description": "The access the invite grants; the API defaults to contributor."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "invited",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.storms.join",
+      "shortPath": "storms.join",
+      "description": "Join a Storm with its key",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stormid",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "stormkey",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.storms.leave",
+      "shortPath": "storms.leave",
+      "description": "Leave a Storm",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stormId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.storms.list",
+      "shortPath": "storms.list",
+      "description": "List your Storms with search, ordering and paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "folder",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "needle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "open | closed",
+            "description": "Filter by Storm state; the API defaults to open."
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "activity | alpha | frequency | starred",
+            "description": "Sort order: activity (last active, the default), alpha (A-Z), frequency or starred."
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hasmore",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "storms",
+            "optional": false,
+            "type": "{ id?: number | string | null, key?: string | null, title?: string | null, description?: string | null, admin?: number | null, favorite?: number | null, palette?: string | null, closed?: boolean | null, team?: { id?: number | string | null } | null, activity?: number | null, votesperuser?: number | null, votesperadmin?: number | null, avatars?: number | null, ideacreator?: number | null, chatlocked?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.storms.listConnectors",
+      "shortPath": "storms.listConnectors",
+      "description": "List the line connectors in a Storm",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stormId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "connectors",
+            "optional": false,
+            "type": "{ id?: number | string | null, from?: number | string | null, to?: number | string | null, from_uuid?: string | null, to_uuid?: string | null, label?: string | null, style?: { color?: string | null, fromEndType?: string | null, toEndType?: string | null } | null, points?: any[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.storms.listIdeas",
+      "shortPath": "storms.listIdeas",
+      "description": "List a Storm's ideas, optionally filtered by last modified date",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stormId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "lastModifiedMin",
+            "optional": true,
+            "type": "string",
+            "description": "An ISO 8601 date; dates without a timezone are read as UTC."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ideas",
+            "optional": false,
+            "type": "{ id?: number | string | null, uuid?: string | null, storm?: { id?: number | string | null, title?: string | null } | null, x?: number | null, y?: number | null, z?: number | null, color?: string | null, lock?: number | null, comments?: number | null, votes?: number | null, type?: string | null, data?: { text?: string | null, name?: string | null } | null, task?: Record<string, any> | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.storms.listInvites",
+      "shortPath": "storms.listInvites",
+      "description": "List your Storm invites",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "needle",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hasmore",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "storms",
+            "optional": false,
+            "type": "{ id?: number | string | null, key?: string | null, title?: string | null, description?: string | null, admin?: number | null, favorite?: number | null, palette?: string | null, closed?: boolean | null, team?: { id?: number | string | null } | null, activity?: number | null, votesperuser?: number | null, votesperadmin?: number | null, avatars?: number | null, ideacreator?: number | null, chatlocked?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.storms.listUsers",
+      "shortPath": "storms.listUsers",
+      "description": "List a Storm's participants with their activity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stormId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ firstname?: string | null, lastname?: string | null, email?: string | null, ideas?: number | null, comments?: number | null, votes?: number | null, lastactivity?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.storms.reopen",
+      "shortPath": "storms.reopen",
+      "description": "Re-open a closed Storm",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stormId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.storms.unfavorite",
+      "shortPath": "storms.unfavorite",
+      "description": "Remove a Storm's star",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stormId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "stormboard.api.storms.update",
+      "shortPath": "storms.update",
+      "description": "Update a Storm's title, description and settings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stormId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "votesperuser",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "avatars",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "ideacreator",
+            "optional": true,
+            "type": "0 | 1"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.storms.updateLegend",
+      "shortPath": "storms.updateLegend",
+      "description": "Set the color labels of a Storm's legend",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stormId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "color",
+            "optional": false,
+            "type": "Record<string, string>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.storms.updateSection",
+      "shortPath": "storms.updateSection",
+      "description": "Update one section of a Storm",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stormId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "sectionIndex",
+            "optional": false,
+            "type": "string",
+            "description": "The section index from storms.getTemplate, such as \"abcdef123456\"."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "character",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.tags.createForIdea",
+      "shortPath": "tags.createForIdea",
+      "description": "Set tag data on an idea",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ideaId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, string>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "stormboard.api.tags.createForStorm",
+      "shortPath": "tags.createForStorm",
+      "description": "Create a tag in a Storm",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stormId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "stormboard.api.tags.getForIdea",
+      "shortPath": "tags.getForIdea",
+      "description": "Read the tag data of an idea",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ideaId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, string>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.tags.listForStorm",
+      "shortPath": "tags.listForStorm",
+      "description": "List the tags in a Storm",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stormId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "{ id?: number | string | null, name?: string | null, type?: string | null, status?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.users.create",
+      "shortPath": "users.create",
+      "description": "Create a Stormboard user, which emails them a verification code, and return its API key",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "firstname",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lastname",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "api_key",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.users.getAuth",
+      "shortPath": "users.getAuth",
+      "description": "Read the account API keys with their creation dates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "auth",
+            "optional": false,
+            "type": "{ key?: string | null, created?: string | null, expires?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.users.getProfile",
+      "shortPath": "users.getProfile",
+      "description": "Read the profile behind the token",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profile",
+            "optional": false,
+            "type": "{ auth?: { api_key?: string | null } | null, id?: number | string | null, firstname?: string | null, lastname?: string | null, username?: string | null, email?: string | null, plan?: string | null, team?: { id?: number | string | null, name?: string | null } | boolean | null, notifications?: { dailyemail?: number | string | null, newstormuser?: number | string | null, newsletter?: number | string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.users.test",
+      "shortPath": "users.test",
+      "description": "Check that the token authenticates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.users.updateNotifications",
+      "shortPath": "users.updateNotifications",
+      "description": "Update the account notification settings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dailyemail",
+            "optional": true,
+            "type": "number",
+            "description": "1 turns the notification on, 0 turns it off."
+          },
+          {
+            "key": "newstormuser",
+            "optional": true,
+            "type": "number",
+            "description": "1 turns the notification on, 0 turns it off."
+          },
+          {
+            "key": "newsletter",
+            "optional": true,
+            "type": "number",
+            "description": "1 turns the notification on, 0 turns it off."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.users.updateProfile",
+      "shortPath": "users.updateProfile",
+      "description": "Update the profile behind the token",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stormboard.api.users.verify",
+      "shortPath": "users.verify",
+      "description": "Verify a Stormboard account with its verification code",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

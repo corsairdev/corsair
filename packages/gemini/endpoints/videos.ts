@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import { toFileOutput } from 'corsair/http';
 import type { GeminiEndpoints } from '..';
 import { GEMINI_API_BASE, makeGeminiRequest } from '../client';
 import type { VideoFile, VideoOperation } from '../schema/videos';
@@ -19,6 +20,12 @@ export function videoOperationState(
 		? 'SUCCEEDED'
 		: 'FAILED';
 }
+
+/**
+ * Most bytes of a video returned inline to a caller without a host. A host that
+ * keeps files (setFileSink) caps it at its own limit and gets a `fileId` instead.
+ */
+const VIDEO_MAX_BYTES = 100_000_000;
 
 type VideoFileResult =
 	| { ok: true; videoFile: VideoFile }
@@ -88,10 +95,13 @@ async function fetchVideoFile(
 		};
 	}
 
-	const bytes = await videoResponse.arrayBuffer();
-	const contentBase64 = Buffer.from(bytes).toString('base64');
+	const bytes = new Uint8Array(await videoResponse.arrayBuffer());
 	const mimeType = videoResponse.headers.get('content-type') ?? 'video/mp4';
-	return { ok: true, videoFile: { mimeType, contentBase64 } };
+	const file = toFileOutput(bytes, mimeType, {
+		filename: 'video.mp4',
+		maxBytes: VIDEO_MAX_BYTES,
+	});
+	return { ok: true, videoFile: { mimeType, ...file } };
 }
 
 /** Logs the poll outcome with a status that actually matches what happened. */

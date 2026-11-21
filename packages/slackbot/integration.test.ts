@@ -17,6 +17,7 @@ jest.mock('corsair/core', () => ({
 	logEventFromContext: async () => undefined,
 }));
 
+import { FILE_OUTPUT_MAX_BYTES, setFileSink } from 'corsair/http';
 import {
 	makeSlackbotRequest,
 	SLACKBOT_RATE_LIMIT_CONFIG,
@@ -317,10 +318,76 @@ describe('files.download', () => {
 				headers: { Authorization: 'Bearer xoxb-test-token' },
 			}),
 		);
-		expect(Buffer.from(result.content, 'base64').toString()).toBe(
+		expect(Buffer.from(result.content ?? '', 'base64').toString()).toBe(
 			'file contents',
 		);
 		expect(result.byte_size).toBe(body.byteLength);
+		expect(result).toMatchObject({
+			contentType: 'text/plain',
+			byteLength: body.byteLength,
+		});
+	});
+
+	it('returns an empty file as empty content, not as nothing', async () => {
+		globalThis.fetch = jest.fn().mockResolvedValue({
+			ok: true,
+			status: 200,
+			headers: new Map([['content-type', 'text/plain']]),
+			arrayBuffer: async () => Buffer.alloc(0),
+		}) as unknown as typeof fetch;
+		requestMock.mockResolvedValueOnce({
+			ok: true,
+			file: { id: 'F1', url_private_download: 'https://files.slack.com/f/F1' },
+		});
+		const result = await Files.download(makeCtx(), { file: 'F1' });
+		expect(result).toMatchObject({ content: '', byte_size: 0, byteLength: 0 });
+		expect(result.contentOmitted).toBeUndefined();
+	});
+
+	it("names the file after Slack's file name, and hands a large one to a host that keeps files", async () => {
+		const small = Buffer.from('%PDF-1.4');
+		const big = Buffer.alloc(FILE_OUTPUT_MAX_BYTES + 1, 7);
+		const serve = (body: Buffer) =>
+			jest.fn().mockResolvedValue({
+				ok: true,
+				status: 200,
+				headers: new Map([['content-type', 'application/pdf']]),
+				arrayBuffer: async () => body,
+			});
+		const meta = {
+			ok: true,
+			file: {
+				id: 'F1',
+				name: 'q3-report.pdf',
+				url_private_download: 'https://files.slack.com/f/F1',
+			},
+		};
+
+		globalThis.fetch = serve(small) as unknown as typeof fetch;
+		requestMock.mockResolvedValueOnce(meta);
+		const named = await Files.download(makeCtx(), { file: 'F1' });
+		expect(named).toMatchObject({
+			contentType: 'application/pdf',
+			byteLength: small.byteLength,
+			filename: 'q3-report.pdf',
+			content: small.toString('base64'),
+		});
+
+		globalThis.fetch = serve(big) as unknown as typeof fetch;
+		requestMock.mockResolvedValueOnce(meta);
+		setFileSink(() => () => 'held_1');
+		try {
+			const kept = await Files.download(makeCtx(), { file: 'F1' });
+			expect(kept).toMatchObject({
+				filename: 'q3-report.pdf',
+				byteLength: big.byteLength,
+				byte_size: big.byteLength,
+				fileId: 'held_1',
+			});
+			expect(kept.content).toBeUndefined();
+		} finally {
+			setFileSink(() => undefined);
+		}
 	});
 
 	it('raises when the file exposes no private URL', async () => {
@@ -502,7 +569,7 @@ describe('files.download credential safety', () => {
 				redirect: 'manual',
 			}),
 		);
-		expect(Buffer.from(result.content, 'base64').toString()).toBe('ok');
+		expect(Buffer.from(result.content ?? '', 'base64').toString()).toBe('ok');
 	});
 
 	it('does not follow a redirect off Slack with the bot token', async () => {
@@ -552,7 +619,7 @@ describe('files.download credential safety', () => {
 		expect(fetchMock.mock.calls[1]?.[0]).toBe(
 			'https://files.slack.com/files-pri/T1-F1/real.txt',
 		);
-		expect(Buffer.from(result.content, 'base64').toString()).toBe('ok');
+		expect(Buffer.from(result.content ?? '', 'base64').toString()).toBe('ok');
 	});
 });
 
@@ -623,7 +690,9 @@ describe('files.download size bounding', () => {
 			file: 'F1',
 			max_bytes: 1000,
 		});
-		expect(Buffer.from(result.content, 'base64').toString()).toBe('hello');
+		expect(Buffer.from(result.content ?? '', 'base64').toString()).toBe(
+			'hello',
+		);
 		expect(result.byte_size).toBe(5);
 	});
 });

@@ -28979,7 +28979,7 @@ OAuth requires products:read or products:full. The response is image metadata an
 
 `products.images.update`
 
-Replace a product image with binary data
+Replace a product image with binary data. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -28992,10 +28992,27 @@ await corsair.pipedrive.api.products.images.update({ id: 1, data: new Blob([awai
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `data` | `custom` | Yes | — |
+| `data` | `string \| object \| custom` | Yes | The image (GIF, JPG, PNG or WEBP): a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). |
 | `file_name` | `string` | No | — |
 
 OAuth requires products:full. In this example, file is an existing runtime File containing the image; its actual bytes are wrapped in a Blob for the required multipart/form-data binary field data. Pass real image bytes. Pipedrive needs a file name with an extension: pass file_name, or the plugin names it `image.<type>` from the Blob type (a name without an extension saves an image Pipedrive then fails to read). The documented API token cost is 20 tokens.
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -29031,7 +29048,7 @@ OAuth requires products:full. In this example, file is an existing runtime File 
 
 `products.images.upload`
 
-Upload a binary image for a product
+Upload a binary image for a product. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -29044,10 +29061,27 @@ await corsair.pipedrive.api.products.images.upload({ id: 1, data: new Blob([awai
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `data` | `custom` | Yes | — |
+| `data` | `string \| object \| custom` | Yes | The image (GIF, JPG, PNG or WEBP): a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). |
 | `file_name` | `string` | No | — |
 
 OAuth requires products:full. In this example, file is an existing runtime File containing the image; its actual bytes are wrapped in a Blob for the required multipart/form-data binary field data. Pass real image bytes. Pipedrive needs a file name with an extension: pass file_name, or the plugin names it `image.<type>` from the Blob type (a name without an extension saves an image Pipedrive then fails to read). The documented API token cost is 20 tokens.
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 

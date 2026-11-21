@@ -1,0 +1,395 @@
+---
+title: "Stannp webhooks"
+sidebarTitle: "Webhooks"
+description: "Stannp incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
+---
+
+The Stannp plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/stannp/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `campaigns`
+  - `status` (`campaigns.status`)
+- `events`
+  - `created` (`events.created`)
+- `mailpieces`
+  - `status` (`mailpieces.status`)
+- `webhooks`
+  - `testUrl` (`webhooks.testUrl`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
+}
+```
+
+## Events
+
+## Campaigns
+
+### Status
+
+`campaigns.status`
+
+A campaign changed status: printing, dispatched or cancelled; up to 50 campaigns per call
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_id` | `number \| string \| null` | No | — |
+| `event` | `campaign_status` | Yes | — |
+| `created` | `string` | Yes | — |
+| `retries` | `number \| string \| null` | No | — |
+| `campaigns` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="campaigns full type">
+
+```ts
+{
+  id?: string | number | null,
+  account_id?: string | number | null,
+  name?: string | number | null,
+  template_id?: string | number | null,
+  type?: string | number | null,
+  trigger_date?: string | number | null,
+  send_date?: string | number | null,
+  trigger_offset?: string | number | null,
+  created?: string | number | null,
+  updated?: string | number | null,
+  status?: string | number | null,
+  recipients_group?: string | number | null,
+  recipients_filter?: string | number | null,
+  recipients_validated?: string | number | null,
+  recipients?: string | number | null,
+  recipients_not_valid?: string | number | null,
+  dispatched?: string | number | null,
+  cost?: string | number | null,
+  voucher_code?: string | number | null,
+  image?: string | number | null,
+  size?: string | number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  webhook_id?: number | string | null,
+  event: campaign_status,
+  created: string,
+  retries?: number | string | null,
+  campaigns: {
+    id?: string | number | null,
+    account_id?: string | number | null,
+    name?: string | number | null,
+    template_id?: string | number | null,
+    type?: string | number | null,
+    trigger_date?: string | number | null,
+    send_date?: string | number | null,
+    trigger_offset?: string | number | null,
+    created?: string | number | null,
+    updated?: string | number | null,
+    status?: string | number | null,
+    recipients_group?: string | number | null,
+    recipients_filter?: string | number | null,
+    recipients_validated?: string | number | null,
+    recipients?: string | number | null,
+    recipients_not_valid?: string | number | null,
+    dispatched?: string | number | null,
+    cost?: string | number | null,
+    voucher_code?: string | number | null,
+    image?: string | number | null,
+    size?: string | number | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+stannp({
+    webhookHooks: {
+        campaigns: {
+            status: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Events
+
+### Created
+
+`events.created`
+
+A new recipient event was recorded; up to 50 events per call
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_id` | `number \| string \| null` | No | — |
+| `event` | `recipient_events` | Yes | — |
+| `created` | `string` | Yes | — |
+| `retries` | `number \| string \| null` | No | — |
+| `events` | `Record<string, any>[]` | Yes | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  webhook_id?: number | string | null,
+  event: recipient_events,
+  created: string,
+  retries?: number | string | null,
+  events: Record<string, any>[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+stannp({
+    webhookHooks: {
+        events: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Mailpieces
+
+### Status
+
+`mailpieces.status`
+
+A mailpiece changed status: printing, dispatched, cancelled, local_delivery, delivered or returned; up to 50 mailpieces per call
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_id` | `number \| string \| null` | No | — |
+| `event` | `mailpiece_status` | Yes | — |
+| `created` | `string` | Yes | — |
+| `retries` | `number \| string \| null` | No | — |
+| `mailpieces` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="mailpieces full type">
+
+```ts
+{
+  id?: number | string | null,
+  account_id?: number | string | null,
+  timestamp?: string | number | null,
+  status?: string | number | null,
+  type?: string | number | null,
+  format?: string | number | null,
+  pdf_file?: string | number | null,
+  dispatched?: string | number | null,
+  country?: string | number | null,
+  cost?: number | string | null,
+  addons?: string | number | null,
+  tags?: string | number | null,
+  template_id?: number | string | null,
+  campaign_id?: number | string | null,
+  recipient_id?: number | string | null,
+  firstname?: string | number | null,
+  lastname?: string | number | null,
+  address1?: string | number | null,
+  address2?: string | number | null,
+  address3?: string | number | null,
+  city?: string | number | null,
+  county?: string | number | null,
+  postcode?: string | number | null,
+  zipcode?: string | number | null,
+  transactional?: number | string | null,
+  class?: number | string | null,
+  updated?: string | number | null,
+  mailpiece_id?: number | string | null,
+  tracking_ref?: string | number | null,
+  tracking?: Record<string, any>[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  webhook_id?: number | string | null,
+  event: mailpiece_status,
+  created: string,
+  retries?: number | string | null,
+  mailpieces: {
+    id?: number | string | null,
+    account_id?: number | string | null,
+    timestamp?: string | number | null,
+    status?: string | number | null,
+    type?: string | number | null,
+    format?: string | number | null,
+    pdf_file?: string | number | null,
+    dispatched?: string | number | null,
+    country?: string | number | null,
+    cost?: number | string | null,
+    addons?: string | number | null,
+    tags?: string | number | null,
+    template_id?: number | string | null,
+    campaign_id?: number | string | null,
+    recipient_id?: number | string | null,
+    firstname?: string | number | null,
+    lastname?: string | number | null,
+    address1?: string | number | null,
+    address2?: string | number | null,
+    address3?: string | number | null,
+    city?: string | number | null,
+    county?: string | number | null,
+    postcode?: string | number | null,
+    zipcode?: string | number | null,
+    transactional?: number | string | null,
+    class?: number | string | null,
+    updated?: string | number | null,
+    mailpiece_id?: number | string | null,
+    tracking_ref?: string | number | null,
+    tracking?: Record<string, any>[] | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+stannp({
+    webhookHooks: {
+        mailpieces: {
+            status: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Webhooks
+
+### Test Url
+
+`webhooks.testUrl`
+
+Validation POST sent once when a webhook is created; the platform keeps the webhook only if this answers HTTP 200
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_id` | `number \| string \| null` | No | — |
+| `event` | `test_url` | Yes | — |
+| `created` | `string` | Yes | — |
+| `retries` | `number \| string \| null` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  webhook_id?: number | string | null,
+  event: test_url,
+  created: string,
+  retries?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+stannp({
+    webhookHooks: {
+        webhooks: {
+            testUrl: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

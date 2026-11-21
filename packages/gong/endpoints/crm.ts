@@ -4,6 +4,7 @@ import { gongRequest } from '../client';
 import type { GongCrmInputs, GongCrmOutputs } from './crm-types';
 import type { GongFamilyContext } from './family-context';
 import { gongCredentials, gongEventPayload } from './family-context';
+import { CRM_DATA_FILE_MAX_BYTES, gongUploadPart } from './file-input';
 
 async function run<K extends keyof GongCrmInputs>(
 	ctx: GongFamilyContext,
@@ -91,7 +92,7 @@ export const getCrmObjects = (
 		objectsCrmIds,
 	);
 };
-export const uploadCrmObjects = (
+export const uploadCrmObjects = async (
 	ctx: GongFamilyContext,
 	input: GongCrmInputs['uploadObjects'],
 ) => {
@@ -104,7 +105,12 @@ export const uploadCrmObjects = (
 		input,
 		query,
 		undefined,
-		{ dataFile },
+		{
+			dataFile: await gongUploadPart(dataFile, {
+				maxBytes: CRM_DATA_FILE_MAX_BYTES,
+				fallbackName: 'data.ldjson',
+			}),
+		},
 	);
 };
 export const getCrmRequestStatus = (

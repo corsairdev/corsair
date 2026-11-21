@@ -358,7 +358,8 @@ const tinyFishEndpointMeta = {
 	},
 	'agent.getStepScreenshot': {
 		riskLevel: 'read',
-		description: 'Get the JPEG screenshot captured at one step of a run',
+		description:
+			'Get the JPEG screenshot captured at one step of a run. On Corsair up to about 700 KB comes back inline as base64 and a larger image comes back as fileId, a Files id.',
 	},
 	'agent.getStepHtml': {
 		riskLevel: 'read',

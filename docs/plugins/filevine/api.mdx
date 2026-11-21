@@ -411,7 +411,7 @@ await corsair.filevine.api.documents.list({ projectId: 123, limit: 50 });
 
 `documents.upload`
 
-Upload a document to a project
+Upload a document to a project. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -428,10 +428,27 @@ await corsair.filevine.api.documents.upload({ projectId: 123, filename: 'contrac
 | `folderId` | `number` | No | — |
 | `tags` | `string[]` | No | — |
 | `sharedToPortal` | `boolean` | No | — |
-| `file` | `string \| custom \| custom \| custom` | No | File content: string \| Uint8Array (incl. Buffer) \| ArrayBuffer \| Blob (see fileEncoding) |
+| `file` | `string \| object \| custom` | No | The file: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; Uint8Array (incl. Buffer), ArrayBuffer, Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). A string starting with http:// or https:// is fetched as a link when fileEncoding is not set; with fileEncoding, a string is text or base64 content as before. |
 | `fileEncoding` | `base64 \| text` | No | How to interpret string file content — 'base64' decodes to bytes, 'text' (default) uploads literally |
 | `orgId` | `number` | No | Explicit Filevine org ID — must belong to the authenticated user |
 | `userId` | `number` | No | Explicit Filevine user ID |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom | custom | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 

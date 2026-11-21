@@ -136,6 +136,8 @@ jobs:
           scripts/release-on-merge.test.mjs
           scripts/plugin-icon-svg.test.ts
           scripts/mdx-escape.test.ts
+          scripts/doc-type-match.test.ts
+          scripts/docs-nav-order.test.ts
 
       # ts-jest only transpiles (isolatedModules in tsconfig.base.json), so test
       # types are checked by each package's own tsc build. This covers the

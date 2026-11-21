@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { gongFileSchema } from './file-input';
 
 // Gong ids are 64-bit; a string keeps the digits a JavaScript number would round.
 const gongId = z.union([
@@ -11,7 +12,7 @@ export const GongTargetsInputSchemas = {
 		targetId: z.string().regex(/^\d{1,20}$/),
 		workspaceId: gongId,
 		validateOnly: z.boolean().optional(),
-		file: z.instanceof(Blob),
+		file: gongFileSchema('The CSV file of target assignments'),
 	}),
 } as const;
 export const GongTargetsOutputSchemas = {

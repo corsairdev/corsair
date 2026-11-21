@@ -1,0 +1,77 @@
+displayName: Google Photos
+description: Read albums and media items, upload photos and videos, and manage album membership through the Google Photos Library API.
+domain: photos.google.com
+recommendedAuth: oauth_2
+overviewNote: |
+  The Google Photos Library API manages a user's albums and media items: it lists and searches them, uploads new bytes, and adds or removes items from albums an app created.
+
+  **Read this before you build on it.** On 31 March 2025 Google removed the `photoslibrary`, `photoslibrary.readonly` and `photoslibrary.sharing` scopes and restricted the Library API to content the app created. Three things follow, and this plugin is shaped around them:
+
+  - The scopes that remain are `photoslibrary.appendonly`, `photoslibrary.readonly.appcreateddata` and `photoslibrary.edit.appcreateddata`. All three are requested here.
+  - Reads only reach albums and media items this app created. No API searches the rest of a user's library any more. To work with other photos, the Google Photos Picker API lets the user pick items in a Picker session and gives the app only those; it is a different API with its own flow and is not part of this plugin.
+  - `albums.share`, `albums.unshare` and every `sharedAlbums.*` method were removed. The plugin exposes none of them.
+
+  Things to know before you call:
+
+  - **Uploading is two steps, done here in one call.** `mediaItems.create` posts the bytes to `/uploads`, reads back an upload token, then sends up to 50 tokens to `mediaItems:batchCreate`. Each `file` is a public URL, `{ url }` or `{ base64 }`, with an optional `filename` and `contentType`, up to 200 MB. A partial failure answers 207 with a status per item, so check each `newMediaItemResults[].status`.
+  - **Uploads count toward the user's storage past 25MB.** Google asks an app to tell the user this.
+  - **Google asks for a different request shape per list.** Albums default to 20 per page and cap at 50; media items default to 25 and cap at 100. Both are paginated with `nextPageToken`.
+  - **`filters` and `albumId` cannot be combined.** The API answers 400, so the plugin refuses it before the request.
+  - **`orderBy` only works with a date filter.** The two accepted values are `MediaMetadata.creation_time desc` (newest first, the default) and `MediaMetadata.creation_time`.
+  - **A base URL is not fetchable, and it expires.** A parameter must be appended: `=d` for a photo's original bytes, `=dv` for a video's bytes, or `=w<width>-h<height>` for a scaled copy (a thumbnail for a video) with an optional `-c` to crop. A base URL works for 60 minutes after the read that returned it. `mediaBytesUrl(item, options)` builds the URL and picks `=dv` when the item is a video.
+  - **Updates change one field each.** `albums.update` renames an album (the `title` mask) and `mediaItems.update` changes a media item's description (the `description` mask, the only one the API accepts).
+  - **A 429 needs at least 30 seconds before a retry.** That is the upload guide's rule. The plugin waits 30 seconds, or longer when Google's `Retry-After` asks for more. A 429 that reports the spent daily quota (10,000 requests per project per day) is not retried, since no wait within the call can clear it.
+  - **No service accounts.** Google states the Library API does not support them, so every call is made as a signed-in user.
+references:
+  - title: API limits and quotas, including the 10,000 request daily cap
+    url: https://developers.google.com/photos/library/guides/api-limits-quotas
+  - title: Uploading media, the two steps and the headers
+    url: https://developers.google.com/photos/library/guides/upload-media
+  - title: Search filters and the accepted orderBy values
+    url: https://developers.google.com/photos/library/guides/apply-filters
+  - title: The March 2025 scope and method changes
+    url: https://developers.google.com/photos/support/updates
+examples:
+  read:
+    path: mediaItems.search
+    title: Find the photos in an app-created album
+    args:
+      albumId: ABcDeFgHiJkLmNoP
+  write:
+    path: albums.create
+    title: Create an album
+    args:
+      title: Holiday 2026
+apiExamples:
+  albums.list:
+    call: "{ pageSize: 20 }"
+  albums.get:
+    call: "{ albumId: 'ABcDeFgHiJkLmNoP' }"
+  albums.create:
+    call: "{ title: 'Holiday 2026' }"
+  albums.update:
+    call: "{ albumId: 'ABcDeFgHiJkLmNoP', title: 'Holiday 2026 (edited)' }"
+  albums.addEnrichment:
+    call: "{ albumId: 'ABcDeFgHiJkLmNoP', text: 'Day one' }"
+  albums.batchAddMediaItems:
+    call: "{ albumId: 'ABcDeFgHiJkLmNoP', mediaItemIds: ['AbCdEf123'] }"
+  albums.batchRemoveMediaItems:
+    call: "{ albumId: 'ABcDeFgHiJkLmNoP', mediaItemIds: ['AbCdEf123'] }"
+  mediaItems.search:
+    call: "{ albumId: 'ABcDeFgHiJkLmNoP', pageSize: 25 }"
+  mediaItems.list:
+    call: "{ pageSize: 25 }"
+  mediaItems.get:
+    call: "{ mediaItemId: 'AbCdEf123' }"
+  mediaItems.batchGet:
+    call: "{ mediaItemIds: ['AbCdEf123', 'GhIjKl456'] }"
+  mediaItems.update:
+    call: "{ mediaItemId: 'AbCdEf123', description: 'Sunset over the bay' }"
+  mediaItems.create:
+    call: "{ newMediaItems: [{ file: { url: 'https://example.com/beach.jpg', contentType: 'image/jpeg' }, description: 'Beach day' }] }"
+apiNotes:
+  albums.list: 'Only albums this app created are readable; the wide-read scope was removed in 2025.'
+  albums.update: 'Sends PATCH with the `title` mask. The API also accepts `coverPhotoMediaItemId`, which this plugin does not expose yet.'
+  mediaItems.search: 'Send `albumId` or `filters`, never both; the API answers 400 for that combination.'
+  mediaItems.create: 'Each file is a public URL or base64 (up to 200 MB). The endpoint uploads them, then creates up to 50 items from the returned tokens; a failed item carries a status code.'
+  mediaItems.batchGet: 'Each requested id gets an entry, and a failed id carries a status instead of an item.'
