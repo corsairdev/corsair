@@ -1,9 +1,6 @@
 import { inspect } from 'node:util';
-import {
-	describePasscreatorError,
-	makePasscreatorRequest,
-	PasscreatorAPIError,
-} from './client';
+import { ApiError } from 'corsair/http';
+import { describePasscreatorError, makePasscreatorRequest } from './client';
 import { pass, writeResult } from './test-fixtures';
 
 const API_KEY = 'pc-test-key';
@@ -29,12 +26,10 @@ function respond(
 }
 
 // unknown: a rejection can be any value until the instanceof check narrows it.
-async function failure(
-	promise: Promise<unknown>,
-): Promise<PasscreatorAPIError> {
+async function failure(promise: Promise<unknown>): Promise<ApiError> {
 	const error = await promise.catch((caught: unknown) => caught);
-	expect(error).toBeInstanceOf(PasscreatorAPIError);
-	if (!(error instanceof PasscreatorAPIError)) throw error;
+	expect(error).toBeInstanceOf(ApiError);
+	if (!(error instanceof ApiError)) throw error;
 	return error;
 }
 
@@ -105,7 +100,20 @@ describe('makePasscreatorRequest', () => {
 		);
 		expect(error.status).toBe(401);
 		expect(error.message).toContain('Unauthorized');
-		expect(error.name).toBe('PasscreatorAPIError');
+		expect(error.name).toBe('ApiError');
+	});
+
+	it('masks the recipient email in the path of a failed sendEmail', async () => {
+		respond({ ErrorMessage: 'Pass not found' }, 404);
+		const error = await failure(
+			makePasscreatorRequest('key', {
+				method: 'POST',
+				path: `/api/pass/deliver/uid1/email/${encodeURIComponent('jane@example.com')}`,
+			}),
+		);
+		expect(error.name).toBe('ApiError');
+		expect(error.url).toBe('/api/pass/deliver/uid1/email/[email]');
+		expect(inspect(error, { depth: 5 })).not.toContain('jane');
 	});
 
 	it('keeps no request body on the rebuilt error', async () => {

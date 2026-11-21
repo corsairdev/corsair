@@ -1,9 +1,10 @@
 import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
-import { PasscreatorAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { buildPasscreatorApiError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
-function apiError(status: number, method: string = 'GET'): PasscreatorAPIError {
-	return new PasscreatorAPIError(`Passcreator ${status}: boom`, {
+function apiError(status: number, method: string = 'GET'): ApiError {
+	return buildPasscreatorApiError(`Passcreator ${status}: boom`, {
 		method,
 		path: '/api/pass',
 		status,
@@ -108,7 +109,7 @@ describe('mergeErrorHandlers', () => {
 		const entry = merged.OVERLOADED_ERROR;
 		if (!entry) throw new Error('caller handler missing');
 		const result = await entry.handler(
-			new PasscreatorAPIError('overloaded', {
+			buildPasscreatorApiError('overloaded', {
 				method: 'GET',
 				path: '/x',
 				status: 529,
@@ -147,5 +148,5 @@ describe('mergeErrorHandlers', () => {
 });
 
 function statusIs(error: Error, status: number): boolean {
-	return error instanceof PasscreatorAPIError && error.status === status;
+	return error instanceof ApiError && error.status === status;
 }
