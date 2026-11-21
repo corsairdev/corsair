@@ -27,10 +27,10 @@ export type EpisodeMinimum = z.infer<typeof EpisodeMinimumSchema>;
 
 export const PodcastSimpleSchema = z.object({
 	id: z.string().optional(),
-	title: z.string().optional(),
-	publisher: z.string().optional(),
-	image: z.string().optional(),
-	thumbnail: z.string().optional(),
+	title: z.string().nullable().optional(),
+	publisher: z.string().nullable().optional(),
+	image: z.string().nullable().optional(),
+	thumbnail: z.string().nullable().optional(),
 	listennotes_url: z.string().optional(),
 	is_claimed: z.boolean().optional(),
 	type: z.enum(['episodic', 'serial']).optional(),
@@ -38,14 +38,14 @@ export const PodcastSimpleSchema = z.object({
 	audio_length_sec: z.number().int().optional(),
 	update_frequency_hours: z.number().int().optional(),
 	earliest_pub_date_ms: z.number().int().optional(),
-	rss: z.string().optional(),
+	rss: z.string().nullable().optional(),
 	latest_episode_id: z.string().optional(),
 	latest_pub_date_ms: z.number().int().optional(),
 	explicit_content: z.boolean().optional(),
-	description: z.string().optional(),
+	description: z.string().nullable().optional(),
 	itunes_id: z.number().int().nullable().optional(),
-	language: z.string().optional(),
-	country: z.string().optional(),
+	language: z.string().nullable().optional(),
+	country: z.string().nullable().optional(),
 	website: z.string().nullable().optional(),
 	email: z.string().nullable().optional(),
 	genre_ids: z.array(z.number().int()).optional(),
@@ -477,7 +477,10 @@ export type PodcastsGetRecommendationsResponse = z.infer<
 
 export const PodcastsGetBestInputSchema = z
 	.object({
-		genre_id: z.string().optional().describe('Genre ID'),
+		genre_id: z
+			.union([z.number().int().min(0), z.string().regex(/^\d+$/)])
+			.optional()
+			.describe('Genre ID from genres.list (number or numeric string)'),
 		page: z.number().int().min(1).optional().describe('Page number'),
 		region: z.string().optional().describe('Region code'),
 		publisher_region: z.string().optional().describe('Publisher region code'),
