@@ -295,7 +295,7 @@
     {
       "path": "carbone.api.templates.download",
       "shortPath": "templates.download",
-      "description": "Tool to download a template from Carbone by template ID. Use when you need to retrieve the original template file.",
+      "description": "Tool to download a template from Carbone by template ID. Use when you need to retrieve the original template file. On Corsair up to about 700 KB comes back inline as content and a larger file comes back as fileId, a Files id.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -312,6 +312,36 @@
         "kind": "object",
         "fields": [
           {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "Media type of the file, for example application/pdf."
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the file in bytes."
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string",
+            "description": "The file name, when known."
+          },
+          {
+            "key": "contentOmitted",
+            "optional": true,
+            "type": "not_requested | over_limit",
+            "description": "Set when the content was left out: the caller did not ask for it, or the file was over the limit."
+          },
+          {
+            "key": "fileId",
+            "optional": true,
+            "type": "string",
+            "description": "Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text."
+          },
+          {
             "key": "templateId",
             "optional": false,
             "type": "string",
@@ -319,9 +349,9 @@
           },
           {
             "key": "content",
-            "optional": false,
+            "optional": true,
             "type": "string",
-            "description": "Base64-encoded binary content of the retrieved template file"
+            "description": "Base64-encoded content of the template file. Missing when contentOmitted is set, or when a host kept a file too large to return inline (fileId)."
           },
           {
             "key": "success",

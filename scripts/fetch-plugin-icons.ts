@@ -149,6 +149,17 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	// Google's own Contacts product mark (the 192px branding PNG).
 	googlecontacts:
 		'https://www.gstatic.com/images/branding/product/2x/contacts_2022_96dp.png',
+	// Google's own Search Console and Ads product marks (192px branding PNGs);
+	// the domain lookup gave the generic Google G and a blurry 32px Ads icon.
+	googlesearchconsole:
+		'https://www.gstatic.com/images/branding/product/2x/search_console_96dp.png',
+	googleads: 'https://www.gstatic.com/images/branding/product/2x/ads_96dp.png',
+	// Google's current Admin console mark (the domain lookup gave the generic G).
+	googleadmin:
+		'https://www.gstatic.com/images/branding/product/2x/admin_2020q4_96dp.png',
+	// interzoid.com serves no favicon (twenty-icons and Google both miss);
+	// its GitHub organisation logo is square.
+	interzoid: 'https://github.com/interzoid.png?size=256',
 	// plugin-docs.yaml names zoho.com, whose icon is the generic Zoho mark;
 	// App Store icon is Zoho Invoice's own.
 	zohoinvoice:
