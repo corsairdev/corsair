@@ -29,12 +29,14 @@ import {
 	promotionAnswer,
 	promotions,
 	redeemedVoucher,
+	reward,
 	rewardReception,
 	rewards,
 	tier,
 	voucherAnswer,
 	voucherLock,
 	vouchersList,
+	webhookSubscription,
 	webhookSubscriptions,
 } from './test-fixtures';
 
@@ -544,5 +546,95 @@ describe('webhooks', () => {
 		expectCall({
 			query: { status: 'ACTIVE' },
 		});
+	});
+});
+
+describe('reads and updates the review listed', () => {
+	it('contacts.createAnonymous posts the identifier value', async () => {
+		respond(createdContact, 201);
+		await invoke(Contacts.createAnonymous, {
+			contactIdentifierValue: 'card-123',
+		});
+		expectCall({
+			path: '/api/v3/oauth/clients/contacts/anonymous',
+			method: 'POST',
+			body: { contact_identifier_value: 'card-123' },
+		});
+	});
+
+	it('contacts.findOneByEmail sends the email as a query', async () => {
+		respond(contactAnswer);
+		await invoke(Contacts.findOneByEmail, { email: 'jane@example.com' });
+		expectCall({
+			path: '/api/v3/oauth/clients/contacts/find-one-by',
+			method: 'GET',
+			query: { email: 'jane@example.com' },
+		});
+	});
+
+	it('points.get reads one transaction', async () => {
+		respond(directPointsTransaction);
+		await invoke(Points.get, { uuid: 't1' });
+		expectCall({
+			path: '/api/v3/oauth/clients/direct-points-transactions/t1',
+			method: 'GET',
+		});
+	});
+
+	it('rewards.get and rewards.update hang off the reward UUID', async () => {
+		respond({ data: reward, meta: [] });
+		await invoke(Rewards.get, { rewardUuid: 'r1' });
+		expectCall({ path: '/api/v3/oauth/clients/rewards/r1', method: 'GET' });
+
+		respond({ data: reward, meta: [] });
+		await invoke(Rewards.update, { rewardUuid: 'r1', title: 'New title' });
+		const sent = lastRequest();
+		expect(sent.path).toBe('/api/v3/oauth/clients/rewards/r1');
+		expect(sent.method).toBe('PUT');
+		expect(sent.body).toMatchObject({ title: 'New title' });
+	});
+
+	it('vouchers.reverseRedemption posts to the reverse route', async () => {
+		respond({});
+		await invoke(Vouchers.reverseRedemption, { voucherUuid: 'v1' });
+		expectCall({
+			path: '/api/v3/oauth/clients/vouchers/v1/reverse',
+			method: 'POST',
+		});
+	});
+
+	it('giftcards.get reads one giftcard', async () => {
+		respond(giftcard);
+		await invoke(Giftcards.get, { giftcardUuid: 'g1' });
+		expectCall({ path: '/api/v3/oauth/clients/giftcards/g1', method: 'GET' });
+	});
+
+	it('webhooks.get and webhooks.update hang off the subscription UUID', async () => {
+		respond({ data: webhookSubscription, meta: [] });
+		await invoke(Webhooks.get, { webhookSubscriptionUuid: 'w1' });
+		expectCall({
+			path: '/api/v3/oauth/clients/webhook-subscriptions/w1',
+			method: 'GET',
+		});
+
+		respond({ data: webhookSubscription, meta: [] });
+		await invoke(Webhooks.update, {
+			webhookSubscriptionUuid: 'w1',
+			name: 'Renamed',
+		});
+		const sent = lastRequest();
+		expect(sent.path).toBe('/api/v3/oauth/clients/webhook-subscriptions/w1');
+		expect(sent.method).toBe('PUT');
+		expect(sent.body).toMatchObject({ name: 'Renamed' });
+	});
+
+	it('vouchers.lock keeps the release key out of the event log', async () => {
+		respond(voucherLock);
+		await invoke(Vouchers.lock, { voucherUuid: 'v1' });
+		const logged = JSON.stringify(mockLog.mock.calls);
+		const key = (voucherLock as { data: { lock?: { release_key?: string } } })
+			.data.lock?.release_key;
+		expect(key).toBeTruthy();
+		expect(logged).not.toContain(key as string);
 	});
 });

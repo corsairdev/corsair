@@ -154,8 +154,10 @@ export const lock: PiggyEndpoints['vouchersLock'] = (ctx, input) =>
 			path: `${CLIENT}/vouchers/${encodeURIComponent(voucherUuid)}/lock`,
 		}),
 		{
+			// The release key lets anyone release or redeem the locked voucher,
+			// so the event log records only that a key was issued.
 			log: (_, lock) => ({
-				releaseKey: lock.data.lock?.release_key ?? undefined,
+				locked: Boolean(lock.data.lock?.release_key),
 			}),
 		},
 	);

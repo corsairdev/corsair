@@ -509,12 +509,13 @@ export const piggyEndpointMeta = {
 		description: 'Read one giftcard by hash or QR value',
 	},
 	'giftcards.create': {
-		riskLevel: 'write',
-		description: 'Create a digital giftcard in a giftcard program',
+		riskLevel: 'destructive',
+		description:
+			'Issue a digital giftcard with a balance; it carries real value and uses Leat tokens',
 	},
 	'giftcards.sendByEmail': {
-		riskLevel: 'write',
-		description: 'Email a giftcard to a contact',
+		riskLevel: 'destructive',
+		description: 'Email a giftcard to a contact; the email cannot be recalled',
 	},
 	'giftcards.listPrograms': {
 		riskLevel: 'read',
@@ -546,8 +547,8 @@ export const piggyEndpointMeta = {
 		description: 'Update a subscription name, URL or status',
 	},
 	'webhooks.delete': {
-		riskLevel: 'write',
-		description: 'Delete a webhook subscription',
+		riskLevel: 'destructive',
+		description: 'Delete a webhook subscription; it cannot be restored',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof piggyEndpointsNested>;
 
@@ -620,8 +621,6 @@ export function piggy<const T extends PiggyPluginOptions>(
 		},
 	} satisfies InternalPiggyPlugin;
 }
-
-export { PiggyAPIError } from './client';
 
 export type {
 	BusinessProfile,

@@ -35,12 +35,18 @@ describe('plugin registration', () => {
 		);
 	});
 
-	it('marks only deletion and merge as destructive', () => {
+	it('marks deletes, merges, giftcard issues and giftcard emails as destructive', () => {
 		const destructive = Object.entries(
 			piggyEndpointMeta as Record<string, { riskLevel: string }>,
 		)
 			.filter(([, meta]) => meta.riskLevel === 'destructive')
 			.map(([key]) => key);
-		expect(destructive.sort()).toEqual(['contacts.delete', 'contacts.merge']);
+		expect(destructive.sort()).toEqual([
+			'contacts.delete',
+			'contacts.merge',
+			'giftcards.create',
+			'giftcards.sendByEmail',
+			'webhooks.delete',
+		]);
 	});
 });

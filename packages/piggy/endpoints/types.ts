@@ -26,6 +26,7 @@ export type PageMeta = z.infer<typeof PageMetaSchema>;
 export const ListMetaSchema = z
 	.union([
 		PageMetaSchema,
+		// unknown: Leat documents this value without a fixed shape, so it stays open.
 		z.array(z.unknown()),
 		z.record(z.string(), z.unknown()),
 	])
@@ -37,13 +38,16 @@ function envelope<T extends z.ZodType>(
 	data: T,
 	note: string,
 ): z.ZodObject<{ data: T; meta: z.ZodOptional<z.ZodUnknown> }> {
-	return z
-		.object({ data, meta: z.unknown().optional() })
-		.loose()
-		.describe(note) as z.ZodObject<{
-		data: T;
-		meta: z.ZodOptional<z.ZodUnknown>;
-	}>;
+	return (
+		z
+			// unknown: Leat documents this value without a fixed shape, so it stays open.
+			.object({ data, meta: z.unknown().optional() })
+			.loose()
+			.describe(note) as z.ZodObject<{
+			data: T;
+			meta: z.ZodOptional<z.ZodUnknown>;
+		}>
+	);
 }
 
 /** A contact reference: the short contact shape most answers embed. */
@@ -68,6 +72,7 @@ export const TierInfoSchema = z
 		name: z.string().nullish().describe('Tier name'),
 		description: z.string().nullish().describe('Tier description'),
 		position: z.number().nullish().describe('Tier order'),
+		// unknown: media records vary by asset type and aren't documented field by field.
 		media: z.unknown().nullish().describe('Tier media'),
 		perks: z
 			.array(z.unknown())
@@ -113,6 +118,7 @@ export const ContactSchema = z
 		uuid: z.string().nullish().describe('Contact UUID'),
 		email: z.string().nullish().describe('Contact email'),
 		attributes: z
+			// unknown: Leat documents this value without a fixed shape, so it stays open.
 			.array(z.unknown())
 			.nullish()
 			.describe('Deprecated attribute array'),
@@ -154,6 +160,7 @@ export const ShopRefSchema = z
 		uuid: z.string().nullish().describe('Shop UUID'),
 		type: z.string().nullish().describe('physical or web'),
 		name: z.string().nullish().describe('Shop name'),
+		// unknown: the address record's fields vary by country.
 		address: z.unknown().nullish().describe('Address record'),
 	})
 	.loose()
@@ -253,6 +260,7 @@ export const RewardSchema = z
 		description: z.string().nullish().describe('Reward description'),
 		required_credits: z.number().nullish().describe('Credits needed to claim'),
 		stock: z.number().nullish().describe('Remaining stock'),
+		// unknown: media records vary by asset type and aren't documented field by field.
 		media: z.unknown().nullish().describe('Media record'),
 		// unknown: rewards carry custom attributes as top-level fields.
 	})
@@ -317,6 +325,7 @@ export const PromotionSchema = z
 			.record(z.string(), z.unknown())
 			.nullish()
 			.describe('Custom attributes of the promotion'),
+		// unknown: media records vary by asset type and aren't documented field by field.
 		media: z.unknown().nullish().describe('Media record'),
 	})
 	.loose()
@@ -335,6 +344,7 @@ export const PromotionRefSchema = z
 			.nullish()
 			.describe('Claims allowed per contact'),
 		expiration_duration: z.number().nullish().describe('Validity in seconds'),
+		// unknown: media records vary by asset type and aren't documented field by field.
 		media: z.unknown().nullish().describe('Media record'),
 		type: z.string().nullish().describe('Promotion type, e.g. SINGLE_USE'),
 	})
@@ -450,6 +460,7 @@ export const GiftcardSchema = z
 		url: z.string().nullish().describe('Balance page URL'),
 		giftcard_program: GiftcardProgramSchema.nullish().describe('The program'),
 		giftcard_recipients: z
+			// unknown: Leat documents this value without a fixed shape, so it stays open.
 			.array(z.unknown())
 			.nullish()
 			.describe('Recipients the card was sent to'),
@@ -479,6 +490,7 @@ export const WebhookSubscriptionSchema = z
 		url: z.string().nullish().describe('Delivery URL'),
 		status: z.string().nullish().describe('ACTIVE or INACTIVE'),
 		version: z.string().nullish().describe('V1 or V2 envelope'),
+		// unknown: subscription properties depend on the subscription type.
 		properties: z.unknown().nullish().describe('Subscription properties'),
 		created_at: z.string().nullish().describe('Creation timestamp'),
 	})
@@ -1299,7 +1311,11 @@ export const WebhooksDeleteInputSchema = z
 export type WebhooksDeleteInput = z.infer<typeof WebhooksDeleteInputSchema>;
 
 export const WebhooksDeletedOutputSchema = envelope(
-	z.unknown().optional().describe('Piggy answers with an empty data array'),
+	// unknown: Leat documents this value without a fixed shape, so it stays open.
+	z
+		.unknown()
+		.optional()
+		.describe('Piggy answers with an empty data array'),
 	'The webhook subscription was deleted',
 );
 

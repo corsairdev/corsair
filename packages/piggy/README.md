@@ -27,12 +27,12 @@ pnpm add @corsair-dev/piggy
 | `contacts.list` | `piggy.api.contacts.list` | `read` | List contacts with paging, date and attribute filters |
 | `contacts.merge` | `piggy.api.contacts.merge` | `destructive` | Merge a source contact into a destination contact; cannot be undone |
 | `contacts.update` | `piggy.api.contacts.update` | `write` | Update contact attributes keyed by attribute name |
-| `giftcards.create` | `piggy.api.giftcards.create` | `write` | Create a digital giftcard in a giftcard program |
+| `giftcards.create` | `piggy.api.giftcards.create` | `destructive` | Issue a digital giftcard with a balance; it carries real value and uses Leat tokens |
 | `giftcards.findOneByHash` | `piggy.api.giftcards.findOneByHash` | `read` | Read one giftcard by hash or QR value |
 | `giftcards.get` | `piggy.api.giftcards.get` | `read` | Read one giftcard by UUID |
 | `giftcards.list` | `piggy.api.giftcards.list` | `read` | List giftcards with program and paging filters |
 | `giftcards.listPrograms` | `piggy.api.giftcards.listPrograms` | `read` | List the giftcard programs |
-| `giftcards.sendByEmail` | `piggy.api.giftcards.sendByEmail` | `write` | Email a giftcard to a contact |
+| `giftcards.sendByEmail` | `piggy.api.giftcards.sendByEmail` | `destructive` | Email a giftcard to a contact; the email cannot be recalled |
 | `loyalty.getProgram` | `piggy.api.loyalty.getProgram` | `read` | Read the account loyalty program settings |
 | `loyalty.listTransactions` | `piggy.api.loyalty.listTransactions` | `read` | List loyalty transactions with type, shop and date filters |
 | `points.create` | `piggy.api.points.create` | `write` | Add or subtract points on a contact balance directly |
@@ -55,7 +55,7 @@ pnpm add @corsair-dev/piggy
 | `vouchers.update` | `piggy.api.vouchers.update` | `write` | Update voucher status, attributes or expiration |
 | `vouchers.validate` | `piggy.api.vouchers.validate` | `read` | Check whether a voucher is redeemable at a business profile |
 | `webhooks.create` | `piggy.api.webhooks.create` | `write` | Create a webhook subscription for one event type |
-| `webhooks.delete` | `piggy.api.webhooks.delete` | `write` | Delete a webhook subscription |
+| `webhooks.delete` | `piggy.api.webhooks.delete` | `destructive` | Delete a webhook subscription; it cannot be restored |
 | `webhooks.get` | `piggy.api.webhooks.get` | `read` | Read one webhook subscription by UUID |
 | `webhooks.list` | `piggy.api.webhooks.list` | `read` | List webhook subscriptions with event type and status filters |
 | `webhooks.update` | `piggy.api.webhooks.update` | `write` | Update a subscription name, URL or status |
