@@ -199,18 +199,34 @@ export const MaintenanceSchema = z
 		description: z.string().nullish().describe('Description'),
 		from: z.number().nullish().describe('Start, UNIX time'),
 		to: z.number().nullish().describe('End, UNIX time'),
-		recurrence: z
+		duration: z.number().nullish().describe('Window length, in durationunit'),
+		durationunit: z.string().nullish().describe('Unit of duration, e.g. hour'),
+		recurrencetype: z
 			.string()
 			.nullish()
-			.describe('Recurrence, e.g. weekly, or none'),
-		recurring: z.boolean().nullish().describe('Whether the window recurs'),
-		effective_to: z
+			.describe('Recurrence: none, day, week or month'),
+		repeatevery: z
+			.number()
+			.nullish()
+			.describe('Repeat every N recurrence units'),
+		effectiveto: z
 			.number()
 			.nullish()
 			.describe('When the recurrence stops, UNIX time'),
-		checks: z.array(z.number()).nullish().describe('Check ids covered'),
-		teams: z.array(z.number()).nullish().describe('Team ids covered'),
-		contacts: z.array(z.number()).nullish().describe('Contact ids covered'),
+		checks: z
+			.object({
+				uptime: z
+					.array(z.number())
+					.nullish()
+					.describe('Uptime check ids covered'),
+				tms: z
+					.array(z.number())
+					.nullish()
+					.describe('Transaction check ids covered'),
+			})
+			.loose()
+			.nullish()
+			.describe('Checks the window covers'),
 	})
 	.loose()
 	.describe('A maintenance window');
@@ -237,16 +253,14 @@ export const TeamSchema = z
 	.describe('An alerting team');
 export type Team = z.infer<typeof TeamSchema>;
 
-/** A notification target on a contact. */
+/** A notification target on a contact: an email address or a phone number. */
 export const NotificationTargetSchema = z
 	.object({
-		severity: z
-			.string()
-			.nullish()
-			.describe('Severity level this target covers'),
-		country_code: z.string().nullish().describe('Country code (phone targets)'),
-		number: z.string().nullish().describe('Phone number'),
-		email: z.string().nullish().describe('Email address'),
+		severity: z.string().nullish().describe('HIGH or LOW'),
+		address: z.string().nullish().describe('Email address (email targets)'),
+		country_code: z.string().nullish().describe('Country code (sms targets)'),
+		number: z.string().nullish().describe('Phone number (sms targets)'),
+		provider: z.string().nullish().describe('SMS provider (sms targets)'),
 	})
 	.loose()
 	.describe('A contact notification target');
@@ -260,9 +274,13 @@ export const ContactSchema = z
 		paused: z.boolean().nullish().describe('Whether alerts are paused'),
 		type: z.string().nullish().describe('contact, team_member or admin'),
 		notification_targets: z
-			.array(NotificationTargetSchema)
+			.object({
+				email: z.array(NotificationTargetSchema).nullish(),
+				sms: z.array(NotificationTargetSchema).nullish(),
+			})
+			.loose()
 			.nullish()
-			.describe('Notification targets'),
+			.describe('Notification targets grouped by medium (email, sms, ...)'),
 	})
 	.loose()
 	.describe('An alerting contact');
@@ -773,65 +791,58 @@ export const SingleRunOutputSchema = z
 
 export const MaintenanceWindowBodySchema = {
 	description: z.string().min(1).describe('Description'),
-	from: z
-		.number()
-		.int()
-		.describe('Window start, UNIX time; only future allowed (use 1 for now)'),
-	to: z
-		.number()
-		.int()
-		.describe('Window end, UNIX time; only future allowed (use 1 for now)'),
-	recurrence: z
-		.enum(['none', 'daily', 'weekly', 'monthly'])
-		.describe('Recurrence interval'),
-	recurring: z
-		.enum(['0', '1'])
+	from: z.number().int().describe('Window start, UNIX time (future only)'),
+	to: z.number().int().describe('Window end, UNIX time (future only)'),
+	recurrenceType: z
+		.enum(['none', 'day', 'week', 'month'])
 		.optional()
-		.transform((v) => (v === undefined ? undefined : v === '1'))
-		.describe('Whether the window recurs (1) or is one-off (0)'),
+		.describe('Recurrence (sent as recurrencetype); default none'),
+	repeatEvery: z
+		.number()
+		.int()
+		.min(0)
+		.optional()
+		.describe('Repeat every N recurrence units (sent as repeatevery)'),
 	effectiveTo: z
 		.number()
 		.int()
 		.optional()
-		.describe('When the recurrence stops, UNIX time (0 = never)'),
-	checks: z
+		.describe('When the recurrence stops, UNIX time (sent as effectiveto)'),
+	uptimeIds: z
 		.array(z.number().int())
 		.optional()
-		.describe('Check ids the window covers'),
-	teams: z
+		.describe('Uptime check ids the window covers (sent as uptimeids)'),
+	tmsIds: z
 		.array(z.number().int())
 		.optional()
-		.describe('Team ids the window covers'),
-	contacts: z
-		.array(z.number().int())
-		.optional()
-		.describe('Contact ids the window covers'),
+		.describe('Transaction check ids the window covers (sent as tmsids)'),
 };
 
-type MaintenanceWindowBody = {
-	description: string;
-	from: number;
-	to: number;
-	recurrence: 'none' | 'daily' | 'weekly' | 'monthly';
-	recurring?: boolean;
+export type MaintenanceWindowBody = {
+	description?: string;
+	from?: number;
+	to?: number;
+	recurrenceType?: 'none' | 'day' | 'week' | 'month';
+	repeatEvery?: number;
 	effectiveTo?: number;
-	checks?: number[];
-	teams?: number[];
-	contacts?: number[];
+	uptimeIds?: number[];
+	tmsIds?: number[];
 };
 
-// unknown: the body is built from caller fields with mixed types.
-function maintenanceBody(w: MaintenanceWindowBody): Record<string, unknown> {
+/** Maps the window fields to the API's lowercase body names. */
+// unknown: the body mixes strings, numbers and id arrays.
+export function maintenanceBody(
+	w: MaintenanceWindowBody,
+): Record<string, unknown> {
 	return {
 		description: w.description,
 		from: w.from,
 		to: w.to,
-		recurrence: w.recurrence,
-		recurring: w.recurring,
-		effective_to: w.effectiveTo,
-		checks: w.checks,
-		teams: w.teams,
-		contacts: w.contacts,
+		recurrencetype: w.recurrenceType,
+		repeatevery: w.repeatEvery,
+		effectiveto: w.effectiveTo,
+		uptimeids: w.uptimeIds,
+		tmsids: w.tmsIds,
 	};
 }
 
@@ -883,22 +894,14 @@ export const MaintenanceOutputSchema = z
 export const MaintenanceUpdateInputSchema = z
 	.object({
 		id: z.number().int().describe('The maintenance window id'),
-		description: z.string().optional().describe('New description'),
-		from: z.number().int().optional().describe('New start, UNIX time'),
-		to: z.number().int().optional().describe('New end, UNIX time'),
-		recurrence: z
-			.enum(['none', 'daily', 'weekly', 'monthly'])
-			.optional()
-			.describe('New recurrence'),
-		recurring: z.boolean().optional().describe('New recurring flag'),
-		effectiveTo: z
-			.number()
-			.int()
-			.optional()
-			.describe('New recurrence stop, UNIX time'),
-		checks: z.array(z.number().int()).optional().describe('New check ids'),
-		teams: z.array(z.number().int()).optional().describe('New team ids'),
-		contacts: z.array(z.number().int()).optional().describe('New contact ids'),
+		description: MaintenanceWindowBodySchema.description.optional(),
+		from: MaintenanceWindowBodySchema.from.optional(),
+		to: MaintenanceWindowBodySchema.to.optional(),
+		recurrenceType: MaintenanceWindowBodySchema.recurrenceType,
+		repeatEvery: MaintenanceWindowBodySchema.repeatEvery,
+		effectiveTo: MaintenanceWindowBodySchema.effectiveTo,
+		uptimeIds: MaintenanceWindowBodySchema.uptimeIds,
+		tmsIds: MaintenanceWindowBodySchema.tmsIds,
 	})
 	.describe('Input for modifying a maintenance window');
 export type MaintenanceUpdateInput = z.infer<
@@ -939,16 +942,18 @@ export type OccurrencesListInput = z.infer<typeof OccurrencesListInputSchema>;
 export const OccurrenceSchema = z
 	.object({
 		id: z.number().nullish().describe('Occurrence id'),
-		maintenance_id: z.number().nullish().describe('Parent window id'),
+		maintenanceid: z.number().nullish().describe('Parent window id'),
 		from: z.number().nullish().describe('Start, UNIX time'),
 		to: z.number().nullish().describe('End, UNIX time'),
+		duration: z.number().nullish().describe('Length, in durationunit'),
+		durationunit: z.string().nullish().describe('Unit of duration'),
 	})
 	.loose()
-	.describe('A maintenance occurrence');
+	.describe('One occurrence of a maintenance window');
 export type Occurrence = z.infer<typeof OccurrenceSchema>;
 
 export const OccurrencesListOutputSchema = z
-	.object({ maintenance_occurrences: z.array(OccurrenceSchema) })
+	.object({ occurrences: z.array(OccurrenceSchema) })
 	.loose()
 	.describe('The maintenance occurrences');
 
@@ -959,8 +964,7 @@ export type OccurrenceIdInput = z.infer<typeof OccurrenceIdInputSchema>;
 
 export const OccurrenceOutputSchema = z
 	.object({
-		maintenance_occurrence:
-			OccurrenceSchema.nullish().describe('The occurrence'),
+		occurrence: OccurrenceSchema.nullish().describe('The occurrence'),
 	})
 	.loose()
 	.describe('The maintenance occurrence');
@@ -1040,36 +1044,51 @@ export const ContactsListOutputSchema = z
 
 const notificationTargetsSchema = z
 	.array(
-		z.object({
-			severity: z
-				.string()
-				.optional()
-				.describe('Severity level this target covers, e.g. H, M, L'),
-			countryCode: z
-				.string()
-				.optional()
-				.describe('Country code for phone targets'),
-			number: z.string().optional().describe('Phone number for SMS targets'),
-			email: z.string().optional().describe('Email address for email targets'),
-		}),
+		z
+			.object({
+				severity: z
+					.enum(['HIGH', 'LOW'])
+					.describe('Alert severity this target receives'),
+				email: z.string().optional().describe('Email address (email target)'),
+				number: z.string().optional().describe('Phone number (sms target)'),
+				countryCode: z
+					.string()
+					.optional()
+					.describe('Country calling code for the phone number'),
+				provider: z.string().optional().describe('SMS provider'),
+			})
+			.refine((t) => Boolean(t.email) !== Boolean(t.number), {
+				message: 'Each target takes either email or number',
+			}),
 	)
 	.min(1);
 
-type NotificationTargets = Array<{
-	severity?: string;
-	countryCode?: string;
-	number?: string;
-	email?: string;
-}>;
+export type NotificationTargets = z.infer<typeof notificationTargetsSchema>;
 
-// unknown: the body is built from caller fields with mixed types.
-function targetsBody(targets: NotificationTargets): Record<string, unknown>[] {
-	return targets.map((t) => ({
-		severity: t.severity,
-		country_code: t.countryCode,
-		number: t.number,
-		email: t.email,
-	}));
+/**
+ * Pingdom takes targets grouped by medium:
+ * `{ email: [{ severity, address }], sms: [{ severity, country_code, number, provider }] }`
+ * (verified live 11-21; a flat array answers 400 "not expected").
+ */
+// unknown: the grouped body holds two differently shaped arrays.
+export function targetsBody(
+	targets: NotificationTargets,
+): Record<string, unknown> {
+	const email = targets
+		.filter((t) => t.email)
+		.map((t) => ({ severity: t.severity, address: t.email }));
+	const sms = targets
+		.filter((t) => t.number)
+		.map((t) => ({
+			severity: t.severity,
+			country_code: t.countryCode,
+			number: t.number,
+			provider: t.provider,
+		}));
+	return {
+		...(email.length > 0 ? { email } : {}),
+		...(sms.length > 0 ? { sms } : {}),
+	};
 }
 
 export const ContactsCreateInputSchema = z
@@ -1077,7 +1096,7 @@ export const ContactsCreateInputSchema = z
 		name: z.string().min(1).describe('Contact name'),
 		paused: z.boolean().optional().describe('Create the contact paused'),
 		notificationTargets: notificationTargetsSchema.describe(
-			'Notification targets; each takes email or number (+countryCode) and an optional severity',
+			'Notification targets, each an email or a number (+countryCode) with severity HIGH or LOW; Pingdom wants at least one HIGH and one LOW',
 		),
 	})
 	.describe('Input for creating a contact');
@@ -1112,7 +1131,7 @@ export const ContactsUpdateInputSchema = z
 		name: z.string().min(1).describe('Contact name'),
 		paused: z.boolean().describe('Whether alerts are paused'),
 		notificationTargets: notificationTargetsSchema.describe(
-			'Notification targets; each takes email or number (+countryCode) and an optional severity',
+			'Notification targets, each an email or a number (+countryCode) with severity HIGH or LOW; Pingdom wants at least one HIGH and one LOW',
 		),
 	})
 	.describe('Input for modifying a contact');

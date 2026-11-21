@@ -84,7 +84,7 @@ apiExamples:
   maintenance.list:
     call: '{}'
   maintenance.create:
-    call: '{ description: "Deploy window", from: 1700000000, to: 1700003600, recurrence: "weekly", checks: [100] }'
+    call: '{ description: "Deploy window", from: 1700000000, to: 1700003600, recurrenceType: "week", repeatEvery: 1, uptimeIds: [100] }'
   maintenance.get:
     call: '{ id: 777 }'
   maintenance.update:
@@ -114,11 +114,11 @@ apiExamples:
   alerting.contacts.list:
     call: '{}'
   alerting.contacts.create:
-    call: '{ name: "John Doe", notificationTargets: [{ email: "john@example.com", severity: "H" }] }'
+    call: '{ name: "John Doe", notificationTargets: [{ email: "john@example.com", severity: "HIGH" }, { email: "john@example.com", severity: "LOW" }] }'
   alerting.contacts.get:
     call: '{ contactId: 111250 }'
   alerting.contacts.update:
-    call: '{ contactId: 111250, name: "John Doe", paused: true, notificationTargets: [{ email: "john@example.com" }] }'
+    call: '{ contactId: 111250, name: "John Doe", paused: true, notificationTargets: [{ email: "john@example.com", severity: "HIGH" }, { email: "john@example.com", severity: "LOW" }] }'
   alerting.contacts.delete:
     call: '{ contactId: 111250 }'
 apiNotes:
@@ -127,4 +127,4 @@ apiNotes:
   results.list: 'status filters to up, down, unconfirmed or unknown; probes takes a comma-separated probe id list.'
   maintenance.create: 'recurrence is none, daily, weekly or monthly; from and to must be in the future (use 1 for now); effectiveTo 0 means the recurrence never stops.'
   tools.runSingle: 'Performs a single test without creating a check; the answer carries status, responsetime and the probe that ran it.'
-  alerting.contacts.create: 'notificationTargets each take email or number with countryCode, plus an optional severity (H, M or L).'
+  alerting.contacts.create: 'notificationTargets each take email, or number with countryCode, plus severity HIGH or LOW; Pingdom wants at least one HIGH and one LOW target.'

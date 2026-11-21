@@ -189,12 +189,13 @@ export const maintenanceWindow = {
 	description: 'Maintenance window from DB',
 	from: 1500471702,
 	to: 1500475302,
-	recurrence: 'weekly',
-	recurring: true,
-	effective_to: 0,
-	checks: [100],
-	teams: [],
-	contacts: [],
+	duration: 1,
+	durationunit: 'hour',
+	recurrencetype: 'week',
+	repeatevery: 1,
+	dayofweekinmonth: 0,
+	effectiveto: 1503063702,
+	checks: { uptime: [100], tms: [] },
 };
 
 export const maintenanceList = { maintenance: [maintenanceWindow] };
@@ -209,12 +210,15 @@ export const maintenanceModified = {
 
 export const occurrence = {
 	id: 3,
-	maintenance_id: 777,
+	maintenanceid: 777,
 	from: 1500471702,
 	to: 1500475302,
+	duration: 1,
+	durationunit: 'hour',
 };
 
-export const occurrencesList = { maintenance_occurrences: [occurrence] };
+// Shapes as the live API answered them (11-21).
+export const occurrencesList = { occurrences: [occurrence] };
 
 export const team = {
 	id: 63,
@@ -231,7 +235,13 @@ export const contact = {
 	name: 'John Doe',
 	paused: false,
 	type: 'contact',
-	notification_targets: [{ severity: 'H', email: 'john@example.com' }],
+	notification_targets: {
+		email: [
+			{ severity: 'HIGH', address: 'john@example.com' },
+			{ severity: 'LOW', address: 'john@example.com' },
+		],
+	},
+	teams: [{ id: 63, name: 'Engineering' }],
 };
 
 export const contactsList = { contacts: [contact] };

@@ -289,9 +289,10 @@ describe('maintenance', () => {
 			description: 'New window',
 			from: 1500471702,
 			to: 1500475302,
-			recurrence: 'weekly',
-			checks: [100],
-			effectiveTo: 0,
+			recurrenceType: 'week',
+			repeatEvery: 1,
+			uptimeIds: [100],
+			effectiveTo: 1503063702,
 		});
 		expectCall({
 			path: '/api/3.1/maintenance',
@@ -300,9 +301,10 @@ describe('maintenance', () => {
 				description: 'New window',
 				from: 1500471702,
 				to: 1500475302,
-				recurrence: 'weekly',
-				checks: [100],
-				effective_to: 0,
+				recurrencetype: 'week',
+				repeatevery: 1,
+				uptimeids: [100],
+				effectiveto: 1503063702,
 			},
 		});
 	});
@@ -314,7 +316,7 @@ describe('maintenance', () => {
 			description: 'Changed',
 			from: 1500471702,
 			to: 1500475302,
-			recurrence: 'none',
+			recurrenceType: 'none',
 		});
 		expectCall({
 			path: '/api/3.1/maintenance/777',
@@ -323,7 +325,7 @@ describe('maintenance', () => {
 				description: 'Changed',
 				from: 1500471702,
 				to: 1500475302,
-				recurrence: 'none',
+				recurrencetype: 'none',
 			},
 		});
 
@@ -441,8 +443,8 @@ describe('alerting', () => {
 		await invoke(Alerting.createContact, {
 			name: 'John Doe',
 			notificationTargets: [
-				{ email: 'john@example.com', severity: 'H' },
-				{ number: '+3725555', countryCode: 'EE' },
+				{ email: 'john@example.com', severity: 'HIGH' },
+				{ number: '5555555', countryCode: '372', severity: 'LOW' },
 			],
 		});
 		expectCall({
@@ -450,10 +452,10 @@ describe('alerting', () => {
 			method: 'POST',
 			body: {
 				name: 'John Doe',
-				notification_targets: [
-					{ severity: 'H', email: 'john@example.com' },
-					{ country_code: 'EE', number: '+3725555' },
-				],
+				notification_targets: {
+					email: [{ severity: 'HIGH', address: 'john@example.com' }],
+					sms: [{ severity: 'LOW', country_code: '372', number: '5555555' }],
+				},
 			},
 		});
 
@@ -462,7 +464,10 @@ describe('alerting', () => {
 			contactId: 111250,
 			name: 'John Doe',
 			paused: true,
-			notificationTargets: [{ email: 'john@example.com' }],
+			notificationTargets: [
+				{ email: 'john@example.com', severity: 'HIGH' },
+				{ email: 'john@example.com', severity: 'LOW' },
+			],
 		});
 		expectCall({
 			path: '/api/3.1/alerting/contacts/111250',
@@ -470,7 +475,12 @@ describe('alerting', () => {
 			body: {
 				name: 'John Doe',
 				paused: true,
-				notification_targets: [{ email: 'john@example.com' }],
+				notification_targets: {
+					email: [
+						{ severity: 'HIGH', address: 'john@example.com' },
+						{ severity: 'LOW', address: 'john@example.com' },
+					],
+				},
 			},
 		});
 		const logged = JSON.stringify(mockLog.mock.calls);

@@ -2,6 +2,7 @@ import type { PingdomEndpoints } from '..';
 import { call } from './call';
 import {
 	PingdomEndpointInputSchemas as Inputs,
+	maintenanceBody,
 	PingdomEndpointOutputSchemas as Outputs,
 } from './types';
 
@@ -36,17 +37,7 @@ export const create: PingdomEndpoints['maintenanceCreate'] = (ctx, input) =>
 		(window_) => ({
 			method: 'POST',
 			path: `${V31}/maintenance`,
-			body: {
-				description: window_.description,
-				from: window_.from,
-				to: window_.to,
-				recurrence: window_.recurrence,
-				recurring: window_.recurring,
-				effective_to: window_.effectiveTo,
-				checks: window_.checks,
-				teams: window_.teams,
-				contacts: window_.contacts,
-			},
+			body: maintenanceBody(window_),
 		}),
 		{
 			log: (_, created) => ({
@@ -80,20 +71,10 @@ export const update: PingdomEndpoints['maintenanceUpdate'] = (ctx, input) =>
 			output: Outputs.maintenanceUpdate,
 		},
 		input,
-		({ id, effectiveTo, ...rest }) => ({
+		({ id, ...rest }) => ({
 			method: 'PUT',
 			path: `${V31}/maintenance/${id}`,
-			body: {
-				description: rest.description,
-				from: rest.from,
-				to: rest.to,
-				recurrence: rest.recurrence,
-				recurring: rest.recurring,
-				effective_to: effectiveTo,
-				checks: rest.checks,
-				teams: rest.teams,
-				contacts: rest.contacts,
-			},
+			body: maintenanceBody(rest),
 		}),
 		{ log: ({ id }) => ({ windowId: id }) },
 	);

@@ -3,6 +3,7 @@ import { call } from './call';
 import {
 	PingdomEndpointInputSchemas as Inputs,
 	PingdomEndpointOutputSchemas as Outputs,
+	targetsBody,
 } from './types';
 
 const V31 = '/api/3.1';
@@ -116,12 +117,7 @@ export const createContact: PingdomEndpoints['contactsCreate'] = (ctx, input) =>
 			body: {
 				name,
 				paused,
-				notification_targets: notificationTargets.map((t) => ({
-					severity: t.severity,
-					country_code: t.countryCode,
-					number: t.number,
-					email: t.email,
-				})),
+				notification_targets: targetsBody(notificationTargets),
 			},
 		}),
 		{ log: (_, created) => ({ contactId: created.contact.id ?? undefined }) },
@@ -158,12 +154,7 @@ export const updateContact: PingdomEndpoints['contactsUpdate'] = (ctx, input) =>
 			body: {
 				name,
 				paused,
-				notification_targets: notificationTargets.map((t) => ({
-					severity: t.severity,
-					country_code: t.countryCode,
-					number: t.number,
-					email: t.email,
-				})),
+				notification_targets: targetsBody(notificationTargets),
 			},
 		}),
 		{ log: ({ contactId }) => ({ contactId }) },

@@ -212,7 +212,7 @@ describe('output parsing', () => {
 			description: 'New window',
 			from: 1500471702,
 			to: 1500475302,
-			recurrence: 'weekly',
+			recurrenceType: 'week',
 		})) as { maintenance?: { id?: number } };
 		expect(created.maintenance?.id).toBe(777);
 
@@ -232,8 +232,8 @@ describe('output parsing', () => {
 		respond(occurrencesList);
 		const occPage = (await invoke(Occurrences.list, {
 			maintenanceId: 777,
-		})) as { maintenance_occurrences?: Array<{ id?: number }> };
-		expect(occPage.maintenance_occurrences?.[0]?.id).toBe(occurrence.id);
+		})) as { occurrences?: Array<{ id?: number }> };
+		expect(occPage.occurrences?.[0]?.id).toBe(occurrence.id);
 	});
 
 	it('parses teams and contacts', async () => {
@@ -252,14 +252,14 @@ describe('output parsing', () => {
 
 		respond(contactsList);
 		const contacts = (await invoke(Alerting.listContacts, {})) as {
-			contacts?: Array<{ notification_targets?: unknown[] }>;
+			contacts?: Array<{ notification_targets?: { email?: unknown[] } }>;
 		};
-		expect(contacts.contacts?.[0]?.notification_targets).toHaveLength(1);
+		expect(contacts.contacts?.[0]?.notification_targets?.email).toHaveLength(2);
 
 		respond(contactCreated);
 		const contactOut = (await invoke(Alerting.createContact, {
 			name: 'John Doe',
-			notificationTargets: [{ email: 'john@example.com', severity: 'H' }],
+			notificationTargets: [{ email: 'john@example.com', severity: 'HIGH' }],
 		})) as { contact?: { id?: number } };
 		expect(contactOut.contact?.id).toBe(12345678);
 	});
@@ -302,12 +302,12 @@ describe('input validation', () => {
 	it('rejects a maintenance window without description, from or to', async () => {
 		await rejects(
 			Maintenance.create,
-			{ from: 1500471702, to: 1500475302, recurrence: 'weekly' },
+			{ from: 1500471702, to: 1500475302, recurrenceType: 'week' },
 			'description',
 		);
 		await rejects(
 			Maintenance.create,
-			{ description: 'x', to: 1500475302, recurrence: 'weekly' },
+			{ description: 'x', to: 1500475302, recurrenceType: 'week' },
 			'from',
 		);
 	});
@@ -319,9 +319,9 @@ describe('input validation', () => {
 				description: 'x',
 				from: 1500471702,
 				to: 1500475302,
-				recurrence: 'yearly',
+				recurrenceType: 'year',
 			},
-			'recurrence',
+			'recurrenceType',
 		);
 	});
 

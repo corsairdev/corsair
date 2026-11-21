@@ -23,7 +23,7 @@ export const list: PingdomEndpoints['occurrencesList'] = (ctx, input) =>
 		}),
 		{
 			log: (_, page) => ({
-				count: page.maintenance_occurrences.length,
+				count: page.occurrences.length,
 			}),
 		},
 	);
