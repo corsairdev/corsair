@@ -252,8 +252,8 @@ export const BaseProviders = [
 	'enginemailer',
 	'enigma',
 	'epicgames',
-	'esignatures',
 	'erpnext',
+	'esignatures',
 	'esputnik',
 	'etermin',
 	'eventbrite',
@@ -412,6 +412,7 @@ export const BaseProviders = [
 	'kontentai',
 	'krakenio',
 	'labs64netlicensing',
+	'langbase',
 	'launchdarkly',
 	'leexi',
 	'leiga',
@@ -437,8 +438,8 @@ export const BaseProviders = [
 	'marketstack',
 	'melo',
 	'mem0',
-	'memberstack',
 	'memberspot',
+	'memberstack',
 	'merriamwebsterdict',
 	'microsoftclarity',
 	'minerstat',
@@ -460,16 +461,16 @@ export const BaseProviders = [
 	'needle',
 	'neon',
 	'nethunt',
-	'neuronwriter',
 	'netsuite',
+	'neuronwriter',
 	'neutrino',
+	'neverbounce',
 	'newrelic',
+	'newsapi',
+	'nextdns',
 	'ngrok',
 	'niftyimages',
 	'ninox',
-	'neverbounce',
-	'newsapi',
-	'nextdns',
 	'northflank',
 	'notion',
 	'nutshell',
@@ -513,15 +514,15 @@ export const BaseProviders = [
 	'polygonio',
 	'postalytics',
 	'postgrid',
+	'posthog',
 	'postiz',
+	'postman',
 	'postmark',
 	'postonce',
 	'prerender',
+	'prisma',
 	'prismic',
 	'proabono',
-	'posthog',
-	'postman',
-	'prisma',
 	'proofly',
 	'pushbullet',
 	'pushover',
@@ -615,8 +616,8 @@ export const BaseProviders = [
 	'sourcegraph',
 	'splitwise',
 	'spoki',
-	'spotlightr',
 	'spotify',
+	'spotlightr',
 	'square',
 	'stackai',
 	'stackexchange',
@@ -627,44 +628,44 @@ export const BaseProviders = [
 	'storerocket',
 	'stormboard',
 	'stormglass',
+	'storyblok',
 	'strava',
 	'streamtime',
 	'stripe',
-	'storyblok',
 	'studiobyai21labs',
 	'suitedash',
-	'superchat',
-	'supersaas',
 	'supabase',
 	'supadata',
+	'superchat',
+	'supersaas',
 	'supportbee',
 	'surf',
 	'surveymonkey',
-	'swaggerhub',
 	'suzanne',
 	'svix',
+	'swaggerhub',
 	'sympla',
 	'synthflowai',
 	'taggun',
 	'tailscale',
 	'talenthr',
-	'tapfiliate',
 	'tally',
+	'tapfiliate',
 	'tave',
-	'telnyx',
-	'teltel',
-	'thanksio',
 	'tavily',
-	'taxjar',
 	'tavilymcp',
-	'templated',
-	'textcortex',
+	'taxjar',
 	'teamcamp',
 	'teams',
 	'teamwork',
 	'telegram',
+	'telnyx',
+	'teltel',
+	'templated',
+	'textcortex',
 	'textit',
 	'textrazor',
+	'thanksio',
 	'thinkific',
 	'ticketmaster',
 	'ticktick',
@@ -678,10 +679,10 @@ export const BaseProviders = [
 	'tisane',
 	'tldv',
 	'todoist',
-	'tomba',
-	'tomtom',
 	'toggl',
 	'tokenmetrics',
+	'tomba',
+	'tomtom',
 	'toneden',
 	'tpscheck',
 	'trello',
@@ -1001,8 +1002,8 @@ export const ProviderDisplayNames = {
 	enginemailer: 'Enginemailer',
 	enigma: 'Enigma',
 	epicgames: 'Epic Games',
-	esignatures: 'eSignatures',
 	erpnext: 'ERPNext',
+	esignatures: 'eSignatures',
 	esputnik: 'eSputnik',
 	etermin: 'ETermin',
 	eventbrite: 'Eventbrite',
@@ -1161,6 +1162,7 @@ export const ProviderDisplayNames = {
 	kontentai: 'Kontent.ai',
 	krakenio: 'Kraken.io',
 	labs64netlicensing: 'Labs64 NetLicensing',
+	langbase: 'Langbase',
 	launchdarkly: 'LaunchDarkly',
 	leexi: 'Leexi',
 	leiga: 'Leiga',
@@ -1186,8 +1188,8 @@ export const ProviderDisplayNames = {
 	marketstack: 'Marketstack',
 	melo: 'Melo',
 	mem0: 'Mem0',
-	memberstack: 'Memberstack',
 	memberspot: 'MemberSpot',
+	memberstack: 'Memberstack',
 	merriamwebsterdict: 'Merriam-Webster Dictionary',
 	microsoftclarity: 'Microsoft Clarity',
 	minerstat: 'Minerstat',
@@ -1209,16 +1211,16 @@ export const ProviderDisplayNames = {
 	needle: 'Needle',
 	neon: 'Neon',
 	nethunt: 'NetHunt CRM',
-	neuronwriter: 'NEURONwriter',
 	netsuite: 'NetSuite',
+	neuronwriter: 'NEURONwriter',
 	neutrino: 'Neutrino API',
+	neverbounce: 'NeverBounce',
 	newrelic: 'New Relic',
+	newsapi: 'NewsAPI',
+	nextdns: 'NextDNS',
 	ngrok: 'ngrok',
 	niftyimages: 'NiftyImages',
 	ninox: 'Ninox',
-	neverbounce: 'NeverBounce',
-	newsapi: 'NewsAPI',
-	nextdns: 'NextDNS',
 	northflank: 'Northflank',
 	notion: 'Notion',
 	nutshell: 'Nutshell',
@@ -1262,15 +1264,15 @@ export const ProviderDisplayNames = {
 	polygonio: 'Polygon.io',
 	postalytics: 'Postalytics',
 	postgrid: 'PostGrid',
+	posthog: 'PostHog',
 	postiz: 'Postiz',
+	postman: 'Postman',
 	postmark: 'Postmark',
 	postonce: 'PostOnce',
 	prerender: 'Prerender',
+	prisma: 'Prisma',
 	prismic: 'Prismic',
 	proabono: 'ProAbono',
-	posthog: 'PostHog',
-	postman: 'Postman',
-	prisma: 'Prisma',
 	proofly: 'Proofly',
 	pushbullet: 'Pushbullet',
 	pushover: 'Pushover',
@@ -1364,8 +1366,8 @@ export const ProviderDisplayNames = {
 	sourcegraph: 'Sourcegraph',
 	splitwise: 'Splitwise',
 	spoki: 'Spoki',
-	spotlightr: 'Spotlightr',
 	spotify: 'Spotify',
+	spotlightr: 'Spotlightr',
 	square: 'Square',
 	stackai: 'StackAI',
 	stackexchange: 'Stack Exchange',
@@ -1376,44 +1378,44 @@ export const ProviderDisplayNames = {
 	storerocket: 'Storerocket',
 	stormboard: 'Stormboard',
 	stormglass: 'Stormglass',
+	storyblok: 'Storyblok',
 	strava: 'Strava',
 	streamtime: 'Streamtime',
 	stripe: 'Stripe',
-	storyblok: 'Storyblok',
 	studiobyai21labs: 'StudioByAI21Labs',
 	suitedash: 'SuiteDash',
-	superchat: 'Superchat',
-	supersaas: 'SuperSaaS',
 	supabase: 'Supabase',
 	supadata: 'Supadata',
+	superchat: 'Superchat',
+	supersaas: 'SuperSaaS',
 	supportbee: 'Supportbee',
 	surf: 'Surf',
 	surveymonkey: 'SurveyMonkey',
-	swaggerhub: 'SwaggerHub',
 	suzanne: 'Suzanne',
 	svix: 'Svix',
+	swaggerhub: 'SwaggerHub',
 	sympla: 'Sympla',
 	synthflowai: 'Synthflow AI',
 	taggun: 'Taggun',
 	tailscale: 'Tailscale',
 	talenthr: 'TalentHR',
-	tapfiliate: 'Tapfiliate',
 	tally: 'Tally',
+	tapfiliate: 'Tapfiliate',
 	tave: 'Tave',
-	telnyx: 'Telnyx',
-	teltel: 'TelTEL',
-	thanksio: 'Thanks.io',
 	tavily: 'Tavily',
-	taxjar: 'TaxJar',
 	tavilymcp: 'Tavily MCP',
-	templated: 'Templated',
-	textcortex: 'TextCortex',
+	taxjar: 'TaxJar',
 	teamcamp: 'Teamcamp',
 	teams: 'Teams',
 	teamwork: 'Teamwork',
 	telegram: 'Telegram',
+	telnyx: 'Telnyx',
+	teltel: 'TelTEL',
+	templated: 'Templated',
+	textcortex: 'TextCortex',
 	textit: 'TextIt',
 	textrazor: 'TextRazor',
+	thanksio: 'Thanks.io',
 	thinkific: 'Thinkific',
 	ticketmaster: 'Ticketmaster',
 	ticktick: 'TickTick',
@@ -1427,10 +1429,10 @@ export const ProviderDisplayNames = {
 	tisane: 'Tisane',
 	tldv: 'tl;dv',
 	todoist: 'Todoist',
-	tomba: 'Tomba',
-	tomtom: 'TomTom',
 	toggl: 'Toggl',
 	tokenmetrics: 'Token Metrics',
+	tomba: 'Tomba',
+	tomtom: 'TomTom',
 	toneden: 'ToneDen',
 	tpscheck: 'TPSCheck',
 	trello: 'Trello',
@@ -1757,8 +1759,8 @@ export type AllProviders =
 	| 'enginemailer'
 	| 'enigma'
 	| 'epicgames'
-	| 'esignatures'
 	| 'erpnext'
+	| 'esignatures'
 	| 'esputnik'
 	| 'etermin'
 	| 'eventbrite'
@@ -1917,6 +1919,7 @@ export type AllProviders =
 	| 'kontentai'
 	| 'krakenio'
 	| 'labs64netlicensing'
+	| 'langbase'
 	| 'launchdarkly'
 	| 'leexi'
 	| 'leiga'
@@ -1942,8 +1945,8 @@ export type AllProviders =
 	| 'marketstack'
 	| 'melo'
 	| 'mem0'
-	| 'memberstack'
 	| 'memberspot'
+	| 'memberstack'
 	| 'merriamwebsterdict'
 	| 'microsoftclarity'
 	| 'minerstat'
@@ -1965,16 +1968,16 @@ export type AllProviders =
 	| 'needle'
 	| 'neon'
 	| 'nethunt'
-	| 'neuronwriter'
 	| 'netsuite'
+	| 'neuronwriter'
 	| 'neutrino'
+	| 'neverbounce'
 	| 'newrelic'
+	| 'newsapi'
+	| 'nextdns'
 	| 'ngrok'
 	| 'niftyimages'
 	| 'ninox'
-	| 'neverbounce'
-	| 'newsapi'
-	| 'nextdns'
 	| 'northflank'
 	| 'notion'
 	| 'nutshell'
@@ -2018,15 +2021,15 @@ export type AllProviders =
 	| 'polygonio'
 	| 'postalytics'
 	| 'postgrid'
+	| 'posthog'
 	| 'postiz'
+	| 'postman'
 	| 'postmark'
 	| 'postonce'
 	| 'prerender'
+	| 'prisma'
 	| 'prismic'
 	| 'proabono'
-	| 'posthog'
-	| 'postman'
-	| 'prisma'
 	| 'proofly'
 	| 'pushbullet'
 	| 'pushover'
@@ -2120,8 +2123,8 @@ export type AllProviders =
 	| 'sourcegraph'
 	| 'splitwise'
 	| 'spoki'
-	| 'spotlightr'
 	| 'spotify'
+	| 'spotlightr'
 	| 'square'
 	| 'stackai'
 	| 'stackexchange'
@@ -2132,44 +2135,44 @@ export type AllProviders =
 	| 'storerocket'
 	| 'stormboard'
 	| 'stormglass'
+	| 'storyblok'
 	| 'strava'
 	| 'streamtime'
 	| 'stripe'
-	| 'storyblok'
 	| 'studiobyai21labs'
 	| 'suitedash'
-	| 'superchat'
-	| 'supersaas'
 	| 'supabase'
 	| 'supadata'
+	| 'superchat'
+	| 'supersaas'
 	| 'supportbee'
 	| 'surf'
 	| 'surveymonkey'
-	| 'swaggerhub'
 	| 'suzanne'
 	| 'svix'
+	| 'swaggerhub'
 	| 'sympla'
 	| 'synthflowai'
 	| 'taggun'
 	| 'tailscale'
 	| 'talenthr'
-	| 'tapfiliate'
 	| 'tally'
+	| 'tapfiliate'
 	| 'tave'
-	| 'telnyx'
-	| 'teltel'
-	| 'thanksio'
 	| 'tavily'
-	| 'taxjar'
 	| 'tavilymcp'
-	| 'templated'
-	| 'textcortex'
+	| 'taxjar'
 	| 'teamcamp'
 	| 'teams'
 	| 'teamwork'
 	| 'telegram'
+	| 'telnyx'
+	| 'teltel'
+	| 'templated'
+	| 'textcortex'
 	| 'textit'
 	| 'textrazor'
+	| 'thanksio'
 	| 'thinkific'
 	| 'ticketmaster'
 	| 'ticktick'
@@ -2183,10 +2186,10 @@ export type AllProviders =
 	| 'tisane'
 	| 'tldv'
 	| 'todoist'
-	| 'tomba'
-	| 'tomtom'
 	| 'toggl'
 	| 'tokenmetrics'
+	| 'tomba'
+	| 'tomtom'
 	| 'toneden'
 	| 'tpscheck'
 	| 'trello'

@@ -1,0 +1,137 @@
+---
+title: "Langbase plugin"
+sidebarTitle: "Overview"
+description: "Run AI pipes, manage memories and documents, retrieve semantic context, and manage conversation threads with Langbase."
+---
+
+Use **Langbase** through Corsair: one client, typed API calls.
+
+Configure a Langbase User or Organization API key as the tenant's `api_key` credential. All calls use the `Authorization: Bearer` header.
+
+`pipes.run` only supports JSON responses in this plugin: `stream: true` is rejected and the request sends `stream: false`. Use the thread endpoints to retrieve conversation context; the current v1 API reference does not define a separate run-history retrieval route.
+
+`agent.run` also uses JSON responses only and relies on an LLM keyset configured in Langbase for the selected model. MCP server configuration is not exposed because its documented options can carry authorization tokens and custom headers in tool arguments.
+
+Document upload follows Langbase's two-step signed URL contract. Pass the file contents as base64 and a supported content type; the signed URL remains internal and is never returned. Lists are complete arrays; the documented Langbase list APIs do not expose pagination parameters.
+
+Web search is not included because Langbase requires a separate Exa key in `LB-WEB-SEARCH-KEY`. Pipe deletion and single-memory GET are also omitted because the current v1 API reference does not define those routes.
+
+**What you get:**
+
+- 20 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/langbase better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/langbase better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/langbase better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/langbase better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { langbase } from '@corsair-dev/langbase';
+
+export const corsair = createCorsair({
+	plugins: [
+		langbase(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Langbase API key before the first call: `pnpm corsair setup --plugin=langbase --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+langbase()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'langbase',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Retrieve conversation context**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.langbase.api.threads.listMessages({ threadId: 'sample-thread' });
+```
+
+
+**Create an AI pipe**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.langbase.api.pipes.create({ name: 'sample-support-pipe' });
+```
+
+
+See the full list on the [API](/plugins/langbase/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/langbase/api">
+    Every `langbase.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

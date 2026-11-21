@@ -3422,6 +3422,14 @@
                 ]
               },
               {
+                "group": "Langbase",
+                "pages": [
+                  "plugins/langbase/overview",
+                  "plugins/langbase/api",
+                  "plugins/langbase/database"
+                ]
+              },
+              {
                 "group": "LaunchDarkly",
                 "pages": [
                   "plugins/launchdarkly/overview",
