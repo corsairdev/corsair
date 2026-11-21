@@ -17,6 +17,8 @@ export const extract: ParseraEndpoints['extractorExtract'] = (ctx, input) =>
 		(body) => ({
 			method: 'POST',
 			path: '/v1/extractor/extract',
+			// An LLM extraction of a large page can outrun core's 20 s default.
+			timeoutMs: 120_000,
 			body,
 		}),
 		{ log: (_, result) => ({ attributes: Object.keys(result).length }) },
@@ -34,6 +36,8 @@ export const parse: ParseraEndpoints['extractorParse'] = (ctx, input) =>
 		(body) => ({
 			method: 'POST',
 			path: '/v1/extractor/parse',
+			// An LLM extraction of a large page can outrun core's 20 s default.
+			timeoutMs: 120_000,
 			body,
 		}),
 		{ log: (_, result) => ({ attributes: Object.keys(result).length }) },
@@ -105,7 +109,7 @@ export const deleteScraper: ParseraEndpoints['extractorDeleteScraper'] = (
 					record.message.length === 0
 				) {
 					throw new Error(
-						`Parsera extractor.deleteScraper: unexpected body ${JSON.stringify(raw)}`,
+						'Parsera extractor.deleteScraper: unexpected answer (no confirmation message)',
 					);
 				}
 				return { message: record.message };

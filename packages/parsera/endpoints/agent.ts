@@ -170,7 +170,7 @@ export const deleteScraper: ParseraEndpoints['agentDeleteScraper'] = (
 					record.message.length === 0
 				) {
 					throw new Error(
-						`Parsera agent.deleteScraper: unexpected body ${JSON.stringify(raw)}`,
+						'Parsera agent.deleteScraper: unexpected answer (no confirmation message)',
 					);
 				}
 				return { message: record.message };

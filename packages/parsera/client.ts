@@ -94,6 +94,11 @@ export type ParseraRequest = {
 	// unknown: callers send whatever the input schema parsed; the client
 	// cannot name a stricter body type across POST shapes.
 	body?: unknown;
+	/**
+	 * Request timeout in ms; core's default is 20 s. Synchronous scraper
+	 * runs wait up to five minutes before Parsera answers a run_id.
+	 */
+	timeoutMs?: number;
 };
 
 // unknown: callers parse the response with the endpoint's zod output schema,
@@ -104,7 +109,7 @@ export type ParseraRequest = {
  */
 export async function makeParseraRequest(
 	apiKey: string,
-	{ method, path, body }: ParseraRequest,
+	{ method, path, body, timeoutMs }: ParseraRequest,
 	// unknown: callers parse the response with the endpoint's zod output
 	// schema, so the client cannot name a stricter return type.
 ): Promise<unknown> {
@@ -113,6 +118,7 @@ export async function makeParseraRequest(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
+		...(timeoutMs === undefined ? {} : { TIMEOUT: timeoutMs }),
 		HEADERS: {
 			Accept: 'application/json',
 			'X-API-KEY': apiKey,

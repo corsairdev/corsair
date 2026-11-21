@@ -18,6 +18,8 @@ export const run: ParseraEndpoints['scrapersRun'] = (ctx, input) =>
 			method: 'POST',
 			path: '/v1/scrapers/run',
 			body,
+			// Parsera holds a synchronous run up to five minutes.
+			timeoutMs: 330_000,
 		}),
 		{
 			// A run that passes five minutes comes back 202 with a run_id

@@ -143,18 +143,22 @@ describe('input validation', () => {
 });
 
 describe('message-shaped responses', () => {
-	it('rejects a delete that answers no message string', async () => {
+	it('rejects a delete that answers no message string, without copying the body into the error', async () => {
+		respond({ ok: true, customer: 'secret customer data' });
+		await expect(
+			invoke(Extractor.deleteScraper, { scraperId: 'x' }),
+		).rejects.not.toThrow('secret customer data');
 		respond({ ok: true });
 		await rejects(
 			Extractor.deleteScraper,
 			{ scraperId: 'x' },
-			'unexpected body',
+			'unexpected answer',
 		);
 	});
 
 	it('rejects a delete that answers an empty body', async () => {
 		respond(undefined, 204);
-		await rejects(Agent.deleteScraper, { scraperId: 'x' }, 'unexpected body');
+		await rejects(Agent.deleteScraper, { scraperId: 'x' }, 'unexpected answer');
 	});
 
 	it('rejects a getScraper whose status is not a documented value', async () => {
