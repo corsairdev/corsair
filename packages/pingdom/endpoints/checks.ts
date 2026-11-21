@@ -161,12 +161,18 @@ export const updateMulti: PingdomEndpoints['checksUpdateMulti'] = (
 			output: Outputs.checksUpdateMulti,
 		},
 		input,
-		({ paused, resolution }) => ({
+		({ checkIds, paused, resolution }) => ({
 			method: 'PUT',
 			path: `${V31}/checks`,
-			body: { paused, resolution },
+			body: { checkids: checkIds.join(','), paused, resolution },
 		}),
-		{ log: ({ paused, resolution }) => ({ paused, resolution }) },
+		{
+			log: ({ checkIds, paused, resolution }) => ({
+				count: checkIds.length,
+				paused,
+				resolution,
+			}),
+		},
 	);
 
 export const deleteMulti: PingdomEndpoints['checksDeleteMulti'] = (

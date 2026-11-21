@@ -156,12 +156,16 @@ describe('checks', () => {
 
 	it('multi pause and delete use the collection route', async () => {
 		respond(checkModified);
-		await invoke(Checks.updateMulti, { paused: true });
+		await invoke(Checks.updateMulti, { checkIds: [1, 2], paused: true });
 		expectCall({
 			path: '/api/3.1/checks',
 			method: 'PUT',
-			body: { paused: true },
+			body: { checkids: '1,2', paused: true },
 		});
+		// Without checkids Pingdom changes every check in the account.
+		await expect(
+			invoke(Checks.updateMulti, { paused: true }),
+		).rejects.toThrow();
 
 		respond(checksDeleted);
 		await invoke(Checks.deleteMulti, { checkIds: [1, 2, 3] });
@@ -260,6 +264,12 @@ describe('tools', () => {
 		respond(probesList);
 		await invoke(Tools.listProbes, {});
 		expectCall({ path: '/api/3.1/probes' });
+	});
+
+	it('reference hits its route', async () => {
+		respond({ regions: [{ id: 1, description: 'EU' }] });
+		await invoke(Tools.getReference, {});
+		expectCall({ path: '/api/3.1/reference' });
 	});
 
 	it('single sends the host', async () => {
@@ -369,6 +379,25 @@ describe('maintenance', () => {
 });
 
 describe('alerting', () => {
+	it('contact get and delete hang off the contact id', async () => {
+		respond({ contact: contactsList.contacts[0] });
+		await invoke(Alerting.getContact, { contactId: 14901345 });
+		expectCall({ path: '/api/3.1/alerting/contacts/14901345' });
+
+		respond(checksDeleted);
+		await invoke(Alerting.deleteContact, { contactId: 14901345 });
+		expectCall({
+			path: '/api/3.1/alerting/contacts/14901345',
+			method: 'DELETE',
+		});
+	});
+
+	it('occurrence get hangs off the occurrence id', async () => {
+		respond({ occurrence: { id: 3, maintenanceid: 777, from: 1, to: 2 } });
+		await invoke(Occurrences.get, { id: 3 });
+		expectCall({ path: '/api/3.1/maintenance.occurrences/3' });
+	});
+
 	it('team create and update send the member ids', async () => {
 		respond({ team: { id: 12345678 } });
 		await invoke(Alerting.createTeam, {

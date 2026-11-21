@@ -7,6 +7,7 @@ export const CheckSummarySchema = z
 	.object({
 		id: z.number().nullish().describe('Check id'),
 		name: z.string().nullish().describe('Check name'),
+		// unknown: a string on lists, an object keyed by check type on reads.
 		type: z.unknown().nullish().describe('Check type, e.g. http'),
 		hostname: z.string().nullish().describe('Target host'),
 		lasterrortime: z
@@ -30,9 +31,11 @@ export const CheckSummarySchema = z
 			.nullish()
 			.describe('UNIX timestamp when the check last recovered'),
 		created: z.number().nullish().describe('UNIX timestamp of creation'),
+		// unknown: the API answers a boolean, older checks have sent 0/1.
 		paused: z.unknown().nullish().describe('Pause state'),
 		resolution: z.number().nullish().describe('Test interval in minutes'),
 		status: z.string().nullish().describe('up, down, paused or unconfirmed'),
+		// unknown: tag objects ({ name, type, count }) only arrive with include_tags.
 		tags: z.unknown().nullish().describe('Tags, when include_tags is set'),
 	})
 	.loose()
@@ -52,6 +55,7 @@ export const CheckDetailSchema = z
 			.nullish()
 			.describe('Type-specific settings keyed by the check type'),
 		created: z.number().nullish().describe('UNIX timestamp of creation'),
+		// unknown: the API answers a boolean, older checks have sent 0/1.
 		paused: z.unknown().nullish().describe('Pause state'),
 		resolution: z.number().nullish().describe('Test interval in minutes'),
 		send_notification_when_down: z
@@ -69,8 +73,10 @@ export const CheckDetailSchema = z
 			.array(z.number())
 			.nullish()
 			.describe('Assigned integration ids'),
+		// unknown: tag objects ({ name, type, count }) only arrive with include_tags.
 		tags: z.unknown().nullish().describe('Tags'),
 		probe_filters: z
+			// unknown: probe filters are provider-defined region objects.
 			.array(z.unknown())
 			.nullish()
 			.describe('Probe region filters'),
@@ -117,6 +123,7 @@ const checkCommonFields = {
 		.describe('Send an alert when the check recovers'),
 	tags: z.string().optional().describe('Comma-separated tags for filtering'),
 	probeFilters: z
+		// unknown: provider-defined entries the reference does not type.
 		.array(z.record(z.string(), z.unknown()))
 		.optional()
 		.describe(
@@ -141,12 +148,14 @@ type CheckCommon = {
 	notifyAgainEvery?: number;
 	notifyWhenBackup?: boolean;
 	tags?: string;
+	// unknown: probe filters are provider-defined region objects.
 	probeFilters?: Record<string, unknown>[];
 	ipv6?: boolean;
 	responseTimeThreshold?: number;
 	customMessage?: string;
 };
 
+// unknown: flat body fields whose names depend on the check type.
 type CheckTypeSettings = Record<string, unknown>;
 
 /** An action (alert) entry. */
@@ -158,9 +167,9 @@ export const ActionSchema = z
 		checkname: z.string().nullish().describe('Name of the alerted check'),
 		time: z.number().nullish().describe('UNIX time of alert generation'),
 		via: z
-			.enum(['email', 'sms', 'twitter', 'apns', 'agcm'])
+			.string()
 			.nullish()
-			.describe('Alert medium'),
+			.describe('Alert medium, e.g. email, sms, twitter, apns, agcm'),
 	})
 	.loose()
 	.describe('A Pingdom alert action');
@@ -264,10 +273,11 @@ export const ResultSchema = z
 	.object({
 		probeid: z.number().nullish().describe('Probe id'),
 		time: z.number().nullish().describe('UNIX time of the test'),
+		// Open string: a status Pingdom adds later must not fail the read.
 		status: z
-			.enum(['up', 'down', 'unconfirmed', 'unknown'])
+			.string()
 			.nullish()
-			.describe('Result status'),
+			.describe('Result status: up, down, unconfirmed or unknown'),
 		responsetime: z.number().nullish().describe('Response time in ms'),
 		probedesc: z.string().nullish().describe('Probe description'),
 		probeip: z.string().nullish().describe('Probe IP'),
@@ -348,6 +358,7 @@ export const ChecksCreateInputSchema = z
 			])
 			.describe('Type of check'),
 		typeSettings: z
+			// unknown: provider-defined entries the reference does not type.
 			.record(z.string(), z.unknown())
 			.optional()
 			.describe(
@@ -390,6 +401,7 @@ export const ChecksUpdateInputSchema = z
 			.optional()
 			.describe('New type of check'),
 		typeSettings: z
+			// unknown: provider-defined entries the reference does not type.
 			.record(z.string(), z.unknown())
 			.optional()
 			.describe('Type-specific settings as flat body fields'),
@@ -405,6 +417,12 @@ export const CheckModifiedOutputSchema = z
 
 export const ChecksUpdateMultiInputSchema = z
 	.object({
+		checkIds: z
+			.array(z.number().int().positive())
+			.min(1)
+			.describe(
+				'Checks to modify (sent as checkids); Pingdom changes every check in the account when the list is missing',
+			),
 		paused: z.boolean().optional().describe('Pause (true) or unpause (false)'),
 		resolution: z
 			.enum(['1', '5', '15', '30', '60'])
@@ -449,6 +467,7 @@ export const AnalysisOutputSchema = z
 	.object({
 		id: z.number().nullish().describe('Analysis id'),
 		time: z.number().nullish().describe('UNIX time of the analysis'),
+		// unknown: the root-cause block differs per check type and is undocumented.
 		rootcause: z.unknown().nullish().describe('Root cause details'),
 	})
 	.loose()
@@ -544,9 +563,11 @@ export const SummaryAverageOutputSchema = z
 		summary: z
 			.object({
 				responsetime: z
+					// unknown: provider-defined entries the reference does not type.
 					.unknown()
 					.nullish()
 					.describe('Average response time block'),
+				// unknown: the status block shape differs between summary endpoints.
 				status: z.unknown().nullish().describe('Status and uptime block'),
 			})
 			.loose(),
@@ -559,6 +580,7 @@ export const SummaryHoursOfDayOutputSchema = z
 		summary: z
 			.object({
 				hours: z
+					// unknown: provider-defined entries the reference does not type.
 					.array(z.unknown())
 					.nullish()
 					.describe('Per-hour response time entries'),
@@ -574,6 +596,7 @@ export const SummaryOutageOutputSchema = z
 			.object({
 				state: z.string().nullish().describe('Current state'),
 				outages: z
+					// unknown: provider-defined entries the reference does not type.
 					.array(z.unknown())
 					.nullish()
 					.describe('Status change entries'),
@@ -605,14 +628,17 @@ export const SummaryPerformanceOutputSchema = z
 		summary: z
 			.object({
 				weeks: z
+					// unknown: provider-defined entries the reference does not type.
 					.array(z.unknown())
 					.nullish()
 					.describe('Weekly intervals, when resolution is week'),
 				hours: z
+					// unknown: provider-defined entries the reference does not type.
 					.array(z.unknown())
 					.nullish()
 					.describe('Hourly intervals, when resolution is day'),
 				days: z
+					// unknown: provider-defined entries the reference does not type.
 					.array(z.unknown())
 					.nullish()
 					.describe('Daily intervals, when resolution is month'),
@@ -627,6 +653,7 @@ export const SummaryProbesOutputSchema = z
 		summary: z
 			.object({
 				probes: z
+					// unknown: provider-defined entries the reference does not type.
 					.array(z.unknown())
 					.nullish()
 					.describe('Per-probe test counts'),
@@ -793,6 +820,7 @@ type MaintenanceWindowBody = {
 	contacts?: number[];
 };
 
+// unknown: the body is built from caller fields with mixed types.
 function maintenanceBody(w: MaintenanceWindowBody): Record<string, unknown> {
 	return {
 		description: w.description,
@@ -1034,6 +1062,7 @@ type NotificationTargets = Array<{
 	email?: string;
 }>;
 
+// unknown: the body is built from caller fields with mixed types.
 function targetsBody(targets: NotificationTargets): Record<string, unknown>[] {
 	return targets.map((t) => ({
 		severity: t.severity,
