@@ -80,7 +80,7 @@ apiExamples:
   verification.createRequest:
     call: '{ presentationTemplateId: "pres_1", expirationInMinutes: 10, challenge: "nonce-123" }'
   verification.getSession:
-    call: '{ verificationId: "verification_1", challenge: "challenge-1", responseCode: "code-1" }'
+    call: '{ verificationId: "verification_1" }'
   verification.complete:
     call: '{ verificationId: "verification_1", challenge: "challenge-1", responseCode: "code-1" }'
   revocation.batch:
