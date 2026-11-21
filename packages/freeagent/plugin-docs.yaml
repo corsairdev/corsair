@@ -1,5 +1,5 @@
 displayName: FreeAgent
-description: Manage FreeAgent company records, verified sender addresses, contacts, projects, invoices, and tracking groups through its OAuth 2.0 REST API.
+description: Manage FreeAgent company accounting, contacts, invoices, estimates, expenses, banking, tax, payroll, users, and time records through the OAuth 2.0 REST API.
 domain: freeagent.com
 recommendedAuth: oauth_2
 examples:
@@ -13,87 +13,1032 @@ examples:
       contact:
         organisation_name: Example Ltd
 apiExamples:
-  company.get: {}
-  company.businessCategories: {}
-  company.taxTimeline: {}
-  emailAddresses.list: {}
-  contacts.list: {}
-  contacts.get:
-    id: '1'
-  contacts.create:
-    contact:
-      organisation_name: Example Ltd
-  contacts.update:
-    id: '1'
-    contact:
-      organisation_name: Example Ltd
-  contacts.delete:
-    id: '1'
-  projects.list: {}
-  projects.get:
-    id: '1'
-  projects.create:
-    project:
-      contact: https://api.freeagent.com/v2/contacts/1
-      name: Example Project
-      status: Active
-      currency: GBP
-      budget_units: Hours
-  projects.update:
-    id: '1'
-    project:
-      name: Example Project
-  projects.delete:
-    id: '1'
-  invoices.list: {}
-  invoices.get:
-    id: '1'
-  invoices.pdf:
-    id: '1'
-  invoices.create:
-    invoice:
-      contact: https://api.freeagent.com/v2/contacts/1
-      dated_on: '2025-01-15'
-      payment_terms_in_days: 30
-  invoices.duplicate:
-    id: '1'
-  invoices.update:
-    id: '1'
-    invoice:
-      comments: Example update
-  invoices.delete:
-    id: '1'
-  invoices.sendEmail:
-    id: '1'
-    email:
-      use_template: true
-  invoices.markSent:
-    id: '1'
-  invoices.markScheduled:
-    id: '1'
-  invoices.markDraft:
-    id: '1'
-  invoices.markCancelled:
-    id: '1'
-  invoices.directDebit:
-    id: '1'
-  invoices.timeline: {}
-  invoices.getDefaultAdditionalText: {}
-  invoices.updateDefaultAdditionalText:
-    default_additional_text: Pay within 7 days
-  invoices.deleteDefaultAdditionalText: {}
-  invoices.convertToCreditNote:
-    id: '1'
-  recurringInvoices.list: {}
-  recurringInvoices.get:
-    id: '1'
-  trackingGroups.list: {}
-  trackingGroups.get:
-    id: '1'
+  {
+      "accountLocks.list":  {},
+      "accountLocks.update":  {
+                                 "account_lock":  {
+                                                      "locked_to_date":  "2024-12-31"
+                                                  }
+                             },
+      "accountLocks.delete":  {},
+      "company.get":  {
+
+                      },
+      "company.businessCategories":  {
+
+                                     },
+      "company.taxTimeline":  {
+
+                              },
+      "emailAddresses.list":  {
+                                  "query":  {
+                                                "page":  2,
+                                                "per_page":  50
+                                            }
+                              },
+      "contacts.list":  {
+                            "query":  {
+                                          "page":  2,
+                                          "per_page":  25
+                                      }
+                        },
+      "contacts.get":  {
+                           "id":  "record/with space?"
+                       },
+      "contacts.create":  {
+                              "contact":  {
+                                              "organisation_name":  "Example Ltd",
+                                              "email":  "billing@example.test"
+                                          }
+                          },
+      "contacts.update":  {
+                              "id":  "record/with space?",
+                              "contact":  {
+                                              "organisation_name":  "Updated Ltd"
+                                          }
+                          },
+      "contacts.delete":  {
+                              "id":  "record/with space?"
+                          },
+      "projects.list":  {
+                            "query":  {
+                                          "page":  3,
+                                          "per_page":  10,
+                                          "nested":  true
+                                      }
+                        },
+      "projects.get":  {
+                           "id":  "record/with space?"
+                       },
+      "projects.create":  {
+                              "project":  {
+                                              "contact":  "https://api.freeagent.com/v2/contacts/1",
+                                              "name":  "Example Project",
+                                              "status":  "Active",
+                                              "currency":  "GBP",
+                                              "budget_units":  "Hours"
+                                          }
+                          },
+      "projects.update":  {
+                              "id":  "record/with space?",
+                              "project":  {
+                                              "name":  "Updated Project"
+                                          }
+                          },
+      "projects.delete":  {
+                              "id":  "record/with space?"
+                          },
+      "invoices.list":  {
+                            "query":  {
+                                          "page":  2,
+                                          "per_page":  25,
+                                          "contact":  "https://api.freeagent.com/v2/contacts/1"
+                                      }
+                        },
+      "invoices.get":  {
+                           "id":  "record/with space?"
+                       },
+      "invoices.create":  {
+                              "invoice":  {
+                                              "contact":  "https://api.freeagent.com/v2/contacts/1",
+                                              "dated_on":  "2026-10-15",
+                                              "payment_terms_in_days":  30
+                                          }
+                          },
+      "invoices.update":  {
+                              "id":  "record/with space?",
+                              "invoice":  {
+                                              "comments":  "Updated",
+                                              "payment_methods":  {
+                                                                      "gocardless_preauth":  true,
+                                                                      "stripe":  false
+                                                                  }
+                                          }
+                          },
+      "invoices.delete":  {
+                              "id":  "record/with space?"
+                          },
+      "invoices.markSent":  {
+                                "id":  "record/with space?"
+                            },
+      "invoices.sendEmail":  {
+                                 "id":  "record/with space?",
+                                 "email":  {
+                                               "use_template":  true
+                                           }
+                             },
+      "invoices.duplicate":  {
+                                 "id":  "record/with space?"
+                             },
+      "invoices.markScheduled":  {
+                                     "id":  "record/with space?"
+                                 },
+      "invoices.markDraft":  {
+                                 "id":  "record/with space?"
+                             },
+      "invoices.markCancelled":  {
+                                     "id":  "record/with space?"
+                                 },
+      "invoices.directDebit":  {
+                                   "id":  "record/with space?"
+                               },
+      "invoices.timeline":  {
+
+                            },
+      "invoices.getDefaultAdditionalText":  {
+
+                                            },
+      "invoices.updateDefaultAdditionalText":  {
+                                                   "default_additional_text":  "Pay within 7 days"
+                                               },
+      "invoices.deleteDefaultAdditionalText":  {
+
+                                               },
+      "invoices.pdf":  {
+                           "id":  "record/with space?"
+                       },
+      "invoices.convertToCreditNote":  {
+                                           "id":  "record/with space?"
+                                       },
+      "recurringInvoices.list":  {
+                                     "query":  {
+                                                   "view":  "active",
+                                                   "page":  2,
+                                                   "per_page":  10,
+                                                   "contact":  "https://api.freeagent.com/v2/contacts/1"
+                                               }
+                                 },
+      "recurringInvoices.get":  {
+                                    "id":  "record/with space?"
+                                },
+      "trackingGroups.list":  {
+                                  "query":  {
+                                                "include_hidden":  true,
+                                                "order_by":  "labels_count",
+                                                "reverse":  true,
+                                                "page":  1,
+                                                "per_page":  50
+                                            }
+                              },
+      "trackingGroups.get":  {
+                                 "id":  "record/with space?"
+                             },
+      "attachments.get":  {
+                              "id":  "1"
+                          },
+      "attachments.delete":  {
+                                 "id":  "1"
+                             },
+      "bankAccounts.list":  {
+                                "query":  {
+                                              "page":  2,
+                                              "per_page":  50,
+                                              "view":  "standard_bank_accounts"
+                                          }
+                            },
+      "bankAccounts.get":  {
+                               "id":  "1"
+                           },
+      "bankAccounts.create":  {
+                                  "bank_account":  {
+                                                       "name":  "Operating",
+                                                       "opening_balance":  "0.0"
+                                                   }
+                              },
+      "bankAccounts.update":  {
+                                  "id":  "1",
+                                  "bank_account":  {
+                                                       "name":  "Updated"
+                                                   }
+                              },
+      "bankAccounts.delete":  {
+                                  "id":  "1"
+                              },
+      "bankFeeds.list":  {
+                             "query":  {
+                                           "page":  1,
+                                           "per_page":  25
+                                       }
+                         },
+      "bankFeeds.get":  {
+                            "id":  "1"
+                        },
+      "bankTransactions.list":  {
+                                    "query":  {
+                                                  "bank_account":  "https://api.freeagent.com/v2/bank_accounts/1",
+                                                  "page":  2
+                                              }
+                                },
+      "bankTransactions.get":  {
+                                   "id":  "1"
+                               },
+      "bankTransactions.delete":  {
+                                      "id":  "1"
+                                  },
+      "bankTransactions.uploadStatement":  {
+                                               "bank_account":  "https://api.freeagent.com/v2/bank_accounts/1",
+                                               "statement":  [
+                                                                 {
+                                                                     "dated_on":  "2026-10-01",
+                                                                     "amount":  -10,
+                                                                     "description":  "Purchase"
+                                                                 }
+                                                             ]
+                                           },
+      "bankTransactionExplanations.list":  {
+                                               "query":  {
+                                                             "bank_account":  "https://api.freeagent.com/v2/bank_accounts/1",
+                                                             "from_date":  "2026-10-01"
+                                                         }
+                                           },
+      "bankTransactionExplanations.get":  {
+                                              "id":  "1"
+                                          },
+      "bankTransactionExplanations.create":  {
+                                                 "explanation":  {
+                                                                     "bank_account":  "https://api.freeagent.com/v2/bank_accounts/1",
+                                                                     "dated_on":  "2026-10-01",
+                                                                     "gross_value":  "-5.0"
+                                                                 }
+                                             },
+      "bankTransactionExplanations.update":  {
+                                                 "id":  "1",
+                                                 "explanation":  {
+                                                                     "description":  "Updated"
+                                                                 }
+                                             },
+      "bankTransactionExplanations.delete":  {
+                                                 "id":  "1"
+                                             },
+      "bankTransactionExplanations.listAttachments":  {
+                                                          "id":  "1"
+                                                      },
+      "bankTransactionExplanations.createAttachments":  {
+                                                            "id":  "1",
+                                                            "attachments":  [
+                                                                                {
+                                                                                    "data":  "YQ==",
+                                                                                    "file_name":  "note.txt",
+                                                                                    "content_type":  "text/plain"
+                                                                                }
+                                                                            ]
+                                                        },
+      "bankTransactionExplanations.updateAttachments":  {
+                                                            "id":  "1",
+                                                            "attachments":  [
+                                                                                {
+                                                                                    "url":  "https://api.freeagent.com/v2/attachments/2",
+                                                                                    "_destroy":  "true"
+                                                                                }
+                                                                            ]
+                                                        },
+      "bankTransactionExplanations.deleteAttachments":  {
+                                                            "id":  "1"
+                                                        },
+      "categories.list":  {
+                              "query":  {
+                                            "page":  1,
+                                            "per_page":  25,
+                                            "sub_accounts":  true
+                                        }
+                          },
+      "categories.get":  {
+                             "nominal_code":  "001"
+                         },
+      "categories.create":  {
+                                "category":  {
+                                                 "description":  "Custom income",
+                                                 "nominal_code":  "047",
+                                                 "category_group":  "income"
+                                             }
+                            },
+      "categories.update":  {
+                                "nominal_code":  "047",
+                                "category":  {
+                                                 "description":  "Updated income"
+                                             }
+                            },
+      "categories.delete":  {
+                                "nominal_code":  "047"
+                            },
+      "balanceSheet.get":  {
+                               "query":  {
+                                             "as_at_date":  "2026-10-01"
+                                         }
+                           },
+      "balanceSheet.openingBalances":  {
+
+                                       },
+      "cis.bands":  {
+
+                    },
+      "cis.getSettings":  {
+
+                          },
+      "cis.updateSettings":  {
+                                 "cis_settings":  {
+                                                      "contractor_details":  null
+                                                  }
+                             },
+      "financialReports.cashflow":  {
+                                        "query":  {
+                                                      "from_date":  "2026-07-01",
+                                                      "to_date":  "2026-09-30"
+                                                  }
+                                    },
+      "financialReports.profitAndLoss":  {
+                                             "query":  {
+                                                           "from_date":  "2026-01-01",
+                                                           "to_date":  "2026-12-31",
+                                                           "accounting_period":  "2026/27"
+                                                       }
+                                         },
+      "financialReports.trialBalance":  {
+                                            "query":  {
+                                                          "from_date":  "2026-01-01",
+                                                          "to_date":  "2026-01-31"
+                                                      }
+                                        },
+      "financialReports.trialBalanceOpeningBalances":  {
+
+                                                       },
+      "financialReports.transactionsList":  {
+                                                "query":  {
+                                                              "from_date":  "2026-01-01",
+                                                              "to_date":  "2026-01-31"
+                                                          }
+                                            },
+      "financialReports.transactionsGet":  {
+                                               "id":  "1"
+                                           },
+      "journalSets.list":  {
+                               "query":  {
+                                             "page":  1,
+                                             "per_page":  25,
+                                             "tag":  "app-run"
+                                         }
+                           },
+      "journalSets.get":  {
+                              "id":  "1"
+                          },
+      "journalSets.openingBalances":  {
+
+                                      },
+      "journalSets.create":  {
+                                 "journal_set":  {
+                                                     "dated_on":  "2026-10-01",
+                                                     "description":  "Adjustment",
+                                                     "journal_entries":  [
+                                                                             {
+                                                                                 "category":  "https://api.freeagent.com/v2/categories/001",
+                                                                                 "debit_value":  "10.0"
+                                                                             },
+                                                                             {
+                                                                                 "category":  "https://api.freeagent.com/v2/categories/002",
+                                                                                 "debit_value":  "-10.0"
+                                                                             }
+                                                                         ]
+                                                 }
+                             },
+      "journalSets.update":  {
+                                  "id":  "37",
+                                  "journal_set":  {
+                                                      "journal_entries":  [
+                                                                              {
+                                                                                  "url":  "https://api.freeagent.com/v2/journal_sets/37/journal_entries/17",
+                                                                                  "_destroy":  true
+                                                                              },
+                                                                              {
+                                                                                  "url":  "https://api.freeagent.com/v2/journal_sets/37/journal_entries/18",
+                                                                                  "debit_value":  "-20.0"
+                                                                              },
+                                                                              {
+                                                                                  "category":  "https://api.freeagent.com/v2/categories/001",
+                                                                                  "debit_value":  "-20.0"
+                                                                              }
+                                                                          ]
+                                              }
+                             },
+      "journalSets.delete":  {
+                                 "id":  "1"
+                             },
+      "capitalAssetTypes.list":  {
+                                     "query":  {
+                                                   "page":  1,
+                                                   "per_page":  25
+                                               }
+                                 },
+      "capitalAssetTypes.get":  {
+                                    "id":  "1"
+                                },
+      "capitalAssetTypes.create":  {
+                                       "capital_asset_type":  {
+                                                                  "name":  "Specialized machinery"
+                                                              }
+                                   },
+      "capitalAssetTypes.update":  {
+                                       "id":  "4",
+                                       "capital_asset_type":  {
+                                                                  "name":  "Updated type"
+                                                              }
+                                   },
+      "capitalAssetTypes.delete":  {
+                                       "id":  "4"
+                                   },
+      "capitalAssets.list":  {
+                                 "query":  {
+                                               "view":  "disposable",
+                                               "include_history":  true
+                                           }
+                             },
+      "capitalAssets.get":  {
+                                "id":  "2",
+                                "query":  {
+                                              "include_history":  true
+                                          }
+                            },
+      "hirePurchases.list":  {
+                                 "query":  {
+                                               "page":  1,
+                                               "per_page":  25
+                                           }
+                             },
+      "hirePurchases.get":  {
+                                "id":  "1"
+                            },
+      "properties.list":  {
+                              "query":  {
+                                            "page":  1
+                                        }
+                          },
+      "properties.get":  {
+                             "id":  "3"
+                         },
+      "properties.create":  {
+                                "property":  {
+                                                 "address1":  "Example address",
+                                                 "town":  "London"
+                                             }
+                            },
+      "properties.update":  {
+                                "id":  "3",
+                                "property":  {
+                                                 "address2":  "Updated address"
+                                             }
+                            },
+      "properties.delete":  {
+                                "id":  "3"
+                            },
+      "stockItems.list":  {
+                              "query":  {
+                                            "sort":  "-updated_at",
+                                            "page":  2
+                                        }
+                          },
+      "stockItems.get":  {
+                             "id":  "3"
+                         },
+      "notes.list":  {
+                         "query":  {
+                                       "contact":  "https://api.freeagent.com/v2/contacts/1",
+                                       "page":  2
+                                   }
+                     },
+      "notes.get":  {
+                        "id":  "1"
+                    },
+      "notes.create":  {
+                           "parent":  {
+                                          "project":  "https://api.freeagent.com/v2/projects/1"
+                                      },
+                           "note":  "Meeting notes"
+                       },
+      "notes.update":  {
+                           "id":  "1",
+                           "note":  "Updated note"
+                       },
+      "notes.delete":  {
+                           "id":  "1"
+                       },
+      "priceListItems.list":  {
+                                  "query":  {
+                                                "page":  1,
+                                                "sort":  "-created_at"
+                                            }
+                              },
+      "priceListItems.get":  {
+                                 "id":  "1"
+                             },
+      "priceListItems.create":  {
+                                    "price_list_item":  {
+                                                            "code":  "A001",
+                                                            "quantity":  "1.0",
+                                                            "item_type":  "Products",
+                                                            "description":  "Apple",
+                                                            "price":  "1.99",
+                                                            "vat_status":  "standard"
+                                                        }
+                                },
+      "priceListItems.update":  {
+                                    "id":  "1",
+                                    "price_list_item":  {
+                                                            "description":  "Green apple",
+                                                            "price":  "2.50"
+                                                        }
+                                },
+      "priceListItems.delete":  {
+                                    "id":  "1"
+                                },
+      "salesTaxPeriods.list":  {
+                                   "query":  {
+                                                 "page":  2
+                                             }
+                               },
+      "salesTaxPeriods.get":  {
+                                  "id":  "1"
+                              },
+      "salesTaxPeriods.create":  {
+                                     "sales_tax_period":  {
+                                                              "sales_tax_name":  "Local tax",
+                                                              "sales_tax_registration_status":  "Registered",
+                                                              "sales_tax_rate_1":  "2.0",
+                                                              "sales_tax_is_value_added":  true,
+                                                              "effective_date":  "2026-01-01"
+                                                          }
+                                 },
+      "salesTaxPeriods.update":  {
+                                     "id":  "1",
+                                     "sales_tax_period":  {
+                                                              "sales_tax_rate_1":  "3.0"
+                                                          }
+                                 },
+      "salesTaxPeriods.delete":  {
+                                     "id":  "1"
+                                 },
+      "salesTax.rates":  {
+                             "query":  {
+                                           "country":  "Austria",
+                                           "date":  "2026-01-01"
+                                       }
+                         },
+      "corporationTaxReturns.list":  {
+
+                                     },
+      "corporationTaxReturns.get":  {
+                                        "period_ends_on":  "2024-12-31"
+                                    },
+      "corporationTaxReturns.markAsFiled":  {
+                                                "period_ends_on":  "2024-12-31"
+                                            },
+      "corporationTaxReturns.markAsUnfiled":  {
+                                                  "period_ends_on":  "2024-12-31"
+                                              },
+      "corporationTaxReturns.markAsPaid":  {
+                                               "period_ends_on":  "2024-12-31"
+                                           },
+      "corporationTaxReturns.markAsUnpaid":  {
+                                                 "period_ends_on":  "2024-12-31"
+                                             },
+      "finalAccountsReports.list":  {
+
+                                    },
+      "finalAccountsReports.get":  {
+                                       "period_ends_on":  "2024-12-31"
+                                   },
+      "finalAccountsReports.markAsFiled":  {
+                                               "period_ends_on":  "2024-12-31"
+                                           },
+      "finalAccountsReports.markAsUnfiled":  {
+                                                 "period_ends_on":  "2024-12-31"
+                                             },
+      "incomeTaxReturns.list":  {
+                                    "user_id":  "119"
+                                },
+      "incomeTaxReturns.get":  {
+                                   "user_id":  "119",
+                                   "period_ends_on":  "2024-04-05"
+                               },
+      "incomeTaxReturns.markAsFiled":  {
+                                           "user_id":  "119",
+                                           "period_ends_on":  "2024-04-05"
+                                       },
+      "incomeTaxReturns.markAsUnfiled":  {
+                                             "user_id":  "119",
+                                             "period_ends_on":  "2024-04-05"
+                                         },
+      "incomeTaxReturns.markPaymentAsPaid":  {
+                                                 "user_id":  "119",
+                                                 "period_ends_on":  "2024-04-05",
+                                                 "payment_date":  "2025-01-31"
+                                             },
+      "incomeTaxReturns.markPaymentAsUnpaid":  {
+                                                   "user_id":  "119",
+                                                   "period_ends_on":  "2024-04-05",
+                                                   "payment_date":  "2025-01-31"
+                                               },
+      "vatReturns.list":  {
+
+                          },
+      "vatReturns.get":  {
+                             "period_ends_on":  "2024-07-31"
+                         },
+      "vatReturns.markAsFiled":  {
+                                     "period_ends_on":  "2024-07-31"
+                                 },
+      "vatReturns.markAsUnfiled":  {
+                                       "period_ends_on":  "2024-07-31"
+                                   },
+      "vatReturns.markPaymentAsPaid":  {
+                                           "period_ends_on":  "2024-07-31",
+                                           "payment_date":  "2024-09-07"
+                                       },
+      "vatReturns.markPaymentAsUnpaid":  {
+                                             "period_ends_on":  "2024-07-31",
+                                             "payment_date":  "2024-09-07"
+                                         },
+      "bills.list":  {
+                         "query":  {
+                                       "page":  1,
+                                       "view":  "open",
+                                       "nested_bill_items":  true
+                                   }
+                     },
+      "bills.get":  {
+                        "id":  "1"
+                    },
+      "bills.create":  {
+                           "bill":  {
+                                        "contact":  "https://api.freeagent.com/v2/contacts/1",
+                                        "reference":  "REF100",
+                                        "dated_on":  "2026-10-01",
+                                        "due_on":  "2026-10-31",
+                                        "bill_items":  [
+                                                           {
+                                                               "category":  "https://api.freeagent.com/v2/categories/285",
+                                                               "total_value":  "100.0",
+                                                               "description":  "Travel"
+                                                           }
+                                                       ]
+                                    }
+                       },
+      "bills.update":  {
+                           "id":  "1",
+                           "bill":  {
+                                        "bill_items":  [
+                                                           {
+                                                               "url":  "https://api.freeagent.com/v2/bill_items/7",
+                                                               "_destroy":  1
+                                                           }
+                                                       ]
+                                    }
+                       },
+      "bills.delete":  {
+                           "id":  "1"
+                       },
+      "expenses.list":  {
+                            "query":  {
+                                          "page":  2,
+                                          "view":  "recent"
+                                      }
+                        },
+      "expenses.get":  {
+                           "id":  "1"
+                       },
+      "expenses.create":  {
+                              "expense":  {
+                                              "user":  "https://api.freeagent.com/v2/users/1",
+                                              "category":  "https://api.freeagent.com/v2/categories/285",
+                                              "dated_on":  "2026-10-01",
+                                              "description":  "Travel",
+                                              "gross_value":  "-20.0"
+                                          }
+                          },
+      "expenses.batchCreate":  {
+                                   "expenses":  [
+                                                    {
+                                                        "user":  "https://api.freeagent.com/v2/users/1",
+                                                        "category":  "https://api.freeagent.com/v2/categories/285",
+                                                        "dated_on":  "2026-10-01",
+                                                        "description":  "First",
+                                                        "gross_value":  "10.0"
+                                                    },
+                                                    {
+                                                        "user":  "https://api.freeagent.com/v2/users/1",
+                                                        "category":  "https://api.freeagent.com/v2/categories/285",
+                                                        "dated_on":  "2026-10-01",
+                                                        "description":  "Second",
+                                                        "gross_value":  "20.0"
+                                                    }
+                                                ]
+                               },
+      "expenses.update":  {
+                              "id":  "1",
+                              "expense":  {
+                                              "description":  "Updated travel"
+                                          }
+                          },
+      "expenses.delete":  {
+                              "id":  "1"
+                          },
+      "expenses.mileageSettings":  {
+
+                                   },
+      "creditNotes.list":  {
+                               "query":  {
+                                             "page":  1,
+                                             "view":  "open",
+                                             "nested_credit_note_items":  true
+                                         }
+                           },
+      "creditNotes.get":  {
+                              "id":  "1"
+                          },
+      "creditNotes.pdf":  {
+                              "id":  "1"
+                          },
+      "creditNotes.create":  {
+                                 "credit_note":  {
+                                                     "contact":  "https://api.freeagent.com/v2/contacts/1",
+                                                     "dated_on":  "2026-10-01",
+                                                     "payment_terms_in_days":  30,
+                                                     "credit_note_items":  [
+                                                                               {
+                                                                                   "description":  "Refund",
+                                                                                   "price":  "-10.0",
+                                                                                   "quantity":  "1.0"
+                                                                               }
+                                                                           ]
+                                                 }
+                             },
+      "creditNotes.update":  {
+                                 "id":  "1",
+                                 "credit_note":  {
+                                                     "credit_note_items":  [
+                                                                               {
+                                                                                   "id":  2,
+                                                                                   "description":  "Updated refund"
+                                                                               },
+                                                                               {
+                                                                                   "id":  3,
+                                                                                   "_destroy":  1
+                                                                               }
+                                                                           ]
+                                                 }
+                             },
+      "creditNotes.delete":  {
+                                 "id":  "1"
+                             },
+      "creditNotes.sendEmail":  {
+                                    "id":  "1",
+                                    "email":  {
+                                                  "use_template":  true,
+                                                  "email_to_sender":  false
+                                              }
+                                },
+      "creditNotes.markSent":  {
+                                   "id":  "1"
+                               },
+      "creditNotes.markDraft":  {
+                                    "id":  "1"
+                                },
+      "creditNoteReconciliations.list":  {
+                                             "query":  {
+                                                           "page":  1,
+                                                           "from_date":  "2026-01-01"
+                                                       }
+                                         },
+      "creditNoteReconciliations.get":  {
+                                            "id":  "1"
+                                        },
+      "creditNoteReconciliations.create":  {
+                                               "credit_note_reconciliation":  {
+                                                                                  "gross_value":  "10.0",
+                                                                                  "invoice":  "https://api.freeagent.com/v2/invoices/1",
+                                                                                  "credit_note":  "https://api.freeagent.com/v2/credit_notes/1"
+                                                                              }
+                                           },
+      "creditNoteReconciliations.update":  {
+                                               "id":  "1",
+                                               "credit_note_reconciliation":  {
+                                                                                  "gross_value":  "5.0"
+                                                                              }
+                                           },
+      "creditNoteReconciliations.delete":  {
+                                               "id":  "1"
+                                           },
+      "estimates.list":  {
+                             "query":  {
+                                           "page":  1,
+                                           "view":  "recent",
+                                           "nested_estimate_items":  true
+                                       }
+                         },
+      "estimates.get":  {
+                            "id":  "1"
+                        },
+      "estimates.pdf":  {
+                            "id":  "1"
+                        },
+      "estimates.create":  {
+                               "estimate":  {
+                                                "status":  "Draft",
+                                                "estimate_type":  "Estimate",
+                                                "contact":  "https://api.freeagent.com/v2/contacts/1",
+                                                "reference":  "E-001",
+                                                "dated_on":  "2026-10-01",
+                                                "currency":  "GBP",
+                                                "estimate_items":  [
+                                                                       {
+                                                                           "item_type":  "Hours",
+                                                                           "quantity":  "1.0",
+                                                                           "price":  "50.0",
+                                                                           "description":  "Consulting"
+                                                                       }
+                                                                   ]
+                                            }
+                           },
+      "estimates.update":  {
+                               "id":  "1",
+                               "estimate":  {
+                                                "notes":  "Updated terms"
+                                            }
+                           },
+      "estimates.createItem":  {
+                                   "estimate":  "https://api.freeagent.com/v2/estimates/1",
+                                   "estimate_item":  {
+                                                         "item_type":  "Hours",
+                                                         "quantity":  "1.0",
+                                                         "price":  "50.0",
+                                                         "description":  "Consulting"
+                                                     }
+                               },
+      "estimates.updateItem":  {
+                                   "id":  "2",
+                                   "estimate_item":  {
+                                                         "description":  "Updated line"
+                                                     }
+                               },
+      "estimates.duplicate":  {
+                                  "id":  "1"
+                              },
+      "estimates.deleteItem":  {
+                                   "id":  "2"
+                               },
+      "estimates.delete":  {
+                               "id":  "1"
+                           },
+      "estimates.sendEmail":  {
+                                  "id":  "1",
+                                  "email":  {
+                                                "use_template":  true
+                                            }
+                              },
+      "estimates.markSent":  {
+                                 "id":  "1"
+                             },
+      "estimates.markDraft":  {
+                                  "id":  "1"
+                              },
+      "estimates.markApproved":  {
+                                     "id":  "1"
+                                 },
+      "estimates.markRejected":  {
+                                     "id":  "1"
+                                 },
+      "estimates.convertToInvoice":  {
+                                         "id":  "1"
+                                     },
+      "estimates.getDefaultAdditionalText":  {
+
+                                             },
+      "estimates.updateDefaultAdditionalText":  {
+                                                    "default_additional_text":  "Respond within 7 days"
+                                                },
+      "estimates.deleteDefaultAdditionalText":  {
+
+                                                },
+      "payroll.list":  {
+                           "year":  "2026"
+                       },
+      "payroll.get":  {
+                          "year":  "2026",
+                          "period":  0
+                      },
+      "payroll.markPaymentAsPaid":  {
+                                        "year":  "2026",
+                                        "payment_date":  "2026-05-22"
+                                    },
+      "payroll.markPaymentAsUnpaid":  {
+                                          "year":  "2026",
+                                          "payment_date":  "2026-05-22"
+                                      },
+      "payrollProfiles.list":  {
+                                   "year":  "2026",
+                                   "query":  {
+                                                 "user":  "https://api.freeagent.com/v2/users/1"
+                                             }
+                               },
+      "users.list":  {
+                         "query":  {
+                                       "page":  1,
+                                       "view":  "active_staff"
+                                   }
+                     },
+      "users.get":  {
+                        "id":  "1"
+                    },
+      "users.me":  {
+
+                   },
+      "users.create":  {
+                           "user":  {
+                                        "email":  "new@example.test",
+                                        "first_name":  "New",
+                                        "last_name":  "User",
+                                        "role":  "Employee",
+                                        "opening_mileage":  0,
+                                        "send_invitation":  false
+                                    }
+                       },
+      "users.update":  {
+                           "id":  "1",
+                           "user":  {
+                                        "permission_level":  3
+                                    }
+                       },
+      "users.updateMe":  {
+                             "user":  {
+                                          "first_name":  "Updated"
+                                      }
+                         },
+      "users.delete":  {
+                           "id":  "2"
+                       },
+      "tasks.list":  {
+                         "query":  {
+                                       "page":  1,
+                                       "view":  "completed",
+                                       "project":  "https://api.freeagent.com/v2/projects/1"
+                                   }
+                     },
+      "tasks.get":  {
+                        "id":  "1"
+                    },
+      "tasks.create":  {
+                           "project":  "https://api.freeagent.com/v2/projects/1",
+                           "task":  {
+                                        "name":  "Development",
+                                        "status":  "Active",
+                                        "is_billable":  true
+                                    }
+                       },
+      "tasks.update":  {
+                           "id":  "1",
+                           "task":  {
+                                        "status":  "Completed"
+                                    }
+                       },
+      "timeslips.list":  {
+                             "query":  {
+                                           "page":  1,
+                                           "nested":  true,
+                                           "view":  "running"
+                                       }
+                         },
+      "timeslips.get":  {
+                            "id":  "1"
+                        },
+      "timeslips.create":  {
+                               "timeslip":  {
+                                                "task":  "https://api.freeagent.com/v2/tasks/1",
+                                                "user":  "https://api.freeagent.com/v2/users/1",
+                                                "project":  "https://api.freeagent.com/v2/projects/1",
+                                                "dated_on":  "2026-10-01",
+                                                "hours":  "1.5",
+                                                "comment":  "Worked"
+                                            }
+                           },
+      "timeslips.update":  {
+                               "id":  "1",
+                               "timeslip":  {
+                                                "comment":  "Updated"
+                                            }
+                           },
+      "timeslips.delete":  {
+                               "id":  "1"
+                           },
+      "timeslips.startTimer":  {
+                                   "id":  "1"
+                               },
+      "timeslips.stopTimer":  {
+                                  "id":  "1"
+                              }
+  }
 apiNotes:
   invoices.create: >-
     FreeAgent creates new invoices in Draft status. Use an explicit status-transition
-    operation to mark an invoice sent; this plugin currently exposes markSent.
+    operation to mark an invoice sent; this plugin exposes the documented
+    transitions. Payment methods are configured with valid documented flags.
   invoices.sendEmail: >-
     Sending an invoice email is a separate action from marking the invoice sent.
     The operation accepts the documented template flag, message fields, and
@@ -117,12 +1062,70 @@ apiNotes:
   trackingGroups.list: >-
     Hidden groups and labels are omitted by default. Use include_hidden, order_by,
     and reverse as documented; collection pagination uses page and per_page.
+  journalSets.update: >-
+    Updates can omit unchanged journal-set fields. Existing journal entries are
+    updated by URL, deleted with _destroy: true, or added without a URL. Creation
+    remains a separate operation that requires at least two entries. This update
+    is destructive because entry deletion cannot be undone through this API.
+  bills.update: >-
+    Existing bill items can be deleted with their URL and _destroy: 1. This
+    operation is classified as destructive because item deletion cannot be undone.
+  creditNotes.update: >-
+    Existing credit note items can be deleted with their id and _destroy: 1. This
+    operation is classified as destructive because item deletion cannot be undone.
+  invoices.update: >-
+    payment_methods accepts the five keys documented on the invoice API. Invalid
+    options may be omitted by FreeAgent in responses; stripe and gocardless_preauth
+    cannot both be true for one invoice.
+  bankTransactionExplanations.listAttachments: >-
+    Uses X-Api-Version 2026-09-01, the minimum version documented for the
+    Bank Transaction Explanation Attachments API.
+  bankTransactionExplanations.createAttachments: >-
+    Sends base64 file data as JSON. FreeAgent allows up to ten attachments per
+    request and up to fifty on an explanation.
+  bankTransactionExplanations.updateAttachments: >-
+    A PUT can add, update, and remove attachments together; deletion uses the
+    documented _destroy: "true" form.
+  expenses.batchCreate: >-
+    The first-party API forum confirms a 201 response containing one expense per
+    submitted item in order. One observed 422 validation failure created no
+    records; this does not establish whether an ambiguous timeout or lost response
+    committed. Check for the submitted expenses before retrying an ambiguous
+    failure.
+  accountLocks.list: >-
+    Requires Full Access. Lists user and resource locks. If earliest_lock_date is
+    absent, a user account lock cannot be set.
+  accountLocks.update: >-
+    Requires Full Access. Sets or updates only the user account lock; choose a
+    locked_to_date within the bounds returned by accountLocks.list.
+  accountLocks.delete: >-
+    Requires Full Access. Deletes only the user account lock; other listed locks
+    are read-only through this API.
+  users.create: >-
+    Requires user-management access. When send_invitation is true, FreeAgent sends
+    a password setup invitation; this operation is classified as destructive.
+  timeslips.create: >-
+    This operation creates one timeslip. The API docs also show a batch request
+    mode, but do not document its response envelope, so that mode is not exposed.
+  estimates.create: >-
+    Create estimates as Draft and use status transitions. FreeAgent's first-party
+    forum reports Sent is rewritten to Open, while Open and Invoiced are rejected
+    at create time; the input schema accepts only verified create statuses.
+  estimates.delete: >-
+    FreeAgent's first-party forum reports that non-Draft estimates must first be
+    returned to Draft with markDraft before deletion.
+  bankTransactions.uploadStatement: >-
+    Implements the documented JSON transaction-array statement import. The
+    alternate multipart file-upload mode is not exposed.
 overviewNote: >-
   Connect a FreeAgent OAuth 2.0 app (client ID and secret from dev.freeagent.com).
   Access tokens last an hour and refresh automatically. Pass sandbox: true to use
-  api.sandbox.freeagent.com for both OAuth and the API. This plugin exposes company
-  profile, verified sender addresses, contacts, projects, selected invoice and
-  recurring invoice operations, and tracking groups. Many other
-  official company API routes remain unimplemented; see the linked route inventory
-  in the package README. The Accountancy Practice API requires practice-enabled
-  OAuth and X-Subdomain client scoping and is excluded.
+  api.sandbox.freeagent.com for both OAuth and the API. Route coverage and all
+  unresolved or excluded contracts are listed in the package README; coverage
+  remains partial and is not a claim of full API coverage. The Tasks resource's
+  published delete path is unresolved, and Timeslips batch-create is withheld
+  because its response is undocumented. The Bills and Expenses docs omit Monthly
+  from their recurring enums, so their input schemas enforce only those published
+  values and do not claim Monthly support. The separate Recurring Invoices resource
+  documents Monthly. The Accountancy Practice API requires practice-enabled OAuth
+  and X-Subdomain client scoping and is excluded.
