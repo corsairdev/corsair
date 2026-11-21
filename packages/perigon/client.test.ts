@@ -93,7 +93,7 @@ describe('makePerigonRequest', () => {
 		).rejects.toThrow('connection reset');
 	});
 
-	it('retries a 429 at the transport, honouring Retry-After', async () => {
+	it('retries a 429 through core and returns the next answer', async () => {
 		respond({ message: 'Slow down' }, 429);
 		respond({ articles: [] }, 200);
 
