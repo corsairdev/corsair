@@ -10993,5 +10993,11 @@
         "title": "Accept managed_pricing auth"
       }
     ]
+  },
+  {
+    "date": "2026-11-21",
+    "package": "cloud",
+    "version": "0.2.19",
+    "changes": []
   }
 ]
