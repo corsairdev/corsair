@@ -272,7 +272,7 @@ export const lodgifyEndpointMeta = {
 		description: 'Create a new reservation or booking',
 	},
 	'reservations.createEnquiry': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Create a guest enquiry with guest and stay details',
 	},
 	'reservations.unreadCount': {

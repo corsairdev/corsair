@@ -135,7 +135,11 @@ apiExamples:
           adults: 2
   messages.list:
     threadGuid: 550e8400-e29b-41d4-a716-446655440000
-  messages.send: {}
+  messages.send:
+    inboxType: booking
+    id: 501
+    message: Welcome to your stay!
+    type: Owner
 apiNotes:
   properties.list: >-
     Returns a page of properties using Lodgify v2 pagination parameters. Optional

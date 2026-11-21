@@ -300,7 +300,12 @@ Send a message to a guest or thread
 **Risk:** `destructive`
 
 ```ts
-await corsair.lodgify.api.messages.send({});
+await corsair.lodgify.api.messages.send({
+	inboxType: 'booking',
+	id: 501,
+	message: 'Welcome to your stay!',
+	type: 'Owner',
+});
 ```
 
 **Input**
@@ -1331,7 +1336,7 @@ Creates a v1 booking and returns its integer ID. Optional `from` upgrades an exi
 
 Create a guest enquiry with guest and stay details
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.lodgify.api.reservations.createEnquiry({
