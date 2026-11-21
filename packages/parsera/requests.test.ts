@@ -167,6 +167,16 @@ describe('agent', () => {
 		};
 		expect(task.error).not.toContain('made-up-pass');
 		expect(task.error).toContain('wss://[redacted]@proxy.example.com');
+
+		respond({
+			task_id: 'agent-ext-2',
+			status: 'failed',
+			error: 'wss://:only-password@proxy.example.com:9222/',
+		});
+		const second = (await invoke(Agent.getTask, { taskId: 'agent-ext-2' })) as {
+			error?: string;
+		};
+		expect(second.error).not.toContain('only-password');
 	});
 
 	it('getTask GETs the task status', async () => {

@@ -36,7 +36,7 @@ export function redactTaskError(raw: unknown): unknown {
 	return {
 		...record,
 		error: record.error.replace(
-			/([a-z][a-z0-9+.-]*:\/\/)[^\s/@:]+:[^\s/@]+@/gi,
+			/([a-z][a-z0-9+.-]*:\/\/)[^\s/@:]*:[^\s/@]+@/gi,
 			'$1[redacted]@',
 		),
 	};

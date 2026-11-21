@@ -38,7 +38,7 @@ examples:
           description: Number of points
 apiExamples:
   extractor.extract:
-    call: '{ url: "https://news.ycombinator.com/", prompt: "Extract news metadata" }'
+    call: '{ url: "https://news.ycombinator.com/", prompt: "Extract news metadata", attributes: [{ name: "title", description: "News title" }] }'
   extractor.parse:
     call: '{ content: "<h1>Hello</h1>", attributes: [{ name: "heading", description: "The heading text" }] }'
   extractor.createScraper:

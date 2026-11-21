@@ -355,7 +355,7 @@ Extract structured data from a URL with the LLM extractor; each call charges cre
 **Risk:** `read`
 
 ```ts
-await corsair.parsera.api.extractor.extract({ url: "https://news.ycombinator.com/", prompt: "Extract news metadata" });
+await corsair.parsera.api.extractor.extract({ url: "https://news.ycombinator.com/", prompt: "Extract news metadata", attributes: [{ name: "title", description: "News title" }] });
 ```
 
 **Input**
