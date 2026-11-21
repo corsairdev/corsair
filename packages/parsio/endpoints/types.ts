@@ -297,7 +297,7 @@ export const UploadDocumentSyncInputSchema = z
 			.string()
 			.min(1)
 			.refine((value) => {
-				const bytes = Buffer.byteLength(value, 'base64');
+				const bytes = Buffer.byteLength(value.replace(/\s+/g, ''), 'base64');
 				return bytes <= 20 * 1024 * 1024;
 			}, 'Sync upload accepts at most 20MB')
 			.describe(
@@ -327,7 +327,9 @@ export const UploadDocumentAsyncInputSchema = z
 			.string()
 			.min(1)
 			.refine(
-				(value) => Buffer.byteLength(value, 'base64') <= MAX_UPLOAD_BYTES,
+				(value) =>
+					Buffer.byteLength(value.replace(/\s+/g, ''), 'base64') <=
+					MAX_UPLOAD_BYTES,
 				'Async upload accepts at most 50MB',
 			)
 			.describe(

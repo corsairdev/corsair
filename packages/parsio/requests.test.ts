@@ -223,6 +223,13 @@ describe('documents', () => {
 		expect(file.type).toBe('application/pdf');
 	});
 
+	it('reparse refuses an answer that is not the queued number', async () => {
+		respond({});
+		await expect(
+			invoke(Documents.reparse, { documentId: 'DOC_ID' }),
+		).rejects.toThrow('unexpected answer');
+	});
+
 	it('get reads one document', async () => {
 		respond(parsedDocument);
 		await invoke(Documents.get, { documentId: 'DOC_ID' });
@@ -247,7 +254,8 @@ describe('documents', () => {
 	});
 
 	it('reparse POSTs to the parse route', async () => {
-		respond(parsingDocument);
+		// The live answer is a bare number.
+		respond(6295176);
 		await invoke(Documents.reparse, { documentId: 'DOC_ID' });
 		expectAuthenticated('/docs/DOC_ID/parse', 'POST');
 	});

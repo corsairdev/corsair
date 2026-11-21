@@ -171,11 +171,20 @@ export const reparse: ParsioEndpoints['documentsReparse'] = (ctx, input) =>
 		}),
 		{
 			// The API answers a bare number (live); the document id is echoed.
-			shape: (raw, { documentId }) => ({
-				doc_id: documentId,
-				queued: true,
-				result: raw,
-			}),
+			shape: (raw, { documentId }) => {
+				// The documented success is a bare number (sometimes as text).
+				if (
+					!(
+						typeof raw === 'number' ||
+						(typeof raw === 'string' && /^\d+$/.test(raw))
+					)
+				) {
+					throw new Error(
+						'Parsio documents.reparse: unexpected answer (not the queued number)',
+					);
+				}
+				return { doc_id: documentId, queued: true, result: raw };
+			},
 			log: (_, doc) => ({ documentId: doc.doc_id }),
 		},
 	);

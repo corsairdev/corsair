@@ -58,15 +58,18 @@ export const update: ParsioEndpoints['mailboxesUpdate'] = async (
 	const parsedInput = Inputs.mailboxesUpdate.parse(input ?? {});
 	let emailPrefix = parsedInput.email_prefix;
 	if (emailPrefix === undefined) {
-		const current = asRecord(
+		const current = Outputs.mailboxesGet.parse(
 			await makeParsioRequest(ctx.key, {
 				method: 'GET',
 				path: `/mailboxes/${encodeURIComponent(parsedInput.mailboxId)}`,
 			}),
 		);
-		if (typeof current?.email_prefix === 'string') {
-			emailPrefix = current.email_prefix;
+		if (typeof current.email_prefix !== 'string') {
+			throw new Error(
+				'Parsio mailboxes.update: the mailbox answered no email_prefix to keep',
+			);
 		}
+		emailPrefix = current.email_prefix;
 	}
 	return call(
 		ctx,

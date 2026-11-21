@@ -70,13 +70,12 @@ export const update: ParsioEndpoints['webhooksUpdate'] = async (ctx, input) => {
 	// "url must be a string; event must be a string; table_id must be a
 	// string"), so the current values fill whatever the caller leaves out.
 	const parsedInput = Inputs.webhooksUpdate.parse(input ?? {});
-	const current =
-		asRecord(
-			await makeParsioRequest(ctx.key, {
-				method: 'GET',
-				path: `/webhooks/${encodeURIComponent(parsedInput.webhookId)}`,
-			}),
-		) ?? {};
+	const current = Outputs.webhooksGet.parse(
+		await makeParsioRequest(ctx.key, {
+			method: 'GET',
+			path: `/webhooks/${encodeURIComponent(parsedInput.webhookId)}`,
+		}),
+	) as Record<string, unknown>;
 	const keep = (key: string) =>
 		typeof current[key] === 'string' ? (current[key] as string) : undefined;
 	return call(
