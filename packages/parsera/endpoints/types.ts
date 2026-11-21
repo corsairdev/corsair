@@ -31,30 +31,31 @@ const proxyCountry = z
 	.optional()
 	.describe('Proxy country, e.g. "Germany" or "UnitedStates"');
 
-const promptOrAttributes = (label: string) =>
-	z
-		.object({
-			prompt: z
-				.string()
-				.optional()
-				.describe('Prompt describing what to extract'),
-			attributes: z
-				.array(AttributeSchema)
-				.optional()
-				.describe('Attribute list describing what to extract'),
-		})
-		.superRefine((input, ctx) => {
-			if (
-				!input.prompt &&
-				(!input.attributes || input.attributes.length === 0)
-			) {
-				ctx.addIssue({
-					code: 'custom',
-					path: ['prompt'],
-					message: `Give a prompt or at least one attribute to ${label}`,
-				});
-			}
-		});
+/**
+ * The extractor routes require attributes (a prompt alone answers 422
+ * "attributes: Field required", live 2026-11-21); the prompt refines them.
+ */
+const attributesRequired = () =>
+	z.object({
+		prompt: z
+			.string()
+			.optional()
+			.describe('Prompt that adds context to the attributes'),
+		attributes: z
+			.array(AttributeSchema)
+			.min(1)
+			.describe('Attribute list describing what to extract'),
+	});
+
+/** The agent routes require a prompt; attributes are optional (OpenAPI). */
+const promptRequired = () =>
+	z.object({
+		prompt: z.string().min(1).describe('Prompt describing what to extract'),
+		attributes: z
+			.array(AttributeSchema)
+			.optional()
+			.describe('Attribute list describing the output fields'),
+	});
 
 /** The extraction result. The docs publish no fixed schema. */
 export const ExtractionResultSchema = z
@@ -68,7 +69,7 @@ export type ExtractionResult = z.infer<typeof ExtractionResultSchema>;
 
 // ── extractor ──────────────────────────────────────────────────────────────
 
-export const ExtractInputSchema = promptOrAttributes('extract')
+export const ExtractInputSchema = attributesRequired()
 	.extend({
 		url: z.string().url().describe('URL of the webpage to extract data from'),
 		mode: z
@@ -87,7 +88,7 @@ export type ExtractInput = z.infer<typeof ExtractInputSchema>;
 export const ExtractOutputSchema = ExtractionResultSchema;
 export type ExtractOutput = z.infer<typeof ExtractOutputSchema>;
 
-export const ParseInputSchema = promptOrAttributes('parse')
+export const ParseInputSchema = attributesRequired()
 	.extend({
 		content: z
 			.string()
@@ -163,7 +164,7 @@ export type DeleteScraperOutput = z.infer<typeof DeleteScraperOutputSchema>;
 
 // ── agent ──────────────────────────────────────────────────────────────────
 
-export const AgentExtractInputSchema = promptOrAttributes('extract')
+export const AgentExtractInputSchema = promptRequired()
 	.extend({
 		url: z.string().url().describe('URL for the agent to start from'),
 		callback_url: z
@@ -180,9 +181,17 @@ export type AgentExtractInput = z.infer<typeof AgentExtractInputSchema>;
 export const AgentTaskSchema = z
 	.object({
 		task_id: z.string().min(1).describe('Extraction task id'),
+		// Open on output so a state Parsera adds later does not fail the read.
 		status: z
-			.enum(['pending', 'running', 'completed', 'failed', 'stopped'])
+			.union([
+				z.enum(['pending', 'running', 'completed', 'failed', 'stopped']),
+				z.string(),
+			])
 			.describe('Task status'),
+		error: z
+			.string()
+			.nullish()
+			.describe('Why a failed task failed (URL credentials redacted)'),
 		data: z
 			// unknown: extracted records are caller-defined open records, so
 			// they cannot be stricter.
@@ -219,7 +228,7 @@ export const StopAgentTaskOutputSchema = AgentTaskSchema.describe(
 );
 export type StopAgentTaskOutput = z.infer<typeof StopAgentTaskOutputSchema>;
 
-export const GenerateAgentScraperInputSchema = promptOrAttributes('build from')
+export const GenerateAgentScraperInputSchema = promptRequired()
 	.extend({
 		url: z.string().url().describe('URL for the agent to build on'),
 		template_id: z

@@ -73,6 +73,7 @@ describe('output parsing', () => {
 		const result = (await invoke(Extractor.parse, {
 			content: 'nothing here',
 			prompt: 'Extract whatever exists',
+			attributes: [{ name: 'title', description: 'The title' }],
 			// unknown: extraction results are caller-defined open records.
 		})) as Record<string, unknown>;
 		expect(Object.keys(result)).toHaveLength(0);
@@ -107,35 +108,32 @@ describe('output parsing', () => {
 });
 
 describe('input validation', () => {
-	it('rejects an extract with neither prompt nor attributes', async () => {
+	it('rejects an extract or parse without attributes (the API answers 422 to a prompt alone)', async () => {
 		await rejects(
 			Extractor.extract,
-			{ url: 'https://example.com' },
-			'prompt or at least one attribute',
+			{ url: 'https://example.com', prompt: 'Get the title' },
+			'attributes',
 		);
-	});
-
-	it('rejects a parse with neither prompt nor attributes', async () => {
 		await rejects(
 			Extractor.parse,
-			{ content: '<p>hi</p>' },
-			'prompt or at least one attribute',
+			{ content: '<p>hi</p>', prompt: 'Get the text' },
+			'attributes',
 		);
 	});
 
-	it('rejects an agent extract with neither prompt nor attributes', async () => {
+	it('rejects an agent extract or generate without a prompt', async () => {
 		await rejects(
 			Agent.extract,
-			{ url: 'https://example.com' },
-			'prompt or at least one attribute',
+			{
+				url: 'https://example.com',
+				attributes: [{ name: 't', description: 'title' }],
+			},
+			'prompt',
 		);
-	});
-
-	it('rejects a generate with neither prompt nor attributes', async () => {
 		await rejects(
 			Agent.generateScraper,
 			{ url: 'https://example.com' },
-			'prompt or at least one attribute',
+			'prompt',
 		);
 	});
 

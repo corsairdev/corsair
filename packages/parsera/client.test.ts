@@ -1,9 +1,6 @@
 import { inspect } from 'node:util';
-import {
-	describeParseraError,
-	makeParseraRequest,
-	ParseraAPIError,
-} from './client';
+import { ApiError } from 'corsair/http';
+import { describeParseraError, makeParseraRequest } from './client';
 import { agentTaskCompleted, invalidKey } from './test-fixtures';
 
 const API_KEY = 'prs-test-key';
@@ -29,10 +26,10 @@ function respond(
 }
 
 // unknown: a rejection can be any value until the instanceof check narrows it.
-async function failure(promise: Promise<unknown>): Promise<ParseraAPIError> {
+async function failure(promise: Promise<unknown>): Promise<ApiError> {
 	const error = await promise.catch((caught: unknown) => caught);
-	expect(error).toBeInstanceOf(ParseraAPIError);
-	if (!(error instanceof ParseraAPIError)) throw error;
+	expect(error).toBeInstanceOf(ApiError);
+	if (!(error instanceof ApiError)) throw error;
 	return error;
 }
 
@@ -83,7 +80,7 @@ describe('makeParseraRequest', () => {
 		);
 		expect(error.status).toBe(401);
 		expect(error.message).toContain('Invalid API key');
-		expect(error.name).toBe('ParseraAPIError');
+		expect(error.name).toBe('ApiError');
 	});
 
 	it('keeps no request body on the rebuilt error', async () => {
@@ -112,6 +109,31 @@ describe('makeParseraRequest', () => {
 		);
 		expect(error.status).toBe(404);
 		expect(error.message).toContain('Not Found');
+	});
+
+	it('drops the request body a 422 echoes in detail[].input (seen live)', async () => {
+		respond(
+			{
+				detail: [
+					{
+						type: 'missing',
+						loc: ['body', 'attributes'],
+						msg: 'Field required',
+						input: { content: 'secret page content', prompt: 'p' },
+					},
+				],
+			},
+			422,
+		);
+		const error = await failure(
+			makeParseraRequest(API_KEY, {
+				method: 'POST',
+				path: '/v1/extractor/parse',
+				body: { content: 'secret page content', prompt: 'p' },
+			}),
+		);
+		expect(inspect(error, { depth: 6 })).not.toContain('secret page content');
+		expect(error.status).toBe(422);
 	});
 
 	it('lets transport failures through unwrapped', async () => {

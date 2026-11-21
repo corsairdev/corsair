@@ -73,7 +73,7 @@ The API answers a message string the operation validates and returns.
 
 Start a one-shot agentic extraction; answers a task_id to poll, stop or wait on
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
 await corsair.parsera.api.agent.extract({ url: "https://news.ycombinator.com/", prompt: "Extract the top 10 news titles with their scores", callback_url: "https://example.com/callback" });
@@ -83,8 +83,8 @@ await corsair.parsera.api.agent.extract({ url: "https://news.ycombinator.com/", 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `prompt` | `string` | No | Prompt describing what to extract |
-| `attributes` | `object[]` | No | Attribute list describing what to extract |
+| `prompt` | `string` | Yes | Prompt describing what to extract |
+| `attributes` | `object[]` | No | Attribute list describing the output fields |
 | `url` | `string` | Yes | URL for the agent to start from |
 | `callback_url` | `string` | No | URL to POST results to when extraction completes |
 
@@ -109,8 +109,9 @@ Answers 202 Accepted with a task_id and status pending; poll agent.getTask, stop
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `task_id` | `string` | Yes | Extraction task id |
-| `status` | `pending \| running \| completed \| failed \| stopped` | Yes | Task status |
-| `data` | `Record<string, unknown>[] \| null` | No | The extracted records once the task completed |
+| `status` | `pending \| running \| completed \| failed \| stopped \| string` | Yes | Task status |
+| `error` | `string \| null` | No | Why a failed task failed (URL credentials redacted) |
+| `data` | `Record<string, any>[] \| null` | No | The extracted records once the task completed |
 
 
 
@@ -122,7 +123,7 @@ Answers 202 Accepted with a task_id and status pending; poll agent.getTask, stop
 
 Build or regenerate an agentic scraper from a page and an instruction
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.parsera.api.agent.generateScraper({ url: "https://news.ycombinator.com/", prompt: "Extract news titles with their scores" });
@@ -132,8 +133,8 @@ await corsair.parsera.api.agent.generateScraper({ url: "https://news.ycombinator
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `prompt` | `string` | No | Prompt describing what to extract |
-| `attributes` | `object[]` | No | Attribute list describing what to extract |
+| `prompt` | `string` | Yes | Prompt describing what to extract |
+| `attributes` | `object[]` | No | Attribute list describing the output fields |
 | `url` | `string` | Yes | URL for the agent to build on |
 | `template_id` | `string` | No | Existing scraper id to regenerate; a new scraper is created when omitted |
 
@@ -195,7 +196,7 @@ Status is one of generating, ready, failed; parameters_schema lists what each ru
 | `status` | `generating \| ready \| failed` | Yes | Build status |
 | `name` | `string \| null` | No | Scraper name |
 | `url` | `string \| null` | No | Primary URL the scraper was built on |
-| `sample_data` | `Record<string, unknown>[] \| null` | No | Data captured while the agent learned the page |
+| `sample_data` | `Record<string, any>[] \| null` | No | Data captured while the agent learned the page |
 | `parameters_schema` | `object[] \| null` | No | Parameters the scraper accepts on each run |
 | `credits_charged` | `number \| null` | No | Credits charged for the build |
 
@@ -243,8 +244,9 @@ Status is one of pending, running, completed, failed, stopped; data arrives when
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `task_id` | `string` | Yes | Extraction task id |
-| `status` | `pending \| running \| completed \| failed \| stopped` | Yes | Task status |
-| `data` | `Record<string, unknown>[] \| null` | No | The extracted records once the task completed |
+| `status` | `pending \| running \| completed \| failed \| stopped \| string` | Yes | Task status |
+| `error` | `string \| null` | No | Why a failed task failed (URL credentials redacted) |
+| `data` | `Record<string, any>[] \| null` | No | The extracted records once the task completed |
 
 
 
@@ -277,8 +279,9 @@ Cancels a running extraction; the task reports stopped.
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `task_id` | `string` | Yes | Extraction task id |
-| `status` | `pending \| running \| completed \| failed \| stopped` | Yes | Task status |
-| `data` | `Record<string, unknown>[] \| null` | No | The extracted records once the task completed |
+| `status` | `pending \| running \| completed \| failed \| stopped \| string` | Yes | Task status |
+| `error` | `string \| null` | No | Why a failed task failed (URL credentials redacted) |
+| `data` | `Record<string, any>[] \| null` | No | The extracted records once the task completed |
 
 
 
@@ -349,7 +352,7 @@ The API answers a message string the operation validates and returns.
 
 Extract structured data from a URL with the LLM extractor; each call charges credits
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
 await corsair.parsera.api.extractor.extract({ url: "https://news.ycombinator.com/", prompt: "Extract news metadata" });
@@ -359,14 +362,14 @@ await corsair.parsera.api.extractor.extract({ url: "https://news.ycombinator.com
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `prompt` | `string` | No | Prompt describing what to extract |
-| `attributes` | `object[]` | No | Attribute list describing what to extract |
+| `prompt` | `string` | No | Prompt that adds context to the attributes |
+| `attributes` | `object[]` | Yes | Attribute list describing what to extract |
 | `url` | `string` | Yes | URL of the webpage to extract data from |
 | `mode` | `standard` | No | Extractor mode; standard is the documented value |
 | `proxy_country` | `string` | No | Proxy country, e.g. "Germany" or "UnitedStates" |
-| `cookies` | `Record<string, unknown>[]` | No | Cookies to use during extraction |
+| `cookies` | `Record<string, any>[]` | No | Cookies to use during extraction |
 
-Minimal payload is url plus a prompt or an attributes list; mode and proxy_country are optional, cookies take the documented name-value records with an optional sameSite.
+Minimal payload is url plus an attributes list (a prompt alone answers 422); the prompt adds context; mode and proxy_country are optional, cookies take the documented name-value records with an optional sameSite.
 
 <AccordionGroup>
 <Accordion title="attributes full type">
@@ -382,7 +385,7 @@ Minimal payload is url plus a prompt or an attributes list; mode and proxy_count
 
 
 
-**Output:** `Record<string, unknown>`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -426,7 +429,7 @@ await corsair.parsera.api.extractor.getScraper({ scraperId: "abc123" });
 
 Parse data from HTML or text content you already have; each call charges credits
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
 await corsair.parsera.api.extractor.parse({ content: "<h1>Hello</h1>", attributes: [{ name: "heading", description: "The heading text" }] });
@@ -436,8 +439,8 @@ await corsair.parsera.api.extractor.parse({ content: "<h1>Hello</h1>", attribute
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `prompt` | `string` | No | Prompt describing what to extract |
-| `attributes` | `object[]` | No | Attribute list describing what to extract |
+| `prompt` | `string` | No | Prompt that adds context to the attributes |
+| `attributes` | `object[]` | Yes | Attribute list describing what to extract |
 | `content` | `string` | Yes | Raw HTML or text content to extract data from |
 
 Parses content you already have instead of fetching a URL.
@@ -456,7 +459,7 @@ Parses content you already have instead of fetching a URL.
 
 
 
-**Output:** `Record<string, unknown>`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -494,7 +497,7 @@ Status is one of running, completed, completed_partial, failed; data is keyed by
 | `completed` | `number \| null` | No | URLs processed so far (async runs) |
 | `total` | `number \| null` | No | Total URLs in the run (async runs) |
 | `credits_charged` | `number \| null` | No | Credits charged for the run |
-| `data` | `Record<string, Record<string, unknown>[]> \| null` | No | Extracted records keyed by scraped URL |
+| `data` | `Record<string, Record<string, any>[]> \| null` | No | Extracted records keyed by scraped URL |
 
 
 
@@ -506,7 +509,7 @@ Status is one of running, completed, completed_partial, failed; data is keyed by
 
 Run a scraper and wait for results; the API defers past five minutes to a pollable run
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
 await corsair.parsera.api.scrapers.run({ template_id: "abc123", url: "https://example.com/page1" });
@@ -518,10 +521,10 @@ await corsair.parsera.api.scrapers.run({ template_id: "abc123", url: "https://ex
 |------|------|----------|-------------|
 | `template_id` | `string` | Yes | Scraper id to run |
 | `url` | `string \| string[]` | No | URL to scrape; extractor scrapers accept an array of up to 100 URLs, agentic scrapers a single URL. Falls back to the scraper default when omitted |
-| `parameters` | `Record<string, unknown>` | No | Custom parameters for agentic scrapers that define a parameters_schema |
+| `parameters` | `Record<string, any>` | No | Custom parameters for agentic scrapers that define a parameters_schema |
 | `callback_url` | `string` | No | URL to POST results to when the run completes |
 | `proxy_country` | `string` | No | Proxy country, e.g. "Germany" or "UnitedStates" |
-| `cookies` | `Record<string, unknown>[]` | No | Cookies to use; ignored for agentic scrapers |
+| `cookies` | `Record<string, any>[]` | No | Cookies to use; ignored for agentic scrapers |
 
 Waits up to five minutes; past that the API answers 202 with a run_id, which scrapers.getRun polls.
 
@@ -536,7 +539,7 @@ Waits up to five minutes; past that the API answers 202 with a run_id, which scr
 | `completed` | `number \| null` | No | URLs processed so far (async runs) |
 | `total` | `number \| null` | No | Total URLs in the run (async runs) |
 | `credits_charged` | `number \| null` | No | Credits charged for the run |
-| `data` | `Record<string, Record<string, unknown>[]> \| null` | No | Extracted records keyed by scraped URL |
+| `data` | `Record<string, Record<string, any>[]> \| null` | No | Extracted records keyed by scraped URL |
 
 
 
@@ -548,7 +551,7 @@ Waits up to five minutes; past that the API answers 202 with a run_id, which scr
 
 Run a scraper asynchronously; answers a run_id to poll
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
 await corsair.parsera.api.scrapers.runAsync({ template_id: "abc123", url: ["https://example.com/page1", "https://example.com/page2"] });
@@ -560,10 +563,10 @@ await corsair.parsera.api.scrapers.runAsync({ template_id: "abc123", url: ["http
 |------|------|----------|-------------|
 | `template_id` | `string` | Yes | Scraper id to run |
 | `url` | `string \| string[]` | No | URL to scrape; extractor scrapers accept an array of up to 100 URLs, agentic scrapers a single URL. Falls back to the scraper default when omitted |
-| `parameters` | `Record<string, unknown>` | No | Custom parameters for agentic scrapers that define a parameters_schema |
+| `parameters` | `Record<string, any>` | No | Custom parameters for agentic scrapers that define a parameters_schema |
 | `callback_url` | `string` | No | URL to POST results to when the run completes |
 | `proxy_country` | `string` | No | Proxy country, e.g. "Germany" or "UnitedStates" |
-| `cookies` | `Record<string, unknown>[]` | No | Cookies to use; ignored for agentic scrapers |
+| `cookies` | `Record<string, any>[]` | No | Cookies to use; ignored for agentic scrapers |
 
 Extractor scrapers accept up to 100 URLs and fan out into one aggregated run; agentic scrapers take a single URL.
 
@@ -578,7 +581,7 @@ Extractor scrapers accept up to 100 URLs and fan out into one aggregated run; ag
 | `completed` | `number \| null` | No | URLs processed so far (async runs) |
 | `total` | `number \| null` | No | Total URLs in the run (async runs) |
 | `credits_charged` | `number \| null` | No | Credits charged for the run |
-| `data` | `Record<string, Record<string, unknown>[]> \| null` | No | Extracted records keyed by scraped URL |
+| `data` | `Record<string, Record<string, any>[]> \| null` | No | Extracted records keyed by scraped URL |
 
 
 

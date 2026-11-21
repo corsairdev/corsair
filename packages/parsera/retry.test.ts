@@ -95,6 +95,7 @@ describe('retries through createCorsair', () => {
 				corsair.parsera.api.extractor.extract({
 					url: 'https://example.com',
 					prompt: 'Extract the titles',
+					attributes: [{ name: 'title', description: 'The title' }],
 				}),
 			).rejects.toMatchObject({ status: 502 });
 			expect(fetchMock).toHaveBeenCalledTimes(1);

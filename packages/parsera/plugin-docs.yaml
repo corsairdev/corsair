@@ -68,7 +68,7 @@ apiExamples:
   scrapers.getRun:
     call: '{ runId: "run-abc123" }'
 apiNotes:
-  extractor.extract: 'Minimal payload is url plus a prompt or an attributes list; mode and proxy_country are optional, cookies take the documented name-value records with an optional sameSite.'
+  extractor.extract: 'Minimal payload is url plus an attributes list (a prompt alone answers 422); the prompt adds context; mode and proxy_country are optional, cookies take the documented name-value records with an optional sameSite.'
   extractor.parse: 'Parses content you already have instead of fetching a URL.'
   extractor.deleteScraper: 'The API answers a message string the operation validates and returns.'
   agent.extract: 'Answers 202 Accepted with a task_id and status pending; poll agent.getTask, stop with agent.stopTask, or get a callback at callback_url.'

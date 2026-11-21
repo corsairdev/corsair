@@ -62,7 +62,7 @@ describe('parsera plugin', () => {
 		}
 	});
 
-	it('marks deletes destructive and extraction runs as writes', () => {
+	it('marks deletes and scraper generation destructive, extraction runs read (R8 metered scrapes)', () => {
 		const meta = parsera({}).endpointMeta!;
 		for (const key of [
 			'extractor.deleteScraper',
@@ -73,8 +73,18 @@ describe('parsera plugin', () => {
 				irreversible: true,
 			});
 		}
-		expect(meta['extractor.extract']).toMatchObject({ riskLevel: 'write' });
-		expect(meta['scrapers.run']).toMatchObject({ riskLevel: 'write' });
+		for (const key of [
+			'extractor.extract',
+			'extractor.parse',
+			'agent.extract',
+			'scrapers.run',
+			'scrapers.runAsync',
+		] as const) {
+			expect(meta[key]).toMatchObject({ riskLevel: 'read' });
+		}
+		expect(meta['agent.generateScraper']).toMatchObject({
+			riskLevel: 'destructive',
+		});
 		expect(meta['agent.getTask']).toMatchObject({ riskLevel: 'read' });
 	});
 

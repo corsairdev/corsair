@@ -104,12 +104,14 @@ describe('extractor', () => {
 		await invoke(Extractor.parse, {
 			content: '<h1>Hello</h1>',
 			prompt: 'Extract the heading',
+			attributes: [{ name: 'heading', description: 'The heading' }],
 		});
 		const sent = lastRequest();
 		expectAuthenticated('/v1/extractor/parse');
 		expect(JSON.parse(sent.body as string)).toEqual({
 			content: '<h1>Hello</h1>',
 			prompt: 'Extract the heading',
+			attributes: [{ name: 'heading', description: 'The heading' }],
 		});
 	});
 
@@ -151,6 +153,20 @@ describe('agent', () => {
 			prompt: 'Extract the top 10 news titles',
 			callback_url: 'https://example.com/callback',
 		});
+	});
+
+	it('getTask redacts URL credentials in a failed task error (seen live)', async () => {
+		respond({
+			task_id: 'agent-ext-1',
+			status: 'failed',
+			error:
+				'connect_over_cdp: WebSocket error: wss://made-up-user:made-up-pass@proxy.example.com:9222/ 403',
+		});
+		const task = (await invoke(Agent.getTask, { taskId: 'agent-ext-1' })) as {
+			error?: string;
+		};
+		expect(task.error).not.toContain('made-up-pass');
+		expect(task.error).toContain('wss://[redacted]@proxy.example.com');
 	});
 
 	it('getTask GETs the task status', async () => {

@@ -190,12 +190,12 @@ const SCRAPER_RUN_JOB = {
 
 const parseraEndpointMeta = {
 	'extractor.extract': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description:
 			'Extract structured data from a URL with the LLM extractor; each call charges credits',
 	},
 	'extractor.parse': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description:
 			'Parse data from HTML or text content you already have; each call charges credits',
 	},
@@ -213,7 +213,7 @@ const parseraEndpointMeta = {
 		irreversible: true,
 	},
 	'agent.extract': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description:
 			'Start a one-shot agentic extraction; answers a task_id to poll, stop or wait on',
 		job: AGENT_EXTRACT_JOB,
@@ -227,7 +227,7 @@ const parseraEndpointMeta = {
 		description: 'Cancel a running agentic extraction',
 	},
 	'agent.generateScraper': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Build or regenerate an agentic scraper from a page and an instruction',
 		job: AGENT_GENERATE_JOB,
@@ -247,12 +247,12 @@ const parseraEndpointMeta = {
 		irreversible: true,
 	},
 	'scrapers.run': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description:
 			'Run a scraper and wait for results; the API defers past five minutes to a pollable run',
 	},
 	'scrapers.runAsync': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Run a scraper asynchronously; answers a run_id to poll',
 		job: SCRAPER_RUN_JOB,
 	},
@@ -320,8 +320,6 @@ export function parsera<const T extends ParseraPluginOptions>(
 		},
 	} satisfies InternalParseraPlugin;
 }
-
-export { ParseraAPIError } from './client';
 
 export type {
 	AgentTask,

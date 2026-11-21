@@ -22,6 +22,26 @@ export const extract: ParseraEndpoints['agentExtract'] = (ctx, input) =>
 		{ log: (_, task) => ({ taskId: task.task_id, status: task.status }) },
 	);
 
+/**
+ * A failed task's error is Parsera's own stack text, and live (2026-11-21)
+ * it carried the user:password of Parsera's upstream browser proxy in a
+ * wss:// URL. Credentials in any URL are redacted before the answer reaches
+ * the caller.
+ */
+// unknown: raw is the response body; the output schema checks the result.
+export function redactTaskError(raw: unknown): unknown {
+	if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return raw;
+	const record = raw as Record<string, unknown>;
+	if (typeof record.error !== 'string') return raw;
+	return {
+		...record,
+		error: record.error.replace(
+			/([a-z][a-z0-9+.-]*:\/\/)[^\s/@:]+:[^\s/@]+@/gi,
+			'$1[redacted]@',
+		),
+	};
+}
+
 export const getTask: ParseraEndpoints['agentGetTask'] = (ctx, input) =>
 	call(
 		ctx,
@@ -35,7 +55,10 @@ export const getTask: ParseraEndpoints['agentGetTask'] = (ctx, input) =>
 			method: 'GET',
 			path: `/v1/agent/extract/${encodeURIComponent(taskId)}`,
 		}),
-		{ log: (_, task) => ({ taskId: task.task_id, status: task.status }) },
+		{
+			shape: redactTaskError,
+			log: (_, task) => ({ taskId: task.task_id, status: task.status }),
+		},
 	);
 
 export const stopTask: ParseraEndpoints['agentStopTask'] = (ctx, input) =>
