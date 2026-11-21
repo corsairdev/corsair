@@ -24,6 +24,8 @@ pnpm add @corsair-dev/parallel
 | `findall.ingest` | `parallel.api.findall.ingest` | `destructive` | Create an entity search specification |
 | `findall.result` | `parallel.api.findall.result` | `read` | Get FindAll results |
 | `findall.schema` | `parallel.api.findall.schema` | `read` | Get the FindAll schema |
+| `flights.search` | `parallel.api.flights.search` | `read` | Search one-way or round-trip flights with where to book them |
+| `hotels.search` | `parallel.api.hotels.search` | `read` | Search hotels and vacation rentals for a stay |
 | `images.search` | `parallel.api.images.search` | `read` | Search for images |
 | `memory.clear` | `parallel.api.memory.clear` | `destructive` | Clear a memory scope |
 | `memory.evict` | `parallel.api.memory.evict` | `destructive` | Evict a memory source |
@@ -39,6 +41,7 @@ pnpm add @corsair-dev/parallel
 | `places.search` | `parallel.api.places.search` | `read` | Search for places by location |
 | `responses.create` | `parallel.api.responses.create` | `destructive` | Create a non-streaming response |
 | `search.search` | `parallel.api.search.search` | `read` | Search the web for relevant sources and excerpts |
+| `shopping.search` | `parallel.api.shopping.search` | `read` | Search products to buy, linked to store product pages |
 | `tasks.addGroupRuns` | `parallel.api.tasks.addGroupRuns` | `destructive` | Add runs to a task group |
 | `tasks.createGroup` | `parallel.api.tasks.createGroup` | `write` | Create a task group |
 | `tasks.createRun` | `parallel.api.tasks.createRun` | `destructive` | Create a task run |
@@ -53,12 +56,30 @@ operations are not supported.
 
 ## Auth
 
-Auth: API key. Corsair prompts your tenant for credentials on first use.
+API key, or `authType: 'managed_pricing'` to run on Corsair's Parallel account
+billed in Corsair credits (only the operations Corsair prices; others are
+refused without a charge). Corsair prompts your tenant for credentials on first
+use.
 
 ## Webhooks
 
-Task, FindAll, and Monitor requests support configuring Parallel's outbound
-webhooks. This plugin does not receive, route, or verify inbound webhooks.
+Parallel signs Task, FindAll and Monitor webhooks the Standard Webhooks way with
+your account's webhook secret (Settings → Webhooks). Pass it as `webhookSecret`
+or store it with `keys.set_webhook_signature`; deliveries are verified against
+the raw body and refused when older than five minutes.
+
+| Webhook | Parallel event |
+|---------|----------------|
+| `taskRun.status` | `task_run.status` |
+| `findall.candidateGenerated` | `findall.candidate.generated` |
+| `findall.candidateMatched` | `findall.candidate.matched` |
+| `findall.candidateEnriched` | `findall.candidate.enriched` |
+| `findall.runCompleted` | `findall.run.completed` |
+| `findall.runCancelled` | `findall.run.cancelled` |
+| `findall.runFailed` | `findall.run.failed` |
+| `monitor.eventDetected` | `monitor.event.detected` |
+| `monitor.executionCompleted` | `monitor.execution.completed` |
+| `monitor.executionFailed` | `monitor.execution.failed` |
 
 ## Reference
 
