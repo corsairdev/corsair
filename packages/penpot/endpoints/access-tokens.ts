@@ -22,26 +22,6 @@ export const list: PenpotEndpoints['accessTokensList'] = (ctx, input) =>
 		},
 	);
 
-export const create: PenpotEndpoints['accessTokensCreate'] = (ctx, input) =>
-	call(
-		ctx,
-		{
-			event: 'accessTokens.create',
-			input: Inputs.accessTokensCreate,
-			output: Outputs.accessTokensCreate,
-		},
-		input,
-		() => 'create-access-token',
-		{
-			body: (input) => input,
-			// The one-time token value is not logged, only its presence.
-			log: (_, token) => ({
-				tokenId: token.id ?? undefined,
-				hasToken: token.token !== undefined && token.token !== null,
-			}),
-		},
-	);
-
 export const remove: PenpotEndpoints['accessTokensDelete'] = (ctx, input) =>
 	call(
 		ctx,

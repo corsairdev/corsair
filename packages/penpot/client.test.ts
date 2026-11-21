@@ -1,9 +1,6 @@
 import { inspect } from 'node:util';
-import {
-	describePenpotError,
-	makePenpotRequest,
-	PenpotAPIError,
-} from './client';
+import { ApiError } from 'corsair/http';
+import { describePenpotError, makePenpotRequest } from './client';
 import { authRequired } from './test-fixtures';
 
 const API_KEY = 'penpot-test-token';
@@ -21,10 +18,10 @@ function respond(body: unknown, status: number) {
 }
 
 // unknown: a rejection can be any value until the instanceof check narrows it.
-async function failure(promise: Promise<unknown>): Promise<PenpotAPIError> {
+async function failure(promise: Promise<unknown>): Promise<ApiError> {
 	const error = await promise.catch((caught: unknown) => caught);
-	expect(error).toBeInstanceOf(PenpotAPIError);
-	if (!(error instanceof PenpotAPIError)) throw error;
+	expect(error).toBeInstanceOf(ApiError);
+	if (!(error instanceof ApiError)) throw error;
 	return error;
 }
 
@@ -72,7 +69,7 @@ describe('makePenpotRequest', () => {
 		);
 		expect(error.status).toBe(401);
 		expect(error.message).toContain('authentication required');
-		expect(error.name).toBe('PenpotAPIError');
+		expect(error.name).toBe('ApiError');
 	});
 
 	it('keeps no request body on the rebuilt error', async () => {

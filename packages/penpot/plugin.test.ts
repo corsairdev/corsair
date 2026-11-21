@@ -56,7 +56,7 @@ describe('penpot plugin', () => {
 			['files', 10],
 			['comments', 5],
 			['webhooks', 4],
-			['accessTokens', 3],
+			['accessTokens', 2],
 		]);
 	});
 

@@ -12,7 +12,6 @@ pnpm add @corsair-dev/penpot
 
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
-| `accessTokens.create` | `penpot.api.accessTokens.create` | `write` | Create an API access token; the token value is shown only once |
 | `accessTokens.delete` | `penpot.api.accessTokens.delete` | `destructive` | Revoke an API access token; apps using it stop working |
 | `accessTokens.list` | `penpot.api.accessTokens.list` | `read` | List the API access tokens of the account (names only, never values) |
 | `comments.create` | `penpot.api.comments.create` | `write` | Comment on a thread |

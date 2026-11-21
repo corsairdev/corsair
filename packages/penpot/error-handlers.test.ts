@@ -1,13 +1,22 @@
 import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
-import { PenpotAPIError } from './client';
+import { ApiError } from 'corsair/http';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
-function apiError(status: number, method: string = 'POST'): PenpotAPIError {
-	return new PenpotAPIError(`Penpot ${status}: boom`, {
-		method,
-		path: '/api/rpc/command/create-team',
-		status,
-	});
+function apiError(
+	status: number,
+	method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' = 'POST',
+): ApiError {
+	return new ApiError(
+		{ method, url: '/api/rpc/command/create-team' },
+		{
+			url: '/api/rpc/command/create-team',
+			ok: false,
+			status,
+			statusText: '',
+			body: null,
+		},
+		`Penpot ${status}: boom`,
+	);
 }
 
 const NO_CONTEXT: ErrorContext = {
@@ -37,6 +46,13 @@ async function retriesFor(error: Error): Promise<number> {
 }
 
 describe('error handlers', () => {
+	it('claims a 429 with zero retries so a caller root handler cannot restart the transport retries', async () => {
+		const entry = handlers.RATE_LIMIT_ERROR;
+		if (!entry) throw new Error('RATE_LIMIT_ERROR handler missing');
+		expect(entry.match(apiError(429), NO_CONTEXT)).toBe(true);
+		expect((await entry.handler(apiError(429), NO_CONTEXT)).maxRetries).toBe(0);
+	});
+
 	it('does not retry a 401 or a 403', async () => {
 		expect(await retriesFor(apiError(401))).toBe(0);
 		expect(await retriesFor(apiError(403))).toBe(0);
@@ -51,11 +67,15 @@ describe('error handlers', () => {
 		expect(await retriesFor(zodError())).toBe(0);
 	});
 
-	it('retries a GET 5xx twice with exponential backoff', async () => {
+	it('retries a read 5xx twice with exponential backoff (every RPC is a POST)', async () => {
 		const entry = handlers.SERVER_ERROR;
 		if (!entry) throw new Error('SERVER_ERROR handler missing');
-		expect(entry.match(apiError(503, 'GET'), NO_CONTEXT)).toBe(true);
-		const result = await entry.handler(apiError(503, 'GET'), NO_CONTEXT);
+		const read = { ...NO_CONTEXT, operation: 'teams.list' };
+		expect(entry.match(apiError(503), read)).toBe(true);
+		expect(
+			entry.match(apiError(503), { ...NO_CONTEXT, operation: 'teams.create' }),
+		).toBe(false);
+		const result = await entry.handler(apiError(503), read);
 		expect(result.maxRetries).toBe(2);
 		expect(result.retryStrategy).toBe('exponential_backoff');
 	});
@@ -72,6 +92,7 @@ describe('error handlers', () => {
 		const order = Object.keys(errorHandlers);
 		expect(order.at(-1)).toBe('DEFAULT');
 		expect(order).toEqual([
+			'RATE_LIMIT_ERROR',
 			'AUTH_ERROR',
 			'VALIDATION_ERROR',
 			'SERVER_ERROR',
@@ -107,14 +128,7 @@ describe('mergeErrorHandlers', () => {
 		expect(order.at(-1)).toBe('DEFAULT');
 		const entry = merged.OVERLOADED_ERROR;
 		if (!entry) throw new Error('caller handler missing');
-		const result = await entry.handler(
-			new PenpotAPIError('overloaded', {
-				method: 'GET',
-				path: '/x',
-				status: 529,
-			}),
-			NO_CONTEXT,
-		);
+		const result = await entry.handler(apiError(529), NO_CONTEXT);
 		expect(result.maxRetries).toBe(1);
 	});
 
@@ -147,5 +161,5 @@ describe('mergeErrorHandlers', () => {
 });
 
 function statusIs(error: Error, status: number): boolean {
-	return error instanceof PenpotAPIError && error.status === status;
+	return error instanceof ApiError && error.status === status;
 }

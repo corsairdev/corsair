@@ -116,7 +116,6 @@ const penpotEndpointsNested = {
 	},
 	accessTokens: {
 		list: AccessTokens.list,
-		create: AccessTokens.create,
 		delete: AccessTokens.remove,
 	},
 } as const;
@@ -247,10 +246,6 @@ export const penpotEndpointSchemas = {
 	'accessTokens.list': {
 		input: PenpotEndpointInputSchemas.accessTokensList,
 		output: PenpotEndpointOutputSchemas.accessTokensList,
-	},
-	'accessTokens.create': {
-		input: PenpotEndpointInputSchemas.accessTokensCreate,
-		output: PenpotEndpointOutputSchemas.accessTokensCreate,
 	},
 	'accessTokens.delete': {
 		input: PenpotEndpointInputSchemas.accessTokensDelete,
@@ -395,11 +390,6 @@ const penpotEndpointMeta = {
 		description:
 			'List the API access tokens of the account (names only, never values)',
 	},
-	'accessTokens.create': {
-		riskLevel: 'write',
-		description:
-			'Create an API access token; the token value is shown only once',
-	},
 	'accessTokens.delete': {
 		riskLevel: 'destructive',
 		description: 'Revoke an API access token; apps using it stop working',
@@ -475,8 +465,6 @@ export function penpot<const T extends PenpotPluginOptions>(
 		},
 	} satisfies InternalPenpotPlugin;
 }
-
-export { PenpotAPIError } from './client';
 
 export type {
 	AccessToken,

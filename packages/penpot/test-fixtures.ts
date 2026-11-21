@@ -68,12 +68,6 @@ export const accessToken = {
 	expiration: null,
 };
 
-export const createdAccessToken = {
-	id: 'ef2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c66',
-	name: 'CI token',
-	token: 'penpot_at_once_seen_value',
-};
-
 /** A webhook delivery body, as the help center documents the envelope. */
 export const webhookEvent = {
 	event: 'penpot.file.updated',

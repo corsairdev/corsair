@@ -513,39 +513,6 @@ export type ListAccessTokensOutput = z.infer<
 	typeof ListAccessTokensOutputSchema
 >;
 
-export const CreateAccessTokenInputSchema = z
-	.object({
-		name: z.string().min(1).max(250).describe('Token name'),
-		expiration: z
-			.number()
-			.int()
-			.positive()
-			.optional()
-			.describe('Expiration duration in seconds'),
-	})
-	.describe('Create an API access token; the token value is shown only once');
-export type CreateAccessTokenInput = z.infer<
-	typeof CreateAccessTokenInputSchema
->;
-
-export const CreatedAccessTokenSchema = z
-	.object({
-		id: uuid,
-		name: z.string().nullish().describe('Token name'),
-		token: z
-			.string()
-			.nullish()
-			.describe('The token value; shown only once at creation'),
-	})
-	.loose()
-	.describe('A newly created access token with its one-time token value');
-export type CreatedAccessToken = z.infer<typeof CreatedAccessTokenSchema>;
-
-export const CreateAccessTokenOutputSchema = CreatedAccessTokenSchema;
-export type CreateAccessTokenOutput = z.infer<
-	typeof CreateAccessTokenOutputSchema
->;
-
 export const DeleteAccessTokenInputSchema = z
 	.object({ id: uuid.describe('Token id') })
 	.describe('Revoke an API access token');
@@ -596,7 +563,6 @@ export const PenpotEndpointInputSchemas = {
 	webhooksUpdate: UpdateWebhookInputSchema,
 	webhooksDelete: DeleteWebhookInputSchema,
 	accessTokensList: ListAccessTokensInputSchema,
-	accessTokensCreate: CreateAccessTokenInputSchema,
 	accessTokensDelete: DeleteAccessTokenInputSchema,
 };
 
@@ -631,7 +597,6 @@ export const PenpotEndpointOutputSchemas = {
 	webhooksUpdate: UpdateWebhookOutputSchema,
 	webhooksDelete: DeleteWebhookOutputSchema,
 	accessTokensList: ListAccessTokensOutputSchema,
-	accessTokensCreate: CreateAccessTokenOutputSchema,
 	accessTokensDelete: DeleteAccessTokenOutputSchema,
 };
 

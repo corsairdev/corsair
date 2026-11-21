@@ -65,15 +65,16 @@ describe('retries through createCorsair', () => {
 		}
 	});
 
-	it('does not replay a 503: every Penpot RPC is a POST, and RPCs have no idempotency contract', async () => {
+	it('replays a read RPC on a 503 (read operations are named, since every RPC is a POST)', async () => {
 		const { corsair, testDb } = await createClient();
 		try {
 			respond({ hint: 'Something went wrong' }, 503);
+			respond([]);
 
-			await expect(
-				corsair.penpot.api.projects.listAll({}),
-			).rejects.toMatchObject({ status: 503 });
-			expect(fetchMock).toHaveBeenCalledTimes(1);
+			await expect(corsair.penpot.api.projects.listAll({})).resolves.toEqual(
+				[],
+			);
+			expect(fetchMock).toHaveBeenCalledTimes(2);
 		} finally {
 			testDb.cleanup();
 		}

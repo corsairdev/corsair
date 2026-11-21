@@ -11,7 +11,6 @@ import {
 	accessToken,
 	comment,
 	commentThread,
-	createdAccessToken,
 	file,
 	project,
 	shareLink,
@@ -331,15 +330,6 @@ describe('accessTokens', () => {
 		const tokens = (await invoke(AccessTokens.list, {})) as unknown[]; // unknown: access-token records are provider-shaped
 		expect(tokens).toHaveLength(1);
 		expectRpc('get-access-tokens');
-	});
-
-	it('create posts the name and answers the one-time token value', async () => {
-		respond(createdAccessToken);
-		const token = (await invoke(AccessTokens.create, {
-			name: 'CI token',
-		})) as { token?: string };
-		expect(token.token).toBe('penpot_at_once_seen_value');
-		expectRpc('create-access-token');
 	});
 
 	it('delete echoes the id', async () => {

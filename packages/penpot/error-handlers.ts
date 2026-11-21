@@ -1,16 +1,38 @@
-import type { CorsairErrorHandler } from 'corsair/core';
-import { PenpotAPIError } from './client';
+import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
+
+/**
+ * Every route is a POST, so the operations that only read are named here;
+ * they are safe to send again after a 5xx.
+ */
+const REPLAYABLE_OPERATIONS = new Set([
+	'teams.list',
+	'teams.get',
+	'projects.listAll',
+	'projects.get',
+	'files.get',
+	'files.snapshotsList',
+	'comments.threadsList',
+	'comments.threadGet',
+	'comments.list',
+	'webhooks.list',
+	'accessTokens.list',
+]);
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof PenpotAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 // The client retries a 429 up to three times through core, honouring
-// Retry-After. No RATE_LIMIT_ERROR handler is needed here: DEFAULT adds no
-// retries after the client has used its attempts.
+// Retry-After. RATE_LIMIT_ERROR returns maxRetries 0 so a caller's root 429
+// handler cannot restart those attempts (R8: one retry layer).
 // Documented statuses (verified live): 401 authentication-required; 404
 // unknown RPC name or resource.
 export const errorHandlers = {
+	RATE_LIMIT_ERROR: {
+		match: (error: Error) => statusOf(error) === 429,
+		handler: async () => ({ maxRetries: 0 }),
+	},
 	AUTH_ERROR: {
 		match: (error: Error) => statusOf(error) === 401 || statusOf(error) === 403,
 		handler: async () => ({ maxRetries: 0 }),
@@ -25,10 +47,10 @@ export const errorHandlers = {
 	// Only reads are replayed: creates and deletes have no documented
 	// idempotency contract.
 	SERVER_ERROR: {
-		match: (error: Error) =>
-			error instanceof PenpotAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+		match: (error: Error, context?: ErrorContext) =>
+			error instanceof ApiError &&
+			error.status >= 500 &&
+			REPLAYABLE_OPERATIONS.has(context?.operation ?? ''),
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,
