@@ -1,20 +1,28 @@
+import { PingGetInputSchema, PingGetResponseSchema } from './endpoints/types';
 import { FingertipSchema } from './schema';
+import { fingertipEntities } from './schema/database';
 
 describe('Fingertip schema', () => {
-	it('declares a semver version', () => {
-		expect(FingertipSchema.version).toBeDefined();
+	it('declares a semver version and no local entities', () => {
 		expect(FingertipSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
+		expect(FingertipSchema.entities).toBe(fingertipEntities);
+		expect(FingertipSchema.entities).toEqual({});
 	});
 
-	it('declares an entities map', () => {
-		expect(typeof FingertipSchema.entities).toBe('object');
-		expect(FingertipSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(FingertipSchema.entities))).toBe(true);
-		for (const entity of Object.values(FingertipSchema.entities)) {
-			expect(entity).toBeDefined();
-		}
+	it('accepts only the empty ping input object', () => {
+		expect(PingGetInputSchema.safeParse({}).success).toBe(true);
+		expect(PingGetInputSchema.safeParse({ unexpected: true }).success).toBe(
+			false,
+		);
+	});
+
+	it('validates the documented ping message response field', () => {
+		expect(PingGetResponseSchema.safeParse({ message: 'pong' }).success).toBe(
+			true,
+		);
+		expect(PingGetResponseSchema.safeParse({}).success).toBe(false);
+		expect(PingGetResponseSchema.safeParse({ message: 200 }).success).toBe(
+			false,
+		);
 	});
 });
-
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.

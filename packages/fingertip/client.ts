@@ -1,30 +1,30 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
+import { AuthMissingError } from 'corsair/core';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
+import { request } from 'corsair/http';
 
-export class FingertipAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly code?: string,
-	) {
-		super(message);
-		this.name = 'FingertipAPIError';
+export const FINGERTIP_API_BASE = 'https://api.fingertip.com';
+
+// The HTTP transport extracts Retry-After but leaves retry ownership to the
+// endpoint error handler, avoiding nested retries.
+export const FINGERTIP_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 0,
+	backoffMultiplier: 1,
+	headerNames: { retryAfter: 'retry-after' },
+};
+
+// Returns unknown because the provider response is untrusted until endpoint validation.
+export async function makeFingertipPingRequest(
+	apiKey?: string,
+): Promise<unknown> {
+	if (!apiKey) {
+		throw new AuthMissingError('fingertip', 'api_key');
 	}
-}
-
-// TODO: Update with your API base URL
-const FINGERTIP_API_BASE = 'https://api.example.com';
-
-export async function makeFingertipRequest<T>(
-	endpoint: string,
-	apiKey: string,
-	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
-	} = {},
-): Promise<T> {
-	const { method = 'GET', body, query } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: FINGERTIP_API_BASE,
@@ -32,34 +32,14 @@ export async function makeFingertipRequest<T>(
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: apiKey,
-		HEADERS: {
-			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
-		},
 	};
-
 	const requestOptions: ApiRequestOptions = {
-		method,
-		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
-		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		method: 'GET',
+		url: '/v1/ping',
 	};
 
-	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		// Rethrow core's ApiError as is: its status and retryAfter are what the
-		// error handlers match (429 retries) and what core reads to refresh an
-		// OAuth token after a 401. Wrapping it in a new error loses both.
-		if (error instanceof ApiError) throw error;
-		if (error instanceof Error) {
-			throw new FingertipAPIError(error.message);
-		}
-		throw new FingertipAPIError('Unknown error');
-	}
+	// The transport result remains unknown until the endpoint output schema parses it.
+	return request<unknown>(config, requestOptions, {
+		rateLimitConfig: FINGERTIP_RATE_LIMIT_CONFIG,
+	});
 }

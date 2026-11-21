@@ -1,9 +1,1 @@
-import { z } from 'zod';
-
-// TODO: Define your database entities here
-// export const FingertipExample = z.object({
-// 	id: z.string(),
-// 	name: z.string(),
-// 	created_at: z.coerce.date().nullable().optional(),
-// });
-// export type FingertipExample = z.infer<typeof FingertipExample>;
+export const fingertipEntities = {};

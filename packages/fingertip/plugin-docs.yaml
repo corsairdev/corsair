@@ -1,4 +1,11 @@
-# Display copy for the docs, the catalog, corsair.dev and Hub.
-# `pnpm validate:plugins` fails until the TODO is replaced.
 displayName: "Fingertip"
-description: TODO one sentence on what the API is and what this plugin can do with it.
+description: Verify Fingertip REST API connectivity and API key validity.
+domain: fingertip.com
+recommendedAuth: api_key
+overviewNote: |
+  Create an API key at https://fingertip.com/api-keys and connect it to Corsair before calling the authenticated ping operation.
+apiExamples:
+  ping.get:
+    call: '{}'
+apiNotes:
+  ping.get: 'The REST guide documents the route but not its response schema. The official Node.js guide reads `response.message`; this plugin validates that field as a string. Other response fields are not exposed.'

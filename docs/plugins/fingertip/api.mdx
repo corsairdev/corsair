@@ -1,0 +1,38 @@
+---
+title: "Fingertip API reference"
+sidebarTitle: "API"
+description: "API reference for the Fingertip plugin in Corsair: every `fingertip.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Ping
+
+### get
+
+`ping.get`
+
+Verify Fingertip REST API connectivity and API key validity
+
+**Risk:** `read`
+
+```ts
+await corsair.fingertip.api.ping.get({});
+```
+
+**Input:** _empty object_
+
+The REST guide documents the route but not its response schema. The official Node.js guide reads `response.message`; this plugin validates that field as a string. Other response fields are not exposed.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+
+
+
+---

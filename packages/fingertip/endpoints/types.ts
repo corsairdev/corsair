@@ -1,29 +1,29 @@
 import { z } from 'zod';
 
-const ExampleGetInputSchema = z.object({
-	id: z.string(),
+export const PingGetInputSchema = z.object({}).strict();
+
+export type PingGetInput = z.infer<typeof PingGetInputSchema>;
+
+// The REST guide documents the ping route but not a response schema. The
+// official Node.js guide reads `response.message` from that same route.
+export const PingGetResponseSchema = z.object({
+	message: z.string(),
 });
 
-export type ExampleGetInput = z.infer<typeof ExampleGetInputSchema>;
-
-const ExampleGetResponseSchema = z.object({
-	id: z.string(),
-});
-
-export type ExampleGetResponse = z.infer<typeof ExampleGetResponseSchema>;
+export type PingGetResponse = z.infer<typeof PingGetResponseSchema>;
 
 export type FingertipEndpointInputs = {
-	exampleGet: ExampleGetInput;
+	pingGet: PingGetInput;
 };
 
 export type FingertipEndpointOutputs = {
-	exampleGet: ExampleGetResponse;
+	pingGet: PingGetResponse;
 };
 
 export const FingertipEndpointInputSchemas = {
-	exampleGet: ExampleGetInputSchema,
+	pingGet: PingGetInputSchema,
 } as const;
 
 export const FingertipEndpointOutputSchemas = {
-	exampleGet: ExampleGetResponseSchema,
+	pingGet: PingGetResponseSchema,
 } as const;

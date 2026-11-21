@@ -1,7 +1,7 @@
-import { get as exampleGet } from './example';
+import { get as pingGet } from './ping';
 
-export const Example = {
-	get: exampleGet,
+export const Ping = {
+	get: pingGet,
 };
 
 export * from './types';
