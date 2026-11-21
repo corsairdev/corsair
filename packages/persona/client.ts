@@ -118,6 +118,18 @@ export async function makePersonaRequest(
 				error.body,
 				error.statusText || 'request failed',
 			);
+			// Persona's validation errors can echo submitted values (names,
+			// birthdates, ID numbers) in errors[].details, so the rebuilt error
+			// keeps only each error's title.
+			const record = asRecord(error.body);
+			const errorBody = Array.isArray(record?.errors)
+				? {
+						errors: record.errors.map((item) => {
+							const title = asRecord(item)?.title;
+							return typeof title === 'string' ? { title } : {};
+						}),
+					}
+				: undefined;
 			// R8: core's ApiError itself (management maps errors named
 			// ApiError to their real status), rebuilt with the method and path
 			// only, so status and retryAfter survive for the handlers.
@@ -128,7 +140,7 @@ export async function makePersonaRequest(
 					ok: false,
 					status: error.status,
 					statusText: error.statusText,
-					body: error.body,
+					body: errorBody,
 				},
 				`Persona ${error.status}: ${detail}`,
 				{ retryAfter: error.retryAfter },

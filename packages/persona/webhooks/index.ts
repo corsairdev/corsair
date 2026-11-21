@@ -3,7 +3,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { PersonaContext } from '..';
 import type { PersonaWebhookPayload } from './types';
 import {
-	matchPersonaWebhook,
+	isPersonaEvent,
 	PersonaWebhookPayloadSchema,
 	verifyPersonaWebhook,
 } from './types';
@@ -36,7 +36,7 @@ export const event: CorsairWebhook<
 	PersonaWebhookPayload,
 	PersonaWebhookPayload
 > = {
-	match: matchPersonaWebhook,
+	match: isPersonaEvent,
 	handler: async (ctx, request) => {
 		const verification = verifyPersonaWebhook(request, ctx.key);
 		if (!verification.valid) {

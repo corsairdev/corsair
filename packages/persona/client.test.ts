@@ -103,6 +103,27 @@ describe('makePersonaRequest', () => {
 	});
 });
 
+describe('error body', () => {
+	it('keeps only error titles, not the details that echo submitted values', async () => {
+		respond(
+			{
+				errors: [
+					{
+						title: 'Invalid attribute',
+						details: 'name-first "Jane" birthdate "1990-01-01" is invalid',
+					},
+				],
+			},
+			422,
+		);
+		const error = await failure(
+			makePersonaRequest(API_KEY, { method: 'POST', path: '/accounts' }),
+		);
+		expect(error.body).toEqual({ errors: [{ title: 'Invalid attribute' }] });
+		expect(JSON.stringify(error)).not.toContain('1990-01-01');
+	});
+});
+
 describe('describePersonaError', () => {
 	it('reads the documented { errors: [{ title }] } envelope', () => {
 		expect(describePersonaError(authRequired, 'fallback')).toBe(

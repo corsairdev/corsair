@@ -179,19 +179,28 @@ export type PersonaWebhookPayload = z.infer<typeof PersonaEventSchema>;
 // ── Matching ───────────────────────────────────────────────────────────────
 
 /**
- * Persona sends every event of a webhook to its one URL. A delivery has the
- * Persona-Signature header and a `{ data: { type: "event", attributes: {
- * name } } }` body; requiring both keeps other providers' `{ type, data }`
- * deliveries (Stripe's, for one) away from this plugin.
+ * True for Persona's `{ data: { type: "event", attributes: { name } } }`
+ * envelope. The event webhook matches on this alone, so a delivery Hub
+ * already verified and routed still reaches its handler even if Hub did not
+ * forward the signature header.
  */
-export function matchPersonaWebhook(request: RawWebhookRequest): boolean {
-	if (headerValue(request.headers, PERSONA_SIGNATURE_HEADER) === undefined) {
-		return false;
-	}
+export function isPersonaEvent(request: RawWebhookRequest): boolean {
 	const body = readBodyRecord(request);
 	const data = body?.data;
 	if (!data || typeof data !== 'object' || Array.isArray(data)) return false;
 	const record = data as Record<string, unknown>;
 	const attributes = record.attributes as Record<string, unknown> | undefined;
 	return record.type === 'event' && typeof attributes?.name === 'string';
+}
+
+/**
+ * Plugin-level matcher for unrouted deliveries: the Persona-Signature header
+ * plus the event envelope. Requiring both keeps other providers' `{ type,
+ * data }` deliveries (Stripe's, for one) away from this plugin.
+ */
+export function matchPersonaWebhook(request: RawWebhookRequest): boolean {
+	if (headerValue(request.headers, PERSONA_SIGNATURE_HEADER) === undefined) {
+		return false;
+	}
+	return isPersonaEvent(request);
 }

@@ -180,6 +180,17 @@ describe('matchPersonaWebhook', () => {
 	});
 });
 
+describe('event webhook match', () => {
+	it('matches the envelope without the signature header, for deliveries Hub routed', () => {
+		expect(event.match(rawRequest(webhookEvent) as never)).toBe(true);
+		expect(
+			event.match(
+				rawRequest({ type: 'invoice.paid', data: { object: {} } }) as never,
+			),
+		).toBe(false);
+	});
+});
+
 describe('PersonaWebhookPayloadSchema', () => {
 	it('parses a delivery', () => {
 		const parsed = PersonaWebhookPayloadSchema.parse(webhookEvent);
