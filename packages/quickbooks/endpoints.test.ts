@@ -1,4 +1,8 @@
-import { AccountsEndpoints, CompanyEndpoints } from './endpoints';
+import {
+	AccountsEndpoints,
+	CatalogEndpoints,
+	CompanyEndpoints,
+} from './endpoints';
 import {
 	QuickBooksCatalogEndpointSchemas,
 	QuickBooksCatalogTestCases,
@@ -339,4 +343,219 @@ describe('QuickBooks first-party catalog operation requests', () => {
 			}
 		},
 	);
+
+	it('accepts account- and item-based Bill and Purchase lines on create, read, and update', async () => {
+		const accountBasedLine = {
+			Id: '1',
+			Amount: 125,
+			DetailType: 'AccountBasedExpenseLineDetail' as const,
+			AccountBasedExpenseLineDetail: {
+				AccountRef: { value: 'expense-account' },
+			},
+		};
+		const itemBasedLine = {
+			Id: '2',
+			Amount: 50,
+			DetailType: 'ItemBasedExpenseLineDetail' as const,
+			ItemBasedExpenseLineDetail: { ItemRef: { value: 'item' } },
+		};
+		const bill = {
+			VendorRef: { value: 'vendor-1' },
+			Line: [accountBasedLine, itemBasedLine],
+			Id: 'bill-1',
+			SyncToken: '0',
+		};
+		const billCreateBody = {
+			VendorRef: { value: 'vendor-1' },
+			Line: [accountBasedLine],
+		};
+		const purchase = {
+			PaymentType: 'Check',
+			AccountRef: { value: 'bank' },
+			Line: [accountBasedLine, itemBasedLine],
+			Id: 'purchase-1',
+			SyncToken: '0',
+		};
+		const purchaseCreateBody = {
+			PaymentType: 'Check',
+			AccountRef: { value: 'bank' },
+			Line: [accountBasedLine],
+		};
+		const time = '2026-11-18T12:00:00Z';
+
+		fetchMock
+			.mockResolvedValueOnce(mockJsonResponse({ Bill: bill, time }))
+			.mockResolvedValueOnce(mockJsonResponse({ Bill: bill, time }))
+			.mockResolvedValueOnce(mockJsonResponse({ Bill: bill, time }))
+			.mockResolvedValueOnce(mockJsonResponse({ Purchase: purchase, time }))
+			.mockResolvedValueOnce(mockJsonResponse({ Purchase: purchase, time }))
+			.mockResolvedValueOnce(mockJsonResponse({ Purchase: purchase, time }));
+
+		const createdBill = await CatalogEndpoints.bill.create(context, {
+			realmId: '12345678',
+			body: billCreateBody,
+		});
+		const readBill = await CatalogEndpoints.bill.get(context, {
+			realmId: '12345678',
+			billId: 'bill-1',
+		});
+		const updatedBill = await CatalogEndpoints.bill.update(context, {
+			realmId: '12345678',
+			body: bill,
+		});
+		const createdPurchase = await CatalogEndpoints.purchase.create(context, {
+			realmId: '12345678',
+			body: purchaseCreateBody,
+		});
+		const readPurchase = await CatalogEndpoints.purchase.get(context, {
+			realmId: '12345678',
+			purchaseId: 'purchase-1',
+		});
+		const updatedPurchase = await CatalogEndpoints.purchase.update(context, {
+			realmId: '12345678',
+			body: purchase,
+		});
+
+		expect(createdBill.Bill.Line).toEqual([accountBasedLine, itemBasedLine]);
+		expect(readBill.Bill.Line).toEqual([accountBasedLine, itemBasedLine]);
+		expect(updatedBill.Bill.Line).toEqual([accountBasedLine, itemBasedLine]);
+		expect(createdPurchase.Purchase.Line).toEqual([
+			accountBasedLine,
+			itemBasedLine,
+		]);
+		expect(readPurchase.Purchase.Line).toEqual([
+			accountBasedLine,
+			itemBasedLine,
+		]);
+		expect(updatedPurchase.Purchase.Line).toEqual([
+			accountBasedLine,
+			itemBasedLine,
+		]);
+
+		const calls = fetchMock.mock.calls;
+		expect(calls).toHaveLength(6);
+		expect(new URL(String(calls[0]?.[0])).pathname).toBe(
+			'/v3/company/12345678/bill',
+		);
+		expect(calls[0]?.[1]?.method).toBe('POST');
+		expect(JSON.parse(String(calls[0]?.[1]?.body))).toEqual(billCreateBody);
+		expect(new URL(String(calls[1]?.[0])).pathname).toBe(
+			'/v3/company/12345678/bill/bill-1',
+		);
+		expect(calls[1]?.[1]?.method).toBe('GET');
+		expect(JSON.parse(String(calls[2]?.[1]?.body))).toEqual(bill);
+		expect(JSON.parse(String(calls[3]?.[1]?.body))).toEqual(purchaseCreateBody);
+		expect(new URL(String(calls[4]?.[0])).pathname).toBe(
+			'/v3/company/12345678/purchase/purchase-1',
+		);
+		expect(calls[4]?.[1]?.method).toBe('GET');
+		expect(JSON.parse(String(calls[5]?.[1]?.body))).toEqual(purchase);
+	});
+
+	it('roundtrips linked-payment and DepositLineDetail lines on create, read, and update', async () => {
+		const linkedPaymentLine = {
+			Amount: 50,
+			LinkedTxn: [{ TxnId: 'payment-1', TxnType: 'Payment' }],
+		};
+		const depositDetailLine = {
+			Id: 'deposit-line-1',
+			Amount: 75,
+			DetailType: 'DepositLineDetail' as const,
+			Description: 'Other deposit income',
+			CustomField: {
+				DefinitionId: '1',
+				Name: 'Reference',
+				Type: 'StringType' as const,
+				StringValue: 'A-7',
+			},
+			DepositLineDetail: {
+				AccountRef: { value: 'income-account' },
+				CheckNum: 'A-7',
+				Entity: { value: 'customer-1' },
+			},
+		};
+		const deposit = {
+			DepositToAccountRef: { value: 'bank' },
+			Line: [linkedPaymentLine, depositDetailLine],
+			Id: 'deposit-1',
+			SyncToken: '0',
+		};
+		const createBody = {
+			DepositToAccountRef: { value: 'bank' },
+			Line: [depositDetailLine],
+		};
+		const time = '2026-11-18T12:00:00Z';
+		fetchMock
+			.mockResolvedValueOnce(mockJsonResponse({ Deposit: deposit, time }))
+			.mockResolvedValueOnce(mockJsonResponse({ Deposit: deposit, time }))
+			.mockResolvedValueOnce(mockJsonResponse({ Deposit: deposit, time }));
+
+		const created = await CatalogEndpoints.deposit.create(context, {
+			realmId: '12345678',
+			body: createBody,
+		});
+		const read = await CatalogEndpoints.deposit.get(context, {
+			realmId: '12345678',
+			depositId: 'deposit-1',
+		});
+		const updated = await CatalogEndpoints.deposit.update(context, {
+			realmId: '12345678',
+			body: deposit,
+		});
+
+		for (const result of [created, read, updated]) {
+			expect(result.Deposit.Line).toEqual([
+				linkedPaymentLine,
+				depositDetailLine,
+			]);
+			expect(result.Deposit.Line[1]).toEqual(depositDetailLine);
+		}
+		const calls = fetchMock.mock.calls;
+		expect(calls).toHaveLength(3);
+		expect(new URL(String(calls[0]?.[0])).pathname).toBe(
+			'/v3/company/12345678/deposit',
+		);
+		expect(calls[0]?.[1]?.method).toBe('POST');
+		expect(JSON.parse(String(calls[0]?.[1]?.body))).toEqual(createBody);
+		expect(new URL(String(calls[1]?.[0])).pathname).toBe(
+			'/v3/company/12345678/deposit/deposit-1',
+		);
+		expect(calls[1]?.[1]?.method).toBe('GET');
+		expect(JSON.parse(String(calls[2]?.[1]?.body))).toEqual(deposit);
+	});
+
+	it('creates an invoice-linked Payment with its documented line unchanged', async () => {
+		const body = {
+			TotalAmt: 125,
+			CustomerRef: { value: 'customer-1' },
+			Line: [
+				{
+					Amount: 125,
+					LinkedTxn: [{ TxnId: 'invoice-1', TxnType: 'Invoice' }],
+				},
+			],
+		};
+		const payment = { ...body, Id: 'payment-1' };
+		fetchMock.mockResolvedValue(
+			mockJsonResponse({
+				Payment: payment,
+				time: '2026-11-18T12:00:00Z',
+			}),
+		);
+
+		const result = await CatalogEndpoints.payment.create(context, {
+			realmId: '12345678',
+			body,
+		});
+
+		expect(result.Payment).toEqual(payment);
+		const call = fetchMock.mock.calls.at(0);
+		expect(call).toBeDefined();
+		if (!call) throw new Error('Expected the payment provider request');
+		expect(new URL(String(call[0])).pathname).toBe(
+			'/v3/company/12345678/payment',
+		);
+		expect(call[1]?.method).toBe('POST');
+		expect(JSON.parse(String(call[1]?.body))).toEqual(body);
+	});
 });

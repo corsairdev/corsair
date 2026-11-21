@@ -1990,7 +1990,7 @@ Submit 1–30 strictly modelled create, update, delete, or Query batch items. Us
       },
       Line: {
         Description?: string,
-        DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
+        DetailType: AccountBasedExpenseLineDetail,
         CustomExtensions?: {
           AssociatedValues: {
             Value: string,
@@ -2075,62 +2075,114 @@ Submit 1–30 strictly modelled create, update, delete, or Query batch items. Us
         name?: string,
         value: string
       },
-      Line: {
-        LinkedTxn?: {
-          TxnLineId?: string,
-          TxnId: string,
-          TxnType: string
-        }[],
-        Description?: string,
-        ItemBasedExpenseLineDetail: {
-          TaxInclusiveAmt?: number,
-          ItemRef?: {
-            name?: string,
-            value: string
-          },
-          CustomerRef?: {
-            name?: string,
-            value: string
-          },
-          PriceLevelRef?: {
-            name?: string,
-            value: string
-          },
-          ClassRef?: {
-            name?: string,
-            value: string
-          },
-          TaxCodeRef?: {
-            name?: string,
-            value: string
-          },
-          MarkupInfo?: {
+      Line: (
+        {
+          LinkedTxn?: {
+            TxnLineId: string,
+            TxnId: string,
+            TxnType: string
+          }[],
+          Description?: string,
+          ItemBasedExpenseLineDetail: {
+            TaxInclusiveAmt?: number,
+            ItemRef?: {
+              name?: string,
+              value: string
+            },
+            CustomerRef?: {
+              name?: string,
+              value: string
+            },
             PriceLevelRef?: {
               name?: string,
               value: string
             },
-            Percent?: number,
-            MarkUpIncomeAccountRef?: {
+            ClassRef?: {
+              name?: string,
+              value: string
+            },
+            TaxCodeRef?: {
+              name?: string,
+              value: string
+            },
+            MarkupInfo?: {
+              PriceLevelRef?: {
+                name?: string,
+                value: string
+              },
+              Percent?: number,
+              MarkUpIncomeAccountRef?: {
+                name?: string,
+                value: string
+              }
+            },
+            BillableStatus?: Billable | NotBillable | HasBeenBilled,
+            Qty?: number,
+            UnitPrice?: number
+          },
+          CustomExtensions?: {
+            AssociatedValues: {
+              Value: string,
+              Key: string
+            },
+            ExtensionType: string
+          },
+          LineNum?: number,
+          Amount: number,
+          DetailType: ItemBasedExpenseLineDetail,
+          Id: string
+        } | {
+          LinkedTxn?: {
+            TxnLineId: string,
+            TxnId: string,
+            TxnType: string
+          }[],
+          Description?: string,
+          DetailType: AccountBasedExpenseLineDetail,
+          CustomExtensions?: {
+            AssociatedValues: {
+              Value: string,
+              Key: string
+            },
+            ExtensionType: string
+          },
+          LineNum?: number,
+          Amount: number,
+          Id: string,
+          AccountBasedExpenseLineDetail: {
+            TaxAmount?: number,
+            TaxInclusiveAmt?: number,
+            ClassRef?: {
+              name?: string,
+              value: string
+            },
+            TaxCodeRef?: {
+              name?: string,
+              value: string
+            },
+            MarkupInfo?: {
+              PriceLevelRef?: {
+                name?: string,
+                value: string
+              },
+              Percent?: number,
+              MarkUpIncomeAccountRef?: {
+                name?: string,
+                value: string
+              }
+            },
+            BillableStatus?: Billable | NotBillable | HasBeenBilled,
+            AccountRef: {
+              name?: string,
+              value: string
+            },
+            CustomerRef?: {
               name?: string,
               value: string
             }
-          },
-          BillableStatus?: Billable | NotBillable | HasBeenBilled,
-          Qty?: number,
-          UnitPrice?: number
-        },
-        CustomExtensions?: {
-          AssociatedValues: {
-            Value: string,
-            Key: string
-          },
-          ExtensionType: string
-        },
-        LineNum?: number,
-        Amount: number,
-        DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
-        Id: string
-      }[],
+          }
+        }
+      )[],
       Balance?: number,
       TxnTaxDetail?: {
         TxnTaxCodeRef?: {
@@ -3392,7 +3444,7 @@ Submit 1–30 strictly modelled create, update, delete, or Query batch items. Us
       },
       Line?: {
         Description?: string,
-        DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
+        DetailType: DepositLineDetail,
         ProjectRef?: {
           name?: string,
           value: string
@@ -3468,14 +3520,64 @@ Submit 1–30 strictly modelled create, update, delete, or Query batch items. Us
       },
       TxnSource?: string,
       TxnDate?: string,
-      Line: {
-        Amount: number,
-        LinkedTxn: {
-          TxnLineId?: string,
-          TxnId: string,
-          TxnType: string
-        }[]
-      }[],
+      Line: (
+        {
+          Amount: number,
+          LinkedTxn: {
+            TxnLineId?: string,
+            TxnId: string,
+            TxnType: string
+          }[]
+        } | {
+          Description?: string,
+          DetailType: DepositLineDetail,
+          ProjectRef?: {
+            name?: string,
+            value: string
+          },
+          CustomExtensions?: {
+            AssociatedValues: {
+              Value: string,
+              Key: string
+            },
+            ExtensionType: string
+          },
+          LineNum?: number,
+          Amount: number,
+          CustomField?: {
+            DefinitionId: string,
+            StringValue?: string,
+            Type?: StringType | BooleanType | NumberType | DateType,
+            Name?: string
+          },
+          Id: string,
+          DepositLineDetail: {
+            PaymentMethodRef?: {
+              name?: string,
+              value: string
+            },
+            ClassRef?: {
+              name?: string,
+              value: string
+            },
+            CheckNum?: string,
+            TaxCodeRef?: {
+              name?: string,
+              value: string
+            },
+            TaxApplicableOn?: Purchase | Sales,
+            TxnType?: APCreditCard | ARRefundCreditCard | Bill | BillPaymentCheck | BuildAssembly | CarryOver | CashPurchase | Charge | Check | CreditCardPayment | CreditMemo | Deposit | EFPLiabilityCheck | EFTBillPayment | EFTRefund | Estimate | InventoryAdjustment | InventoryTransfer | Invoice | ItemReceipt | JournalEntry | LiabilityAdjustment | Paycheck | PayrollLiabilityCheck | PurchaseOrder | PriorPayment | ReceivePayment | RefundCheck | ReimburseCharge | SalesOrder | SalesReceipt | SalesTaxPaymentCheck | Transfer | TimeActivity | VendorCredit | YTDAdjustment,
+            AccountRef: {
+              name?: string,
+              value: string
+            },
+            Entity?: {
+              name?: string,
+              value: string
+            }
+          }
+        }
+      )[],
       CashBack?: {
         AccountRef: {
           name?: string,
@@ -3540,14 +3642,64 @@ Submit 1–30 strictly modelled create, update, delete, or Query batch items. Us
       },
       TxnSource?: string,
       TxnDate?: string,
-      Line: {
-        Amount: number,
-        LinkedTxn: {
-          TxnLineId?: string,
-          TxnId: string,
-          TxnType: string
-        }[]
-      }[],
+      Line: (
+        {
+          Amount: number,
+          LinkedTxn: {
+            TxnLineId?: string,
+            TxnId: string,
+            TxnType: string
+          }[]
+        } | {
+          Description?: string,
+          DetailType: DepositLineDetail,
+          ProjectRef?: {
+            name?: string,
+            value: string
+          },
+          CustomExtensions?: {
+            AssociatedValues: {
+              Value: string,
+              Key: string
+            },
+            ExtensionType: string
+          },
+          LineNum?: number,
+          Amount: number,
+          CustomField?: {
+            DefinitionId: string,
+            StringValue?: string,
+            Type?: StringType | BooleanType | NumberType | DateType,
+            Name?: string
+          },
+          Id: string,
+          DepositLineDetail: {
+            PaymentMethodRef?: {
+              name?: string,
+              value: string
+            },
+            ClassRef?: {
+              name?: string,
+              value: string
+            },
+            CheckNum?: string,
+            TaxCodeRef?: {
+              name?: string,
+              value: string
+            },
+            TaxApplicableOn?: Purchase | Sales,
+            TxnType?: APCreditCard | ARRefundCreditCard | Bill | BillPaymentCheck | BuildAssembly | CarryOver | CashPurchase | Charge | Check | CreditCardPayment | CreditMemo | Deposit | EFPLiabilityCheck | EFTBillPayment | EFTRefund | Estimate | InventoryAdjustment | InventoryTransfer | Invoice | ItemReceipt | JournalEntry | LiabilityAdjustment | Paycheck | PayrollLiabilityCheck | PurchaseOrder | PriorPayment | ReceivePayment | RefundCheck | ReimburseCharge | SalesOrder | SalesReceipt | SalesTaxPaymentCheck | Transfer | TimeActivity | VendorCredit | YTDAdjustment,
+            AccountRef: {
+              name?: string,
+              value: string
+            },
+            Entity?: {
+              name?: string,
+              value: string
+            }
+          }
+        }
+      )[],
       CashBack?: {
         AccountRef: {
           name?: string,
@@ -5203,7 +5355,15 @@ Submit 1–30 strictly modelled create, update, delete, or Query batch items. Us
       CurrencyRef?: {
         name?: string,
         value: string
-      }
+      },
+      Line?: {
+        Amount: number,
+        LinkedTxn: {
+          TxnLineId?: string,
+          TxnId: string,
+          TxnType: string
+        }[]
+      }[]
     }
   } | {
     bId: string,
@@ -5525,7 +5685,7 @@ Submit 1–30 strictly modelled create, update, delete, or Query batch items. Us
       },
       Line: {
         Description?: string,
-        DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
+        DetailType: AccountBasedExpenseLineDetail,
         CustomExtensions?: {
           AssociatedValues: {
             Value: string,
@@ -5610,62 +5770,109 @@ Submit 1–30 strictly modelled create, update, delete, or Query batch items. Us
         name?: string,
         value: string
       },
-      Line: {
-        LinkedTxn?: {
-          TxnLineId?: string,
-          TxnId: string,
-          TxnType: string
-        }[],
-        Description?: string,
-        ItemBasedExpenseLineDetail: {
-          TaxInclusiveAmt?: number,
-          ItemRef?: {
-            name?: string,
-            value: string
-          },
-          CustomerRef?: {
-            name?: string,
-            value: string
-          },
-          PriceLevelRef?: {
-            name?: string,
-            value: string
-          },
-          ClassRef?: {
-            name?: string,
-            value: string
-          },
-          TaxCodeRef?: {
-            name?: string,
-            value: string
-          },
-          MarkupInfo?: {
+      Line: (
+        {
+          LinkedTxn?: {
+            TxnLineId?: string,
+            TxnId: string,
+            TxnType: string
+          }[],
+          Description?: string,
+          ItemBasedExpenseLineDetail: {
+            TaxInclusiveAmt?: number,
+            ItemRef?: {
+              name?: string,
+              value: string
+            },
+            CustomerRef?: {
+              name?: string,
+              value: string
+            },
             PriceLevelRef?: {
               name?: string,
               value: string
             },
-            Percent?: number,
-            MarkUpIncomeAccountRef?: {
+            ClassRef?: {
+              name?: string,
+              value: string
+            },
+            TaxCodeRef?: {
+              name?: string,
+              value: string
+            },
+            MarkupInfo?: {
+              PriceLevelRef?: {
+                name?: string,
+                value: string
+              },
+              Percent?: number,
+              MarkUpIncomeAccountRef?: {
+                name?: string,
+                value: string
+              }
+            },
+            BillableStatus?: Billable | NotBillable | HasBeenBilled,
+            Qty?: number,
+            UnitPrice?: number
+          },
+          CustomExtensions?: {
+            AssociatedValues: {
+              Value: string,
+              Key: string
+            },
+            ExtensionType: string
+          },
+          LineNum?: number,
+          Amount: number,
+          DetailType: ItemBasedExpenseLineDetail,
+          Id: string
+        } | {
+          Description?: string,
+          DetailType: AccountBasedExpenseLineDetail,
+          CustomExtensions?: {
+            AssociatedValues: {
+              Value: string,
+              Key: string
+            },
+            ExtensionType: string
+          },
+          LineNum?: number,
+          Amount: number,
+          Id: string,
+          AccountBasedExpenseLineDetail: {
+            TaxAmount?: number,
+            TaxInclusiveAmt?: number,
+            ClassRef?: {
+              name?: string,
+              value: string
+            },
+            TaxCodeRef?: {
+              name?: string,
+              value: string
+            },
+            MarkupInfo?: {
+              PriceLevelRef?: {
+                name?: string,
+                value: string
+              },
+              Percent?: number,
+              MarkUpIncomeAccountRef?: {
+                name?: string,
+                value: string
+              }
+            },
+            BillableStatus?: Billable | NotBillable | HasBeenBilled,
+            AccountRef: {
+              name?: string,
+              value: string
+            },
+            CustomerRef?: {
               name?: string,
               value: string
             }
-          },
-          BillableStatus?: Billable | NotBillable | HasBeenBilled,
-          Qty?: number,
-          UnitPrice?: number
-        },
-        CustomExtensions?: {
-          AssociatedValues: {
-            Value: string,
-            Key: string
-          },
-          ExtensionType: string
-        },
-        LineNum?: number,
-        Amount: number,
-        DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
-        Id: string
-      }[],
+          }
+        }
+      )[],
       Credit?: boolean,
       TxnTaxDetail?: {
         TxnTaxCodeRef?: {
@@ -5788,7 +5995,7 @@ Submit 1–30 strictly modelled create, update, delete, or Query batch items. Us
         },
         LineNum?: number,
         Amount: number,
-        DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
+        DetailType: ItemBasedExpenseLineDetail,
         Id: string
       }[]
     }
@@ -5903,7 +6110,7 @@ Submit 1–30 strictly modelled create, update, delete, or Query batch items. Us
         },
         LineNum?: number,
         Amount: number,
-        DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
+        DetailType: ItemBasedExpenseLineDetail,
         Id: string
       }[],
       TxnTaxDetail?: {
@@ -7411,7 +7618,7 @@ Submit 1–30 strictly modelled create, update, delete, or Query batch items. Us
         },
         LineNum?: number,
         Amount: number,
-        DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
+        DetailType: ItemBasedExpenseLineDetail,
         Id: string
       }[]
     }
@@ -7480,7 +7687,7 @@ Submit 1–30 strictly modelled create, update, delete, or Query batch items. Us
         },
         LineNum?: number,
         Amount: number,
-        DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
+        DetailType: ItemBasedExpenseLineDetail,
         Id: string
       }[],
       Id: string,
@@ -7628,62 +7835,114 @@ Submit 1–30 strictly modelled create, update, delete, or Query batch items. Us
           name?: string,
           value: string
         },
-        Line: {
-          LinkedTxn?: {
-            TxnLineId?: string,
-            TxnId: string,
-            TxnType: string
-          }[],
-          Description?: string,
-          ItemBasedExpenseLineDetail: {
-            TaxInclusiveAmt?: number,
-            ItemRef?: {
-              name?: string,
-              value: string
-            },
-            CustomerRef?: {
-              name?: string,
-              value: string
-            },
-            PriceLevelRef?: {
-              name?: string,
-              value: string
-            },
-            ClassRef?: {
-              name?: string,
-              value: string
-            },
-            TaxCodeRef?: {
-              name?: string,
-              value: string
-            },
-            MarkupInfo?: {
+        Line: (
+          {
+            LinkedTxn?: {
+              TxnLineId: string,
+              TxnId: string,
+              TxnType: string
+            }[],
+            Description?: string,
+            ItemBasedExpenseLineDetail: {
+              TaxInclusiveAmt?: number,
+              ItemRef?: {
+                name?: string,
+                value: string
+              },
+              CustomerRef?: {
+                name?: string,
+                value: string
+              },
               PriceLevelRef?: {
                 name?: string,
                 value: string
               },
-              Percent?: number,
-              MarkUpIncomeAccountRef?: {
+              ClassRef?: {
+                name?: string,
+                value: string
+              },
+              TaxCodeRef?: {
+                name?: string,
+                value: string
+              },
+              MarkupInfo?: {
+                PriceLevelRef?: {
+                  name?: string,
+                  value: string
+                },
+                Percent?: number,
+                MarkUpIncomeAccountRef?: {
+                  name?: string,
+                  value: string
+                }
+              },
+              BillableStatus?: Billable | NotBillable | HasBeenBilled,
+              Qty?: number,
+              UnitPrice?: number
+            },
+            CustomExtensions?: {
+              AssociatedValues: {
+                Value: string,
+                Key: string
+              },
+              ExtensionType: string
+            },
+            LineNum?: number,
+            Amount: number,
+            DetailType: ItemBasedExpenseLineDetail,
+            Id: string
+          } | {
+            LinkedTxn?: {
+              TxnLineId: string,
+              TxnId: string,
+              TxnType: string
+            }[],
+            Description?: string,
+            DetailType: AccountBasedExpenseLineDetail,
+            CustomExtensions?: {
+              AssociatedValues: {
+                Value: string,
+                Key: string
+              },
+              ExtensionType: string
+            },
+            LineNum?: number,
+            Amount: number,
+            Id: string,
+            AccountBasedExpenseLineDetail: {
+              TaxAmount?: number,
+              TaxInclusiveAmt?: number,
+              ClassRef?: {
+                name?: string,
+                value: string
+              },
+              TaxCodeRef?: {
+                name?: string,
+                value: string
+              },
+              MarkupInfo?: {
+                PriceLevelRef?: {
+                  name?: string,
+                  value: string
+                },
+                Percent?: number,
+                MarkUpIncomeAccountRef?: {
+                  name?: string,
+                  value: string
+                }
+              },
+              BillableStatus?: Billable | NotBillable | HasBeenBilled,
+              AccountRef: {
+                name?: string,
+                value: string
+              },
+              CustomerRef?: {
                 name?: string,
                 value: string
               }
-            },
-            BillableStatus?: Billable | NotBillable | HasBeenBilled,
-            Qty?: number,
-            UnitPrice?: number
-          },
-          CustomExtensions?: {
-            AssociatedValues: {
-              Value: string,
-              Key: string
-            },
-            ExtensionType: string
-          },
-          LineNum?: number,
-          Amount: number,
-          DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
-          Id: string
-        }[],
+            }
+          }
+        )[],
         Balance?: number,
         TxnTaxDetail?: {
           TxnTaxCodeRef?: {
@@ -8407,14 +8666,64 @@ Submit 1–30 strictly modelled create, update, delete, or Query batch items. Us
         },
         TxnSource?: string,
         TxnDate?: string,
-        Line: {
-          Amount: number,
-          LinkedTxn: {
-            TxnLineId?: string,
-            TxnId: string,
-            TxnType: string
-          }[]
-        }[],
+        Line: (
+          {
+            Amount: number,
+            LinkedTxn: {
+              TxnLineId?: string,
+              TxnId: string,
+              TxnType: string
+            }[]
+          } | {
+            Description?: string,
+            DetailType: DepositLineDetail,
+            ProjectRef?: {
+              name?: string,
+              value: string
+            },
+            CustomExtensions?: {
+              AssociatedValues: {
+                Value: string,
+                Key: string
+              },
+              ExtensionType: string
+            },
+            LineNum?: number,
+            Amount: number,
+            CustomField?: {
+              DefinitionId: string,
+              StringValue?: string,
+              Type?: StringType | BooleanType | NumberType | DateType,
+              Name?: string
+            },
+            Id: string,
+            DepositLineDetail: {
+              PaymentMethodRef?: {
+                name?: string,
+                value: string
+              },
+              ClassRef?: {
+                name?: string,
+                value: string
+              },
+              CheckNum?: string,
+              TaxCodeRef?: {
+                name?: string,
+                value: string
+              },
+              TaxApplicableOn?: Purchase | Sales,
+              TxnType?: APCreditCard | ARRefundCreditCard | Bill | BillPaymentCheck | BuildAssembly | CarryOver | CashPurchase | Charge | Check | CreditCardPayment | CreditMemo | Deposit | EFPLiabilityCheck | EFTBillPayment | EFTRefund | Estimate | InventoryAdjustment | InventoryTransfer | Invoice | ItemReceipt | JournalEntry | LiabilityAdjustment | Paycheck | PayrollLiabilityCheck | PurchaseOrder | PriorPayment | ReceivePayment | RefundCheck | ReimburseCharge | SalesOrder | SalesReceipt | SalesTaxPaymentCheck | Transfer | TimeActivity | VendorCredit | YTDAdjustment,
+              AccountRef: {
+                name?: string,
+                value: string
+              },
+              Entity?: {
+                name?: string,
+                value: string
+              }
+            }
+          }
+        )[],
         CashBack?: {
           AccountRef: {
             name?: string,
@@ -9399,62 +9708,109 @@ Submit 1–30 strictly modelled create, update, delete, or Query batch items. Us
           name?: string,
           value: string
         },
-        Line: {
-          LinkedTxn?: {
-            TxnLineId?: string,
-            TxnId: string,
-            TxnType: string
-          }[],
-          Description?: string,
-          ItemBasedExpenseLineDetail: {
-            TaxInclusiveAmt?: number,
-            ItemRef?: {
-              name?: string,
-              value: string
-            },
-            CustomerRef?: {
-              name?: string,
-              value: string
-            },
-            PriceLevelRef?: {
-              name?: string,
-              value: string
-            },
-            ClassRef?: {
-              name?: string,
-              value: string
-            },
-            TaxCodeRef?: {
-              name?: string,
-              value: string
-            },
-            MarkupInfo?: {
+        Line: (
+          {
+            LinkedTxn?: {
+              TxnLineId?: string,
+              TxnId: string,
+              TxnType: string
+            }[],
+            Description?: string,
+            ItemBasedExpenseLineDetail: {
+              TaxInclusiveAmt?: number,
+              ItemRef?: {
+                name?: string,
+                value: string
+              },
+              CustomerRef?: {
+                name?: string,
+                value: string
+              },
               PriceLevelRef?: {
                 name?: string,
                 value: string
               },
-              Percent?: number,
-              MarkUpIncomeAccountRef?: {
+              ClassRef?: {
+                name?: string,
+                value: string
+              },
+              TaxCodeRef?: {
+                name?: string,
+                value: string
+              },
+              MarkupInfo?: {
+                PriceLevelRef?: {
+                  name?: string,
+                  value: string
+                },
+                Percent?: number,
+                MarkUpIncomeAccountRef?: {
+                  name?: string,
+                  value: string
+                }
+              },
+              BillableStatus?: Billable | NotBillable | HasBeenBilled,
+              Qty?: number,
+              UnitPrice?: number
+            },
+            CustomExtensions?: {
+              AssociatedValues: {
+                Value: string,
+                Key: string
+              },
+              ExtensionType: string
+            },
+            LineNum?: number,
+            Amount: number,
+            DetailType: ItemBasedExpenseLineDetail,
+            Id: string
+          } | {
+            Description?: string,
+            DetailType: AccountBasedExpenseLineDetail,
+            CustomExtensions?: {
+              AssociatedValues: {
+                Value: string,
+                Key: string
+              },
+              ExtensionType: string
+            },
+            LineNum?: number,
+            Amount: number,
+            Id: string,
+            AccountBasedExpenseLineDetail: {
+              TaxAmount?: number,
+              TaxInclusiveAmt?: number,
+              ClassRef?: {
+                name?: string,
+                value: string
+              },
+              TaxCodeRef?: {
+                name?: string,
+                value: string
+              },
+              MarkupInfo?: {
+                PriceLevelRef?: {
+                  name?: string,
+                  value: string
+                },
+                Percent?: number,
+                MarkUpIncomeAccountRef?: {
+                  name?: string,
+                  value: string
+                }
+              },
+              BillableStatus?: Billable | NotBillable | HasBeenBilled,
+              AccountRef: {
+                name?: string,
+                value: string
+              },
+              CustomerRef?: {
                 name?: string,
                 value: string
               }
-            },
-            BillableStatus?: Billable | NotBillable | HasBeenBilled,
-            Qty?: number,
-            UnitPrice?: number
-          },
-          CustomExtensions?: {
-            AssociatedValues: {
-              Value: string,
-              Key: string
-            },
-            ExtensionType: string
-          },
-          LineNum?: number,
-          Amount: number,
-          DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
-          Id: string
-        }[],
+            }
+          }
+        )[],
         Credit?: boolean,
         TxnTaxDetail?: {
           TxnTaxCodeRef?: {
@@ -9613,7 +9969,7 @@ Submit 1–30 strictly modelled create, update, delete, or Query batch items. Us
           },
           LineNum?: number,
           Amount: number,
-          DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
+          DetailType: ItemBasedExpenseLineDetail,
           Id: string
         }[],
         TxnTaxDetail?: {
@@ -10583,7 +10939,7 @@ Submit 1–30 strictly modelled create, update, delete, or Query batch items. Us
           },
           LineNum?: number,
           Amount: number,
-          DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
+          DetailType: ItemBasedExpenseLineDetail,
           Id: string
         }[],
         Balance?: number,
@@ -10721,62 +11077,114 @@ Submit 1–30 strictly modelled create, update, delete, or Query batch items. Us
         name?: string,
         value: string
       },
-      Line: {
-        LinkedTxn?: {
-          TxnLineId?: string,
-          TxnId: string,
-          TxnType: string
-        }[],
-        Description?: string,
-        ItemBasedExpenseLineDetail: {
-          TaxInclusiveAmt?: number,
-          ItemRef?: {
-            name?: string,
-            value: string
-          },
-          CustomerRef?: {
-            name?: string,
-            value: string
-          },
-          PriceLevelRef?: {
-            name?: string,
-            value: string
-          },
-          ClassRef?: {
-            name?: string,
-            value: string
-          },
-          TaxCodeRef?: {
-            name?: string,
-            value: string
-          },
-          MarkupInfo?: {
+      Line: (
+        {
+          LinkedTxn?: {
+            TxnLineId: string,
+            TxnId: string,
+            TxnType: string
+          }[],
+          Description?: string,
+          ItemBasedExpenseLineDetail: {
+            TaxInclusiveAmt?: number,
+            ItemRef?: {
+              name?: string,
+              value: string
+            },
+            CustomerRef?: {
+              name?: string,
+              value: string
+            },
             PriceLevelRef?: {
               name?: string,
               value: string
             },
-            Percent?: number,
-            MarkUpIncomeAccountRef?: {
+            ClassRef?: {
+              name?: string,
+              value: string
+            },
+            TaxCodeRef?: {
+              name?: string,
+              value: string
+            },
+            MarkupInfo?: {
+              PriceLevelRef?: {
+                name?: string,
+                value: string
+              },
+              Percent?: number,
+              MarkUpIncomeAccountRef?: {
+                name?: string,
+                value: string
+              }
+            },
+            BillableStatus?: Billable | NotBillable | HasBeenBilled,
+            Qty?: number,
+            UnitPrice?: number
+          },
+          CustomExtensions?: {
+            AssociatedValues: {
+              Value: string,
+              Key: string
+            },
+            ExtensionType: string
+          },
+          LineNum?: number,
+          Amount: number,
+          DetailType: ItemBasedExpenseLineDetail,
+          Id: string
+        } | {
+          LinkedTxn?: {
+            TxnLineId: string,
+            TxnId: string,
+            TxnType: string
+          }[],
+          Description?: string,
+          DetailType: AccountBasedExpenseLineDetail,
+          CustomExtensions?: {
+            AssociatedValues: {
+              Value: string,
+              Key: string
+            },
+            ExtensionType: string
+          },
+          LineNum?: number,
+          Amount: number,
+          Id: string,
+          AccountBasedExpenseLineDetail: {
+            TaxAmount?: number,
+            TaxInclusiveAmt?: number,
+            ClassRef?: {
+              name?: string,
+              value: string
+            },
+            TaxCodeRef?: {
+              name?: string,
+              value: string
+            },
+            MarkupInfo?: {
+              PriceLevelRef?: {
+                name?: string,
+                value: string
+              },
+              Percent?: number,
+              MarkUpIncomeAccountRef?: {
+                name?: string,
+                value: string
+              }
+            },
+            BillableStatus?: Billable | NotBillable | HasBeenBilled,
+            AccountRef: {
+              name?: string,
+              value: string
+            },
+            CustomerRef?: {
               name?: string,
               value: string
             }
-          },
-          BillableStatus?: Billable | NotBillable | HasBeenBilled,
-          Qty?: number,
-          UnitPrice?: number
-        },
-        CustomExtensions?: {
-          AssociatedValues: {
-            Value: string,
-            Key: string
-          },
-          ExtensionType: string
-        },
-        LineNum?: number,
-        Amount: number,
-        DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
-        Id: string
-      }[],
+          }
+        }
+      )[],
       Balance?: number,
       TxnTaxDetail?: {
         TxnTaxCodeRef?: {
@@ -11476,14 +11884,64 @@ Submit 1–30 strictly modelled create, update, delete, or Query batch items. Us
       },
       TxnSource?: string,
       TxnDate?: string,
-      Line: {
-        Amount: number,
-        LinkedTxn: {
-          TxnLineId?: string,
-          TxnId: string,
-          TxnType: string
-        }[]
-      }[],
+      Line: (
+        {
+          Amount: number,
+          LinkedTxn: {
+            TxnLineId?: string,
+            TxnId: string,
+            TxnType: string
+          }[]
+        } | {
+          Description?: string,
+          DetailType: DepositLineDetail,
+          ProjectRef?: {
+            name?: string,
+            value: string
+          },
+          CustomExtensions?: {
+            AssociatedValues: {
+              Value: string,
+              Key: string
+            },
+            ExtensionType: string
+          },
+          LineNum?: number,
+          Amount: number,
+          CustomField?: {
+            DefinitionId: string,
+            StringValue?: string,
+            Type?: StringType | BooleanType | NumberType | DateType,
+            Name?: string
+          },
+          Id: string,
+          DepositLineDetail: {
+            PaymentMethodRef?: {
+              name?: string,
+              value: string
+            },
+            ClassRef?: {
+              name?: string,
+              value: string
+            },
+            CheckNum?: string,
+            TaxCodeRef?: {
+              name?: string,
+              value: string
+            },
+            TaxApplicableOn?: Purchase | Sales,
+            TxnType?: APCreditCard | ARRefundCreditCard | Bill | BillPaymentCheck | BuildAssembly | CarryOver | CashPurchase | Charge | Check | CreditCardPayment | CreditMemo | Deposit | EFPLiabilityCheck | EFTBillPayment | EFTRefund | Estimate | InventoryAdjustment | InventoryTransfer | Invoice | ItemReceipt | JournalEntry | LiabilityAdjustment | Paycheck | PayrollLiabilityCheck | PurchaseOrder | PriorPayment | ReceivePayment | RefundCheck | ReimburseCharge | SalesOrder | SalesReceipt | SalesTaxPaymentCheck | Transfer | TimeActivity | VendorCredit | YTDAdjustment,
+            AccountRef: {
+              name?: string,
+              value: string
+            },
+            Entity?: {
+              name?: string,
+              value: string
+            }
+          }
+        }
+      )[],
       CashBack?: {
         AccountRef: {
           name?: string,
@@ -12446,62 +12904,109 @@ Submit 1–30 strictly modelled create, update, delete, or Query batch items. Us
         name?: string,
         value: string
       },
-      Line: {
-        LinkedTxn?: {
-          TxnLineId?: string,
-          TxnId: string,
-          TxnType: string
-        }[],
-        Description?: string,
-        ItemBasedExpenseLineDetail: {
-          TaxInclusiveAmt?: number,
-          ItemRef?: {
-            name?: string,
-            value: string
-          },
-          CustomerRef?: {
-            name?: string,
-            value: string
-          },
-          PriceLevelRef?: {
-            name?: string,
-            value: string
-          },
-          ClassRef?: {
-            name?: string,
-            value: string
-          },
-          TaxCodeRef?: {
-            name?: string,
-            value: string
-          },
-          MarkupInfo?: {
+      Line: (
+        {
+          LinkedTxn?: {
+            TxnLineId?: string,
+            TxnId: string,
+            TxnType: string
+          }[],
+          Description?: string,
+          ItemBasedExpenseLineDetail: {
+            TaxInclusiveAmt?: number,
+            ItemRef?: {
+              name?: string,
+              value: string
+            },
+            CustomerRef?: {
+              name?: string,
+              value: string
+            },
             PriceLevelRef?: {
               name?: string,
               value: string
             },
-            Percent?: number,
-            MarkUpIncomeAccountRef?: {
+            ClassRef?: {
+              name?: string,
+              value: string
+            },
+            TaxCodeRef?: {
+              name?: string,
+              value: string
+            },
+            MarkupInfo?: {
+              PriceLevelRef?: {
+                name?: string,
+                value: string
+              },
+              Percent?: number,
+              MarkUpIncomeAccountRef?: {
+                name?: string,
+                value: string
+              }
+            },
+            BillableStatus?: Billable | NotBillable | HasBeenBilled,
+            Qty?: number,
+            UnitPrice?: number
+          },
+          CustomExtensions?: {
+            AssociatedValues: {
+              Value: string,
+              Key: string
+            },
+            ExtensionType: string
+          },
+          LineNum?: number,
+          Amount: number,
+          DetailType: ItemBasedExpenseLineDetail,
+          Id: string
+        } | {
+          Description?: string,
+          DetailType: AccountBasedExpenseLineDetail,
+          CustomExtensions?: {
+            AssociatedValues: {
+              Value: string,
+              Key: string
+            },
+            ExtensionType: string
+          },
+          LineNum?: number,
+          Amount: number,
+          Id: string,
+          AccountBasedExpenseLineDetail: {
+            TaxAmount?: number,
+            TaxInclusiveAmt?: number,
+            ClassRef?: {
+              name?: string,
+              value: string
+            },
+            TaxCodeRef?: {
+              name?: string,
+              value: string
+            },
+            MarkupInfo?: {
+              PriceLevelRef?: {
+                name?: string,
+                value: string
+              },
+              Percent?: number,
+              MarkUpIncomeAccountRef?: {
+                name?: string,
+                value: string
+              }
+            },
+            BillableStatus?: Billable | NotBillable | HasBeenBilled,
+            AccountRef: {
+              name?: string,
+              value: string
+            },
+            CustomerRef?: {
               name?: string,
               value: string
             }
-          },
-          BillableStatus?: Billable | NotBillable | HasBeenBilled,
-          Qty?: number,
-          UnitPrice?: number
-        },
-        CustomExtensions?: {
-          AssociatedValues: {
-            Value: string,
-            Key: string
-          },
-          ExtensionType: string
-        },
-        LineNum?: number,
-        Amount: number,
-        DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
-        Id: string
-      }[],
+          }
+        }
+      )[],
       Credit?: boolean,
       TxnTaxDetail?: {
         TxnTaxCodeRef?: {
@@ -12658,7 +13163,7 @@ Submit 1–30 strictly modelled create, update, delete, or Query batch items. Us
         },
         LineNum?: number,
         Amount: number,
-        DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
+        DetailType: ItemBasedExpenseLineDetail,
         Id: string
       }[],
       TxnTaxDetail?: {
@@ -13598,7 +14103,7 @@ Submit 1–30 strictly modelled create, update, delete, or Query batch items. Us
         },
         LineNum?: number,
         Amount: number,
-        DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
+        DetailType: ItemBasedExpenseLineDetail,
         Id: string
       }[],
       Balance?: number,
@@ -13669,7 +14174,7 @@ await corsair.quickbooks.api.bill.create({"realmId":"12345678","body":{"VendorRe
   },
   Line: {
     Description?: string,
-    DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
+    DetailType: AccountBasedExpenseLineDetail,
     CustomExtensions?: {
       AssociatedValues: {
         Value: string,
@@ -13768,62 +14273,114 @@ await corsair.quickbooks.api.bill.create({"realmId":"12345678","body":{"VendorRe
     name?: string,
     value: string
   },
-  Line: {
-    LinkedTxn?: {
-      TxnLineId?: string,
-      TxnId: string,
-      TxnType: string
-    }[],
-    Description?: string,
-    ItemBasedExpenseLineDetail: {
-      TaxInclusiveAmt?: number,
-      ItemRef?: {
-        name?: string,
-        value: string
-      },
-      CustomerRef?: {
-        name?: string,
-        value: string
-      },
-      PriceLevelRef?: {
-        name?: string,
-        value: string
-      },
-      ClassRef?: {
-        name?: string,
-        value: string
-      },
-      TaxCodeRef?: {
-        name?: string,
-        value: string
-      },
-      MarkupInfo?: {
+  Line: (
+    {
+      LinkedTxn?: {
+        TxnLineId: string,
+        TxnId: string,
+        TxnType: string
+      }[],
+      Description?: string,
+      ItemBasedExpenseLineDetail: {
+        TaxInclusiveAmt?: number,
+        ItemRef?: {
+          name?: string,
+          value: string
+        },
+        CustomerRef?: {
+          name?: string,
+          value: string
+        },
         PriceLevelRef?: {
           name?: string,
           value: string
         },
-        Percent?: number,
-        MarkUpIncomeAccountRef?: {
+        ClassRef?: {
+          name?: string,
+          value: string
+        },
+        TaxCodeRef?: {
+          name?: string,
+          value: string
+        },
+        MarkupInfo?: {
+          PriceLevelRef?: {
+            name?: string,
+            value: string
+          },
+          Percent?: number,
+          MarkUpIncomeAccountRef?: {
+            name?: string,
+            value: string
+          }
+        },
+        BillableStatus?: Billable | NotBillable | HasBeenBilled,
+        Qty?: number,
+        UnitPrice?: number
+      },
+      CustomExtensions?: {
+        AssociatedValues: {
+          Value: string,
+          Key: string
+        },
+        ExtensionType: string
+      },
+      LineNum?: number,
+      Amount: number,
+      DetailType: ItemBasedExpenseLineDetail,
+      Id: string
+    } | {
+      LinkedTxn?: {
+        TxnLineId: string,
+        TxnId: string,
+        TxnType: string
+      }[],
+      Description?: string,
+      DetailType: AccountBasedExpenseLineDetail,
+      CustomExtensions?: {
+        AssociatedValues: {
+          Value: string,
+          Key: string
+        },
+        ExtensionType: string
+      },
+      LineNum?: number,
+      Amount: number,
+      Id: string,
+      AccountBasedExpenseLineDetail: {
+        TaxAmount?: number,
+        TaxInclusiveAmt?: number,
+        ClassRef?: {
+          name?: string,
+          value: string
+        },
+        TaxCodeRef?: {
+          name?: string,
+          value: string
+        },
+        MarkupInfo?: {
+          PriceLevelRef?: {
+            name?: string,
+            value: string
+          },
+          Percent?: number,
+          MarkUpIncomeAccountRef?: {
+            name?: string,
+            value: string
+          }
+        },
+        BillableStatus?: Billable | NotBillable | HasBeenBilled,
+        AccountRef: {
+          name?: string,
+          value: string
+        },
+        CustomerRef?: {
           name?: string,
           value: string
         }
-      },
-      BillableStatus?: Billable | NotBillable | HasBeenBilled,
-      Qty?: number,
-      UnitPrice?: number
-    },
-    CustomExtensions?: {
-      AssociatedValues: {
-        Value: string,
-        Key: string
-      },
-      ExtensionType: string
-    },
-    LineNum?: number,
-    Amount: number,
-    DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
-    Id: string
-  }[],
+      }
+    }
+  )[],
   Balance?: number,
   TxnTaxDetail?: {
     TxnTaxCodeRef?: {
@@ -13990,62 +14547,114 @@ await corsair.quickbooks.api.bill.get({"realmId":"12345678","billId":"35"});
     name?: string,
     value: string
   },
-  Line: {
-    LinkedTxn?: {
-      TxnLineId?: string,
-      TxnId: string,
-      TxnType: string
-    }[],
-    Description?: string,
-    ItemBasedExpenseLineDetail: {
-      TaxInclusiveAmt?: number,
-      ItemRef?: {
-        name?: string,
-        value: string
-      },
-      CustomerRef?: {
-        name?: string,
-        value: string
-      },
-      PriceLevelRef?: {
-        name?: string,
-        value: string
-      },
-      ClassRef?: {
-        name?: string,
-        value: string
-      },
-      TaxCodeRef?: {
-        name?: string,
-        value: string
-      },
-      MarkupInfo?: {
+  Line: (
+    {
+      LinkedTxn?: {
+        TxnLineId: string,
+        TxnId: string,
+        TxnType: string
+      }[],
+      Description?: string,
+      ItemBasedExpenseLineDetail: {
+        TaxInclusiveAmt?: number,
+        ItemRef?: {
+          name?: string,
+          value: string
+        },
+        CustomerRef?: {
+          name?: string,
+          value: string
+        },
         PriceLevelRef?: {
           name?: string,
           value: string
         },
-        Percent?: number,
-        MarkUpIncomeAccountRef?: {
+        ClassRef?: {
+          name?: string,
+          value: string
+        },
+        TaxCodeRef?: {
+          name?: string,
+          value: string
+        },
+        MarkupInfo?: {
+          PriceLevelRef?: {
+            name?: string,
+            value: string
+          },
+          Percent?: number,
+          MarkUpIncomeAccountRef?: {
+            name?: string,
+            value: string
+          }
+        },
+        BillableStatus?: Billable | NotBillable | HasBeenBilled,
+        Qty?: number,
+        UnitPrice?: number
+      },
+      CustomExtensions?: {
+        AssociatedValues: {
+          Value: string,
+          Key: string
+        },
+        ExtensionType: string
+      },
+      LineNum?: number,
+      Amount: number,
+      DetailType: ItemBasedExpenseLineDetail,
+      Id: string
+    } | {
+      LinkedTxn?: {
+        TxnLineId: string,
+        TxnId: string,
+        TxnType: string
+      }[],
+      Description?: string,
+      DetailType: AccountBasedExpenseLineDetail,
+      CustomExtensions?: {
+        AssociatedValues: {
+          Value: string,
+          Key: string
+        },
+        ExtensionType: string
+      },
+      LineNum?: number,
+      Amount: number,
+      Id: string,
+      AccountBasedExpenseLineDetail: {
+        TaxAmount?: number,
+        TaxInclusiveAmt?: number,
+        ClassRef?: {
+          name?: string,
+          value: string
+        },
+        TaxCodeRef?: {
+          name?: string,
+          value: string
+        },
+        MarkupInfo?: {
+          PriceLevelRef?: {
+            name?: string,
+            value: string
+          },
+          Percent?: number,
+          MarkUpIncomeAccountRef?: {
+            name?: string,
+            value: string
+          }
+        },
+        BillableStatus?: Billable | NotBillable | HasBeenBilled,
+        AccountRef: {
+          name?: string,
+          value: string
+        },
+        CustomerRef?: {
           name?: string,
           value: string
         }
-      },
-      BillableStatus?: Billable | NotBillable | HasBeenBilled,
-      Qty?: number,
-      UnitPrice?: number
-    },
-    CustomExtensions?: {
-      AssociatedValues: {
-        Value: string,
-        Key: string
-      },
-      ExtensionType: string
-    },
-    LineNum?: number,
-    Amount: number,
-    DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
-    Id: string
-  }[],
+      }
+    }
+  )[],
   Balance?: number,
   TxnTaxDetail?: {
     TxnTaxCodeRef?: {
@@ -14160,62 +14769,114 @@ await corsair.quickbooks.api.bill.list({"realmId":"12345678"});
       name?: string,
       value: string
     },
-    Line: {
-      LinkedTxn?: {
-        TxnLineId?: string,
-        TxnId: string,
-        TxnType: string
-      }[],
-      Description?: string,
-      ItemBasedExpenseLineDetail: {
-        TaxInclusiveAmt?: number,
-        ItemRef?: {
-          name?: string,
-          value: string
-        },
-        CustomerRef?: {
-          name?: string,
-          value: string
-        },
-        PriceLevelRef?: {
-          name?: string,
-          value: string
-        },
-        ClassRef?: {
-          name?: string,
-          value: string
-        },
-        TaxCodeRef?: {
-          name?: string,
-          value: string
-        },
-        MarkupInfo?: {
+    Line: (
+      {
+        LinkedTxn?: {
+          TxnLineId: string,
+          TxnId: string,
+          TxnType: string
+        }[],
+        Description?: string,
+        ItemBasedExpenseLineDetail: {
+          TaxInclusiveAmt?: number,
+          ItemRef?: {
+            name?: string,
+            value: string
+          },
+          CustomerRef?: {
+            name?: string,
+            value: string
+          },
           PriceLevelRef?: {
             name?: string,
             value: string
           },
-          Percent?: number,
-          MarkUpIncomeAccountRef?: {
+          ClassRef?: {
+            name?: string,
+            value: string
+          },
+          TaxCodeRef?: {
+            name?: string,
+            value: string
+          },
+          MarkupInfo?: {
+            PriceLevelRef?: {
+              name?: string,
+              value: string
+            },
+            Percent?: number,
+            MarkUpIncomeAccountRef?: {
+              name?: string,
+              value: string
+            }
+          },
+          BillableStatus?: Billable | NotBillable | HasBeenBilled,
+          Qty?: number,
+          UnitPrice?: number
+        },
+        CustomExtensions?: {
+          AssociatedValues: {
+            Value: string,
+            Key: string
+          },
+          ExtensionType: string
+        },
+        LineNum?: number,
+        Amount: number,
+        DetailType: ItemBasedExpenseLineDetail,
+        Id: string
+      } | {
+        LinkedTxn?: {
+          TxnLineId: string,
+          TxnId: string,
+          TxnType: string
+        }[],
+        Description?: string,
+        DetailType: AccountBasedExpenseLineDetail,
+        CustomExtensions?: {
+          AssociatedValues: {
+            Value: string,
+            Key: string
+          },
+          ExtensionType: string
+        },
+        LineNum?: number,
+        Amount: number,
+        Id: string,
+        AccountBasedExpenseLineDetail: {
+          TaxAmount?: number,
+          TaxInclusiveAmt?: number,
+          ClassRef?: {
+            name?: string,
+            value: string
+          },
+          TaxCodeRef?: {
+            name?: string,
+            value: string
+          },
+          MarkupInfo?: {
+            PriceLevelRef?: {
+              name?: string,
+              value: string
+            },
+            Percent?: number,
+            MarkUpIncomeAccountRef?: {
+              name?: string,
+              value: string
+            }
+          },
+          BillableStatus?: Billable | NotBillable | HasBeenBilled,
+          AccountRef: {
+            name?: string,
+            value: string
+          },
+          CustomerRef?: {
             name?: string,
             value: string
           }
-        },
-        BillableStatus?: Billable | NotBillable | HasBeenBilled,
-        Qty?: number,
-        UnitPrice?: number
-      },
-      CustomExtensions?: {
-        AssociatedValues: {
-          Value: string,
-          Key: string
-        },
-        ExtensionType: string
-      },
-      LineNum?: number,
-      Amount: number,
-      DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
-      Id: string
-    }[],
+        }
+      }
+    )[],
     Balance?: number,
     TxnTaxDetail?: {
       TxnTaxCodeRef?: {
@@ -14317,62 +14978,114 @@ await corsair.quickbooks.api.bill.update({"realmId":"12345678","body":{"VendorRe
     name?: string,
     value: string
   },
-  Line: {
-    LinkedTxn?: {
-      TxnLineId?: string,
-      TxnId: string,
-      TxnType: string
-    }[],
-    Description?: string,
-    ItemBasedExpenseLineDetail: {
-      TaxInclusiveAmt?: number,
-      ItemRef?: {
-        name?: string,
-        value: string
-      },
-      CustomerRef?: {
-        name?: string,
-        value: string
-      },
-      PriceLevelRef?: {
-        name?: string,
-        value: string
-      },
-      ClassRef?: {
-        name?: string,
-        value: string
-      },
-      TaxCodeRef?: {
-        name?: string,
-        value: string
-      },
-      MarkupInfo?: {
+  Line: (
+    {
+      LinkedTxn?: {
+        TxnLineId: string,
+        TxnId: string,
+        TxnType: string
+      }[],
+      Description?: string,
+      ItemBasedExpenseLineDetail: {
+        TaxInclusiveAmt?: number,
+        ItemRef?: {
+          name?: string,
+          value: string
+        },
+        CustomerRef?: {
+          name?: string,
+          value: string
+        },
         PriceLevelRef?: {
           name?: string,
           value: string
         },
-        Percent?: number,
-        MarkUpIncomeAccountRef?: {
+        ClassRef?: {
+          name?: string,
+          value: string
+        },
+        TaxCodeRef?: {
+          name?: string,
+          value: string
+        },
+        MarkupInfo?: {
+          PriceLevelRef?: {
+            name?: string,
+            value: string
+          },
+          Percent?: number,
+          MarkUpIncomeAccountRef?: {
+            name?: string,
+            value: string
+          }
+        },
+        BillableStatus?: Billable | NotBillable | HasBeenBilled,
+        Qty?: number,
+        UnitPrice?: number
+      },
+      CustomExtensions?: {
+        AssociatedValues: {
+          Value: string,
+          Key: string
+        },
+        ExtensionType: string
+      },
+      LineNum?: number,
+      Amount: number,
+      DetailType: ItemBasedExpenseLineDetail,
+      Id: string
+    } | {
+      LinkedTxn?: {
+        TxnLineId: string,
+        TxnId: string,
+        TxnType: string
+      }[],
+      Description?: string,
+      DetailType: AccountBasedExpenseLineDetail,
+      CustomExtensions?: {
+        AssociatedValues: {
+          Value: string,
+          Key: string
+        },
+        ExtensionType: string
+      },
+      LineNum?: number,
+      Amount: number,
+      Id: string,
+      AccountBasedExpenseLineDetail: {
+        TaxAmount?: number,
+        TaxInclusiveAmt?: number,
+        ClassRef?: {
+          name?: string,
+          value: string
+        },
+        TaxCodeRef?: {
+          name?: string,
+          value: string
+        },
+        MarkupInfo?: {
+          PriceLevelRef?: {
+            name?: string,
+            value: string
+          },
+          Percent?: number,
+          MarkUpIncomeAccountRef?: {
+            name?: string,
+            value: string
+          }
+        },
+        BillableStatus?: Billable | NotBillable | HasBeenBilled,
+        AccountRef: {
+          name?: string,
+          value: string
+        },
+        CustomerRef?: {
           name?: string,
           value: string
         }
-      },
-      BillableStatus?: Billable | NotBillable | HasBeenBilled,
-      Qty?: number,
-      UnitPrice?: number
-    },
-    CustomExtensions?: {
-      AssociatedValues: {
-        Value: string,
-        Key: string
-      },
-      ExtensionType: string
-    },
-    LineNum?: number,
-    Amount: number,
-    DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
-    Id: string
-  }[],
+      }
+    }
+  )[],
   Balance?: number,
   TxnTaxDetail?: {
     TxnTaxCodeRef?: {
@@ -14459,62 +15172,114 @@ await corsair.quickbooks.api.bill.update({"realmId":"12345678","body":{"VendorRe
     name?: string,
     value: string
   },
-  Line: {
-    LinkedTxn?: {
-      TxnLineId?: string,
-      TxnId: string,
-      TxnType: string
-    }[],
-    Description?: string,
-    ItemBasedExpenseLineDetail: {
-      TaxInclusiveAmt?: number,
-      ItemRef?: {
-        name?: string,
-        value: string
-      },
-      CustomerRef?: {
-        name?: string,
-        value: string
-      },
-      PriceLevelRef?: {
-        name?: string,
-        value: string
-      },
-      ClassRef?: {
-        name?: string,
-        value: string
-      },
-      TaxCodeRef?: {
-        name?: string,
-        value: string
-      },
-      MarkupInfo?: {
+  Line: (
+    {
+      LinkedTxn?: {
+        TxnLineId: string,
+        TxnId: string,
+        TxnType: string
+      }[],
+      Description?: string,
+      ItemBasedExpenseLineDetail: {
+        TaxInclusiveAmt?: number,
+        ItemRef?: {
+          name?: string,
+          value: string
+        },
+        CustomerRef?: {
+          name?: string,
+          value: string
+        },
         PriceLevelRef?: {
           name?: string,
           value: string
         },
-        Percent?: number,
-        MarkUpIncomeAccountRef?: {
+        ClassRef?: {
+          name?: string,
+          value: string
+        },
+        TaxCodeRef?: {
+          name?: string,
+          value: string
+        },
+        MarkupInfo?: {
+          PriceLevelRef?: {
+            name?: string,
+            value: string
+          },
+          Percent?: number,
+          MarkUpIncomeAccountRef?: {
+            name?: string,
+            value: string
+          }
+        },
+        BillableStatus?: Billable | NotBillable | HasBeenBilled,
+        Qty?: number,
+        UnitPrice?: number
+      },
+      CustomExtensions?: {
+        AssociatedValues: {
+          Value: string,
+          Key: string
+        },
+        ExtensionType: string
+      },
+      LineNum?: number,
+      Amount: number,
+      DetailType: ItemBasedExpenseLineDetail,
+      Id: string
+    } | {
+      LinkedTxn?: {
+        TxnLineId: string,
+        TxnId: string,
+        TxnType: string
+      }[],
+      Description?: string,
+      DetailType: AccountBasedExpenseLineDetail,
+      CustomExtensions?: {
+        AssociatedValues: {
+          Value: string,
+          Key: string
+        },
+        ExtensionType: string
+      },
+      LineNum?: number,
+      Amount: number,
+      Id: string,
+      AccountBasedExpenseLineDetail: {
+        TaxAmount?: number,
+        TaxInclusiveAmt?: number,
+        ClassRef?: {
+          name?: string,
+          value: string
+        },
+        TaxCodeRef?: {
+          name?: string,
+          value: string
+        },
+        MarkupInfo?: {
+          PriceLevelRef?: {
+            name?: string,
+            value: string
+          },
+          Percent?: number,
+          MarkUpIncomeAccountRef?: {
+            name?: string,
+            value: string
+          }
+        },
+        BillableStatus?: Billable | NotBillable | HasBeenBilled,
+        AccountRef: {
+          name?: string,
+          value: string
+        },
+        CustomerRef?: {
           name?: string,
           value: string
         }
-      },
-      BillableStatus?: Billable | NotBillable | HasBeenBilled,
-      Qty?: number,
-      UnitPrice?: number
-    },
-    CustomExtensions?: {
-      AssociatedValues: {
-        Value: string,
-        Key: string
-      },
-      ExtensionType: string
-    },
-    LineNum?: number,
-    Amount: number,
-    DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
-    Id: string
-  }[],
+      }
+    }
+  )[],
   Balance?: number,
   TxnTaxDetail?: {
     TxnTaxCodeRef?: {
@@ -15963,62 +16728,114 @@ changedSince must be within the previous 30 days. JournalCode, TaxAgency, TimeAc
             name?: string,
             value: string
           },
-          Line: {
-            LinkedTxn?: {
-              TxnLineId?: string,
-              TxnId: string,
-              TxnType: string
-            }[],
-            Description?: string,
-            ItemBasedExpenseLineDetail: {
-              TaxInclusiveAmt?: number,
-              ItemRef?: {
-                name?: string,
-                value: string
-              },
-              CustomerRef?: {
-                name?: string,
-                value: string
-              },
-              PriceLevelRef?: {
-                name?: string,
-                value: string
-              },
-              ClassRef?: {
-                name?: string,
-                value: string
-              },
-              TaxCodeRef?: {
-                name?: string,
-                value: string
-              },
-              MarkupInfo?: {
+          Line: (
+            {
+              LinkedTxn?: {
+                TxnLineId: string,
+                TxnId: string,
+                TxnType: string
+              }[],
+              Description?: string,
+              ItemBasedExpenseLineDetail: {
+                TaxInclusiveAmt?: number,
+                ItemRef?: {
+                  name?: string,
+                  value: string
+                },
+                CustomerRef?: {
+                  name?: string,
+                  value: string
+                },
                 PriceLevelRef?: {
                   name?: string,
                   value: string
                 },
-                Percent?: number,
-                MarkUpIncomeAccountRef?: {
+                ClassRef?: {
+                  name?: string,
+                  value: string
+                },
+                TaxCodeRef?: {
+                  name?: string,
+                  value: string
+                },
+                MarkupInfo?: {
+                  PriceLevelRef?: {
+                    name?: string,
+                    value: string
+                  },
+                  Percent?: number,
+                  MarkUpIncomeAccountRef?: {
+                    name?: string,
+                    value: string
+                  }
+                },
+                BillableStatus?: Billable | NotBillable | HasBeenBilled,
+                Qty?: number,
+                UnitPrice?: number
+              },
+              CustomExtensions?: {
+                AssociatedValues: {
+                  Value: string,
+                  Key: string
+                },
+                ExtensionType: string
+              },
+              LineNum?: number,
+              Amount: number,
+              DetailType: ItemBasedExpenseLineDetail,
+              Id: string
+            } | {
+              LinkedTxn?: {
+                TxnLineId: string,
+                TxnId: string,
+                TxnType: string
+              }[],
+              Description?: string,
+              DetailType: AccountBasedExpenseLineDetail,
+              CustomExtensions?: {
+                AssociatedValues: {
+                  Value: string,
+                  Key: string
+                },
+                ExtensionType: string
+              },
+              LineNum?: number,
+              Amount: number,
+              Id: string,
+              AccountBasedExpenseLineDetail: {
+                TaxAmount?: number,
+                TaxInclusiveAmt?: number,
+                ClassRef?: {
+                  name?: string,
+                  value: string
+                },
+                TaxCodeRef?: {
+                  name?: string,
+                  value: string
+                },
+                MarkupInfo?: {
+                  PriceLevelRef?: {
+                    name?: string,
+                    value: string
+                  },
+                  Percent?: number,
+                  MarkUpIncomeAccountRef?: {
+                    name?: string,
+                    value: string
+                  }
+                },
+                BillableStatus?: Billable | NotBillable | HasBeenBilled,
+                AccountRef: {
+                  name?: string,
+                  value: string
+                },
+                CustomerRef?: {
                   name?: string,
                   value: string
                 }
-              },
-              BillableStatus?: Billable | NotBillable | HasBeenBilled,
-              Qty?: number,
-              UnitPrice?: number
-            },
-            CustomExtensions?: {
-              AssociatedValues: {
-                Value: string,
-                Key: string
-              },
-              ExtensionType: string
-            },
-            LineNum?: number,
-            Amount: number,
-            DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
-            Id: string
-          }[],
+              }
+            }
+          )[],
           Balance?: number,
           TxnTaxDetail?: {
             TxnTaxCodeRef?: {
@@ -16850,14 +17667,64 @@ changedSince must be within the previous 30 days. JournalCode, TaxAgency, TimeAc
           },
           TxnSource?: string,
           TxnDate?: string,
-          Line: {
-            Amount: number,
-            LinkedTxn: {
-              TxnLineId?: string,
-              TxnId: string,
-              TxnType: string
-            }[]
-          }[],
+          Line: (
+            {
+              Amount: number,
+              LinkedTxn: {
+                TxnLineId?: string,
+                TxnId: string,
+                TxnType: string
+              }[]
+            } | {
+              Description?: string,
+              DetailType: DepositLineDetail,
+              ProjectRef?: {
+                name?: string,
+                value: string
+              },
+              CustomExtensions?: {
+                AssociatedValues: {
+                  Value: string,
+                  Key: string
+                },
+                ExtensionType: string
+              },
+              LineNum?: number,
+              Amount: number,
+              CustomField?: {
+                DefinitionId: string,
+                StringValue?: string,
+                Type?: StringType | BooleanType | NumberType | DateType,
+                Name?: string
+              },
+              Id: string,
+              DepositLineDetail: {
+                PaymentMethodRef?: {
+                  name?: string,
+                  value: string
+                },
+                ClassRef?: {
+                  name?: string,
+                  value: string
+                },
+                CheckNum?: string,
+                TaxCodeRef?: {
+                  name?: string,
+                  value: string
+                },
+                TaxApplicableOn?: Purchase | Sales,
+                TxnType?: APCreditCard | ARRefundCreditCard | Bill | BillPaymentCheck | BuildAssembly | CarryOver | CashPurchase | Charge | Check | CreditCardPayment | CreditMemo | Deposit | EFPLiabilityCheck | EFTBillPayment | EFTRefund | Estimate | InventoryAdjustment | InventoryTransfer | Invoice | ItemReceipt | JournalEntry | LiabilityAdjustment | Paycheck | PayrollLiabilityCheck | PurchaseOrder | PriorPayment | ReceivePayment | RefundCheck | ReimburseCharge | SalesOrder | SalesReceipt | SalesTaxPaymentCheck | Transfer | TimeActivity | VendorCredit | YTDAdjustment,
+                AccountRef: {
+                  name?: string,
+                  value: string
+                },
+                Entity?: {
+                  name?: string,
+                  value: string
+                }
+              }
+            }
+          )[],
           CashBack?: {
             AccountRef: {
               name?: string,
@@ -17941,62 +18808,109 @@ changedSince must be within the previous 30 days. JournalCode, TaxAgency, TimeAc
             name?: string,
             value: string
           },
-          Line: {
-            LinkedTxn?: {
-              TxnLineId?: string,
-              TxnId: string,
-              TxnType: string
-            }[],
-            Description?: string,
-            ItemBasedExpenseLineDetail: {
-              TaxInclusiveAmt?: number,
-              ItemRef?: {
-                name?: string,
-                value: string
-              },
-              CustomerRef?: {
-                name?: string,
-                value: string
-              },
-              PriceLevelRef?: {
-                name?: string,
-                value: string
-              },
-              ClassRef?: {
-                name?: string,
-                value: string
-              },
-              TaxCodeRef?: {
-                name?: string,
-                value: string
-              },
-              MarkupInfo?: {
+          Line: (
+            {
+              LinkedTxn?: {
+                TxnLineId?: string,
+                TxnId: string,
+                TxnType: string
+              }[],
+              Description?: string,
+              ItemBasedExpenseLineDetail: {
+                TaxInclusiveAmt?: number,
+                ItemRef?: {
+                  name?: string,
+                  value: string
+                },
+                CustomerRef?: {
+                  name?: string,
+                  value: string
+                },
                 PriceLevelRef?: {
                   name?: string,
                   value: string
                 },
-                Percent?: number,
-                MarkUpIncomeAccountRef?: {
+                ClassRef?: {
+                  name?: string,
+                  value: string
+                },
+                TaxCodeRef?: {
+                  name?: string,
+                  value: string
+                },
+                MarkupInfo?: {
+                  PriceLevelRef?: {
+                    name?: string,
+                    value: string
+                  },
+                  Percent?: number,
+                  MarkUpIncomeAccountRef?: {
+                    name?: string,
+                    value: string
+                  }
+                },
+                BillableStatus?: Billable | NotBillable | HasBeenBilled,
+                Qty?: number,
+                UnitPrice?: number
+              },
+              CustomExtensions?: {
+                AssociatedValues: {
+                  Value: string,
+                  Key: string
+                },
+                ExtensionType: string
+              },
+              LineNum?: number,
+              Amount: number,
+              DetailType: ItemBasedExpenseLineDetail,
+              Id: string
+            } | {
+              Description?: string,
+              DetailType: AccountBasedExpenseLineDetail,
+              CustomExtensions?: {
+                AssociatedValues: {
+                  Value: string,
+                  Key: string
+                },
+                ExtensionType: string
+              },
+              LineNum?: number,
+              Amount: number,
+              Id: string,
+              AccountBasedExpenseLineDetail: {
+                TaxAmount?: number,
+                TaxInclusiveAmt?: number,
+                ClassRef?: {
+                  name?: string,
+                  value: string
+                },
+                TaxCodeRef?: {
+                  name?: string,
+                  value: string
+                },
+                MarkupInfo?: {
+                  PriceLevelRef?: {
+                    name?: string,
+                    value: string
+                  },
+                  Percent?: number,
+                  MarkUpIncomeAccountRef?: {
+                    name?: string,
+                    value: string
+                  }
+                },
+                BillableStatus?: Billable | NotBillable | HasBeenBilled,
+                AccountRef: {
+                  name?: string,
+                  value: string
+                },
+                CustomerRef?: {
                   name?: string,
                   value: string
                 }
-              },
-              BillableStatus?: Billable | NotBillable | HasBeenBilled,
-              Qty?: number,
-              UnitPrice?: number
-            },
-            CustomExtensions?: {
-              AssociatedValues: {
-                Value: string,
-                Key: string
-              },
-              ExtensionType: string
-            },
-            LineNum?: number,
-            Amount: number,
-            DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
-            Id: string
-          }[],
+              }
+            }
+          )[],
           Credit?: boolean,
           TxnTaxDetail?: {
             TxnTaxCodeRef?: {
@@ -18164,7 +19078,7 @@ changedSince must be within the previous 30 days. JournalCode, TaxAgency, TimeAc
             },
             LineNum?: number,
             Amount: number,
-            DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
+            DetailType: ItemBasedExpenseLineDetail,
             Id: string
           }[],
           TxnTaxDetail?: {
@@ -19089,7 +20003,7 @@ changedSince must be within the previous 30 days. JournalCode, TaxAgency, TimeAc
             },
             LineNum?: number,
             Amount: number,
-            DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
+            DetailType: ItemBasedExpenseLineDetail,
             Id: string
           }[],
           Balance?: number,
@@ -24798,7 +25712,7 @@ await corsair.quickbooks.api.deposit.create({"realmId":"12345678","body":{}});
   },
   Line?: {
     Description?: string,
-    DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
+    DetailType: DepositLineDetail,
     ProjectRef?: {
       name?: string,
       value: string
@@ -24888,14 +25802,64 @@ await corsair.quickbooks.api.deposit.create({"realmId":"12345678","body":{}});
   },
   TxnSource?: string,
   TxnDate?: string,
-  Line: {
-    Amount: number,
-    LinkedTxn: {
-      TxnLineId?: string,
-      TxnId: string,
-      TxnType: string
-    }[]
-  }[],
+  Line: (
+    {
+      Amount: number,
+      LinkedTxn: {
+        TxnLineId?: string,
+        TxnId: string,
+        TxnType: string
+      }[]
+    } | {
+      Description?: string,
+      DetailType: DepositLineDetail,
+      ProjectRef?: {
+        name?: string,
+        value: string
+      },
+      CustomExtensions?: {
+        AssociatedValues: {
+          Value: string,
+          Key: string
+        },
+        ExtensionType: string
+      },
+      LineNum?: number,
+      Amount: number,
+      CustomField?: {
+        DefinitionId: string,
+        StringValue?: string,
+        Type?: StringType | BooleanType | NumberType | DateType,
+        Name?: string
+      },
+      Id: string,
+      DepositLineDetail: {
+        PaymentMethodRef?: {
+          name?: string,
+          value: string
+        },
+        ClassRef?: {
+          name?: string,
+          value: string
+        },
+        CheckNum?: string,
+        TaxCodeRef?: {
+          name?: string,
+          value: string
+        },
+        TaxApplicableOn?: Purchase | Sales,
+        TxnType?: APCreditCard | ARRefundCreditCard | Bill | BillPaymentCheck | BuildAssembly | CarryOver | CashPurchase | Charge | Check | CreditCardPayment | CreditMemo | Deposit | EFPLiabilityCheck | EFTBillPayment | EFTRefund | Estimate | InventoryAdjustment | InventoryTransfer | Invoice | ItemReceipt | JournalEntry | LiabilityAdjustment | Paycheck | PayrollLiabilityCheck | PurchaseOrder | PriorPayment | ReceivePayment | RefundCheck | ReimburseCharge | SalesOrder | SalesReceipt | SalesTaxPaymentCheck | Transfer | TimeActivity | VendorCredit | YTDAdjustment,
+        AccountRef: {
+          name?: string,
+          value: string
+        },
+        Entity?: {
+          name?: string,
+          value: string
+        }
+      }
+    }
+  )[],
   CashBack?: {
     AccountRef: {
       name?: string,
@@ -25054,14 +26018,64 @@ await corsair.quickbooks.api.deposit.get({"realmId":"12345678","depositId":"35"}
   },
   TxnSource?: string,
   TxnDate?: string,
-  Line: {
-    Amount: number,
-    LinkedTxn: {
-      TxnLineId?: string,
-      TxnId: string,
-      TxnType: string
-    }[]
-  }[],
+  Line: (
+    {
+      Amount: number,
+      LinkedTxn: {
+        TxnLineId?: string,
+        TxnId: string,
+        TxnType: string
+      }[]
+    } | {
+      Description?: string,
+      DetailType: DepositLineDetail,
+      ProjectRef?: {
+        name?: string,
+        value: string
+      },
+      CustomExtensions?: {
+        AssociatedValues: {
+          Value: string,
+          Key: string
+        },
+        ExtensionType: string
+      },
+      LineNum?: number,
+      Amount: number,
+      CustomField?: {
+        DefinitionId: string,
+        StringValue?: string,
+        Type?: StringType | BooleanType | NumberType | DateType,
+        Name?: string
+      },
+      Id: string,
+      DepositLineDetail: {
+        PaymentMethodRef?: {
+          name?: string,
+          value: string
+        },
+        ClassRef?: {
+          name?: string,
+          value: string
+        },
+        CheckNum?: string,
+        TaxCodeRef?: {
+          name?: string,
+          value: string
+        },
+        TaxApplicableOn?: Purchase | Sales,
+        TxnType?: APCreditCard | ARRefundCreditCard | Bill | BillPaymentCheck | BuildAssembly | CarryOver | CashPurchase | Charge | Check | CreditCardPayment | CreditMemo | Deposit | EFPLiabilityCheck | EFTBillPayment | EFTRefund | Estimate | InventoryAdjustment | InventoryTransfer | Invoice | ItemReceipt | JournalEntry | LiabilityAdjustment | Paycheck | PayrollLiabilityCheck | PurchaseOrder | PriorPayment | ReceivePayment | RefundCheck | ReimburseCharge | SalesOrder | SalesReceipt | SalesTaxPaymentCheck | Transfer | TimeActivity | VendorCredit | YTDAdjustment,
+        AccountRef: {
+          name?: string,
+          value: string
+        },
+        Entity?: {
+          name?: string,
+          value: string
+        }
+      }
+    }
+  )[],
   CashBack?: {
     AccountRef: {
       name?: string,
@@ -25168,14 +26182,64 @@ await corsair.quickbooks.api.deposit.list({"realmId":"12345678"});
     },
     TxnSource?: string,
     TxnDate?: string,
-    Line: {
-      Amount: number,
-      LinkedTxn: {
-        TxnLineId?: string,
-        TxnId: string,
-        TxnType: string
-      }[]
-    }[],
+    Line: (
+      {
+        Amount: number,
+        LinkedTxn: {
+          TxnLineId?: string,
+          TxnId: string,
+          TxnType: string
+        }[]
+      } | {
+        Description?: string,
+        DetailType: DepositLineDetail,
+        ProjectRef?: {
+          name?: string,
+          value: string
+        },
+        CustomExtensions?: {
+          AssociatedValues: {
+            Value: string,
+            Key: string
+          },
+          ExtensionType: string
+        },
+        LineNum?: number,
+        Amount: number,
+        CustomField?: {
+          DefinitionId: string,
+          StringValue?: string,
+          Type?: StringType | BooleanType | NumberType | DateType,
+          Name?: string
+        },
+        Id: string,
+        DepositLineDetail: {
+          PaymentMethodRef?: {
+            name?: string,
+            value: string
+          },
+          ClassRef?: {
+            name?: string,
+            value: string
+          },
+          CheckNum?: string,
+          TaxCodeRef?: {
+            name?: string,
+            value: string
+          },
+          TaxApplicableOn?: Purchase | Sales,
+          TxnType?: APCreditCard | ARRefundCreditCard | Bill | BillPaymentCheck | BuildAssembly | CarryOver | CashPurchase | Charge | Check | CreditCardPayment | CreditMemo | Deposit | EFPLiabilityCheck | EFTBillPayment | EFTRefund | Estimate | InventoryAdjustment | InventoryTransfer | Invoice | ItemReceipt | JournalEntry | LiabilityAdjustment | Paycheck | PayrollLiabilityCheck | PurchaseOrder | PriorPayment | ReceivePayment | RefundCheck | ReimburseCharge | SalesOrder | SalesReceipt | SalesTaxPaymentCheck | Transfer | TimeActivity | VendorCredit | YTDAdjustment,
+          AccountRef: {
+            name?: string,
+            value: string
+          },
+          Entity?: {
+            name?: string,
+            value: string
+          }
+        }
+      }
+    )[],
     CashBack?: {
       AccountRef: {
         name?: string,
@@ -25269,14 +26333,64 @@ await corsair.quickbooks.api.deposit.sparseUpdate({"realmId":"12345678","body":{
   },
   TxnSource?: string,
   TxnDate?: string,
-  Line?: {
-    Amount: number,
-    LinkedTxn: {
-      TxnLineId?: string,
-      TxnId: string,
-      TxnType: string
-    }[]
-  }[],
+  Line?: (
+    {
+      Amount: number,
+      LinkedTxn: {
+        TxnLineId?: string,
+        TxnId: string,
+        TxnType: string
+      }[]
+    } | {
+      Description?: string,
+      DetailType: DepositLineDetail,
+      ProjectRef?: {
+        name?: string,
+        value: string
+      },
+      CustomExtensions?: {
+        AssociatedValues: {
+          Value: string,
+          Key: string
+        },
+        ExtensionType: string
+      },
+      LineNum?: number,
+      Amount: number,
+      CustomField?: {
+        DefinitionId: string,
+        StringValue?: string,
+        Type?: StringType | BooleanType | NumberType | DateType,
+        Name?: string
+      },
+      Id: string,
+      DepositLineDetail: {
+        PaymentMethodRef?: {
+          name?: string,
+          value: string
+        },
+        ClassRef?: {
+          name?: string,
+          value: string
+        },
+        CheckNum?: string,
+        TaxCodeRef?: {
+          name?: string,
+          value: string
+        },
+        TaxApplicableOn?: Purchase | Sales,
+        TxnType?: APCreditCard | ARRefundCreditCard | Bill | BillPaymentCheck | BuildAssembly | CarryOver | CashPurchase | Charge | Check | CreditCardPayment | CreditMemo | Deposit | EFPLiabilityCheck | EFTBillPayment | EFTRefund | Estimate | InventoryAdjustment | InventoryTransfer | Invoice | ItemReceipt | JournalEntry | LiabilityAdjustment | Paycheck | PayrollLiabilityCheck | PurchaseOrder | PriorPayment | ReceivePayment | RefundCheck | ReimburseCharge | SalesOrder | SalesReceipt | SalesTaxPaymentCheck | Transfer | TimeActivity | VendorCredit | YTDAdjustment,
+        AccountRef: {
+          name?: string,
+          value: string
+        },
+        Entity?: {
+          name?: string,
+          value: string
+        }
+      }
+    }
+  )[],
   CashBack?: {
     AccountRef: {
       name?: string,
@@ -25356,14 +26470,64 @@ await corsair.quickbooks.api.deposit.sparseUpdate({"realmId":"12345678","body":{
   },
   TxnSource?: string,
   TxnDate?: string,
-  Line: {
-    Amount: number,
-    LinkedTxn: {
-      TxnLineId?: string,
-      TxnId: string,
-      TxnType: string
-    }[]
-  }[],
+  Line: (
+    {
+      Amount: number,
+      LinkedTxn: {
+        TxnLineId?: string,
+        TxnId: string,
+        TxnType: string
+      }[]
+    } | {
+      Description?: string,
+      DetailType: DepositLineDetail,
+      ProjectRef?: {
+        name?: string,
+        value: string
+      },
+      CustomExtensions?: {
+        AssociatedValues: {
+          Value: string,
+          Key: string
+        },
+        ExtensionType: string
+      },
+      LineNum?: number,
+      Amount: number,
+      CustomField?: {
+        DefinitionId: string,
+        StringValue?: string,
+        Type?: StringType | BooleanType | NumberType | DateType,
+        Name?: string
+      },
+      Id: string,
+      DepositLineDetail: {
+        PaymentMethodRef?: {
+          name?: string,
+          value: string
+        },
+        ClassRef?: {
+          name?: string,
+          value: string
+        },
+        CheckNum?: string,
+        TaxCodeRef?: {
+          name?: string,
+          value: string
+        },
+        TaxApplicableOn?: Purchase | Sales,
+        TxnType?: APCreditCard | ARRefundCreditCard | Bill | BillPaymentCheck | BuildAssembly | CarryOver | CashPurchase | Charge | Check | CreditCardPayment | CreditMemo | Deposit | EFPLiabilityCheck | EFTBillPayment | EFTRefund | Estimate | InventoryAdjustment | InventoryTransfer | Invoice | ItemReceipt | JournalEntry | LiabilityAdjustment | Paycheck | PayrollLiabilityCheck | PurchaseOrder | PriorPayment | ReceivePayment | RefundCheck | ReimburseCharge | SalesOrder | SalesReceipt | SalesTaxPaymentCheck | Transfer | TimeActivity | VendorCredit | YTDAdjustment,
+        AccountRef: {
+          name?: string,
+          value: string
+        },
+        Entity?: {
+          name?: string,
+          value: string
+        }
+      }
+    }
+  )[],
   CashBack?: {
     AccountRef: {
       name?: string,
@@ -25456,14 +26620,64 @@ await corsair.quickbooks.api.deposit.update({"realmId":"12345678","body":{"Depos
   },
   TxnSource?: string,
   TxnDate?: string,
-  Line: {
-    Amount: number,
-    LinkedTxn: {
-      TxnLineId?: string,
-      TxnId: string,
-      TxnType: string
-    }[]
-  }[],
+  Line: (
+    {
+      Amount: number,
+      LinkedTxn: {
+        TxnLineId?: string,
+        TxnId: string,
+        TxnType: string
+      }[]
+    } | {
+      Description?: string,
+      DetailType: DepositLineDetail,
+      ProjectRef?: {
+        name?: string,
+        value: string
+      },
+      CustomExtensions?: {
+        AssociatedValues: {
+          Value: string,
+          Key: string
+        },
+        ExtensionType: string
+      },
+      LineNum?: number,
+      Amount: number,
+      CustomField?: {
+        DefinitionId: string,
+        StringValue?: string,
+        Type?: StringType | BooleanType | NumberType | DateType,
+        Name?: string
+      },
+      Id: string,
+      DepositLineDetail: {
+        PaymentMethodRef?: {
+          name?: string,
+          value: string
+        },
+        ClassRef?: {
+          name?: string,
+          value: string
+        },
+        CheckNum?: string,
+        TaxCodeRef?: {
+          name?: string,
+          value: string
+        },
+        TaxApplicableOn?: Purchase | Sales,
+        TxnType?: APCreditCard | ARRefundCreditCard | Bill | BillPaymentCheck | BuildAssembly | CarryOver | CashPurchase | Charge | Check | CreditCardPayment | CreditMemo | Deposit | EFPLiabilityCheck | EFTBillPayment | EFTRefund | Estimate | InventoryAdjustment | InventoryTransfer | Invoice | ItemReceipt | JournalEntry | LiabilityAdjustment | Paycheck | PayrollLiabilityCheck | PurchaseOrder | PriorPayment | ReceivePayment | RefundCheck | ReimburseCharge | SalesOrder | SalesReceipt | SalesTaxPaymentCheck | Transfer | TimeActivity | VendorCredit | YTDAdjustment,
+        AccountRef: {
+          name?: string,
+          value: string
+        },
+        Entity?: {
+          name?: string,
+          value: string
+        }
+      }
+    }
+  )[],
   CashBack?: {
     AccountRef: {
       name?: string,
@@ -25542,14 +26756,64 @@ await corsair.quickbooks.api.deposit.update({"realmId":"12345678","body":{"Depos
   },
   TxnSource?: string,
   TxnDate?: string,
-  Line: {
-    Amount: number,
-    LinkedTxn: {
-      TxnLineId?: string,
-      TxnId: string,
-      TxnType: string
-    }[]
-  }[],
+  Line: (
+    {
+      Amount: number,
+      LinkedTxn: {
+        TxnLineId?: string,
+        TxnId: string,
+        TxnType: string
+      }[]
+    } | {
+      Description?: string,
+      DetailType: DepositLineDetail,
+      ProjectRef?: {
+        name?: string,
+        value: string
+      },
+      CustomExtensions?: {
+        AssociatedValues: {
+          Value: string,
+          Key: string
+        },
+        ExtensionType: string
+      },
+      LineNum?: number,
+      Amount: number,
+      CustomField?: {
+        DefinitionId: string,
+        StringValue?: string,
+        Type?: StringType | BooleanType | NumberType | DateType,
+        Name?: string
+      },
+      Id: string,
+      DepositLineDetail: {
+        PaymentMethodRef?: {
+          name?: string,
+          value: string
+        },
+        ClassRef?: {
+          name?: string,
+          value: string
+        },
+        CheckNum?: string,
+        TaxCodeRef?: {
+          name?: string,
+          value: string
+        },
+        TaxApplicableOn?: Purchase | Sales,
+        TxnType?: APCreditCard | ARRefundCreditCard | Bill | BillPaymentCheck | BuildAssembly | CarryOver | CashPurchase | Charge | Check | CreditCardPayment | CreditMemo | Deposit | EFPLiabilityCheck | EFTBillPayment | EFTRefund | Estimate | InventoryAdjustment | InventoryTransfer | Invoice | ItemReceipt | JournalEntry | LiabilityAdjustment | Paycheck | PayrollLiabilityCheck | PurchaseOrder | PriorPayment | ReceivePayment | RefundCheck | ReimburseCharge | SalesOrder | SalesReceipt | SalesTaxPaymentCheck | Transfer | TimeActivity | VendorCredit | YTDAdjustment,
+        AccountRef: {
+          name?: string,
+          value: string
+        },
+        Entity?: {
+          name?: string,
+          value: string
+        }
+      }
+    }
+  )[],
   CashBack?: {
     AccountRef: {
       name?: string,
@@ -33262,7 +34526,15 @@ await corsair.quickbooks.api.payment.create({"realmId":"12345678","body":{"Total
   CurrencyRef?: {
     name?: string,
     value: string
-  }
+  },
+  Line?: {
+    Amount: number,
+    LinkedTxn: {
+      TxnLineId?: string,
+      TxnId: string,
+      TxnType: string
+    }[]
+  }[]
 }
 ```
 </Accordion>
@@ -35182,7 +36454,7 @@ await corsair.quickbooks.api.purchase.create({"realmId":"12345678","body":{"Paym
   },
   Line: {
     Description?: string,
-    DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
+    DetailType: AccountBasedExpenseLineDetail,
     CustomExtensions?: {
       AssociatedValues: {
         Value: string,
@@ -35281,62 +36553,109 @@ await corsair.quickbooks.api.purchase.create({"realmId":"12345678","body":{"Paym
     name?: string,
     value: string
   },
-  Line: {
-    LinkedTxn?: {
-      TxnLineId?: string,
-      TxnId: string,
-      TxnType: string
-    }[],
-    Description?: string,
-    ItemBasedExpenseLineDetail: {
-      TaxInclusiveAmt?: number,
-      ItemRef?: {
-        name?: string,
-        value: string
-      },
-      CustomerRef?: {
-        name?: string,
-        value: string
-      },
-      PriceLevelRef?: {
-        name?: string,
-        value: string
-      },
-      ClassRef?: {
-        name?: string,
-        value: string
-      },
-      TaxCodeRef?: {
-        name?: string,
-        value: string
-      },
-      MarkupInfo?: {
+  Line: (
+    {
+      LinkedTxn?: {
+        TxnLineId?: string,
+        TxnId: string,
+        TxnType: string
+      }[],
+      Description?: string,
+      ItemBasedExpenseLineDetail: {
+        TaxInclusiveAmt?: number,
+        ItemRef?: {
+          name?: string,
+          value: string
+        },
+        CustomerRef?: {
+          name?: string,
+          value: string
+        },
         PriceLevelRef?: {
           name?: string,
           value: string
         },
-        Percent?: number,
-        MarkUpIncomeAccountRef?: {
+        ClassRef?: {
+          name?: string,
+          value: string
+        },
+        TaxCodeRef?: {
+          name?: string,
+          value: string
+        },
+        MarkupInfo?: {
+          PriceLevelRef?: {
+            name?: string,
+            value: string
+          },
+          Percent?: number,
+          MarkUpIncomeAccountRef?: {
+            name?: string,
+            value: string
+          }
+        },
+        BillableStatus?: Billable | NotBillable | HasBeenBilled,
+        Qty?: number,
+        UnitPrice?: number
+      },
+      CustomExtensions?: {
+        AssociatedValues: {
+          Value: string,
+          Key: string
+        },
+        ExtensionType: string
+      },
+      LineNum?: number,
+      Amount: number,
+      DetailType: ItemBasedExpenseLineDetail,
+      Id: string
+    } | {
+      Description?: string,
+      DetailType: AccountBasedExpenseLineDetail,
+      CustomExtensions?: {
+        AssociatedValues: {
+          Value: string,
+          Key: string
+        },
+        ExtensionType: string
+      },
+      LineNum?: number,
+      Amount: number,
+      Id: string,
+      AccountBasedExpenseLineDetail: {
+        TaxAmount?: number,
+        TaxInclusiveAmt?: number,
+        ClassRef?: {
+          name?: string,
+          value: string
+        },
+        TaxCodeRef?: {
+          name?: string,
+          value: string
+        },
+        MarkupInfo?: {
+          PriceLevelRef?: {
+            name?: string,
+            value: string
+          },
+          Percent?: number,
+          MarkUpIncomeAccountRef?: {
+            name?: string,
+            value: string
+          }
+        },
+        BillableStatus?: Billable | NotBillable | HasBeenBilled,
+        AccountRef: {
+          name?: string,
+          value: string
+        },
+        CustomerRef?: {
           name?: string,
           value: string
         }
-      },
-      BillableStatus?: Billable | NotBillable | HasBeenBilled,
-      Qty?: number,
-      UnitPrice?: number
-    },
-    CustomExtensions?: {
-      AssociatedValues: {
-        Value: string,
-        Key: string
-      },
-      ExtensionType: string
-    },
-    LineNum?: number,
-    Amount: number,
-    DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
-    Id: string
-  }[],
+      }
+    }
+  )[],
   Credit?: boolean,
   TxnTaxDetail?: {
     TxnTaxCodeRef?: {
@@ -35517,62 +36836,109 @@ await corsair.quickbooks.api.purchase.get({"realmId":"12345678","purchaseId":"35
     name?: string,
     value: string
   },
-  Line: {
-    LinkedTxn?: {
-      TxnLineId?: string,
-      TxnId: string,
-      TxnType: string
-    }[],
-    Description?: string,
-    ItemBasedExpenseLineDetail: {
-      TaxInclusiveAmt?: number,
-      ItemRef?: {
-        name?: string,
-        value: string
-      },
-      CustomerRef?: {
-        name?: string,
-        value: string
-      },
-      PriceLevelRef?: {
-        name?: string,
-        value: string
-      },
-      ClassRef?: {
-        name?: string,
-        value: string
-      },
-      TaxCodeRef?: {
-        name?: string,
-        value: string
-      },
-      MarkupInfo?: {
+  Line: (
+    {
+      LinkedTxn?: {
+        TxnLineId?: string,
+        TxnId: string,
+        TxnType: string
+      }[],
+      Description?: string,
+      ItemBasedExpenseLineDetail: {
+        TaxInclusiveAmt?: number,
+        ItemRef?: {
+          name?: string,
+          value: string
+        },
+        CustomerRef?: {
+          name?: string,
+          value: string
+        },
         PriceLevelRef?: {
           name?: string,
           value: string
         },
-        Percent?: number,
-        MarkUpIncomeAccountRef?: {
+        ClassRef?: {
+          name?: string,
+          value: string
+        },
+        TaxCodeRef?: {
+          name?: string,
+          value: string
+        },
+        MarkupInfo?: {
+          PriceLevelRef?: {
+            name?: string,
+            value: string
+          },
+          Percent?: number,
+          MarkUpIncomeAccountRef?: {
+            name?: string,
+            value: string
+          }
+        },
+        BillableStatus?: Billable | NotBillable | HasBeenBilled,
+        Qty?: number,
+        UnitPrice?: number
+      },
+      CustomExtensions?: {
+        AssociatedValues: {
+          Value: string,
+          Key: string
+        },
+        ExtensionType: string
+      },
+      LineNum?: number,
+      Amount: number,
+      DetailType: ItemBasedExpenseLineDetail,
+      Id: string
+    } | {
+      Description?: string,
+      DetailType: AccountBasedExpenseLineDetail,
+      CustomExtensions?: {
+        AssociatedValues: {
+          Value: string,
+          Key: string
+        },
+        ExtensionType: string
+      },
+      LineNum?: number,
+      Amount: number,
+      Id: string,
+      AccountBasedExpenseLineDetail: {
+        TaxAmount?: number,
+        TaxInclusiveAmt?: number,
+        ClassRef?: {
+          name?: string,
+          value: string
+        },
+        TaxCodeRef?: {
+          name?: string,
+          value: string
+        },
+        MarkupInfo?: {
+          PriceLevelRef?: {
+            name?: string,
+            value: string
+          },
+          Percent?: number,
+          MarkUpIncomeAccountRef?: {
+            name?: string,
+            value: string
+          }
+        },
+        BillableStatus?: Billable | NotBillable | HasBeenBilled,
+        AccountRef: {
+          name?: string,
+          value: string
+        },
+        CustomerRef?: {
           name?: string,
           value: string
         }
-      },
-      BillableStatus?: Billable | NotBillable | HasBeenBilled,
-      Qty?: number,
-      UnitPrice?: number
-    },
-    CustomExtensions?: {
-      AssociatedValues: {
-        Value: string,
-        Key: string
-      },
-      ExtensionType: string
-    },
-    LineNum?: number,
-    Amount: number,
-    DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
-    Id: string
-  }[],
+      }
+    }
+  )[],
   Credit?: boolean,
   TxnTaxDetail?: {
     TxnTaxCodeRef?: {
@@ -35701,62 +37067,109 @@ await corsair.quickbooks.api.purchase.list({"realmId":"12345678"});
       name?: string,
       value: string
     },
-    Line: {
-      LinkedTxn?: {
-        TxnLineId?: string,
-        TxnId: string,
-        TxnType: string
-      }[],
-      Description?: string,
-      ItemBasedExpenseLineDetail: {
-        TaxInclusiveAmt?: number,
-        ItemRef?: {
-          name?: string,
-          value: string
-        },
-        CustomerRef?: {
-          name?: string,
-          value: string
-        },
-        PriceLevelRef?: {
-          name?: string,
-          value: string
-        },
-        ClassRef?: {
-          name?: string,
-          value: string
-        },
-        TaxCodeRef?: {
-          name?: string,
-          value: string
-        },
-        MarkupInfo?: {
+    Line: (
+      {
+        LinkedTxn?: {
+          TxnLineId?: string,
+          TxnId: string,
+          TxnType: string
+        }[],
+        Description?: string,
+        ItemBasedExpenseLineDetail: {
+          TaxInclusiveAmt?: number,
+          ItemRef?: {
+            name?: string,
+            value: string
+          },
+          CustomerRef?: {
+            name?: string,
+            value: string
+          },
           PriceLevelRef?: {
             name?: string,
             value: string
           },
-          Percent?: number,
-          MarkUpIncomeAccountRef?: {
+          ClassRef?: {
+            name?: string,
+            value: string
+          },
+          TaxCodeRef?: {
+            name?: string,
+            value: string
+          },
+          MarkupInfo?: {
+            PriceLevelRef?: {
+              name?: string,
+              value: string
+            },
+            Percent?: number,
+            MarkUpIncomeAccountRef?: {
+              name?: string,
+              value: string
+            }
+          },
+          BillableStatus?: Billable | NotBillable | HasBeenBilled,
+          Qty?: number,
+          UnitPrice?: number
+        },
+        CustomExtensions?: {
+          AssociatedValues: {
+            Value: string,
+            Key: string
+          },
+          ExtensionType: string
+        },
+        LineNum?: number,
+        Amount: number,
+        DetailType: ItemBasedExpenseLineDetail,
+        Id: string
+      } | {
+        Description?: string,
+        DetailType: AccountBasedExpenseLineDetail,
+        CustomExtensions?: {
+          AssociatedValues: {
+            Value: string,
+            Key: string
+          },
+          ExtensionType: string
+        },
+        LineNum?: number,
+        Amount: number,
+        Id: string,
+        AccountBasedExpenseLineDetail: {
+          TaxAmount?: number,
+          TaxInclusiveAmt?: number,
+          ClassRef?: {
+            name?: string,
+            value: string
+          },
+          TaxCodeRef?: {
+            name?: string,
+            value: string
+          },
+          MarkupInfo?: {
+            PriceLevelRef?: {
+              name?: string,
+              value: string
+            },
+            Percent?: number,
+            MarkUpIncomeAccountRef?: {
+              name?: string,
+              value: string
+            }
+          },
+          BillableStatus?: Billable | NotBillable | HasBeenBilled,
+          AccountRef: {
+            name?: string,
+            value: string
+          },
+          CustomerRef?: {
             name?: string,
             value: string
           }
-        },
-        BillableStatus?: Billable | NotBillable | HasBeenBilled,
-        Qty?: number,
-        UnitPrice?: number
-      },
-      CustomExtensions?: {
-        AssociatedValues: {
-          Value: string,
-          Key: string
-        },
-        ExtensionType: string
-      },
-      LineNum?: number,
-      Amount: number,
-      DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
-      Id: string
-    }[],
+        }
+      }
+    )[],
     Credit?: boolean,
     TxnTaxDetail?: {
       TxnTaxCodeRef?: {
@@ -35872,62 +37285,109 @@ await corsair.quickbooks.api.purchase.update({"realmId":"12345678","body":{"Line
     name?: string,
     value: string
   },
-  Line: {
-    LinkedTxn?: {
-      TxnLineId?: string,
-      TxnId: string,
-      TxnType: string
-    }[],
-    Description?: string,
-    ItemBasedExpenseLineDetail: {
-      TaxInclusiveAmt?: number,
-      ItemRef?: {
-        name?: string,
-        value: string
-      },
-      CustomerRef?: {
-        name?: string,
-        value: string
-      },
-      PriceLevelRef?: {
-        name?: string,
-        value: string
-      },
-      ClassRef?: {
-        name?: string,
-        value: string
-      },
-      TaxCodeRef?: {
-        name?: string,
-        value: string
-      },
-      MarkupInfo?: {
+  Line: (
+    {
+      LinkedTxn?: {
+        TxnLineId?: string,
+        TxnId: string,
+        TxnType: string
+      }[],
+      Description?: string,
+      ItemBasedExpenseLineDetail: {
+        TaxInclusiveAmt?: number,
+        ItemRef?: {
+          name?: string,
+          value: string
+        },
+        CustomerRef?: {
+          name?: string,
+          value: string
+        },
         PriceLevelRef?: {
           name?: string,
           value: string
         },
-        Percent?: number,
-        MarkUpIncomeAccountRef?: {
+        ClassRef?: {
+          name?: string,
+          value: string
+        },
+        TaxCodeRef?: {
+          name?: string,
+          value: string
+        },
+        MarkupInfo?: {
+          PriceLevelRef?: {
+            name?: string,
+            value: string
+          },
+          Percent?: number,
+          MarkUpIncomeAccountRef?: {
+            name?: string,
+            value: string
+          }
+        },
+        BillableStatus?: Billable | NotBillable | HasBeenBilled,
+        Qty?: number,
+        UnitPrice?: number
+      },
+      CustomExtensions?: {
+        AssociatedValues: {
+          Value: string,
+          Key: string
+        },
+        ExtensionType: string
+      },
+      LineNum?: number,
+      Amount: number,
+      DetailType: ItemBasedExpenseLineDetail,
+      Id: string
+    } | {
+      Description?: string,
+      DetailType: AccountBasedExpenseLineDetail,
+      CustomExtensions?: {
+        AssociatedValues: {
+          Value: string,
+          Key: string
+        },
+        ExtensionType: string
+      },
+      LineNum?: number,
+      Amount: number,
+      Id: string,
+      AccountBasedExpenseLineDetail: {
+        TaxAmount?: number,
+        TaxInclusiveAmt?: number,
+        ClassRef?: {
+          name?: string,
+          value: string
+        },
+        TaxCodeRef?: {
+          name?: string,
+          value: string
+        },
+        MarkupInfo?: {
+          PriceLevelRef?: {
+            name?: string,
+            value: string
+          },
+          Percent?: number,
+          MarkUpIncomeAccountRef?: {
+            name?: string,
+            value: string
+          }
+        },
+        BillableStatus?: Billable | NotBillable | HasBeenBilled,
+        AccountRef: {
+          name?: string,
+          value: string
+        },
+        CustomerRef?: {
           name?: string,
           value: string
         }
-      },
-      BillableStatus?: Billable | NotBillable | HasBeenBilled,
-      Qty?: number,
-      UnitPrice?: number
-    },
-    CustomExtensions?: {
-      AssociatedValues: {
-        Value: string,
-        Key: string
-      },
-      ExtensionType: string
-    },
-    LineNum?: number,
-    Amount: number,
-    DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
-    Id: string
-  }[],
+      }
+    }
+  )[],
   Credit?: boolean,
   TxnTaxDetail?: {
     TxnTaxCodeRef?: {
@@ -36028,62 +37488,109 @@ await corsair.quickbooks.api.purchase.update({"realmId":"12345678","body":{"Line
     name?: string,
     value: string
   },
-  Line: {
-    LinkedTxn?: {
-      TxnLineId?: string,
-      TxnId: string,
-      TxnType: string
-    }[],
-    Description?: string,
-    ItemBasedExpenseLineDetail: {
-      TaxInclusiveAmt?: number,
-      ItemRef?: {
-        name?: string,
-        value: string
-      },
-      CustomerRef?: {
-        name?: string,
-        value: string
-      },
-      PriceLevelRef?: {
-        name?: string,
-        value: string
-      },
-      ClassRef?: {
-        name?: string,
-        value: string
-      },
-      TaxCodeRef?: {
-        name?: string,
-        value: string
-      },
-      MarkupInfo?: {
+  Line: (
+    {
+      LinkedTxn?: {
+        TxnLineId?: string,
+        TxnId: string,
+        TxnType: string
+      }[],
+      Description?: string,
+      ItemBasedExpenseLineDetail: {
+        TaxInclusiveAmt?: number,
+        ItemRef?: {
+          name?: string,
+          value: string
+        },
+        CustomerRef?: {
+          name?: string,
+          value: string
+        },
         PriceLevelRef?: {
           name?: string,
           value: string
         },
-        Percent?: number,
-        MarkUpIncomeAccountRef?: {
+        ClassRef?: {
+          name?: string,
+          value: string
+        },
+        TaxCodeRef?: {
+          name?: string,
+          value: string
+        },
+        MarkupInfo?: {
+          PriceLevelRef?: {
+            name?: string,
+            value: string
+          },
+          Percent?: number,
+          MarkUpIncomeAccountRef?: {
+            name?: string,
+            value: string
+          }
+        },
+        BillableStatus?: Billable | NotBillable | HasBeenBilled,
+        Qty?: number,
+        UnitPrice?: number
+      },
+      CustomExtensions?: {
+        AssociatedValues: {
+          Value: string,
+          Key: string
+        },
+        ExtensionType: string
+      },
+      LineNum?: number,
+      Amount: number,
+      DetailType: ItemBasedExpenseLineDetail,
+      Id: string
+    } | {
+      Description?: string,
+      DetailType: AccountBasedExpenseLineDetail,
+      CustomExtensions?: {
+        AssociatedValues: {
+          Value: string,
+          Key: string
+        },
+        ExtensionType: string
+      },
+      LineNum?: number,
+      Amount: number,
+      Id: string,
+      AccountBasedExpenseLineDetail: {
+        TaxAmount?: number,
+        TaxInclusiveAmt?: number,
+        ClassRef?: {
+          name?: string,
+          value: string
+        },
+        TaxCodeRef?: {
+          name?: string,
+          value: string
+        },
+        MarkupInfo?: {
+          PriceLevelRef?: {
+            name?: string,
+            value: string
+          },
+          Percent?: number,
+          MarkUpIncomeAccountRef?: {
+            name?: string,
+            value: string
+          }
+        },
+        BillableStatus?: Billable | NotBillable | HasBeenBilled,
+        AccountRef: {
+          name?: string,
+          value: string
+        },
+        CustomerRef?: {
           name?: string,
           value: string
         }
-      },
-      BillableStatus?: Billable | NotBillable | HasBeenBilled,
-      Qty?: number,
-      UnitPrice?: number
-    },
-    CustomExtensions?: {
-      AssociatedValues: {
-        Value: string,
-        Key: string
-      },
-      ExtensionType: string
-    },
-    LineNum?: number,
-    Amount: number,
-    DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
-    Id: string
-  }[],
+      }
+    }
+  )[],
   Credit?: boolean,
   TxnTaxDetail?: {
     TxnTaxCodeRef?: {
@@ -36229,7 +37736,7 @@ await corsair.quickbooks.api.purchaseOrder.create({"realmId":"12345678","body":{
     },
     LineNum?: number,
     Amount: number,
-    DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
+    DetailType: ItemBasedExpenseLineDetail,
     Id: string
   }[]
 }
@@ -36358,7 +37865,7 @@ await corsair.quickbooks.api.purchaseOrder.create({"realmId":"12345678","body":{
     },
     LineNum?: number,
     Amount: number,
-    DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
+    DetailType: ItemBasedExpenseLineDetail,
     Id: string
   }[],
   TxnTaxDetail?: {
@@ -36621,7 +38128,7 @@ await corsair.quickbooks.api.purchaseOrder.get({"realmId":"12345678","purchaseor
     },
     LineNum?: number,
     Amount: number,
-    DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
+    DetailType: ItemBasedExpenseLineDetail,
     Id: string
   }[],
   TxnTaxDetail?: {
@@ -36866,7 +38373,7 @@ await corsair.quickbooks.api.purchaseOrder.list({"realmId":"12345678"});
       },
       LineNum?: number,
       Amount: number,
-      DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
+      DetailType: ItemBasedExpenseLineDetail,
       Id: string
     }[],
     TxnTaxDetail?: {
@@ -37074,7 +38581,7 @@ await corsair.quickbooks.api.purchaseOrder.send({"realmId":"12345678","purchaseo
     },
     LineNum?: number,
     Amount: number,
-    DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
+    DetailType: ItemBasedExpenseLineDetail,
     Id: string
   }[],
   TxnTaxDetail?: {
@@ -37271,7 +38778,7 @@ await corsair.quickbooks.api.purchaseOrder.update({"realmId":"12345678","body":{
     },
     LineNum?: number,
     Amount: number,
-    DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
+    DetailType: ItemBasedExpenseLineDetail,
     Id: string
   }[],
   TxnTaxDetail?: {
@@ -37454,7 +38961,7 @@ await corsair.quickbooks.api.purchaseOrder.update({"realmId":"12345678","body":{
     },
     LineNum?: number,
     Amount: number,
-    DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
+    DetailType: ItemBasedExpenseLineDetail,
     Id: string
   }[],
   TxnTaxDetail?: {
@@ -46468,7 +47975,7 @@ await corsair.quickbooks.api.vendorCredit.create({"realmId":"12345678","body":{"
     },
     LineNum?: number,
     Amount: number,
-    DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
+    DetailType: ItemBasedExpenseLineDetail,
     Id: string
   }[]
 }
@@ -46572,7 +48079,7 @@ await corsair.quickbooks.api.vendorCredit.create({"realmId":"12345678","body":{"
     },
     LineNum?: number,
     Amount: number,
-    DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
+    DetailType: ItemBasedExpenseLineDetail,
     Id: string
   }[],
   Balance?: number,
@@ -46766,7 +48273,7 @@ await corsair.quickbooks.api.vendorCredit.get({"realmId":"12345678","vendorcredi
     },
     LineNum?: number,
     Amount: number,
-    DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
+    DetailType: ItemBasedExpenseLineDetail,
     Id: string
   }[],
   Balance?: number,
@@ -46908,7 +48415,7 @@ await corsair.quickbooks.api.vendorCredit.list({"realmId":"12345678"});
       },
       LineNum?: number,
       Amount: number,
-      DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
+      DetailType: ItemBasedExpenseLineDetail,
       Id: string
     }[],
     Balance?: number,
@@ -47016,7 +48523,7 @@ await corsair.quickbooks.api.vendorCredit.update({"realmId":"12345678","body":{"
     },
     LineNum?: number,
     Amount: number,
-    DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
+    DetailType: ItemBasedExpenseLineDetail,
     Id: string
   }[],
   Id: string,
@@ -47122,7 +48629,7 @@ await corsair.quickbooks.api.vendorCredit.update({"realmId":"12345678","body":{"
     },
     LineNum?: number,
     Amount: number,
-    DetailType: PaymentLineDetail | DiscountLineDetail | TaxLineDetail | SalesItemLineDetail | ItemBasedExpenseLineDetail | AccountBasedExpenseLineDetail | DepositLineDetail | PurchaseOrderItemLineDetail | ItemReceiptLineDetail | JournalEntryLineDetail | GroupLineDetail | DescriptionOnly | SubTotalLineDetail | SalesOrderItemLineDetail | TDSLineDetail | ReimburseLineDetail | ItemAdjustmentLineDetail,
+    DetailType: ItemBasedExpenseLineDetail,
     Id: string
   }[],
   Balance?: number,

@@ -482,25 +482,7 @@ const accountbasedexpenselinedetailSchema = z
 const accountbasedexpenselineSchema = z
 	.object({
 		Description: z.string().optional(),
-		DetailType: z.enum([
-			'PaymentLineDetail',
-			'DiscountLineDetail',
-			'TaxLineDetail',
-			'SalesItemLineDetail',
-			'ItemBasedExpenseLineDetail',
-			'AccountBasedExpenseLineDetail',
-			'DepositLineDetail',
-			'PurchaseOrderItemLineDetail',
-			'ItemReceiptLineDetail',
-			'JournalEntryLineDetail',
-			'GroupLineDetail',
-			'DescriptionOnly',
-			'SubTotalLineDetail',
-			'SalesOrderItemLineDetail',
-			'TDSLineDetail',
-			'ReimburseLineDetail',
-			'ItemAdjustmentLineDetail',
-		]),
+		DetailType: z.literal('AccountBasedExpenseLineDetail'),
 		CustomExtensions: customextensionsSchema.optional(),
 		LineNum: z.number().optional(),
 		Amount: z.number(),
@@ -512,6 +494,14 @@ const accountbasedexpenselineSchema = z
 const linkedtxnSchema = z
 	.object({
 		TxnLineId: z.string().optional(),
+		TxnId: z.string(),
+		TxnType: z.string(),
+	})
+	.strict();
+
+const linkedtxnBillSchema = z
+	.object({
+		TxnLineId: z.string(),
 		TxnId: z.string(),
 		TxnType: z.string(),
 	})
@@ -624,32 +614,27 @@ const itembasedexpenselinedetailSchema = z
 
 const itembasedexpenselinebillSchema = z
 	.object({
-		LinkedTxn: z.array(linkedtxnSchema).optional(),
+		LinkedTxn: z.array(linkedtxnBillSchema).optional(),
 		Description: z.string().optional(),
 		ItemBasedExpenseLineDetail: itembasedexpenselinedetailSchema,
 		CustomExtensions: customextensionsSchema.optional(),
 		LineNum: z.number().optional(),
 		Amount: z.number(),
-		DetailType: z.enum([
-			'PaymentLineDetail',
-			'DiscountLineDetail',
-			'TaxLineDetail',
-			'SalesItemLineDetail',
-			'ItemBasedExpenseLineDetail',
-			'AccountBasedExpenseLineDetail',
-			'DepositLineDetail',
-			'PurchaseOrderItemLineDetail',
-			'ItemReceiptLineDetail',
-			'JournalEntryLineDetail',
-			'GroupLineDetail',
-			'DescriptionOnly',
-			'SubTotalLineDetail',
-			'SalesOrderItemLineDetail',
-			'TDSLineDetail',
-			'ReimburseLineDetail',
-			'ItemAdjustmentLineDetail',
-		]),
+		DetailType: z.literal('ItemBasedExpenseLineDetail'),
 		Id: z.string(),
+	})
+	.strict();
+
+const accountbasedexpenselinebillSchema = z
+	.object({
+		LinkedTxn: z.array(linkedtxnBillSchema).optional(),
+		Description: z.string().optional(),
+		DetailType: z.literal('AccountBasedExpenseLineDetail'),
+		CustomExtensions: customextensionsSchema.optional(),
+		LineNum: z.number().optional(),
+		Amount: z.number(),
+		Id: z.string(),
+		AccountBasedExpenseLineDetail: accountbasedexpenselinedetailSchema,
 	})
 	.strict();
 
@@ -1567,25 +1552,7 @@ const itembasedexpenselineSchema = z
 		CustomExtensions: customextensionsSchema.optional(),
 		LineNum: z.number().optional(),
 		Amount: z.number(),
-		DetailType: z.enum([
-			'PaymentLineDetail',
-			'DiscountLineDetail',
-			'TaxLineDetail',
-			'SalesItemLineDetail',
-			'ItemBasedExpenseLineDetail',
-			'AccountBasedExpenseLineDetail',
-			'DepositLineDetail',
-			'PurchaseOrderItemLineDetail',
-			'ItemReceiptLineDetail',
-			'JournalEntryLineDetail',
-			'GroupLineDetail',
-			'DescriptionOnly',
-			'SubTotalLineDetail',
-			'SalesOrderItemLineDetail',
-			'TDSLineDetail',
-			'ReimburseLineDetail',
-			'ItemAdjustmentLineDetail',
-		]),
+		DetailType: z.literal('ItemBasedExpenseLineDetail'),
 		Id: z.string(),
 	})
 	.strict();
@@ -2169,25 +2136,7 @@ const depositlinedetailSchema = z
 const depositlineSchema = z
 	.object({
 		Description: z.string().optional(),
-		DetailType: z.enum([
-			'PaymentLineDetail',
-			'DiscountLineDetail',
-			'TaxLineDetail',
-			'SalesItemLineDetail',
-			'ItemBasedExpenseLineDetail',
-			'AccountBasedExpenseLineDetail',
-			'DepositLineDetail',
-			'PurchaseOrderItemLineDetail',
-			'ItemReceiptLineDetail',
-			'JournalEntryLineDetail',
-			'GroupLineDetail',
-			'DescriptionOnly',
-			'SubTotalLineDetail',
-			'SalesOrderItemLineDetail',
-			'TDSLineDetail',
-			'ReimburseLineDetail',
-			'ItemAdjustmentLineDetail',
-		]),
+		DetailType: z.literal('DepositLineDetail'),
 		ProjectRef: referencetypeSchema.optional(),
 		CustomExtensions: customextensionsSchema.optional(),
 		LineNum: z.number().optional(),
@@ -2660,6 +2609,8 @@ const paymentrequestSchema = z
 		ProjectRef: referencetypeSchema.optional(),
 		CustomerRef: referencetypeSchema,
 		CurrencyRef: currencyrefSchema.optional(),
+		// Payment inherits Transaction.Line; the v75 XSD permits LinkedTxn allocations.
+		Line: z.array(linelinkedtxnSchema).optional(),
 	})
 	.strict();
 
@@ -2936,7 +2887,9 @@ const purchaseresponseSchema = z
 		DocNumber: z.string().optional(),
 		PrivateNote: z.string().optional(),
 		RecurDataRef: referencetypeSchema.optional(),
-		Line: z.array(itembasedexpenselineSchema),
+		Line: z.array(
+			z.union([itembasedexpenselineSchema, accountbasedexpenselineSchema]),
+		),
 		Credit: z.boolean().optional(),
 		TxnTaxDetail: txntaxdetailSchema.optional(),
 		SyncToken: z.string().optional(),
@@ -3172,14 +3125,6 @@ const recurringtransactionresponseSchema = z
 	})
 	.strict();
 
-const linkedtxnBillSchema = z
-	.object({
-		TxnLineId: z.string(),
-		TxnId: z.string(),
-		TxnType: z.string(),
-	})
-	.strict();
-
 const journalentryrequestSchema = z
 	.object({
 		CurrencyRef: currencyrefSchema.optional(),
@@ -3242,7 +3187,12 @@ const billresponseSchema = z
 		PrivateNote: z.string().optional(),
 		VendorRef: referencetypeSchema,
 		RecurDataRef: referencetypeSchema.optional(),
-		Line: z.array(itembasedexpenselineSchema),
+		Line: z.array(
+			z.union([
+				itembasedexpenselinebillSchema,
+				accountbasedexpenselinebillSchema,
+			]),
+		),
 		Balance: z.number().optional(),
 		TxnTaxDetail: txntaxdetailSchema.optional(),
 		SyncToken: z.string().optional(),
@@ -3373,7 +3323,7 @@ const depositresponseSchema = z
 		DepartmentRef: referencetypeSchema.optional(),
 		TxnSource: z.string().optional(),
 		TxnDate: z.string().optional(),
-		Line: z.array(linelinkedtxnSchema),
+		Line: z.array(z.union([linelinkedtxnSchema, depositlineSchema])),
 		CashBack: cashbackinfoSchema.optional(),
 		Id: z.string(),
 		TxnTaxDetail: txntaxdetailSchema.optional(),
@@ -3730,37 +3680,6 @@ const changeorderrequestSchema = z
 		Line: salesitemlineSchema,
 		CustomerRef: referencetypeSchema,
 		EmailStatus: z.string().optional(),
-	})
-	.strict();
-
-const accountbasedexpenselinebillSchema = z
-	.object({
-		LinkedTxn: z.array(linkedtxnSchema).optional(),
-		Description: z.string().optional(),
-		DetailType: z.enum([
-			'PaymentLineDetail',
-			'DiscountLineDetail',
-			'TaxLineDetail',
-			'SalesItemLineDetail',
-			'ItemBasedExpenseLineDetail',
-			'AccountBasedExpenseLineDetail',
-			'DepositLineDetail',
-			'PurchaseOrderItemLineDetail',
-			'ItemReceiptLineDetail',
-			'JournalEntryLineDetail',
-			'GroupLineDetail',
-			'DescriptionOnly',
-			'SubTotalLineDetail',
-			'SalesOrderItemLineDetail',
-			'TDSLineDetail',
-			'ReimburseLineDetail',
-			'ItemAdjustmentLineDetail',
-		]),
-		CustomExtensions: customextensionsSchema.optional(),
-		LineNum: z.number().optional(),
-		Amount: z.number(),
-		Id: z.string(),
-		AccountBasedExpenseLineDetail: accountbasedexpenselinedetailSchema,
 	})
 	.strict();
 

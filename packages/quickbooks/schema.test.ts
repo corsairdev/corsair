@@ -1,4 +1,5 @@
 import { QuickBooksCatalogEndpointSchemas } from './endpoints/catalog';
+import { QuickBooksModelSchemas } from './endpoints/models';
 import { QuickBooksSpecialEndpointSchemas } from './endpoints/special';
 import {
 	QuickBooksEndpointInputSchemas,
@@ -155,6 +156,123 @@ describe('QuickBooks endpoint schemas', () => {
 				time: '2026-11-18T12:00:00Z',
 			}).success,
 		).toBe(true);
+	});
+
+	it('accepts both documented expense-line variants in Bill and Purchase responses', () => {
+		const accountBasedLine = {
+			Id: '2',
+			Amount: 125,
+			DetailType: 'AccountBasedExpenseLineDetail',
+			AccountBasedExpenseLineDetail: {
+				AccountRef: { value: 'expense-account' },
+			},
+		};
+		const itemBasedLine = {
+			Id: '1',
+			Amount: 50,
+			DetailType: 'ItemBasedExpenseLineDetail',
+			ItemBasedExpenseLineDetail: { ItemRef: { value: 'item' } },
+		};
+		const billFields = {
+			VendorRef: { value: 'vendor' },
+			Line: [accountBasedLine, itemBasedLine],
+			Id: 'bill-1',
+		};
+		const purchaseFields = {
+			PaymentType: 'Check',
+			AccountRef: { value: 'bank' },
+			Line: [accountBasedLine, itemBasedLine],
+			Id: 'purchase-1',
+		};
+
+		expect(
+			QuickBooksModelSchemas.billresponse.safeParse(billFields).success,
+		).toBe(true);
+		expect(
+			QuickBooksModelSchemas.purchaseresponse.safeParse(purchaseFields).success,
+		).toBe(true);
+		expect(
+			QuickBooksModelSchemas.billresponse.safeParse({
+				...billFields,
+				Line: [
+					{
+						...accountBasedLine,
+						DetailType: 'ItemBasedExpenseLineDetail',
+					},
+				],
+			}).success,
+		).toBe(false);
+	});
+
+	it('validates linked-transaction and DepositLineDetail response lines strictly', () => {
+		const depositDetailLine = {
+			Id: 'line-2',
+			Amount: 75,
+			DetailType: 'DepositLineDetail',
+			Description: 'Other deposit income',
+			CustomField: {
+				DefinitionId: '1',
+				Name: 'Reference',
+				Type: 'StringType',
+				StringValue: 'A-7',
+			},
+			DepositLineDetail: {
+				AccountRef: { value: 'income-account' },
+				CheckNum: 'A-7',
+				Entity: { value: 'customer-1' },
+			},
+		};
+		const response = {
+			DepositToAccountRef: { value: 'bank' },
+			Line: [
+				{
+					Amount: 50,
+					LinkedTxn: [{ TxnId: 'payment-1', TxnType: 'Payment' }],
+				},
+				depositDetailLine,
+			],
+			Id: 'deposit-1',
+		};
+
+		expect(
+			QuickBooksModelSchemas.depositresponse.safeParse(response).success,
+		).toBe(true);
+		expect(
+			QuickBooksModelSchemas.depositresponse.safeParse({
+				...response,
+				Line: [
+					{
+						...depositDetailLine,
+						DepositLineDetail: {
+							...depositDetailLine.DepositLineDetail,
+							undocumented: true,
+						},
+					},
+				],
+			}).success,
+		).toBe(false);
+	});
+
+	it('accepts only documented invoice-linked payment lines', () => {
+		const schema = QuickBooksModelSchemas.paymentrequest;
+		const payment = {
+			TotalAmt: 125,
+			CustomerRef: { value: 'customer-1' },
+			Line: [
+				{
+					Amount: 125,
+					LinkedTxn: [{ TxnId: 'invoice-1', TxnType: 'Invoice' }],
+				},
+			],
+		};
+
+		expect(schema.safeParse(payment).success).toBe(true);
+		expect(
+			schema.safeParse({
+				...payment,
+				Line: [{ ...payment.Line[0], UndocumentedLineField: 'rejected' }],
+			}).success,
+		).toBe(false);
 	});
 
 	it('keeps the persistence schema empty and versioned', () => {
