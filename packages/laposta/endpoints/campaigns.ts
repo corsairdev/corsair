@@ -216,15 +216,30 @@ export const campaigns = {
  */
 function withCampaignListIds<
 	T extends { list_ids?: (string | Record<string, string[]>)[] },
->(body: T): Omit<T, 'list_ids'> & { list_ids?: unknown } {
+>(
+	body: T,
+): Omit<T, 'list_ids'> & {
+	list_ids?:
+		| (string | Record<string, string[]>)[]
+		| Record<string, string | string[]>;
+} {
 	const { list_ids } = body;
 	if (!list_ids || list_ids.every((entry) => typeof entry === 'string')) {
 		return body;
 	}
 	const keyed: Record<string, string | string[]> = {};
 	list_ids.forEach((entry, index) => {
-		if (typeof entry === 'string') keyed[String(index)] = entry;
-		else Object.assign(keyed, entry);
+		if (typeof entry === 'string') {
+			keyed[String(index)] = entry;
+			return;
+		}
+		for (const [listId, segments] of Object.entries(entry)) {
+			// The same list in two entries keeps every segment from both.
+			const earlier = keyed[listId];
+			keyed[listId] = Array.isArray(earlier)
+				? [...new Set([...earlier, ...segments])]
+				: segments;
+		}
 	});
 	return { ...body, list_ids: keyed };
 }

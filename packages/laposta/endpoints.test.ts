@@ -559,9 +559,9 @@ const endpointCases: EndpointCase[] = [
 		run: () =>
 			api.campaigns.update({
 				campaign_id: 'campaign-1',
-				list_ids: [{ 'list-1': ['segment-1'] }],
+				list_ids: [{ 'list-1': ['segment-1'] }, { 'list-1': ['segment-2'] }],
 			}),
-		formRepeated: { 'list_ids[list-1][]': ['segment-1'] },
+		formRepeated: { 'list_ids[list-1][]': ['segment-1', 'segment-2'] },
 	},
 	{
 		name: 'campaigns.delete',
@@ -707,12 +707,12 @@ describe('Laposta bound endpoints', () => {
 			for (const [key, value] of Object.entries(endpointCase.query ?? {})) {
 				expect(requestUrl.searchParams.get(key)).toBe(value);
 			}
-			if (endpointCase.form) {
+			if (endpointCase.form || endpointCase.formRepeated) {
 				expect(requestHeaders.get('content-type')).toContain(
 					'application/x-www-form-urlencoded',
 				);
 				const form = new URLSearchParams(String(capturedInit.body));
-				for (const [key, value] of Object.entries(endpointCase.form)) {
+				for (const [key, value] of Object.entries(endpointCase.form ?? {})) {
 					expect(form.get(key)).toBe(value);
 				}
 				for (const [key, values] of Object.entries(
