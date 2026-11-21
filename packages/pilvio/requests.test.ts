@@ -13,7 +13,6 @@ import {
 	stoppedVm,
 	user,
 	vm,
-	vmNotFound,
 	vmsList,
 } from './test-fixtures';
 
@@ -83,6 +82,28 @@ afterEach(() => {
 });
 
 describe('account', () => {
+	it('token update PATCHes the encoded fields, masks the answer, never sends restricted=false', async () => {
+		respond({
+			id: 3,
+			token: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ123456',
+			description: 'ci',
+		});
+		// unknown: provider-shaped token record; only two keys are checked
+		const updated = (await invoke(Account.updateToken, {
+			tokenId: 3,
+			description: 'ci',
+			restricted: false,
+			// unknown: provider-shaped or untyped until a schema narrows it; no stricter type fits.
+		})) as Record<string, unknown>;
+		expectCall({
+			path: '/v1/user-resource/token',
+			method: 'PATCH',
+			body: { token_id: '3', description: 'ci' },
+		});
+		expect(updated).not.toHaveProperty('token');
+		expect(updated.tokenEnding).toBe('3456');
+	});
+
 	it("token list keeps only each token's last four characters (live: full values)", async () => {
 		respond([
 			{ id: 3, token: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ123456', description: 'ci' },
@@ -264,7 +285,7 @@ describe('vm', () => {
 			query: { uuid: 'u-1' },
 		});
 
-		respond(vmNotFound);
+		respond({ success: true });
 		await invoke(Vm.deleteVm, { uuid: 'u-1' });
 		expectCall({
 			path: '/v1/user-resource/vm',

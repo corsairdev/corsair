@@ -60,7 +60,8 @@ export function describePilvioError(
 	const errors = record?.errors;
 	const businessMessage =
 		(typeof errors === 'object' && errors !== null
-			? (errors as Record<string, unknown>)['Error']
+			? // unknown: provider-shaped or untyped until a schema narrows it; no stricter type fits.
+				(errors as Record<string, unknown>)['Error']
 			: undefined) ?? errors;
 	const text =
 		(typeof record?.message === 'string' && record.message.length > 0
@@ -80,6 +81,7 @@ export type PilvioRequest = {
 	path: string;
 	query?: PilvioQuery;
 	/** Form-encoded body (default) or JSON body per the endpoint docs. */
+	// unknown: provider-shaped or untyped until a schema narrows it; no stricter type fits.
 	body?: Record<string, unknown>;
 	/** Send the body as JSON instead of the form encoding most writes use. */
 	json?: boolean;

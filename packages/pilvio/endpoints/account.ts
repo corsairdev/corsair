@@ -79,7 +79,9 @@ export const updateToken: PilvioEndpoints['tokensUpdate'] = (ctx, input) =>
 			body: {
 				token_id: tokenId,
 				description,
-				restricted,
+				// The docs' table says any supplied restricted value restricts the
+				// token (their example sends false), so only true is sent.
+				restricted: restricted === true ? true : undefined,
 				billing_account_id: billingAccountId,
 			},
 		}),

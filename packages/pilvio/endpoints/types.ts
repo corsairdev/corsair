@@ -224,6 +224,7 @@ export function withoutSecrets(raw: unknown): unknown {
 			token,
 			cookie_id: _cookie,
 			...rest
+			// unknown: provider-shaped or untyped until a schema narrows it; no stricter type fits.
 		} = item as Record<string, unknown>;
 		return typeof token === 'string'
 			? { ...rest, tokenEnding: token.slice(-4) }
@@ -402,6 +403,7 @@ export type SshKeysDeleteInput = z.infer<typeof SshKeysDeleteInputSchema>;
  * output accepts whatever comes back.
  */
 export const SshKeysDeletedOutputSchema = z
+	// unknown: provider-shaped or untyped until a schema narrows it; no stricter type fits.
 	.unknown()
 	.optional()
 	.describe('The key was deleted (usually 204 with no body)');
@@ -545,6 +547,13 @@ export const VmDeletedOutputSchema = z
 	.loose()
 	.describe('The delete answer; the docs show an error-keyed object');
 
+export const NoContentOutputSchema = z
+	// unknown: the API documents 204 No Content here, so there is no body
+	// to type; an object answer is let through as is.
+	.unknown()
+	.optional()
+	.describe('The resource was deleted (204, no body)');
+
 // ── storage ────────────────────────────────────────────────────────────────
 
 export const DisksListOutputSchema = z
@@ -666,6 +675,7 @@ export const NetworksDeleteInputSchema = z
 export type NetworksDeleteInput = z.infer<typeof NetworksDeleteInputSchema>;
 
 export const NetworksDeletedOutputSchema = z
+	// unknown: provider-shaped or untyped until a schema narrows it; no stricter type fits.
 	.unknown()
 	.optional()
 	.describe('The network was deleted');
@@ -800,19 +810,19 @@ export const PilvioEndpointOutputSchemas = {
 	disksCreate: DiskOutputSchema,
 	disksGet: DiskOutputSchema,
 	disksUpdate: DiskOutputSchema,
-	disksDelete: VmDeletedOutputSchema,
+	disksDelete: NoContentOutputSchema,
 	bucketsList: BucketsListOutputSchema,
 	bucketsCreate: BucketOutputSchema,
 	bucketsGet: BucketOutputSchema,
 	bucketsUpdate: BucketOutputSchema,
-	bucketsDelete: VmDeletedOutputSchema,
+	bucketsDelete: NoContentOutputSchema,
 	networksList: NetworksListOutputSchema,
 	networksGet: NetworkOutputSchema,
 	networksCreate: NetworkOutputSchema,
 	networksDelete: NetworksDeletedOutputSchema,
 	firewallsList: FirewallsListOutputSchema,
 	firewallsCreate: FirewallOutputSchema,
-	firewallsDelete: VmDeletedOutputSchema,
+	firewallsDelete: NoContentOutputSchema,
 };
 
 export type PilvioEndpointInputs = {

@@ -180,12 +180,18 @@ describe('output parsing', () => {
 		expect(page[0]?.rules?.[0]?.protocol).toBe('tcp');
 	});
 
-	it('keeps the documented business error envelope on delete answers', async () => {
+	it('fails on the business error envelope a delete can answer with HTTP 200', async () => {
 		respond(vmNotFound);
-		const result = (await invoke(Vm.deleteVm, { uuid: 'u-1' })) as {
-			errors?: unknown;
-		};
-		expect(result.errors).toBeDefined();
+		await expect(invoke(Vm.deleteVm, { uuid: 'u-1' })).rejects.toThrow(
+			'Pilvio vm.delete',
+		);
+	});
+
+	it('accepts the 204 a bucket, disk or firewall delete answers', async () => {
+		respond(undefined, 204);
+		await expect(
+			invoke(Storage.deleteBucket, { name: 'b' }),
+		).resolves.toBeUndefined();
 	});
 });
 

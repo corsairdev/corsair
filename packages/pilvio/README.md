@@ -35,22 +35,22 @@ pnpm add @corsair-dev/pilvio
 | `network.networks.delete` | `pilvio.api.network.networks.delete` | `destructive` | Delete an empty, non-default network |
 | `network.networks.get` | `pilvio.api.network.networks.get` | `read` | Read one network by UUID |
 | `network.networks.list` | `pilvio.api.network.networks.list` | `read` | List the private networks |
-| `storage.buckets.create` | `pilvio.api.storage.buckets.create` | `write` | Create an S3 bucket with a globally unique name |
+| `storage.buckets.create` | `pilvio.api.storage.buckets.create` | `destructive` | Create an S3 bucket with a globally unique name |
 | `storage.buckets.delete` | `pilvio.api.storage.buckets.delete` | `destructive` | Delete a bucket |
 | `storage.buckets.get` | `pilvio.api.storage.buckets.get` | `read` | Read one bucket by name |
 | `storage.buckets.list` | `pilvio.api.storage.buckets.list` | `read` | List the object storage buckets |
 | `storage.buckets.update` | `pilvio.api.storage.buckets.update` | `write` | Move a bucket to another billing account |
-| `storage.disks.create` | `pilvio.api.storage.disks.create` | `write` | Create a disk from empty, an OS image, a disk or a snapshot |
+| `storage.disks.create` | `pilvio.api.storage.disks.create` | `destructive` | Create a disk from empty, an OS image, a disk or a snapshot |
 | `storage.disks.delete` | `pilvio.api.storage.disks.delete` | `destructive` | Delete a disk |
 | `storage.disks.get` | `pilvio.api.storage.disks.get` | `read` | Read one disk by UUID |
 | `storage.disks.list` | `pilvio.api.storage.disks.list` | `read` | List the block storage disks |
 | `storage.disks.update` | `pilvio.api.storage.disks.update` | `write` | Update disk metadata |
-| `vm.create` | `pilvio.api.vm.create` | `write` | Create a virtual machine from an image or source |
+| `vm.create` | `pilvio.api.vm.create` | `destructive` | Create a virtual machine from an image or source |
 | `vm.delete` | `pilvio.api.vm.delete` | `destructive` | Delete a virtual machine |
 | `vm.get` | `pilvio.api.vm.get` | `read` | Read one VM by UUID |
 | `vm.list` | `pilvio.api.vm.list` | `read` | List the virtual machines |
 | `vm.reinstall` | `pilvio.api.vm.reinstall` | `destructive` | Reinstall a VM with a new OS; existing data is replaced |
-| `vm.start` | `pilvio.api.vm.start` | `write` | Start a stopped VM |
+| `vm.start` | `pilvio.api.vm.start` | `destructive` | Start a stopped VM; billing for it resumes |
 | `vm.stop` | `pilvio.api.vm.stop` | `write` | Stop a running VM |
 
 ## Auth
