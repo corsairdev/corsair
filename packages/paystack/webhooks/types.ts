@@ -44,21 +44,28 @@ function safeEqual(left: string, right: string): boolean {
 	return a.length === b.length && timingSafeEqual(a, b);
 }
 
-/** Parses "t=<seconds>,v1=<keyid>:<hex>" into its parts. */
+/**
+ * Parses "t=<seconds>,v1=<keyid>:<hex>[,v1=...]" into its parts. While a
+ * signing secret rotates, Paystack sends one v1 per secret, and a delivery is
+ * genuine when any of them matches.
+ */
 export function parseCurrentSignature(
 	value: string,
-): { timestamp: string; signature: string } | undefined {
+): { timestamp: string; signatures: string[] } | undefined {
 	const parts = value.split(',').map((piece) => piece.trim());
 	let timestamp: string | undefined;
-	let signature: string | undefined;
+	const signatures: string[] = [];
 	for (const part of parts) {
 		if (part.startsWith('t=')) timestamp = part.slice(2);
-		if (part.startsWith('v1=') && part.includes(':')) {
-			signature = part.slice(3).split(':')[1];
+		if (part.startsWith('v1=')) {
+			// Split on the first ':' only: <key id>:<signature>.
+			const value = part.slice(3);
+			const colon = value.indexOf(':');
+			if (colon > 0) signatures.push(value.slice(colon + 1));
 		}
 	}
-	if (!timestamp || !signature) return undefined;
-	return { timestamp, signature };
+	if (!timestamp || signatures.length === 0) return undefined;
+	return { timestamp, signatures };
 }
 
 /**
@@ -112,7 +119,8 @@ export function verifyPaystackWebhook(
 		const digest = createHmac('sha512', expected)
 			.update(`${parsed.timestamp}.${request.rawBody}`)
 			.digest('hex');
-		if (safeEqual(digest, parsed.signature)) return { valid: true };
+		if (parsed.signatures.some((signature) => safeEqual(digest, signature)))
+			return { valid: true };
 		return { valid: false, error: 'Invalid webhook signature' };
 	}
 
@@ -137,9 +145,14 @@ export const PaystackEventSchema = z
 	.object({
 		/** The event that fired, e.g. "charge.success". */
 		event: z.string().min(1),
-		// unknown: the data object's keys depend on the event type, so it
-		// stays an open record.
-		data: z.record(z.string(), z.unknown()).nullish(),
+		// unknown: the data keys depend on the event type, so it stays an
+		// open record; subscription.expiring_cards sends an array of them.
+		data: z
+			.union([
+				z.record(z.string(), z.unknown()),
+				z.array(z.record(z.string(), z.unknown())),
+			])
+			.nullish(),
 	})
 	.loose();
 
@@ -153,11 +166,16 @@ export type PaystackWebhookPayload = z.infer<typeof PaystackEventSchema>;
 
 /**
  * Paystack sends every event type to the one endpoint configured in the
- * dashboard, so matching only needs the documented envelope. A body parsed
- * by processWebhook is an object here (readBodyRecord returns null
- * otherwise).
+ * dashboard. Other providers also post `{ event: ... }` bodies (Zoom), so a
+ * delivery only matches when it carries one of Paystack's signature headers.
+ * A body parsed by processWebhook is an object here (readBodyRecord returns
+ * null otherwise).
  */
 export function matchPaystackWebhook(request: RawWebhookRequest): boolean {
+	const signed =
+		headerValue(request.headers, LEGACY_SIGNATURE_HEADER) !== undefined ||
+		headerValue(request.headers, CURRENT_SIGNATURE_HEADER) !== undefined;
+	if (!signed) return false;
 	const body = readBodyRecord(request);
 	return body !== null && typeof body.event === 'string';
 }

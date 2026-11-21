@@ -45,7 +45,10 @@ describe('parseCurrentSignature', () => {
 		const parsed = parseCurrentSignature(
 			't=1760270400,v1=whk_3f9a1c2e:9d1b2c3d',
 		);
-		expect(parsed).toEqual({ timestamp: '1760270400', signature: '9d1b2c3d' });
+		expect(parsed).toEqual({
+			timestamp: '1760270400',
+			signatures: ['9d1b2c3d'],
+		});
 	});
 
 	it('returns undefined for a malformed header', () => {
@@ -88,6 +91,28 @@ describe('verifyPaystackWebhook', () => {
 		expect(verifyPaystackWebhook(raw as never, SIGNING_SECRET)).toEqual({
 			valid: true,
 		});
+	});
+
+	it('accepts a rotation delivery when either v1 signature matches', () => {
+		const timestamp = String(Math.floor(Date.now() / 1000));
+		const rawBody = JSON.stringify(webhookEvent);
+		const good = currentSign(timestamp, rawBody, SIGNING_SECRET);
+		const other = currentSign(timestamp, rawBody, 'whsec_other_secret');
+		for (const header of [
+			`t=${timestamp},v1=whk_old:${good},v1=whk_new:${other}`,
+			`t=${timestamp},v1=whk_old:${other},v1=whk_new:${good}`,
+		]) {
+			const raw = rawRequest(webhookEvent, { 'Paystack-Signature': header });
+			expect(verifyPaystackWebhook(raw as never, SIGNING_SECRET)).toEqual({
+				valid: true,
+			});
+		}
+		const neither = rawRequest(webhookEvent, {
+			'Paystack-Signature': `t=${timestamp},v1=whk_old:${other},v1=whk_new:${other}`,
+		});
+		expect(verifyPaystackWebhook(neither as never, SIGNING_SECRET).valid).toBe(
+			false,
+		);
 	});
 
 	it('rejects a current delivery whose timestamp is outside the 300s tolerance', () => {
@@ -147,15 +172,37 @@ describe('verifyPaystackWebhook', () => {
 });
 
 describe('matchPaystackWebhook', () => {
-	it('matches the documented event envelope', () => {
-		expect(matchPaystackWebhook(rawRequest(webhookEvent) as never)).toBe(true);
+	it('matches the documented event envelope when it carries a Paystack signature header', () => {
+		expect(
+			matchPaystackWebhook(
+				rawRequest(webhookEvent, { 'x-paystack-signature': 'abc' }) as never,
+			),
+		).toBe(true);
+		expect(
+			matchPaystackWebhook(
+				rawRequest(webhookEvent, {
+					'Paystack-Signature': 't=1,v1=whk_a:b',
+				}) as never,
+			),
+		).toBe(true);
+	});
+
+	it('leaves unsigned { event } bodies (Zoom and others) to other plugins', () => {
+		expect(
+			matchPaystackWebhook(
+				rawRequest({ event: 'meeting.created', payload: {} }) as never,
+			),
+		).toBe(false);
 	});
 
 	it('does not match bodies without an event string', () => {
-		expect(matchPaystackWebhook(rawRequest({ data: {} }) as never)).toBe(false);
-		expect(matchPaystackWebhook(rawRequest([webhookEvent]) as never)).toBe(
-			false,
-		);
+		const signed = { 'x-paystack-signature': 'abc' };
+		expect(
+			matchPaystackWebhook(rawRequest({ data: {} }, signed) as never),
+		).toBe(false);
+		expect(
+			matchPaystackWebhook(rawRequest([webhookEvent], signed) as never),
+		).toBe(false);
 	});
 });
 
@@ -163,7 +210,21 @@ describe('PaystackWebhookPayloadSchema', () => {
 	it('parses a delivery', () => {
 		const parsed = PaystackWebhookPayloadSchema.parse(webhookEvent);
 		expect(parsed.event).toBe('charge.success');
-		expect(parsed.data?.['reference']).toBe('7PVGX8MEk85tgeEpVDtD');
+		const data = parsed.data as Record<string, unknown> | undefined;
+		expect(data?.['reference']).toBe('7PVGX8MEk85tgeEpVDtD');
+	});
+
+	it('parses subscription.expiring_cards, whose data is an array', () => {
+		const parsed = PaystackWebhookPayloadSchema.parse({
+			event: 'subscription.expiring_cards',
+			data: [
+				{
+					expiry_date: '12/2026',
+					subscription: { subscription_code: 'SUB_x' },
+				},
+			],
+		});
+		expect(Array.isArray(parsed.data)).toBe(true);
 	});
 
 	it('rejects a delivery without an event', () => {
