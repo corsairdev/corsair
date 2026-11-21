@@ -7,15 +7,17 @@ recommendedAuth: api_key
 overviewNote: >
   Authenticate with the API key from the Pexels API keys page; the plugin
   sends it as the raw value of the Authorization header, without a Bearer
-  prefix, as the API expects. Photos live under /v1, videos at the root, and
-  the plugin handles both.
+  prefix, as the API expects. Photos and videos both live under /v1.
 
-  Every route is a GET and answers { photos|videos|collections, page,
-  per_page, total_results, next_page, prev_page }; follow next_page for the
-  next results page, or pass page and per_page (at most 80) yourself. The
-  default monthly quota is 20,000 requests; limits.get is not part of the
-  Pexels API, so watch the per-page X-Ratelimit-Remaining header if you need
-  quota tracking.
+  Every route is a GET. photos.get and videos.get answer one photo or video.
+  The lists answer { photos | videos | collections | media, page, per_page,
+  total_results, next_page, prev_page }: photos for photos.search and
+  photos.curated, videos for videos.search and videos.popular, collections
+  for the collection lists, media for collections.listMedia. Pass page and
+  per_page (at most 80) for the next page.
+
+  Pexels limits each key to 200 requests an hour and 20,000 a month by
+  default. A 429 means one of those is spent; the plugin does not retry it.
 
   Every operation is described in the official docs:
   https://www.pexels.com/api/documentation/
