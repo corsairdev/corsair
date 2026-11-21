@@ -13,6 +13,10 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import {
+	createManagedPricingCredentialCache,
+	resolveManagedPricingApiKey,
+} from 'corsair/hub';
+import {
 	Account,
 	AccountStats,
 	ApiKeys,
@@ -68,7 +72,11 @@ import { errorHandlers } from './error-handlers';
 import { HunterioSchema } from './schema';
 
 export type HunterioPluginOptions = {
-	authType?: PickAuth<'api_key'>;
+	/**
+	 * `api_key`: the tenant's own Hunter key. `managed_pricing`: Corsair's
+	 * Hunter account, billed in Corsair credits through Hub.
+	 */
+	authType?: PickAuth<'api_key' | 'managed_pricing'>;
 	key?: string;
 	hooks?: InternalHunterioPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -1765,6 +1773,10 @@ const hunterioEndpointMeta = {
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof hunterioEndpointsNested>;
 
+// Short-lived keys Hub mints for Corsair's own Hunter account, one per
+// metered operation, cached until they expire.
+const hunterioManagedPricingCache = createManagedPricingCredentialCache();
+
 export const hunterioAuthConfig = {
 	api_key: {},
 } as const satisfies PluginAuthConfig;
@@ -1790,6 +1802,14 @@ export function hunterio<const T extends HunterioPluginOptions>(
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+	// managed_pricing runs on Corsair's key, which core gets from Hub without
+	// asking the keyBuilder, so an explicit key would be dropped silently and
+	// the call billed to Corsair credits. The two can't both apply.
+	if (options.authType === 'managed_pricing' && options.key) {
+		throw new Error(
+			"hunterio: `key` can't be used with authType 'managed_pricing', which runs on Corsair's Hunter key. Drop `key`, or use authType 'api_key' to call Hunter with your own key.",
+		);
+	}
 
 	return {
 		id: 'hunterio',
@@ -1818,6 +1838,14 @@ export function hunterio<const T extends HunterioPluginOptions>(
 		keyBuilder: async (ctx: HunterioKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {
 				return options.key;
+			}
+
+			if (source === 'endpoint' && ctx.authType === 'managed_pricing') {
+				return resolveManagedPricingApiKey(ctx, {
+					plugin: 'hunterio',
+					cache: hunterioManagedPricingCache,
+					operation: ctx.meteredOperationId,
+				});
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
