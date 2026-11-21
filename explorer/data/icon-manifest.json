@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-21T07:10:13.985Z",
+  "generatedAt": "2026-11-21T07:13:10.621Z",
   "primarySource": "https://twenty-icons.com",
   "fallbackSource": "https://www.google.com/s2/favicons",
   "size": 128,
@@ -1064,7 +1064,7 @@
     "godial": "url-override",
     "gong": "curated",
     "googleaddressvalidation": "curated",
-    "googleadmin": "twenty-icons",
+    "googleadmin": "url-override",
     "googleads": "url-override",
     "googleanalytics": "curated",
     "googlebigquery": "curated",
