@@ -55,7 +55,9 @@ describe('retries through createCorsair', () => {
 	it("retries a 429 through the transport's rate-limit handling", async () => {
 		const { corsair, testDb } = await createClient();
 		try {
-			respond({ errors: [{ title: 'Slow down' }] }, 429, { 'Retry-After': '0' });
+			respond({ errors: [{ title: 'Slow down' }] }, 429, {
+				'Retry-After': '0',
+			});
 			respond({ data: [inquiry] });
 
 			await expect(
@@ -102,7 +104,9 @@ describe('retries through createCorsair', () => {
 		const { corsair, testDb } = await createClient();
 		try {
 			respond(
-				{ errors: [{ title: 'Must be authenticated to access this endpoint' }] },
+				{
+					errors: [{ title: 'Must be authenticated to access this endpoint' }],
+				},
 				401,
 			);
 
