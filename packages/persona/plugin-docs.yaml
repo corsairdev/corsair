@@ -20,7 +20,9 @@ overviewNote: >
 
   Webhook deliveries carry a Persona-Signature header of
   t=<unix time>,v1=<hex> sets: HMAC-SHA256 over "<t>.<raw body>" with the
-  webhook's secret, one set per active secret while it rotates. webhooks.create
+  webhook's secret, one set per active secret while it rotates. Sets whose
+  timestamp is more than 5 minutes from now are refused, so an old signed
+  delivery can't be replayed. webhooks.create
   and webhooks.rotateSecret return the secret; store it with
   keys.set_webhook_signature (or set webhookSecret on the plugin). The
   delivery body is { data: { type: "event", attributes: { name, payload } } }.

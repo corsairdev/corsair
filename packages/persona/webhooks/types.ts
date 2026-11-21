@@ -13,6 +13,12 @@ import { z } from 'zod';
  * https://docs.withpersona.com/webhooks-best-practices
  */
 
+/**
+ * How far a set's timestamp may sit from now. A signed delivery replayed
+ * later than this, or stamped in the future beyond it, is refused.
+ */
+export const SIGNATURE_TOLERANCE_SECONDS = 300;
+
 /** Header carrying the signature sets. */
 export const PERSONA_SIGNATURE_HEADER = 'persona-signature';
 
@@ -69,6 +75,7 @@ export function verifyPersonaWebhook(
 	// this only reads headers and the raw body.
 	request: WebhookRequest<unknown>,
 	secret: string | undefined,
+	nowMs: number = Date.now(),
 ): { valid: boolean; error?: string } {
 	if (request.hubVerified) return { valid: true };
 	const key = secret?.trim();
@@ -98,13 +105,27 @@ export function verifyPersonaWebhook(
 		return { valid: false, error: 'Malformed Persona-Signature header' };
 	}
 
+	let stale = false;
 	for (const { t, v1 } of sets) {
 		const digest = createHmac('sha256', key)
 			.update(`${t}.${request.rawBody}`)
 			.digest('hex');
-		if (safeEqual(digest, v1)) return { valid: true };
+		if (!safeEqual(digest, v1)) continue;
+		const seconds = Number(t);
+		if (
+			Number.isFinite(seconds) &&
+			Math.abs(nowMs / 1000 - seconds) <= SIGNATURE_TOLERANCE_SECONDS
+		) {
+			return { valid: true };
+		}
+		stale = true;
 	}
-	return { valid: false, error: 'Invalid webhook signature' };
+	return {
+		valid: false,
+		error: stale
+			? 'Webhook signature timestamp is outside the allowed window'
+			: 'Invalid webhook signature',
+	};
 }
 
 // ── Payload ────────────────────────────────────────────────────────────────

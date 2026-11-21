@@ -9,7 +9,7 @@ import {
 
 const SECRET = 'whsec_test_secret';
 
-const T = '1732190000';
+const T = String(Math.floor(Date.now() / 1000));
 
 /** One documented `t=<time>,v1=<hex>` set over `<t>.<body>`. */
 function sign(body: string, key: string, t: string = T): string {
@@ -67,6 +67,38 @@ describe('verifyPersonaWebhook', () => {
 			SECRET,
 		);
 		expect(result.valid).toBe(false);
+	});
+
+	it('rejects a correctly signed delivery replayed after the window', () => {
+		const body = JSON.stringify(webhookEvent);
+		const old = String(Math.floor(Date.now() / 1000) - 3600);
+		const result = verifyPersonaWebhook(
+			rawRequest(webhookEvent, sign(body, SECRET, old)) as never,
+			SECRET,
+		);
+		expect(result.valid).toBe(false);
+		expect(result.error).toContain('outside the allowed window');
+	});
+
+	it('rejects a timestamp too far in the future', () => {
+		const body = JSON.stringify(webhookEvent);
+		const future = String(Math.floor(Date.now() / 1000) + 3600);
+		const result = verifyPersonaWebhook(
+			rawRequest(webhookEvent, sign(body, SECRET, future)) as never,
+			SECRET,
+		);
+		expect(result.valid).toBe(false);
+	});
+
+	it('accepts a delivery a little older than now, inside the window', () => {
+		const body = JSON.stringify(webhookEvent);
+		const recent = String(Math.floor(Date.now() / 1000) - 120);
+		expect(
+			verifyPersonaWebhook(
+				rawRequest(webhookEvent, sign(body, SECRET, recent)) as never,
+				SECRET,
+			),
+		).toEqual({ valid: true });
 	});
 
 	it('rejects a signature from another secret', () => {
