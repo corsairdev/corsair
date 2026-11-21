@@ -325,6 +325,11 @@ describe('Lexoffice endpoint schemas', () => {
 		expect(VoucherCreateInputSchema.safeParse(withoutVersion).success).toBe(
 			true,
 		);
+		const { totalTaxAmount, ...withoutTotalTaxAmount } = voucherCreate;
+		expect(totalTaxAmount).toBe(19);
+		expect(
+			VoucherCreateInputSchema.safeParse(withoutTotalTaxAmount).success,
+		).toBe(false);
 		expect(
 			VoucherCreateInputSchema.safeParse({
 				type: 'purchaseinvoice',
