@@ -50,10 +50,10 @@ await corsair.listennotes.api.curated.get({ id: 'e4a6865261f945aeb78f2ebcb3fd46f
 ```ts
 {
   id?: string,
-  title?: string,
-  publisher?: string,
-  image?: string,
-  thumbnail?: string,
+  title?: string | null,
+  publisher?: string | null,
+  image?: string | null,
+  thumbnail?: string | null,
   listennotes_url?: string,
   is_claimed?: boolean,
   type?: episodic | serial,
@@ -61,14 +61,14 @@ await corsair.listennotes.api.curated.get({ id: 'e4a6865261f945aeb78f2ebcb3fd46f
   audio_length_sec?: number,
   update_frequency_hours?: number,
   earliest_pub_date_ms?: number,
-  rss?: string,
+  rss?: string | null,
   latest_episode_id?: string,
   latest_pub_date_ms?: number,
   explicit_content?: boolean,
-  description?: string,
+  description?: string | null,
   itunes_id?: number | null,
-  language?: string,
-  country?: string,
+  language?: string | null,
+  country?: string | null,
   website?: string | null,
   email?: string | null,
   genre_ids?: number[],
@@ -152,10 +152,10 @@ await corsair.listennotes.api.curated.list({});
   total?: number,
   podcasts?: {
     id?: string,
-    title?: string,
-    publisher?: string,
-    image?: string,
-    thumbnail?: string,
+    title?: string | null,
+    publisher?: string | null,
+    image?: string | null,
+    thumbnail?: string | null,
     listennotes_url?: string,
     is_claimed?: boolean,
     type?: episodic | serial,
@@ -163,14 +163,14 @@ await corsair.listennotes.api.curated.list({});
     audio_length_sec?: number,
     update_frequency_hours?: number,
     earliest_pub_date_ms?: number,
-    rss?: string,
+    rss?: string | null,
     latest_episode_id?: string,
     latest_pub_date_ms?: number,
     explicit_content?: boolean,
-    description?: string,
+    description?: string | null,
     itunes_id?: number | null,
-    language?: string,
-    country?: string,
+    language?: string | null,
+    country?: string | null,
     website?: string | null,
     email?: string | null,
     genre_ids?: number[],
@@ -259,10 +259,10 @@ await corsair.listennotes.api.episodes.get({ id: '254444fa6cf64a43a95292a70eb686
 ```ts
 {
   id?: string,
-  title?: string,
-  publisher?: string,
-  image?: string,
-  thumbnail?: string,
+  title?: string | null,
+  publisher?: string | null,
+  image?: string | null,
+  thumbnail?: string | null,
   listennotes_url?: string,
   is_claimed?: boolean,
   type?: episodic | serial,
@@ -270,14 +270,14 @@ await corsair.listennotes.api.episodes.get({ id: '254444fa6cf64a43a95292a70eb686
   audio_length_sec?: number,
   update_frequency_hours?: number,
   earliest_pub_date_ms?: number,
-  rss?: string,
+  rss?: string | null,
   latest_episode_id?: string,
   latest_pub_date_ms?: number,
   explicit_content?: boolean,
-  description?: string,
+  description?: string | null,
   itunes_id?: number | null,
-  language?: string,
-  country?: string,
+  language?: string | null,
+  country?: string | null,
   website?: string | null,
   email?: string | null,
   genre_ids?: number[],
@@ -362,10 +362,10 @@ Supports up to 10 episode IDs and is available only on PRO and ENTERPRISE plans.
   link?: string | null,
   podcast?: {
     id?: string,
-    title?: string,
-    publisher?: string,
-    image?: string,
-    thumbnail?: string,
+    title?: string | null,
+    publisher?: string | null,
+    image?: string | null,
+    thumbnail?: string | null,
     listennotes_url?: string,
     is_claimed?: boolean,
     type?: episodic | serial,
@@ -373,14 +373,14 @@ Supports up to 10 episode IDs and is available only on PRO and ENTERPRISE plans.
     audio_length_sec?: number,
     update_frequency_hours?: number,
     earliest_pub_date_ms?: number,
-    rss?: string,
+    rss?: string | null,
     latest_episode_id?: string,
     latest_pub_date_ms?: number,
     explicit_content?: boolean,
-    description?: string,
+    description?: string | null,
     itunes_id?: number | null,
-    language?: string,
-    country?: string,
+    language?: string | null,
+    country?: string | null,
     website?: string | null,
     email?: string | null,
     genre_ids?: number[],
@@ -465,10 +465,10 @@ await corsair.listennotes.api.episodes.getRecommendations({ id: '254444fa6cf64a4
   link?: string | null,
   podcast?: {
     id?: string,
-    title?: string,
-    publisher?: string,
-    image?: string,
-    thumbnail?: string,
+    title?: string | null,
+    publisher?: string | null,
+    image?: string | null,
+    thumbnail?: string | null,
     listennotes_url?: string,
     is_claimed?: boolean,
     type?: episodic | serial,
@@ -476,14 +476,14 @@ await corsair.listennotes.api.episodes.getRecommendations({ id: '254444fa6cf64a4
     audio_length_sec?: number,
     update_frequency_hours?: number,
     earliest_pub_date_ms?: number,
-    rss?: string,
+    rss?: string | null,
     latest_episode_id?: string,
     latest_pub_date_ms?: number,
     explicit_content?: boolean,
-    description?: string,
+    description?: string | null,
     itunes_id?: number | null,
-    language?: string,
-    country?: string,
+    language?: string | null,
+    country?: string | null,
     website?: string | null,
     email?: string | null,
     genre_ids?: number[],
@@ -561,10 +561,10 @@ await corsair.listennotes.api.episodes.justListen({});
 ```ts
 {
   id?: string,
-  title?: string,
-  publisher?: string,
-  image?: string,
-  thumbnail?: string,
+  title?: string | null,
+  publisher?: string | null,
+  image?: string | null,
+  thumbnail?: string | null,
   listennotes_url?: string,
   is_claimed?: boolean,
   type?: episodic | serial,
@@ -572,14 +572,14 @@ await corsair.listennotes.api.episodes.justListen({});
   audio_length_sec?: number,
   update_frequency_hours?: number,
   earliest_pub_date_ms?: number,
-  rss?: string,
+  rss?: string | null,
   latest_episode_id?: string,
   latest_pub_date_ms?: number,
   explicit_content?: boolean,
-  description?: string,
+  description?: string | null,
   itunes_id?: number | null,
-  language?: string,
-  country?: string,
+  language?: string | null,
+  country?: string | null,
   website?: string | null,
   email?: string | null,
   genre_ids?: number[],
@@ -1113,10 +1113,10 @@ The response includes up to 10 episodes. Use `next_episode_pub_date` from the re
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | No | — |
-| `title` | `string` | No | — |
-| `publisher` | `string` | No | — |
-| `image` | `string` | No | — |
-| `thumbnail` | `string` | No | — |
+| `title` | `string \| null` | No | — |
+| `publisher` | `string \| null` | No | — |
+| `image` | `string \| null` | No | — |
+| `thumbnail` | `string \| null` | No | — |
 | `listennotes_url` | `string` | No | — |
 | `is_claimed` | `boolean` | No | — |
 | `type` | `episodic \| serial` | No | — |
@@ -1124,14 +1124,14 @@ The response includes up to 10 episodes. Use `next_episode_pub_date` from the re
 | `audio_length_sec` | `number` | No | — |
 | `update_frequency_hours` | `number` | No | — |
 | `earliest_pub_date_ms` | `number` | No | — |
-| `rss` | `string` | No | — |
+| `rss` | `string \| null` | No | — |
 | `latest_episode_id` | `string` | No | — |
 | `latest_pub_date_ms` | `number` | No | — |
 | `explicit_content` | `boolean` | No | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `itunes_id` | `number \| null` | No | — |
-| `language` | `string` | No | — |
-| `country` | `string` | No | — |
+| `language` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
 | `website` | `string \| null` | No | — |
 | `email` | `string \| null` | No | — |
 | `genre_ids` | `number[]` | No | — |
@@ -1288,10 +1288,10 @@ POSTs form-encoded selectors and supports up to 10 podcasts. This endpoint is av
 ```ts
 {
   id?: string,
-  title?: string,
-  publisher?: string,
-  image?: string,
-  thumbnail?: string,
+  title?: string | null,
+  publisher?: string | null,
+  image?: string | null,
+  thumbnail?: string | null,
   listennotes_url?: string,
   is_claimed?: boolean,
   type?: episodic | serial,
@@ -1299,14 +1299,14 @@ POSTs form-encoded selectors and supports up to 10 podcasts. This endpoint is av
   audio_length_sec?: number,
   update_frequency_hours?: number,
   earliest_pub_date_ms?: number,
-  rss?: string,
+  rss?: string | null,
   latest_episode_id?: string,
   latest_pub_date_ms?: number,
   explicit_content?: boolean,
-  description?: string,
+  description?: string | null,
   itunes_id?: number | null,
-  language?: string,
-  country?: string,
+  language?: string | null,
+  country?: string | null,
   website?: string | null,
   email?: string | null,
   genre_ids?: number[],
@@ -1357,10 +1357,10 @@ POSTs form-encoded selectors and supports up to 10 podcasts. This endpoint is av
   link?: string | null,
   podcast?: {
     id?: string,
-    title?: string,
-    publisher?: string,
-    image?: string,
-    thumbnail?: string,
+    title?: string | null,
+    publisher?: string | null,
+    image?: string | null,
+    thumbnail?: string | null,
     listennotes_url?: string,
     is_claimed?: boolean,
     type?: episodic | serial,
@@ -1368,14 +1368,14 @@ POSTs form-encoded selectors and supports up to 10 podcasts. This endpoint is av
     audio_length_sec?: number,
     update_frequency_hours?: number,
     earliest_pub_date_ms?: number,
-    rss?: string,
+    rss?: string | null,
     latest_episode_id?: string,
     latest_pub_date_ms?: number,
     explicit_content?: boolean,
-    description?: string,
+    description?: string | null,
     itunes_id?: number | null,
-    language?: string,
-    country?: string,
+    language?: string | null,
+    country?: string | null,
     website?: string | null,
     email?: string | null,
     genre_ids?: number[],
@@ -1429,7 +1429,7 @@ await corsair.listennotes.api.podcasts.getBest({ genre_id: '127' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `genre_id` | `string` | No | Genre ID |
+| `genre_id` | `number \| string` | No | Genre ID from genres.list (number or numeric string) |
 | `page` | `number` | No | Page number |
 | `region` | `string` | No | Region code |
 | `publisher_region` | `string` | No | Publisher region code |
@@ -1463,10 +1463,10 @@ Pass `next_page_number` as `page` for pagination. `sort` accepts recent_added_fi
 ```ts
 {
   id?: string,
-  title?: string,
-  publisher?: string,
-  image?: string,
-  thumbnail?: string,
+  title?: string | null,
+  publisher?: string | null,
+  image?: string | null,
+  thumbnail?: string | null,
   listennotes_url?: string,
   is_claimed?: boolean,
   type?: episodic | serial,
@@ -1474,14 +1474,14 @@ Pass `next_page_number` as `page` for pagination. `sort` accepts recent_added_fi
   audio_length_sec?: number,
   update_frequency_hours?: number,
   earliest_pub_date_ms?: number,
-  rss?: string,
+  rss?: string | null,
   latest_episode_id?: string,
   latest_pub_date_ms?: number,
   explicit_content?: boolean,
-  description?: string,
+  description?: string | null,
   itunes_id?: number | null,
-  language?: string,
-  country?: string,
+  language?: string | null,
+  country?: string | null,
   website?: string | null,
   email?: string | null,
   genre_ids?: number[],
@@ -1558,10 +1558,10 @@ Returns up to 10 podcasts per page. Pass `next_page_number` as `page` to continu
 ```ts
 {
   id?: string,
-  title?: string,
-  publisher?: string,
-  image?: string,
-  thumbnail?: string,
+  title?: string | null,
+  publisher?: string | null,
+  image?: string | null,
+  thumbnail?: string | null,
   listennotes_url?: string,
   is_claimed?: boolean,
   type?: episodic | serial,
@@ -1569,14 +1569,14 @@ Returns up to 10 podcasts per page. Pass `next_page_number` as `page` to continu
   audio_length_sec?: number,
   update_frequency_hours?: number,
   earliest_pub_date_ms?: number,
-  rss?: string,
+  rss?: string | null,
   latest_episode_id?: string,
   latest_pub_date_ms?: number,
   explicit_content?: boolean,
-  description?: string,
+  description?: string | null,
   itunes_id?: number | null,
-  language?: string,
-  country?: string,
+  language?: string | null,
+  country?: string | null,
   website?: string | null,
   email?: string | null,
   genre_ids?: number[],
@@ -1706,10 +1706,10 @@ await corsair.listennotes.api.podcasts.getRecommendations({ id: '4d3fe717742d496
 ```ts
 {
   id?: string,
-  title?: string,
-  publisher?: string,
-  image?: string,
-  thumbnail?: string,
+  title?: string | null,
+  publisher?: string | null,
+  image?: string | null,
+  thumbnail?: string | null,
   listennotes_url?: string,
   is_claimed?: boolean,
   type?: episodic | serial,
@@ -1717,14 +1717,14 @@ await corsair.listennotes.api.podcasts.getRecommendations({ id: '4d3fe717742d496
   audio_length_sec?: number,
   update_frequency_hours?: number,
   earliest_pub_date_ms?: number,
-  rss?: string,
+  rss?: string | null,
   latest_episode_id?: string,
   latest_pub_date_ms?: number,
   explicit_content?: boolean,
-  description?: string,
+  description?: string | null,
   itunes_id?: number | null,
-  language?: string,
-  country?: string,
+  language?: string | null,
+  country?: string | null,
   website?: string | null,
   email?: string | null,
   genre_ids?: number[],
