@@ -424,6 +424,7 @@ export const BaseProviders = [
 	'linkup',
 	'litescrape',
 	'livesession',
+	'lodgify',
 	'logodev',
 	'loyverse',
 	'magichour',
@@ -1173,6 +1174,7 @@ export const ProviderDisplayNames = {
 	linkup: 'Linkup',
 	litescrape: 'LiteScrape',
 	livesession: 'LiveSession',
+	lodgify: 'Lodgify',
 	logodev: 'Logo.dev',
 	loyverse: 'Loyverse',
 	magichour: 'Magic Hour',
@@ -1929,6 +1931,7 @@ export type AllProviders =
 	| 'linkup'
 	| 'litescrape'
 	| 'livesession'
+	| 'lodgify'
 	| 'logodev'
 	| 'loyverse'
 	| 'magichour'
