@@ -1,0 +1,4236 @@
+---
+title: "Tailscale API reference"
+sidebarTitle: "API"
+description: "API reference for the Tailscale plugin in Corsair: every `tailscale.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Contacts
+
+### get
+
+`contacts.get`
+
+Get the tailnet's account, support and security contact emails.
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.contacts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | `object \| null` | No | — |
+| `support` | `object \| null` | No | — |
+| `security` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="account full type">
+
+```ts
+{
+  email?: string | null,
+  fallbackEmail?: string | null,
+  needsVerification?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="support full type">
+
+```ts
+{
+  email?: string | null,
+  fallbackEmail?: string | null,
+  needsVerification?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="security full type">
+
+```ts
+{
+  email?: string | null,
+  fallbackEmail?: string | null,
+  needsVerification?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### resendVerificationEmail
+
+`contacts.resendVerificationEmail`
+
+Email the verification link for a contact address again.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.tailscale.api.contacts.resendVerificationEmail({ contactType: 'security' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `contactType` | `account \| support \| security` | Yes | Type of contact. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Tailscale accepted the call; it answers with no body. |
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Change the account, support or security contact email. Tailscale emails the new address to verify it.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.tailscale.api.contacts.update({ contactType: 'security', email: 'security@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `contactType` | `account \| support \| security` | Yes | Type of contact. |
+| `email` | `string` | Yes | The contact's email address. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Tailscale accepted the call; it answers with no body. |
+
+
+
+---
+
+## Device Invites
+
+### accept
+
+`deviceInvites.accept`
+
+Accept a device share invite from another tailnet into this key's tailnet, by its invite URL or code. The shared device then appears in devices.list. Needs a user's API access token: a share belongs to a user, so an OAuth client can't accept one.
+
+**Risk:** `write`
+
+```ts
+await corsair.tailscale.api.deviceInvites.accept({ invite: 'https://login.tailscale.com/admin/invite/12346abc' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invite` | `string` | Yes | The URL of the invite (in the form `https://login.tailscale.com/admin/invite/{code}`) or the `{code}` component of the URL. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `device` | `object \| null` | No | Information about the device being shared. |
+| `sharer` | `object \| null` | No | The user who create the device share invite. |
+| `acceptedBy` | `object \| null` | No | The user accepting the device share invite. |
+
+<AccordionGroup>
+<Accordion title="device full type">
+
+```ts
+{
+  id?: string | null,
+  os?: string | null,
+  name?: string | null,
+  fqdn?: string | null,
+  ipv4?: string | null,
+  ipv6?: string | null,
+  includeExitNode?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="sharer full type">
+
+```ts
+{
+  id?: string | null,
+  displayName?: string | null,
+  loginName?: string | null,
+  profilePicURL?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="acceptedBy full type">
+
+```ts
+{
+  id?: string | null,
+  displayName?: string | null,
+  loginName?: string | null,
+  profilePicURL?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`deviceInvites.create`
+
+Share a device with people outside the tailnet. Each invite gives an invite URL to send; with email set, Tailscale emails the invite itself. allowExitNode lets the recipient use the device as an exit node; multiUse lets several people accept one link. deviceId is the device `id` or `nodeId` from devices.list.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.tailscale.api.deviceInvites.create({
+	deviceId: 'nKLggijBzX11CNTRL',
+	invites: [{ multiUse: false, allowExitNode: false }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceId` | `string` | Yes | ID of the device. Using the device's `nodeId` is preferred, but its numeric `id` value can also be used. |
+| `invites` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="invites full type">
+
+```ts
+{
+  multiUse?: boolean,
+  allowExitNode?: boolean,
+  email?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[] \| null`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  created?: string | null,
+  tailnetId?: number | null,
+  deviceId?: number | null,
+  sharerId?: number | null,
+  multiUse?: boolean | null,
+  allowExitNode?: boolean | null,
+  email?: string | null,
+  lastEmailSentAt?: string | null,
+  inviteUrl?: string | null,
+  accepted?: boolean | null,
+  acceptedBy?: {
+    id?: number | null,
+    loginName?: string | null,
+    profilePicUrl?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`deviceInvites.delete`
+
+Delete a device share invite; its link stops working.
+
+**Risk:** `write`
+
+```ts
+await corsair.tailscale.api.deviceInvites.delete({ deviceInviteId: '12346' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceInviteId` | `string` | Yes | ID of the device invite. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Tailscale accepted the call; it answers with no body. |
+
+
+
+---
+
+### get
+
+`deviceInvites.get`
+
+Get a device share invite: its invite URL, who accepted it and when.
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.deviceInvites.get({ deviceInviteId: '12346' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceInviteId` | `string` | Yes | ID of the device invite. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | The unique identifier for the invite. Supply this value wherever &#123;deviceInviteId&#125; is indicated in the endpoint. |
+| `created` | `string \| null` | No | The creation time of the invite. |
+| `tailnetId` | `number \| null` | No | The ID of the tailnet to which the shared device belongs. |
+| `deviceId` | `number \| null` | No | The ID of the device being shared. |
+| `sharerId` | `number \| null` | No | The ID of the user who created the share invite. |
+| `multiUse` | `boolean \| null` | No | Specifies whether this device invite can be accepted more than once. |
+| `allowExitNode` | `boolean \| null` | No | Specifies whether the invited user is able to use the device as an exit node when the device is advertising as one. |
+| `email` | `string \| null` | No | The email to which the invite was sent. If empty, the invite was not emailed to anyone, but the inviteUrl can be shared manually. |
+| `lastEmailSentAt` | `string \| null` | No | The last time the invite was attempted to be sent to Email. Only ever set if `email` is not empty. |
+| `inviteUrl` | `string \| null` | No | The link to accept the invite. Anyone with this link can accept the invite. It is not restricted to the person to which the invite was emailed. |
+| `accepted` | `boolean \| null` | No | `true` when the share invite has been accepted. |
+| `acceptedBy` | `object \| null` | No | Set when the invite has been accepted. It holds information about the user who accepted the share invite. |
+
+<AccordionGroup>
+<Accordion title="acceptedBy full type">
+
+```ts
+{
+  id?: number | null,
+  loginName?: string | null,
+  profilePicUrl?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`deviceInvites.list`
+
+List the share invites for a device (who it was shared with, accepted or not); null when there are none. deviceId is the device `id` or `nodeId` from devices.list.
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.deviceInvites.list({ deviceId: 'nKLggijBzX11CNTRL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceId` | `string` | Yes | ID of the device. Using the device's `nodeId` is preferred, but its numeric `id` value can also be used. |
+
+
+
+**Output:** `object[] \| null`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  created?: string | null,
+  tailnetId?: number | null,
+  deviceId?: number | null,
+  sharerId?: number | null,
+  multiUse?: boolean | null,
+  allowExitNode?: boolean | null,
+  email?: string | null,
+  lastEmailSentAt?: string | null,
+  inviteUrl?: string | null,
+  accepted?: boolean | null,
+  acceptedBy?: {
+    id?: number | null,
+    loginName?: string | null,
+    profilePicUrl?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### resend
+
+`deviceInvites.resend`
+
+Email a device share invite again to the address it was created for.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.tailscale.api.deviceInvites.resend({ deviceInviteId: '12346' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceInviteId` | `string` | Yes | ID of the device invite. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Tailscale accepted the call; it answers with no body. |
+
+
+
+---
+
+## Devices
+
+### authorize
+
+`devices.authorize`
+
+Approve (authorized: true) or revoke approval for (authorized: false) a device when the tailnet requires device approval. Revoking cuts the device's access until it is approved again. deviceId is the device `id` or `nodeId` from devices.list.
+
+**Risk:** `write`
+
+```ts
+await corsair.tailscale.api.devices.authorize({ deviceId: 'nKLggijBzX11CNTRL', authorized: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceId` | `string` | Yes | ID of the device. Using the device's `nodeId` is preferred, but its numeric `id` value can also be used. |
+| `authorized` | `boolean` | Yes | - If `true`, authorize a new device or re-authorize a previously deauthorized device. - If `false`, deauthorize an authorized device. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Tailscale accepted the call; it answers with no body. |
+
+
+
+---
+
+### delete
+
+`devices.delete`
+
+Remove a device from the tailnet. It loses access at once and must be signed in again (with a new auth key or login) to rejoin. Cannot be undone. deviceId is the device `id` or `nodeId` from devices.list.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.tailscale.api.devices.delete({ deviceId: 'nKLggijBzX11CNTRL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceId` | `string` | Yes | ID of the device. Using the device's `nodeId` is preferred, but its numeric `id` value can also be used. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Tailscale accepted the call; it answers with no body. |
+
+
+
+---
+
+### expireKey
+
+`devices.expireKey`
+
+Expire a device's node key now: the device is disconnected until someone signs in on it again. Use it to cut off a lost or compromised machine. deviceId is the device `id` or `nodeId` from devices.list.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.tailscale.api.devices.expireKey({ deviceId: 'nKLggijBzX11CNTRL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceId` | `string` | Yes | ID of the device. Using the device's `nodeId` is preferred, but its numeric `id` value can also be used. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Tailscale accepted the call; it answers with no body. |
+
+
+
+---
+
+### get
+
+`devices.get`
+
+Get one device. fields: "all" adds routes, posture and connectivity details. deviceId is the device `id` or `nodeId` from devices.list.
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.devices.get({ deviceId: 'nKLggijBzX11CNTRL', fields: 'all' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceId` | `string` | Yes | ID of the device. Using the device's `nodeId` is preferred, but its numeric `id` value can also be used. |
+| `fields` | `all \| default` | No | Optionally controls whether the response returns **all** fields or only a predefined subset of fields. Currently, there are two supported options: - **`all`:** return all fields in the response - **`default`:** return the following fields - `addresses` - `id` - `nodeId` - `user` - `name` - `hostname` - `clientVersion` - `updateAvailable` - `os` - `created` - `connectedToControl` - `lastSeen` - `keyExpiryDisabled` - `expires` - `authorized` - `isExternal` - `machineKey` - `nodeKey` - `blocksIncomingConnections` - `tailnetLockKey` - `tailnetLockError` - `tags` - `isEphemeral` If the `fields` parameter is not supplied, then the default (limited fields) option is used. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `addresses` | `string[] \| null` | No | A list of Tailscale IP addresses for the device, including both IPv4 (formatted as 100.x.y.z) and IPv6 (formatted as fd7a:115c:a1e0:a:b:c:d:e) addresses. |
+| `id` | `string \| null` | No | The legacy identifier for a device; you can supply this value wherever &#123;deviceId&#125; is indicated in the endpoint. Note that although "id" is still accepted, "nodeId" is preferred. |
+| `nodeId` | `string \| null` | No | The preferred identifier for a device; supply this value wherever &#123;deviceId&#125; is indicated in the endpoint. |
+| `user` | `string \| null` | No | The user who registered the node. For untagged nodes, this user is the device owner. |
+| `name` | `string \| null` | No | The MagicDNS name of the device. Learn more about MagicDNS at https://tailscale.com/docs/features/magicdns. |
+| `hostname` | `string \| null` | No | The machine name in the admin console. Learn more about machine names at https://tailscale.com/docs/concepts/machine-names. |
+| `clientVersion` | `string \| null` | No | The version of the Tailscale client software; this is empty for external devices. |
+| `updateAvailable` | `boolean \| null` | No | 'true' if a Tailscale client version upgrade is available. This value is empty for external devices. |
+| `os` | `string \| null` | No | The operating system that the device is running. |
+| `created` | `string \| null` | No | The date on which the device was added to the tailnet; this is empty for external devices. |
+| `connectedToControl` | `boolean \| null` | No | Indicates if the device recently maintained a TCP connection to the Tailscale control server. |
+| `lastSeen` | `string \| null` | No | When the device was last connected to the Tailscale control server. Omitted if the device has never been online or `connectedToControl` is true. |
+| `keyExpiryDisabled` | `boolean \| null` | No | 'true' if the keys for the device will not expire. Learn more at https://tailscale.com/docs/features/access-control/key-expiry. |
+| `expires` | `string \| null` | No | The expiration date of the device's auth key. Learn more about key expiry at https://tailscale.com/docs/features/access-control/key-expiry. |
+| `authorized` | `boolean \| null` | No | 'true' if the device has been authorized to join the tailnet; otherwise, 'false'. Learn more about device authorization at https://tailscale.com/docs/features/access-control/device-management/device-approval. |
+| `isExternal` | `boolean \| null` | No | 'true', indicates that a device is not a member of the tailnet, but is shared in to the tailnet; if 'false', the device is a member of the tailnet. Learn more about node sharing at https://tailscale.com/docs/features/sharing. |
+| `multipleConnections` | `boolean \| null` | No | 'true', indicates that multiple devices are currently connected using the same node key, which is usually a sign of node state being copied between machines. If only one device is connected using this node's key, the field is omitted. If the number of live connections goes back to 0 or 1, this field is also omitted, meaning it's not sticky. In case an attacker steals node state from a legitimate node, they can mask their activities by not connecting concurrently with the legitimate node. |
+| `machineKey` | `string \| null` | No | For internal use and is not required for any API operations. This value is empty for external devices. |
+| `nodeKey` | `string \| null` | No | Mostly for internal use, required for select operations, such as adding a node to a locked tailnet. Learn about tailnet locks at https://tailscale.com/docs/features/tailnet-lock. |
+| `blocksIncomingConnections` | `boolean \| null` | No | 'true' if the device is not allowed to accept any connections over Tailscale, including pings. Learn more in the "Allow incoming connections" section of https://tailscale.com/docs/features/client/manage-preferences. |
+| `enabledRoutes` | `string[] \| null` | No | The subnet routes for this device that have been approved by a tailnet admin. Learn more about subnet routes at https://tailscale.com/docs/features/subnet-routers. |
+| `advertisedRoutes` | `string[] \| null` | No | The subnets this device requests to expose. Learn more about subnet routes at https://tailscale.com/docs/features/subnet-routers. |
+| `clientConnectivity` | `object \| null` | No | clientConnectivity provides a report on the device's current physical network conditions. |
+| `tags` | `string[] \| null` | No | Lets you assign an identity to a device that is separate from human users, and use it as part of an ACL to restrict access. Once a device is tagged, the tag is the owner of that device. A single node can have multiple tags assigned. This value is empty for external devices. Learn more about tags at https://tailscale.com/docs/features/tags. |
+| `tailnetLockError` | `string \| null` | No | Indicates an issue with the tailnet lock node-key signature on this device. This field is only populated when tailnet lock is enabled. |
+| `tailnetLockKey` | `string \| null` | No | The node's tailnet lock key. Every node generates a tailnet lock key (so the value will be present) even if tailnet lock is not enabled. Learn more about tailnet lock at https://tailscale.com/docs/features/tailnet-lock. |
+| `sshEnabled` | `boolean \| null` | No | 'true' if Tailscale SSH is enabled on this device. Learn more about Tailscale SSH at https://tailscale.com/docs/features/tailscale-ssh. |
+| `postureIdentity` | `object \| null` | No | Contains extra identifiers from the device when the tailnet it is connected to has device posture identification collection enabled. If the device has not opted-in to posture identification collection, this will contain &#123;"disabled": true&#125;. Learn more about posture identity at https://tailscale.com/docs/features/access-control/device-management/how-to/manage-identity. |
+| `postureStatus` | `object \| null` | No | Reports the status of a single posture for a device. |
+| `isEphemeral` | `boolean \| null` | No | 'true' if the device is ephemeral. Learn more about ephemeral nodes at https://tailscale.com/docs/features/ephemeral-nodes. |
+| `distro` | `object \| null` | No | distro provides details of the operating system distribution, if available. |
+
+<AccordionGroup>
+<Accordion title="clientConnectivity full type">
+
+```ts
+{
+  endpoints?: string[] | null,
+  mappingVariesByDestIP?: boolean | null,
+  latency?: Record<string, {
+    preferred?: boolean | null,
+    latencyMs?: number | null
+  }> | null,
+  clientSupports?: {
+    hairPinning?: boolean | null | null,
+    ipv6?: boolean | null | null,
+    pcp?: boolean | null | null,
+    pmp?: boolean | null | null,
+    udp?: boolean | null | null,
+    upnp?: boolean | null | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="postureIdentity full type">
+
+```ts
+{
+  serialNumbers?: string[] | null,
+  disabled?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="postureStatus full type">
+
+```ts
+{
+  passing?: boolean | null,
+  impacting?: boolean | null,
+  failingAssertions?: string[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="distro full type">
+
+```ts
+{
+  name?: string | null,
+  version?: string | null,
+  codeName?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`devices.list`
+
+List the devices in the tailnet: name, hostname, Tailscale IPs, owner, OS, client version, tags, last seen, key expiry, authorized. Pass fields: "all" to add advertised and enabled routes, posture and connectivity details. filters narrows the list on the server by exact match on top-level device fields, all of them required to match (for example &#123; tags: ["tag:prod"], isEphemeral: true &#125;).
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.devices.list({
+	filters: {
+		tags: ['tag:mcp'],
+	},
+	fields: 'all',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `fields` | `all \| default` | No | Optionally controls whether the response returns **all** fields or only a predefined subset of fields. Currently, there are two supported options: - **`all`:** return all fields in the response - **`default`:** return the following fields - `addresses` - `id` - `nodeId` - `user` - `name` - `hostname` - `clientVersion` - `updateAvailable` - `os` - `created` - `connectedToControl` - `lastSeen` - `keyExpiryDisabled` - `expires` - `authorized` - `isExternal` - `machineKey` - `nodeKey` - `blocksIncomingConnections` - `tailnetLockKey` - `tailnetLockError` - `tags` - `isEphemeral` If the `fields` parameter is not supplied, then the default (limited fields) option is used. |
+| `filters` | `Record<string, string \| number \| boolean \| string[]>` | No | Server-side filters: top-level device fields matched exactly, all of them together, for example &#123; "tags": ["tag:prod"], "isEphemeral": true, "hostname": "mcp-1" &#125;. A list value matches devices that have every item. Objects such as clientConnectivity cannot be filtered on. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `devices` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="devices full type">
+
+```ts
+{
+  addresses?: string[] | null,
+  id?: string | null,
+  nodeId?: string | null,
+  user?: string | null,
+  name?: string | null,
+  hostname?: string | null,
+  clientVersion?: string | null,
+  updateAvailable?: boolean | null,
+  os?: string | null,
+  created?: string | null,
+  connectedToControl?: boolean | null,
+  lastSeen?: string | null,
+  keyExpiryDisabled?: boolean | null,
+  expires?: string | null,
+  authorized?: boolean | null,
+  isExternal?: boolean | null,
+  multipleConnections?: boolean | null,
+  machineKey?: string | null,
+  nodeKey?: string | null,
+  blocksIncomingConnections?: boolean | null,
+  enabledRoutes?: string[] | null,
+  advertisedRoutes?: string[] | null,
+  clientConnectivity?: {
+    endpoints?: string[] | null,
+    mappingVariesByDestIP?: boolean | null,
+    latency?: Record<string, {
+      preferred?: boolean | null,
+      latencyMs?: number | null
+    }> | null,
+    clientSupports?: {
+      hairPinning?: boolean | null | null,
+      ipv6?: boolean | null | null,
+      pcp?: boolean | null | null,
+      pmp?: boolean | null | null,
+      udp?: boolean | null | null,
+      upnp?: boolean | null | null
+    } | null
+  } | null,
+  tags?: string[] | null,
+  tailnetLockError?: string | null,
+  tailnetLockKey?: string | null,
+  sshEnabled?: boolean | null,
+  postureIdentity?: {
+    serialNumbers?: string[] | null,
+    disabled?: boolean | null
+  } | null,
+  postureStatus?: {
+    passing?: boolean | null,
+    impacting?: boolean | null,
+    failingAssertions?: string[] | null
+  } | null,
+  isEphemeral?: boolean | null,
+  distro?: {
+    name?: string | null,
+    version?: string | null,
+    codeName?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### postureAttributes.batchUpdate
+
+`devices.postureAttributes.batchUpdate`
+
+Set or delete custom posture attributes on many devices in one call. A null value deletes that attribute. Applied all together or not at all.
+
+**Risk:** `write`
+
+```ts
+await corsair.tailscale.api.devices.postureAttributes.batchUpdate({
+	nodes: {
+		nKLggijBzX11CNTRL: {
+			custom:agentApproved: { value: true },
+		},
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `nodes` | `object` | No | A mapping of deviceId → posture attributes. |
+| `comment` | `string` | No | An optional comment indicating why attributes are being set, which will be added to the audit log. |
+
+<AccordionGroup>
+<Accordion title="nodes full type">
+
+```ts
+Record<string, Record<string, {
+  value: string | number | boolean,
+  expiry?: string
+} | null>>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Tailscale accepted the call; it answers with no body. |
+
+
+
+---
+
+### postureAttributes.delete
+
+`devices.postureAttributes.delete`
+
+Delete a custom posture attribute (custom:...) from a device. deviceId is the device `id` or `nodeId` from devices.list.
+
+**Risk:** `write`
+
+```ts
+await corsair.tailscale.api.devices.postureAttributes.delete({ deviceId: 'nKLggijBzX11CNTRL', attributeKey: 'custom:agentApproved' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceId` | `string` | Yes | ID of the device. Using the device's `nodeId` is preferred, but its numeric `id` value can also be used. |
+| `attributeKey` | `string` | Yes | The name of the posture attribute to set. This must be prefixed with `custom`: Keys have a maximum length of 128 characters including the namespace, and can only contain letters, numbers, underscores, and colon. Keys are case-sensitive. Keys must be unique, but are checked for uniqueness in a case-insensitive manner. For example, `custom:MyAttribute` and `custom:myattribute` cannot both be set within a single tailnet. All values for a given key need to be of the same type, which is determined when the first value is written for a given key. For example, `custom:myattribute` cannot have a numeric value (`87`) for one node and a string value (`"78"`) for another node within the same tailnet. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Tailscale accepted the call; it answers with no body. |
+
+
+
+---
+
+### postureAttributes.get
+
+`devices.postureAttributes.get`
+
+Get a device's posture attributes: Tailscale's own (node:os, node:tsVersion, node:tsReleaseTrack, ...) and custom ones (custom:&lt;name&gt;) set through the API or a posture integration. deviceId is the device `id` or `nodeId` from devices.list.
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.devices.postureAttributes.get({ deviceId: 'nKLggijBzX11CNTRL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceId` | `string` | Yes | ID of the device. Using the device's `nodeId` is preferred, but its numeric `id` value can also be used. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attributes` | `Record<string, string \| number \| boolean> \| null` | No | Contains all the posture attributes assigned to a node. Attribute values can be strings, numbers or booleans. |
+| `expiries` | `Record<string, string> \| null` | No | Contains the expiry time for each posture attribute, if set. |
+
+
+
+---
+
+### postureAttributes.set
+
+`devices.postureAttributes.set`
+
+Set a custom posture attribute on a device. attributeKey must start with custom: (for example custom:agentApproved); value is a string, number or boolean. expiry (RFC 3339) makes it lapse on its own. Policy postures can then allow or deny access on it. deviceId is the device `id` or `nodeId` from devices.list.
+
+**Risk:** `write`
+
+```ts
+await corsair.tailscale.api.devices.postureAttributes.set({
+	deviceId: 'nKLggijBzX11CNTRL',
+	attributeKey: 'custom:agentApproved',
+	value: true,
+	expiry: '2026-12-31T00:00:00Z',
+	comment: 'approved for agent access',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceId` | `string` | Yes | ID of the device. Using the device's `nodeId` is preferred, but its numeric `id` value can also be used. |
+| `attributeKey` | `string` | Yes | The name of the posture attribute to set. This must be prefixed with `custom`: Keys have a maximum length of 128 characters including the namespace, and can only contain letters, numbers, underscores, and colon. Keys are case-sensitive. Keys must be unique, but are checked for uniqueness in a case-insensitive manner. For example, `custom:MyAttribute` and `custom:myattribute` cannot both be set within a single tailnet. All values for a given key need to be of the same type, which is determined when the first value is written for a given key. For example, `custom:myattribute` cannot have a numeric value (`87`) for one node and a string value (`"78"`) for another node within the same tailnet. |
+| `value` | `string \| number \| boolean` | No | A value can be either a string, number or boolean. A string value can have a maximum length of 50 characters, and can only contain letters, numbers, underscores, and periods. A number value is an integer and must be a JSON safe number (up to 2^53 - 1). |
+| `expiry` | `string` | No | An optional expiry time for a given posture attribute. If set, Tailscale will automatically remove the attribute within a few minutes after the specified time. |
+| `comment` | `string` | No | An optional comment indicating a reason why an attribute is set, which will be added to the audit log. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attributes` | `Record<string, string \| number \| boolean> \| null` | No | Contains all the posture attributes assigned to a node. Attribute values can be strings, numbers or booleans. |
+| `expiries` | `Record<string, string> \| null` | No | Contains the expiry time for each posture attribute, if set. |
+
+
+
+---
+
+### routes.list
+
+`devices.routes.list`
+
+List the subnet routes and exit-node routes a device advertises and which of them are enabled. deviceId is the device `id` or `nodeId` from devices.list.
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.devices.routes.list({ deviceId: 'nKLggijBzX11CNTRL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceId` | `string` | Yes | ID of the device. Using the device's `nodeId` is preferred, but its numeric `id` value can also be used. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `advertisedRoutes` | `string[] \| null` | No | The subnets this device requests to expose. |
+| `enabledRoutes` | `string[] \| null` | No | The subnet routes for this device that have been approved by a tailnet admin. |
+
+
+
+---
+
+### routes.set
+
+`devices.routes.set`
+
+Set which of the routes a device advertises are enabled (subnet routes, and 0.0.0.0/0 plus ::/0 for an exit node). Replaces the enabled list: routes left out are turned off. Only routes the device advertises can be enabled. deviceId is the device `id` or `nodeId` from devices.list.
+
+**Risk:** `write`
+
+```ts
+await corsair.tailscale.api.devices.routes.set({
+	deviceId: 'nKLggijBzX11CNTRL',
+	routes: ['10.0.0.0/24'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceId` | `string` | Yes | ID of the device. Using the device's `nodeId` is preferred, but its numeric `id` value can also be used. |
+| `routes` | `string[]` | No | The new list of enabled subnet routes. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `advertisedRoutes` | `string[] \| null` | No | The subnets this device requests to expose. |
+| `enabledRoutes` | `string[] \| null` | No | The subnet routes for this device that have been approved by a tailnet admin. |
+
+
+
+---
+
+### setIp
+
+`devices.setIp`
+
+Change a device's Tailscale IPv4 address to an unused one in the tailnet's range (100.64.0.0/10 by default). Existing connections to the old address break and must reconnect to the new one. deviceId is the device `id` or `nodeId` from devices.list.
+
+**Risk:** `write`
+
+```ts
+await corsair.tailscale.api.devices.setIp({ deviceId: 'nKLggijBzX11CNTRL', ipv4: '100.80.0.1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceId` | `string` | Yes | ID of the device. Using the device's `nodeId` is preferred, but its numeric `id` value can also be used. |
+| `ipv4` | `string` | Yes | The new IPv4 address for the device. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Tailscale accepted the call; it answers with no body. |
+
+
+
+---
+
+### setName
+
+`devices.setName`
+
+Rename a device: its MagicDNS name becomes &lt;name&gt;.&lt;tailnet&gt;.ts.net. Pass name: "" to go back to the machine's own hostname. Connections using the old name stop resolving. deviceId is the device `id` or `nodeId` from devices.list.
+
+**Risk:** `write`
+
+```ts
+await corsair.tailscale.api.devices.setName({ deviceId: 'nKLggijBzX11CNTRL', name: 'mcp-server-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceId` | `string` | Yes | ID of the device. Using the device's `nodeId` is preferred, but its numeric `id` value can also be used. |
+| `name` | `string` | Yes | The new name for the device. This can be provided as either the fully qualified domain name for the device (e.g. "nodename.your-domain.ts.net") or just the base name (e.g. "nodename"). If `name` is unset or provided empty, the device's name is reset to be generated from its OS hostname. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Tailscale accepted the call; it answers with no body. |
+
+
+
+---
+
+### setTags
+
+`devices.setTags`
+
+Replace a device's ACL tags (tag:server, tag:mcp, ...). Each tag must be defined in the policy file and owned by the caller (tagOwners). Tagging a user's device turns it into a tagged device that no longer belongs to that user, and the access rules for its tags apply from then on. Pass tags: [] to remove every tag. deviceId is the device `id` or `nodeId` from devices.list.
+
+**Risk:** `write`
+
+```ts
+await corsair.tailscale.api.devices.setTags({
+	deviceId: 'nKLggijBzX11CNTRL',
+	tags: ['tag:mcp'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceId` | `string` | Yes | ID of the device. Using the device's `nodeId` is preferred, but its numeric `id` value can also be used. |
+| `tags` | `string[]` | No | The new list of tags for the device. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Tailscale accepted the call; it answers with no body. |
+
+
+
+---
+
+### updateKey
+
+`devices.updateKey`
+
+Turn key expiry off (keyExpiryDisabled: true) or back on for a device, for servers that should stay signed in. deviceId is the device `id` or `nodeId` from devices.list.
+
+**Risk:** `write`
+
+```ts
+await corsair.tailscale.api.devices.updateKey({ deviceId: 'nKLggijBzX11CNTRL', keyExpiryDisabled: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceId` | `string` | Yes | ID of the device. Using the device's `nodeId` is preferred, but its numeric `id` value can also be used. |
+| `keyExpiryDisabled` | `boolean` | Yes | - If `true`, disable the device's key expiry. The original key expiry time is still maintained. Upon re-enabling, the key will expire at that original time. - If `false`, enable the device's key expiry. Sets the key to expire at the original expiry time prior to disabling. The key may already have expired. In that case, the device must be re-authenticated. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Tailscale accepted the call; it answers with no body. |
+
+
+
+---
+
+## Dns
+
+### configuration.get
+
+`dns.configuration.get`
+
+Get the tailnet's whole DNS configuration in one object: nameservers, split DNS, search paths and preferences.
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.dns.configuration.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nameservers` | `object[] \| null` | No | Global DNS resolvers to use. If `preferences.overrideLocalDNS` is true, these override the local OS configuration; otherwise they are used as fallback resolvers. |
+| `splitDNS` | `object \| null` | No | Map of DNS name suffixes (domains) to lists of resolvers for Split DNS and advanced routing overlays. |
+| `searchPaths` | `string[] \| null` | No | Search domain paths to apply. |
+| `preferences` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="nameservers full type">
+
+```ts
+{
+  address?: string | null,
+  useWithExitNode?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="splitDNS full type">
+
+```ts
+Record<string, {
+  address?: string | null,
+  useWithExitNode?: boolean | null
+}[] | null> | null
+```
+</Accordion>
+
+<Accordion title="preferences full type">
+
+```ts
+{
+  overrideLocalDNS?: boolean | null,
+  magicDNS?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### configuration.set
+
+`dns.configuration.set`
+
+Replace the tailnet's whole DNS configuration in one call (nameservers, split DNS, search paths, preferences).
+
+**Risk:** `write`
+
+```ts
+await corsair.tailscale.api.dns.configuration.set({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `nameservers` | `object[]` | No | Global DNS resolvers to use. If `preferences.overrideLocalDNS` is true, these override the local OS configuration; otherwise they are used as fallback resolvers. |
+| `splitDNS` | `object` | No | Map of DNS name suffixes (domains) to lists of resolvers for Split DNS and advanced routing overlays. |
+| `searchPaths` | `string[]` | No | Search domain paths to apply. |
+| `preferences` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="nameservers full type">
+
+```ts
+{
+  address?: string,
+  useWithExitNode?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="splitDNS full type">
+
+```ts
+Record<string, {
+  address?: string,
+  useWithExitNode?: boolean
+}[] | null>
+```
+</Accordion>
+
+<Accordion title="preferences full type">
+
+```ts
+{
+  overrideLocalDNS?: boolean,
+  magicDNS?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nameservers` | `object[] \| null` | No | Global DNS resolvers to use. If `preferences.overrideLocalDNS` is true, these override the local OS configuration; otherwise they are used as fallback resolvers. |
+| `splitDNS` | `object \| null` | No | Map of DNS name suffixes (domains) to lists of resolvers for Split DNS and advanced routing overlays. |
+| `searchPaths` | `string[] \| null` | No | Search domain paths to apply. |
+| `preferences` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="nameservers full type">
+
+```ts
+{
+  address?: string | null,
+  useWithExitNode?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="splitDNS full type">
+
+```ts
+Record<string, {
+  address?: string | null,
+  useWithExitNode?: boolean | null
+}[] | null> | null
+```
+</Accordion>
+
+<Accordion title="preferences full type">
+
+```ts
+{
+  overrideLocalDNS?: boolean | null,
+  magicDNS?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### nameservers.list
+
+`dns.nameservers.list`
+
+List the global DNS nameservers devices use.
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.dns.nameservers.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dns` | `string[] \| null` | No | DNS nameservers. |
+
+
+
+---
+
+### nameservers.set
+
+`dns.nameservers.set`
+
+Replace the global DNS nameservers (IP addresses). An empty list removes them all and turns MagicDNS off.
+
+**Risk:** `write`
+
+```ts
+await corsair.tailscale.api.dns.nameservers.set({
+	dns: ['1.1.1.1', '1.0.0.1'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `dns` | `string[]` | No | DNS nameservers. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dns` | `string[] \| null` | No | DNS nameservers. |
+| `magicDNS` | `boolean \| null` | No | Whether MagicDNS is active for this tailnet. |
+
+
+
+---
+
+### preferences.get
+
+`dns.preferences.get`
+
+Get whether MagicDNS is on.
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.dns.preferences.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `magicDNS` | `boolean \| null` | No | Whether MagicDNS is active for this tailnet. |
+
+
+
+---
+
+### preferences.set
+
+`dns.preferences.set`
+
+Turn MagicDNS on or off. Turning it on needs at least one nameserver; turning it off breaks &lt;name&gt;.ts.net lookups.
+
+**Risk:** `write`
+
+```ts
+await corsair.tailscale.api.dns.preferences.set({ magicDNS: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `magicDNS` | `boolean` | Yes | Whether MagicDNS is active for this tailnet. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `magicDNS` | `boolean \| null` | No | Whether MagicDNS is active for this tailnet. |
+
+
+
+---
+
+### searchPaths.list
+
+`dns.searchPaths.list`
+
+List the DNS search domains pushed to devices.
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.dns.searchPaths.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `searchPaths` | `string[] \| null` | No | The search domains for the given tailnet. |
+
+
+
+---
+
+### searchPaths.set
+
+`dns.searchPaths.set`
+
+Replace the DNS search domains pushed to devices.
+
+**Risk:** `write`
+
+```ts
+await corsair.tailscale.api.dns.searchPaths.set({
+	searchPaths: ['corp.example.com'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `searchPaths` | `string[]` | Yes | The search domains for the given tailnet. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `searchPaths` | `string[] \| null` | No | The search domains for the given tailnet. |
+
+
+
+---
+
+### splitDns.get
+
+`dns.splitDns.get`
+
+Get split DNS: which nameservers answer for which domains.
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.dns.splitDns.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+
+
+
+**Output:** `Record<string, string[] \| null>`
+
+
+---
+
+### splitDns.set
+
+`dns.splitDns.set`
+
+Replace the whole split DNS map (domain to nameservers). Domains left out are removed.
+
+**Risk:** `write`
+
+```ts
+await corsair.tailscale.api.dns.splitDns.set({
+	domains: {
+		corp.example.com: ['10.0.0.53'],
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `domains` | `Record<string, string[] \| null>` | Yes | — |
+
+
+
+**Output:** `Record<string, string[] \| null>`
+
+
+---
+
+### splitDns.update
+
+`dns.splitDns.update`
+
+Change split DNS for the given domains only; a domain set to null is removed, others are kept.
+
+**Risk:** `write`
+
+```ts
+await corsair.tailscale.api.dns.splitDns.update({
+	domains: {
+		corp.example.com: ['10.0.0.53'],
+		old.example.com: null,
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `domains` | `Record<string, string[] \| null>` | Yes | — |
+
+
+
+**Output:** `Record<string, string[] \| null>`
+
+
+---
+
+## Keys
+
+### create
+
+`keys.create`
+
+Create an auth key (keyType "auth", the default) that adds a device to the tailnet, or a trust credential (keyType "client" for an OAuth client, "federated" for a federated identity). For an agent or server, make the auth key preauthorized, tagged (capabilities.devices.create.tags) and ephemeral so the node is removed when it goes offline. The secret is returned once in `key`: hand it to the machine right away, never paste it into chat.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.tailscale.api.keys.create({
+	description: 'agent node',
+	expirySeconds: 3600,
+	capabilities: {
+		devices: {
+			create: {
+				reusable: false,
+				ephemeral: true,
+				preauthorized: true,
+				tags: ['tag:agent'],
+			},
+		},
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `keyType` | `auth \| client \| federated` | No | The type of key to create. Defaults to "auth" if omitted. |
+| `description` | `string` | No | A short string specifying the purpose of the key. Can be a maximum of 50 alphanumeric characters. Hyphens and spaces are also allowed. |
+| `capabilities` | `object` | No | — |
+| `expirySeconds` | `number` | No | Specifies the duration in seconds until the key expires. Defaults to 90 days if not supplied. Only applies to auth keys. |
+| `scopes` | `string[]` | No | A list of scopes to grant to the key. At least one scope is required for OAuth clients and federated identities. See [trust credentials scopes](https://tailscale.com/docs/reference/trust-credentials#scopes) for a list of available scopes. Only applies to OAuth clients and federated identities. |
+| `tags` | `string[]` | No | A list of tags associated to the trust credential. Auth keys created with this credential must have these exact tags, or tags owned by the credential's tags. Mandatory if the scopes include "devices:core" or "auth_keys". Only applies to OAuth clients and federated identities. |
+| `issuer` | `string` | No | The issuer of the OIDC identity token used in the token exchange. Must be a valid and publicly reachable https:// URL. Only applies to federated identities. |
+| `subject` | `string` | No | The pattern used when matching against the `sub` claim from an OIDC identity token. Patterns can include `*` characters to match against any character. Only applies to federated identities. |
+| `audience` | `string` | No | The value used when matching against the `aud` claim from an OIDC identity token. Specifying the audience is optional as Tailscale will generate a secure audience at creation time by default. It is recommended to let Tailscale generate the audience unless the identity provider you are integrating with requires a specific audience format. Only applies to federated identities. |
+| `customClaimRules` | `Record<string, string>` | No | A map of claim names to pattern strings used to match against arbitrary claims in the OIDC identity token. Patterns can include `*` characters to match against any character. Only applies to federated identities. |
+
+<AccordionGroup>
+<Accordion title="capabilities full type">
+
+```ts
+{
+  devices?: {
+    create?: {
+      reusable?: boolean,
+      ephemeral?: boolean,
+      preauthorized?: boolean,
+      tags?: string[],
+      nodeAttributes?: Record<string, string | number | boolean>
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `key` | `string \| null` | No | The secret key material (only populated at creation time). |
+| `keyType` | `string \| null` | No | The type of key. Can be one of "auth", "client", "federated", or "api". - "auth" refers to machine auth keys. - "client" refers to OAuth clients. - "federated" refers to federated identities. - "api" refers to personal API access tokens or tokens generated using an OAuth client or federated identity. |
+| `expirySeconds` | `number \| null` | No | Duration in seconds until the key expires. Only applies to auth keys. |
+| `created` | `string \| null` | No | — |
+| `updated` | `string \| null` | No | — |
+| `expires` | `string \| null` | No | — |
+| `revoked` | `string \| null` | No | — |
+| `capabilities` | `object \| null` | No | — |
+| `scopes` | `string[] \| null` | No | A list of scopes granted to the key. Only applies to OAuth clients, API access tokens, and federated identities. |
+| `tags` | `string[] \| null` | No | A list of tags associated to the trust credential. Auth keys created with this client must have these exact tags, or tags owned by the client's tags. Mandatory if the scopes include "devices:core" or "auth_keys". Only applies to OAuth clients and federated identities. |
+| `description` | `string \| null` | No | — |
+| `invalid` | `boolean \| null` | No | Response for a revoked (deleted) or expired key will have an `invalid` field set to true. |
+| `userId` | `string \| null` | No | ID of the user who created this key, empty for keys created by trust credentials. |
+| `audience` | `string \| null` | No | The value used when matching against the `aud` claim from an OIDC identity token. Specifying the audience is optional as Tailscale will generate a secure audience at creation time by default. It is recommended to let Tailscale generate the audience unless the identity provider you are integrating with requires a specific audience format. Only applies to federated identities. |
+| `issuer` | `string \| null` | No | The issuer of the OIDC identity token used in the token exchange. Must be a valid and publicly reachable https:// URL. Only applies to federated identities. |
+| `subject` | `string \| null` | No | The pattern used when matching against the `sub` claim from an OIDC identity token. This pattern can include `*` characters to match against any character. Only applies to federated identities. |
+| `customClaimRules` | `Record<string, string> \| null` | No | A map of claim names to pattern strings used to match against arbitrary claims in the OIDC identity token. Patterns can include `*` characters to match against any character. Only applies to federated identities. |
+
+<AccordionGroup>
+<Accordion title="capabilities full type">
+
+```ts
+{
+  devices?: {
+    create?: {
+      reusable?: boolean | null,
+      ephemeral?: boolean | null,
+      preauthorized?: boolean | null,
+      tags?: string[] | null,
+      nodeAttributes?: Record<string, string | number | boolean> | null
+    } | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`keys.delete`
+
+Revoke a key. Devices already added with an auth key stay; anything using a revoked API token or OAuth client stops working. Cannot be undone.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.tailscale.api.keys.delete({ keyId: 'kXYZ123CNTRL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `keyId` | `string` | Yes | The id of the key. The key ID can be found in the [admin console](https://login.tailscale.com/admin/settings/keys). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Tailscale accepted the call; it answers with no body. |
+
+
+
+---
+
+### get
+
+`keys.get`
+
+Get a key: type, description, scopes, tags, created, expires, revoked. Never returns the secret.
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.keys.get({ keyId: 'kXYZ123CNTRL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `keyId` | `string` | Yes | The id of the key. The key ID can be found in the [admin console](https://login.tailscale.com/admin/settings/keys). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `key` | `string \| null` | No | The secret key material (only populated at creation time). |
+| `keyType` | `string \| null` | No | The type of key. Can be one of "auth", "client", "federated", or "api". - "auth" refers to machine auth keys. - "client" refers to OAuth clients. - "federated" refers to federated identities. - "api" refers to personal API access tokens or tokens generated using an OAuth client or federated identity. |
+| `expirySeconds` | `number \| null` | No | Duration in seconds until the key expires. Only applies to auth keys. |
+| `created` | `string \| null` | No | — |
+| `updated` | `string \| null` | No | — |
+| `expires` | `string \| null` | No | — |
+| `revoked` | `string \| null` | No | — |
+| `capabilities` | `object \| null` | No | — |
+| `scopes` | `string[] \| null` | No | A list of scopes granted to the key. Only applies to OAuth clients, API access tokens, and federated identities. |
+| `tags` | `string[] \| null` | No | A list of tags associated to the trust credential. Auth keys created with this client must have these exact tags, or tags owned by the client's tags. Mandatory if the scopes include "devices:core" or "auth_keys". Only applies to OAuth clients and federated identities. |
+| `description` | `string \| null` | No | — |
+| `invalid` | `boolean \| null` | No | Response for a revoked (deleted) or expired key will have an `invalid` field set to true. |
+| `userId` | `string \| null` | No | ID of the user who created this key, empty for keys created by trust credentials. |
+| `audience` | `string \| null` | No | The value used when matching against the `aud` claim from an OIDC identity token. Specifying the audience is optional as Tailscale will generate a secure audience at creation time by default. It is recommended to let Tailscale generate the audience unless the identity provider you are integrating with requires a specific audience format. Only applies to federated identities. |
+| `issuer` | `string \| null` | No | The issuer of the OIDC identity token used in the token exchange. Must be a valid and publicly reachable https:// URL. Only applies to federated identities. |
+| `subject` | `string \| null` | No | The pattern used when matching against the `sub` claim from an OIDC identity token. This pattern can include `*` characters to match against any character. Only applies to federated identities. |
+| `customClaimRules` | `Record<string, string> \| null` | No | A map of claim names to pattern strings used to match against arbitrary claims in the OIDC identity token. Patterns can include `*` characters to match against any character. Only applies to federated identities. |
+
+<AccordionGroup>
+<Accordion title="capabilities full type">
+
+```ts
+{
+  devices?: {
+    create?: {
+      reusable?: boolean | null,
+      ephemeral?: boolean | null,
+      preauthorized?: boolean | null,
+      tags?: string[] | null,
+      nodeAttributes?: Record<string, string | number | boolean> | null
+    } | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`keys.list`
+
+List the keys of the caller (all: true for every key in the tailnet): auth keys, API access tokens, OAuth clients and federated identities, with expiry, scopes and tags. Never returns the secrets.
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.keys.list({ all: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `all` | `boolean` | Yes | If set to true, this will return all auth keys, API access tokens and OAuth clients for the tailnet. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keys` | `object[] \| null` | No | A list of the active keys. |
+
+<AccordionGroup>
+<Accordion title="keys full type">
+
+```ts
+{
+  id?: string | null,
+  key?: string | null,
+  keyType?: string | null,
+  expirySeconds?: number | null,
+  created?: string | null,
+  updated?: string | null,
+  expires?: string | null,
+  revoked?: string | null,
+  capabilities?: {
+    devices?: {
+      create?: {
+        reusable?: boolean | null,
+        ephemeral?: boolean | null,
+        preauthorized?: boolean | null,
+        tags?: string[] | null,
+        nodeAttributes?: Record<string, string | number | boolean> | null
+      } | null
+    } | null
+  } | null,
+  scopes?: string[] | null,
+  tags?: string[] | null,
+  description?: string | null,
+  invalid?: boolean | null,
+  userId?: string | null,
+  audience?: string | null,
+  issuer?: string | null,
+  subject?: string | null,
+  customClaimRules?: Record<string, string> | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`keys.update`
+
+Change an OAuth client's or federated identity's description, scopes or tags (auth keys and API tokens can't be edited).
+
+**Risk:** `write`
+
+```ts
+await corsair.tailscale.api.keys.update({
+	keyId: 'kXYZ123CNTRL',
+	keyType: 'client',
+	scopes: ['devices:core:read', 'policy_file:read'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `keyId` | `string` | Yes | The id of the key. The key ID can be found in the [admin console](https://login.tailscale.com/admin/settings/keys). |
+| `keyType` | `client \| federated` | No | The type of the key being updated. |
+| `description` | `string` | No | A short string specifying the purpose of the key. Can be a maximum of 50 alphanumeric characters. Hyphens and spaces are also allowed. |
+| `scopes` | `string[]` | No | A list of scopes to grant to the key. At least one scope is required. See [trust credentials scopes](https://tailscale.com/docs/reference/trust-credentials#scopes) for a list of available scopes. |
+| `tags` | `string[]` | No | A list of tags associated to the trust credential. Auth keys created with this credential must have these exact tags, or tags owned by the credential's tags. Mandatory if the scopes include "devices:core" or "auth_keys". |
+| `issuer` | `string` | No | The issuer of the OIDC identity token used in the token exchange. Must be a valid https:// URL. Only applies to federated identities. |
+| `subject` | `string` | No | The pattern used when matching against the `sub` claim from an OIDC identity token. Patterns can include `*` characters to match against any character. Only applies to federated identities. |
+| `audience` | `string` | No | The value used when matching against the `aud` claim from an OIDC identity token. Only applies to federated identities. |
+| `customClaimRules` | `Record<string, string>` | No | A map of claim names to pattern strings used to match against arbitrary claims in the OIDC identity token. Patterns can include `*` characters to match against any character. Only applies to federated identities. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `key` | `string \| null` | No | The secret key material (only populated at creation time). |
+| `keyType` | `string \| null` | No | The type of key. Can be one of "auth", "client", "federated", or "api". - "auth" refers to machine auth keys. - "client" refers to OAuth clients. - "federated" refers to federated identities. - "api" refers to personal API access tokens or tokens generated using an OAuth client or federated identity. |
+| `expirySeconds` | `number \| null` | No | Duration in seconds until the key expires. Only applies to auth keys. |
+| `created` | `string \| null` | No | — |
+| `updated` | `string \| null` | No | — |
+| `expires` | `string \| null` | No | — |
+| `revoked` | `string \| null` | No | — |
+| `capabilities` | `object \| null` | No | — |
+| `scopes` | `string[] \| null` | No | A list of scopes granted to the key. Only applies to OAuth clients, API access tokens, and federated identities. |
+| `tags` | `string[] \| null` | No | A list of tags associated to the trust credential. Auth keys created with this client must have these exact tags, or tags owned by the client's tags. Mandatory if the scopes include "devices:core" or "auth_keys". Only applies to OAuth clients and federated identities. |
+| `description` | `string \| null` | No | — |
+| `invalid` | `boolean \| null` | No | Response for a revoked (deleted) or expired key will have an `invalid` field set to true. |
+| `userId` | `string \| null` | No | ID of the user who created this key, empty for keys created by trust credentials. |
+| `audience` | `string \| null` | No | The value used when matching against the `aud` claim from an OIDC identity token. Specifying the audience is optional as Tailscale will generate a secure audience at creation time by default. It is recommended to let Tailscale generate the audience unless the identity provider you are integrating with requires a specific audience format. Only applies to federated identities. |
+| `issuer` | `string \| null` | No | The issuer of the OIDC identity token used in the token exchange. Must be a valid and publicly reachable https:// URL. Only applies to federated identities. |
+| `subject` | `string \| null` | No | The pattern used when matching against the `sub` claim from an OIDC identity token. This pattern can include `*` characters to match against any character. Only applies to federated identities. |
+| `customClaimRules` | `Record<string, string> \| null` | No | A map of claim names to pattern strings used to match against arbitrary claims in the OIDC identity token. Patterns can include `*` characters to match against any character. Only applies to federated identities. |
+
+<AccordionGroup>
+<Accordion title="capabilities full type">
+
+```ts
+{
+  devices?: {
+    create?: {
+      reusable?: boolean | null,
+      ephemeral?: boolean | null,
+      preauthorized?: boolean | null,
+      tags?: string[] | null,
+      nodeAttributes?: Record<string, string | number | boolean> | null
+    } | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Logging
+
+### awsExternalId.get
+
+`logging.awsExternalId.get`
+
+Get (or create on first use) the AWS external ID to put in an IAM role trust policy before streaming logs to S3.
+
+**Risk:** `write`
+
+```ts
+await corsair.tailscale.api.logging.awsExternalId.get({ reusable: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `reusable` | `boolean` | No | If set to true, this same AWS external id will be returned on future calls to this endpoint, if and only if those calls also mark `reusable` as true, and the ID has not yet been linked with an AWS account. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `externalId` | `string \| null` | No | The external id that Tailscale will supply to AWS when authenticating using role-based authentication. |
+| `tailscaleAwsAccountId` | `string \| null` | No | The AWS account id that Tailscale will supply to AWS when authenticating using role-based authentication. |
+
+
+
+---
+
+### awsExternalId.validate
+
+`logging.awsExternalId.validate`
+
+Check that an IAM role trusts Tailscale with this external ID, before log streaming to S3 is turned on.
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.logging.awsExternalId.validate({ id: 'ext123', roleArn: 'arn:aws:iam::123456789012:role/tailscale-logs' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `id` | `string` | Yes | The AWS external ID to validate. |
+| `roleArn` | `string` | No | ARN of the AWS IAM role to validate with this external ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Tailscale accepted the call; it answers with no body. |
+
+
+
+---
+
+### configurationLogs.list
+
+`logging.configurationLogs.list`
+
+Read the configuration audit log between start and end (RFC 3339): who changed the policy file, approved or deleted a device, created a key, changed a setting, with old and new values. Filter by actor, target or event (TAILNET.UPDATE.ACL, NODE.CREATE, NODE.APPROVE, API_KEY.CREATE, USER.UPDATE.USER_ROLE, ...). Use it to answer "who changed what, and when".
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.logging.configurationLogs.list({
+	start: '2026-11-19T00:00:00Z',
+	end: '2026-11-20T00:00:00Z',
+	event: ['TAILNET.UPDATE.ACL'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `start` | `string` | Yes | The start of the time window for which to retrieve logs, in RFC 3339 format. |
+| `end` | `string` | Yes | The end of the time window for which to retrieve logs, in RFC 3339 format. |
+| `actor` | `string[]` | No | List of filters on actors, either exact actor IDs or a wildcard search on login name or display name indicated as `~search`. |
+| `target` | `string[]` | No | List of target elements for which to filter, attempts to match any part of any of the targets to any of the given strings. |
+| `event` | `(ADMIN_CONSOLE.LOGIN \| ADMIN_CONSOLE.LOGOUT \| API_KEY.CREATE \| API_KEY.EXPIRED \| API_KEY.REVOKE \| BILLING.CANCEL.SUBSCRIPTION \| BILLING.CREATE.SUBSCRIPTION \| BILLING.UPDATE.ADDRESS \| BILLING.UPDATE.BILLING_OWNER \| BILLING.UPDATE.EMAIL \| BILLING.UPDATE.PAYMENT_INFO \| BILLING.UPDATE.STRIPE_CUSTOMER_ID \| BILLING.UPDATE.SUBSCRIPTION \| FAILED_REQUEST.UPDATE \| GROUP.PUSH_GROUP.ATTRIBUTES \| GROUP.UPDATE.USER_ROLE \| INVITE.ACCEPT.FEATURE \| INVITE.ACCEPT.NODE_SHARE \| INVITE.ACCEPT.TAILNET_INVITE \| INVITE.CREATE.FEATURE \| INVITE.CREATE.NODE_SHARE \| INVITE.CREATE.TAILNET_INVITE \| INVITE.DELETE.NODE_SHARE \| INVITE.DELETE.TAILNET_INVITE \| INVITE.RESEND.NODE_SHARE \| INVITE.RESEND.TAILNET_INVITE \| NODE.APPROVE \| NODE.CREATE \| NODE.CREATE.ATTRIBUTES \| NODE.DELETE \| NODE.DELETE.ATTRIBUTES \| NODE.DISABLE.KEY_EXPIRY \| NODE.DISCONNECT_NODE.CLIENT_LOG \| NODE.ENABLE.KEY_EXPIRY \| NODE.EXPIRED.KEY_EXPIRY_TIME \| NODE.LOGIN \| NODE.LOGOUT \| NODE.REVOKE \| NODE.UPDATE.ACL_TAGS \| NODE.UPDATE.ALLOWED_IPS \| NODE.UPDATE.ATTRIBUTES \| NODE.UPDATE.AUTO_APPROVED_ROUTES \| NODE.UPDATE.EXIT_NODE \| NODE.UPDATE.KEY_EXPIRY_TIME \| NODE.UPDATE.MACHINE_NAME \| NODE.UPDATE.POSTURE_IDENTITY \| NODE.UPDATE.TKA \| SHARE.CREATE \| SHARE.DELETE \| SHARE.UPDATE \| TAILNET.ACCEPT.FEATURE \| TAILNET.CREATE \| TAILNET.CREATE.LOGSTREAM_ENDPOINT \| TAILNET.CREATE.POSTURE_INTEGRATION \| TAILNET.CREATE.TKA \| TAILNET.DELETE.LOGSTREAM_ENDPOINT \| TAILNET.DELETE.POSTURE_INTEGRATION \| TAILNET.DELETE.TKA \| TAILNET.DISABLE.COLLECT_POSTURE_IDENTITY \| TAILNET.DISABLE.COLLECT_SERVICES \| TAILNET.DISABLE.FILE_SHARING \| TAILNET.DISABLE.GEOSTEERING \| TAILNET.DISABLE.HTTPS \| TAILNET.DISABLE.LOG_EXIT_FLOWS \| TAILNET.DISABLE.MACHINE_APPROVAL_NEEDED \| TAILNET.DISABLE.MAGIC_DNS \| TAILNET.DISABLE.MULLVAD_VPN \| TAILNET.DISABLE.NETWORK_FLOW_LOGGING \| TAILNET.DISABLE.SCIM \| TAILNET.DISABLE.TKA \| TAILNET.DISABLE.USER_APPROVAL_REQUIRED \| TAILNET.ENABLE.COLLECT_POSTURE_IDENTITY \| TAILNET.ENABLE.COLLECT_SERVICES \| TAILNET.ENABLE.FILE_SHARING \| TAILNET.ENABLE.GEOSTEERING \| TAILNET.ENABLE.HTTPS \| TAILNET.ENABLE.LOG_EXIT_FLOWS \| TAILNET.ENABLE.MACHINE_APPROVAL_NEEDED \| TAILNET.ENABLE.MAGIC_DNS \| TAILNET.ENABLE.MULLVAD_VPN \| TAILNET.ENABLE.NETWORK_FLOW_LOGGING \| TAILNET.ENABLE.SCIM \| TAILNET.ENABLE.TKA \| TAILNET.ENABLE.USER_APPROVAL_REQUIRED \| TAILNET.JOIN \| TAILNET.JOIN_WAITLIST.FEATURE \| TAILNET.LEAVE \| TAILNET.UPDATE.ACCOUNT_EMAIL \| TAILNET.UPDATE.ACL \| TAILNET.UPDATE.DNS_CONFIG \| TAILNET.UPDATE.LOGSTREAM_ENDPOINT \| TAILNET.UPDATE.MAX_KEY_DURATION \| TAILNET.UPDATE.POSTURE_INTEGRATION \| TAILNET.UPDATE.ROUTE_SELECTION \| TAILNET.UPDATE.SECURITY_EMAIL \| TAILNET.UPDATE.SUPPORT_EMAIL \| TAILNET.UPDATE.TCD \| TAILNET.UPDATE.TKA \| TAILNET.VERIFY.ACCOUNT_EMAIL \| TAILNET.VERIFY.SECURITY_EMAIL \| TAILNET.VERIFY.SUPPORT_EMAIL \| USER.APPROVE \| USER.CREATE \| USER.DELETE \| USER.INVITE \| USER.PUSH_USER.ATTRIBUTES \| USER.RESEND.TAILNET_INVITE \| USER.RESTORE \| USER.RESTORE_GLOBAL \| USER.SUSPEND \| USER.SUSPEND_GLOBAL \| USER.UPDATE.USER_ROLE \| WEBHOOK_ENDPOINT.CREATE \| WEBHOOK_ENDPOINT.DELETE \| WEBHOOK_ENDPOINT.UPDATE.SECRET \| WEBHOOK_ENDPOINT.UPDATE.SUBSCRIBED_EVENTS \| WEB_INTERFACE.LOGIN \| WEB_INTERFACE.LOGOUT \| PAM_CONNECTOR.CREATE \| PAM_CONNECTOR.CREATE.ACCESS_TOKEN \| PAM_CONNECTOR.DELETE \| PAM_CONNECTOR.DISABLE.ACCESS_TOKEN \| PAM_CONNECTOR.UPDATE \| PAM_SERVICE.CREATE \| PAM_SERVICE.DELETE \| PAM_SERVICE.UPDATE \| PAM_SERVICE_ACCOUNT.CREATE \| PAM_SERVICE_ACCOUNT.CREATE.ACCESS_TOKEN \| PAM_SERVICE_ACCOUNT.DELETE \| PAM_SERVICE_ACCOUNT.UPDATE \| PAM_SETTINGS.CREATE.CUSTOM_DOMAIN \| PAM_SETTINGS.CREATE.NOTIFICATION \| PAM_SETTINGS.CREATE.RECORDING_STORAGE \| PAM_SETTINGS.DELETE.CUSTOM_DOMAIN \| PAM_SETTINGS.DELETE.NOTIFICATION \| PAM_SETTINGS.DELETE.RECORDING_STORAGE \| PAM_SETTINGS.UPDATE \| PAM_SETTINGS.UPDATE.CUSTOM_DOMAIN \| PAM_SETTINGS.UPDATE.NOTIFICATION \| PAM_SETTINGS.UPDATE.SETUP_WIZARD)[]` | No | List of events for which to filter. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `version` | `string \| null` | No | Version of audit logs response. |
+| `tailnet` | `string \| null` | No | The tailnet on which the logged configuration changes were made. |
+| `logs` | `object[] \| null` | No | Matching log entries, ordered chronologically. |
+
+<AccordionGroup>
+<Accordion title="logs full type">
+
+```ts
+{
+  eventTime?: string | null,
+  type?: string | null,
+  deferredAt?: string | null,
+  eventGroupID?: string | null,
+  origin?: string | null,
+  actor?: {
+    id?: string | null,
+    type?: string | null,
+    loginName?: string | null,
+    displayName?: string | null,
+    tags?: string[] | null
+  } | null,
+  target?: {
+    id?: string | null,
+    name?: string | null,
+    type?: string | null,
+    isEphemeral?: boolean | null,
+    property?: string | null
+  } | null,
+  action?: string | null,
+  old?: string | number | number | boolean | any[] | {
+  } | null,
+  new?: string | number | number | boolean | any[] | {
+  } | null,
+  actionDetails?: string | null,
+  error?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### networkLogs.list
+
+`logging.networkLogs.list`
+
+Read network flow logs between start and end (RFC 3339): which device talked to which, over what protocol and ports, and how many bytes. Network flow logging must be turned on (Premium and Enterprise plans).
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.logging.networkLogs.list({ start: '2026-11-19T00:00:00Z', end: '2026-11-20T00:00:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `start` | `string` | Yes | The start of the time window for which to retrieve logs, in RFC 3339 format. |
+| `end` | `string` | Yes | The end of the time window for which to retrieve logs, in RFC 3339 format. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `logs` | `object[] \| null` | No | Matching log entries, ordered chronologically. |
+
+<AccordionGroup>
+<Accordion title="logs full type">
+
+```ts
+{
+  logged?: string | null,
+  nodeId?: string | null,
+  start?: string | null,
+  end?: string | null,
+  virtualTraffic?: {
+    proto?: string | null,
+    src?: string | null,
+    dst?: string | null,
+    txPkts?: number | null,
+    txBytes?: number | null,
+    rxPkts?: number | null,
+    rxBytes?: number | null
+  }[] | null,
+  subnetTraffic?: {
+    proto?: string | null,
+    src?: string | null,
+    dst?: string | null,
+    txPkts?: number | null,
+    txBytes?: number | null,
+    rxPkts?: number | null,
+    rxBytes?: number | null
+  }[] | null,
+  exitTraffic?: {
+    proto?: string | null,
+    src?: string | null,
+    dst?: string | null,
+    txPkts?: number | null,
+    txBytes?: number | null,
+    rxPkts?: number | null,
+    rxBytes?: number | null
+  }[] | null,
+  physicalTraffic?: {
+    proto?: string | null,
+    src?: string | null,
+    dst?: string | null,
+    txPkts?: number | null,
+    txBytes?: number | null,
+    rxPkts?: number | null,
+    rxBytes?: number | null
+  }[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### streaming.disable
+
+`logging.streaming.disable`
+
+Stop streaming configuration or network logs; the destination settings are removed.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.tailscale.api.logging.streaming.disable({ logType: 'configuration' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `logType` | `configuration \| network` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Tailscale accepted the call; it answers with no body. |
+
+
+
+---
+
+### streaming.get
+
+`logging.streaming.get`
+
+Get where configuration or network logs are streamed (Splunk, Elastic, Panther, Cribl, CrowdStrike, Datadog, Axiom or S3).
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.logging.streaming.get({ logType: 'configuration' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `logType` | `configuration \| network` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `logType` | `string \| null` | No | — |
+| `destinationType` | `string \| null` | No | The type of system to which logs are being streamed. |
+| `url` | `string \| null` | No | The URL to which log streams are being posted. If the DestinationType is `s3`, the URL may be (and often is) empty to use the official Amazon S3 endpoint. |
+| `user` | `string \| null` | No | The username with which log streams to this endpoint are authenticated. |
+| `uploadPeriodMinutes` | `number \| null` | No | An optional number of minutes to wait in between uploading new logs. If the quantity of logs does not fit within a single upload, multiple uploads will be made. |
+| `compressionFormat` | `string \| null` | No | The compression algorithm with which to compress logs. `none` disables compression. Defaults to `none`. |
+| `token` | `string \| null` | No | The token/password with which log streams to this endpoint should be authenticated. |
+| `s3Bucket` | `string \| null` | No | The S3 bucket name. Required if the destinationType is `s3`. |
+| `s3Region` | `string \| null` | No | The region in which the S3 bucket is located. Required if the destinationType is `s3`. |
+| `s3KeyPrefix` | `string \| null` | No | An optional S3 key prefix to prepend to the auto-generated S3 key name. |
+| `s3AuthenticationType` | `string \| null` | No | What type of authentication to use for S3. Required if the destinationType is `s3`. Tailscale recommends using `rolearn`. See [Amazon documentation](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_common-scenarios_third-party.html). |
+| `s3AccessKeyId` | `string \| null` | No | The S3 access key ID. Required if the destinationType is `s3` and `authenticationType` is `accesskey`. |
+| `s3SecretAccessKey` | `string \| null` | No | The S3 secret access key. Required if the destinationType is `s3` and `authenticationType` is `accesskey`. |
+| `s3RoleArn` | `string \| null` | No | The Role ARN that Tailscale should supply to AWS when authenticating using role-based authentication. Required if the destinationType is `s3` and `authenticationType` is `rolearn`. |
+| `s3ExternalId` | `string \| null` | No | The AWS external id that Tailscale supplies when authenticating using role-based authentication. Populated if the destinationType is `s3` and `authenticationType` is `rolearn`. This corresponds to the `externalId` field obtained from [tailnet/&#123;tailnet&#125;/aws-external-id](#tag/logging/POST/tailnet/&#123;tailnet&#125;/aws-external-id). |
+| `gcsBucket` | `string \| null` | No | The GCS bucket name. Required if the destinationType is `gcs`. |
+| `gcsKeyPrefix` | `string \| null` | No | An optional GCS key prefix to append to the GCS bucket name. |
+| `gcsScopes` | `string[] \| null` | No | The GCS scopes needed to be able to write to the GCS bucket. |
+| `gcsCredentials` | `string \| null` | No | The JSON workload identity credentials from GCS needed for accessing the GCS account. |
+
+
+
+---
+
+### streaming.getStatus
+
+`logging.streaming.getStatus`
+
+Get whether log streaming to a SIEM is working for configuration or network logs, and its last errors.
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.logging.streaming.getStatus({ logType: 'configuration' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `logType` | `configuration \| network` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lastActivity` | `string \| null` | No | Timestamp of the most recent publishing activity, in RFC 3339 format. |
+| `lastError` | `string \| null` | No | The most recent error (if any). |
+| `maxBodySize` | `number \| null` | No | The size of the largest single request body. |
+| `numBytesSent` | `number \| null` | No | Total bytes published across all requests. |
+| `numEntriesSent` | `number \| null` | No | The total number of entries published. |
+| `numSpoofedEntries` | `number \| null` | No | The number of spoofed entries published. A spoofed entry is one that failed to validate because we did not see receive a matching flow log from the other side of the connection. |
+| `numTotalRequests` | `number \| null` | No | The total number of requests made to the streaming endpoint. |
+| `numFailedRequests` | `number \| null` | No | The total number of requests to the streaming endpoint that have failed. |
+| `rateBytesSent` | `number \| null` | No | The exponentially weighted moving average rate at which data is being streamed to the endpoint, in bytes per second. |
+| `rateEntriesSent` | `number \| null` | No | The exponentially weighted moving average rate at which entries are being sent to the endpoint, in entries per second. |
+| `rateTotalRequests` | `number \| null` | No | The exponentially weighted moving average rate at which requests are being made to the endpoint, in requests per second. |
+| `rateFailedRequests` | `number \| null` | No | The exponentially weighted moving average rate at which requests are failing, in requests per second. |
+
+
+
+---
+
+### streaming.set
+
+`logging.streaming.set`
+
+Start or change streaming of configuration or network logs to a SIEM or bucket. Replaces the current destination.
+
+**Risk:** `write`
+
+```ts
+await corsair.tailscale.api.logging.streaming.set({
+	logType: 'configuration',
+	destinationType: 'splunk',
+	url: 'https://splunk.example.com:8088',
+	user: 'tailscale',
+	token: 'splunk-hec-token',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `logType` | `configuration \| network` | Yes | — |
+| `destinationType` | `splunk \| elastic \| panther \| cribl \| crowdstrike \| datadog \| axiom \| s3` | No | The type of system to which logs are being streamed. |
+| `url` | `string` | No | The URL to which log streams are being posted. If the DestinationType is `s3`, the URL may be (and often is) empty to use the official Amazon S3 endpoint. |
+| `user` | `string` | No | The username with which log streams to this endpoint are authenticated. |
+| `uploadPeriodMinutes` | `number` | No | An optional number of minutes to wait in between uploading new logs. If the quantity of logs does not fit within a single upload, multiple uploads will be made. |
+| `compressionFormat` | `zstd \| gzip \| none` | No | The compression algorithm with which to compress logs. `none` disables compression. Defaults to `none`. |
+| `token` | `string` | No | The token/password with which log streams to this endpoint should be authenticated. |
+| `s3Bucket` | `string` | No | The S3 bucket name. Required if the destinationType is `s3`. |
+| `s3Region` | `string` | No | The region in which the S3 bucket is located. Required if the destinationType is `s3`. |
+| `s3KeyPrefix` | `string` | No | An optional S3 key prefix to prepend to the auto-generated S3 key name. |
+| `s3AuthenticationType` | `accesskey \| rolearn` | No | What type of authentication to use for S3. Required if the destinationType is `s3`. Tailscale recommends using `rolearn`. See [Amazon documentation](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_common-scenarios_third-party.html). |
+| `s3AccessKeyId` | `string` | No | The S3 access key ID. Required if the destinationType is `s3` and `authenticationType` is `accesskey`. |
+| `s3SecretAccessKey` | `string` | No | The S3 secret access key. Required if the destinationType is `s3` and `authenticationType` is `accesskey`. |
+| `s3RoleArn` | `string` | No | The Role ARN that Tailscale should supply to AWS when authenticating using role-based authentication. Required if the destinationType is `s3` and `authenticationType` is `rolearn`. |
+| `gcsBucket` | `string` | No | The GCS bucket name. Required if the destinationType is `gcs`. |
+| `gcsKeyPrefix` | `string` | No | An optional GCS key prefix to append to the GCS bucket name. |
+| `gcsScopes` | `string[]` | No | The GCS scopes needed to be able to write to the GCS bucket. |
+| `gcsCredentials` | `string` | No | The JSON workload identity credentials from GCS needed for accessing the GCS account. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Tailscale accepted the call; it answers with no body. |
+
+
+
+---
+
+## Oauth Apps
+
+### create
+
+`oauthApps.create`
+
+Register an OAuth app in the tailnet with its redirect URIs and scopes. The client secret is returned once.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.tailscale.api.oauthApps.create({
+	name: 'internal-agent',
+	redirectURIs: ['https://agent.example.com/callback'],
+	scopes: ['auth_keys:create:once'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `redirectURIs` | `string[]` | Yes | — |
+| `scopes` | `string[]` | Yes | — |
+| `allowedNodeAttributes` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | The unique identifier for the OAuth app. |
+| `name` | `string \| null` | No | The name of the OAuth app. Must be between 3 and 50 characters and contain only alphanumeric characters, dashes, periods, and underscores. |
+| `description` | `string \| null` | No | A human-readable description of the OAuth app. Must be at most 300 characters. |
+| `redirectURIs` | `string[] \| null` | No | The list of permitted redirect URIs for the OAuth authorization code flow. At least one redirect URI is required. Each URI must use the `https` scheme, except for `localhost`, `127.0.0.1`, and `::1`, which may use any scheme. Raw IP address hosts are not permitted. |
+| `scopes` | `string[] \| null` | No | The list of OAuth scopes granted to the app. Must be non-empty. Learn more about [OAuth clients and scopes](https://tailscale.com/docs/features/oauth-clients). |
+| `allowedNodeAttributes` | `string[] \| null` | No | The list of custom device attributes that the OAuth app is allowed to set. |
+| `clientSecret` | `string \| null` | No | The client secret for the OAuth app. Only populated when the app is created and cannot be retrieved afterwards. |
+| `created` | `string \| null` | No | The time the OAuth app was created. |
+| `updated` | `string \| null` | No | The time the OAuth app was last updated. |
+
+
+
+---
+
+### delete
+
+`oauthApps.delete`
+
+Delete an OAuth app; sign-ins and tokens issued through it stop working.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.tailscale.api.oauthApps.delete({ appId: 'a123456CNTRL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `appId` | `string` | Yes | The ID of the OAuth app. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Tailscale accepted the call; it answers with no body. |
+
+
+
+---
+
+### get
+
+`oauthApps.get`
+
+Get an OAuth app: name, redirect URIs, scopes. Never returns the secret.
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.oauthApps.get({ appId: 'a123456CNTRL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `appId` | `string` | Yes | The ID of the OAuth app. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | The unique identifier for the OAuth app. |
+| `name` | `string \| null` | No | The name of the OAuth app. Must be between 3 and 50 characters and contain only alphanumeric characters, dashes, periods, and underscores. |
+| `description` | `string \| null` | No | A human-readable description of the OAuth app. Must be at most 300 characters. |
+| `redirectURIs` | `string[] \| null` | No | The list of permitted redirect URIs for the OAuth authorization code flow. At least one redirect URI is required. Each URI must use the `https` scheme, except for `localhost`, `127.0.0.1`, and `::1`, which may use any scheme. Raw IP address hosts are not permitted. |
+| `scopes` | `string[] \| null` | No | The list of OAuth scopes granted to the app. Must be non-empty. Learn more about [OAuth clients and scopes](https://tailscale.com/docs/features/oauth-clients). |
+| `allowedNodeAttributes` | `string[] \| null` | No | The list of custom device attributes that the OAuth app is allowed to set. |
+| `clientSecret` | `string \| null` | No | The client secret for the OAuth app. Only populated when the app is created and cannot be retrieved afterwards. |
+| `created` | `string \| null` | No | The time the OAuth app was created. |
+| `updated` | `string \| null` | No | The time the OAuth app was last updated. |
+
+
+
+---
+
+### list
+
+`oauthApps.list`
+
+List the OAuth apps registered in the tailnet (apps people in the tailnet sign in to so it can act on their behalf).
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.oauthApps.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `oauthApps` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="oauthApps full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  description?: string | null,
+  redirectURIs?: string[] | null,
+  scopes?: string[] | null,
+  allowedNodeAttributes?: string[] | null,
+  clientSecret?: string | null,
+  created?: string | null,
+  updated?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`oauthApps.update`
+
+Replace an OAuth app's name, redirect URIs or scopes.
+
+**Risk:** `write`
+
+```ts
+await corsair.tailscale.api.oauthApps.update({
+	appId: 'a123456CNTRL',
+	name: 'internal-agent',
+	redirectURIs: ['https://agent.example.com/callback'],
+	scopes: ['auth_keys:create:once'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `appId` | `string` | Yes | The ID of the OAuth app. |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `redirectURIs` | `string[]` | Yes | — |
+| `scopes` | `string[]` | Yes | — |
+| `allowedNodeAttributes` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | The unique identifier for the OAuth app. |
+| `name` | `string \| null` | No | The name of the OAuth app. Must be between 3 and 50 characters and contain only alphanumeric characters, dashes, periods, and underscores. |
+| `description` | `string \| null` | No | A human-readable description of the OAuth app. Must be at most 300 characters. |
+| `redirectURIs` | `string[] \| null` | No | The list of permitted redirect URIs for the OAuth authorization code flow. At least one redirect URI is required. Each URI must use the `https` scheme, except for `localhost`, `127.0.0.1`, and `::1`, which may use any scheme. Raw IP address hosts are not permitted. |
+| `scopes` | `string[] \| null` | No | The list of OAuth scopes granted to the app. Must be non-empty. Learn more about [OAuth clients and scopes](https://tailscale.com/docs/features/oauth-clients). |
+| `allowedNodeAttributes` | `string[] \| null` | No | The list of custom device attributes that the OAuth app is allowed to set. |
+| `clientSecret` | `string \| null` | No | The client secret for the OAuth app. Only populated when the app is created and cannot be retrieved afterwards. |
+| `created` | `string \| null` | No | The time the OAuth app was created. |
+| `updated` | `string \| null` | No | The time the OAuth app was last updated. |
+
+
+
+---
+
+## Policy File
+
+### get
+
+`policyFile.get`
+
+Get the tailnet's policy file (ACLs or grants, groups, tagOwners, autoApprovers, postures, tests). format "hujson" (the default) keeps comments and returns the text; "json" returns an object without comments. etag is the version: pass it as ifMatch to policyFile.set so another edit made in between is not overwritten. details: true also returns warnings and errors.
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.policyFile.get({ format: 'hujson' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `details` | `boolean` | No | Request a detailed description of the tailnet policy file by providing `details=true` in the URL query string. Supplying any other value for `details`, or not sending the param, is treated as sending `details=false`. If using this, do not supply an `Accept` parameter in the header. The response will contain a JSON object with the fields: - `acl`: a base64-encoded string representation of the huJSON format. - `warnings`: array of strings for syntactically valid but nonsensical entries. - `errors`: an array of strings for parsing failures. |
+| `format` | `hujson \| json` | No | "hujson" (default): the policy as text, comments kept. "json": the policy as an object, comments dropped. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `policy` | `string \| object \| null` | No | The policy file: HuJSON text for format "hujson" or details, an object for "json". |
+| `etag` | `string \| null \| null` | No | The version of the file; pass it as ifMatch to policyFile.set. |
+| `warnings` | `string[] \| null` | No | With details: entries that parse but look wrong. |
+| `errors` | `string[] \| null` | No | With details: parse errors. |
+
+<AccordionGroup>
+<Accordion title="policy full type">
+
+```ts
+string | {
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### preview
+
+`policyFile.preview`
+
+Show which rules of the policy file you pass apply to a user (type "user", previewFor their email) or a destination (type "ipport", previewFor "100.101.102.103:443"), without saving anything. policy is required: pass a draft, or the text from policyFile.get to preview the current file.
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.policyFile.preview({ type: 'ipport', previewFor: '100.80.0.1:443', policy: '{
+  // Agents tagged tag:agent may reach MCP servers on port 443 only.
+  "tagOwners": { "tag:agent": ["autogroup:admin"], "tag:mcp": ["autogroup:admin"] },
+  "grants": [
+    { "src": ["autogroup:member"], "dst": ["*"], "ip": ["*"] },
+    { "src": ["tag:agent"], "dst": ["tag:mcp"], "ip": ["tcp:443"] }
+  ],
+  "tests": [{ "src": "tag:agent", "accept": ["tag:mcp:443"], "deny": ["tag:mcp:22"] }]
+}
+' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `type` | `user \| ipport` | Yes | Specify for which type of resource (user or IP port) matching rules are to be fetched. Read about [previewing changes in the admin console](https://tailscale.com/docs/features/tailnet-policy-file/manage-tailnet-policies#preview-changes). OAuth Scope: `policy_file:read`. |
+| `previewFor` | `string` | Yes | - If `type` is `user`, provide the email of a valid user with registered machines. - If `type` is `ipport`, provide an IP address + port: `10.0.0.1:80`. The supplied policy file is queried with this parameter to determine which rules match. |
+| `policy` | `string \| object` | Yes | The whole policy file: HuJSON text (keeps comments) or a JSON object. |
+
+<AccordionGroup>
+<Accordion title="policy full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `matches` | `object[] \| null` | No | — |
+| `type` | `string \| null` | No | Echoes the `type` provided in the request. |
+| `previewFor` | `string \| null` | No | Echoes the `previewFor` provided in the request. |
+
+<AccordionGroup>
+<Accordion title="matches full type">
+
+```ts
+{
+  users?: string[] | null,
+  ports?: string[] | null,
+  lineNumber?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### set
+
+`policyFile.set`
+
+Replace the tailnet's policy file, as HuJSON text (keeps comments) or a JSON object. It controls who can reach what across the whole tailnet, so run policyFile.validate first, and pass ifMatch with the etag from policyFile.get: Tailscale then refuses the write if the file changed since. Tests in the file must pass or nothing is saved.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.tailscale.api.policyFile.set({ policy: '{
+  // Agents tagged tag:agent may reach MCP servers on port 443 only.
+  "tagOwners": { "tag:agent": ["autogroup:admin"], "tag:mcp": ["autogroup:admin"] },
+  "grants": [
+    { "src": ["autogroup:member"], "dst": ["*"], "ip": ["*"] },
+    { "src": ["tag:agent"], "dst": ["tag:mcp"], "ip": ["tcp:443"] }
+  ],
+  "tests": [{ "src": "tag:agent", "accept": ["tag:mcp:443"], "deny": ["tag:mcp:22"] }]
+}
+', ifMatch: '"e0b2816b418b3f266309d94426ac7668"' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `ifMatch` | `string` | No | The etag from policyFile.get. Tailscale saves only if the file is still that version, so a change someone made in between is not overwritten. "ts-default" saves only over the untouched default policy. |
+| `policy` | `string \| object` | Yes | The whole policy file: HuJSON text (keeps comments) or a JSON object. |
+| `format` | `hujson \| json` | No | "hujson" (default): the policy as text, comments kept. "json": the policy as an object, comments dropped. |
+
+<AccordionGroup>
+<Accordion title="policy full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `policy` | `string \| object \| null` | No | The policy file: HuJSON text for format "hujson" or details, an object for "json". |
+| `etag` | `string \| null \| null` | No | The version of the file; pass it as ifMatch to policyFile.set. |
+| `warnings` | `string[] \| null` | No | With details: entries that parse but look wrong. |
+| `errors` | `string[] \| null` | No | With details: parse errors. |
+
+<AccordionGroup>
+<Accordion title="policy full type">
+
+```ts
+string | {
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### validate
+
+`policyFile.validate`
+
+Check a draft policy file without saving it: pass policy (HuJSON text or object) to parse it and run its tests, or tests (at least one) to run ACL tests against the current file. null or an empty message means everything passed. Problems still answer 200: message holds the parse error, or "test(s) failed" with each failing test in data.
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.policyFile.validate({
+	tests: [{
+		src: 'tag:agent',
+		accept: ['tag:mcp:443'],
+		deny: ['tag:mcp:22'],
+	}],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `policy` | `string \| object` | No | A draft policy file to parse and test, HuJSON text or an object. Give either policy or tests. |
+| `tests` | `object[]` | No | ACL tests to run against the current policy file, e.g. [&#123; "src": "dave@example.com", "accept": ["tag:mcp:443"], "deny": ["tag:db:5432"] &#125;]. Give either tests or policy. |
+
+<AccordionGroup>
+<Accordion title="policy full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+
+<Accordion title="tests full type">
+
+```ts
+{
+  src: string,
+  srcPostureAttrs?: Record<string, string | number | boolean>,
+  proto?: string,
+  accept?: string[],
+  deny?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Posture Integrations
+
+### create
+
+`postureIntegrations.create`
+
+Connect a device posture provider, so its attributes (compliance, risk score) can gate access in the policy file.
+
+**Risk:** `write`
+
+```ts
+await corsair.tailscale.api.postureIntegrations.create({
+	provider: 'falcon',
+	cloudId: 'us-1',
+	clientId: 'falcon-client-id',
+	clientSecret: 'falcon-client-secret',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `provider` | `falcon \| intune \| jamfpro \| kandji \| kolide \| sentinelone` | No | The device posture provider. Required on POST requests, ignored on PATCH requests. |
+| `cloudId` | `string` | No | Identifies which of the provider's clouds to integrate with. - For CrowdStrike Falcon, it will be one of `us-1`, `us-2`, `eu-1` or `us-gov`. - For Microsoft Intune, it will be one of `global` or `us-gov`. - For Jamf Pro, Kandji and Sentinel One, it is the FQDN of your subdomain, for example `mydomain.sentinelone.net`. - For Kolide, this is left blank. |
+| `clientId` | `string` | No | Unique identifier for your client. - For Microsoft Intune, it will be your application's UUID. - For CrowdStrike Falcon and Jamf Pro, it will be your client id. - For Kandji, Kolide and Sentinel One, this is left blank. |
+| `tenantId` | `string` | No | The Microsoft Intune directory (tenant) ID. For other providers, this is left blank. |
+| `clientSecret` | `string` | No | The secret (auth key, token, etc.) used to authenticate with the provider. Required when creating a new integration, may be omitted when updating an existing integration, in which case we retain the existing password. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider` | `string \| null` | No | The device posture provider. Required on POST requests, ignored on PATCH requests. |
+| `cloudId` | `string \| null` | No | Identifies which of the provider's clouds to integrate with. - For CrowdStrike Falcon, it will be one of `us-1`, `us-2`, `eu-1` or `us-gov`. - For Microsoft Intune, it will be one of `global` or `us-gov`. - For Jamf Pro, Kandji and Sentinel One, it is the FQDN of your subdomain, for example `mydomain.sentinelone.net`. - For Kolide, this is left blank. |
+| `clientId` | `string \| null` | No | Unique identifier for your client. - For Microsoft Intune, it will be your application's UUID. - For CrowdStrike Falcon and Jamf Pro, it will be your client id. - For Kandji, Kolide and Sentinel One, this is left blank. |
+| `tenantId` | `string \| null` | No | The Microsoft Intune directory (tenant) ID. For other providers, this is left blank. |
+| `clientSecret` | `string \| null` | No | The secret (auth key, token, etc.) used to authenticate with the provider. Required when creating a new integration, may be omitted when updating an existing integration, in which case we retain the existing password. |
+| `id` | `string \| null` | No | A unique identifier for the integration (generated by the system). |
+| `configUpdated` | `string \| null` | No | Timestamp of the last time this configuration was updated, in RFC 3339 format. |
+| `status` | `object \| null` | No | Most recent status for this integration. |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  lastSync?: string | null,
+  error?: string | null,
+  providerHostCount?: number | null,
+  matchedCount?: number | null,
+  possibleMatchedCount?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`postureIntegrations.delete`
+
+Disconnect a device posture provider; rules that rely on its attributes stop matching.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.tailscale.api.postureIntegrations.delete({ id: 'p56wQiqrn7mfDEVEL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier for a posture integration. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Tailscale accepted the call; it answers with no body. |
+
+
+
+---
+
+### get
+
+`postureIntegrations.get`
+
+Get a device posture integration and its sync status.
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.postureIntegrations.get({ id: 'p56wQiqrn7mfDEVEL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier for a posture integration. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider` | `string \| null` | No | The device posture provider. Required on POST requests, ignored on PATCH requests. |
+| `cloudId` | `string \| null` | No | Identifies which of the provider's clouds to integrate with. - For CrowdStrike Falcon, it will be one of `us-1`, `us-2`, `eu-1` or `us-gov`. - For Microsoft Intune, it will be one of `global` or `us-gov`. - For Jamf Pro, Kandji and Sentinel One, it is the FQDN of your subdomain, for example `mydomain.sentinelone.net`. - For Kolide, this is left blank. |
+| `clientId` | `string \| null` | No | Unique identifier for your client. - For Microsoft Intune, it will be your application's UUID. - For CrowdStrike Falcon and Jamf Pro, it will be your client id. - For Kandji, Kolide and Sentinel One, this is left blank. |
+| `tenantId` | `string \| null` | No | The Microsoft Intune directory (tenant) ID. For other providers, this is left blank. |
+| `clientSecret` | `string \| null` | No | The secret (auth key, token, etc.) used to authenticate with the provider. Required when creating a new integration, may be omitted when updating an existing integration, in which case we retain the existing password. |
+| `id` | `string \| null` | No | A unique identifier for the integration (generated by the system). |
+| `configUpdated` | `string \| null` | No | Timestamp of the last time this configuration was updated, in RFC 3339 format. |
+| `status` | `object \| null` | No | Most recent status for this integration. |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  lastSync?: string | null,
+  error?: string | null,
+  providerHostCount?: number | null,
+  matchedCount?: number | null,
+  possibleMatchedCount?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`postureIntegrations.list`
+
+List device posture integrations (CrowdStrike Falcon, Intune, Jamf Pro, Kandji, Kolide, SentinelOne, ...).
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.postureIntegrations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `integrations` | `object[] \| null` | No | List of PostureIntegrations. |
+
+<AccordionGroup>
+<Accordion title="integrations full type">
+
+```ts
+{
+  provider?: string | null,
+  cloudId?: string | null,
+  clientId?: string | null,
+  tenantId?: string | null,
+  clientSecret?: string | null,
+  id?: string | null,
+  configUpdated?: string | null,
+  status?: {
+    lastSync?: string | null,
+    error?: string | null,
+    providerHostCount?: number | null,
+    matchedCount?: number | null,
+    possibleMatchedCount?: number | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`postureIntegrations.update`
+
+Change a device posture integration (credentials, tenant, which devices it reads).
+
+**Risk:** `write`
+
+```ts
+await corsair.tailscale.api.postureIntegrations.update({ id: 'p56wQiqrn7mfDEVEL', cloudId: 'us-2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier for a posture integration. |
+| `provider` | `falcon \| intune \| jamfpro \| kandji \| kolide \| sentinelone` | No | The device posture provider. Required on POST requests, ignored on PATCH requests. |
+| `cloudId` | `string` | No | Identifies which of the provider's clouds to integrate with. - For CrowdStrike Falcon, it will be one of `us-1`, `us-2`, `eu-1` or `us-gov`. - For Microsoft Intune, it will be one of `global` or `us-gov`. - For Jamf Pro, Kandji and Sentinel One, it is the FQDN of your subdomain, for example `mydomain.sentinelone.net`. - For Kolide, this is left blank. |
+| `clientId` | `string` | No | Unique identifier for your client. - For Microsoft Intune, it will be your application's UUID. - For CrowdStrike Falcon and Jamf Pro, it will be your client id. - For Kandji, Kolide and Sentinel One, this is left blank. |
+| `tenantId` | `string` | No | The Microsoft Intune directory (tenant) ID. For other providers, this is left blank. |
+| `clientSecret` | `string` | No | The secret (auth key, token, etc.) used to authenticate with the provider. Required when creating a new integration, may be omitted when updating an existing integration, in which case we retain the existing password. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider` | `string \| null` | No | The device posture provider. Required on POST requests, ignored on PATCH requests. |
+| `cloudId` | `string \| null` | No | Identifies which of the provider's clouds to integrate with. - For CrowdStrike Falcon, it will be one of `us-1`, `us-2`, `eu-1` or `us-gov`. - For Microsoft Intune, it will be one of `global` or `us-gov`. - For Jamf Pro, Kandji and Sentinel One, it is the FQDN of your subdomain, for example `mydomain.sentinelone.net`. - For Kolide, this is left blank. |
+| `clientId` | `string \| null` | No | Unique identifier for your client. - For Microsoft Intune, it will be your application's UUID. - For CrowdStrike Falcon and Jamf Pro, it will be your client id. - For Kandji, Kolide and Sentinel One, this is left blank. |
+| `tenantId` | `string \| null` | No | The Microsoft Intune directory (tenant) ID. For other providers, this is left blank. |
+| `clientSecret` | `string \| null` | No | The secret (auth key, token, etc.) used to authenticate with the provider. Required when creating a new integration, may be omitted when updating an existing integration, in which case we retain the existing password. |
+| `id` | `string \| null` | No | A unique identifier for the integration (generated by the system). |
+| `configUpdated` | `string \| null` | No | Timestamp of the last time this configuration was updated, in RFC 3339 format. |
+| `status` | `object \| null` | No | Most recent status for this integration. |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  lastSync?: string | null,
+  error?: string | null,
+  providerHostCount?: number | null,
+  matchedCount?: number | null,
+  possibleMatchedCount?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Services
+
+### delete
+
+`services.delete`
+
+Delete a Tailscale Service; its address stops answering on every host.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.tailscale.api.services.delete({ serviceName: 'svc:mcp' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `serviceName` | `string` | Yes | The unique name of a Service. The name should be prefixed with "svc:". It should be unique across the tailnet, so names already used for a machine cannot be reused for a Service. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Tailscale accepted the call; it answers with no body. |
+
+
+
+---
+
+### get
+
+`services.get`
+
+Get a Tailscale Service: its addresses, ports, tags and comment. serviceName is svc:&lt;name&gt;.
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.services.get({ serviceName: 'svc:mcp' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `serviceName` | `string` | Yes | The unique name of a Service. The name should be prefixed with "svc:". It should be unique across the tailnet, so names already used for a machine cannot be reused for a Service. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string \| null` | No | The unique name of the Service. |
+| `displayName` | `string \| null` | No | An optional human-readable label for the Service, shown in the Tailscale admin console and to clients with access to the Service. Must be 64 characters or fewer. |
+| `addrs` | `string[] \| null` | No | The IP addresses assigned to the Service: the IPv4 followed by the IPv6. |
+| `comment` | `string \| null` | No | An optional comment for the Service. |
+| `ports` | `string[] \| null` | No | A list of protocol:port pairs to be exposed by the Service. The only supported protocol is "tcp" at this time. "do-not-validate" can be used to skip validation. |
+| `tags` | `string[] \| null` | No | A list of optional tags associated with the Service. |
+
+
+
+---
+
+### hosts.getApproval
+
+`services.hosts.getApproval`
+
+Get whether a device is approved to serve a Tailscale Service.
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.services.hosts.getApproval({ serviceName: 'svc:mcp', deviceId: 'nKLggijBzX11CNTRL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `serviceName` | `string` | Yes | The unique name of a Service. The name should be prefixed with "svc:". It should be unique across the tailnet, so names already used for a machine cannot be reused for a Service. |
+| `deviceId` | `string` | Yes | ID of the device. Using the device's `nodeId` is preferred, but its numeric `id` value can also be used. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `approved` | `boolean \| null` | No | Indicates whether the Service is approved on the device. |
+| `autoApproved` | `boolean \| null` | No | Indicates whether the Service was auto-approved by an auto-approver. |
+
+
+
+---
+
+### hosts.list
+
+`services.hosts.list`
+
+List the devices that advertise a Tailscale Service and whether each is approved to serve it.
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.services.hosts.list({ serviceName: 'svc:mcp' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `serviceName` | `string` | Yes | The unique name of a Service. The name should be prefixed with "svc:". It should be unique across the tailnet, so names already used for a machine cannot be reused for a Service. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hosts` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="hosts full type">
+
+```ts
+{
+  stableNodeID?: string | null,
+  approvalLevel?: string | null,
+  configured?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### hosts.setApproval
+
+`services.hosts.setApproval`
+
+Approve (approved: true) or stop (false) a device serving a Tailscale Service, when its tags are not auto-approved.
+
+**Risk:** `write`
+
+```ts
+await corsair.tailscale.api.services.hosts.setApproval({ serviceName: 'svc:mcp', deviceId: 'nKLggijBzX11CNTRL', approved: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `serviceName` | `string` | Yes | The unique name of a Service. The name should be prefixed with "svc:". It should be unique across the tailnet, so names already used for a machine cannot be reused for a Service. |
+| `deviceId` | `string` | Yes | ID of the device. Using the device's `nodeId` is preferred, but its numeric `id` value can also be used. |
+| `approved` | `boolean` | No | Indicates whether to approve or revoke approval for the Service on the device. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `approved` | `boolean \| null` | No | Indicates whether the Service is approved on the device. |
+| `autoApproved` | `boolean \| null` | No | Indicates whether the Service was auto-approved by an auto-approver. |
+
+
+
+---
+
+### list
+
+`services.list`
+
+List Tailscale Services: named virtual endpoints (svc:&lt;name&gt;) with their own Tailscale IPs and MagicDNS name, served by one or more hosts. Use them to give an internal app or MCP server a stable address on the tailnet.
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.services.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `vipServices` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="vipServices full type">
+
+```ts
+{
+  name?: string | null,
+  displayName?: string | null,
+  addrs?: string[] | null,
+  comment?: string | null,
+  ports?: string[] | null,
+  tags?: string[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`services.update`
+
+Create or replace a Tailscale Service (serviceName svc:&lt;name&gt;; name defaults to it): ports ("tcp:443", "do-not-validate") and tags. Hosts then advertise it with `tailscale serve --service=svc:<name>`, and the policy file grants who may reach it.
+
+**Risk:** `write`
+
+```ts
+await corsair.tailscale.api.services.update({
+	serviceName: 'svc:mcp',
+	ports: ['tcp:443'],
+	tags: ['tag:mcp'],
+	comment: 'MCP server for agents',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `serviceName` | `string` | Yes | The unique name of a Service. The name should be prefixed with "svc:". It should be unique across the tailnet, so names already used for a machine cannot be reused for a Service. |
+| `addrs` | `string[]` | No | The IP addresses assigned to the Service: the IPv4 followed by the IPv6. |
+| `name` | `string` | No | The unique name of the Service. |
+| `displayName` | `string` | No | An optional human-readable label for the Service, shown in the Tailscale admin console and to clients with access to the Service. Must be 64 characters or fewer. |
+| `comment` | `string` | No | An optional comment for the Service. |
+| `ports` | `string[]` | No | A list of protocol:port pairs to be exposed by the Service. The only supported protocol is "tcp" at this time. "do-not-validate" can be used to skip validation. |
+| `tags` | `string[]` | No | A list of optional tags associated with the Service. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string \| null` | No | The unique name of the Service. |
+| `displayName` | `string \| null` | No | An optional human-readable label for the Service, shown in the Tailscale admin console and to clients with access to the Service. Must be 64 characters or fewer. |
+| `addrs` | `string[] \| null` | No | The IP addresses assigned to the Service: the IPv4 followed by the IPv6. |
+| `comment` | `string \| null` | No | An optional comment for the Service. |
+| `ports` | `string[] \| null` | No | A list of protocol:port pairs to be exposed by the Service. The only supported protocol is "tcp" at this time. "do-not-validate" can be used to skip validation. |
+| `tags` | `string[] \| null` | No | A list of optional tags associated with the Service. |
+
+
+
+---
+
+## Tailnets
+
+### create
+
+`tailnets.create`
+
+Create an API-only tailnet in the organization (no human users, not in the admin console), for an app or agent fleet that manages its own network. At most 10 tailnets per organization. The new OAuth client secret is returned once.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.tailscale.api.tailnets.create({ displayName: 'agent-fleet' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization` | `string` | No | The organization ID, or "-" (the default) for the organization the key belongs to. |
+| `displayName` | `string` | Yes | A custom name for the tailnet. It can contain letters, numbers, spaces, apostrophes, and hyphens, and must be unique within the organization. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | A stable, globally unique identifier for the tailnet. |
+| `displayName` | `string \| null` | No | The tailnet name provided in the request. |
+| `orgId` | `string \| null` | No | A stable, globally unique identifier for the organization. |
+| `dnsName` | `string \| null` | No | The DNS suffix used to construct fully qualified domain names for devices in this tailnet. |
+| `createdAt` | `string \| null` | No | RFC3339 timestamp of when the tailnet was created. |
+| `oauthClient` | `object \| null` | No | — |
+| `alreadyExists` | `boolean \| null` | No | True if the requested tailnet already exists. |
+
+<AccordionGroup>
+<Accordion title="oauthClient full type">
+
+```ts
+{
+  id?: string | null,
+  secret?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`tailnets.delete`
+
+Delete a whole tailnet with all of its users, devices and settings. Only API-only tailnets can be deleted this way. Cannot be undone.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.tailscale.api.tailnets.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Tailscale accepted the call; it answers with no body. |
+
+
+
+---
+
+### list
+
+`tailnets.list`
+
+List the tailnets in the organization: the original one and any API-only tailnets made with tailnets.create. Pages with cursor.
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.tailnets.list({ limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization` | `string` | No | The organization ID, or "-" (the default) for the organization the key belongs to. |
+| `limit` | `number` | No | Maximum number of tailnets to return per page; defaults to the maximum of 100. |
+| `cursor` | `string` | No | Opaque pagination cursor from a previous response. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnets` | `object[] \| null` | No | Tailnets in the organization. |
+| `cursor` | `string \| null` | No | Opaque pagination cursor for the next page. |
+| `totalCount` | `number \| null` | No | Total number of tailnets in the organization. |
+
+<AccordionGroup>
+<Accordion title="tailnets full type">
+
+```ts
+{
+  id?: string | null,
+  displayName?: string | null,
+  orgId?: string | null,
+  createdAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tailnet Settings
+
+### get
+
+`tailnetSettings.get`
+
+Get tailnet settings: device and user approval, device auto-updates, key expiry days, who may join, posture identity collection, network flow logging, regional routing, HTTPS.
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.tailnetSettings.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `aclsExternallyManagedOn` | `boolean \| null \| null` | No | Prevents users from editing policies in the admin console to avoid conflicts with external management workflows like GitOps or Terraform. |
+| `aclsExternalLink` | `string \| null` | No | Link to the external tailnet policy definition or management solution for this tailnet. |
+| `adminConsoleSessionTimeoutMinutes` | `number \| null` | No | The [admin console session timeout](https://tailscale.com/docs/account/admin-console-session-timeout) for members of this tailnet. Setting it to 0 disables the timeout. |
+| `devicesApprovalOn` | `boolean \| null \| null` | No | Whether [device approval](https://tailscale.com/docs/features/access-control/device-management/device-approval) is enabled for the tailnet. |
+| `devicesAutoUpdatesOn` | `boolean \| null \| null` | No | Whether [auto updates](https://tailscale.com/docs/features/client/update#auto-updates) are enabled for devices that belong to this tailnet. |
+| `devicesKeyDurationDays` | `number \| null` | No | The [key expiry](https://tailscale.com/docs/features/access-control/key-expiry) duration for devices on this tailnet. |
+| `usersApprovalOn` | `boolean \| null \| null` | No | Whether [user approval](https://tailscale.com/docs/features/access-control/user-approval) is enabled for this tailnet. |
+| `usersRoleAllowedToJoinExternalTailnets` | `string \| null` | No | Which user roles are allowed to [join external tailnets](https://tailscale.com/docs/features/sharing/how-to/invite-any-user). |
+| `networkFlowLoggingOn` | `boolean \| null \| null` | No | Whether [network flog logs](https://tailscale.com/docs/features/logging/network-flow-logs) are enabled for the tailnet. |
+| `regionalRoutingOn` | `boolean \| null \| null` | No | Whether [regional routing](https://tailscale.com/docs/features/route-selection#regional-routing) is enabled for the tailnet. A PATCH request should prefer setting `routeSelection`. A PATCH request must not specify both the `regionalRoutingOn` and `routeSelection` fields. |
+| `routeSelection` | `string \| null` | No | The [route selection](https://tailscale.com/docs/features/route-selection) algorithm used by the tailnet: * `active-passive-failover` - Active-passive failover (formerly known as "Failover") * `regional-routing` - Regional routing * `regional-routing-failover` - Regional routing with in-region failover * `magicroute` - MagicRoute A PATCH request must not specify both the `regionalRoutingOn` and `routeSelection` fields. |
+| `postureIdentityCollectionOn` | `boolean \| null \| null` | No | Whether [identity collection](https://tailscale.com/docs/features/access-control/device-management/how-to/manage-identity) is enabled for [device posture](https://tailscale.com/docs/features/device-posture) integrations for the tailnet. |
+| `httpsEnabled` | `boolean \| null \| null` | No | Whether provisioning of [HTTPS certificates](https://tailscale.com/docs/how-to/set-up-https-certificates) is enabled for this tailnet. |
+
+
+
+---
+
+### update
+
+`tailnetSettings.update`
+
+Change tailnet settings; only the fields sent change. Turning on device approval holds every new device until someone approves it. Tailscale answers without the new values: read them with tailnetSettings.get.
+
+**Risk:** `write`
+
+```ts
+await corsair.tailscale.api.tailnetSettings.update({ devicesApprovalOn: true, devicesKeyDurationDays: 90 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `aclsExternallyManagedOn` | `boolean \| null` | No | Prevents users from editing policies in the admin console to avoid conflicts with external management workflows like GitOps or Terraform. |
+| `aclsExternalLink` | `string` | No | Link to the external tailnet policy definition or management solution for this tailnet. |
+| `adminConsoleSessionTimeoutMinutes` | `number` | No | The [admin console session timeout](https://tailscale.com/docs/account/admin-console-session-timeout) for members of this tailnet. Setting it to 0 disables the timeout. |
+| `devicesApprovalOn` | `boolean \| null` | No | Whether [device approval](https://tailscale.com/docs/features/access-control/device-management/device-approval) is enabled for the tailnet. |
+| `devicesAutoUpdatesOn` | `boolean \| null` | No | Whether [auto updates](https://tailscale.com/docs/features/client/update#auto-updates) are enabled for devices that belong to this tailnet. |
+| `devicesKeyDurationDays` | `number` | No | The [key expiry](https://tailscale.com/docs/features/access-control/key-expiry) duration for devices on this tailnet. |
+| `usersApprovalOn` | `boolean \| null` | No | Whether [user approval](https://tailscale.com/docs/features/access-control/user-approval) is enabled for this tailnet. |
+| `usersRoleAllowedToJoinExternalTailnets` | `none \| admin \| member` | No | Which user roles are allowed to [join external tailnets](https://tailscale.com/docs/features/sharing/how-to/invite-any-user). |
+| `networkFlowLoggingOn` | `boolean \| null` | No | Whether [network flog logs](https://tailscale.com/docs/features/logging/network-flow-logs) are enabled for the tailnet. |
+| `routeSelection` | `active-passive-failover \| regional-routing \| regional-routing-failover \| magicroute` | No | The [route selection](https://tailscale.com/docs/features/route-selection) algorithm used by the tailnet: * `active-passive-failover` - Active-passive failover (formerly known as "Failover") * `regional-routing` - Regional routing * `regional-routing-failover` - Regional routing with in-region failover * `magicroute` - MagicRoute A PATCH request must not specify both the `regionalRoutingOn` and `routeSelection` fields. |
+| `postureIdentityCollectionOn` | `boolean \| null` | No | Whether [identity collection](https://tailscale.com/docs/features/access-control/device-management/how-to/manage-identity) is enabled for [device posture](https://tailscale.com/docs/features/device-posture) integrations for the tailnet. |
+| `httpsEnabled` | `boolean \| null` | No | Whether provisioning of [HTTPS certificates](https://tailscale.com/docs/how-to/set-up-https-certificates) is enabled for this tailnet. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Tailscale accepted the call; it answers with no body. |
+
+
+
+---
+
+## User Invites
+
+### create
+
+`userInvites.create`
+
+Invite people to join the tailnet with a role (member, admin, ...). Each invite gives an invite URL; with email set, Tailscale emails it. Needs a user's API access token (an invite needs an inviting user), not an OAuth client.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.tailscale.api.userInvites.create({
+	invites: [{ role: 'member', email: 'new.teammate@example.com' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `invites` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="invites full type">
+
+```ts
+{
+  role?: member | admin | it-admin | network-admin | billing-admin | auditor,
+  email?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[] \| null`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  role?: string | null,
+  tailnetId?: number | null,
+  inviterId?: number | null,
+  email?: string | null,
+  lastEmailSentAt?: string | null,
+  inviteUrl?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`userInvites.delete`
+
+Delete an invite to join the tailnet; its link stops working. Needs a user's API access token.
+
+**Risk:** `write`
+
+```ts
+await corsair.tailscale.api.userInvites.delete({ userInviteId: '29214' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userInviteId` | `string` | Yes | ID of the user invite. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Tailscale accepted the call; it answers with no body. |
+
+
+
+---
+
+### get
+
+`userInvites.get`
+
+Get an invite to join the tailnet: role, invite URL, email and whether it was accepted.
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.userInvites.get({ userInviteId: '29214' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userInviteId` | `string` | Yes | ID of the user invite. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | The unique identifier for the invite. Supply this value wherever `userInviteId` is indicated in the endpoint. |
+| `role` | `string \| null` | No | The tailnet user role to assign to the invited user upon accepting the invite. |
+| `tailnetId` | `number \| null` | No | The ID of the tailnet to which the user was invited. |
+| `inviterId` | `number \| null` | No | The ID of the user who created the invite. |
+| `email` | `string \| null` | No | The email to which the invite was sent. If empty, the invite was not emailed to anyone, but the inviteUrl can be shared manually. |
+| `lastEmailSentAt` | `string \| null` | No | The last time the invite was attempted to be sent to Email. Only ever set if `email` is not empty. |
+| `inviteUrl` | `string \| null` | No | Included when `email` is not part of the tailnet's domain, or when `email` is empty. It is the link to accept the invite. When included, anyone with this link can accept the invite. It is not restricted to the person to which the invite was emailed. When `email` is part of the tailnet's domain (has the same @domain.com suffix as the tailnet), the user can join the tailnet automatically by logging in with their domain email at https://login.tailscale.com/start. They'll be assigned the specified `role` upon signing in for the first time. |
+
+
+
+---
+
+### list
+
+`userInvites.list`
+
+List pending invites for people to join the tailnet; null when there are none. Invites need a user's API access token, not an OAuth client.
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.userInvites.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+
+
+
+**Output:** `object[] \| null`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  role?: string | null,
+  tailnetId?: number | null,
+  inviterId?: number | null,
+  email?: string | null,
+  lastEmailSentAt?: string | null,
+  inviteUrl?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### resend
+
+`userInvites.resend`
+
+Email an invite to join the tailnet again.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.tailscale.api.userInvites.resend({ userInviteId: '29214' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userInviteId` | `string` | Yes | ID of the user invite. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Tailscale accepted the call; it answers with no body. |
+
+
+
+---
+
+## Users
+
+### approve
+
+`users.approve`
+
+Approve a user waiting for approval (when the tailnet requires user approval).
+
+**Risk:** `write`
+
+```ts
+await corsair.tailscale.api.users.approve({ userId: 'uS81iBWpBf11CNTRL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | ID of the user. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Tailscale accepted the call; it answers with no body. |
+
+
+
+---
+
+### delete
+
+`users.delete`
+
+Delete a user from the tailnet, with their devices. Cannot be undone; users.suspend keeps them restorable. A user's own token can't delete that user.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.tailscale.api.users.delete({ userId: 'uS81iBWpBf11CNTRL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | ID of the user. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Tailscale accepted the call; it answers with no body. |
+
+
+
+---
+
+### get
+
+`users.get`
+
+Get one user: role, status, login name, device count, last seen.
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.users.get({ userId: 'uS81iBWpBf11CNTRL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | ID of the user. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | The unique identifier for the user. Supply this value wherever &#123;userId&#125; is indicated in an endpoint. |
+| `displayName` | `string \| null` | No | The name of the user. |
+| `loginName` | `string \| null` | No | The emailish login name of the user. |
+| `profilePicUrl` | `string \| null` | No | The profile pic URL for the user. |
+| `tailnetId` | `string \| null` | No | The tailnet that owns the user. |
+| `created` | `string \| null` | No | The time the user joined their tailnet. |
+| `type` | `string \| null` | No | The type of relation this user has to the tailnet associated with the request. |
+| `role` | `string \| null` | No | The role of the user. Learn more about [user roles](https://tailscale.com/docs/reference/user-roles). |
+| `status` | `string \| null` | No | The status of the user. |
+| `deviceCount` | `number \| null` | No | Number of devices the user owns. |
+| `lastSeen` | `string \| null` | No | The later of either: - The last time any of the user's nodes were connected to the network. - The last time the user authenticated to any tailscale service, including the admin panel. |
+| `currentlyConnected` | `boolean \| null` | No | `true` when the user has a node currently connected to the control server. |
+
+
+
+---
+
+### list
+
+`users.list`
+
+List users: role, status (active, idle, suspended, needs-approval), device count, last seen. type and role filter the list.
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.users.list({ type: 'member', role: 'all' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `type` | `member \| shared \| all` | No | Allows for filtering the output by user type. |
+| `role` | `owner \| member \| admin \| it-admin \| network-admin \| billing-admin \| auditor \| all` | No | Allows for filtering the output by user role. Learn more about [user roles](https://tailscale.com/docs/reference/user-roles). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id?: string | null,
+  displayName?: string | null,
+  loginName?: string | null,
+  profilePicUrl?: string | null,
+  tailnetId?: string | null,
+  created?: string | null,
+  type?: string | null,
+  role?: string | null,
+  status?: string | null,
+  deviceCount?: number | null,
+  lastSeen?: string | null,
+  currentlyConnected?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### restore
+
+`users.restore`
+
+Restore a suspended user and their access.
+
+**Risk:** `write`
+
+```ts
+await corsair.tailscale.api.users.restore({ userId: 'uS81iBWpBf11CNTRL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | ID of the user. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Tailscale accepted the call; it answers with no body. |
+
+
+
+---
+
+### suspend
+
+`users.suspend`
+
+Suspend a user: they lose access to the tailnet until restored; their devices and settings are kept. A user's own token can't suspend that user.
+
+**Risk:** `write`
+
+```ts
+await corsair.tailscale.api.users.suspend({ userId: 'uS81iBWpBf11CNTRL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | ID of the user. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Tailscale accepted the call; it answers with no body. |
+
+
+
+---
+
+### updateRole
+
+`users.updateRole`
+
+Change a user's role (member, admin, it-admin, network-admin, billing-admin, auditor, owner).
+
+**Risk:** `write`
+
+```ts
+await corsair.tailscale.api.users.updateRole({ userId: 'uS81iBWpBf11CNTRL', role: 'auditor' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | ID of the user. |
+| `role` | `owner \| member \| admin \| it-admin \| network-admin \| billing-admin \| auditor` | No | The role of the user. Learn more about [user roles](https://tailscale.com/docs/reference/user-roles). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Tailscale accepted the call; it answers with no body. |
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Add a webhook endpoint for tailnet events (nodeCreated, nodeNeedsApproval, nodeKeyExpiringInOneDay, nodeDeleted, policyUpdate, userNeedsApproval, userRoleUpdated, ...), or a whole category (categoryTailnetManagement, categoryDeviceMisconfigurations) that also takes events Tailscale adds later. Tailscale signs each event with the secret (Tailscale-Webhook-Signature). providerType "slack", "discord", "mattermost" or "googlechat" formats the message for that chat app; "" or none sends the generic format. The signing secret is returned once: keep it to verify events.
+
+**Risk:** `write`
+
+```ts
+await corsair.tailscale.api.webhooks.create({
+	endpointUrl: 'https://hooks.slack.com/services/T000/B000/XXXX',
+	providerType: 'slack',
+	subscriptions: ['nodeNeedsApproval', 'nodeCreated', 'policyUpdate'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+| `endpointUrl` | `string` | Yes | The endpoint that events are sent to from Tailscale via POST requests. |
+| `providerType` | `"" \| slack \| mattermost \| googlechat \| discord` | No | — |
+| `subscriptions` | `(nodeCreated \| nodeNeedsApproval \| nodeApproved \| nodeKeyExpiringInOneDay \| nodeKeyExpired \| nodeDeleted \| nodeSigned \| nodeNeedsSignature \| policyUpdate \| userCreated \| userNeedsApproval \| userSuspended \| userRestored \| userDeleted \| userApproved \| userRoleUpdated \| subnetIPForwardingNotEnabled \| exitNodeIPForwardingNotEnabled \| categoryTailnetManagement \| categoryDeviceMisconfigurations)[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpointId` | `string \| null` | No | ID of the webhook endpoint. |
+| `endpointUrl` | `string \| null` | No | The endpoint that events are sent to from Tailscale via POST requests. |
+| `providerType` | `string \| null` | No | The provider type for the webhook destination, or an empty string if none are applicable. Outgoing webhook events are sent in the format expected by the provider type if non-empty. |
+| `creatorLoginName` | `string \| null` | No | The login name for the creator of the webhook endpoint. In some cases, such as webhooks created with an OAuth client, this can be blank. |
+| `created` | `string \| null` | No | The time the webhook endpoint was created. |
+| `lastModified` | `string \| null` | No | The time the webhook endpoint was last modified. |
+| `subscriptions` | `string[] \| null` | No | The list of subscribed events that trigger POST requests to the configured endpoint URL. Learn more about [webhook events](https://tailscale.com/docs/features/webhooks#events). |
+| `secret` | `string \| null` | No | The webhook secret associated with the endpoint. Only populated on creation or when the secret is rotated. This secret is used for generating the `Tailscale-Webhook-Signature` header in requests sent to the endpoint URL. Learn more about [verifying webhook event signatures](https://tailscale.com/docs/features/webhooks#verifying-an-event-signature). |
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Delete a webhook endpoint; Tailscale stops sending it events.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.tailscale.api.webhooks.delete({ endpointId: 'w5S9wB4zAH11CNTRL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpointId` | `string` | Yes | ID for the webhook endpoint. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Tailscale accepted the call; it answers with no body. |
+
+
+
+---
+
+### get
+
+`webhooks.get`
+
+Get a webhook endpoint: URL, provider type and subscribed events.
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.webhooks.get({ endpointId: 'w5S9wB4zAH11CNTRL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpointId` | `string` | Yes | ID for the webhook endpoint. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpointId` | `string \| null` | No | ID of the webhook endpoint. |
+| `endpointUrl` | `string \| null` | No | The endpoint that events are sent to from Tailscale via POST requests. |
+| `providerType` | `string \| null` | No | The provider type for the webhook destination, or an empty string if none are applicable. Outgoing webhook events are sent in the format expected by the provider type if non-empty. |
+| `creatorLoginName` | `string \| null` | No | The login name for the creator of the webhook endpoint. In some cases, such as webhooks created with an OAuth client, this can be blank. |
+| `created` | `string \| null` | No | The time the webhook endpoint was created. |
+| `lastModified` | `string \| null` | No | The time the webhook endpoint was last modified. |
+| `subscriptions` | `string[] \| null` | No | The list of subscribed events that trigger POST requests to the configured endpoint URL. Learn more about [webhook events](https://tailscale.com/docs/features/webhooks#events). |
+| `secret` | `string \| null` | No | The webhook secret associated with the endpoint. Only populated on creation or when the secret is rotated. This secret is used for generating the `Tailscale-Webhook-Signature` header in requests sent to the endpoint URL. Learn more about [verifying webhook event signatures](https://tailscale.com/docs/features/webhooks#verifying-an-event-signature). |
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List the webhook endpoints that receive tailnet events (device added, needs approval, policy changed, user joined, ...).
+
+**Risk:** `read`
+
+```ts
+await corsair.tailscale.api.webhooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tailnet` | `string` | No | The tailnet ID (T1234CNTRL, from Settings → General) or "-", the tailnet the key belongs to. Defaults to the plugin's `tailnet` option, else "-". |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhooks` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhooks full type">
+
+```ts
+{
+  endpointId?: string | null,
+  endpointUrl?: string | null,
+  providerType?: string | null,
+  creatorLoginName?: string | null,
+  created?: string | null,
+  lastModified?: string | null,
+  subscriptions?: string[] | null,
+  secret?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### rotateSecret
+
+`webhooks.rotateSecret`
+
+Replace a webhook endpoint's signing secret. The new one is returned once; signatures made with the old one stop verifying.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.tailscale.api.webhooks.rotateSecret({ endpointId: 'w5S9wB4zAH11CNTRL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpointId` | `string` | Yes | ID for the webhook endpoint. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpointId` | `string \| null` | No | ID of the webhook endpoint. |
+| `endpointUrl` | `string \| null` | No | The endpoint that events are sent to from Tailscale via POST requests. |
+| `providerType` | `string \| null` | No | The provider type for the webhook destination, or an empty string if none are applicable. Outgoing webhook events are sent in the format expected by the provider type if non-empty. |
+| `creatorLoginName` | `string \| null` | No | The login name for the creator of the webhook endpoint. In some cases, such as webhooks created with an OAuth client, this can be blank. |
+| `created` | `string \| null` | No | The time the webhook endpoint was created. |
+| `lastModified` | `string \| null` | No | The time the webhook endpoint was last modified. |
+| `subscriptions` | `string[] \| null` | No | The list of subscribed events that trigger POST requests to the configured endpoint URL. Learn more about [webhook events](https://tailscale.com/docs/features/webhooks#events). |
+| `secret` | `string \| null` | No | The webhook secret associated with the endpoint. Only populated on creation or when the secret is rotated. This secret is used for generating the `Tailscale-Webhook-Signature` header in requests sent to the endpoint URL. Learn more about [verifying webhook event signatures](https://tailscale.com/docs/features/webhooks#verifying-an-event-signature). |
+
+
+
+---
+
+### test
+
+`webhooks.test`
+
+Send a test event to a webhook endpoint (a chat channel, for a Slack or Discord one) to check it receives and accepts deliveries.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.tailscale.api.webhooks.test({ endpointId: 'w5S9wB4zAH11CNTRL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpointId` | `string` | Yes | ID for the webhook endpoint. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Tailscale accepted the call; it answers with no body. |
+
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Change which events a webhook endpoint receives.
+
+**Risk:** `write`
+
+```ts
+await corsair.tailscale.api.webhooks.update({
+	endpointId: 'w5S9wB4zAH11CNTRL',
+	subscriptions: ['nodeNeedsApproval', 'userNeedsApproval'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpointId` | `string` | Yes | ID for the webhook endpoint. |
+| `subscriptions` | `(nodeCreated \| nodeNeedsApproval \| nodeApproved \| nodeKeyExpiringInOneDay \| nodeKeyExpired \| nodeDeleted \| nodeSigned \| nodeNeedsSignature \| policyUpdate \| userCreated \| userNeedsApproval \| userSuspended \| userRestored \| userDeleted \| userApproved \| userRoleUpdated \| subnetIPForwardingNotEnabled \| exitNodeIPForwardingNotEnabled \| categoryTailnetManagement \| categoryDeviceMisconfigurations)[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpointId` | `string \| null` | No | ID of the webhook endpoint. |
+| `endpointUrl` | `string \| null` | No | The endpoint that events are sent to from Tailscale via POST requests. |
+| `providerType` | `string \| null` | No | The provider type for the webhook destination, or an empty string if none are applicable. Outgoing webhook events are sent in the format expected by the provider type if non-empty. |
+| `creatorLoginName` | `string \| null` | No | The login name for the creator of the webhook endpoint. In some cases, such as webhooks created with an OAuth client, this can be blank. |
+| `created` | `string \| null` | No | The time the webhook endpoint was created. |
+| `lastModified` | `string \| null` | No | The time the webhook endpoint was last modified. |
+| `subscriptions` | `string[] \| null` | No | The list of subscribed events that trigger POST requests to the configured endpoint URL. Learn more about [webhook events](https://tailscale.com/docs/features/webhooks#events). |
+| `secret` | `string \| null` | No | The webhook secret associated with the endpoint. Only populated on creation or when the secret is rotated. This secret is used for generating the `Tailscale-Webhook-Signature` header in requests sent to the endpoint URL. Learn more about [verifying webhook event signatures](https://tailscale.com/docs/features/webhooks#verifying-an-event-signature). |
+
+
+
+---
+
