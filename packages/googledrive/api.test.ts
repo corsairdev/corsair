@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { ApiError } from 'corsair/http';
 import { makeGoogleDriveRequest } from './client';
-import { download } from './endpoints/files';
+import { download, exportFile } from './endpoints/files';
 import { GoogleDriveEndpointOutputSchemas } from './endpoints/types';
 import type { GoogleDriveContext } from './index';
 import type {
@@ -341,9 +341,60 @@ describe('Google Drive API Type Tests', () => {
 				Buffer.from(pdf),
 			);
 
+			expect(gotPdf.filename).toMatch(/^corsair-download-test-\d+\.pdf$/);
+
 			const gotCsv = await download(ctx, { fileId: csvId });
 			expect(gotCsv.contentType).toBe('text/csv');
 			expect(gotCsv.text).toBe(csv);
+			expect(gotCsv.filename).toMatch(/\.csv$/);
+		});
+
+		// A Doc can't be downloaded as it is: download points at files.export,
+		// which returns it as Markdown by default, named after the Doc.
+		it('files.export returns a Doc as Markdown, and files.download refuses it', async () => {
+			const name = `corsair-export-test-${Date.now()}`;
+			const form = new FormData();
+			form.append(
+				'metadata',
+				new Blob(
+					[
+						JSON.stringify({
+							name,
+							mimeType: 'application/vnd.google-apps.document',
+						}),
+					],
+					{ type: 'application/json' },
+				),
+			);
+			form.append(
+				'file',
+				new Blob(['Exported by the Corsair test.'], { type: 'text/plain' }),
+			);
+			const response = await fetch(
+				'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',
+				{
+					method: 'POST',
+					headers: { Authorization: `Bearer ${TEST_TOKEN}` },
+					body: form,
+				},
+			);
+			expect(response.ok).toBe(true);
+			const { id } = (await response.json()) as { id: string };
+			createdFileIds.push(id);
+
+			// unknown: the endpoint reads only ctx.key, not a full plugin context.
+			const ctx = { key: TEST_TOKEN } as unknown as GoogleDriveContext;
+			const got = await exportFile(ctx, { fileId: id });
+			expect(GoogleDriveEndpointOutputSchemas.filesExport.parse(got)).toEqual(
+				got,
+			);
+			expect(got.contentType).toBe('text/markdown');
+			expect(got.text).toContain('Exported by the Corsair test.');
+			expect(got.filename).toBe(`${name}.md`);
+
+			await expect(download(ctx, { fileId: id })).rejects.toThrow(
+				/files\.export/,
+			);
 		});
 
 		it('filesDelete works correctly', async () => {

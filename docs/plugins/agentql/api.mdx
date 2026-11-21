@@ -144,7 +144,7 @@ await corsair.agentql.api.data.query({});
 
 `data.queryDocument`
 
-Tool to extract structured data from PDF or image documents using an AgentQL query or natural language prompt. Accepts a file upload plus query or prompt.
+Tool to extract structured data from PDF or image documents using an AgentQL query or natural language prompt. Accepts a file plus query or prompt. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `read`
 
@@ -156,13 +156,28 @@ await corsair.agentql.api.data.queryDocument({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `file` | `custom` | Yes | — |
-| `fileName` | `string` | No | — |
+| `file` | `string \| object \| custom` | Yes | The PDF or image (.pdf, .png, .jpg, .jpeg): a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). |
+| `fileName` | `string` | No | The name stored with the result. Defaults to the name of a linked or base64 file; a Blob's is not taken. |
 | `query` | `string` | No | — |
 | `prompt` | `string` | No | — |
 | `params` | `object` | No | — |
 
 <AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+
 <Accordion title="params full type">
 
 ```ts

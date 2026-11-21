@@ -1,5 +1,5 @@
 import type { SpotlightrEndpoints } from '..';
-import { call, flag } from './call';
+import { call, flag, uploadFile } from './call';
 import {
 	SpotlightrEndpointInputSchemas,
 	SpotlightrEndpointOutputSchemas,
@@ -35,13 +35,20 @@ export const create: SpotlightrEndpoints['videosCreate'] = async (ctx, input) =>
 			output: SpotlightrEndpointOutputSchemas.createVideo,
 		},
 		input,
-		(parsed) => {
+		async (parsed) => {
 			// A file makes this multipart; otherwise `URL` goes in a form body,
-			// which is the shape the reference's upload example uses.
+			// which is the shape the reference's upload example uses. A Blob is
+			// sent as before; a link or base64 is fetched only when there is no
+			// `url`, since Spotlightr uses the `url` over the file.
+			const file =
+				parsed.file === undefined ||
+				(parsed.url !== undefined && !(parsed.file instanceof Blob))
+					? undefined
+					: await uploadFile(parsed.file, 'video');
 			const formData: Record<string, string | Blob | undefined> = {
 				name: parsed.name,
 				URL: parsed.url,
-				file: parsed.file,
+				file,
 				customS3:
 					parsed.custom_s3 === undefined ? undefined : String(parsed.custom_s3),
 				hls:

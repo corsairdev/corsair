@@ -1,0 +1,1223 @@
+---
+title: "HotspotSystem API reference"
+sidebarTitle: "API"
+description: "API reference for HotspotSystem: every `hotspotsystem.api.*` operation with input and output types."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Customers
+
+### list
+
+`customers.list`
+
+List the account customers, with field selection, sorting and paging
+
+**Risk:** `read`
+
+```ts
+await corsair.hotspotsystem.api.customers.list({ limit: 25, offset: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `string[]` | No | Response properties to return, such as `["id", "name"]`. Omitted returns every property. |
+| `sort` | `string` | No | A response property to sort by. Prefix it with `-` for descending order, such as `-registered_at`. |
+| `limit` | `number` | No | How many items to return per page. |
+| `offset` | `number` | No | Zero-based index of the first item to return. Take the next value from `next_offset` on the previous page. |
+
+A customer and a subscriber have the same documented properties, so both are the same shape here.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `metadata` | `object \| null` | No | — |
+| `next_offset` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string | null,
+  user_name?: string | null,
+  name?: string | null,
+  email?: string | null,
+  company_name?: string | null,
+  address?: string | null,
+  city?: string | null,
+  state?: string | null,
+  zip?: string | null,
+  country_code?: string | null,
+  phone?: string | null,
+  social_network?: string | null,
+  social_id?: string | null,
+  social_username?: string | null,
+  social_link?: string | null,
+  social_gender?: string | null,
+  social_age_range?: string | null,
+  social_followers_count?: string | null,
+  registered_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  total_count?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Locations
+
+### customers
+
+`locations.customers`
+
+List the customers seen at one location, with their contact details and social profiles
+
+**Risk:** `read`
+
+```ts
+await corsair.hotspotsystem.api.locations.customers({ location_id: '42', limit: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location_id` | `string \| number` | Yes | The ID of a location, as `locations.list` returns it. |
+| `fields` | `string[]` | No | Response properties to return, such as `["id", "name"]`. Omitted returns every property. |
+| `sort` | `string` | No | A response property to sort by. Prefix it with `-` for descending order, such as `-registered_at`. |
+| `limit` | `number` | No | How many items to return per page. |
+| `offset` | `number` | No | Zero-based index of the first item to return. Take the next value from `next_offset` on the previous page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `metadata` | `object \| null` | No | — |
+| `next_offset` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string | null,
+  user_name?: string | null,
+  name?: string | null,
+  email?: string | null,
+  company_name?: string | null,
+  address?: string | null,
+  city?: string | null,
+  state?: string | null,
+  zip?: string | null,
+  country_code?: string | null,
+  phone?: string | null,
+  social_network?: string | null,
+  social_id?: string | null,
+  social_username?: string | null,
+  social_link?: string | null,
+  social_gender?: string | null,
+  social_age_range?: string | null,
+  social_followers_count?: string | null,
+  registered_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  total_count?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`locations.list`
+
+List the account locations, with field selection, sorting and paging
+
+**Risk:** `read`
+
+```ts
+await corsair.hotspotsystem.api.locations.list({ fields: ['id', 'name'], limit: 10, offset: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `string[]` | No | Response properties to return, such as `["id", "name"]`. Omitted returns every property. |
+| `sort` | `string` | No | A response property to sort by. Prefix it with `-` for descending order, such as `-registered_at`. |
+| `limit` | `number` | No | How many items to return per page. |
+| `offset` | `number` | No | Zero-based index of the first item to return. Take the next value from `next_offset` on the previous page. |
+
+Returns `items` and `metadata.total_count`. `next_offset` is absent on the last page.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `metadata` | `object \| null` | No | — |
+| `next_offset` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  total_count?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### macTransactions
+
+`locations.macTransactions`
+
+List the device MAC transactions at one location, with the device answers collected
+
+**Risk:** `read`
+
+```ts
+await corsair.hotspotsystem.api.locations.macTransactions({ location_id: '42', limit: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location_id` | `string \| number` | Yes | The ID of a location, as `locations.list` returns it. |
+| `fields` | `string[]` | No | Response properties to return, such as `["id", "name"]`. Omitted returns every property. |
+| `sort` | `string` | No | A response property to sort by. Prefix it with `-` for descending order, such as `-registered_at`. |
+| `limit` | `number` | No | How many items to return per page. |
+| `offset` | `number` | No | Zero-based index of the first item to return. Take the next value from `next_offset` on the previous page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `metadata` | `object \| null` | No | — |
+| `next_offset` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: number | null,
+  operator?: string | null,
+  location_id?: number | null,
+  user_name?: string | null,
+  action_date_gmt?: string | null,
+  package_id?: string | null,
+  user_agent?: string | null,
+  customer?: string | null,
+  newsletter?: number | null,
+  company_name?: string | null,
+  email?: string | null,
+  address?: string | null,
+  city?: string | null,
+  state?: string | null,
+  zip?: string | null,
+  country_code?: string | null,
+  phone?: string | null,
+  q1?: string | null,
+  a1?: string | null,
+  q2?: string | null,
+  a2?: string | null,
+  q3?: string | null,
+  a3?: string | null,
+  q4?: string | null,
+  a4?: string | null,
+  q5?: string | null,
+  a5?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  total_count?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### options
+
+`locations.options`
+
+List the account locations as `id` and `name` pairs for a picker; no paging
+
+**Risk:** `read`
+
+```ts
+await corsair.hotspotsystem.api.locations.options({});
+```
+
+**Input:** _empty object_
+
+Returns `{ items }` with no `metadata` and no paging, for filling a picker.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### paidTransactions
+
+`locations.paidTransactions`
+
+List the paid transactions at one location, with amounts and currencies
+
+**Risk:** `read`
+
+```ts
+await corsair.hotspotsystem.api.locations.paidTransactions({ location_id: '42', limit: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location_id` | `string \| number` | Yes | The ID of a location, as `locations.list` returns it. |
+| `fields` | `string[]` | No | Response properties to return, such as `["id", "name"]`. Omitted returns every property. |
+| `sort` | `string` | No | A response property to sort by. Prefix it with `-` for descending order, such as `-registered_at`. |
+| `limit` | `number` | No | How many items to return per page. |
+| `offset` | `number` | No | Zero-based index of the first item to return. Take the next value from `next_offset` on the previous page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `metadata` | `object \| null` | No | — |
+| `next_offset` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: number | null,
+  operator?: string | null,
+  location_id?: number | null,
+  user_name?: string | null,
+  customer?: string | null,
+  action_date_gmt?: string | null,
+  amount?: number | null,
+  currency?: string | null,
+  user_agent?: string | null,
+  newsletter?: number | null,
+  company_name?: string | null,
+  email?: string | null,
+  address?: string | null,
+  city?: string | null,
+  state?: string | null,
+  zip?: string | null,
+  country_code?: string | null,
+  phone?: string | null,
+  language?: string | null,
+  smscountry?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  total_count?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### socialTransactions
+
+`locations.socialTransactions`
+
+List social-login transactions at one location
+
+**Risk:** `read`
+
+```ts
+await corsair.hotspotsystem.api.locations.socialTransactions({ location_id: '42', limit: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location_id` | `string \| number` | Yes | The ID of a location, as `locations.list` returns it. |
+| `fields` | `string[]` | No | Response properties to return, such as `["id", "name"]`. Omitted returns every property. |
+| `sort` | `string` | No | A response property to sort by. Prefix it with `-` for descending order, such as `-registered_at`. |
+| `limit` | `number` | No | How many items to return per page. |
+| `offset` | `number` | No | Zero-based index of the first item to return. Take the next value from `next_offset` on the previous page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `metadata` | `object \| null` | No | — |
+| `next_offset` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: number | null,
+  operator?: string | null,
+  location_id?: number | null,
+  user_name?: string | null,
+  action_date_gmt?: string | null,
+  package_id?: string | null,
+  user_agent?: string | null,
+  customer?: string | null,
+  newsletter?: number | null,
+  company_name?: string | null,
+  email?: string | null,
+  address?: string | null,
+  city?: string | null,
+  state?: string | null,
+  zip?: string | null,
+  country_code?: string | null,
+  phone?: string | null,
+  social_id?: string | null,
+  social_username?: string | null,
+  social_link?: string | null,
+  social_gender?: string | null,
+  social_age_range?: string | null,
+  social_followers_count?: string | null,
+  social_network?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  total_count?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### subscribers
+
+`locations.subscribers`
+
+List the subscribers seen at one location, with their contact details and social profiles
+
+**Risk:** `read`
+
+```ts
+await corsair.hotspotsystem.api.locations.subscribers({ location_id: '42', limit: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location_id` | `string \| number` | Yes | The ID of a location, as `locations.list` returns it. |
+| `fields` | `string[]` | No | Response properties to return, such as `["id", "name"]`. Omitted returns every property. |
+| `sort` | `string` | No | A response property to sort by. Prefix it with `-` for descending order, such as `-registered_at`. |
+| `limit` | `number` | No | How many items to return per page. |
+| `offset` | `number` | No | Zero-based index of the first item to return. Take the next value from `next_offset` on the previous page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `metadata` | `object \| null` | No | — |
+| `next_offset` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string | null,
+  user_name?: string | null,
+  name?: string | null,
+  email?: string | null,
+  company_name?: string | null,
+  address?: string | null,
+  city?: string | null,
+  state?: string | null,
+  zip?: string | null,
+  country_code?: string | null,
+  phone?: string | null,
+  social_network?: string | null,
+  social_id?: string | null,
+  social_username?: string | null,
+  social_link?: string | null,
+  social_gender?: string | null,
+  social_age_range?: string | null,
+  social_followers_count?: string | null,
+  registered_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  total_count?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### vouchers
+
+`locations.vouchers`
+
+List the vouchers issued at one location, with their validity and traffic limits
+
+**Risk:** `read`
+
+```ts
+await corsair.hotspotsystem.api.locations.vouchers({ location_id: '42', limit: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location_id` | `string \| number` | Yes | The ID of a location, as `locations.list` returns it. |
+| `fields` | `string[]` | No | Response properties to return, such as `["id", "name"]`. Omitted returns every property. |
+| `sort` | `string` | No | A response property to sort by. Prefix it with `-` for descending order, such as `-registered_at`. |
+| `limit` | `number` | No | How many items to return per page. |
+| `offset` | `number` | No | Zero-based index of the first item to return. Take the next value from `next_offset` on the previous page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `metadata` | `object \| null` | No | — |
+| `next_offset` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  serial?: string | null,
+  voucher_code?: string | null,
+  limit_tl?: number | null,
+  simultaneous_use?: number | null,
+  limit_dl?: number | null,
+  limit_ul?: number | null,
+  usage_exp?: string | null,
+  validity?: number | null,
+  price_enduser?: number | null,
+  currency?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  total_count?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### voucherTransactions
+
+`locations.voucherTransactions`
+
+List the voucher transactions at one location, with the voucher used and the amount
+
+**Risk:** `read`
+
+```ts
+await corsair.hotspotsystem.api.locations.voucherTransactions({ location_id: '42', limit: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location_id` | `string \| number` | Yes | The ID of a location, as `locations.list` returns it. |
+| `fields` | `string[]` | No | Response properties to return, such as `["id", "name"]`. Omitted returns every property. |
+| `sort` | `string` | No | A response property to sort by. Prefix it with `-` for descending order, such as `-registered_at`. |
+| `limit` | `number` | No | How many items to return per page. |
+| `offset` | `number` | No | Zero-based index of the first item to return. Take the next value from `next_offset` on the previous page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `metadata` | `object \| null` | No | — |
+| `next_offset` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: number | null,
+  operator?: string | null,
+  location_id?: number | null,
+  user_name?: string | null,
+  customer?: string | null,
+  action_date_gmt?: string | null,
+  amount?: number | null,
+  currency?: string | null,
+  user_agent?: string | null,
+  newsletter?: number | null,
+  company_name?: string | null,
+  email?: string | null,
+  address?: string | null,
+  city?: string | null,
+  state?: string | null,
+  zip?: string | null,
+  country_code?: string | null,
+  phone?: string | null,
+  language?: string | null,
+  smscountry?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  total_count?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Me
+
+### get
+
+`me.get`
+
+Read the resource owner behind the key: a user ID and an operator name
+
+**Risk:** `read`
+
+```ts
+await corsair.hotspotsystem.api.me.get({});
+```
+
+**Input:** _empty object_
+
+Returns the resource owner as `{ userId, operator }`.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `number \| null` | No | — |
+| `operator` | `string \| null` | No | — |
+
+
+
+---
+
+## Ping
+
+### check
+
+`ping.check`
+
+Confirm the API answers: returns `pong`. Needs a key, because Corsair resolves one before every call
+
+**Risk:** `read`
+
+```ts
+await corsair.hotspotsystem.api.ping.check({});
+```
+
+**Input:** _empty object_
+
+Answers `{ ping: "pong" }`. The endpoint needs no key, but Corsair resolves one before every call, so a connected account is still required.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ping` | `string \| null` | No | — |
+
+
+
+---
+
+## Subscribers
+
+### list
+
+`subscribers.list`
+
+List the account subscribers, with field selection, sorting and paging
+
+**Risk:** `read`
+
+```ts
+await corsair.hotspotsystem.api.subscribers.list({ limit: 25, offset: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `string[]` | No | Response properties to return, such as `["id", "name"]`. Omitted returns every property. |
+| `sort` | `string` | No | A response property to sort by. Prefix it with `-` for descending order, such as `-registered_at`. |
+| `limit` | `number` | No | How many items to return per page. |
+| `offset` | `number` | No | Zero-based index of the first item to return. Take the next value from `next_offset` on the previous page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `metadata` | `object \| null` | No | — |
+| `next_offset` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string | null,
+  user_name?: string | null,
+  name?: string | null,
+  email?: string | null,
+  company_name?: string | null,
+  address?: string | null,
+  city?: string | null,
+  state?: string | null,
+  zip?: string | null,
+  country_code?: string | null,
+  phone?: string | null,
+  social_network?: string | null,
+  social_id?: string | null,
+  social_username?: string | null,
+  social_link?: string | null,
+  social_gender?: string | null,
+  social_age_range?: string | null,
+  social_followers_count?: string | null,
+  registered_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  total_count?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Transactions
+
+### mac
+
+`transactions.mac`
+
+List device MAC transactions across the account, with the device answers collected
+
+**Risk:** `read`
+
+```ts
+await corsair.hotspotsystem.api.transactions.mac({ limit: 25, offset: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `string[]` | No | Response properties to return, such as `["id", "name"]`. Omitted returns every property. |
+| `sort` | `string` | No | A response property to sort by. Prefix it with `-` for descending order, such as `-registered_at`. |
+| `limit` | `number` | No | How many items to return per page. |
+| `offset` | `number` | No | Zero-based index of the first item to return. Take the next value from `next_offset` on the previous page. |
+
+The Swagger documents every field of a MAC transaction as `TODO`, so nothing is required and the values are passed through as sent.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `metadata` | `object \| null` | No | — |
+| `next_offset` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: number | null,
+  operator?: string | null,
+  location_id?: number | null,
+  user_name?: string | null,
+  action_date_gmt?: string | null,
+  package_id?: string | null,
+  user_agent?: string | null,
+  customer?: string | null,
+  newsletter?: number | null,
+  company_name?: string | null,
+  email?: string | null,
+  address?: string | null,
+  city?: string | null,
+  state?: string | null,
+  zip?: string | null,
+  country_code?: string | null,
+  phone?: string | null,
+  q1?: string | null,
+  a1?: string | null,
+  q2?: string | null,
+  a2?: string | null,
+  q3?: string | null,
+  a3?: string | null,
+  q4?: string | null,
+  a4?: string | null,
+  q5?: string | null,
+  a5?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  total_count?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### paid
+
+`transactions.paid`
+
+List paid transactions across the account, with amounts and currencies
+
+**Risk:** `read`
+
+```ts
+await corsair.hotspotsystem.api.transactions.paid({ limit: 25, offset: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `string[]` | No | Response properties to return, such as `["id", "name"]`. Omitted returns every property. |
+| `sort` | `string` | No | A response property to sort by. Prefix it with `-` for descending order, such as `-registered_at`. |
+| `limit` | `number` | No | How many items to return per page. |
+| `offset` | `number` | No | Zero-based index of the first item to return. Take the next value from `next_offset` on the previous page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `metadata` | `object \| null` | No | — |
+| `next_offset` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: number | null,
+  operator?: string | null,
+  location_id?: number | null,
+  user_name?: string | null,
+  customer?: string | null,
+  action_date_gmt?: string | null,
+  amount?: number | null,
+  currency?: string | null,
+  user_agent?: string | null,
+  newsletter?: number | null,
+  company_name?: string | null,
+  email?: string | null,
+  address?: string | null,
+  city?: string | null,
+  state?: string | null,
+  zip?: string | null,
+  country_code?: string | null,
+  phone?: string | null,
+  language?: string | null,
+  smscountry?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  total_count?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### social
+
+`transactions.social`
+
+List social-login transactions across the account, with the network used
+
+**Risk:** `read`
+
+```ts
+await corsair.hotspotsystem.api.transactions.social({ limit: 25, offset: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `string[]` | No | Response properties to return, such as `["id", "name"]`. Omitted returns every property. |
+| `sort` | `string` | No | A response property to sort by. Prefix it with `-` for descending order, such as `-registered_at`. |
+| `limit` | `number` | No | How many items to return per page. |
+| `offset` | `number` | No | Zero-based index of the first item to return. Take the next value from `next_offset` on the previous page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `metadata` | `object \| null` | No | — |
+| `next_offset` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: number | null,
+  operator?: string | null,
+  location_id?: number | null,
+  user_name?: string | null,
+  action_date_gmt?: string | null,
+  package_id?: string | null,
+  user_agent?: string | null,
+  customer?: string | null,
+  newsletter?: number | null,
+  company_name?: string | null,
+  email?: string | null,
+  address?: string | null,
+  city?: string | null,
+  state?: string | null,
+  zip?: string | null,
+  country_code?: string | null,
+  phone?: string | null,
+  social_id?: string | null,
+  social_username?: string | null,
+  social_link?: string | null,
+  social_gender?: string | null,
+  social_age_range?: string | null,
+  social_followers_count?: string | null,
+  social_network?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  total_count?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### voucher
+
+`transactions.voucher`
+
+List voucher transactions across the account, with the voucher used and the amount
+
+**Risk:** `read`
+
+```ts
+await corsair.hotspotsystem.api.transactions.voucher({ limit: 25, offset: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `string[]` | No | Response properties to return, such as `["id", "name"]`. Omitted returns every property. |
+| `sort` | `string` | No | A response property to sort by. Prefix it with `-` for descending order, such as `-registered_at`. |
+| `limit` | `number` | No | How many items to return per page. |
+| `offset` | `number` | No | Zero-based index of the first item to return. Take the next value from `next_offset` on the previous page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `metadata` | `object \| null` | No | — |
+| `next_offset` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: number | null,
+  operator?: string | null,
+  location_id?: number | null,
+  user_name?: string | null,
+  customer?: string | null,
+  action_date_gmt?: string | null,
+  amount?: number | null,
+  currency?: string | null,
+  user_agent?: string | null,
+  newsletter?: number | null,
+  company_name?: string | null,
+  email?: string | null,
+  address?: string | null,
+  city?: string | null,
+  state?: string | null,
+  zip?: string | null,
+  country_code?: string | null,
+  phone?: string | null,
+  language?: string | null,
+  smscountry?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  total_count?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Vouchers
+
+### list
+
+`vouchers.list`
+
+List the account vouchers with their traffic limits, validity and price
+
+**Risk:** `read`
+
+```ts
+await corsair.hotspotsystem.api.vouchers.list({ limit: 25, offset: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `string[]` | No | Response properties to return, such as `["id", "name"]`. Omitted returns every property. |
+| `sort` | `string` | No | A response property to sort by. Prefix it with `-` for descending order, such as `-registered_at`. |
+| `limit` | `number` | No | How many items to return per page. |
+| `offset` | `number` | No | Zero-based index of the first item to return. Take the next value from `next_offset` on the previous page. |
+
+`limit_tl`, `limit_dl` and `limit_ul` are bytes, and are -1 when the voucher has no location context.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `metadata` | `object \| null` | No | — |
+| `next_offset` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  serial?: string | null,
+  voucher_code?: string | null,
+  limit_tl?: number | null,
+  simultaneous_use?: number | null,
+  limit_dl?: number | null,
+  limit_ul?: number | null,
+  usage_exp?: string | null,
+  validity?: number | null,
+  price_enduser?: number | null,
+  currency?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  total_count?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

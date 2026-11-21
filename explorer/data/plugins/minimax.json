@@ -882,6 +882,16 @@
       "shortPath": "speech.createAsyncTask",
       "description": "Create an asynchronous long-text speech synthesis task",
       "riskLevel": "write",
+      "job": {
+        "idPath": "task_id",
+        "status": {
+          "op": "speech.queryAsyncTask",
+          "idArg": "task_id",
+          "statusPath": "status",
+          "done": ["success", "Success"],
+          "failed": ["failed", "Failed", "expired", "Expired"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
@@ -1137,6 +1147,16 @@
       "shortPath": "video.contextIr",
       "description": "Create an H3-Context-IR task that enriches a video prompt",
       "riskLevel": "write",
+      "job": {
+        "idPath": "task_id",
+        "status": {
+          "op": "video.queryV2",
+          "idArg": "task_id",
+          "statusPath": "task.status",
+          "done": ["succeeded"],
+          "failed": ["failed", "cancelled"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
@@ -1183,6 +1203,16 @@
       "shortPath": "video.generate",
       "description": "Create a Hailuo video generation task (text, image, first/last frame or subject reference)",
       "riskLevel": "write",
+      "job": {
+        "idPath": "task_id",
+        "status": {
+          "op": "video.query",
+          "idArg": "task_id",
+          "statusPath": "status",
+          "done": ["Success"],
+          "failed": ["Fail"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
@@ -1259,6 +1289,16 @@
       "shortPath": "video.generateV2",
       "description": "Create an H3 multimodal video generation task",
       "riskLevel": "write",
+      "job": {
+        "idPath": "task_id",
+        "status": {
+          "op": "video.queryV2",
+          "idArg": "task_id",
+          "statusPath": "task.status",
+          "done": ["succeeded"],
+          "failed": ["failed", "cancelled"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
@@ -1448,6 +1488,16 @@
       "shortPath": "video.regenerate",
       "description": "Create a 2K video regeneration task",
       "riskLevel": "write",
+      "job": {
+        "idPath": "task_id",
+        "status": {
+          "op": "video.queryV2",
+          "idArg": "task_id",
+          "statusPath": "task.status",
+          "done": ["succeeded"],
+          "failed": ["failed", "cancelled"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
@@ -1499,6 +1549,16 @@
       "shortPath": "video.templateGenerate",
       "description": "Create a Video Agent task from a template",
       "riskLevel": "write",
+      "job": {
+        "idPath": "task_id",
+        "status": {
+          "op": "video.templateQuery",
+          "idArg": "task_id",
+          "statusPath": "status",
+          "done": ["Success"],
+          "failed": ["Fail"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [

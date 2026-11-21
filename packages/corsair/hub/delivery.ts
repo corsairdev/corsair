@@ -257,6 +257,7 @@ export async function handleHubDeliveryGet(
 				refreshToken: payload.refreshToken,
 				expiresIn: payload.expiresIn,
 				scope: payload.scope,
+				userAccessToken: payload.userAccessToken,
 				authType: payload.authType,
 				providerData: payload.providerData,
 				account: payload.account,

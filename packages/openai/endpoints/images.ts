@@ -1,5 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeOpenaiRequest, multipartOpenaiRequest } from '../client';
+import type { OpenaiFilePart } from '../client';
+import {
+	makeOpenaiRequest,
+	multipartOpenaiRequest,
+	OPENAI_UPLOAD_MAX_BYTES,
+} from '../client';
 import type { OpenaiEndpoints } from '../index';
 import type {
 	ImagesCreateEditResponse,
@@ -40,13 +45,20 @@ export const createEdit: OpenaiEndpoints['imagesCreateEdit'] = async (
 	ctx,
 	input,
 ) => {
-	const files: Array<{ field: string; file: Blob | string; fileName: string }> =
-		[{ field: 'image', file: input.image, fileName: input.imageFileName }];
+	const files: OpenaiFilePart[] = [
+		{
+			field: 'image',
+			file: input.image,
+			fileName: input.imageFileName,
+			maxBytes: OPENAI_UPLOAD_MAX_BYTES.imageEdit,
+		},
+	];
 	if (input.mask !== undefined && input.maskFileName !== undefined) {
 		files.push({
 			field: 'mask',
 			file: input.mask,
 			fileName: input.maskFileName,
+			maxBytes: OPENAI_UPLOAD_MAX_BYTES.imagePng,
 		});
 	}
 
@@ -87,6 +99,7 @@ export const createVariation: OpenaiEndpoints['imagesCreateVariation'] = async (
 					field: 'image',
 					file: input.image,
 					fileName: input.imageFileName,
+					maxBytes: OPENAI_UPLOAD_MAX_BYTES.imagePng,
 				},
 			],
 			fields: {

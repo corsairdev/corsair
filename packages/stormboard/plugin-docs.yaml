@@ -1,0 +1,234 @@
+displayName: Stormboard
+description: >-
+  Stormboard turns unstructured collaboration into data-rich workspaces.
+  This plugin manages storms and ideas with comments, votes, connectors,
+  tags and tasks, handles chat and invitations, and reads the account
+  profile behind the token.
+domain: stormboard.com
+recommendedAuth: api_key
+overviewNote: >-
+  The API key sits on the API tab of the Stormboard account
+  (stormboard.com/users/account#api) and authenticates with the X-API-Key
+  header. Some operations need a paid subscription; the docs mark each
+  route's availability (Public, Team Members, Team Owners), and on the free
+  Personal plan storms.update, ideas.update, ideas.delete, votes and
+  comments answer 401 "only available to Stormboard subscribers". The API
+  uses standard rate-limiting headers (RateLimit-Limit,
+  RateLimit-Remaining, RateLimit-Reset) and answers 429 when the period
+  quota is spent, which this plugin waits out before retrying. The two
+  documented /templates routes answer an HTML 404 on the live API, so they
+  are left out of this plugin; a team's template list is reachable through
+  api.folders.list. Response examples mix numeric and string ids across
+  routes, so id fields accept both.
+examples:
+  read:
+    path: storms.list
+    title: List your Storms
+  write:
+    path: ideas.create
+    title: Create an idea on a Storm
+apiExamples:
+  users.create:
+    args:
+      firstname: James
+      lastname: Dean
+      email: james.dean@fake.com
+      username: james.dean
+      password: 'example-password'
+  users.verify:
+    args:
+      code: ABC123
+  users.updateProfile:
+    args:
+      firstname: James
+  users.getProfile: {}
+  users.getAuth: {}
+  users.test: {}
+  users.updateNotifications:
+    args:
+      dailyemail: 0
+      newsletter: 1
+  storms.create:
+    args:
+      plan: personal
+      title: Sprint Planning
+      description: Weekly sprint board
+  storms.get:
+    args:
+      stormId: 49999
+  storms.update:
+    args:
+      stormId: 49999
+      title: My New Storm Title
+  storms.updateLegend:
+    args:
+      stormId: 49999
+      color:
+        yellow: General Tasks
+        pink: High Priority
+  storms.getTemplate:
+    args:
+      stormId: 49999
+  storms.updateSection:
+    args:
+      stormId: 49999
+      sectionIndex: abcdef123456
+      name: New Section Title
+  storms.getAccess:
+    args:
+      stormId: 49999
+  storms.listIdeas:
+    args:
+      stormId: 49999
+      lastModifiedMin: '2024-01-01T00:00:00Z'
+  storms.listUsers:
+    args:
+      stormId: 49999
+  storms.list:
+    call: '{ status: "open", order: "activity", results: 50 }'
+  storms.listInvites: {}
+  storms.listConnectors:
+    args:
+      stormId: 49999
+  storms.close:
+    args:
+      stormId: 49999
+  storms.reopen:
+    args:
+      stormId: 49999
+  storms.invite:
+    call: >-
+      { stormId: 49999, participants: ["yoda@jedicouncil.com"], type:
+      "contributor" }
+  storms.acceptInvite:
+    args:
+      stormId: 49999
+  storms.declineInvite:
+    args:
+      stormId: 49999
+  storms.join:
+    args:
+      stormid: 49999
+      stormkey: piece335
+  storms.leave:
+    args:
+      stormId: 49999
+  storms.duplicate:
+    args:
+      stormId: 49999
+      stormname: My Copied Storm
+  storms.favorite:
+    args:
+      stormId: 49999
+  storms.unfavorite:
+    args:
+      stormId: 49999
+  ideas.create:
+    args:
+      stormid: 49999
+      data: This is an idea. Like it?
+  ideas.update:
+    args:
+      ideaId: 10000001
+      data: Updated idea text
+  ideas.get:
+    args:
+      ideaId: 1000000
+  ideas.delete:
+    args:
+      ideaId: 1000000
+  ideas.addVote:
+    args:
+      ideaId: 1000000
+  ideas.removeVote:
+    args:
+      ideaId: 1000000
+  ideas.createComment:
+    args:
+      ideaId: 1000000
+      comment: My awesome comment
+  ideas.updateComment:
+    args:
+      ideaId: 1000000
+      commentId: 1234
+      comment: Edited comment
+  ideas.deleteComment:
+    args:
+      ideaId: 1000000
+      commentId: 1234
+  ideas.listComments:
+    call: '{ ideaId: 1000000, order: "asc" }'
+  ideas.createConnector:
+    args:
+      from_idea_id: 1000
+      to_idea_id: 1001
+      label: Depends On
+  ideas.updateConnector:
+    args:
+      connectorId: 9999
+      label: Depended On
+  ideas.deleteConnector:
+    args:
+      connectorId: 9999
+  ideas.deleteConnectorBetween:
+    args:
+      from_idea_id: 1000
+      to_idea_id: 1001
+  ideas.updateTask:
+    args:
+      ideaId: 1000000
+      assigned_to: 1
+      date_due: '2020-01-01'
+  tags.createForStorm:
+    args:
+      stormId: 49999
+      name: Integration ID
+  tags.createForIdea:
+    args:
+      ideaId: 1000000
+      data:
+        Owner: John Smith
+  tags.listForStorm:
+    args:
+      stormId: 49999
+  tags.getForIdea:
+    args:
+      ideaId: 1000000
+  chat.create:
+    args:
+      stormId: 1234
+      message: Example Chat Message 1
+  chat.list:
+    args:
+      stormId: 1234
+  chat.listUnread:
+    args:
+      stormId: 1234
+  chat.markAllRead:
+    args:
+      stormId: 1234
+  folders.list:
+    args:
+      teamId: 1
+apiNotes:
+  storms.list: >-
+    The list read pages with start and results and answers hasmore plus the
+    storms array; walk it by advancing start until hasmore is false.
+    Filters combine: team, folder and needle narrow the result. status is
+    open (the default) or closed; order is activity (the default), alpha,
+    frequency or starred.
+  storms.close: >-
+    Closing answers {"message": "Storm closed"} and can be undone with
+    api.storms.reopen, so it is registered as a write rather than a delete.
+  storms.favorite: >-
+    The favorite and unfavorite toggles carry no documented response
+    example, so their output schema accepts any JSON object.
+  ideas.create: >-
+    Stormboard assigns the id; the answer carries it as {"message": "idea
+    created", "id": 10000001}. color is one of the documented 16 (yellow,
+    the default, through grey) and shape one of standard, gem, hexagon,
+    octagon, square, title or triangle.
+  ideas.deleteConnectorBetween: >-
+    The two ids go in the DELETE's JSON body; the API answers 400 when they
+    come as query parameters. Either idea can be named by its numeric id or
+    its uuid.

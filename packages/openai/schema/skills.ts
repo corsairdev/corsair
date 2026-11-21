@@ -1,7 +1,8 @@
 import { z } from 'zod';
+import { openaiFileInput } from './file-input';
 
 export const SkillsCreateInputSchema = z.object({
-	file: z.union([z.instanceof(Blob), z.string()]),
+	file: openaiFileInput('The skill file'),
 	fileName: z.string(),
 });
 export type SkillsCreateInput = z.infer<typeof SkillsCreateInputSchema>;

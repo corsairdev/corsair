@@ -1,7 +1,15 @@
 import { logEventFromContext } from 'corsair/core';
+import type { FileInput } from 'corsair/http';
+import { resolveFileInput } from 'corsair/http';
 import type { ArynEndpoints } from '..';
 import { makeArynBinaryRequest, makeArynRequest } from '../client';
 import { ArynEndpointInputSchemas, ArynEndpointOutputSchemas } from './types';
+
+/**
+ * Most bytes taken from a link, base64 or a data: URL: core's download default,
+ * passed explicitly so inline base64 is held to it too (core caps it only when asked).
+ */
+const FILE_MAX_BYTES = 25 * 1024 * 1024;
 
 export const documentGet: ArynEndpoints['documentGet'] = async (ctx, input) => {
 	const parsed = ArynEndpointInputSchemas.documentGet.parse(input);
@@ -50,6 +58,21 @@ export const documentGetBinary: ArynEndpoints['documentGetBinary'] = async (
 	return output;
 };
 
+/**
+ * The file part: a Blob is sent as it was given, a link or base64 is fetched or
+ * decoded here. Aryn documents no upload size limit, so core's default
+ * download cap applies.
+ */
+async function uploadFile(file: FileInput): Promise<Blob> {
+	if (file instanceof Blob) return file;
+	return (
+		await resolveFileInput(file, {
+			maxBytes: FILE_MAX_BYTES,
+			fallbackName: 'document',
+		})
+	).file;
+}
+
 export const documentPartition: ArynEndpoints['documentPartition'] = async (
 	ctx,
 	input,
@@ -57,7 +80,7 @@ export const documentPartition: ArynEndpoints['documentPartition'] = async (
 	const parsed = ArynEndpointInputSchemas.documentPartition.parse(input);
 	const formData: Record<string, unknown> = {};
 	if (parsed.file) {
-		formData.file = parsed.file;
+		formData.file = await uploadFile(parsed.file);
 	} else if (parsed.file_url) {
 		formData.file_url = parsed.file_url;
 	}
@@ -85,7 +108,7 @@ export const documentSubmitAsyncAdd: ArynEndpoints['documentSubmitAsyncAdd'] =
 		const parsed = ArynEndpointInputSchemas.documentSubmitAsyncAdd.parse(input);
 		const formData: Record<string, unknown> = {};
 		if (parsed.file) {
-			formData.file = parsed.file;
+			formData.file = await uploadFile(parsed.file);
 		} else if (parsed.file_url) {
 			formData.file_url = parsed.file_url;
 		}

@@ -2267,6 +2267,7 @@ await corsair.onedrive.api.items.download({});
 | `byteLength` | `number` | Yes | Size of the file in bytes. |
 | `filename` | `string` | No | The file name, when known. |
 | `contentOmitted` | `not_requested \| over_limit` | No | Set when the content was left out: the caller did not ask for it, or the file was over the limit. |
+| `fileId` | `string` | No | Where the host saved the file, in place of its content, when it was over the limit. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
 
 
 
@@ -2304,6 +2305,7 @@ await corsair.onedrive.api.items.downloadAsFormat({});
 | `byteLength` | `number` | Yes | Size of the file in bytes. |
 | `filename` | `string` | No | The file name, when known. |
 | `contentOmitted` | `not_requested \| over_limit` | No | Set when the content was left out: the caller did not ask for it, or the file was over the limit. |
+| `fileId` | `string` | No | Where the host saved the file, in place of its content, when it was over the limit. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
 
 
 
@@ -2340,6 +2342,7 @@ await corsair.onedrive.api.items.downloadByPath({});
 | `byteLength` | `number` | Yes | Size of the file in bytes. |
 | `filename` | `string` | No | The file name, when known. |
 | `contentOmitted` | `not_requested \| over_limit` | No | Set when the content was left out: the caller did not ask for it, or the file was over the limit. |
+| `fileId` | `string` | No | Where the host saved the file, in place of its content, when it was over the limit. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
 
 
 
@@ -2378,6 +2381,7 @@ await corsair.onedrive.api.items.downloadVersion({});
 | `byteLength` | `number` | Yes | Size of the file in bytes. |
 | `filename` | `string` | No | The file name, when known. |
 | `contentOmitted` | `not_requested \| over_limit` | No | Set when the content was left out: the caller did not ask for it, or the file was over the limit. |
+| `fileId` | `string` | No | Where the host saved the file, in place of its content, when it was over the limit. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
 
 
 

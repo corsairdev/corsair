@@ -144,11 +144,13 @@ const arynEndpointMeta = {
 	},
 	'document.partition': {
 		riskLevel: 'write',
-		description: 'Partition document using Aryn DocParse',
+		description:
+			'Partition document using Aryn DocParse. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'document.submitAsyncAdd': {
 		riskLevel: 'write',
-		description: 'Submit document asynchronously to a DocSet',
+		description:
+			'Submit document asynchronously to a DocSet. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'query.generatePlan': {
 		riskLevel: 'read',
