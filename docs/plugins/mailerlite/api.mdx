@@ -7080,6 +7080,7 @@ await corsair.mailerlite.api.cartItems.create({
 ```ts
 {
   id: string | number,
+  resource_id?: string | null,
   ecommerce_product_id?: string | number | null,
   ecommerce_product_variant_id?: string | number | null,
   product?: {
@@ -7156,6 +7157,7 @@ await corsair.mailerlite.api.cartItems.delete({ shopId: '1', cartId: '1', itemId
 ```ts
 {
   id: string | number,
+  resource_id?: string | null,
   ecommerce_product_id?: string | number | null,
   ecommerce_product_variant_id?: string | number | null,
   product?: {
@@ -7232,6 +7234,7 @@ await corsair.mailerlite.api.cartItems.get({ shopId: '1', cartId: '1', itemId: '
 ```ts
 {
   id: string | number,
+  resource_id?: string | null,
   ecommerce_product_id?: string | number | null,
   ecommerce_product_variant_id?: string | number | null,
   product?: {
@@ -7312,6 +7315,7 @@ await corsair.mailerlite.api.cartItems.list({ shopId: '1', cartId: '1' });
 ```ts
 {
   id: string | number,
+  resource_id?: string | null,
   ecommerce_product_id?: string | number | null,
   ecommerce_product_variant_id?: string | number | null,
   product?: {
@@ -7435,6 +7439,7 @@ await corsair.mailerlite.api.cartItems.update({
 ```ts
 {
   id: string | number,
+  resource_id?: string | null,
   ecommerce_product_id?: string | number | null,
   ecommerce_product_variant_id?: string | number | null,
   product?: {
@@ -7548,8 +7553,10 @@ await corsair.mailerlite.api.carts.get({ shopId: '1', cartId: '1' });
   ecommerce_customer_id?: string | number | null,
   items?: {
     id?: string | number,
+    resource_id?: string | null,
     ecommerce_product_id?: string | number,
     ecommerce_product_variant_id?: string | number | null,
+    variant?: string | null,
     product?: {
       id: string | number,
       name?: string | null,
@@ -7625,8 +7632,10 @@ await corsair.mailerlite.api.carts.list({ shopId: '1' });
   ecommerce_customer_id?: string | number | null,
   items?: {
     id?: string | number,
+    resource_id?: string | null,
     ecommerce_product_id?: string | number,
     ecommerce_product_variant_id?: string | number | null,
+    variant?: string | null,
     product?: {
       id: string | number,
       name?: string | null,
@@ -7742,8 +7751,10 @@ await corsair.mailerlite.api.carts.update({
   ecommerce_customer_id?: string | number | null,
   items?: {
     id?: string | number,
+    resource_id?: string | null,
     ecommerce_product_id?: string | number,
     ecommerce_product_variant_id?: string | number | null,
+    variant?: string | null,
     product?: {
       id: string | number,
       name?: string | null,
@@ -8189,7 +8200,10 @@ await corsair.mailerlite.api.categoryProducts.assign({ shopId: '1', categoryId: 
     id: string | number,
     name?: string | null,
     attributes?: Record<string, string> | null,
-    price?: number | null
+    price?: number | null,
+    resource_id?: string | null,
+    price_type?: fixed | increment | null,
+    image_url?: string | null
   }[] | null,
   categories?: {
     id: string | number,
@@ -8291,7 +8305,10 @@ await corsair.mailerlite.api.categoryProducts.assignMultiple({
     id: string | number,
     name?: string | null,
     attributes?: Record<string, string> | null,
-    price?: number | null
+    price?: number | null,
+    resource_id?: string | null,
+    price_type?: fixed | increment | null,
+    image_url?: string | null
   }[] | null,
   categories?: {
     id: string | number,
@@ -8380,7 +8397,10 @@ await corsair.mailerlite.api.categoryProducts.list({ shopId: '1', categoryId: '1
     id: string | number,
     name?: string | null,
     attributes?: Record<string, string> | null,
-    price?: number | null
+    price?: number | null,
+    resource_id?: string | null,
+    price_type?: fixed | increment | null,
+    image_url?: string | null
   }[] | null,
   categories?: {
     id: string | number,
@@ -8500,7 +8520,10 @@ await corsair.mailerlite.api.categoryProducts.unassign({ shopId: '1', categoryId
   id: string | number,
   name?: string | null,
   attributes?: Record<string, string> | null,
-  price?: number | null
+  price?: number | null,
+  resource_id?: string | null,
+  price_type?: fixed | increment | null,
+  image_url?: string | null
 }[] | null
 ```
 </Accordion>
@@ -9647,7 +9670,10 @@ await corsair.mailerlite.api.ecommerceImports.products({
     id: string | number,
     name?: string | null,
     attributes?: Record<string, string> | null,
-    price?: number | null
+    price?: number | null,
+    resource_id?: string | null,
+    price_type?: fixed | increment | null,
+    image_url?: string | null
   }[] | null,
   categories?: {
     id: string | number,
@@ -13381,7 +13407,10 @@ await corsair.mailerlite.api.products.changeStatus({
     id: string | number,
     name?: string | null,
     attributes?: Record<string, string> | null,
-    price?: number | null
+    price?: number | null,
+    resource_id?: string | null,
+    price_type?: fixed | increment | null,
+    image_url?: string | null
   }[] | null,
   categories?: {
     id: string | number,
@@ -13542,7 +13571,10 @@ await corsair.mailerlite.api.products.create({
     id: string | number,
     name?: string | null,
     attributes?: Record<string, string> | null,
-    price?: number | null
+    price?: number | null,
+    resource_id?: string | null,
+    price_type?: fixed | increment | null,
+    image_url?: string | null
   }[] | null,
   categories?: {
     id: string | number,
@@ -13627,7 +13659,10 @@ await corsair.mailerlite.api.products.delete({ shopId: '1', productId: '1' });
     id: string | number,
     name?: string | null,
     attributes?: Record<string, string> | null,
-    price?: number | null
+    price?: number | null,
+    resource_id?: string | null,
+    price_type?: fixed | increment | null,
+    image_url?: string | null
   }[] | null,
   categories?: {
     id: string | number,
@@ -13712,7 +13747,10 @@ await corsair.mailerlite.api.products.get({ shopId: '1', productId: '1' });
     id: string | number,
     name?: string | null,
     attributes?: Record<string, string> | null,
-    price?: number | null
+    price?: number | null,
+    resource_id?: string | null,
+    price_type?: fixed | increment | null,
+    image_url?: string | null
   }[] | null,
   categories?: {
     id: string | number,
@@ -13816,7 +13854,10 @@ await corsair.mailerlite.api.products.list({ shopId: '1' });
     id: string | number,
     name?: string | null,
     attributes?: Record<string, string> | null,
-    price?: number | null
+    price?: number | null,
+    resource_id?: string | null,
+    price_type?: fixed | increment | null,
+    image_url?: string | null
   }[] | null,
   categories?: {
     id: string | number,
@@ -13985,7 +14026,10 @@ await corsair.mailerlite.api.products.update({
     id: string | number,
     name?: string | null,
     attributes?: Record<string, string> | null,
-    price?: number | null
+    price?: number | null,
+    resource_id?: string | null,
+    price_type?: fixed | increment | null,
+    image_url?: string | null
   }[] | null,
   categories?: {
     id: string | number,

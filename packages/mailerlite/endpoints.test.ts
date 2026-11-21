@@ -318,6 +318,44 @@ const operationResponseFixtures: Record<string, SampleValue> = {
 			completed_at: '2026-11-20 09:00:00',
 		},
 	},
+	'carts.get': {
+		data: {
+			id: 'cart-1',
+			resource_id: 'external-cart-1',
+			checkout_url: 'https://shop.mailerlite.test/checkout/1',
+			cart_total: 123.4,
+			items: [
+				{
+					id: 'item-1',
+					resource_id: 'external-item-1',
+					ecommerce_product_id: 'product-1',
+					ecommerce_product_variant_id: 'variant-1',
+					variant: 'Blue',
+					quantity: 1,
+					price: 123.4,
+				},
+			],
+		},
+	},
+	'products.get': {
+		data: {
+			id: 'product-1',
+			name: 'Example product',
+			price: 123.4,
+			categories: [{ id: 'category-1', name: 'Accessories' }],
+			variants: [
+				{
+					id: 'variant-1',
+					name: 'Blue',
+					attributes: { color: 'blue' },
+					price: 123.4,
+					resource_id: 'external-variant-1',
+					price_type: 'fixed',
+					image_url: 'https://shop.mailerlite.test/product/1-blue.png',
+				},
+			],
+		},
+	},
 	'emails.get': {
 		data: {
 			id: 'email-1',

@@ -451,23 +451,28 @@ export const MailerLiteCartSchema = MailerLiteEntitySchema.extend({
 	ecommerce_customer_id: MailerLiteIdSchema.nullable().optional(),
 	items: z
 		.array(
-			z.object({
-				id: MailerLiteIdSchema.optional(),
-				ecommerce_product_id: MailerLiteIdSchema.optional(),
-				ecommerce_product_variant_id: MailerLiteIdSchema.nullable().optional(),
-				product: z
-					.object({
-						id: MailerLiteIdSchema,
-						name: OptionalString,
-						price: OptionalNumber,
-						url: OptionalString,
-						image: OptionalString,
-					})
-					.passthrough()
-					.optional(),
-				quantity: OptionalNumber,
-				price: OptionalNumber,
-			}),
+			z
+				.object({
+					id: MailerLiteIdSchema.optional(),
+					resource_id: OptionalString,
+					ecommerce_product_id: MailerLiteIdSchema.optional(),
+					ecommerce_product_variant_id:
+						MailerLiteIdSchema.nullable().optional(),
+					variant: OptionalString,
+					product: z
+						.object({
+							id: MailerLiteIdSchema,
+							name: OptionalString,
+							price: OptionalNumber,
+							url: OptionalString,
+							image: OptionalString,
+						})
+						.passthrough()
+						.optional(),
+					quantity: OptionalNumber,
+					price: OptionalNumber,
+				})
+				.passthrough(),
 		)
 		.nullable()
 		.optional(),
@@ -480,6 +485,7 @@ export const MailerLiteCartListResponseSchema =
 	entityListResponseSchema(MailerLiteCartSchema);
 
 export const MailerLiteCartItemSchema = MailerLiteEntitySchema.extend({
+	resource_id: OptionalString,
 	ecommerce_product_id: MailerLiteIdSchema.nullable().optional(),
 	ecommerce_product_variant_id: MailerLiteIdSchema.nullable().optional(),
 	product: z
@@ -624,12 +630,17 @@ export const MailerLiteProductSchema = MailerLiteEntitySchema.extend({
 	description: OptionalString,
 	variants: z
 		.array(
-			z.object({
-				id: MailerLiteIdSchema,
-				name: OptionalString,
-				attributes: z.record(z.string(), z.string()).nullable().optional(),
-				price: OptionalNumber,
-			}),
+			z
+				.object({
+					id: MailerLiteIdSchema,
+					name: OptionalString,
+					attributes: z.record(z.string(), z.string()).nullable().optional(),
+					price: OptionalNumber,
+					resource_id: OptionalString,
+					price_type: z.enum(['fixed', 'increment']).nullable().optional(),
+					image_url: OptionalString,
+				})
+				.passthrough(),
 		)
 		.nullable()
 		.optional(),
