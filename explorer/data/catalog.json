@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-21T06:51:26.011Z",
-  "corsairVersion": "0.2.19",
+  "generatedAt": "2026-11-21T07:10:07.858Z",
+  "corsairVersion": "0.2.20",
   "catalogVersion": 2,
   "plugins": [
     {
@@ -4631,6 +4631,21 @@
       "defaultAuthType": "api_key",
       "counts": {
         "api": 2,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "googleadmin",
+      "displayName": "Google Admin",
+      "description": "Manage Google Workspace users, groups, group members, organizational units and domains through the Admin SDK Directory API.",
+      "npmPackageName": "@corsair-dev/googleadmin",
+      "authTypes": [
+        "oauth_2"
+      ],
+      "defaultAuthType": "oauth_2",
+      "counts": {
+        "api": 37,
         "webhooks": 0,
         "db": 0
       }
@@ -94618,6 +94633,228 @@
       "kind": "api",
       "shortPath": "address.validate",
       "haystack": "address.validate googleaddressvalidation.api.address.validate validate a postal address and get standardized results read"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "customers.get",
+      "haystack": "customers.get googleadmin.api.customers.get read the account's customer record, including its primary domain read"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "domains.aliases.list",
+      "haystack": "domains.aliases.list googleadmin.api.domains.aliases.list list the account's domain aliases, optionally for one parent domain read"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "domains.get",
+      "haystack": "domains.get googleadmin.api.domains.get read one domain read"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "domains.list",
+      "haystack": "domains.list googleadmin.api.domains.list list the account's domains read"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "groups.aliases.delete",
+      "haystack": "groups.aliases.delete googleadmin.api.groups.aliases.delete remove an alias email address from a group destructive"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "groups.aliases.insert",
+      "haystack": "groups.aliases.insert googleadmin.api.groups.aliases.insert add an alias email address to a group write"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "groups.aliases.list",
+      "haystack": "groups.aliases.list googleadmin.api.groups.aliases.list list a group's aliases read"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "groups.delete",
+      "haystack": "groups.delete googleadmin.api.groups.delete delete a group and its memberships destructive"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "groups.get",
+      "haystack": "groups.get googleadmin.api.groups.get read one group by email, alias or id read"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "groups.insert",
+      "haystack": "groups.insert googleadmin.api.groups.insert create a group write"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "groups.list",
+      "haystack": "groups.list googleadmin.api.groups.list list groups in the account, one domain, or the groups a user belongs to read"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "groups.update",
+      "haystack": "groups.update googleadmin.api.groups.update update a group's email, display name or description write"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "members.delete",
+      "haystack": "members.delete googleadmin.api.members.delete remove a member from a group; the member loses the group's mail and access destructive"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "members.get",
+      "haystack": "members.get googleadmin.api.members.get read one group membership read"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "members.hasMember",
+      "haystack": "members.hasmember googleadmin.api.members.hasmember check whether a user is a direct or nested member of a group read"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "members.insert",
+      "haystack": "members.insert googleadmin.api.members.insert add a user or group to a group with a role and a mail delivery preference write"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "members.list",
+      "haystack": "members.list googleadmin.api.members.list list a group's members, optionally including members inherited from nested groups and filtered by role read"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "members.update",
+      "haystack": "members.update googleadmin.api.members.update change a member's role or mail delivery preference write"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "orgUnits.delete",
+      "haystack": "orgunits.delete googleadmin.api.orgunits.delete delete an organizational unit. it must hold no users or child units first destructive"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "orgUnits.get",
+      "haystack": "orgunits.get googleadmin.api.orgunits.get read one organizational unit read"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "orgUnits.insert",
+      "haystack": "orgunits.insert googleadmin.api.orgunits.insert create an organizational unit under a parent write"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "orgUnits.list",
+      "haystack": "orgunits.list googleadmin.api.orgunits.list list organizational units: immediate children, all descendants, or all descendants plus the unit itself read"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "orgUnits.update",
+      "haystack": "orgunits.update googleadmin.api.orgunits.update rename an organizational unit or move it under another parent, which changes the settings its users inherit write"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "users.aliases.delete",
+      "haystack": "users.aliases.delete googleadmin.api.users.aliases.delete remove alias email addresses from a user; mail to a removed alias is no longer delivered destructive"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "users.aliases.insert",
+      "haystack": "users.aliases.insert googleadmin.api.users.aliases.insert add an alias email address to a user write"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "users.aliases.list",
+      "haystack": "users.aliases.list googleadmin.api.users.aliases.list list a user's alias email addresses read"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "users.delete",
+      "haystack": "users.delete googleadmin.api.users.delete delete a user account. the account stays recoverable through users.undelete while it is in the trash destructive"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "users.get",
+      "haystack": "users.get googleadmin.api.users.get read one user by email, alias or id read"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "users.insert",
+      "haystack": "users.insert googleadmin.api.users.insert create a user account with an initial password. on a flexible workspace plan the new user is a billed licence destructive"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "users.list",
+      "haystack": "users.list googleadmin.api.users.list list users in the account or one domain, with google's search query and paging read"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "users.makeAdmin",
+      "haystack": "users.makeadmin googleadmin.api.users.makeadmin grant or revoke super administrator on a user. the caller cannot revoke its own last admin right destructive"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "users.photos.delete",
+      "haystack": "users.photos.delete googleadmin.api.users.photos.delete remove a user's profile photo destructive"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "users.photos.get",
+      "haystack": "users.photos.get googleadmin.api.users.photos.get read a user's profile photo as base64 bytes read"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "users.photos.update",
+      "haystack": "users.photos.update googleadmin.api.users.photos.update replace a user's profile photo write"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "users.signOut",
+      "haystack": "users.signout googleadmin.api.users.signout sign a user out of all web and device sessions, clearing their sign-in cookies destructive"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "users.undelete",
+      "haystack": "users.undelete googleadmin.api.users.undelete restore a deleted user by id and optionally set the organizational unit it returns to write"
+    },
+    {
+      "pluginId": "googleadmin",
+      "kind": "api",
+      "shortPath": "users.update",
+      "haystack": "users.update googleadmin.api.users.update update a user through the put that keeps the patch semantics google documents for it: omitted fields are preserved, a field sent as null is cleared write"
     },
     {
       "pluginId": "googleads",

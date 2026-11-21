@@ -154,6 +154,9 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	googlesearchconsole:
 		'https://www.gstatic.com/images/branding/product/2x/search_console_96dp.png',
 	googleads: 'https://www.gstatic.com/images/branding/product/2x/ads_96dp.png',
+	// Google's current Admin console mark (the domain lookup gave the generic G).
+	googleadmin:
+		'https://www.gstatic.com/images/branding/product/2x/admin_2020q4_96dp.png',
 	// interzoid.com serves no favicon (twenty-icons and Google both miss);
 	// its GitHub organisation logo is square.
 	interzoid: 'https://github.com/interzoid.png?size=256',
