@@ -264,7 +264,7 @@ await corsair.pandadoc.api.documents.create({ template_uuid: "ustHNnVaPCD6MzuoNB
 | `url` | `string` | No | Create from a publicly accessible HTTPS PDF |
 | `name` | `string` | No | Document name; required when creating from a PDF URL |
 | `recipients` | `object[]` | No | Recipients; required when creating from a template |
-| `fields` | `Record<string, unknown>` | No | Prefilled fields, keyed by field name or uuid; values are strings, booleans or arrays |
+| `fields` | `Record<string, any>` | No | Prefilled fields, keyed by field name or uuid; values are strings, booleans or arrays |
 | `tokens` | `object[]` | No | Token replacements |
 | `metadata` | `Record<string, string>` | No | Arbitrary metadata key/value pairs, filterable on documents.list |
 | `tags` | `string[]` | No | Tags for the document |
@@ -280,7 +280,7 @@ Two creation bodies: from a template (template_uuid plus recipients) or from a p
 
 ```ts
 {
-  email: string,
+  email?: string | null,
   first_name?: string | null,
   last_name?: string | null,
   phone?: string | null,
@@ -294,7 +294,7 @@ Two creation bodies: from a template (template_uuid plus recipients) or from a p
 
 ```ts
 {
-  token: string,
+  name: string,
   value: string
 }[]
 ```
@@ -330,7 +330,8 @@ Two creation bodies: from a template (template_uuid plus recipients) or from a p
 
 ```ts
 {
-  email: string,
+  id?: string | null,
+  email?: string | null,
   first_name?: string | null,
   last_name?: string | null,
   phone?: string | null,
@@ -375,7 +376,7 @@ await corsair.pandadoc.api.documents.createFields({ id: "RsXrKarV524iCpjci9CMGa"
     position: {
       offset_x: number,
       offset_y: number,
-      anchor_point: top_left | top_center | top_right | middle_left | middle_center | middle_right | bottom_left | bottom_center | bottom_right
+      anchor_point: topleft | topright | bottomleft | bottomright
     },
     style: {
       width: number,
@@ -468,7 +469,7 @@ await corsair.pandadoc.api.documents.download({ id: "RsXrKarV524iCpjci9CMGa" });
 | `id` | `string` | Yes | Document id |
 | `watermark_color` | `string` | No | Watermark color, e.g. #FF0000 |
 | `watermark_font_size` | `number` | No | Watermark font size |
-| `watermark_opacity` | `number` | No | Watermark opacity, 0-100 |
+| `watermark_opacity` | `number` | No | Watermark opacity, 0.0-1.0 |
 | `watermark_text` | `string` | No | Watermark text |
 | `separate_files` | `boolean` | No | Return a zip of per-recipient files instead of one PDF |
 
@@ -493,7 +494,7 @@ Answers a PDF; while the document is still rendering the API answers 202 and the
 
 `documents.downloadProtected`
 
-Download a completed document as a protected (flattened) PDF
+Download a completed document as a protected (flattened) PDF; needs a production key (sandbox keys get 401)
 
 **Risk:** `read`
 
@@ -561,6 +562,37 @@ await corsair.pandadoc.api.documents.get({ id: "RsXrKarV524iCpjci9CMGa" });
 | `date_sent` | `string \| null` | No | Sent timestamp; null until sent |
 | `date_completed` | `string \| null` | No | Completion timestamp |
 | `expiration_date` | `string \| null` | No | Expiration timestamp |
+| `recipients` | `object[] \| null` | No | Recipients with their roles and signing order |
+| `tokens` | `object[] \| null` | No | Template tokens (variables) and their values |
+| `metadata` | `Record<string, any> \| null` | No | Metadata stored on the document |
+| `tags` | `string[] \| null` | No | Tags on the document |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  id?: string | null,
+  email?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  phone?: string | null,
+  role?: string | null,
+  signing_order?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="tokens full type">
+
+```ts
+{
+  name?: string | null,
+  value?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -735,9 +767,9 @@ await corsair.pandadoc.api.documents.send({ id: "RsXrKarV524iCpjci9CMGa", messag
 | `id` | `string` | Yes | Document id |
 | `message` | `string` | No | Email body for the recipients |
 | `subject` | `string` | No | Email subject for the recipients |
-| `silent` | `boolean` | No | Send the email silently, without notifications to the account owner |
+| `silent` | `boolean` | No | Send without email notifications to the recipients and the sender, and without scheduled reminders; leave false for recipients to get the signing email |
 | `reply_to` | `string` | No | Reply-to email address |
-| `sender` | `object` | No | Override the sender identity |
+| `sender` | `object` | No | Send as another workspace member, by email or membership_id |
 | `forwarding_settings` | `object` | No | Control whether recipients can forward the document |
 
 Sends the document to its recipients by email. This cannot be recalled.
@@ -747,8 +779,8 @@ Sends the document to its recipients by email. This cannot be recalled.
 
 ```ts
 {
-  name?: string | null,
-  email?: string | null
+  membership_id?: string,
+  email?: string
 }
 ```
 </Accordion>
@@ -757,8 +789,8 @@ Sends the document to its recipients by email. This cannot be recalled.
 
 ```ts
 {
-  enabled?: boolean | null,
-  forward_once?: boolean | null
+  forwarding_allowed?: boolean,
+  forwarding_with_reassigning_allowed?: boolean
 }
 ```
 </Accordion>
@@ -782,7 +814,8 @@ Sends the document to its recipients by email. This cannot be recalled.
 
 ```ts
 {
-  email: string,
+  id?: string | null,
+  email?: string | null,
   first_name?: string | null,
   last_name?: string | null,
   phone?: string | null,
@@ -816,7 +849,7 @@ await corsair.pandadoc.api.documents.update({ id: "RsXrKarV524iCpjci9CMGa", name
 | `id` | `string` | Yes | Document id |
 | `name` | `string` | No | New document name |
 | `recipients` | `object[]` | No | Replace the recipients |
-| `fields` | `Record<string, unknown>` | No | Updated prefilled field values |
+| `fields` | `Record<string, any>` | No | Updated prefilled field values |
 | `tokens` | `object[]` | No | Token replacements |
 | `metadata` | `Record<string, string>` | No | Metadata key/value pairs |
 | `tags` | `string[]` | No | Tags for the document |
@@ -826,7 +859,7 @@ await corsair.pandadoc.api.documents.update({ id: "RsXrKarV524iCpjci9CMGa", name
 
 ```ts
 {
-  email: string,
+  email?: string | null,
   first_name?: string | null,
   last_name?: string | null,
   phone?: string | null,
@@ -840,7 +873,7 @@ await corsair.pandadoc.api.documents.update({ id: "RsXrKarV524iCpjci9CMGa", name
 
 ```ts
 {
-  token: string,
+  name: string,
   value: string
 }[]
 ```
@@ -853,9 +886,8 @@ await corsair.pandadoc.api.documents.update({ id: "RsXrKarV524iCpjci9CMGa", name
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | Yes | Document id |
-| `name` | `string \| null` | No | Document name |
-| `status` | `string \| null` | No | Document lifecycle status, e.g. document.draft, document.sent, document.completed |
+| `id` | `string` | Yes | Updated document id |
+| `success` | `boolean` | Yes | Whether the update succeeded |
 
 
 
@@ -1046,10 +1078,10 @@ await corsair.pandadoc.api.templates.get({ id: "ustHNnVaPCD6MzuoNBbZ8L" });
 | `date_created` | `string \| null` | No | Creation timestamp |
 | `date_modified` | `string \| null` | No | Last modification timestamp |
 | `tokens` | `object[] \| null` | No | Tokens the template declares |
-| `fields` | `Record<string, unknown>[] \| null` | No | Fields the template places on documents |
+| `fields` | `Record<string, any>[] \| null` | No | Fields the template places on documents |
 | `roles` | `object[] \| null` | No | Signing roles the template defines |
 | `tags` | `string[] \| null` | No | Tags on the template |
-| `metadata` | `Record<string, unknown> \| null` | No | Template metadata |
+| `metadata` | `Record<string, any> \| null` | No | Template metadata |
 
 <AccordionGroup>
 <Accordion title="tokens full type">
@@ -1238,7 +1270,7 @@ The id comes from the X-PandaDoc-Webhook-Event-Id header of a delivery.
 | `id` | `string \| null` | No | Event id |
 | `event` | `string \| null` | No | Event name |
 | `created_on` | `string \| null` | No | When the event happened |
-| `data` | `Record<string, unknown> \| null` | No | Event payload |
+| `data` | `Record<string, any> \| null` | No | Event payload |
 
 
 

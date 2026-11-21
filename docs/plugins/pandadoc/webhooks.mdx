@@ -53,13 +53,19 @@ export async function POST(request: Request) {
 
 A PandaDoc event delivery: an array of event objects
 
-**Payload**
+**Payload:** `object[]`
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `event` | `string` | Yes | — |
-| `data` | `Record<string, any> \| null` | No | — |
+<AccordionGroup>
+<Accordion title="Payload full type">
 
+```ts
+{
+  event: string,
+  data?: Record<string, any> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 <AccordionGroup>
@@ -69,7 +75,7 @@ A PandaDoc event delivery: an array of event objects
 {
   event: string,
   data?: Record<string, any> | null
-}
+}[]
 ```
 </Accordion>
 </AccordionGroup>
