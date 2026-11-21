@@ -1,3 +1,119 @@
 displayName: Laposta
-description: Dutch email marketing and newsletter platform for managing subscriber lists, members, custom fields, and email campaigns.
+description: Dutch email marketing and newsletter platform for managing mailing lists, subscriber members, custom fields, segments, campaigns, webhook subscriptions, and delivery reports.
 domain: laposta.nl
+recommendedAuth: api_key
+overviewNote: |
+  Laposta uses HTTP Basic authentication with the API key as the username and an empty password. The plugin resolves the key through Corsair and sends it only in the Authorization header.
+
+  Laposta's documented webhook management endpoints are included. Incoming webhook delivery is a separate callback workflow and is not registered as a Corsair webhook receiver by this plugin.
+examples:
+  read:
+    path: members.list
+    title: List active subscribers
+    args:
+      list_id: list-1
+      limit: 100
+  write:
+    path: lists.create
+    title: Create a mailing list
+    args:
+      name: Newsletter
+apiNotes:
+  lists.sync_members: 'This bulk endpoint is available only to paid accounts and requires JSON. The `unsubscribe_excluded` action unsubscribes every current member omitted from the submitted list; double-check the complete member set before using it.'
+  members.create: 'The `ip` is mandatory. On a double-opt-in list Laposta can send a confirmation email; `options.ignore_doubleoptin` disables that confirmation behavior.'
+  members.list: 'Use `limit` (1–1000) and `cursor` to page. Pass `pagination.next_cursor` unchanged and retain the other filters. A plus sign in an email used as `member_id` is encoded as `%252B` in the path.'
+  members.history: 'History uses cursor pagination with a default limit of 100 and maximum of 1000. Keep the same filters and order when sending the next cursor.'
+  fields.create: 'The `required`, `in_form`, and `in_list` booleans are mandatory. Select fields need at least one option.'
+  fields.update: 'Laposta requires `options_full` to be sent as JSON. Changing a field datatype removes its stored values.'
+  segments.create: 'Laposta recommends creating a segment in its application first and retrieving it through `segments.get` before composing a definition string.'
+  campaigns.list: 'Use `limit` (1–1000) and `cursor` to page through campaigns. `status` may be `draft` or `sent`.'
+  campaigns.history: 'Campaign history uses cursor pagination with a default limit of 100 and maximum of 1000. Keep the same filters and ordering when sending the next cursor.'
+  campaigns.update_content: 'Provide `html` or `import_url`. Laposta imports HTML from the URL when selected; if both are provided, the `html` value takes precedence. Only exported campaigns support content retrieval.'
+  campaigns.send: 'This sends the campaign to configured recipients. A previously sent campaign may be sent again to members added since its previous send.'
+  campaigns.schedule: 'Scheduling starts email delivery at the specified time; a campaign sent before may be rescheduled for members added since its previous send.'
+  campaigns.send_test: 'This sends an actual test email, and only works when content exists for a campaign that has not yet been sent.'
+  reports.list: 'Use `limit` (1–1000) and `cursor` to page through campaign reports.'
+  webhooks.get: 'Laposta returns the webhook signing secret in the webhook object. Keep it private; the plugin does not include it in logs.'
+  webhooks.create: 'Creates a Laposta subscription that POSTs member events to the configured URL. This operation manages the subscription; it does not install an incoming request handler.'
+apiExamples:
+  lists.list: {}
+  lists.get:
+    call: "{ list_id: 'list-1' }"
+  lists.create:
+    call: "{ name: 'Newsletter' }"
+  lists.update:
+    call: "{ list_id: 'list-1', name: 'Customers' }"
+  lists.delete:
+    call: "{ list_id: 'list-1' }"
+  lists.purge_members:
+    call: "{ list_id: 'list-1' }"
+  lists.sync_members:
+    call: "{ list_id: 'list-1', actions: ['add'], members: [{ email: 'person@example.net' }] }"
+  members.list:
+    call: "{ list_id: 'list-1', state: 'active', limit: 100 }"
+  members.get:
+    call: "{ list_id: 'list-1', member_id: 'member-1' }"
+  members.create:
+    call: "{ list_id: 'list-1', email: 'person@example.net', ip: '198.51.100.10' }"
+  members.update:
+    call: "{ list_id: 'list-1', member_id: 'member-1', state: 'unsubscribed' }"
+  members.delete:
+    call: "{ list_id: 'list-1', member_id: 'member-1' }"
+  members.history:
+    call: "{ list_id: 'list-1', member_id: 'member-1', limit: 100 }"
+  fields.list:
+    call: "{ list_id: 'list-1' }"
+  fields.get:
+    call: "{ list_id: 'list-1', field_id: 'field-1' }"
+  fields.create:
+    call: "{ list_id: 'list-1', name: 'City', datatype: 'text', required: false, in_form: true, in_list: true }"
+  fields.update:
+    call: "{ list_id: 'list-1', field_id: 'field-1', required: true }"
+  fields.delete:
+    call: "{ list_id: 'list-1', field_id: 'field-1' }"
+  segments.list:
+    call: "{ list_id: 'list-1' }"
+  segments.get:
+    call: "{ list_id: 'list-1', segment_id: 'segment-1' }"
+  segments.create:
+    call: '{ list_id: "list-1", name: "Local members", definition: "\"city\" = ''Utrecht''" }'
+  segments.update:
+    call: "{ list_id: 'list-1', segment_id: 'segment-1', name: 'Local members' }"
+  segments.delete:
+    call: "{ list_id: 'list-1', segment_id: 'segment-1' }"
+  webhooks.list:
+    call: "{ list_id: 'list-1' }"
+  webhooks.get:
+    call: "{ list_id: 'list-1', webhook_id: 'webhook-1' }"
+  webhooks.create:
+    call: "{ list_id: 'list-1', event: 'modified', url: 'https://example.net/hook', blocked: false }"
+  webhooks.update:
+    call: "{ list_id: 'list-1', webhook_id: 'webhook-1', blocked: true }"
+  webhooks.delete:
+    call: "{ list_id: 'list-1', webhook_id: 'webhook-1' }"
+  campaigns.list:
+    call: "{ status: 'draft', limit: 100 }"
+  campaigns.create:
+    call: "{ type: 'regular', name: 'Monthly news', subject: 'Updates', from: { name: 'Example', email: 'sender@example.net' }, list_ids: ['list-1'] }"
+  campaigns.get:
+    call: "{ campaign_id: 'campaign-1' }"
+  campaigns.update:
+    call: "{ campaign_id: 'campaign-1', subject: 'Updated subject' }"
+  campaigns.delete:
+    call: "{ campaign_id: 'campaign-1' }"
+  campaigns.history:
+    call: "{ campaign_id: 'campaign-1', limit: 100 }"
+  campaigns.get_content:
+    call: "{ campaign_id: 'campaign-1' }"
+  campaigns.update_content:
+    call: "{ campaign_id: 'campaign-1', import_url: 'https://example.net/newsletter' }"
+  campaigns.send:
+    call: "{ campaign_id: 'campaign-1' }"
+  campaigns.schedule:
+    call: "{ campaign_id: 'campaign-1', delivery_requested: '2026-12-01 09:00:00' }"
+  campaigns.send_test:
+    call: "{ campaign_id: 'campaign-1', email: 'test@example.net' }"
+  reports.list:
+    call: "{ limit: 100 }"
+  reports.get:
+    call: "{ campaign_id: 'campaign-1' }"

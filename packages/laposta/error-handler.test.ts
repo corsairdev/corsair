@@ -2,7 +2,7 @@ import { ApiError } from 'corsair/http';
 import { errorHandlers } from './error-handlers';
 
 describe('Laposta error handlers', () => {
-	it('matches 429 status and extracts Retry-After duration', async () => {
+	it('matches 429 status and delegates retries to core', async () => {
 		const apiError = new ApiError(
 			{
 				method: 'GET',
@@ -17,13 +17,28 @@ describe('Laposta error handlers', () => {
 			},
 			'Too Many Requests',
 		);
-		// Simulate parsed retryAfter on ApiError
-		(apiError as { retryAfter?: number }).retryAfter = 4000;
 
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(apiError)).toBe(true);
-		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(apiError);
-		expect(result.maxRetries).toBe(5);
-		expect(result.headersRetryAfterMs).toBe(4000);
+		const result = await errorHandlers.RATE_LIMIT_ERROR.handler();
+		expect(result.maxRetries).toBe(0);
+	});
+
+	it('does not classify message text as a rate-limit response', () => {
+		const plainError = new Error('429 Too Many Requests');
+		const non429ApiError = new ApiError(
+			{ method: 'GET', url: 'https://api.laposta.nl/v2/list' },
+			{
+				body: { error: { message: 'rate limit' } },
+				status: 400,
+				statusText: 'Bad Request',
+				ok: false,
+				url: 'https://api.laposta.nl/v2/list',
+			},
+			'Rate limit configuration is invalid',
+		);
+
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(plainError)).toBe(false);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(non429ApiError)).toBe(false);
 	});
 
 	it('matches AUTH_ERROR for 401 and 403', async () => {
@@ -91,8 +106,7 @@ describe('Laposta error handlers', () => {
 	});
 
 	it('falls back to DEFAULT handler', async () => {
-		const generalError = new Error('Random unexpected network glitch');
-		expect(errorHandlers.DEFAULT.match(generalError)).toBe(true);
+		expect(errorHandlers.DEFAULT.match()).toBe(true);
 		const result = await errorHandlers.DEFAULT.handler();
 		expect(result.maxRetries).toBe(0);
 	});

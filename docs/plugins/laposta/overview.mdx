@@ -1,14 +1,18 @@
 ---
 title: "Laposta plugin"
 sidebarTitle: "Overview"
-description: "Dutch email marketing and newsletter platform for managing subscriber lists, members, custom fields, and email campaigns."
+description: "Dutch email marketing and newsletter platform for managing mailing lists, subscriber members, custom fields, segments, campaigns, webhook subscriptions, and delivery reports."
 ---
 
 Use **Laposta** through Corsair: one client, typed API calls.
 
+Laposta uses HTTP Basic authentication with the API key as the username and an empty password. The plugin resolves the key through Corsair and sends it only in the Authorization header.
+
+Laposta's documented webhook management endpoints are included. Incoming webhook delivery is a separate callback workflow and is not registered as a Corsair webhook receiver by this plugin.
+
 **What you get:**
 
-- 17 typed API operations
+- 41 typed API operations
 
 ## Setup
 
@@ -94,19 +98,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`campaigns.get`**
+**List active subscribers**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.laposta.api.campaigns.get({});
+await tenant.laposta.api.members.list({ list_id: 'list-1', limit: 100 });
 ```
 
 
-**`fields.create`**
+**Create a mailing list**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.laposta.api.fields.create({});
+await tenant.laposta.api.lists.create({ name: 'Newsletter' });
 ```
 
 

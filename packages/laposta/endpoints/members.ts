@@ -1,9 +1,12 @@
 import { makeLapostaRequest } from '../client';
+import type { LapostaPluginContext } from '../index';
 import type {
 	CreateMemberInput,
 	CreateMemberOutput,
 	DeleteMemberInput,
 	DeleteMemberOutput,
+	GetMemberHistoryInput,
+	GetMemberHistoryOutput,
 	GetMemberInput,
 	GetMemberOutput,
 	GetMembersInput,
@@ -14,81 +17,123 @@ import type {
 import {
 	CreateMemberOutputSchema,
 	DeleteMemberOutputSchema,
+	GetMemberHistoryOutputSchema,
 	GetMemberOutputSchema,
 	GetMembersOutputSchema,
+	LapostaEndpointInputSchemas,
 	UpdateMemberOutputSchema,
 } from './types';
 
 export const members = {
 	list: async (
+		ctx: LapostaPluginContext,
 		input: GetMembersInput,
-		apiKey?: string,
 	): Promise<GetMembersOutput> => {
-		const raw = await makeLapostaRequest<unknown>('/member', apiKey, {
+		const parsedInput =
+			LapostaEndpointInputSchemas['members.list'].parse(input);
+		// unknown because raw API response is unvalidated before Zod parsing.
+		const raw = await makeLapostaRequest<unknown>('/member', ctx.key, {
 			method: 'GET',
 			query: {
-				list_id: input.list_id,
-				state: input.state,
+				list_id: parsedInput.list_id,
+				state: parsedInput.state,
+				limit: parsedInput.limit,
+				cursor: parsedInput.cursor,
+				order_by: parsedInput.order_by,
+				order: parsedInput.order,
+				search: parsedInput.search,
+				label: parsedInput.label,
 			},
 		});
 		return GetMembersOutputSchema.parse(raw);
 	},
 
 	get: async (
+		ctx: LapostaPluginContext,
 		input: GetMemberInput,
-		apiKey?: string,
 	): Promise<GetMemberOutput> => {
+		const parsedInput = LapostaEndpointInputSchemas['members.get'].parse(input);
+		// unknown because raw API response is unvalidated before Zod parsing.
 		const raw = await makeLapostaRequest<unknown>(
-			`/member/${encodeURIComponent(input.member_id)}`,
-			apiKey,
+			`/member/${encodeMemberId(parsedInput.member_id)}`,
+			ctx.key,
 			{
 				method: 'GET',
-				query: { list_id: input.list_id },
+				query: { list_id: parsedInput.list_id },
 			},
 		);
 		return GetMemberOutputSchema.parse(raw);
 	},
 
 	create: async (
+		ctx: LapostaPluginContext,
 		input: CreateMemberInput,
-		apiKey?: string,
 	): Promise<CreateMemberOutput> => {
-		const raw = await makeLapostaRequest<unknown>('/member', apiKey, {
+		const parsedInput =
+			LapostaEndpointInputSchemas['members.create'].parse(input);
+		// unknown because raw API response is unvalidated before Zod parsing.
+		const raw = await makeLapostaRequest<unknown>('/member', ctx.key, {
 			method: 'POST',
-			body: input as Record<string, unknown>,
+			body: parsedInput,
 		});
 		return CreateMemberOutputSchema.parse(raw);
 	},
 
 	update: async (
+		ctx: LapostaPluginContext,
 		input: UpdateMemberInput,
-		apiKey?: string,
 	): Promise<UpdateMemberOutput> => {
-		const { list_id, member_id, ...body } = input;
+		const parsedInput =
+			LapostaEndpointInputSchemas['members.update'].parse(input);
+		const { list_id, member_id, ...body } = parsedInput;
+		// unknown because raw API response is unvalidated before Zod parsing.
 		const raw = await makeLapostaRequest<unknown>(
-			`/member/${encodeURIComponent(member_id)}`,
-			apiKey,
+			`/member/${encodeMemberId(member_id)}`,
+			ctx.key,
 			{
 				method: 'POST',
 				query: { list_id },
-				body: body as Record<string, unknown>,
+				body,
 			},
 		);
 		return UpdateMemberOutputSchema.parse(raw);
 	},
 
 	delete: async (
+		ctx: LapostaPluginContext,
 		input: DeleteMemberInput,
-		apiKey?: string,
 	): Promise<DeleteMemberOutput> => {
+		const parsedInput =
+			LapostaEndpointInputSchemas['members.delete'].parse(input);
+		// unknown because raw API response is unvalidated before Zod parsing.
 		const raw = await makeLapostaRequest<unknown>(
-			`/member/${encodeURIComponent(input.member_id)}`,
-			apiKey,
+			`/member/${encodeMemberId(parsedInput.member_id)}`,
+			ctx.key,
 			{
 				method: 'DELETE',
-				query: { list_id: input.list_id },
+				query: { list_id: parsedInput.list_id },
 			},
 		);
 		return DeleteMemberOutputSchema.parse(raw);
 	},
+
+	history: async (
+		ctx: LapostaPluginContext,
+		input: GetMemberHistoryInput,
+	): Promise<GetMemberHistoryOutput> => {
+		const parsedInput =
+			LapostaEndpointInputSchemas['members.history'].parse(input);
+		const { list_id, member_id, ...query } = parsedInput;
+		// unknown because raw API response is unvalidated before Zod parsing.
+		const raw = await makeLapostaRequest<unknown>(
+			`/member/${encodeMemberId(member_id)}/history`,
+			ctx.key,
+			{ method: 'GET', query: { list_id, ...query } },
+		);
+		return GetMemberHistoryOutputSchema.parse(raw);
+	},
 };
+
+function encodeMemberId(memberId: string): string {
+	return encodeURIComponent(memberId).replace(/%2B/gi, '%252B');
+}

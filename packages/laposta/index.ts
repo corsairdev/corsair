@@ -13,7 +13,15 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { campaigns, fields, lists, members, reports } from './endpoints';
+import {
+	campaigns,
+	fields,
+	lists,
+	members,
+	reports,
+	segments,
+	webhooks,
+} from './endpoints';
 import type {
 	LapostaEndpointInputs,
 	LapostaEndpointOutputs,
@@ -38,6 +46,8 @@ export type LapostaContext = CorsairPluginContext<
 	LapostaPluginOptions
 >;
 
+export type LapostaPluginContext = LapostaContext;
+
 export type LapostaKeyBuilderContext = KeyBuilderContext<LapostaPluginOptions>;
 
 export type LapostaBoundEndpoints = BindEndpoints<
@@ -51,23 +61,7 @@ type LapostaEndpoint<K extends keyof LapostaEndpointOutputs> = CorsairEndpoint<
 >;
 
 export type LapostaEndpoints = {
-	'lists.list': LapostaEndpoint<'lists.list'>;
-	'lists.get': LapostaEndpoint<'lists.get'>;
-	'lists.create': LapostaEndpoint<'lists.create'>;
-	'lists.update': LapostaEndpoint<'lists.update'>;
-	'lists.delete': LapostaEndpoint<'lists.delete'>;
-	'members.list': LapostaEndpoint<'members.list'>;
-	'members.get': LapostaEndpoint<'members.get'>;
-	'members.create': LapostaEndpoint<'members.create'>;
-	'members.update': LapostaEndpoint<'members.update'>;
-	'members.delete': LapostaEndpoint<'members.delete'>;
-	'fields.list': LapostaEndpoint<'fields.list'>;
-	'fields.get': LapostaEndpoint<'fields.get'>;
-	'fields.create': LapostaEndpoint<'fields.create'>;
-	'fields.delete': LapostaEndpoint<'fields.delete'>;
-	'campaigns.list': LapostaEndpoint<'campaigns.list'>;
-	'campaigns.get': LapostaEndpoint<'campaigns.get'>;
-	'reports.get': LapostaEndpoint<'reports.get'>;
+	[K in keyof LapostaEndpointOutputs]: LapostaEndpoint<K>;
 };
 
 const lapostaEndpointsNested = {
@@ -77,6 +71,8 @@ const lapostaEndpointsNested = {
 		create: lists.create,
 		update: lists.update,
 		delete: lists.delete,
+		purge_members: lists.purge_members,
+		sync_members: lists.sync_members,
 	},
 	members: {
 		list: members.list,
@@ -84,18 +80,44 @@ const lapostaEndpointsNested = {
 		create: members.create,
 		update: members.update,
 		delete: members.delete,
+		history: members.history,
 	},
 	fields: {
 		list: fields.list,
 		get: fields.get,
 		create: fields.create,
+		update: fields.update,
 		delete: fields.delete,
+	},
+	segments: {
+		list: segments.list,
+		get: segments.get,
+		create: segments.create,
+		update: segments.update,
+		delete: segments.delete,
+	},
+	webhooks: {
+		list: webhooks.list,
+		get: webhooks.get,
+		create: webhooks.create,
+		update: webhooks.update,
+		delete: webhooks.delete,
 	},
 	campaigns: {
 		list: campaigns.list,
+		create: campaigns.create,
 		get: campaigns.get,
+		update: campaigns.update,
+		delete: campaigns.delete,
+		history: campaigns.history,
+		get_content: campaigns.get_content,
+		update_content: campaigns.update_content,
+		send: campaigns.send,
+		schedule: campaigns.schedule,
+		send_test: campaigns.send_test,
 	},
 	reports: {
+		list: reports.list,
 		get: reports.get,
 	},
 } as const;
@@ -121,6 +143,14 @@ export const lapostaEndpointSchemas = {
 		input: LapostaEndpointInputSchemas['lists.delete'],
 		output: LapostaEndpointOutputSchemas['lists.delete'],
 	},
+	'lists.purge_members': {
+		input: LapostaEndpointInputSchemas['lists.purge_members'],
+		output: LapostaEndpointOutputSchemas['lists.purge_members'],
+	},
+	'lists.sync_members': {
+		input: LapostaEndpointInputSchemas['lists.sync_members'],
+		output: LapostaEndpointOutputSchemas['lists.sync_members'],
+	},
 	'members.list': {
 		input: LapostaEndpointInputSchemas['members.list'],
 		output: LapostaEndpointOutputSchemas['members.list'],
@@ -141,6 +171,10 @@ export const lapostaEndpointSchemas = {
 		input: LapostaEndpointInputSchemas['members.delete'],
 		output: LapostaEndpointOutputSchemas['members.delete'],
 	},
+	'members.history': {
+		input: LapostaEndpointInputSchemas['members.history'],
+		output: LapostaEndpointOutputSchemas['members.history'],
+	},
 	'fields.list': {
 		input: LapostaEndpointInputSchemas['fields.list'],
 		output: LapostaEndpointOutputSchemas['fields.list'],
@@ -153,17 +187,101 @@ export const lapostaEndpointSchemas = {
 		input: LapostaEndpointInputSchemas['fields.create'],
 		output: LapostaEndpointOutputSchemas['fields.create'],
 	},
+	'fields.update': {
+		input: LapostaEndpointInputSchemas['fields.update'],
+		output: LapostaEndpointOutputSchemas['fields.update'],
+	},
 	'fields.delete': {
 		input: LapostaEndpointInputSchemas['fields.delete'],
 		output: LapostaEndpointOutputSchemas['fields.delete'],
+	},
+	'segments.list': {
+		input: LapostaEndpointInputSchemas['segments.list'],
+		output: LapostaEndpointOutputSchemas['segments.list'],
+	},
+	'segments.get': {
+		input: LapostaEndpointInputSchemas['segments.get'],
+		output: LapostaEndpointOutputSchemas['segments.get'],
+	},
+	'segments.create': {
+		input: LapostaEndpointInputSchemas['segments.create'],
+		output: LapostaEndpointOutputSchemas['segments.create'],
+	},
+	'segments.update': {
+		input: LapostaEndpointInputSchemas['segments.update'],
+		output: LapostaEndpointOutputSchemas['segments.update'],
+	},
+	'segments.delete': {
+		input: LapostaEndpointInputSchemas['segments.delete'],
+		output: LapostaEndpointOutputSchemas['segments.delete'],
+	},
+	'webhooks.list': {
+		input: LapostaEndpointInputSchemas['webhooks.list'],
+		output: LapostaEndpointOutputSchemas['webhooks.list'],
+	},
+	'webhooks.get': {
+		input: LapostaEndpointInputSchemas['webhooks.get'],
+		output: LapostaEndpointOutputSchemas['webhooks.get'],
+	},
+	'webhooks.create': {
+		input: LapostaEndpointInputSchemas['webhooks.create'],
+		output: LapostaEndpointOutputSchemas['webhooks.create'],
+	},
+	'webhooks.update': {
+		input: LapostaEndpointInputSchemas['webhooks.update'],
+		output: LapostaEndpointOutputSchemas['webhooks.update'],
+	},
+	'webhooks.delete': {
+		input: LapostaEndpointInputSchemas['webhooks.delete'],
+		output: LapostaEndpointOutputSchemas['webhooks.delete'],
 	},
 	'campaigns.list': {
 		input: LapostaEndpointInputSchemas['campaigns.list'],
 		output: LapostaEndpointOutputSchemas['campaigns.list'],
 	},
+	'campaigns.create': {
+		input: LapostaEndpointInputSchemas['campaigns.create'],
+		output: LapostaEndpointOutputSchemas['campaigns.create'],
+	},
 	'campaigns.get': {
 		input: LapostaEndpointInputSchemas['campaigns.get'],
 		output: LapostaEndpointOutputSchemas['campaigns.get'],
+	},
+	'campaigns.update': {
+		input: LapostaEndpointInputSchemas['campaigns.update'],
+		output: LapostaEndpointOutputSchemas['campaigns.update'],
+	},
+	'campaigns.delete': {
+		input: LapostaEndpointInputSchemas['campaigns.delete'],
+		output: LapostaEndpointOutputSchemas['campaigns.delete'],
+	},
+	'campaigns.history': {
+		input: LapostaEndpointInputSchemas['campaigns.history'],
+		output: LapostaEndpointOutputSchemas['campaigns.history'],
+	},
+	'campaigns.get_content': {
+		input: LapostaEndpointInputSchemas['campaigns.get_content'],
+		output: LapostaEndpointOutputSchemas['campaigns.get_content'],
+	},
+	'campaigns.update_content': {
+		input: LapostaEndpointInputSchemas['campaigns.update_content'],
+		output: LapostaEndpointOutputSchemas['campaigns.update_content'],
+	},
+	'campaigns.send': {
+		input: LapostaEndpointInputSchemas['campaigns.send'],
+		output: LapostaEndpointOutputSchemas['campaigns.send'],
+	},
+	'campaigns.schedule': {
+		input: LapostaEndpointInputSchemas['campaigns.schedule'],
+		output: LapostaEndpointOutputSchemas['campaigns.schedule'],
+	},
+	'campaigns.send_test': {
+		input: LapostaEndpointInputSchemas['campaigns.send_test'],
+		output: LapostaEndpointOutputSchemas['campaigns.send_test'],
+	},
+	'reports.list': {
+		input: LapostaEndpointInputSchemas['reports.list'],
+		output: LapostaEndpointOutputSchemas['reports.list'],
 	},
 	'reports.get': {
 		input: LapostaEndpointInputSchemas['reports.get'],
@@ -196,6 +314,14 @@ const lapostaEndpointMeta = {
 		riskLevel: 'destructive',
 		description: 'Delete a mailing list',
 	},
+	'lists.purge_members': {
+		riskLevel: 'destructive',
+		description: 'Permanently remove every active member from a mailing list',
+	},
+	'lists.sync_members': {
+		riskLevel: 'destructive',
+		description: 'Add, update, or bulk-unsubscribe members in a mailing list',
+	},
 	'members.list': {
 		riskLevel: 'read',
 		description: 'Retrieve subscribers for a mailing list',
@@ -205,8 +331,8 @@ const lapostaEndpointMeta = {
 		description: 'Retrieve a specific subscriber by ID',
 	},
 	'members.create': {
-		riskLevel: 'write',
-		description: 'Subscribe a new member to a mailing list',
+		riskLevel: 'destructive',
+		description: 'Subscribe a member, which may send a confirmation email',
 	},
 	'members.update': {
 		riskLevel: 'write',
@@ -215,6 +341,10 @@ const lapostaEndpointMeta = {
 	'members.delete': {
 		riskLevel: 'destructive',
 		description: 'Unsubscribe or delete a member from a list',
+	},
+	'members.history': {
+		riskLevel: 'read',
+		description: 'Retrieve a member event history with cursor pagination',
 	},
 	'fields.list': {
 		riskLevel: 'read',
@@ -228,17 +358,102 @@ const lapostaEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Create a new custom field for a mailing list',
 	},
+	'fields.update': {
+		riskLevel: 'destructive',
+		description:
+			'Update a custom field; changing its datatype removes stored values',
+	},
 	'fields.delete': {
 		riskLevel: 'destructive',
 		description: 'Delete a custom field from a mailing list',
+	},
+	'segments.list': {
+		riskLevel: 'read',
+		description: 'Retrieve all segments belonging to a mailing list',
+	},
+	'segments.get': {
+		riskLevel: 'read',
+		description: 'Retrieve one mailing-list segment and its definition',
+	},
+	'segments.create': {
+		riskLevel: 'write',
+		description: 'Create a segment for a mailing list',
+	},
+	'segments.update': {
+		riskLevel: 'write',
+		description: 'Change a segment name or definition',
+	},
+	'segments.delete': {
+		riskLevel: 'destructive',
+		description: 'Permanently delete a mailing-list segment',
+	},
+	'webhooks.list': {
+		riskLevel: 'read',
+		description: 'List webhook subscriptions configured for a mailing list',
+	},
+	'webhooks.get': {
+		riskLevel: 'read',
+		description: 'Retrieve a webhook subscription and its signing secret',
+	},
+	'webhooks.create': {
+		riskLevel: 'write',
+		description: 'Create a webhook subscription for a mailing list',
+	},
+	'webhooks.update': {
+		riskLevel: 'write',
+		description: 'Change a webhook subscription configuration',
+	},
+	'webhooks.delete': {
+		riskLevel: 'destructive',
+		description: 'Permanently delete a webhook subscription',
 	},
 	'campaigns.list': {
 		riskLevel: 'read',
 		description: 'Retrieve all email campaigns',
 	},
+	'campaigns.create': {
+		riskLevel: 'write',
+		description: 'Create a regular email campaign',
+	},
 	'campaigns.get': {
 		riskLevel: 'read',
 		description: 'Retrieve a specific campaign by ID',
+	},
+	'campaigns.update': {
+		riskLevel: 'write',
+		description: 'Update campaign metadata and recipients',
+	},
+	'campaigns.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete an unsent or previously sent campaign',
+	},
+	'campaigns.history': {
+		riskLevel: 'read',
+		description: 'Retrieve paginated events for a campaign',
+	},
+	'campaigns.get_content': {
+		riskLevel: 'read',
+		description: 'Retrieve the HTML and plaintext campaign content',
+	},
+	'campaigns.update_content': {
+		riskLevel: 'write',
+		description: 'Set campaign content from HTML or an import URL',
+	},
+	'campaigns.send': {
+		riskLevel: 'destructive',
+		description: 'Send a campaign to its configured recipients',
+	},
+	'campaigns.schedule': {
+		riskLevel: 'destructive',
+		description: 'Schedule campaign delivery to its configured recipients',
+	},
+	'campaigns.send_test': {
+		riskLevel: 'destructive',
+		description: 'Send a campaign test email to the specified address',
+	},
+	'reports.list': {
+		riskLevel: 'read',
+		description: 'Retrieve paginated delivery reports for campaigns',
 	},
 	'reports.get': {
 		riskLevel: 'read',
@@ -297,41 +512,4 @@ export function laposta<const T extends LapostaPluginOptions>(
 	} satisfies InternalLapostaPlugin;
 }
 
-export type {
-	CreateFieldInput,
-	CreateFieldOutput,
-	CreateListInput,
-	CreateListOutput,
-	CreateMemberInput,
-	CreateMemberOutput,
-	DeleteFieldInput,
-	DeleteFieldOutput,
-	DeleteListInput,
-	DeleteListOutput,
-	DeleteMemberInput,
-	DeleteMemberOutput,
-	GetCampaignInput,
-	GetCampaignOutput,
-	GetCampaignsInput,
-	GetCampaignsOutput,
-	GetFieldInput,
-	GetFieldOutput,
-	GetFieldsInput,
-	GetFieldsOutput,
-	GetListInput,
-	GetListOutput,
-	GetListsInput,
-	GetListsOutput,
-	GetMemberInput,
-	GetMemberOutput,
-	GetMembersInput,
-	GetMembersOutput,
-	GetReportInput,
-	GetReportOutput,
-	LapostaEndpointInputs,
-	LapostaEndpointOutputs,
-	UpdateListInput,
-	UpdateListOutput,
-	UpdateMemberInput,
-	UpdateMemberOutput,
-} from './endpoints/types';
+export type * from './endpoints/types';
