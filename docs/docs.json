@@ -4153,6 +4153,14 @@
                 ]
               },
               {
+                "group": "PersistIQ",
+                "pages": [
+                  "plugins/persistiq/overview",
+                  "plugins/persistiq/api",
+                  "plugins/persistiq/database"
+                ]
+              },
+              {
                 "group": "PhantomBuster",
                 "pages": [
                   "plugins/phantombuster/overview",
