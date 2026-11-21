@@ -21,50 +21,6 @@ const RATE_LIMIT_CONFIG: RateLimitConfig = {
 };
 
 /**
- * A failed call throws this: core's `ApiError` (R8: core and the handlers
- * read `status` and `retryAfter` from it), rebuilt without the request body
- * and query. Lead records carry personal data, which core's own ApiError
- * keeps on the request.
- */
-export class PersistiqAPIError extends ApiError {
-	/** The HTTP method of the failed request, for replay-safety decisions. */
-	readonly method: string;
-
-	constructor(
-		message: string,
-		options: {
-			method: string;
-			/** Request path, without query. */
-			path: string;
-			status: number;
-			statusText?: string;
-			// unknown: error bodies can be the { status, error } envelope or
-			// non-JSON from a proxy.
-			body?: unknown;
-			retryAfter?: number;
-		},
-	) {
-		super(
-			{
-				method: options.method as ApiRequestOptions['method'],
-				url: options.path,
-			},
-			{
-				url: options.path,
-				ok: false,
-				status: options.status,
-				statusText: options.statusText ?? '',
-				body: options.body,
-			},
-			message,
-			{ retryAfter: options.retryAfter },
-		);
-		this.name = 'PersistiqAPIError';
-		this.method = options.method;
-	}
-}
-
-/**
  * Extracts the readable part of a PersistIQ error body. Errors are
  * `{"status":"error","error":{"reason":"unauthorized","message":"..."}}`
  * (verified live with an invalid key).
@@ -102,8 +58,32 @@ export type PersistiqRequest = {
 	body?: unknown;
 };
 
-// unknown: callers parse the response with the endpoint's zod output schema,
-// so the client cannot name a stricter return type.
+/**
+ * Replaces the key wherever PersistIQ echoes it. A 401 answers
+ * "Failed to find api key: <the key sent>", so a wrong or revoked key would
+ * otherwise land in the error message, the error body and every log line
+ * that prints them.
+ */
+export function redactKey(
+	// unknown: error bodies are arbitrary JSON or text.
+	value: unknown,
+	apiKey: string,
+	// unknown: the same value with every occurrence of the key replaced.
+): unknown {
+	if (!apiKey) return value;
+	if (typeof value === 'string') return value.split(apiKey).join('[redacted]');
+	if (Array.isArray(value)) return value.map((item) => redactKey(item, apiKey));
+	if (value && typeof value === 'object') {
+		return Object.fromEntries(
+			Object.entries(value).map(([key, item]) => [
+				key,
+				redactKey(item, apiKey),
+			]),
+		);
+	}
+	return value;
+}
+
 /**
  * Authenticated PersistIQ request. API keys authenticate in the x-api-key
  * header.
@@ -148,21 +128,30 @@ export async function makePersistiqRequest(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
-			// Rebuilt without the request (lead records carry emails). Core's
+			// Rebuilt without the request (lead records carry emails) and with
+			// the echoed key masked. Core's
 			// fallback message embeds the whole response body, so the text
 			// comes from the provider's error or the status.
+			const errorBody = redactKey(error.body, apiKey);
 			const detail = describePersistiqError(
-				error.body,
+				errorBody,
 				error.statusText || 'request failed',
 			);
-			throw new PersistiqAPIError(`PersistIQ ${error.status}: ${detail}`, {
-				method,
-				path,
-				status: error.status,
-				statusText: error.statusText,
-				body: error.body,
-				retryAfter: error.retryAfter,
-			});
+			// R8: core's ApiError itself (management maps errors named
+			// ApiError to their real status), rebuilt with the method and path
+			// only, so status and retryAfter survive for the handlers.
+			throw new ApiError(
+				{ method, url: path },
+				{
+					url: path,
+					ok: false,
+					status: error.status,
+					statusText: error.statusText,
+					body: errorBody,
+				},
+				`PersistIQ ${error.status}: ${detail}`,
+				{ retryAfter: error.retryAfter },
+			);
 		}
 		// Timeouts and network failures carry no request data; let them through.
 		throw error;

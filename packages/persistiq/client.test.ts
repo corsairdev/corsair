@@ -1,9 +1,6 @@
 import { inspect } from 'node:util';
-import {
-	describePersistiqError,
-	makePersistiqRequest,
-	PersistiqAPIError,
-} from './client';
+import { ApiError } from 'corsair/http';
+import { describePersistiqError, makePersistiqRequest } from './client';
 import { unauthorized } from './test-fixtures';
 
 const API_KEY = 'pq-test-key';
@@ -21,10 +18,10 @@ function respond(body: unknown, status: number) {
 }
 
 // unknown: a rejection can be any value until the instanceof check narrows it.
-async function failure(promise: Promise<unknown>): Promise<PersistiqAPIError> {
+async function failure(promise: Promise<unknown>): Promise<ApiError> {
 	const error = await promise.catch((caught: unknown) => caught);
-	expect(error).toBeInstanceOf(PersistiqAPIError);
-	if (!(error instanceof PersistiqAPIError)) throw error;
+	expect(error).toBeInstanceOf(ApiError);
+	if (!(error instanceof ApiError)) throw error;
 	return error;
 }
 
@@ -64,7 +61,9 @@ describe('makePersistiqRequest', () => {
 		);
 		expect(error.status).toBe(401);
 		expect(error.message).toContain('Failed to find api key');
-		expect(error.name).toBe('PersistiqAPIError');
+		// R8: core's own ApiError, so management maps it to its real status.
+		expect(error.name).toBe('ApiError');
+		expect(error.constructor).toBe(ApiError);
 	});
 
 	it('keeps no request body on the rebuilt error', async () => {
@@ -80,6 +79,27 @@ describe('makePersistiqRequest', () => {
 		const printed = inspect(error);
 		expect(printed).not.toContain('john@example.com');
 		expect(error.message).not.toContain('john@example.com');
+	});
+
+	it('masks the key PersistIQ echoes in its 401 message and body', async () => {
+		respond(
+			{
+				status: 'error',
+				error: {
+					reason: 'unauthorized',
+					message: `Failed to find api key: ${API_KEY}.  Did you set header 'x-api-key' correctly?`,
+				},
+			},
+			401,
+		);
+
+		const error = await failure(
+			makePersistiqRequest(API_KEY, { method: 'GET', path: '/v1/users' }),
+		);
+		expect(error.message).toContain('Failed to find api key: [redacted]');
+		expect(error.message).not.toContain(API_KEY);
+		expect(JSON.stringify(error.body)).not.toContain(API_KEY);
+		expect(inspect(error, { depth: 10 })).not.toContain(API_KEY);
 	});
 
 	it('lets transport failures through unwrapped', async () => {
