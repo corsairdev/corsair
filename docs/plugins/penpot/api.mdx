@@ -966,9 +966,9 @@ await corsair.penpot.api.webhooks.create({ teamId: "5f2a1c3d-4e5f-6a7b-8c9d-0e1f
 |------|------|----------|-------------|
 | `teamId` | `string` | Yes | Team the webhook belongs to |
 | `uri` | `string` | Yes | Endpoint deliveries are posted to |
-| `mtype` | `application/json \| application/transit+json` | Yes | Payload format of the deliveries |
+| `mtype` | `application/json` | Yes | Payload format; JSON, the format the plugin reads |
 
-mtype picks the delivery payload format: application/json or application/transit+json. Penpot calls the URI on create and refuses one that does not answer (500 webhook-validation).
+mtype is application/json: the plugin reads JSON deliveries only (Penpot can also send Transit or form bodies, which it does not decode). Penpot calls the URI on create and refuses one that does not answer (500 webhook-validation).
 
 
 
@@ -1077,7 +1077,7 @@ await corsair.penpot.api.webhooks.update({ id: "df2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b
 |------|------|----------|-------------|
 | `id` | `string` | Yes | Webhook id |
 | `uri` | `string` | Yes | Endpoint deliveries are posted to |
-| `mtype` | `application/json \| application/transit+json` | Yes | Payload format |
+| `mtype` | `application/json` | Yes | Payload format |
 | `isActive` | `boolean` | Yes | Whether deliveries are active |
 
 

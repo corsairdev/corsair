@@ -474,8 +474,8 @@ export const CreateWebhookInputSchema = z
 		teamId: uuid.describe('Team the webhook belongs to'),
 		uri: z.string().url().describe('Endpoint deliveries are posted to'),
 		mtype: z
-			.enum(['application/json', 'application/transit+json'])
-			.describe('Payload format of the deliveries'),
+			.enum(['application/json'])
+			.describe('Payload format; JSON, the format the plugin reads'),
 	})
 	.describe(
 		'Create a webhook for a team; Penpot sends no signature header, so verify deliveries another way',
@@ -491,9 +491,7 @@ export const UpdateWebhookInputSchema = z
 	.object({
 		id: uuid.describe('Webhook id'),
 		uri: z.string().url().describe('Endpoint deliveries are posted to'),
-		mtype: z
-			.enum(['application/json', 'application/transit+json'])
-			.describe('Payload format'),
+		mtype: z.enum(['application/json']).describe('Payload format'),
 		isActive: z.boolean().describe('Whether deliveries are active'),
 	})
 	.describe('Update a webhook');

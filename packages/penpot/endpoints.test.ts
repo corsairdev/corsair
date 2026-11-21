@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { Comments, Projects, Teams } from './endpoints';
+import { Comments, Projects, Teams, Webhooks } from './endpoints';
 import { commentThread, team } from './test-fixtures';
 
 jest.mock('corsair/core', () => ({
@@ -73,6 +73,18 @@ describe('output parsing', () => {
 describe('input validation', () => {
 	it('rejects a create-team name over 250 characters', async () => {
 		await rejects(Teams.create, { name: 'x'.repeat(251) }, '250');
+	});
+
+	it('rejects a Transit webhook format, which the receiver cannot decode', async () => {
+		await rejects(
+			Webhooks.create,
+			{
+				teamId: '5f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5d',
+				uri: 'https://example.com/hooks',
+				mtype: 'application/transit+json',
+			},
+			'application/json',
+		);
 	});
 
 	it('rejects a threadsList without a fileId', async () => {

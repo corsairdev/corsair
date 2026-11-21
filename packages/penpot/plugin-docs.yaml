@@ -108,6 +108,6 @@ apiNotes:
   files.get: 'The answer includes the full file data tree.'
   comments.threadsList: 'Takes a fileId; the RPC answers 404 when called with only a team.'
   comments.create: 'Content is capped at 750 characters.'
-  webhooks.create: 'mtype picks the delivery payload format: application/json or application/transit+json. Penpot calls the URI on create and refuses one that does not answer (500 webhook-validation).'
+  webhooks.create: 'mtype is application/json: the plugin reads JSON deliveries only (Penpot can also send Transit or form bodies, which it does not decode). Penpot calls the URI on create and refuses one that does not answer (500 webhook-validation).'
   webhooks.delete: 'Deliveries stop until the webhook is created again.'
   accessTokens.delete: 'Revoking a token immediately breaks apps using it.'
