@@ -30,6 +30,7 @@ import { event } from './webhooks';
 import {
 	matchPasscreatorWebhook,
 	PasscreatorEventSchema,
+	PasscreatorSignedDataSchema,
 } from './webhooks/types';
 
 export type PasscreatorPluginOptions = {
@@ -202,9 +203,9 @@ export const passcreatorEndpointSchemas = {
 const passcreatorWebhookSchemas = {
 	'passcreator.event': {
 		description:
-			'A Passcreator event delivery: a pass object with its signature',
+			'A signed Passcreator delivery; the result is the verified pass data from signedData',
 		payload: PasscreatorEventSchema,
-		response: PasscreatorEventSchema,
+		response: PasscreatorSignedDataSchema,
 	},
 } as const satisfies RequiredPluginWebhookSchemas<
 	typeof passcreatorWebhooksNested
@@ -387,7 +388,7 @@ export function passcreator<const T extends PasscreatorPluginOptions>(
 	} satisfies InternalPasscreatorPlugin;
 }
 
-export { PasscreatorAPIError } from './client';
+export { buildPasscreatorApiError } from './client';
 
 export type {
 	Pass,

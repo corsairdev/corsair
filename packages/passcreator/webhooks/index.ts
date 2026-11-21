@@ -1,9 +1,10 @@
 import type { CorsairWebhook } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
 import type { PasscreatorContext } from '..';
-import type { PasscreatorWebhookPayload } from './types';
+import type { PasscreatorSignedData, PasscreatorWebhookPayload } from './types';
 import {
 	matchPasscreatorWebhook,
+	PasscreatorSignedDataSchema,
 	PasscreatorWebhookPayloadSchema,
 	verifyPasscreatorSignature,
 } from './types';
@@ -35,16 +36,18 @@ async function safeLog(
 export const event: CorsairWebhook<
 	PasscreatorContext,
 	PasscreatorWebhookPayload,
-	PasscreatorWebhookPayload
+	PasscreatorSignedData
 > = {
 	match: matchPasscreatorWebhook,
 	handler: async (ctx, request) => {
 		if (!request.hubVerified) {
 			// The platform public key is not a stored secret; the handler reads
 			// it from the option or the stored webhook signature slot.
+			// ctx.key is what the keyBuilder resolved: the webhookSecret option
+			// or the stored public key.
 			const verification = verifyPasscreatorSignature(
 				request.payload,
-				(await ctx.keys.get_webhook_signature()) ?? undefined,
+				ctx.key || undefined,
 			);
 			if (!verification.valid) {
 				return {
@@ -64,10 +67,31 @@ export const event: CorsairWebhook<
 			};
 		}
 
+		// Only signedData is authenticated, so the result is built from it,
+		// not from the outer fields a sender could change.
+		let signed: unknown;
+		try {
+			signed = JSON.parse(parsed.data.signedData);
+		} catch {
+			return {
+				success: false,
+				statusCode: 400,
+				error: 'signedData is not JSON',
+			};
+		}
+		const data = PasscreatorSignedDataSchema.safeParse(signed);
+		if (!data.success) {
+			return {
+				success: false,
+				statusCode: 400,
+				error: 'Invalid Passcreator signed data',
+			};
+		}
+
 		await safeLog(ctx, 'passcreator.webhook.event', {
-			event: parsed.data.event,
+			passUid: data.data.identifier ?? data.data.passId ?? undefined,
 		});
 
-		return { success: true, data: parsed.data };
+		return { success: true, data: data.data };
 	},
 };

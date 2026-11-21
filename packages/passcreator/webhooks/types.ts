@@ -4,11 +4,14 @@ import { readBodyRecord } from 'corsair/core';
 import { z } from 'zod';
 
 /**
- * Passcreator delivers pass events (pass_created, pass_updated, pass_deleted,
- * pass_scanned, ...) to endpoints subscribed through the API. Every payload
- * carries `signedData` (the canonical JSON of the pass) and `signature`
- * (hex-encoded SHA256 ECDSA over signedData), verifiable with the PEM EC
- * P-256 public key from GET /api/hook/publickey.
+ * Passcreator delivers pass events (pass_created, pass_updated, pass_voided,
+ * pushnotification_registered, ...) to endpoints subscribed with
+ * signPayload: true. A delivery is the flat pass object (identifier, passId,
+ * uniqueIdentifier, template fields) plus `signedData` (the JSON string that
+ * was signed) and `signature` (hex ECDSA over signedData), verifiable with
+ * the PEM public key from GET /api/hook/publickey. The body carries no event
+ * name: the event is the one the subscription was created for.
+ * https://developer.passcreator.com/en/webhooks/overview
  * https://developer.passcreator.com/en/signatures/verify-a-signature
  */
 
@@ -30,7 +33,8 @@ export function headerValue(
 
 /**
  * Verifies the hex ECDSA signature over `signedData` with the PEM public
- * key, as the docs prescribe (openssl-style SHA256 with the EC P-256 key).
+ * key. The docs verify with openssl_verify and SHA1 (its default); SHA256 is
+ * also tried so a later switch on Passcreator's side keeps working.
  * The payload of a Passcreator delivery carries both fields; a delivery
  * without them cannot be verified.
  */
@@ -61,10 +65,15 @@ export function verifyPasscreatorSignature(
 		};
 	}
 	try {
-		const verifier = createVerify('SHA256');
-		verifier.update(signedData);
-		verifier.end();
-		return { valid: verifier.verify(publicKeyPem, signature, 'hex') };
+		for (const algorithm of ['SHA1', 'SHA256']) {
+			const verifier = createVerify(algorithm);
+			verifier.update(signedData);
+			verifier.end();
+			if (verifier.verify(publicKeyPem, signature, 'hex')) {
+				return { valid: true };
+			}
+		}
+		return { valid: false, error: 'Invalid webhook signature' };
 	} catch (error) {
 		return {
 			valid: false,
@@ -77,36 +86,57 @@ export function verifyPasscreatorSignature(
 
 export const PasscreatorEventSchema = z
 	.object({
-		/** The event that fired, e.g. "pass_created". */
-		event: z.string().min(1),
-		// unknown: the pass object's keys depend on the template's properties
-		// (names or IDs), so it stays an open record.
-		pass: z.record(z.string(), z.unknown()).nullish(),
 		signature: z
 			.string()
-			.nullish()
-			.describe('Hex SHA256 ECDSA signature over signedData'),
+			.min(1)
+			.describe('Hex ECDSA signature over signedData'),
 		signedData: z
 			.string()
+			.min(1)
+			.describe('The JSON string Passcreator signed: the pass data'),
+		identifier: z.string().nullish().describe('Pass UUID'),
+		uniqueIdentifier: z
+			.string()
 			.nullish()
-			.describe('Canonical JSON of the signed pass data'),
+			.describe('Unique pass identifier shown in the barcode'),
 	})
-	.loose();
+	.loose()
+	.describe('A signed Passcreator delivery: the flat pass object');
 
 export const PasscreatorWebhookPayloadSchema = PasscreatorEventSchema.describe(
 	'One Passcreator webhook delivery',
 );
 
+/** The verified pass data, parsed from signedData. */
+export const PasscreatorSignedDataSchema = z
+	.object({
+		identifier: z.string().nullish().describe('Pass UUID'),
+		passId: z.string().nullish().describe('Deprecated pass UUID'),
+		uniqueIdentifier: z
+			.string()
+			.nullish()
+			.describe('Unique pass identifier shown in the barcode'),
+		passTemplateGuid: z.string().nullish().describe('Template UUID'),
+	})
+	.loose()
+	.describe('The authenticated pass data of a delivery');
+
 export type PasscreatorWebhookPayload = z.infer<typeof PasscreatorEventSchema>;
+export type PasscreatorSignedData = z.infer<typeof PasscreatorSignedDataSchema>;
 
 // ── Matching ───────────────────────────────────────────────────────────────
 
 /**
- * Passcreator sends every event type to the one endpoint of a subscription,
- * so matching only needs the documented envelope. A body parsed by
- * processWebhook is an object here (readBodyRecord returns null otherwise).
+ * A Passcreator delivery is recognised by its signature pair: the body has
+ * no event field, and other providers post `{ event }` bodies (Stannp). A
+ * body parsed by processWebhook is an object here (readBodyRecord returns
+ * null otherwise).
  */
 export function matchPasscreatorWebhook(request: RawWebhookRequest): boolean {
 	const body = readBodyRecord(request);
-	return body !== null && typeof body.event === 'string';
+	return (
+		body !== null &&
+		typeof body.signature === 'string' &&
+		typeof body.signedData === 'string'
+	);
 }
