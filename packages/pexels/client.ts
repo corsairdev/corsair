@@ -7,63 +7,20 @@ import type {
 import { ApiError, request } from 'corsair/http';
 
 /**
- * Pexels documents a per-month quota (default 200 requests/hour and 20,000
- * per month) with an X-Ratelimit-Reset header on the answer, so 429s get
- * core's standard handling: up to three retries honouring Retry-After (R8:
- * the plugin adds no second retry layer). Every route is a GET, so a retry
- * is safe.
+ * Pexels' only limits are quotas: 200 requests an hour and 20,000 a month
+ * by default. A 429 means one of them is spent and X-Ratelimit-Reset (a UNIX
+ * time) says when it refills, possibly weeks away, so retrying after a few
+ * seconds only burns more calls (R8: a 429 that reports an exhausted quota
+ * is not retried). The 429 reaches the caller at once.
+ * https://www.pexels.com/api/documentation/#guidelines
  */
 const RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 3,
+	maxRetries: 0,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: { retryAfter: 'retry-after' },
 };
-
-/**
- * A failed call throws this: core's `ApiError` (R8: core and the handlers
- * read `status` and `retryAfter` from it), rebuilt without the request body
- * and query. Search queries ride through the request, which core's own
- * ApiError keeps on the request.
- */
-export class PexelsAPIError extends ApiError {
-	/** The HTTP method of the failed request, for replay-safety decisions. */
-	readonly method: string;
-
-	constructor(
-		message: string,
-		options: {
-			method: string;
-			/** Request path, without query. */
-			path: string;
-			status: number;
-			statusText?: string;
-			// unknown: error bodies can be the { status, code, message }
-			// envelope or non-JSON from a proxy.
-			body?: unknown;
-			retryAfter?: number;
-		},
-	) {
-		super(
-			{
-				method: options.method as ApiRequestOptions['method'],
-				url: options.path,
-			},
-			{
-				url: options.path,
-				ok: false,
-				status: options.status,
-				statusText: options.statusText ?? '',
-				body: options.body,
-			},
-			message,
-			{ retryAfter: options.retryAfter },
-		);
-		this.name = 'PexelsAPIError';
-		this.method = options.method;
-	}
-}
 
 /**
  * Extracts the readable part of a Pexels error body. Errors are
@@ -103,7 +60,7 @@ export type PexelsRequest = {
 /**
  * Authenticated Pexels request. API keys authenticate as the raw value of
  * the Authorization header — no scheme word, per the docs. Photos and
- * videos live on the same host; photos under /v1, videos at the root.
+ * videos both live under /v1 (the old /videos root is deprecated).
  * https://www.pexels.com/api/documentation/
  */
 export async function makePexelsRequest(
@@ -144,14 +101,21 @@ export async function makePexelsRequest(
 				error.body,
 				error.statusText || 'request failed',
 			);
-			throw new PexelsAPIError(`Pexels ${error.status}: ${detail}`, {
-				method,
-				path,
-				status: error.status,
-				statusText: error.statusText,
-				body: error.body,
-				retryAfter: error.retryAfter,
-			});
+			// R8: core's ApiError itself (management maps errors named
+			// ApiError to their real status), rebuilt with the method and path
+			// only, so status and retryAfter survive for the handlers.
+			throw new ApiError(
+				{ method, url: path },
+				{
+					url: path,
+					ok: false,
+					status: error.status,
+					statusText: error.statusText,
+					body: error.body,
+				},
+				`Pexels ${error.status}: ${detail}`,
+				{ retryAfter: error.retryAfter },
+			);
 		}
 		// Timeouts and network failures carry no request data; let them through.
 		throw error;

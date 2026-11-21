@@ -1,13 +1,16 @@
 import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
-import { PexelsAPIError } from './client';
+import { ApiError } from 'corsair/http';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
-function apiError(status: number, method: string = 'GET'): PexelsAPIError {
-	return new PexelsAPIError(`Pexels ${status}: boom`, {
-		method,
-		path: '/v1/curated',
-		status,
-	});
+function apiError(
+	status: number,
+	method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE' = 'GET',
+): ApiError {
+	return new ApiError(
+		{ method, url: '/v1/curated' },
+		{ url: '/v1/curated', ok: false, status, statusText: '', body: null },
+		`Pexels ${status}: boom`,
+	);
 }
 
 const NO_CONTEXT: ErrorContext = {
@@ -103,14 +106,7 @@ describe('mergeErrorHandlers', () => {
 		expect(order.at(-1)).toBe('DEFAULT');
 		const entry = merged.OVERLOADED_ERROR;
 		if (!entry) throw new Error('caller handler missing');
-		const result = await entry.handler(
-			new PexelsAPIError('overloaded', {
-				method: 'GET',
-				path: '/x',
-				status: 529,
-			}),
-			NO_CONTEXT,
-		);
+		const result = await entry.handler(apiError(529), NO_CONTEXT);
 		expect(result.maxRetries).toBe(1);
 	});
 
@@ -143,5 +139,5 @@ describe('mergeErrorHandlers', () => {
 });
 
 function statusIs(error: Error, status: number): boolean {
-	return error instanceof PexelsAPIError && error.status === status;
+	return error instanceof ApiError && error.status === status;
 }

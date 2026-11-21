@@ -4,9 +4,9 @@ import { pexels } from './index';
 import { curatedPhotos } from './test-fixtures';
 
 /**
- * A 429 gets the transport's standard retries (Retry-After honoured, up to
- * three). error-handlers.ts decides the rest; every route here is a GET, so
- * a 5xx replay is safe.
+ * A 429 is not retried: Pexels sends one only when the hourly or monthly
+ * quota is spent. error-handlers.ts decides the rest; every route here is a
+ * GET, so a 5xx replay is safe.
  */
 async function createClient() {
 	const testDb = createTestDatabase();
@@ -52,16 +52,15 @@ afterEach(() => {
 });
 
 describe('retries through createCorsair', () => {
-	it("retries a 429 through the transport's rate-limit handling", async () => {
+	it('does not retry a 429, which means a quota is spent', async () => {
 		const { corsair, testDb } = await createClient();
 		try {
 			respond({ message: 'Slow down' }, 429, { 'Retry-After': '0' });
-			respond(curatedPhotos);
 
-			await expect(
-				corsair.pexels.api.photos.curated({}),
-			).resolves.toMatchObject({ photos: curatedPhotos.photos });
-			expect(fetchMock).toHaveBeenCalledTimes(2);
+			await expect(corsair.pexels.api.photos.curated({})).rejects.toMatchObject(
+				{ status: 429 },
+			);
+			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {
 			testDb.cleanup();
 		}

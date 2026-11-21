@@ -1,13 +1,12 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { PexelsAPIError } from './client';
+import { ApiError } from 'corsair/http';
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof PexelsAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
-// The client retries a 429 up to three times through core, honouring
-// Retry-After. No RATE_LIMIT_ERROR handler is needed here: DEFAULT adds no
-// retries after the client has used its attempts.
+// A 429 means the hourly or monthly quota is spent; neither the client nor
+// DEFAULT retries it.
 // Documented statuses (verified live): 401 Unauthorized for a bad key.
 export const errorHandlers = {
 	AUTH_ERROR: {
@@ -24,8 +23,8 @@ export const errorHandlers = {
 	// Every route here is a GET, so a retry after a 5xx replays nothing.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof PexelsAPIError &&
-			error.method === 'GET' &&
+			error instanceof ApiError &&
+			error.request.method === 'GET' &&
 			(error.status ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,

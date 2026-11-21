@@ -1,9 +1,6 @@
 import { inspect } from 'node:util';
-import {
-	describePexelsError,
-	makePexelsRequest,
-	PexelsAPIError,
-} from './client';
+import { ApiError } from 'corsair/http';
+import { describePexelsError, makePexelsRequest } from './client';
 import { unauthorized } from './test-fixtures';
 
 const API_KEY = 'px-test-key';
@@ -21,10 +18,10 @@ function respond(body: unknown, status: number) {
 }
 
 // unknown: a rejection can be any value until the instanceof check narrows it.
-async function failure(promise: Promise<unknown>): Promise<PexelsAPIError> {
+async function failure(promise: Promise<unknown>): Promise<ApiError> {
 	const error = await promise.catch((caught: unknown) => caught);
-	expect(error).toBeInstanceOf(PexelsAPIError);
-	if (!(error instanceof PexelsAPIError)) throw error;
+	expect(error).toBeInstanceOf(ApiError);
+	if (!(error instanceof ApiError)) throw error;
 	return error;
 }
 
@@ -69,7 +66,9 @@ describe('makePexelsRequest', () => {
 		);
 		expect(error.status).toBe(401);
 		expect(error.message).toContain('Invalid API key');
-		expect(error.name).toBe('PexelsAPIError');
+		// R8: core's own ApiError, so management maps it to its real status.
+		expect(error.name).toBe('ApiError');
+		expect(error.constructor).toBe(ApiError);
 	});
 
 	it('keeps no search query on the rebuilt error', async () => {
@@ -94,16 +93,14 @@ describe('makePexelsRequest', () => {
 		).rejects.toThrow('connection reset');
 	});
 
-	it('retries a 429 at the transport, honouring Retry-After', async () => {
+	it('does not retry a 429: Pexels sends one only when a quota is spent', async () => {
 		respond({ message: 'Slow down' }, 429);
-		respond({ photos: [] }, 200);
 
-		const result = await makePexelsRequest(API_KEY, {
-			method: 'GET',
-			path: '/v1/curated',
-		});
-		expect(result).toEqual({ photos: [] });
-		expect(fetchMock).toHaveBeenCalledTimes(2);
+		const error = await failure(
+			makePexelsRequest(API_KEY, { method: 'GET', path: '/v1/curated' }),
+		);
+		expect(error.status).toBe(429);
+		expect(fetchMock).toHaveBeenCalledTimes(1);
 	});
 });
 
