@@ -135,11 +135,11 @@ describe('wallets', () => {
 	});
 
 	it('get reads one wallet by explicit id', async () => {
-		respond({ data: [wallet], meta: {} });
+		respond({ data: [{ ...wallet, id: 'wallet_9' }], meta: {} });
 		const result = (await invoke(Wallets.get, { walletId: 'wallet_9' })) as {
 			id: string;
 		};
-		expect(result.id).toBe(wallet.id);
+		expect(result.id).toBe('wallet_9');
 		// There is no GET /v1/wallets/{id}; the list is filtered by id.
 		expectAuthenticated('/v1/wallets');
 		expect(lastRequest().query).toEqual({ 'filter[id]': 'wallet_9' });
