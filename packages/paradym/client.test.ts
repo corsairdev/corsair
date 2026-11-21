@@ -1,9 +1,6 @@
 import { inspect } from 'node:util';
-import {
-	describeParadymError,
-	makeParadymRequest,
-	ParadymAPIError,
-} from './client';
+import { ApiError } from 'corsair/http';
+import { describeParadymError, makeParadymRequest } from './client';
 import { issuanceSession, unauthorized } from './test-fixtures';
 
 const API_KEY = 'pd-test-key';
@@ -29,10 +26,10 @@ function respond(
 }
 
 // unknown: a rejection can be any value until the instanceof check narrows it.
-async function failure(promise: Promise<unknown>): Promise<ParadymAPIError> {
+async function failure(promise: Promise<unknown>): Promise<ApiError> {
 	const error = await promise.catch((caught: unknown) => caught);
-	expect(error).toBeInstanceOf(ParadymAPIError);
-	if (!(error instanceof ParadymAPIError)) throw error;
+	expect(error).toBeInstanceOf(ApiError);
+	if (!(error instanceof ApiError)) throw error;
 	return error;
 }
 
@@ -113,7 +110,7 @@ describe('makeParadymRequest', () => {
 		);
 		expect(error.status).toBe(401);
 		expect(error.message).toContain('No API key provided');
-		expect(error.name).toBe('ParadymAPIError');
+		expect(error.name).toBe('ApiError');
 	});
 
 	it('keeps no request body on the rebuilt error', async () => {
@@ -129,6 +126,33 @@ describe('makeParadymRequest', () => {
 		const printed = inspect(error);
 		expect(printed).not.toContain('secret-wallet');
 		expect(error.message).not.toContain('secret-wallet');
+	});
+
+	it('masks values a validation error echoes, in message and details', async () => {
+		respond(
+			{
+				message: 'Invalid holder jane@example.com',
+				details: [
+					{ key: 'phone', message: 'Bad number +15555550100', value: 'x' },
+				],
+				code: 1001,
+				echoed: { name: 'Jane Doe' },
+			},
+			400,
+		);
+		const error = await failure(
+			makeParadymRequest(API_KEY, { method: 'POST', path: '/v1/wallets' }),
+		);
+		const printed = inspect(error, { depth: 5 });
+		expect(printed).not.toContain('jane@example.com');
+		expect(printed).not.toContain('5555550100');
+		expect(printed).not.toContain('Jane Doe');
+		expect(error.name).toBe('ApiError');
+		expect(error.body).toEqual({
+			message: 'Invalid holder [email]',
+			code: 1001,
+			details: [{ key: 'phone', message: 'Bad number [number]' }],
+		});
 	});
 
 	it('falls back to the numeric error code when no message exists', async () => {

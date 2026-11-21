@@ -1,9 +1,10 @@
 import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
-import { ParadymAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { buildParadymApiError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
-function apiError(status: number, method: string = 'GET'): ParadymAPIError {
-	return new ParadymAPIError(`Paradym ${status}: boom`, {
+function apiError(status: number, method: string = 'GET'): ApiError {
+	return buildParadymApiError(`Paradym ${status}: boom`, {
 		method,
 		path: '/v1/wallets',
 		status,
@@ -109,7 +110,7 @@ describe('mergeErrorHandlers', () => {
 		const entry = merged.OVERLOADED_ERROR;
 		if (!entry) throw new Error('caller handler missing');
 		const result = await entry.handler(
-			new ParadymAPIError('overloaded', {
+			buildParadymApiError('overloaded', {
 				method: 'GET',
 				path: '/x',
 				status: 529,
@@ -148,5 +149,5 @@ describe('mergeErrorHandlers', () => {
 });
 
 function statusIs(error: Error, status: number): boolean {
-	return error instanceof ParadymAPIError && error.status === status;
+	return error instanceof ApiError && error.status === status;
 }

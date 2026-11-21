@@ -1,8 +1,8 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { ParadymAPIError } from './client';
+import { ApiError } from 'corsair/http';
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof ParadymAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 // The client retries a 429 up to three times through core, honouring
@@ -28,8 +28,8 @@ export const errorHandlers = {
 	// after a 5xx would run twice, and Paradym documents no idempotency keys.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof ParadymAPIError &&
-			error.method === 'GET' &&
+			error instanceof ApiError &&
+			error.request.method === 'GET' &&
 			(error.status ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,

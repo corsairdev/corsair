@@ -21,47 +21,87 @@ const RATE_LIMIT_CONFIG: RateLimitConfig = {
 };
 
 /**
- * A failed call throws this: core's `ApiError` (R8: core and the handlers
- * read `status` and `retryAfter` from it), rebuilt without the request body
- * and query. Wallet-scoped paths carry resource ids, and error bodies can
- * echo what was sent, which core's own ApiError keeps on the request.
+ * A failed call throws core's `ApiError` (R8: core and the handlers read
+ * `status` and `retryAfter` from it, and management maps errors named
+ * ApiError to a provider error with its status), rebuilt without the request
+ * body and query.
  */
-export class ParadymAPIError extends ApiError {
-	/** The HTTP method of the failed request, for replay-safety decisions. */
-	readonly method: string;
-
-	constructor(
-		message: string,
-		options: {
-			method: string;
-			/** Request path, without query. */
-			path: string;
-			status: number;
-			statusText?: string;
-			// unknown: error bodies can be the { message, details, code }
-			// envelope or non-JSON from a proxy.
-			body?: unknown;
-			retryAfter?: number;
+export function buildParadymApiError(
+	message: string,
+	options: {
+		method: string;
+		/** Request path, without query. */
+		path: string;
+		status: number;
+		statusText?: string;
+		// unknown: error bodies can be the { message, details, code }
+		// envelope or non-JSON from a proxy.
+		body?: unknown;
+		retryAfter?: number;
+	},
+): ApiError {
+	return new ApiError(
+		{
+			method: options.method as ApiRequestOptions['method'],
+			url: options.path,
 		},
-	) {
-		super(
-			{
-				method: options.method as ApiRequestOptions['method'],
-				url: options.path,
-			},
-			{
-				url: options.path,
-				ok: false,
-				status: options.status,
-				statusText: options.statusText ?? '',
-				body: options.body,
-			},
-			message,
-			{ retryAfter: options.retryAfter },
-		);
-		this.name = 'ParadymAPIError';
-		this.method = options.method;
+		{
+			url: options.path,
+			ok: false,
+			status: options.status,
+			statusText: options.statusText ?? '',
+			body: options.body,
+		},
+		message,
+		{ retryAfter: options.retryAfter },
+	);
+}
+
+/**
+ * Masks what a validation error can echo back from the request: any word
+ * holding an @ (an email) or 7+ digits (a phone number). Token by token, no
+ * backtracking regex.
+ */
+export function maskEchoes(text: string): string {
+	return text
+		.split(/(\s+)/)
+		.map((token) => {
+			if (token.includes('@')) return '[email]';
+			if ((token.match(/\d/g)?.length ?? 0) >= 7) return '[number]';
+			return token;
+		})
+		.join('');
+}
+
+/**
+ * Keeps only the diagnostic part of an error body: `message`, `code` and each
+ * detail's `key` and `message`, with echoed values masked. Any other key is
+ * dropped.
+ */
+// unknown: error bodies are arbitrary JSON until narrowed here.
+export function safeErrorBody(body: unknown): unknown {
+	if (typeof body === 'string') {
+		return body.length <= 200 ? maskEchoes(body) : undefined;
 	}
+	const record = asRecord(body);
+	if (!record) return undefined;
+	const safe: Record<string, unknown> = {};
+	if (typeof record.message === 'string')
+		safe.message = maskEchoes(record.message);
+	if (typeof record.code === 'number' || typeof record.code === 'string')
+		safe.code = record.code;
+	if (Array.isArray(record.details)) {
+		safe.details = record.details.map((item) => {
+			const detail = asRecord(item);
+			return {
+				...(typeof detail?.key === 'string' ? { key: detail.key } : {}),
+				...(typeof detail?.message === 'string'
+					? { message: maskEchoes(detail.message) }
+					: {}),
+			};
+		});
+	}
+	return safe;
 }
 
 /**
@@ -161,14 +201,17 @@ export async function makeParadymRequest(
 				error.body,
 				textBody || error.statusText || 'request failed',
 			);
-			throw new ParadymAPIError(`Paradym ${error.status}: ${detail}`, {
-				method,
-				path,
-				status: error.status,
-				statusText: error.statusText,
-				body: error.body,
-				retryAfter: error.retryAfter,
-			});
+			throw buildParadymApiError(
+				`Paradym ${error.status}: ${maskEchoes(detail)}`,
+				{
+					method,
+					path,
+					status: error.status,
+					statusText: error.statusText,
+					body: safeErrorBody(error.body),
+					retryAfter: error.retryAfter,
+				},
+			);
 		}
 		// Timeouts and network failures carry no request data; let them through.
 		throw error;
