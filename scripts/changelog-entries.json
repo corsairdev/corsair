@@ -10896,5 +10896,205 @@
     "version": "0.2.19",
     "isNew": false,
     "changes": []
+  },
+  {
+    "date": "2026-11-21",
+    "package": "@corsair-dev/cli",
+    "dir": "packages/cli",
+    "name": "cli",
+    "version": "0.1.101",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-21",
+    "package": "@corsair-dev/langchain",
+    "dir": "adapters/langchain",
+    "name": "langchain",
+    "version": "0.1.76",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-21",
+    "package": "@corsair-dev/llamaindex",
+    "dir": "adapters/llamaindex",
+    "name": "llamaindex",
+    "version": "0.1.76",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-21",
+    "package": "@corsair-dev/mastra",
+    "dir": "adapters/mastra",
+    "name": "mastra",
+    "version": "0.1.76",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-21",
+    "package": "@corsair-dev/mcp",
+    "dir": "packages/mcp",
+    "name": "mcp",
+    "version": "0.1.104",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-21",
+    "package": "@corsair-dev/studio",
+    "dir": "packages/studio",
+    "name": "studio",
+    "version": "0.1.87",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-21",
+    "package": "@corsair-dev/ui",
+    "dir": "packages/ui",
+    "name": "ui",
+    "version": "0.1.81",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-21",
+    "package": "corsair",
+    "dir": "packages/corsair",
+    "name": "corsair",
+    "version": "0.2.20",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-21",
+    "package": "@corsair-dev/tailscale",
+    "dir": "packages/tailscale",
+    "name": "Tailscale",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-21",
+    "package": "@corsair-dev/litescrape",
+    "dir": "packages/litescrape",
+    "name": "LiteScrape",
+    "version": "0.1.2",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2651,
+        "title": "Accept managed_pricing auth"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-21",
+    "package": "cloud",
+    "version": "0.2.19",
+    "changes": []
+  },
+  {
+    "date": "2026-11-21",
+    "package": "@corsair-dev/cli",
+    "dir": "packages/cli",
+    "name": "cli",
+    "version": "0.1.102",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-21",
+    "package": "@corsair-dev/langchain",
+    "dir": "adapters/langchain",
+    "name": "langchain",
+    "version": "0.1.77",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-21",
+    "package": "@corsair-dev/llamaindex",
+    "dir": "adapters/llamaindex",
+    "name": "llamaindex",
+    "version": "0.1.77",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-21",
+    "package": "@corsair-dev/mastra",
+    "dir": "adapters/mastra",
+    "name": "mastra",
+    "version": "0.1.77",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-21",
+    "package": "@corsair-dev/mcp",
+    "dir": "packages/mcp",
+    "name": "mcp",
+    "version": "0.1.105",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-21",
+    "package": "@corsair-dev/studio",
+    "dir": "packages/studio",
+    "name": "studio",
+    "version": "0.1.88",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-21",
+    "package": "@corsair-dev/ui",
+    "dir": "packages/ui",
+    "name": "ui",
+    "version": "0.1.82",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-21",
+    "package": "corsair",
+    "dir": "packages/corsair",
+    "name": "corsair",
+    "version": "0.2.21",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-21",
+    "package": "@corsair-dev/googleadmin",
+    "dir": "packages/googleadmin",
+    "name": "Google Admin",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-21",
+    "package": "@corsair-dev/parallel",
+    "dir": "packages/parallel",
+    "name": "Parallel",
+    "version": "0.1.1",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2654,
+        "title": "Flights, hotels and shopping search, inbound webhooks, managed pricing"
+      }
+    ]
   }
 ]
