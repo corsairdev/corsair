@@ -1,0 +1,4 @@
+export const MailcoachSchema = {
+	version: '1.0.0',
+	entities: {},
+} as const;
