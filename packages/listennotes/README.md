@@ -1,43 +1,78 @@
 # @corsair-dev/listennotes
 
-Listen Notes plugin for Corsair.
+Listen Notes podcast search, directory, playlist, and audience-insights API for Corsair.
 
-## Install
+## Install and authenticate
 
 ```bash
 pnpm add @corsair-dev/listennotes
 ```
 
-## Endpoints
+The plugin authenticates with `X-ListenAPI-Key`. Store a key using `pnpm corsair setup --plugin=listennotes api_key=<your-key>`, or pass `key` to `listennotes({ key })`.
 
-| Operation | Operation ID | Risk | Description |
-|-----------|--------------|------|-------------|
-| `curated.get` | `listennotes.api.curated.get` | `read` | Fetch a curated list of podcasts by ID |
-| `curated.list` | `listennotes.api.curated.list` | `read` | Fetch curated lists of podcasts |
-| `episodes.get` | `listennotes.api.episodes.get` | `read` | Fetch detailed metadata for an episode by ID |
-| `episodes.getRecommendations` | `listennotes.api.episodes.getRecommendations` | `read` | Fetch recommended episodes based on a given episode ID |
-| `genres.list` | `listennotes.api.genres.list` | `read` | Fetch a list of podcast genres supported by Listen Notes |
-| `playlists.get` | `listennotes.api.playlists.get` | `read` | Fetch a playlist and its items by ID |
-| `playlists.list` | `listennotes.api.playlists.list` | `read` | Fetch a list of user playlists |
-| `podcasts.get` | `listennotes.api.podcasts.get` | `read` | Fetch detailed metadata and episodes for a podcast by ID |
-| `podcasts.getBest` | `listennotes.api.podcasts.getBest` | `read` | Fetch best podcasts by genre and region |
-| `podcasts.getEpisodes` | `listennotes.api.podcasts.getEpisodes` | `read` | Fetch paginated episodes for a podcast by ID |
-| `podcasts.getRecommendations` | `listennotes.api.podcasts.getRecommendations` | `read` | Fetch recommended podcasts based on a given podcast ID |
-| `search.search` | `listennotes.api.search.search` | `read` | Full-text search for podcast episodes, channels, or curated lists |
-| `search.typeahead` | `listennotes.api.search.typeahead` | `read` | Typeahead search for podcast titles, genres, and terms |
+```ts
+import { listennotes } from '@corsair-dev/listennotes';
 
-## Auth
+const plugin = listennotes();
+```
 
-Auth: API key. Corsair prompts your tenant for credentials on first use.
+## API operations
+
+Every documented Listen Notes API v2 REST operation is exposed below. References link to the [official OpenAPI specification](https://listen-api.listennotes.com/api/v2/openapi.json) and [API documentation](https://www.listennotes.com/api/docs/).
+
+| Corsair operation | Method and path | Risk |
+|---|---|---|
+| `search.search` | `GET /search` | read |
+| `search.typeahead` | `GET /typeahead` | read |
+| `search.searchEpisodeTitles` | `GET /search_episode_titles` | read |
+| `search.trendingSearches` | `GET /trending_searches` | read |
+| `search.relatedSearches` | `GET /related_searches` | read |
+| `search.spellcheck` | `GET /spellcheck` | read |
+| `podcasts.getBest` | `GET /best_podcasts` | read |
+| `podcasts.get` | `GET /podcasts/{id}` | read |
+| `podcasts.getEpisodes` | `GET /podcasts/{id}` (episode pagination convenience) | read |
+| `podcasts.delete` | `DELETE /podcasts/{id}` | destructive |
+| `podcasts.getRecommendations` | `GET /podcasts/{id}/recommendations` | read |
+| `podcasts.getBatch` | `POST /podcasts` | read |
+| `podcasts.submit` | `POST /podcasts/submit` | write |
+| `podcasts.refreshRss` | `POST /podcasts/{id}/rss` | write |
+| `podcasts.getAudience` | `GET /podcasts/{id}/audience` | read |
+| `podcasts.getByDomain` | `GET /podcasts/domains/{domain_name}` | read |
+| `episodes.get` | `GET /episodes/{id}` | read |
+| `episodes.getRecommendations` | `GET /episodes/{id}/recommendations` | read |
+| `episodes.getBatch` | `POST /episodes` | read |
+| `episodes.justListen` | `GET /just_listen` | read |
+| `genres.list` | `GET /genres` | read |
+| `regions.list` | `GET /regions` | read |
+| `languages.list` | `GET /languages` | read |
+| `curated.list` | `GET /curated_podcasts` | read |
+| `curated.get` | `GET /curated_podcasts/{id}` | read |
+| `playlists.list` | `GET /playlists` | read |
+| `playlists.get` | `GET /playlists/{id}` | read |
+| `playlists.create` | `POST /playlists` | write |
+| `playlists.update` | `PUT /playlists/{id}` | write |
+| `playlists.delete` | `DELETE /playlists/{id}` | destructive |
+| `playlists.addItem` | `POST /playlists/{id}/items` | write |
+| `playlists.updateItem` | `PUT /playlists/{id}/items/{item_id}` | write |
+| `playlists.deleteItem` | `DELETE /playlists/{id}/items/{item_id}` | destructive |
+
+`podcasts.getEpisodes` is a convenience operation for the documented `GET /podcasts/{id}` route; Listen Notes returns episodes and their `next_episode_pub_date` cursor from that route. It does not call an `/episodes` sub-route.
+
+## Pagination, plan limits, and retries
+
+- Search results use `next_offset`; best podcasts use `next_page_number`; podcast episode details and batch latest-episode reads use `next_episode_pub_date`; curated lists and playlists use page numbers; publisher-domain results use `next_page_number`.
+- Batch podcast and episode reads accept at most 10 entries. Related search, spellcheck, transcript retrieval, batch reads, and RSS refresh are limited to PRO/ENTERPRISE plans where specified by Listen Notes. `interviews_only` and `sponsored_only` search filters also require PRO/ENTERPRISE.
+- Listen Notes documents `429` for both exhausted FREE-plan quota and requests that exceed the rate limit. Because the documented response does not distinguish the cases, the plugin does not automatically retry `429`s; it preserves `Retry-After` on the propagated `ApiError`.
+- Playlist mutations require ownership by the API admin account. Confirm destructive playlist changes before calling them. Podcast deletion requests are reviewed by Listen Notes; its documented `reason: "testing"` safeguard can be used to exercise that route without deleting a podcast.
+
+The live API suite is opt-in: set `LISTENNOTES_API_KEY` and run `pnpm --dir packages/listennotes test:live`. Unit tests use mocked responses and make no live API claim.
 
 ## Webhooks
 
-No webhooks.
+No webhooks are implemented; the integration request did not ask for them.
 
-## Reference
+## Documentation and license
 
-Full docs, types, and examples: https://docs.corsair.dev/plugins/listennotes
-
-## License
+Full generated documentation: https://docs.corsair.dev/plugins/listennotes
 
 Apache-2.0

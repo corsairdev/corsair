@@ -5,6 +5,7 @@ import {
 	LISTENNOTES_API_BASE,
 	makeListennotesRequest,
 	sanitizeApiError,
+	serializeFormBody,
 } from './client';
 import { errorHandlers } from './error-handlers';
 
@@ -117,7 +118,8 @@ describe('makeListennotesRequest', () => {
 		);
 
 		expect(caught).toBe(rateLimited);
-		const error = caught as ApiError;
+		if (!(caught instanceof ApiError)) throw new Error('Expected ApiError');
+		const error = caught;
 		expect(error.status).toBe(429);
 		expect(error.retryAfter).toBe(2500);
 		expect(error.request.headers?.['x-listenapi-key']).toBe('[REDACTED]');
@@ -125,7 +127,32 @@ describe('makeListennotesRequest', () => {
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
 		await expect(
 			errorHandlers.RATE_LIMIT_ERROR.handler(error),
-		).resolves.toEqual({ maxRetries: 5, headersRetryAfterMs: 2500 });
+		).resolves.toEqual({ maxRetries: 0, headersRetryAfterMs: 2500 });
+	});
+
+	it('serializes form fields using standard URL encoding', () => {
+		expect(
+			serializeFormBody({
+				ids: 'episode1,episode2',
+				show_latest_episodes: 1,
+				next_episode_pub_date: undefined,
+			}),
+		).toBe('ids=episode1%2Cepisode2&show_latest_episodes=1');
+	});
+
+	it('passes URL-encoded bodies and their media type to the transport', async () => {
+		mockedRequest.mockResolvedValue({ podcasts: [] });
+		await makeListennotesRequest('/podcasts', 'test-api-key', {
+			method: 'POST',
+			body: 'ids=episode1%2Cepisode2',
+			mediaType: 'application/x-www-form-urlencoded',
+		});
+		expect(mockedRequest.mock.calls[0]?.[1]).toMatchObject({
+			method: 'POST',
+			url: '/podcasts',
+			body: 'ids=episode1%2Cepisode2',
+			mediaType: 'application/x-www-form-urlencoded',
+		});
 	});
 
 	it('sanitizes credentials from error request headers and body', () => {
@@ -134,25 +161,68 @@ describe('makeListennotesRequest', () => {
 				method: 'POST',
 				url: '/test',
 				headers: { 'x-listenapi-key': 'super-secret-key' },
+				query: { q: 'listener@example.com', genre_ids: '68' },
 				body: { apiKey: 'secret', safe: 'value' },
 			},
 			{
-				url: 'https://listen-api.listennotes.com/api/v2/test',
+				url: 'https://listen-api.listennotes.com/api/v2/search?q=listener%40example.com',
 				ok: false,
 				status: 400,
 				statusText: 'Bad Request',
-				body: { token: 'secret-token', message: 'invalid' },
+				body: {
+					token: 'secret-token',
+					message: 'Invalid query listener@example.com',
+				},
 			},
-			'Bad Request',
+			'Bad Request for listener@example.com',
 		);
 
 		// `unknown` because sanitizeApiError accepts and returns unknown for non-ApiError fallback.
 		const sanitized: unknown = sanitizeApiError(raw);
 		expect(sanitized).toBe(raw);
-		const err = sanitized as ApiError;
-		expect(err.request.headers?.['x-listenapi-key']).toBe('[REDACTED]');
-		expect(err.request.body).toEqual({ apiKey: '[REDACTED]', safe: 'value' });
-		expect(err.body).toEqual({ token: '[REDACTED]', message: 'invalid' });
+		if (!(sanitized instanceof ApiError)) throw new Error('Expected ApiError');
+		expect(sanitized.request.headers?.['x-listenapi-key']).toBe('[REDACTED]');
+		expect(sanitized.request.query?.q).toBe('[REDACTED]');
+		expect(sanitized.request.query?.genre_ids).toBe('68');
+		expect(sanitized.request.body).toBe('[REDACTED]');
+		expect(sanitized.url).toContain('q=%5BREDACTED%5D');
+		expect(sanitized.message).not.toContain('listener@example.com');
+		expect(sanitized.body).toEqual({
+			token: '[REDACTED]',
+			message: 'Invalid query [REDACTED]',
+		});
+	});
+
+	it('keeps the original request query while redacting sensitive diagnostics', async () => {
+		mockedRequest.mockResolvedValue({ terms: [] });
+		await makeListennotesRequest('/search', 'test-api-key', {
+			method: 'GET',
+			query: { q: 'listener@example.com' },
+		});
+		expect(mockedRequest.mock.calls[0]?.[1]?.query).toEqual({
+			q: 'listener@example.com',
+		});
+	});
+
+	it('redacts publisher domains from propagated API error diagnostics', () => {
+		const raw = new ApiError(
+			{ method: 'GET', url: '/podcasts/domains/private.publisher.example' },
+			{
+				url: 'https://listen-api.listennotes.com/api/v2/podcasts/domains/private.publisher.example',
+				ok: false,
+				status: 404,
+				statusText: 'Not Found',
+				body: { message: 'No podcasts for private.publisher.example' },
+			},
+			'No podcasts for private.publisher.example',
+		);
+
+		const sanitized = sanitizeApiError(raw);
+		if (!(sanitized instanceof ApiError)) throw new Error('Expected ApiError');
+		expect(sanitized.request.url).not.toContain('private.publisher.example');
+		expect(sanitized.url).not.toContain('private.publisher.example');
+		expect(sanitized.message).not.toContain('private.publisher.example');
+		expect(sanitized.body).toEqual({ message: 'No podcasts for [REDACTED]' });
 	});
 });
 
@@ -211,7 +281,8 @@ describe('real transport rate-limit test via jest.requireActual', () => {
 				);
 
 			expect(caught).toBeInstanceOf(ApiError);
-			const error = caught as ApiError;
+			if (!(caught instanceof ApiError)) throw new Error('Expected ApiError');
+			const error = caught;
 			expect(error.status).toBe(429);
 			expect(error.retryAfter).toBe(4000);
 			expect(globalThis.fetch).toHaveBeenCalledTimes(1);

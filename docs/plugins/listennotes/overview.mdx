@@ -1,16 +1,16 @@
 ---
 title: "Listen Notes plugin"
 sidebarTitle: "Overview"
-description: "Podcast search and directory API for exploring podcasts, episodes, genres, curated lists, and playlists."
+description: "Podcast search, directory, playlist, and audience insights API for exploring and managing podcast data."
 ---
 
 Use **Listen Notes** through Corsair: one client, typed API calls.
 
-Listen Notes API requests require an API key passed via the X-ListenAPI-Key header.
+Authenticated calls require an API key in the X-ListenAPI-Key header. Playlist mutations apply only to playlists owned by the API admin account. Confirm destructive requests before using them; the podcast-delete example uses the provider's `reason: testing` safeguard.
 
 **What you get:**
 
-- 13 typed API operations
+- 33 typed API operations
 
 ## Setup
 
@@ -104,9 +104,12 @@ await tenant.listennotes.api.search.search({ q: 'startup' });
 ```
 
 
-**Write**
+**Create a podcast playlist**
 
-_No write-style endpoint inferred; pick any operation from the [API](/plugins/listennotes/api) reference._
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.listennotes.api.playlists.create({ name: 'Research queue' });
+```
 
 
 See the full list on the [API](/plugins/listennotes/api) page.

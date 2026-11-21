@@ -1,7 +1,13 @@
 import { logEventFromContext } from 'corsair/core';
-import type { ListennotesEndpoints } from '..';
 import { makeListennotesRequest } from '../client';
-import type { SearchResponse, TypeaheadResponse } from './types';
+import type { ListennotesEndpoints } from '../index';
+import type {
+	SearchEpisodeTitlesResponse,
+	SearchResponse,
+	SearchTermsResponse,
+	SpellcheckResponse,
+	TypeaheadResponse,
+} from './types';
 import {
 	ListennotesEndpointInputSchemas,
 	ListennotesEndpointOutputSchemas,
@@ -62,5 +68,95 @@ export const typeahead: ListennotesEndpoints['search.typeahead'] = async (
 		'completed',
 	);
 
+	return parsed;
+};
+
+export const searchEpisodeTitles: ListennotesEndpoints['search.searchEpisodeTitles'] =
+	async (ctx, input) => {
+		const parsedInput =
+			ListennotesEndpointInputSchemas['search.searchEpisodeTitles'].parse(
+				input,
+			);
+		const response = await makeListennotesRequest<SearchEpisodeTitlesResponse>(
+			'/search_episode_titles',
+			ctx.key,
+			{ method: 'GET', query: parsedInput },
+		);
+		const parsed =
+			ListennotesEndpointOutputSchemas['search.searchEpisodeTitles'].parse(
+				response,
+			);
+		await logEventFromContext(
+			ctx,
+			'listennotes.search.searchEpisodeTitles',
+			{ count: parsed.count ?? 0 },
+			'completed',
+		);
+		return parsed;
+	};
+
+export const trendingSearches: ListennotesEndpoints['search.trendingSearches'] =
+	async (ctx, input) => {
+		const parsedInput =
+			ListennotesEndpointInputSchemas['search.trendingSearches'].parse(input);
+		const response = await makeListennotesRequest<SearchTermsResponse>(
+			'/trending_searches',
+			ctx.key,
+			{ method: 'GET', query: parsedInput },
+		);
+		const parsed =
+			ListennotesEndpointOutputSchemas['search.trendingSearches'].parse(
+				response,
+			);
+		await logEventFromContext(
+			ctx,
+			'listennotes.search.trendingSearches',
+			{ count: parsed.terms.length },
+			'completed',
+		);
+		return parsed;
+	};
+
+export const relatedSearches: ListennotesEndpoints['search.relatedSearches'] =
+	async (ctx, input) => {
+		const parsedInput =
+			ListennotesEndpointInputSchemas['search.relatedSearches'].parse(input);
+		const response = await makeListennotesRequest<SearchTermsResponse>(
+			'/related_searches',
+			ctx.key,
+			{ method: 'GET', query: parsedInput },
+		);
+		const parsed =
+			ListennotesEndpointOutputSchemas['search.relatedSearches'].parse(
+				response,
+			);
+		await logEventFromContext(
+			ctx,
+			'listennotes.search.relatedSearches',
+			{ count: parsed.terms.length },
+			'completed',
+		);
+		return parsed;
+	};
+
+export const spellcheck: ListennotesEndpoints['search.spellcheck'] = async (
+	ctx,
+	input,
+) => {
+	const parsedInput =
+		ListennotesEndpointInputSchemas['search.spellcheck'].parse(input);
+	const response = await makeListennotesRequest<SpellcheckResponse>(
+		'/spellcheck',
+		ctx.key,
+		{ method: 'GET', query: parsedInput },
+	);
+	const parsed =
+		ListennotesEndpointOutputSchemas['search.spellcheck'].parse(response);
+	await logEventFromContext(
+		ctx,
+		'listennotes.search.spellcheck',
+		{ count: parsed.tokens.length },
+		'completed',
+	);
 	return parsed;
 };

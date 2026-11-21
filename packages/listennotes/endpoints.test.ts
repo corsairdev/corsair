@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import * as client from './client';
 import {
 	Curated,
+	Directory,
 	Episodes,
 	Genres,
 	Playlists,
@@ -22,6 +23,10 @@ jest.mock('./client', () => {
 
 const mockedRequest = jest.mocked(client.makeListennotesRequest);
 const mockedLogEvent = jest.mocked(logEventFromContext);
+
+function withUndocumentedField<T extends object>(input: T) {
+	return { ...input, undocumented: true };
+}
 
 function buildCtx(): ListennotesContext {
 	return {
@@ -46,6 +51,87 @@ const ctx = buildCtx();
 beforeEach(() => {
 	mockedRequest.mockReset();
 	mockedLogEvent.mockReset();
+});
+
+describe('strict request validation', () => {
+	it('rejects undocumented input fields before HTTP for every operation', async () => {
+		// unknown because the heterogeneous operation outputs are only awaited for rejection.
+		const calls: Array<() => Promise<unknown>> = [
+			() => Search.search(ctx, withUndocumentedField({ q: 'term' })),
+			() => Search.typeahead(ctx, withUndocumentedField({ q: 'term' })),
+			() =>
+				Search.searchEpisodeTitles(ctx, withUndocumentedField({ q: 'title' })),
+			() => Search.relatedSearches(ctx, withUndocumentedField({ q: 'topic' })),
+			() => Search.spellcheck(ctx, withUndocumentedField({ q: 'speling' })),
+			() => Podcasts.get(ctx, withUndocumentedField({ id: 'podcast' })),
+			() => Podcasts.getEpisodes(ctx, withUndocumentedField({ id: 'podcast' })),
+			() =>
+				Podcasts.getRecommendations(
+					ctx,
+					withUndocumentedField({ id: 'podcast' }),
+				),
+			() => Podcasts.getBest(ctx, withUndocumentedField({ page: 1 })),
+			() => Podcasts.getBatch(ctx, withUndocumentedField({ ids: 'podcast' })),
+			() =>
+				Podcasts.deletePodcast(ctx, withUndocumentedField({ id: 'podcast' })),
+			() =>
+				Podcasts.submit(
+					ctx,
+					withUndocumentedField({ rss: 'https://feeds.example.com/show.xml' }),
+				),
+			() => Podcasts.refreshRss(ctx, withUndocumentedField({ id: 'podcast' })),
+			() => Podcasts.getAudience(ctx, withUndocumentedField({ id: 'podcast' })),
+			() =>
+				Podcasts.getByDomain(
+					ctx,
+					withUndocumentedField({ domain_name: 'publisher.example' }),
+				),
+			() => Episodes.get(ctx, withUndocumentedField({ id: 'episode' })),
+			() =>
+				Episodes.getRecommendations(
+					ctx,
+					withUndocumentedField({ id: 'episode' }),
+				),
+			() => Episodes.getBatch(ctx, withUndocumentedField({ ids: 'episode' })),
+			() => Genres.list(ctx, withUndocumentedField({ top_level_only: 1 })),
+			() => Curated.list(ctx, withUndocumentedField({ page: 1 })),
+			() => Curated.get(ctx, withUndocumentedField({ id: 'list' })),
+			() => Playlists.list(ctx, withUndocumentedField({ page: 1 })),
+			() => Playlists.get(ctx, withUndocumentedField({ id: 'm1pe7z60bsw' })),
+			() => Playlists.create(ctx, withUndocumentedField({ name: 'Favorites' })),
+			() =>
+				Playlists.update(
+					ctx,
+					withUndocumentedField({ id: 'm1pe7z60bsw', name: 'Updated' }),
+				),
+			() => Playlists.remove(ctx, withUndocumentedField({ id: 'm1pe7z60bsw' })),
+			() =>
+				Playlists.addItem(
+					ctx,
+					withUndocumentedField({
+						id: 'm1pe7z60bsw',
+						episode_id: '0123456789abcdef0123456789abcdef',
+					}),
+				),
+			() =>
+				Playlists.updateItem(
+					ctx,
+					withUndocumentedField({
+						id: 'm1pe7z60bsw',
+						item_id: 1,
+						notes: 'note',
+					}),
+				),
+			() =>
+				Playlists.deleteItem(
+					ctx,
+					withUndocumentedField({ id: 'm1pe7z60bsw', item_id: 1 }),
+				),
+		];
+
+		for (const call of calls) await expect(call()).rejects.toThrow();
+		expect(mockedRequest).not.toHaveBeenCalled();
+	});
 });
 
 describe('search endpoints', () => {
@@ -79,8 +165,9 @@ describe('search endpoints', () => {
 	});
 
 	it('search.search rejects invalid input before network I/O', async () => {
-		// `unknown` because catch clause parameter is untyped.
-		await expect(Search.search(ctx, {} as never)).rejects.toThrow();
+		await expect(
+			Search.search(ctx, withUndocumentedField({ q: 'news' })),
+		).rejects.toThrow();
 		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 
@@ -117,8 +204,86 @@ describe('search endpoints', () => {
 	});
 
 	it('search.typeahead rejects invalid input before network I/O', async () => {
-		await expect(Search.typeahead(ctx, {} as never)).rejects.toThrow();
+		await expect(
+			Search.typeahead(ctx, withUndocumentedField({ q: 'news' })),
+		).rejects.toThrow();
 		expect(mockedRequest).not.toHaveBeenCalled();
+	});
+
+	it('search.searchEpisodeTitles queries the documented episode-title route', async () => {
+		const mockResponse = {
+			count: 1,
+			total: 1,
+			next_offset: 1,
+			results: [{ id: 'episode1', title_original: 'A title' }],
+		};
+		mockedRequest.mockResolvedValue(mockResponse);
+		await expect(
+			Search.searchEpisodeTitles(ctx, {
+				q: 'A title',
+				podcast_id: 'podcast1',
+				podcast_id_type: 'listennotes_id',
+			}),
+		).resolves.toEqual(mockResponse);
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/search_episode_titles',
+			'test-api-key',
+			{
+				method: 'GET',
+				query: {
+					q: 'A title',
+					podcast_id: 'podcast1',
+					podcast_id_type: 'listennotes_id',
+				},
+			},
+		);
+		expect(mockedLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'listennotes.search.searchEpisodeTitles',
+			{ count: 1 },
+			'completed',
+		);
+	});
+
+	it('search.trendingSearches fetches terms without query parameters', async () => {
+		const mockResponse = { terms: ['podcasts', 'technology'] };
+		mockedRequest.mockResolvedValue(mockResponse);
+		await expect(Search.trendingSearches(ctx, {})).resolves.toEqual(
+			mockResponse,
+		);
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/trending_searches',
+			'test-api-key',
+			{ method: 'GET', query: {} },
+		);
+	});
+
+	it('search.relatedSearches sends the term and parses related terms', async () => {
+		const mockResponse = { terms: ['climate', 'climate change'] };
+		mockedRequest.mockResolvedValue(mockResponse);
+		await expect(
+			Search.relatedSearches(ctx, { q: 'climate' }),
+		).resolves.toEqual(mockResponse);
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/related_searches',
+			'test-api-key',
+			{ method: 'GET', query: { q: 'climate' } },
+		);
+	});
+
+	it('search.spellcheck sends the term and parses corrections', async () => {
+		const mockResponse = {
+			tokens: [{ offset: 0, token: 'tecnology', suggestion: 'technology' }],
+			corrected_text_html: '<b><i>technology</i></b>',
+		};
+		mockedRequest.mockResolvedValue(mockResponse);
+		await expect(Search.spellcheck(ctx, { q: 'tecnology' })).resolves.toEqual(
+			mockResponse,
+		);
+		expect(mockedRequest).toHaveBeenCalledWith('/spellcheck', 'test-api-key', {
+			method: 'GET',
+			query: { q: 'tecnology' },
+		});
 	});
 });
 
@@ -161,7 +326,9 @@ describe('podcasts endpoints', () => {
 	});
 
 	it('podcasts.get rejects invalid input before network I/O', async () => {
-		await expect(Podcasts.get(ctx, {} as never)).rejects.toThrow();
+		await expect(
+			Podcasts.get(ctx, withUndocumentedField({ id: 'pod123' })),
+		).rejects.toThrow();
 		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 
@@ -185,7 +352,7 @@ describe('podcasts endpoints', () => {
 
 		expect(result).toEqual(mockResponse);
 		expect(mockedRequest).toHaveBeenCalledWith(
-			'/podcasts/pod123/episodes',
+			'/podcasts/pod123',
 			'test-api-key',
 			{
 				method: 'GET',
@@ -195,7 +362,9 @@ describe('podcasts endpoints', () => {
 	});
 
 	it('podcasts.getEpisodes rejects invalid input before network I/O', async () => {
-		await expect(Podcasts.getEpisodes(ctx, {} as never)).rejects.toThrow();
+		await expect(
+			Podcasts.getEpisodes(ctx, withUndocumentedField({ id: 'pod123' })),
+		).rejects.toThrow();
 		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 
@@ -259,6 +428,120 @@ describe('podcasts endpoints', () => {
 			},
 		);
 	});
+
+	it('podcasts.getBatch sends form-encoded selectors', async () => {
+		const mockResponse = {
+			podcasts: [
+				{ id: 'pod1', title: 'Podcast 1' },
+				{ id: 'pod2', title: 'Podcast 2' },
+			],
+			latest_episodes: [],
+			next_episode_pub_date: 1_700_000_000_000,
+		};
+		mockedRequest.mockResolvedValue(mockResponse);
+		await expect(
+			Podcasts.getBatch(ctx, {
+				ids: 'pod1,pod2',
+				show_latest_episodes: 1,
+				next_episode_pub_date: 1_700_000_000_000,
+			}),
+		).resolves.toEqual(mockResponse);
+		expect(mockedRequest).toHaveBeenCalledWith('/podcasts', 'test-api-key', {
+			method: 'POST',
+			body: 'ids=pod1%2Cpod2&show_latest_episodes=1&next_episode_pub_date=1700000000000',
+			mediaType: 'application/x-www-form-urlencoded',
+		});
+	});
+
+	it('podcasts.delete sends the optional reason and parses the deletion status', async () => {
+		const mockResponse = { status: 'in review' };
+		mockedRequest.mockResolvedValue(mockResponse);
+		await expect(
+			Podcasts.deletePodcast(ctx, { id: 'pod1', reason: 'duplicate feed' }),
+		).resolves.toEqual(mockResponse);
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/podcasts/pod1',
+			'test-api-key',
+			{
+				method: 'DELETE',
+				query: { reason: 'duplicate feed' },
+			},
+		);
+	});
+
+	it('podcasts.submit sends form data and does not log the submitted email', async () => {
+		const mockResponse = { status: 'in review', podcast: {} };
+		mockedRequest.mockResolvedValue(mockResponse);
+		await expect(
+			Podcasts.submit(ctx, {
+				rss: 'https://feeds.example.com/podcast.xml',
+				email: 'owner@example.com',
+			}),
+		).resolves.toEqual(mockResponse);
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/podcasts/submit',
+			'test-api-key',
+			{
+				method: 'POST',
+				body: 'rss=https%3A%2F%2Ffeeds.example.com%2Fpodcast.xml&email=owner%40example.com',
+				mediaType: 'application/x-www-form-urlencoded',
+			},
+		);
+		expect(mockedLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'listennotes.podcasts.submit',
+			{ status: 'in review' },
+			'completed',
+		);
+	});
+
+	it('podcasts.refreshRss requests an RSS refresh', async () => {
+		const mockResponse = {
+			status: 'refreshing',
+			last_refreshed_at_ms: 1_700_000_000_000,
+		};
+		mockedRequest.mockResolvedValue(mockResponse);
+		await expect(Podcasts.refreshRss(ctx, { id: 'pod1' })).resolves.toEqual(
+			mockResponse,
+		);
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/podcasts/pod1/rss',
+			'test-api-key',
+			{ method: 'POST' },
+		);
+	});
+
+	it('podcasts.getAudience fetches documented region breakdowns', async () => {
+		const mockResponse = {
+			by_regions: [{ region: 'us', ratio: '20.22%' }],
+		};
+		mockedRequest.mockResolvedValue(mockResponse);
+		await expect(Podcasts.getAudience(ctx, { id: 'pod1' })).resolves.toEqual(
+			mockResponse,
+		);
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/podcasts/pod1/audience',
+			'test-api-key',
+			{ method: 'GET' },
+		);
+	});
+
+	it('podcasts.getByDomain sends a page and parses podcast results', async () => {
+		const mockResponse = {
+			page_number: 2,
+			has_next: false,
+			podcasts: [{ id: 'pod1', title: 'Podcast 1' }],
+		};
+		mockedRequest.mockResolvedValue(mockResponse);
+		await expect(
+			Podcasts.getByDomain(ctx, { domain_name: 'publisher.example', page: 2 }),
+		).resolves.toEqual(mockResponse);
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/podcasts/domains/publisher.example',
+			'test-api-key',
+			{ method: 'GET', query: { page: 2 } },
+		);
+	});
 });
 
 describe('episodes endpoints', () => {
@@ -314,6 +597,31 @@ describe('episodes endpoints', () => {
 			},
 		);
 	});
+
+	it('episodes.getBatch posts comma-separated episode IDs as form data', async () => {
+		const mockResponse = {
+			episodes: [{ id: 'ep1', title: 'Episode 1' }],
+		};
+		mockedRequest.mockResolvedValue(mockResponse);
+		await expect(Episodes.getBatch(ctx, { ids: 'ep1,ep2' })).resolves.toEqual(
+			mockResponse,
+		);
+		expect(mockedRequest).toHaveBeenCalledWith('/episodes', 'test-api-key', {
+			method: 'POST',
+			body: 'ids=ep1%2Cep2',
+			mediaType: 'application/x-www-form-urlencoded',
+		});
+	});
+
+	it('episodes.justListen fetches a random episode', async () => {
+		const mockResponse = { id: 'ep1', title: 'Episode 1' };
+		mockedRequest.mockResolvedValue(mockResponse);
+		await expect(Episodes.justListen(ctx, {})).resolves.toEqual(mockResponse);
+		expect(mockedRequest).toHaveBeenCalledWith('/just_listen', 'test-api-key', {
+			method: 'GET',
+			query: {},
+		});
+	});
 });
 
 describe('genres endpoints', () => {
@@ -331,6 +639,30 @@ describe('genres endpoints', () => {
 		expect(mockedRequest).toHaveBeenCalledWith('/genres', 'test-api-key', {
 			method: 'GET',
 			query: { top_level_only: 1 },
+		});
+	});
+});
+
+describe('directory endpoints', () => {
+	it('regions.list parses a map of region codes to names', async () => {
+		const mockResponse = {
+			regions: { us: 'United States', gb: 'United Kingdom' },
+		};
+		mockedRequest.mockResolvedValue(mockResponse);
+		await expect(Directory.regions(ctx, {})).resolves.toEqual(mockResponse);
+		expect(mockedRequest).toHaveBeenCalledWith('/regions', 'test-api-key', {
+			method: 'GET',
+			query: {},
+		});
+	});
+
+	it('languages.list parses the supported language names', async () => {
+		const mockResponse = { languages: ['English', 'French'] };
+		mockedRequest.mockResolvedValue(mockResponse);
+		await expect(Directory.languages(ctx, {})).resolves.toEqual(mockResponse);
+		expect(mockedRequest).toHaveBeenCalledWith('/languages', 'test-api-key', {
+			method: 'GET',
+			query: {},
 		});
 	});
 });
@@ -400,7 +732,7 @@ describe('playlists endpoints', () => {
 			has_previous: false,
 			playlists: [
 				{
-					id: 'pl1',
+					id: 'm1pe7z60bsw',
 					name: 'My Playlist',
 				},
 			],
@@ -409,19 +741,19 @@ describe('playlists endpoints', () => {
 
 		const result = await Playlists.list(ctx, {
 			page: 1,
-			sort: 'recent_added_first',
+			sort: 'name_a_to_z',
 		});
 
 		expect(result).toEqual(mockResponse);
 		expect(mockedRequest).toHaveBeenCalledWith('/playlists', 'test-api-key', {
 			method: 'GET',
-			query: { page: 1, sort: 'recent_added_first' },
+			query: { page: 1, sort: 'name_a_to_z' },
 		});
 	});
 
 	it('playlists.get sends ID and returns playlist details and items', async () => {
 		const mockResponse = {
-			id: 'pl1',
+			id: 'm1pe7z60bsw',
 			name: 'My Playlist',
 			items: [
 				{
@@ -433,18 +765,109 @@ describe('playlists endpoints', () => {
 		mockedRequest.mockResolvedValue(mockResponse);
 
 		const result = await Playlists.get(ctx, {
-			id: 'pl1',
+			id: 'm1pe7z60bsw',
 			type: 'episode_list',
 		});
 
 		expect(result).toEqual(mockResponse);
 		expect(mockedRequest).toHaveBeenCalledWith(
-			'/playlists/pl1',
+			'/playlists/m1pe7z60bsw',
 			'test-api-key',
 			{
 				method: 'GET',
 				query: { type: 'episode_list' },
 			},
+		);
+	});
+
+	it('playlists.create posts new playlist metadata', async () => {
+		const mockResponse = { id: 'playlist123', name: 'Favorites' };
+		mockedRequest.mockResolvedValue(mockResponse);
+		await expect(
+			Playlists.create(ctx, { name: 'Favorites', visibility: 'private' }),
+		).resolves.toEqual(mockResponse);
+		expect(mockedRequest).toHaveBeenCalledWith('/playlists', 'test-api-key', {
+			method: 'POST',
+			body: { name: 'Favorites', visibility: 'private' },
+		});
+	});
+
+	it('playlists.update sends only the supplied metadata fields', async () => {
+		const mockResponse = { id: 'playlist123', name: 'Updated favorites' };
+		mockedRequest.mockResolvedValue(mockResponse);
+		await expect(
+			Playlists.update(ctx, { id: 'playlist123', name: 'Updated favorites' }),
+		).resolves.toEqual(mockResponse);
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/playlists/playlist123',
+			'test-api-key',
+			{ method: 'PUT', body: { name: 'Updated favorites' } },
+		);
+	});
+
+	it('playlists.delete removes the playlist and returns its deletion status', async () => {
+		const mockResponse = { id: 'playlist123', deleted: true as const };
+		mockedRequest.mockResolvedValue(mockResponse);
+		await expect(Playlists.remove(ctx, { id: 'playlist123' })).resolves.toEqual(
+			mockResponse,
+		);
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/playlists/playlist123',
+			'test-api-key',
+			{ method: 'DELETE' },
+		);
+	});
+
+	it('playlists.addItem adds an episode and optional notes', async () => {
+		const mockResponse = { id: 8, type: 'episode', notes: 'Listen later' };
+		mockedRequest.mockResolvedValue(mockResponse);
+		await expect(
+			Playlists.addItem(ctx, {
+				id: 'playlist123',
+				episode_id: '0123456789abcdef0123456789abcdef',
+				notes: 'Listen later',
+			}),
+		).resolves.toEqual(mockResponse);
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/playlists/playlist123/items',
+			'test-api-key',
+			{
+				method: 'POST',
+				body: {
+					episode_id: '0123456789abcdef0123456789abcdef',
+					notes: 'Listen later',
+				},
+			},
+		);
+	});
+
+	it('playlists.updateItem replaces the item notes', async () => {
+		const mockResponse = { id: 8, type: 'episode', notes: 'Updated note' };
+		mockedRequest.mockResolvedValue(mockResponse);
+		await expect(
+			Playlists.updateItem(ctx, {
+				id: 'playlist123',
+				item_id: 8,
+				notes: 'Updated note',
+			}),
+		).resolves.toEqual(mockResponse);
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/playlists/playlist123/items/8',
+			'test-api-key',
+			{ method: 'PUT', body: { notes: 'Updated note' } },
+		);
+	});
+
+	it('playlists.deleteItem removes the playlist item', async () => {
+		const mockResponse = { id: 8, deleted: true };
+		mockedRequest.mockResolvedValue(mockResponse);
+		await expect(
+			Playlists.deleteItem(ctx, { id: 'playlist123', item_id: 8 }),
+		).resolves.toEqual(mockResponse);
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/playlists/playlist123/items/8',
+			'test-api-key',
+			{ method: 'DELETE' },
 		);
 	});
 });

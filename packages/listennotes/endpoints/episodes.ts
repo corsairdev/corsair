@@ -1,9 +1,11 @@
 import { logEventFromContext } from 'corsair/core';
-import type { ListennotesEndpoints } from '..';
-import { makeListennotesRequest } from '../client';
+import { makeListennotesRequest, serializeFormBody } from '../client';
+import type { ListennotesEndpoints } from '../index';
 import type {
+	EpisodesBatchResponse,
 	EpisodesGetRecommendationsResponse,
 	EpisodesGetResponse,
+	EpisodesJustListenResponse,
 } from './types';
 import {
 	ListennotesEndpointInputSchemas,
@@ -69,3 +71,51 @@ export const getRecommendations: ListennotesEndpoints['episodes.getRecommendatio
 
 		return parsed;
 	};
+
+export const getBatch: ListennotesEndpoints['episodes.getBatch'] = async (
+	ctx,
+	input,
+) => {
+	const parsedInput =
+		ListennotesEndpointInputSchemas['episodes.getBatch'].parse(input);
+	const response = await makeListennotesRequest<EpisodesBatchResponse>(
+		'/episodes',
+		ctx.key,
+		{
+			method: 'POST',
+			body: serializeFormBody(parsedInput),
+			mediaType: 'application/x-www-form-urlencoded',
+		},
+	);
+	const parsed =
+		ListennotesEndpointOutputSchemas['episodes.getBatch'].parse(response);
+	await logEventFromContext(
+		ctx,
+		'listennotes.episodes.getBatch',
+		{ count: parsed.episodes.length },
+		'completed',
+	);
+	return parsed;
+};
+
+export const justListen: ListennotesEndpoints['episodes.justListen'] = async (
+	ctx,
+	input,
+) => {
+	const parsedInput =
+		ListennotesEndpointInputSchemas['episodes.justListen'].parse(input);
+	const response = await makeListennotesRequest<EpisodesJustListenResponse>(
+		'/just_listen',
+		ctx.key,
+		{ method: 'GET', query: parsedInput },
+	);
+	const parsed =
+		ListennotesEndpointOutputSchemas['episodes.justListen'].parse(response);
+	await logEventFromContext(
+		ctx,
+		'listennotes.episodes.justListen',
+		{ id: parsed.id },
+		'completed',
+	);
+	return parsed;
+};

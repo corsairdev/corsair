@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { ListennotesEndpoints } from '..';
 import { makeListennotesRequest } from '../client';
+import type { ListennotesEndpoints } from '../index';
 import type { GenresListResponse } from './types';
 import {
 	ListennotesEndpointInputSchemas,

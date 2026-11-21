@@ -1,4 +1,5 @@
 export * as Curated from './curated';
+export * as Directory from './directory';
 export * as Episodes from './episodes';
 export * as Genres from './genres';
 export * as Playlists from './playlists';

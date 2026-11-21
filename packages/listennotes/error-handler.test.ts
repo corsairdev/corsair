@@ -25,13 +25,13 @@ function route(error: Error): string {
 }
 
 describe('Listen Notes errorHandlers', () => {
-	it('routes 429 to RATE_LIMIT_ERROR and respects retryAfter', async () => {
+	it('preserves Retry-After but does not retry ambiguous quota 429 responses', async () => {
 		const error = apiError(429, 'Too Many Requests', 1500);
 		expect(route(error)).toBe('RATE_LIMIT_ERROR');
 		await expect(
 			errorHandlers.RATE_LIMIT_ERROR.handler(error),
 		).resolves.toEqual({
-			maxRetries: 5,
+			maxRetries: 0,
 			headersRetryAfterMs: 1500,
 		});
 	});
