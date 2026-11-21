@@ -25,7 +25,11 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	} = {},
 ): Promise<z.output<Output>> {
 	const parsed = operation.input.parse(rawInput ?? {});
-	const raw = await makePersonaRequest(ctx.key, toRequest(parsed));
+	const raw = await makePersonaRequest(
+		ctx.key,
+		toRequest(parsed),
+		ctx.options?.apiVersion,
+	);
 	const result = operation.output.parse(
 		options.shape ? options.shape(raw, parsed) : raw,
 	);
@@ -44,4 +48,41 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 // stays untyped.
 export function attributesBody(attributes: unknown): unknown {
 	return { data: { attributes } };
+}
+
+/** Builds the `{ meta }` body the tag, decision and link routes take. */
+export function metaBody(
+	// unknown: each route's meta keys differ; undefined values are dropped.
+	meta: Record<string, unknown>,
+	// unknown: the JSON body handed to the client.
+): unknown {
+	const defined = Object.fromEntries(
+		Object.entries(meta).filter(([, value]) => value !== undefined),
+	);
+	return Object.keys(defined).length > 0 ? { meta: defined } : undefined;
+}
+
+/** page[after], page[before] and page[size] from the paging inputs. */
+export function pageQuery(input: {
+	pageAfter?: string;
+	pageBefore?: string;
+	pageSize?: number;
+}): Record<string, string | number | undefined> {
+	return {
+		'page[after]': input.pageAfter,
+		'page[before]': input.pageBefore,
+		'page[size]': input.pageSize,
+	};
+}
+
+/**
+ * Encodes one path segment. `encodeURIComponent` leaves `.` and `..` as
+ * they are, and URL parsing would resolve them into another route, so those
+ * are refused.
+ */
+export function segment(value: string): string {
+	if (value === '.' || value === '..') {
+		throw new Error(`Persona: "${value}" is not a valid id`);
+	}
+	return encodeURIComponent(value);
 }

@@ -1,13 +1,16 @@
 import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
-import { PersonaAPIError } from './client';
+import { ApiError } from 'corsair/http';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
-function apiError(status: number, method: string = 'GET'): PersonaAPIError {
-	return new PersonaAPIError(`Persona ${status}: boom`, {
-		method,
-		path: '/inquiries',
-		status,
-	});
+function apiError(
+	status: number,
+	method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE' = 'GET',
+): ApiError {
+	return new ApiError(
+		{ method, url: '/inquiries' },
+		{ url: '/inquiries', ok: false, status, statusText: '', body: null },
+		`Persona ${status}: boom`,
+	);
 }
 
 const NO_CONTEXT: ErrorContext = {
@@ -108,14 +111,7 @@ describe('mergeErrorHandlers', () => {
 		expect(order.at(-1)).toBe('DEFAULT');
 		const entry = merged.OVERLOADED_ERROR;
 		if (!entry) throw new Error('caller handler missing');
-		const result = await entry.handler(
-			new PersonaAPIError('overloaded', {
-				method: 'GET',
-				path: '/x',
-				status: 529,
-			}),
-			NO_CONTEXT,
-		);
+		const result = await entry.handler(apiError(529), NO_CONTEXT);
 		expect(result.maxRetries).toBe(1);
 	});
 
@@ -148,5 +144,5 @@ describe('mergeErrorHandlers', () => {
 });
 
 function statusIs(error: Error, status: number): boolean {
-	return error instanceof PersonaAPIError && error.status === status;
+	return error instanceof ApiError && error.status === status;
 }

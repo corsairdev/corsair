@@ -21,54 +21,12 @@ const RATE_LIMIT_CONFIG: RateLimitConfig = {
 };
 
 /**
- * Persona requires a dated API version header on every call; without it the
- * API answers 400 asking for the version.
+ * The dated API version every call pins (Persona-Version header), so a
+ * change to the key's default version in the dashboard cannot change the
+ * shapes this plugin parses. 2023-01-05 is the version the schemas follow;
+ * https://docs.withpersona.com/versioning lists the others.
  */
-const API_VERSION = '2023-01-18';
-
-/**
- * A failed call throws this: core's `ApiError` (R8: core and the handlers
- * read `status` and `retryAfter` from it), rebuilt without the request body
- * and query. Inquiry records carry personal data, which core's own ApiError
- * keeps on the request.
- */
-export class PersonaAPIError extends ApiError {
-	/** The HTTP method of the failed request, for replay-safety decisions. */
-	readonly method: string;
-
-	constructor(
-		message: string,
-		options: {
-			method: string;
-			/** Request path, without query. */
-			path: string;
-			status: number;
-			statusText?: string;
-			// unknown: error bodies can be the { errors: [...] } envelope or
-			// non-JSON from a proxy.
-			body?: unknown;
-			retryAfter?: number;
-		},
-	) {
-		super(
-			{
-				method: options.method as ApiRequestOptions['method'],
-				url: options.path,
-			},
-			{
-				url: options.path,
-				ok: false,
-				status: options.status,
-				statusText: options.statusText ?? '',
-				body: options.body,
-			},
-			message,
-			{ retryAfter: options.retryAfter },
-		);
-		this.name = 'PersonaAPIError';
-		this.method = options.method;
-	}
-}
+export const DEFAULT_API_VERSION = '2023-01-05';
 
 /**
  * Extracts the readable part of a Persona error body. Errors are
@@ -120,6 +78,7 @@ export type PersonaRequest = {
 export async function makePersonaRequest(
 	apiKey: string,
 	{ method, path, query, body }: PersonaRequest,
+	apiVersion: string = DEFAULT_API_VERSION,
 	// unknown: callers parse the response with the endpoint's zod output
 	// schema, so the client cannot name a stricter return type.
 ): Promise<unknown> {
@@ -131,7 +90,7 @@ export async function makePersonaRequest(
 		HEADERS: {
 			Accept: 'application/json',
 			Authorization: `Bearer ${apiKey}`,
-			'Persona-Version': API_VERSION,
+			'Persona-Version': apiVersion,
 		},
 	};
 
@@ -159,14 +118,21 @@ export async function makePersonaRequest(
 				error.body,
 				error.statusText || 'request failed',
 			);
-			throw new PersonaAPIError(`Persona ${error.status}: ${detail}`, {
-				method,
-				path,
-				status: error.status,
-				statusText: error.statusText,
-				body: error.body,
-				retryAfter: error.retryAfter,
-			});
+			// R8: core's ApiError itself (management maps errors named
+			// ApiError to their real status), rebuilt with the method and path
+			// only, so status and retryAfter survive for the handlers.
+			throw new ApiError(
+				{ method, url: path },
+				{
+					url: path,
+					ok: false,
+					status: error.status,
+					statusText: error.statusText,
+					body: error.body,
+				},
+				`Persona ${error.status}: ${detail}`,
+				{ retryAfter: error.retryAfter },
+			);
 		}
 		// Timeouts and network failures carry no request data; let them through.
 		throw error;

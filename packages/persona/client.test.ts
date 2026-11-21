@@ -1,9 +1,6 @@
 import { inspect } from 'node:util';
-import {
-	describePersonaError,
-	makePersonaRequest,
-	PersonaAPIError,
-} from './client';
+import { ApiError } from 'corsair/http';
+import { describePersonaError, makePersonaRequest } from './client';
 import { authRequired } from './test-fixtures';
 
 const API_KEY = 'persona-test-key';
@@ -21,10 +18,10 @@ function respond(body: unknown, status: number) {
 }
 
 // unknown: a rejection can be any value until the instanceof check narrows it.
-async function failure(promise: Promise<unknown>): Promise<PersonaAPIError> {
+async function failure(promise: Promise<unknown>): Promise<ApiError> {
 	const error = await promise.catch((caught: unknown) => caught);
-	expect(error).toBeInstanceOf(PersonaAPIError);
-	if (!(error instanceof PersonaAPIError)) throw error;
+	expect(error).toBeInstanceOf(ApiError);
+	if (!(error instanceof ApiError)) throw error;
 	return error;
 }
 
@@ -54,7 +51,7 @@ describe('makePersonaRequest', () => {
 		const sent = lastCall();
 		expect(sent.url).toBe('https://api.withpersona.com/api/v1/inquiries');
 		expect(sent.headers.get('authorization')).toBe(`Bearer ${API_KEY}`);
-		expect(sent.headers.get('persona-version')).toBe('2023-01-18');
+		expect(sent.headers.get('persona-version')).toBe('2023-01-05');
 	});
 
 	it('keeps the status and envelope detail on the rebuilt error', async () => {
@@ -65,7 +62,9 @@ describe('makePersonaRequest', () => {
 		);
 		expect(error.status).toBe(401);
 		expect(error.message).toContain('Must be authenticated');
-		expect(error.name).toBe('PersonaAPIError');
+		// R8: core's own ApiError, so management maps it to its real status.
+		expect(error.name).toBe('ApiError');
+		expect(error.constructor).toBe(ApiError);
 	});
 
 	it('keeps no request body on the rebuilt error', async () => {
