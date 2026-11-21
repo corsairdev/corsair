@@ -103,12 +103,20 @@ describe('parallel on managed pricing', () => {
 		const net = mockNetwork();
 		const { corsair, testDb } = await createClient();
 		try {
-			await corsair.parallel.api.shopping
-				.search({ search_queries: ['standing desk'] })
-				.catch(() => undefined);
+			const result = await corsair.parallel.api.shopping.search({
+				search_queries: ['standing desk'],
+			});
+			expect(result).toEqual({
+				search_id: 'search_1',
+				session_id: 's',
+				results: [],
+			});
 			expect(net.toHub()[0]?.body).toEqual(
 				expect.objectContaining({ operation: 'shopping.search' }),
 			);
+			const calls = net.toParallel();
+			expect(calls[0]?.url).toBe('https://api.parallel.ai/v1/shopping/search');
+			expect(calls[0]?.headers.get('x-api-key')).toBe('par-hub-minted-key');
 		} finally {
 			testDb.cleanup();
 		}

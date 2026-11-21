@@ -10,6 +10,9 @@ const fetchPolicy = z.object({
 	// ISO 8601 date or timestamp: results as the web stood at that moment.
 	as_of: z.string().nullable().optional(),
 });
+// Task runs take the same fetch policy, but Parallel's TaskAdvancedSettings
+// says as_of is not supported there.
+const taskFetchPolicy = fetchPolicy.extend({ as_of: z.null().optional() });
 const sourcePolicy = z.object({
 	include_domains: z.array(z.string()).optional(),
 	exclude_domains: z.array(z.string()).optional(),
@@ -614,7 +617,7 @@ export const TaskRunInput = z.object({
 	advanced_settings: z
 		.object({
 			location: z.string().nullable().optional(),
-			fetch_policy: fetchPolicy.nullable().optional(),
+			fetch_policy: taskFetchPolicy.nullable().optional(),
 			data_sources: z
 				.object({
 					pay_per_use: z.array(z.string()).optional(),

@@ -292,6 +292,22 @@ describe('Parallel webhooks through processWebhook', () => {
 		]);
 	});
 
+	it('routes a failed run in the error form the webhook guide shows', async () => {
+		const result = await deliver({
+			...taskRunCompleted,
+			data: {
+				...taskRunCompleted.data,
+				status: 'failed',
+				error: {
+					message: 'Task execution failed',
+					details: 'Additional error details',
+				},
+			},
+		});
+		expect(result.action).toBe('taskRun.status');
+		expect(result.response?.success).toBe(true);
+	});
+
 	it('refuses a forged delivery with 401', async () => {
 		const body = JSON.stringify(taskRunCompleted);
 		const result = await deliver(

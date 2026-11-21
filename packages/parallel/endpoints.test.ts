@@ -1352,3 +1352,17 @@ describe('request fields Parallel added', () => {
 		).rejects.toThrow();
 	});
 });
+
+test('task runs refuse fetch_policy.as_of, which Parallel does not support there', async () => {
+	const fetchMock = jest.spyOn(globalThis, 'fetch');
+	await expect(
+		api.tasks.createRun({
+			body: {
+				processor: 'lite',
+				input: 'q',
+				advanced_settings: { fetch_policy: { as_of: '2025-06-01' } as never },
+			},
+		}),
+	).rejects.toThrow();
+	expect(fetchMock).not.toHaveBeenCalled();
+});

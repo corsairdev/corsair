@@ -35,8 +35,24 @@ function envelope<T extends string, D extends z.ZodType>(type: T, data: D) {
 		.passthrough();
 }
 
-/** The full Task Run object, as tasks.getRun returns it. */
-export const TaskRunStatusEvent = envelope('task_run.status', TaskRunOutput);
+/** The full Task Run object, as tasks.getRun returns it. Parallel's webhook
+ * guide shows a failed run's error as `{ message, details }`, without the
+ * `ref_id` tasks.getRun returns, so the webhook takes either form. */
+export const TaskRunStatusEvent = envelope(
+	'task_run.status',
+	TaskRunOutput.extend({
+		error: z
+			.object({
+				message: z.string(),
+				ref_id: z.string().optional(),
+				detail: z.record(z.string(), z.json()).nullable().optional(),
+				details: z.union([z.string(), z.json()]).nullable().optional(),
+			})
+			.passthrough()
+			.nullable()
+			.optional(),
+	}),
+);
 
 const candidateEvent = <T extends string>(type: T) =>
 	envelope(type, FindAllCandidate.extend({ findall_id: z.string() }));

@@ -858,9 +858,10 @@ A task run finished, successfully or not
     detail?: Record<string, any> | null
   }[] | null,
   error?: {
-    ref_id: string,
     message: string,
-    detail?: Record<string, JsonValue> | null
+    ref_id?: string,
+    detail?: Record<string, JsonValue> | null,
+    details?: string | JsonValue | null
   } | null,
   metadata?: Record<string, string | number | boolean> | null,
   taskgroup_id?: string | null
@@ -892,9 +893,10 @@ A task run finished, successfully or not
       detail?: Record<string, any> | null
     }[] | null,
     error?: {
-      ref_id: string,
       message: string,
-      detail?: Record<string, JsonValue> | null
+      ref_id?: string,
+      detail?: Record<string, JsonValue> | null,
+      details?: string | JsonValue | null
     } | null,
     metadata?: Record<string, string | number | boolean> | null,
     taskgroup_id?: string | null
