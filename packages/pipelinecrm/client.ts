@@ -48,6 +48,8 @@ export type PipelineCrmRequest = {
 	path: string;
 	query?: PipelineCrmQuery;
 	/** JSON body, wrapped in the record name by the endpoints. */
+	// unknown: each record type (deal, person, company, note) has its own
+	// body fields, so the shared request type stays open.
 	body?: Record<string, unknown>;
 };
 

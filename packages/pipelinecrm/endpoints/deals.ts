@@ -31,6 +31,8 @@ function dealBody(d: {
 	dealWonReasonNotes?: string;
 	dealSource?: number;
 	tagIds?: number[];
+	// unknown: custom field values follow each field's type, keyed
+	// custom_label_<id>, and the built body carries them through.
 	customFields?: Record<string, unknown>;
 }): Record<string, unknown> {
 	return {
