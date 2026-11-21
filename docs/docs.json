@@ -2312,6 +2312,14 @@
                 ]
               },
               {
+                "group": "Fingertip",
+                "pages": [
+                  "plugins/fingertip/overview",
+                  "plugins/fingertip/api",
+                  "plugins/fingertip/database"
+                ]
+              },
+              {
                 "group": "Finmei",
                 "pages": [
                   "plugins/finmei/overview",
