@@ -19,7 +19,7 @@ Render HTML content into a PDF
 **Risk:** `destructive`
 
 ```ts
-await corsair.pdf4me.api.convert.htmlToPdf({ htmlContent: "<h1>Hello</h1>", docName: "out.pdf" });
+await corsair.pdf4me.api.convert.htmlToPdf({ htmlContent: "<h1>Hello</h1>", docName: "page.html", format: "A4" });
 ```
 
 **Input**
@@ -80,7 +80,7 @@ Run OCR on a scanned PDF to make its text editable; the API answers a job, so po
 **Risk:** `destructive`
 
 ```ts
-await corsair.pdf4me.api.convert.ocrPdf({ docContent: "<base64>", docName: "scan.pdf", ocrWhenNeeded: true, ocrLang: "eng" });
+await corsair.pdf4me.api.convert.ocrPdf({ docContent: "<base64>", docName: "scan.pdf", ocrWhenNeeded: true, language: "English" });
 ```
 
 **Input**
@@ -96,7 +96,7 @@ await corsair.pdf4me.api.convert.ocrPdf({ docContent: "<base64>", docName: "scan
 | `isAsync` | `boolean` | No | Process asynchronously and return a job to poll at jobs.status (only honoured by actions that support it) |
 | `callBackUrl` | `string` | No | URL notified when an asynchronous job completes |
 
-ocrWhenNeeded is the documented mixed-type boolean field; ocrLang takes an OCR language code such as eng.
+Always runs as a job: poll jobs.status with the jobId for the file. ocrWhenNeeded goes out as the string the API expects.
 
 
 
@@ -137,7 +137,7 @@ Convert a PDF to a Word document; the API answers a job, so poll jobs.status for
 **Risk:** `destructive`
 
 ```ts
-await corsair.pdf4me.api.convert.pdfToWord({ docContent: "<base64>", docName: "document.pdf", docType: "docx" });
+await corsair.pdf4me.api.convert.pdfToWord({ docContent: "<base64>", docName: "document.pdf", qualityType: "Draft" });
 ```
 
 **Input**
@@ -207,7 +207,7 @@ await corsair.pdf4me.api.extract.pdfFormData({ docContent: "<base64>", docName: 
 | `isAsync` | `boolean` | No | Process asynchronously and return a job to poll at jobs.status (only honoured by actions that support it) |
 | `callBackUrl` | `string` | No | URL notified when an asynchronous job completes |
 
-Answers the values of filled PDF form fields.
+Answers formData: field values keyed by field name.
 
 
 
@@ -243,7 +243,7 @@ await corsair.pdf4me.api.extract.tableFromPdf({ docContent: "<base64>", docName:
 | `isAsync` | `boolean` | No | Process asynchronously and return a job to poll at jobs.status (only honoured by actions that support it) |
 | `callBackUrl` | `string` | No | URL notified when an asynchronous job completes |
 
-Answers the extracted tables as structured data.
+Answers tableList: one entry per page with its table rows.
 
 
 
@@ -289,7 +289,7 @@ await corsair.pdf4me.api.jobs.status({ jobId: "job-1" });
 |------|------|----------|-------------|
 | `jobId` | `string` | Yes | Job id the async answer returned |
 
-Poll a job started with isAsync: true. isFinished with isSuccess true means done; hasFailed true means it failed.
+GETs GetActionStatus with the job id. A finished job answers its file (isFinished true, fileContent); a running one answers its status.
 
 
 
@@ -375,7 +375,7 @@ Return a copy of a PDF without the given pages; the source file is not changed
 **Risk:** `destructive`
 
 ```ts
-await corsair.pdf4me.api.pdf.deletePages({ docContent: "<base64>", docName: "document.pdf", pageNumbers: [2] });
+await corsair.pdf4me.api.pdf.deletePages({ docContent: "<base64>", docName: "document.pdf", pageNumbers: "2,4-5" });
 ```
 
 **Input**
@@ -389,7 +389,7 @@ await corsair.pdf4me.api.pdf.deletePages({ docContent: "<base64>", docName: "doc
 | `isAsync` | `boolean` | No | Process asynchronously and return a job to poll at jobs.status (only honoured by actions that support it) |
 | `callBackUrl` | `string` | No | URL notified when an asynchronous job completes |
 
-The original document is not recoverable from the answer, so this is marked destructive.
+Answers a new PDF without the pages; the source file is not changed. Marked destructive because each call uses a billed API call.
 
 
 
@@ -493,7 +493,7 @@ await corsair.pdf4me.api.pdf.getInfo({ docContent: "<base64>", docName: "documen
 | `docContent` | `string` | Yes | Source file: base64 content, a pdf4meblobid://&lt;id&gt; reference, or an https URL |
 | `docName` | `string` | Yes | Source file name including its extension; the API dispatches on it |
 
-Reads page count, dimensions, author and other metadata.
+Calls GetPdfMetadata (the documented GetPdfInformation route answers 404). Reads page count, size, author, version and more.
 
 
 
@@ -547,7 +547,7 @@ await corsair.pdf4me.api.pdf.merge({ docContent: ["<base64 of first.pdf>", "<bas
 | `isAsync` | `boolean` | No | Process asynchronously and return a job to poll at jobs.status (only honoured by actions that support it) |
 | `callBackUrl` | `string` | No | URL notified when an asynchronous job completes |
 
-docContent is an array and order matters — the array order is the merge order. The answer is the merged PDF.
+docContent is an array and the array order is the merge order. The answer is the merged PDF.
 
 
 
@@ -588,7 +588,7 @@ Split a PDF after a page, every N pages, after listed pages or by page ranges; t
 **Risk:** `destructive`
 
 ```ts
-await corsair.pdf4me.api.pdf.split({ docContent: "<base64>", docName: "document.pdf", splitMode: "pages", splitPageNr: 3 });
+await corsair.pdf4me.api.pdf.split({ docContent: "<base64>", docName: "document.pdf", splitAction: "SplitAfterPage", splitActionNumber: 3 });
 ```
 
 **Input**
@@ -606,7 +606,7 @@ await corsair.pdf4me.api.pdf.split({ docContent: "<base64>", docName: "document.
 | `isAsync` | `boolean` | No | Process asynchronously and return a job to poll at jobs.status (only honoured by actions that support it) |
 | `callBackUrl` | `string` | No | URL notified when an asynchronous job completes |
 
-splitMode picks pages, text, barcode or swissQr; the answer holds the split parts.
+splitAction picks after a page, every N pages, after listed pages or by ranges; the parts come back in documents.
 
 
 

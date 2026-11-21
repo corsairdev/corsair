@@ -48,21 +48,21 @@ apiExamples:
   pdf.merge:
     call: '{ docContent: ["<base64 of first.pdf>", "<base64 of second.pdf>"], docName: "merged.pdf" }'
   pdf.split:
-    call: '{ docContent: "<base64>", docName: "document.pdf", splitMode: "pages", splitPageNr: 3 }'
+    call: '{ docContent: "<base64>", docName: "document.pdf", splitAction: "SplitAfterPage", splitActionNumber: 3 }'
   pdf.compress:
     call: '{ docContent: "<base64>", docName: "document.pdf", optimizeProfile: "Web" }'
   pdf.extractPages:
     call: '{ docContent: "<base64>", docName: "document.pdf", pageNumbers: [1, 3] }'
   pdf.deletePages:
-    call: '{ docContent: "<base64>", docName: "document.pdf", pageNumbers: [2] }'
+    call: '{ docContent: "<base64>", docName: "document.pdf", pageNumbers: "2,4-5" }'
   pdf.getInfo:
     call: '{ docContent: "<base64>", docName: "document.pdf" }'
   convert.pdfToWord:
-    call: '{ docContent: "<base64>", docName: "document.pdf", docType: "docx" }'
+    call: '{ docContent: "<base64>", docName: "document.pdf", qualityType: "Draft" }'
   convert.htmlToPdf:
-    call: '{ htmlContent: "<h1>Hello</h1>", docName: "out.pdf" }'
+    call: '{ htmlContent: "<h1>Hello</h1>", docName: "page.html", format: "A4" }'
   convert.ocrPdf:
-    call: '{ docContent: "<base64>", docName: "scan.pdf", ocrWhenNeeded: true, ocrLang: "eng" }'
+    call: '{ docContent: "<base64>", docName: "scan.pdf", ocrWhenNeeded: true, language: "English" }'
   extract.tableFromPdf:
     call: '{ docContent: "<base64>", docName: "document.pdf" }'
   extract.pdfFormData:
@@ -70,12 +70,12 @@ apiExamples:
   jobs.status:
     call: '{ jobId: "job-1" }'
 apiNotes:
-  pdf.merge: 'docContent is an array and order matters — the array order is the merge order. The answer is the merged PDF.'
-  pdf.split: 'splitMode picks pages, text, barcode or swissQr; the answer holds the split parts.'
+  pdf.merge: 'docContent is an array and the array order is the merge order. The answer is the merged PDF.'
+  pdf.split: 'splitAction picks after a page, every N pages, after listed pages or by ranges; the parts come back in documents.'
   pdf.compress: 'optimizeProfile values: Max, Web, Print, Default. Default is mapped to Max server-side; an unknown value fails with 400 Invalid Optimization Profile.'
-  pdf.deletePages: 'The original document is not recoverable from the answer, so this is marked destructive.'
-  pdf.getInfo: 'Reads page count, dimensions, author and other metadata.'
-  convert.ocrPdf: 'ocrWhenNeeded is the documented mixed-type boolean field; ocrLang takes an OCR language code such as eng.'
-  extract.tableFromPdf: 'Answers the extracted tables as structured data.'
-  extract.pdfFormData: 'Answers the values of filled PDF form fields.'
-  jobs.status: 'Poll a job started with isAsync: true. isFinished with isSuccess true means done; hasFailed true means it failed.'
+  pdf.deletePages: 'Answers a new PDF without the pages; the source file is not changed. Marked destructive because each call uses a billed API call.'
+  pdf.getInfo: 'Calls GetPdfMetadata (the documented GetPdfInformation route answers 404). Reads page count, size, author, version and more.'
+  convert.ocrPdf: 'Always runs as a job: poll jobs.status with the jobId for the file. ocrWhenNeeded goes out as the string the API expects.'
+  extract.tableFromPdf: 'Answers tableList: one entry per page with its table rows.'
+  extract.pdfFormData: 'Answers formData: field values keyed by field name.'
+  jobs.status: 'GETs GetActionStatus with the job id. A finished job answers its file (isFinished true, fileContent); a running one answers its status.'
