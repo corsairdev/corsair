@@ -26,7 +26,7 @@ apiNotes:
   members.history: 'History uses cursor pagination with a default limit of 100 and maximum of 1000. Keep the same filters and order when sending the next cursor.'
   fields.create: 'The `required`, `in_form`, and `in_list` booleans are mandatory. Select fields need at least one option.'
   fields.update: 'Laposta requires `options_full` to be sent as JSON and treats it as a complete replacement: include every option to keep, omitted IDs are deleted, and non-numeric keys such as `new-0` add options. Existing option IDs are numeric in field responses; array updates accept numeric IDs and temporary string IDs. Changing a field datatype removes its stored values.'
-  segments.create: 'Laposta recommends creating a segment in its application first and retrieving it through `segments.get` before composing a definition string.'
+  segments.create: 'The definition is a JSON string of selection blocks and rules, for example `{"blocks":[{"rules":[{"input":{"subject":"domain","comparator":"equal","multi":"","text":"example.com"},"type":"members"}]}]}`. Laposta rejects anything else with "definition is no valid JSON". The easiest way to get one is to build the segment in Laposta and read it with `segments.get`.'
   campaigns.list: 'Use `limit` (1–1000) and `cursor` to page through campaigns. `status` may be `draft` or `sent`.'
   campaigns.history: 'Campaign history uses cursor pagination with a default limit of 100 and maximum of 1000. Keep the same filters and ordering when sending the next cursor.'
   campaigns.update_content: 'Provide `html` or `import_url`. Laposta imports HTML from the URL when selected; if both are provided, the `html` value takes precedence. Only exported campaigns support content retrieval.'
@@ -78,7 +78,7 @@ apiExamples:
     call: "{ list_id: 'list-1', segment_id: 'segment-1' }"
   segments.create:
     call: >-
-      { list_id: 'list-1', name: 'Local members', definition: '{"city"} = \'Utrecht\'' }
+      { list_id: 'list-1', name: 'Members at example.com', definition: '{"blocks":[{"rules":[{"input":{"subject":"domain","comparator":"equal","multi":"","text":"example.com"},"type":"members"}]}]}' }
   segments.update:
     call: "{ list_id: 'list-1', segment_id: 'segment-1', name: 'Local members' }"
   segments.delete:
