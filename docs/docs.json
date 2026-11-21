@@ -4161,6 +4161,14 @@
                 ]
               },
               {
+                "group": "Piloterr",
+                "pages": [
+                  "plugins/piloterr/overview",
+                  "plugins/piloterr/api",
+                  "plugins/piloterr/database"
+                ]
+              },
+              {
                 "group": "Pinecone",
                 "pages": [
                   "plugins/pinecone/overview",
