@@ -4169,6 +4169,14 @@
                 ]
               },
               {
+                "group": "Pingdom",
+                "pages": [
+                  "plugins/pingdom/overview",
+                  "plugins/pingdom/api",
+                  "plugins/pingdom/database"
+                ]
+              },
+              {
                 "group": "Pipedrive",
                 "pages": [
                   "plugins/pipedrive/overview",
