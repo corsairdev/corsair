@@ -56,3 +56,6 @@ export const usedLicenseKey = {
 		uses: 2,
 	},
 };
+
+/** A license route's answer to an unknown key (live, 2026-11-21). */
+export const licenseNotFound = { data: [], error: true };

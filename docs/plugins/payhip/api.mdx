@@ -55,7 +55,7 @@ Exactly one of percent_off (0-100) or amount_off (cents) is required; coupon_typ
 {
   id: number,
   code?: string | null,
-  coupon_type?: single | multi | collection | null,
+  coupon_type?: single | multi | collection | string | null,
   percent_off?: number | null,
   amount_off?: number | null,
   start_date?: string | null,
@@ -107,7 +107,7 @@ await corsair.payhip.api.coupons.get({ couponId: 1495522137 });
 {
   id: number,
   code?: string | null,
-  coupon_type?: single | multi | collection | null,
+  coupon_type?: single | multi | collection | string | null,
   percent_off?: number | null,
   amount_off?: number | null,
   start_date?: string | null,
@@ -163,7 +163,7 @@ Paged with limit and offset.
   coupons: {
     id: number,
     code?: string | null,
-    coupon_type?: single | multi | collection | null,
+    coupon_type?: single | multi | collection | string | null,
     percent_off?: number | null,
     amount_off?: number | null,
     start_date?: string | null,
@@ -225,7 +225,8 @@ Decrements the uses counter (a deactivation). The docs' endpoint list names /lic
   variant_name?: string | null,
   variant_id?: string | null,
   buyer_email?: string | null,
-  uses?: number | null
+  uses?: number | null,
+  date?: string | null
 }
 ```
 </Accordion>
@@ -275,7 +276,8 @@ Payhip disables a license key automatically when a purchase is refunded.
   variant_name?: string | null,
   variant_id?: string | null,
   buyer_email?: string | null,
-  uses?: number | null
+  uses?: number | null,
+  date?: string | null
 }
 ```
 </Accordion>
@@ -323,7 +325,8 @@ await corsair.payhip.api.license.enable({ license_key: "WTKP4-66NL5-HMKQW-GFSCZ"
   variant_name?: string | null,
   variant_id?: string | null,
   buyer_email?: string | null,
-  uses?: number | null
+  uses?: number | null,
+  date?: string | null
 }
 ```
 </Accordion>
@@ -373,7 +376,8 @@ Increments the uses counter (an activation).
   variant_name?: string | null,
   variant_id?: string | null,
   buyer_email?: string | null,
-  uses?: number | null
+  uses?: number | null,
+  date?: string | null
 }
 ```
 </Accordion>
@@ -423,7 +427,8 @@ Answers the license key with enabled, uses, buyer_email and product fields.
   variant_name?: string | null,
   variant_id?: string | null,
   buyer_email?: string | null,
-  uses?: number | null
+  uses?: number | null,
+  date?: string | null
 }
 ```
 </Accordion>

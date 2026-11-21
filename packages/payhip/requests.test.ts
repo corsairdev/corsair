@@ -94,6 +94,32 @@ describe('coupons', () => {
 		);
 	});
 
+	it('create sends dates with a numeric offset, which is the only form Payhip takes', async () => {
+		respond({ data: coupon }, 200);
+		await invoke(Coupons.create, {
+			code: 'example123',
+			coupon_type: 'multi',
+			amount_off: 100,
+			start_date: '2026-12-01T09:30:00.123Z',
+			end_date: '2027-01-01T00:00:00Z',
+		});
+		const form = new URLSearchParams(lastRequest().body);
+		expect(form.get('start_date')).toBe('2026-12-01T09:30:00+00:00');
+		expect(form.get('end_date')).toBe('2027-01-01T00:00:00+00:00');
+	});
+
+	it('create keeps an offset date as given', async () => {
+		respond({ data: coupon }, 200);
+		await invoke(Coupons.create, {
+			code: 'example123',
+			coupon_type: 'multi',
+			amount_off: 100,
+			end_date: '2027-01-01T00:00:00+05:30',
+		});
+		const form = new URLSearchParams(lastRequest().body);
+		expect(form.get('end_date')).toBe('2027-01-01T00:00:00+05:30');
+	});
+
 	it('list GETs coupons with limit and offset', async () => {
 		respond(couponsList);
 		await invoke(Coupons.list, { limit: 10, offset: 5 });

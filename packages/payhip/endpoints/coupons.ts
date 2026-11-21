@@ -5,6 +5,17 @@ import {
 	PayhipEndpointOutputSchemas as Outputs,
 } from './types';
 
+/**
+ * Payhip refuses a `Z` suffix and fractional seconds ("not a valid RFC 3339
+ * datetime string", seen live on 2026-11-21) but takes a numeric offset, so
+ * both are rewritten to the form it accepts.
+ */
+export function toPayhipDate(value: string): string {
+	return value
+		.replace(/\.\d+(?=Z|[+-]\d{2}:\d{2}$)/, '')
+		.replace(/Z$/, '+00:00');
+}
+
 /** Flattens the input into the form fields the API takes. */
 function couponForm(input: {
 	code: string;
@@ -30,8 +41,10 @@ function couponForm(input: {
 	if (input.product_key !== undefined) form['product_key'] = input.product_key;
 	if (input.collection_id !== undefined)
 		form['collection_id'] = input.collection_id;
-	if (input.start_date !== undefined) form['start_date'] = input.start_date;
-	if (input.end_date !== undefined) form['end_date'] = input.end_date;
+	if (input.start_date !== undefined)
+		form['start_date'] = toPayhipDate(input.start_date);
+	if (input.end_date !== undefined)
+		form['end_date'] = toPayhipDate(input.end_date);
 	if (input.minimum_purchase_amount !== undefined)
 		form['minimum_purchase_amount'] = String(input.minimum_purchase_amount);
 	if (input.usage_limit !== undefined)

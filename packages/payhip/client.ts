@@ -64,6 +64,11 @@ export function describePayhipError(
 		(typeof record?.code === 'string' && record.code.length > 0
 			? record.code
 			: undefined) ??
+		// License routes answer an unknown key (or a key from another
+		// product) with a bare 400 {"data":[],"error":true}, seen live.
+		(record?.error === true
+			? "refused; for a license call the key is not one of this product's license keys"
+			: undefined) ??
 		fallback;
 	return text;
 }

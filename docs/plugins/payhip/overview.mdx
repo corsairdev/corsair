@@ -6,9 +6,10 @@ description: "Payhip is a digital products storefront. This plugin creates and m
 
 Use **Payhip** through Corsair: one client, typed API calls.
 
-Two credentials are involved, both stored on the account. Coupon operations authenticate with the account API key (Developer Settings in the Payhip account) in the payhip-api-key header. License-key operations authenticate with a per-product secret key in the product-secret-key header; store that secret on the account (product_secret_key) or pass productSecret in the plugin options. You can find a product's secret key in the Payhip product settings.
+Two credentials are involved, both stored on the account. Coupon operations authenticate with the account API key (Developer Settings in the Payhip account) in the payhip-api-key header. License-key operations authenticate with a per-product secret key in the product-secret-key header; store that secret on the account (product_secret_key). You can find a product's secret key in the Payhip product settings, once license keys are on for that product. One connection holds one product secret, so license calls work on that product's keys. An unknown key answers 400.
 Bodies are form-encoded, as the API requires; the plugin builds them for you. Payhip's purchase-event webhooks exist but their signature scheme is not documented in the API reference, so this plugin does not receive them.
-Note on license.decreaseUsage: the reference's endpoint list names /api/v2/license/decrease while its curl example reuses the /usage URL; this plugin follows the endpoint list. If the API answers 404 for a decrease, tell us and we will switch the route.
+Note on license.decreaseUsage: the reference's endpoint list names /api/v2/license/decrease while its curl example reuses the /usage URL; this plugin follows the endpoint list (checked live: /decrease exists).
+Coupon dates: Payhip takes RFC 3339 with a numeric offset only; the plugin rewrites a Z suffix to +00:00 and drops fractional seconds.
 Every operation is described in the official reference: https://payhip.com/api-reference
 
 **What you get:**

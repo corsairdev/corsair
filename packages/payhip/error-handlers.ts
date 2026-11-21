@@ -9,7 +9,7 @@ function statusOf(error: Error): number | undefined {
 // Retry-After. RATE_LIMIT_ERROR returns maxRetries 0 so a caller's root 429
 // handler cannot restart those attempts (R8: one retry layer).
 // Documented statuses (verified live): 401 authentication_fail; 400
-// validation; 404 unknown coupon id or license key.
+// validation and unknown license key; 404 unknown coupon id.
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => statusOf(error) === 429,

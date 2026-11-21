@@ -1,7 +1,7 @@
 import { inspect } from 'node:util';
 import { ApiError } from 'corsair/http';
 import { describePayhipError, makePayhipRequest } from './client';
-import { authFail, coupon } from './test-fixtures';
+import { authFail, coupon, licenseNotFound } from './test-fixtures';
 
 const API_KEY = 'ph-test-key';
 const PRODUCT_SECRET = 'prod-secret';
@@ -160,6 +160,12 @@ describe('describePayhipError', () => {
 	it('reads the documented { code, message, success } envelope', () => {
 		expect(describePayhipError(authFail, 'fallback')).toBe(
 			'failed to authenticate',
+		);
+	});
+
+	it('names the unknown-license case for the bare { data: [], error: true } 400', () => {
+		expect(describePayhipError(licenseNotFound, 'Bad Request')).toContain(
+			"not one of this product's license keys",
 		);
 	});
 
