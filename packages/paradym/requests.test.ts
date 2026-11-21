@@ -135,9 +135,21 @@ describe('wallets', () => {
 	});
 
 	it('get reads one wallet by explicit id', async () => {
-		respond(wallet);
-		await invoke(Wallets.get, { walletId: 'wallet_9' });
-		expectAuthenticated('/v1/wallets/wallet_9');
+		respond({ data: [wallet], meta: {} });
+		const result = (await invoke(Wallets.get, { walletId: 'wallet_9' })) as {
+			id: string;
+		};
+		expect(result.id).toBe(wallet.id);
+		// There is no GET /v1/wallets/{id}; the list is filtered by id.
+		expectAuthenticated('/v1/wallets');
+		expect(lastRequest().query).toEqual({ 'filter[id]': 'wallet_9' });
+	});
+
+	it('get answers a 404 ApiError when the filter finds no wallet', async () => {
+		respond({ data: [], meta: {} });
+		await expect(
+			invoke(Wallets.get, { walletId: 'missing' }),
+		).rejects.toMatchObject({ name: 'ApiError', status: 404 });
 	});
 
 	it('update PATCHes one wallet', async () => {

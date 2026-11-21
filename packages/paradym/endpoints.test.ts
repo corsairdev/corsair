@@ -119,7 +119,7 @@ describe('output parsing', () => {
 	});
 
 	it('rejects a wallet with no id', async () => {
-		respond({ name: 'No id', ownerId: 'u' });
+		respond({ data: [{ name: 'No id', ownerId: 'u' }], meta: {} });
 		await rejects(Wallets.get, { walletId: 'x' }, 'id');
 	});
 

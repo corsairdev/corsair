@@ -108,6 +108,7 @@ apiExamples:
 apiNotes:
   wallets.list: 'Needs no wallet id; searches by name and filters by id or exact name.'
   wallets.create: 'Wallet creation gives the wallet its own agent and template space.'
+  wallets.get: 'Paradym has no single-wallet GET route, so this reads the wallet list filtered by id.'
   wallets.update: 'Takes the wallet id as an explicit input, not the account wallet.'
   credentialTemplates.create: 'The attributes object is keyed by attribute name; Paradym validates its contents, including the credential type identifier.'
   credentialTemplates.archive: 'Archived templates can be restored with credentialTemplates.unarchive.'

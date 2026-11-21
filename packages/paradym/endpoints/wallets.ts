@@ -1,4 +1,6 @@
+import { asRecord } from 'corsair/core';
 import type { ParadymEndpoints } from '..';
+import { buildParadymApiError } from '../client';
 import { call } from './call';
 import {
 	ParadymEndpointInputSchemas as Inputs,
@@ -55,11 +57,29 @@ export const get: ParadymEndpoints['walletsGet'] = (ctx, input) =>
 			output: Outputs.walletsGet,
 		},
 		input,
+		// The API has no GET /v1/wallets/{id} (it answers 404); a wallet is
+		// read through the list with filter[id].
 		({ walletId }) => ({
 			method: 'GET',
-			path: `/v1/wallets/${encodeURIComponent(walletId)}`,
+			path: '/v1/wallets',
+			query: { 'filter[id]': walletId },
 		}),
-		{ skipWallet: true, log: (_, wallet) => ({ walletId: wallet.id }) },
+		{
+			skipWallet: true,
+			shape: (raw) => {
+				const data = asRecord(raw)?.data;
+				const wallet = Array.isArray(data) ? data[0] : undefined;
+				if (!wallet) {
+					throw buildParadymApiError('Paradym 404: wallet not found', {
+						method: 'GET',
+						path: '/v1/wallets',
+						status: 404,
+					});
+				}
+				return wallet;
+			},
+			log: (_, wallet) => ({ walletId: wallet.id }),
+		},
 	);
 
 export const update: ParadymEndpoints['walletsUpdate'] = (ctx, input) =>
