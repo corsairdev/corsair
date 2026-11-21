@@ -11505,7 +11505,7 @@
     {
       "path": "elorus.api.v12.bills_attachments_create",
       "shortPath": "v12.bills_attachments_create",
-      "description": "Create a new attachment.",
+      "description": "Create a new attachment. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -11518,7 +11518,7 @@
           {
             "key": "form",
             "optional": false,
-            "type": "{ title?: string, file: custom, primary?: boolean }"
+            "type": "{ title?: string, file: string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom, primary?: boolean }"
           },
           {
             "key": "demo",
@@ -13358,7 +13358,7 @@
     {
       "path": "elorus.api.v12.cashpayments_attachments_create",
       "shortPath": "v12.cashpayments_attachments_create",
-      "description": "Create a new attachment.",
+      "description": "Create a new attachment. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -13371,7 +13371,7 @@
           {
             "key": "form",
             "optional": false,
-            "type": "{ title?: string, file: custom }"
+            "type": "{ title?: string, file: string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom }"
           },
           {
             "key": "demo",
@@ -14245,7 +14245,7 @@
     {
       "path": "elorus.api.v12.cashreceipts_attachments_create",
       "shortPath": "v12.cashreceipts_attachments_create",
-      "description": "Create a new attachment.",
+      "description": "Create a new attachment. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -14258,7 +14258,7 @@
           {
             "key": "form",
             "optional": false,
-            "type": "{ title?: string, file: custom }"
+            "type": "{ title?: string, file: string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom }"
           },
           {
             "key": "demo",
@@ -15202,7 +15202,7 @@
     {
       "path": "elorus.api.v12.contacts_attachments_create",
       "shortPath": "v12.contacts_attachments_create",
-      "description": "Create a new attachment.",
+      "description": "Create a new attachment. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -15215,7 +15215,7 @@
           {
             "key": "form",
             "optional": false,
-            "type": "{ title?: string, file: custom }"
+            "type": "{ title?: string, file: string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom }"
           },
           {
             "key": "demo",
@@ -16239,7 +16239,7 @@
     {
       "path": "elorus.api.v12.creditnotes_attachments_create",
       "shortPath": "v12.creditnotes_attachments_create",
-      "description": "Create a new attachment.",
+      "description": "Create a new attachment. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -16252,7 +16252,7 @@
           {
             "key": "form",
             "optional": false,
-            "type": "{ title?: string, file: custom }"
+            "type": "{ title?: string, file: string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom }"
           },
           {
             "key": "demo",
@@ -18214,7 +18214,7 @@
     {
       "path": "elorus.api.v12.deliverynotes_attachments_create",
       "shortPath": "v12.deliverynotes_attachments_create",
-      "description": "Create a new attachment.",
+      "description": "Create a new attachment. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -18227,7 +18227,7 @@
           {
             "key": "form",
             "optional": false,
-            "type": "{ title?: string, file: custom }"
+            "type": "{ title?: string, file: string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom }"
           },
           {
             "key": "demo",
@@ -20636,7 +20636,7 @@
     {
       "path": "elorus.api.v12.estimates_attachments_create",
       "shortPath": "v12.estimates_attachments_create",
-      "description": "Create a new attachment.",
+      "description": "Create a new attachment. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -20649,7 +20649,7 @@
           {
             "key": "form",
             "optional": false,
-            "type": "{ title?: string, file: custom }"
+            "type": "{ title?: string, file: string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom }"
           },
           {
             "key": "demo",
@@ -22537,7 +22537,7 @@
     {
       "path": "elorus.api.v12.expenses_attachments_create",
       "shortPath": "v12.expenses_attachments_create",
-      "description": "Create a new attachment.",
+      "description": "Create a new attachment. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -22550,7 +22550,7 @@
           {
             "key": "form",
             "optional": false,
-            "type": "{ title?: string, file: custom, primary?: boolean }"
+            "type": "{ title?: string, file: string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom, primary?: boolean }"
           },
           {
             "key": "demo",
@@ -24835,7 +24835,7 @@
     {
       "path": "elorus.api.v12.invoices_attachments_create",
       "shortPath": "v12.invoices_attachments_create",
-      "description": "Create a new attachment.",
+      "description": "Create a new attachment. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -24848,7 +24848,7 @@
           {
             "key": "form",
             "optional": false,
-            "type": "{ title?: string, file: custom }"
+            "type": "{ title?: string, file: string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom }"
           },
           {
             "key": "demo",
@@ -28135,7 +28135,7 @@
     {
       "path": "elorus.api.v12.projects_attachments_create",
       "shortPath": "v12.projects_attachments_create",
-      "description": "Create a new attachment.",
+      "description": "Create a new attachment. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -28148,7 +28148,7 @@
           {
             "key": "form",
             "optional": false,
-            "type": "{ title?: string, file: custom }"
+            "type": "{ title?: string, file: string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom }"
           },
           {
             "key": "demo",
@@ -30560,7 +30560,7 @@
     {
       "path": "elorus.api.v12.suppliercredits_attachments_create",
       "shortPath": "v12.suppliercredits_attachments_create",
-      "description": "Create a new attachment.",
+      "description": "Create a new attachment. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -30573,7 +30573,7 @@
           {
             "key": "form",
             "optional": false,
-            "type": "{ title?: string, file: custom, primary?: boolean }"
+            "type": "{ title?: string, file: string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom, primary?: boolean }"
           },
           {
             "key": "demo",
