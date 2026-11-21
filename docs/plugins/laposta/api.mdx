@@ -32,7 +32,7 @@ await corsair.laposta.api.campaigns.create({ type: 'regular', name: 'Monthly new
 | `previewtext` | `string` | No | — |
 | `from` | `object` | Yes | — |
 | `reply_to` | `string` | No | — |
-| `list_ids` | `string[]` | Yes | — |
+| `list_ids` | `(string \| Record<string, string[]>)[]` | Yes | List IDs, or &#123; '&lt;list_id&gt;': ['&lt;segment_id&gt;', ...] &#125; entries to send to segments of a list |
 | `stats` | `object` | No | — |
 
 <AccordionGroup>
@@ -731,7 +731,7 @@ await corsair.laposta.api.campaigns.update({ campaign_id: 'campaign-1', subject:
 | `previewtext` | `string` | No | — |
 | `from` | `object` | No | — |
 | `reply_to` | `string` | No | — |
-| `list_ids` | `string[]` | No | — |
+| `list_ids` | `(string \| Record<string, string[]>)[]` | No | List IDs, or &#123; '&lt;list_id&gt;': ['&lt;segment_id&gt;', ...] &#125; entries to send to segments of a list |
 | `stats` | `object` | No | — |
 
 <AccordionGroup>
