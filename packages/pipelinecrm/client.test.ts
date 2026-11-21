@@ -1,8 +1,5 @@
-import {
-	describePipelineCrmError,
-	makePipelineCrmRequest,
-	PipelineCrmAPIError,
-} from './client';
+import { ApiError } from 'corsair/http';
+import { describePipelineCrmError, makePipelineCrmRequest } from './client';
 import { unknownApiKey } from './test-fixtures';
 
 const TOKEN = 'pcrm_live_testtoken';
@@ -20,12 +17,10 @@ function respond(body: unknown, status: number) {
 }
 
 // unknown: a rejection can be any value until the instanceof check narrows it.
-async function failure(
-	promise: Promise<unknown>,
-): Promise<PipelineCrmAPIError> {
+async function failure(promise: Promise<unknown>): Promise<ApiError> {
 	const error = await promise.catch((caught: unknown) => caught);
-	expect(error).toBeInstanceOf(PipelineCrmAPIError);
-	if (!(error instanceof PipelineCrmAPIError)) throw error;
+	expect(error).toBeInstanceOf(ApiError);
+	if (!(error instanceof ApiError)) throw error;
 	return error;
 }
 
@@ -83,7 +78,8 @@ describe('makePipelineCrmRequest', () => {
 		);
 		expect(error.status).toBe(401);
 		expect(error.message).toBe('Pipeline CRM 401: Unknown api_key');
-		expect(error.method).toBe('GET');
+		expect(error.request.method).toBe('GET');
+		expect(error.name).toBe('ApiError');
 	});
 
 	it('drops the request body from the rebuilt error', async () => {

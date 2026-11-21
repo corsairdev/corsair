@@ -1,13 +1,16 @@
 import type { ErrorContext } from 'corsair/core';
-import { PipelineCrmAPIError } from './client';
+import { ApiError } from 'corsair/http';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
-function pipelineCrmError(method: string, status: number): PipelineCrmAPIError {
-	return new PipelineCrmAPIError(`Pipeline CRM ${status}`, {
-		method,
-		path: '/api/v3/deals',
-		status,
-	});
+function pipelineCrmError(
+	method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
+	status: number,
+): ApiError {
+	return new ApiError(
+		{ method, url: '/api/v3/deals' },
+		{ url: '/api/v3/deals', ok: false, status, statusText: '', body: null },
+		`Pipeline CRM ${status}`,
+	);
 }
 
 function contextFor(error: Error): ErrorContext {
@@ -75,8 +78,7 @@ describe('mergeErrorHandlers', () => {
 	it('lets a caller handler run before the builtins it does not name', async () => {
 		const merged = mergeErrorHandlers(errorHandlers, {
 			TOO_MANY_REQUESTS: {
-				match: (error) =>
-					error instanceof PipelineCrmAPIError && error.status === 429,
+				match: (error) => error instanceof ApiError && error.status === 429,
 				handler: async () => ({ maxRetries: 5 }),
 			},
 		});

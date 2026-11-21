@@ -21,50 +21,6 @@ const RATE_LIMIT_CONFIG: RateLimitConfig = {
 };
 
 /**
- * A failed call throws this: core's `ApiError` (R8: core and the handlers
- * read `status` and `retryAfter` from it), rebuilt without the request
- * body and query. Record payloads ride through the request, which core's
- * own ApiError keeps on the request.
- */
-export class PipelineCrmAPIError extends ApiError {
-	/** The HTTP method of the failed request, for replay-safety decisions. */
-	readonly method: string;
-
-	constructor(
-		message: string,
-		options: {
-			method: string;
-			/** Request path, without query. */
-			path: string;
-			status: number;
-			statusText?: string;
-			// unknown: error bodies are the documented {"error": …} envelope
-			// or non-JSON from the edge.
-			body?: unknown;
-			retryAfter?: number;
-		},
-	) {
-		super(
-			{
-				method: options.method as ApiRequestOptions['method'],
-				url: options.path,
-			},
-			{
-				url: options.path,
-				ok: false,
-				status: options.status,
-				statusText: options.statusText ?? '',
-				body: options.body,
-			},
-			message,
-			{ retryAfter: options.retryAfter },
-		);
-		this.name = 'PipelineCrmAPIError';
-		this.method = options.method;
-	}
-}
-
-/**
  * Extracts the readable part of a Pipeline CRM error body. Every non-2xx
  * answers `{"error": "<message>"}` (verified live with an invalid token:
  * 401 `{"error":"Unknown api_key"}`).
@@ -140,14 +96,21 @@ export async function makePipelineCrmRequest(
 				error.body,
 				error.statusText || 'request failed',
 			);
-			throw new PipelineCrmAPIError(`Pipeline CRM ${error.status}: ${detail}`, {
-				method,
-				path,
-				status: error.status,
-				statusText: error.statusText,
-				body: error.body,
-				retryAfter: error.retryAfter,
-			});
+			// R8: core's ApiError itself (management maps errors named
+			// ApiError to their real status), rebuilt with the method and path
+			// only, so status and retryAfter survive for the handlers.
+			throw new ApiError(
+				{ method, url: path },
+				{
+					url: path,
+					ok: false,
+					status: error.status,
+					statusText: error.statusText,
+					body: error.body,
+				},
+				`Pipeline CRM ${error.status}: ${detail}`,
+				{ retryAfter: error.retryAfter },
+			);
 		}
 		// Timeouts and network failures carry no request data; let them through.
 		throw error;

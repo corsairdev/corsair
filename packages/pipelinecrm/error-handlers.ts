@@ -1,8 +1,8 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { PipelineCrmAPIError } from './client';
+import { ApiError } from 'corsair/http';
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof PipelineCrmAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 // The client retries a 429 up to three times through core, honouring
@@ -32,8 +32,8 @@ export const errorHandlers = {
 	// double-apply, so only GET requests replay after a 5xx.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof PipelineCrmAPIError &&
-			error.method === 'GET' &&
+			error instanceof ApiError &&
+			error.request.method === 'GET' &&
 			(error.status ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,

@@ -406,8 +406,6 @@ export function pipelinecrm<const T extends PipelineCrmPluginOptions>(
 	} satisfies InternalPipelineCrmPlugin;
 }
 
-export { PipelineCrmAPIError } from './client';
-
 export type {
 	Company,
 	Deal,
