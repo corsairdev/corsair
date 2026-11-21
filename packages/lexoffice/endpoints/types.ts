@@ -1171,6 +1171,7 @@ export const PostingCategoriesListResponseSchema = z.array(
 export type PostingCategory = z.infer<typeof PostingCategorySchema>;
 
 const MAX_FILE_BYTES = 5 * 1024 * 1024;
+const MAX_FILE_BASE64_LENGTH = 4 * Math.ceil(MAX_FILE_BYTES / 3);
 const FileContentTypes = [
 	'application/pdf',
 	'image/jpeg',
@@ -1179,13 +1180,19 @@ const FileContentTypes = [
 	'text/xml',
 ] as const;
 
+function decodedBase64ByteLength(value: string): number {
+	const padding = value.endsWith('==') ? 2 : value.endsWith('=') ? 1 : 0;
+	return (value.length / 4) * 3 - padding;
+}
+
 const FileUploadFields = {
 	file: z
 		.string()
 		.base64()
-		.max(Math.ceil((MAX_FILE_BYTES / 3) * 4))
+		.min(4)
+		.max(MAX_FILE_BASE64_LENGTH)
 		.refine(
-			(value) => Buffer.from(value, 'base64').byteLength <= MAX_FILE_BYTES,
+			(value) => decodedBase64ByteLength(value) <= MAX_FILE_BYTES,
 			'File must be no larger than 5 MiB',
 		),
 	fileName: z.string().min(1),

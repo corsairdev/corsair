@@ -504,6 +504,25 @@ describe('Lexoffice endpoint schemas', () => {
 			FilesUploadResponseSchema.safeParse({ id: 'file-1', voucherId: 'v-1' })
 				.success,
 		).toBe(true);
+
+		const maximumFileBytes = 5 * 1024 * 1024;
+		const maximumEncodedLength = 4 * Math.ceil(maximumFileBytes / 3);
+		const atLimitBase64 = `${'A'.repeat(maximumEncodedLength - 1)}=`;
+		const oneByteOverBase64 = 'A'.repeat(maximumEncodedLength);
+		expect(atLimitBase64.length).toBe(maximumEncodedLength);
+		expect(oneByteOverBase64.length).toBe(maximumEncodedLength);
+		expect(
+			FilesUploadInputSchema.safeParse({
+				...uploadInput,
+				file: atLimitBase64,
+			}).success,
+		).toBe(true);
+		expect(
+			FilesUploadInputSchema.safeParse({
+				...uploadInput,
+				file: oneByteOverBase64,
+			}).success,
+		).toBe(false);
 	});
 
 	it('validates profile and credit notes schemas', () => {
