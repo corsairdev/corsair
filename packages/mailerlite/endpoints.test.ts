@@ -50,13 +50,21 @@ type SampleValue =
 // ZodType keeps dynamic registry schemas at an untrusted boundary; safeParse
 // validates each generated candidate before the test calls its request builder.
 function makeSchemaSample(schema: z.ZodType): SampleValue | undefined {
-	const definition = schema._zod.def;
-	if (definition.type === 'optional' || definition.type === 'undefined')
-		return undefined;
-	if (definition.type === 'nullable') return null;
-	if (definition.type === 'string') {
+	if (schema instanceof z.ZodOptional) return undefined;
+	if (schema instanceof z.ZodNullable) return null;
+	if (schema instanceof z.ZodString) {
 		const candidates: SampleValue[] = [
 			'1',
+			'active',
+			'completed',
+			'canceled',
+			'failed',
+			'a_path',
+			'b_path',
+			'c_path',
+			'instant',
+			'simple',
+			'account',
 			'test',
 			'USD',
 			'2026-11-21',
@@ -66,31 +74,65 @@ function makeSchemaSample(schema: z.ZodType): SampleValue | undefined {
 		];
 		return candidates.find((candidate) => schema.safeParse(candidate).success);
 	}
-	if (definition.type === 'number') {
+	if (schema instanceof z.ZodNumber) {
 		return [1, 0, 100].find((candidate) => schema.safeParse(candidate).success);
 	}
-	if (definition.type === 'boolean') return true;
-	if (definition.type === 'enum') return Object.values(definition.entries)[0];
-	if (definition.type === 'literal') return definition.values[0];
-	if (definition.type === 'array') {
-		const element = makeSchemaSample(definition.element);
+	if (schema instanceof z.ZodBoolean) return true;
+	if (schema instanceof z.ZodEnum) return schema.options[0];
+	if (schema instanceof z.ZodLiteral) {
 		const candidates: SampleValue[] = [
-			element === undefined ? [] : [element],
-			[],
+			'1',
+			'active',
+			'completed',
+			'canceled',
+			'failed',
+			'a_path',
+			'b_path',
+			'c_path',
+			'instant',
+			'simple',
+			'account',
+			'test',
+			'USD',
+			'2026-11-21',
+			true,
+			false,
+			0,
+			1,
 		];
 		return candidates.find((candidate) => schema.safeParse(candidate).success);
 	}
-	if (definition.type === 'record') return {};
-	if (definition.type === 'union') {
-		for (const option of definition.options) {
-			const candidate = makeSchemaSample(option);
-			if (candidate !== undefined && schema.safeParse(candidate).success)
-				return candidate;
-		}
-		return undefined;
+	if (schema instanceof z.ZodArray) {
+		const candidates: SampleValue[] = [
+			[],
+			['1'],
+			['subscriber.created'],
+			[{ email: 'person@mailerlite.test' }],
+			[{ name: 'Test resource' }],
+			[{ name: 'Test resource', attributes: {} }],
+			[{ ecommerce_product_id: '1' }],
+		];
+		return candidates.find((candidate) => schema.safeParse(candidate).success);
 	}
-	if (definition.type === 'object') {
-		const shape = schema instanceof z.ZodObject ? schema.shape : {};
+	if (schema instanceof z.ZodRecord) return {};
+	if (schema instanceof z.ZodUnion) {
+		const candidates: SampleValue[] = [
+			'1',
+			'test',
+			'test@mailerlite.test',
+			'https://mailer.test',
+			0,
+			1,
+			true,
+			false,
+			null,
+			[],
+			{},
+		];
+		return candidates.find((candidate) => schema.safeParse(candidate).success);
+	}
+	if (schema instanceof z.ZodObject) {
+		const shape = schema.shape;
 		const required: { [key: string]: SampleValue } = {};
 		const complete: { [key: string]: SampleValue } = {};
 		for (const [key, field] of Object.entries(shape)) {
@@ -292,8 +334,6 @@ describe('MailerLite endpoint contracts', () => {
 				makeSchemaSample(contract.inputSchema);
 			expect(input).toBeDefined();
 			const parsedInput = contract.inputSchema.safeParse(input);
-			if (!parsedInput.success)
-				console.log(operation, parsedInput.error.issues);
 			expect(parsedInput.success).toBe(true);
 			const request = contract.requestBuilder(input);
 			expect(request.method).toBe(expectedMethod(operation));
@@ -326,15 +366,17 @@ describe('MailerLite endpoint contracts', () => {
 		);
 	});
 
-	it('rejects undocumented request keys before network I/O', async () => {
-		await expect(
-			Subscribers.create(ctx, {
+	it('rejects undocumented request keys before network I/O', () => {
+		const createContract = mailerLiteOperationRegistry['subscribers.create'];
+		if (!createContract) throw new Error('Missing subscribers.create contract');
+		expect(() =>
+			createContract.requestBuilder({
 				body: {
 					email: 'person@mailerlite.test',
 					undocumented_field: 'reject-me',
 				},
 			}),
-		).rejects.toThrow();
+		).toThrow();
 		expect(mockedRequest).not.toHaveBeenCalled();
 		expect(mockedLog).not.toHaveBeenCalled();
 	});

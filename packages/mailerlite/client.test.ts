@@ -95,8 +95,8 @@ describe('MailerLite HTTP client', () => {
 		);
 		expect(fetchMock).toHaveBeenCalledTimes(1);
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(rejected)).toBe(true);
-		await expect(
-			errorHandlers.RATE_LIMIT_ERROR.handler(rejected),
-		).resolves.toEqual({ maxRetries: 0 });
+		await expect(errorHandlers.RATE_LIMIT_ERROR.handler()).resolves.toEqual({
+			maxRetries: 0,
+		});
 	});
 });

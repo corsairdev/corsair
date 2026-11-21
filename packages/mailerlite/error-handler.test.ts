@@ -32,9 +32,9 @@ describe('MailerLite error handlers', () => {
 	it('routes 429 to rate-limit handling and does not retry writes again', async () => {
 		const error = apiError(429, 'Too Many Attempts', 4000);
 		expect(handlerFor(error)).toBe('RATE_LIMIT_ERROR');
-		await expect(
-			errorHandlers.RATE_LIMIT_ERROR.handler(error),
-		).resolves.toEqual({ maxRetries: 0 });
+		await expect(errorHandlers.RATE_LIMIT_ERROR.handler()).resolves.toEqual({
+			maxRetries: 0,
+		});
 		expect(error.retryAfter).toBe(4000);
 	});
 
