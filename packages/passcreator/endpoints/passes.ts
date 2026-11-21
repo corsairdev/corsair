@@ -1,5 +1,5 @@
 import type { PasscreatorEndpoints } from '..';
-import { call } from './call';
+import { call, expectEmpty } from './call';
 import {
 	PasscreatorEndpointInputSchemas as Inputs,
 	PasscreatorEndpointOutputSchemas as Outputs,
@@ -44,7 +44,7 @@ export const list: PasscreatorEndpoints['passesList'] = (ctx, input) =>
 			path: `/api/pass/list/${encodeURIComponent(templateUid)}`,
 			query,
 		}),
-		{ log: (_, passes) => ({ count: passes.length }) },
+		{ log: (_, page) => ({ count: page.results.length }) },
 	);
 
 export const get: PasscreatorEndpoints['passesGet'] = (ctx, input) =>
@@ -77,24 +77,31 @@ export const update: PasscreatorEndpoints['passesUpdate'] = (ctx, input) =>
 			output: Outputs.passesUpdate,
 		},
 		input,
-		({ passUid, properties, voided }) => ({
-			method: 'PUT',
-			path: `/api/pass/${encodeURIComponent(passUid)}`,
-			query: { zapierStyle: true },
-			body: { ...properties, ...(voided === undefined ? {} : { voided }) },
-		}),
+		// Property updates are POST ?zapierStyle=true (which also takes
+		// voided); PUT is the documented "mark voided" call, body { voided }.
+		({ passUid, properties, voided }) =>
+			properties && Object.keys(properties).length > 0
+				? {
+						method: 'POST',
+						path: `/api/pass/${encodeURIComponent(passUid)}`,
+						query: { zapierStyle: true },
+						body: {
+							...properties,
+							...(voided === undefined ? {} : { voided }),
+						},
+					}
+				: {
+						method: 'PUT',
+						path: `/api/pass/${encodeURIComponent(passUid)}`,
+						body: { voided },
+					},
 		{
-			// The API answers 204 with no body; anything else is a failure the
-			// caller must see rather than a fabricated success.
 			shape: (raw, { passUid }) => {
-				if (raw !== undefined && raw !== null && raw !== '') {
-					throw new Error(
-						`Passcreator passes.update: unexpected body ${JSON.stringify(raw)}`,
-					);
-				}
+				expectEmpty(raw, 'passes.update');
 				return { passUid, success: true };
 			},
-			log: (_, result) => ({ passUid: result.passUid }),
+			// passUid can be a user-provided id or barcode value: not logged.
+			log: (_, result) => ({ success: result.success }),
 		},
 	);
 
@@ -111,7 +118,14 @@ export const remove: PasscreatorEndpoints['passesDelete'] = (ctx, input) =>
 			method: 'DELETE',
 			path: `/api/pass/${encodeURIComponent(passUid)}`,
 		}),
-		{ log: ({ passUid }, result) => ({ passUid, success: result.success }) },
+		{
+			// The API answers 200 with no body.
+			shape: (raw, { passUid }) => {
+				expectEmpty(raw, 'passes.delete');
+				return { passUid, success: true };
+			},
+			log: (_, result) => ({ success: result.success }),
+		},
 	);
 
 export const search: PasscreatorEndpoints['passesSearch'] = (ctx, input) =>
@@ -205,14 +219,10 @@ export const enableDownload: PasscreatorEndpoints['passesEnableDownload'] = (
 		}),
 		{
 			shape: (raw, { passUid }) => {
-				if (raw !== undefined && raw !== null && raw !== '') {
-					throw new Error(
-						`Passcreator passes.enableDownload: unexpected body ${JSON.stringify(raw)}`,
-					);
-				}
+				expectEmpty(raw, 'passes.enableDownload');
 				return { passUid, success: true };
 			},
-			log: (_, result) => ({ passUid: result.passUid }),
+			log: (_, result) => ({ success: result.success }),
 		},
 	);
 
@@ -229,9 +239,16 @@ export const pushNotification: PasscreatorEndpoints['passesPushNotification'] =
 			({ passUid, message }) => ({
 				method: 'POST',
 				path: `/api/pass/${encodeURIComponent(passUid)}/sendpushnotification`,
-				body: { message },
+				body: { pushNotificationText: message },
 			}),
-			{ log: (_, result) => ({ success: result.success }) },
+			{
+				// The API answers 204 with no body.
+				shape: (raw, { passUid }) => {
+					expectEmpty(raw, 'passes.pushNotification');
+					return { passUid, success: true };
+				},
+				log: (_, result) => ({ success: result.success }),
+			},
 		);
 
 export const sendEmail: PasscreatorEndpoints['passesSendEmail'] = (
@@ -250,5 +267,15 @@ export const sendEmail: PasscreatorEndpoints['passesSendEmail'] = (
 			method: 'POST',
 			path: `/api/pass/deliver/${encodeURIComponent(passUid)}/email/${encodeURIComponent(email)}`,
 		}),
-		{ log: (_, result) => ({ success: result.success }) },
+		{
+			shape: (raw, { passUid }) => {
+				// A success envelope or an empty answer both mean sent.
+				const record = raw as { success?: unknown } | undefined;
+				if (record && typeof record === 'object' && record.success === false) {
+					throw new Error('Passcreator passes.sendEmail: the send failed');
+				}
+				return { passUid, success: true };
+			},
+			log: (_, result) => ({ success: result.success }),
+		},
 	);

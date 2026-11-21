@@ -38,3 +38,22 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	);
 	return result;
 }
+
+/**
+ * Shapes a write the API answers with no body (or `{}`). Anything else is a
+ * failure the caller must see; the body is left out of the message because
+ * it can carry pass holder data.
+ */
+// unknown: raw is the untouched response body.
+export function expectEmpty(raw: unknown, what: string): void {
+	const empty =
+		raw === undefined ||
+		raw === null ||
+		raw === '' ||
+		(typeof raw === 'object' &&
+			!Array.isArray(raw) &&
+			Object.keys(raw as object).length === 0);
+	if (!empty) {
+		throw new Error(`Passcreator ${what}: unexpected response body`);
+	}
+}

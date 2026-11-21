@@ -84,7 +84,15 @@ describe('passes', () => {
 	});
 
 	it('list GETs the passes of a template with cursor params', async () => {
-		respond([pass]);
+		respond({
+			query: {
+				start: 2,
+				pageSize: 50,
+				self: 'https://app.passcreator.com/api/pass/list/tmpl_1',
+			},
+			total: 1,
+			results: [pass],
+		});
 		await invoke(Passes.list, {
 			templateUid: 'tmpl_1',
 			start: 2,
@@ -104,27 +112,43 @@ describe('passes', () => {
 		expectAuthenticated('/api/pass/CUSTOMER-12345');
 	});
 
-	it('update PUTs properties and answers 204', async () => {
+	it('update POSTs properties with zapierStyle and answers 204', async () => {
 		respond(undefined, 204);
 		const result = (await invoke(Passes.update, {
 			passUid: 'uid1',
 			properties: { firstname: 'Jane' },
 		})) as { passUid: string; success: boolean };
 		expect(result).toEqual({ passUid: 'uid1', success: true });
-		expectAuthenticated('/api/pass/uid1', 'PUT');
+		expectAuthenticated('/api/pass/uid1', 'POST');
+		expect(lastRequest().query['zapierStyle']).toBe('true');
 		expect(JSON.parse(lastRequest().body as string)).toEqual({
 			firstname: 'Jane',
 		});
 	});
 
-	it('update sends the voided flag when asked', async () => {
+	it('update PUTs { voided } when only the voided flag changes', async () => {
 		respond(undefined, 204);
 		await invoke(Passes.update, { passUid: 'uid1', voided: true });
+		expectAuthenticated('/api/pass/uid1', 'PUT');
 		expect(JSON.parse(lastRequest().body as string)).toEqual({ voided: true });
 	});
 
-	it('delete DELETEs the pass', async () => {
-		respond(writeResult);
+	it('update POSTs properties and voided together', async () => {
+		respond(undefined, 204);
+		await invoke(Passes.update, {
+			passUid: 'uid1',
+			properties: { firstname: 'Jane' },
+			voided: false,
+		});
+		expectAuthenticated('/api/pass/uid1', 'POST');
+		expect(JSON.parse(lastRequest().body as string)).toEqual({
+			firstname: 'Jane',
+			voided: false,
+		});
+	});
+
+	it('delete DELETEs the pass and accepts the empty 200', async () => {
+		respond(undefined, 200);
 		const result = (await invoke(Passes.remove, { passUid: 'uid1' })) as {
 			success: boolean;
 		};
@@ -161,7 +185,7 @@ describe('passes', () => {
 	});
 
 	it('activeHistory GETs the history', async () => {
-		respond({ history: [] });
+		respond([{ date: '2025-01-15', active: 7, inactive: 4 }]);
 		await invoke(Passes.activeHistory, {
 			templateUid: 'tmpl_1',
 			day: '2025-01-15',
@@ -181,8 +205,8 @@ describe('passes', () => {
 		expectAuthenticated('/api/pass/uid1/enabledownload', 'POST');
 	});
 
-	it('pushNotification POSTs the message', async () => {
-		respond(writeResult);
+	it('pushNotification POSTs pushNotificationText and accepts the 204', async () => {
+		respond(undefined, 204);
 		await invoke(Passes.pushNotification, {
 			passUid: 'uid1',
 			message: 'Your coupon is expiring',
@@ -190,7 +214,7 @@ describe('passes', () => {
 		const sent = lastRequest();
 		expectAuthenticated('/api/pass/uid1/sendpushnotification', 'POST');
 		expect(JSON.parse(sent.body as string)).toEqual({
-			message: 'Your coupon is expiring',
+			pushNotificationText: 'Your coupon is expiring',
 		});
 	});
 
@@ -216,7 +240,7 @@ describe('templates', () => {
 	});
 
 	it('fields GETs the field information', async () => {
-		respond({ required: [], optional: [] });
+		respond([{ id: 'f1', name: 'firstname', type: 'text' }]);
 		await invoke(Templates.fields, { templateUid: 'tmpl_1' });
 		const sent = lastRequest();
 		expectAuthenticated('/api/pass-template/tmpl_1');
@@ -224,13 +248,18 @@ describe('templates', () => {
 	});
 
 	it('copy POSTs to the copy route', async () => {
-		respond(template, 201);
-		await invoke(Templates.copy, { templateUid: 'tmpl_1' });
+		respond({ identifier: 'tmpl_copy' }, 201);
+		await invoke(Templates.copy, { templateUid: 'tmpl_1', name: 'Copy' });
 		expectAuthenticated('/api/pass-template/copy/tmpl_1', 'POST');
+		expect(JSON.parse(lastRequest().body as string)).toEqual({ name: 'Copy' });
+		// The API requires a name for the copy.
+		await expect(
+			invoke(Templates.copy, { templateUid: 'tmpl_1' }),
+		).rejects.toThrow();
 	});
 
-	it('delete DELETEs the template', async () => {
-		respond(writeResult);
+	it('delete DELETEs the template and accepts the empty 200', async () => {
+		respond(undefined, 200);
 		const result = (await invoke(Templates.remove, {
 			templateUid: 'tmpl_1',
 		})) as {
@@ -252,30 +281,51 @@ describe('templates', () => {
 
 describe('webhooks', () => {
 	it('subscribe POSTs the subscription body', async () => {
-		respond(webhookSubscription, 201);
+		respond({}, 201);
 		await invoke(Webhooks.subscribe, {
 			target_url: 'https://example.com/webhooks/passcreator',
 			event: 'pass_created',
 		});
 		const sent = lastRequest();
 		expectAuthenticated('/api/hook/subscribe', 'POST');
+		// signPayload defaults to true: the receiver rejects unsigned deliveries.
 		expect(JSON.parse(sent.body as string)).toEqual({
 			target_url: 'https://example.com/webhooks/passcreator',
 			event: 'pass_created',
+			signPayload: true,
 		});
 	});
 
-	it('unsubscribe DELETEs the subscription', async () => {
-		respond(writeResult);
-		await invoke(Webhooks.unsubscribe, { subscriptionUid: 'sub_1' });
-		expectAuthenticated('/api/hook/subscribe/sub_1', 'DELETE');
+	it('subscribe scopes to a template through the path, not the body', async () => {
+		respond({}, 201);
+		await invoke(Webhooks.subscribe, {
+			target_url: 'https://example.com/webhooks/passcreator',
+			event: 'pass_created',
+			pass_template: 'tmpl_1',
+		});
+		expectAuthenticated('/api/hook/subscribe/tmpl_1', 'POST');
+		expect(JSON.parse(lastRequest().body as string)).not.toHaveProperty(
+			'pass_template',
+		);
+	});
+
+	it('unsubscribe POSTs the target_url and accepts {}', async () => {
+		respond({});
+		const result = await invoke(Webhooks.unsubscribe, {
+			target_url: 'https://example.com/webhooks/passcreator',
+		});
+		expect(result).toEqual({ success: true });
+		expectAuthenticated('/api/hook/unsubscribe', 'POST');
+		expect(JSON.parse(lastRequest().body as string)).toEqual({
+			target_url: 'https://example.com/webhooks/passcreator',
+		});
 	});
 
 	it('list GETs the active hooks', async () => {
 		respond([webhookSubscription]);
 		const result = (await invoke(Webhooks.list, {})) as unknown[]; // unknown: subscription objects are provider-shaped
 		expect(result).toHaveLength(1);
-		expectAuthenticated('/api/hook');
+		expectAuthenticated('/api/hook/list');
 	});
 
 	it('getPublicKey GETs the PEM key', async () => {

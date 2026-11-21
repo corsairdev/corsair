@@ -1,5 +1,5 @@
 import type { PasscreatorEndpoints } from '..';
-import { call } from './call';
+import { call, expectEmpty } from './call';
 import {
 	PasscreatorEndpointInputSchemas as Inputs,
 	PasscreatorEndpointOutputSchemas as Outputs,
@@ -44,9 +44,10 @@ export const copy: PasscreatorEndpoints['templatesCopy'] = (ctx, input) =>
 			output: Outputs.templatesCopy,
 		},
 		input,
-		({ templateUid }) => ({
+		({ templateUid, ...body }) => ({
 			method: 'POST',
 			path: `/api/pass-template/copy/${encodeURIComponent(templateUid)}`,
+			body,
 		}),
 		{
 			log: (_, template) => ({ templateUid: template.identifier ?? undefined }),
@@ -66,7 +67,14 @@ export const remove: PasscreatorEndpoints['templatesDelete'] = (ctx, input) =>
 			method: 'DELETE',
 			path: `/api/pass-template/${encodeURIComponent(templateUid)}`,
 		}),
-		{ log: (_, result) => ({ success: result.success }) },
+		{
+			// The API answers 200 with no body.
+			shape: (raw, { templateUid }) => {
+				expectEmpty(raw, 'templates.delete');
+				return { templateUid, success: true };
+			},
+			log: (_, result) => ({ success: result.success }),
+		},
 	);
 
 export const movePass: PasscreatorEndpoints['templatesMovePass'] = (

@@ -93,9 +93,9 @@ export const ListPassesInputSchema = z
 			.number()
 			.int()
 			.min(1)
-			.max(1000)
+			.max(100)
 			.optional()
-			.describe('Number of passes per page'),
+			.describe('Number of passes per page (max 100)'),
 		lastIdOfPriorPage: z
 			.string()
 			.optional()
@@ -123,8 +123,26 @@ export const ListPassesInputSchema = z
 export type ListPassesInput = z.infer<typeof ListPassesInputSchema>;
 
 export const ListPassesOutputSchema = z
-	.array(PassSchema)
-	.describe('The passes on this page');
+	.object({
+		query: z
+			.object({
+				start: z.number().nullish().describe('Offset of this page'),
+				pageSize: z.number().nullish().describe('Page size'),
+				self: z.string().nullish().describe('URL of this page'),
+				next: z
+					.string()
+					.nullish()
+					.describe('URL of the next page; missing on the last page'),
+			})
+			.loose()
+			.nullish()
+			.describe('The query and its paging links'),
+		total: z.number().nullish().describe('Total passes matching the query'),
+		results: z.array(PassSchema).describe('The passes on this page'),
+	})
+	.loose()
+	.describe('A page of passes');
+
 export type ListPassesOutput = z.infer<typeof ListPassesOutputSchema>;
 
 export const GetPassInputSchema = z
@@ -194,9 +212,13 @@ export const DeletePassInputSchema = z
 	.describe('Delete a pass');
 export type DeletePassInput = z.infer<typeof DeletePassInputSchema>;
 
-export const DeletePassOutputSchema = WriteResultSchema.describe(
-	'The delete result (the API answers 200)',
-);
+export const DeletePassOutputSchema = z
+	.object({
+		passUid: z.string().describe('The pass the call was for'),
+		success: z.boolean().describe('Whether the call succeeded'),
+	})
+	.describe('The pass was deleted (the API answers 200 with no body)');
+
 export type DeletePassOutput = z.infer<typeof DeletePassOutputSchema>;
 
 export const SearchPassesInputSchema = z
@@ -258,15 +280,25 @@ export const GetActiveHistoryInputSchema = z
 			.string()
 			.regex(/^\d{4}-\d{2}-\d{2}$/, 'Expected a date in YYYY-MM-DD format')
 			.optional()
-			.describe('History up to this date; omit for the current state'),
+			.describe(
+				'First day of the history (YYYY-MM-DD); omit for the last seven days',
+			),
 	})
 	.describe('Read the history of active and inactive passes of a template');
 export type GetActiveHistoryInput = z.infer<typeof GetActiveHistoryInputSchema>;
 
 export const GetActiveHistoryOutputSchema = z
-	.object({})
-	.loose()
-	.describe('Active and inactive pass counts over the timeframe');
+	.array(
+		z
+			.object({
+				date: z.string().describe('Day, YYYY-MM-DD'),
+				active: z.number().nullish().describe('Active passes that day'),
+				inactive: z.number().nullish().describe('Inactive passes that day'),
+			})
+			.loose(),
+	)
+	.describe('Active and inactive pass counts per day');
+
 export type GetActiveHistoryOutput = z.infer<
 	typeof GetActiveHistoryOutputSchema
 >;
@@ -287,13 +319,23 @@ export type EnableDownloadOutput = z.infer<typeof EnableDownloadOutputSchema>;
 export const PushNotificationInputSchema = z
 	.object({
 		passUid: z.string().min(1).describe('Pass UID'),
-		message: z.string().min(1).describe('Message pushed to the pass holder'),
+		message: z
+			.string()
+			.min(1)
+			.describe(
+				'Text pushed to the pass holder (sent as pushNotificationText); may use {Property} placeholders',
+			),
 	})
 	.describe('Send a push notification to one pass holder');
 export type PushNotificationInput = z.infer<typeof PushNotificationInputSchema>;
 
-export const PushNotificationOutputSchema =
-	WriteResultSchema.describe('The push result');
+export const PushNotificationOutputSchema = z
+	.object({
+		passUid: z.string().describe('The pass the call was for'),
+		success: z.boolean().describe('Whether the call succeeded'),
+	})
+	.describe('The notification was sent (the API answers 204 with no body)');
+
 export type PushNotificationOutput = z.infer<
 	typeof PushNotificationOutputSchema
 >;
@@ -312,8 +354,13 @@ export const SendEmailInputSchema = z
 	.describe('Send a pass to an email address');
 export type SendEmailInput = z.infer<typeof SendEmailInputSchema>;
 
-export const SendEmailOutputSchema =
-	WriteResultSchema.describe('The send result');
+export const SendEmailOutputSchema = z
+	.object({
+		passUid: z.string().describe('The pass the call was for'),
+		success: z.boolean().describe('Whether the call succeeded'),
+	})
+	.describe('The pass was sent by email');
+
 export type SendEmailOutput = z.infer<typeof SendEmailOutputSchema>;
 
 // ── templates ──────────────────────────────────────────────────────────────
@@ -345,21 +392,48 @@ export type GetTemplateFieldsInput = z.infer<
 >;
 
 export const GetTemplateFieldsOutputSchema = z
-	.object({})
-	.loose()
-	.describe('Required and optional fields of the template');
+	.array(
+		z
+			.object({
+				id: z.string().nullish().describe('Field id'),
+				name: z.string().nullish().describe('Field name'),
+				type: z.string().nullish().describe('Field type'),
+			})
+			.loose(),
+	)
+	.describe('The template fields, as an array of field objects');
+
 export type GetTemplateFieldsOutput = z.infer<
 	typeof GetTemplateFieldsOutputSchema
 >;
 
 export const CopyTemplateInputSchema = z
-	.object({ templateUid: z.string().min(1).describe('Template UID to copy') })
-	.describe('Copy a pass template');
+	.object({
+		templateUid: z.string().min(1).describe('Template UID to copy'),
+		name: z.string().min(1).describe('Name of the copy'),
+		description: z
+			.string()
+			.optional()
+			.describe('Description of the copy; defaults to the original'),
+		organizationName: z
+			.string()
+			.optional()
+			.describe('Organization name of the copy; defaults to the original'),
+	})
+	.loose()
+	.describe(
+		'Copy a pass template; other optional fields (colors) pass through',
+	);
+
 export type CopyTemplateInput = z.infer<typeof CopyTemplateInputSchema>;
 
-export const CopyTemplateOutputSchema = TemplateSchema.describe(
-	'The copied template (201)',
-);
+export const CopyTemplateOutputSchema = z
+	.object({
+		identifier: z.string().nullish().describe('UUID of the new template'),
+	})
+	.loose()
+	.describe('The copied template (201)');
+
 export type CopyTemplateOutput = z.infer<typeof CopyTemplateOutputSchema>;
 
 export const DeleteTemplateInputSchema = z
@@ -369,8 +443,13 @@ export const DeleteTemplateInputSchema = z
 	);
 export type DeleteTemplateInput = z.infer<typeof DeleteTemplateInputSchema>;
 
-export const DeleteTemplateOutputSchema =
-	WriteResultSchema.describe('The delete result');
+export const DeleteTemplateOutputSchema = z
+	.object({
+		templateUid: z.string().describe('Deleted template UID'),
+		success: z.boolean().describe('Whether the delete succeeded'),
+	})
+	.describe('The template was deleted (the API answers 200 with no body)');
+
 export type DeleteTemplateOutput = z.infer<typeof DeleteTemplateOutputSchema>;
 
 // ── v2 move ────────────────────────────────────────────────────────────────
@@ -428,38 +507,63 @@ export const SubscribeWebhookInputSchema = z
 			.string()
 			.min(1)
 			.describe(
-				'Event to subscribe to, e.g. pass_created, pass_updated, pass_deleted, pass_scanned, pass_template_created, pass_template_updated, appscan_created',
+				'Event to subscribe to, e.g. pass_created, pass_updated, pass_voided, pushnotification_registered, pass_template_created, pass_template_updated, app_scan_created',
 			),
 		pass_template: z
 			.string()
 			.optional()
-			.describe('Scope the subscription to one pass-template UID'),
+			.describe(
+				'Scope the subscription to one pass-template UID (sent in the path)',
+			),
+		subscription_url: z
+			.string()
+			.optional()
+			.describe('Optional URL that identifies this subscription'),
+		retryEnabled: z.boolean().optional().describe('Retry failed deliveries'),
+		signPayload: z
+			.boolean()
+			.default(true)
+			.describe(
+				'Sign deliveries (default true here: the receiver rejects unsigned ones)',
+			),
 	})
 	.describe('Subscribe a URL to a webhook event');
+
 export type SubscribeWebhookInput = z.infer<typeof SubscribeWebhookInputSchema>;
 
-export const SubscribeWebhookOutputSchema = WebhookSubscriptionSchema.describe(
-	'The subscription as created',
-);
+export const SubscribeWebhookOutputSchema = z
+	.object({
+		accessToken: z
+			.string()
+			.nullish()
+			.describe('Only returned with generateAccessToken'),
+	})
+	.loose()
+	.describe('The subscription was created (201, usually an empty object)');
+
 export type SubscribeWebhookOutput = z.infer<
 	typeof SubscribeWebhookOutputSchema
 >;
 
 export const UnsubscribeWebhookInputSchema = z
 	.object({
-		subscriptionUid: z
+		target_url: z
 			.string()
-			.min(1)
-			.describe('Subscription UID to unsubscribe'),
+			.url()
+			.describe('target_url the subscription was created with'),
 	})
-	.describe('Unsubscribe a webhook');
+	.describe('Unsubscribe a webhook by its target URL');
+
 export type UnsubscribeWebhookInput = z.infer<
 	typeof UnsubscribeWebhookInputSchema
 >;
 
-export const UnsubscribeWebhookOutputSchema = WriteResultSchema.describe(
-	'The unsubscribe result',
-);
+export const UnsubscribeWebhookOutputSchema = z
+	.object({
+		success: z.boolean().describe('Whether the unsubscribe succeeded'),
+	})
+	.describe('The subscription was removed (the API answers 200 with {})');
+
 export type UnsubscribeWebhookOutput = z.infer<
 	typeof UnsubscribeWebhookOutputSchema
 >;

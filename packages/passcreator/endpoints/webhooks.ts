@@ -1,5 +1,5 @@
 import type { PasscreatorEndpoints } from '..';
-import { call } from './call';
+import { call, expectEmpty } from './call';
 import {
 	PasscreatorEndpointInputSchemas as Inputs,
 	PasscreatorEndpointOutputSchemas as Outputs,
@@ -17,12 +17,21 @@ export const subscribe: PasscreatorEndpoints['webhooksSubscribe'] = (
 			output: Outputs.webhooksSubscribe,
 		},
 		input,
-		(body) => ({
+		// A template-scoped subscription puts the template in the path; the
+		// body has no pass_template field.
+		({ pass_template, ...body }) => ({
 			method: 'POST',
-			path: '/api/hook/subscribe',
+			path: pass_template
+				? `/api/hook/subscribe/${encodeURIComponent(pass_template)}`
+				: '/api/hook/subscribe',
 			body,
 		}),
-		{ log: (_, subscription) => ({ event: subscription.event ?? undefined }) },
+		{
+			log: ({ event, pass_template }) => ({
+				event,
+				scoped: Boolean(pass_template),
+			}),
+		},
 	);
 
 export const unsubscribe: PasscreatorEndpoints['webhooksUnsubscribe'] = (
@@ -37,11 +46,21 @@ export const unsubscribe: PasscreatorEndpoints['webhooksUnsubscribe'] = (
 			output: Outputs.webhooksUnsubscribe,
 		},
 		input,
-		({ subscriptionUid }) => ({
-			method: 'DELETE',
-			path: `/api/hook/subscribe/${encodeURIComponent(subscriptionUid)}`,
+		// Documented as POST or DELETE with a JSON target_url; POST keeps the
+		// body (the client sends none on DELETE).
+		({ target_url }) => ({
+			method: 'POST',
+			path: '/api/hook/unsubscribe',
+			body: { target_url },
 		}),
-		{ log: (_, result) => ({ success: result.success }) },
+		{
+			// The API answers 200 with {}.
+			shape: (raw) => {
+				expectEmpty(raw, 'webhooks.unsubscribe');
+				return { success: true };
+			},
+			log: (_, result) => ({ success: result.success }),
+		},
 	);
 
 export const list: PasscreatorEndpoints['webhooksList'] = (ctx, input) =>
@@ -53,7 +72,7 @@ export const list: PasscreatorEndpoints['webhooksList'] = (ctx, input) =>
 			output: Outputs.webhooksList,
 		},
 		input,
-		() => ({ method: 'GET', path: '/api/hook' }),
+		() => ({ method: 'GET', path: '/api/hook/list' }),
 		{ log: (_, subscriptions) => ({ count: subscriptions.length }) },
 	);
 

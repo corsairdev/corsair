@@ -71,11 +71,11 @@ describe('retries through createCorsair', () => {
 		const { corsair, testDb } = await createClient();
 		try {
 			respond({ description: 'Something went wrong' }, 503);
-			respond([pass]);
+			respond({ total: 1, results: [pass] });
 
 			await expect(
 				corsair.passcreator.api.passes.list({ templateUid: 'tmpl_1' }),
-			).resolves.toEqual([pass]);
+			).resolves.toEqual({ total: 1, results: [pass] });
 			expect(fetchMock).toHaveBeenCalledTimes(2);
 		} finally {
 			testDb.cleanup();
@@ -118,7 +118,7 @@ describe('retries through createCorsair', () => {
 		const { corsair, testDb } = await createClient();
 		try {
 			respond({ description: 'Something went wrong' }, 503);
-			respond([pass]);
+			respond({ total: 1, results: [pass] });
 
 			const pending = corsair.passcreator.api.passes.list({
 				templateUid: 'tmpl_1',
@@ -126,7 +126,7 @@ describe('retries through createCorsair', () => {
 			await jest.advanceTimersByTimeAsync(900);
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 			await jest.advanceTimersByTimeAsync(200);
-			await expect(pending).resolves.toEqual([pass]);
+			await expect(pending).resolves.toEqual({ total: 1, results: [pass] });
 			expect(fetchMock).toHaveBeenCalledTimes(2);
 		} finally {
 			testDb.cleanup();

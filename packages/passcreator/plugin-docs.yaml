@@ -67,7 +67,7 @@ apiExamples:
   templates.fields:
     call: '{ templateUid: "6d03a4a9-cf92-4e36-80b4-a8994546e2f" }'
   templates.copy:
-    call: '{ templateUid: "6d03a4a9-cf92-4e36-80b4-a8994546e2f" }'
+    call: '{ templateUid: "6d03a4a9-cf92-4e36-80b4-a8994546e2f", name: "Coupon copy" }'
   templates.delete:
     call: '{ templateUid: "6d03a4a9-cf92-4e36-80b4-a8994546e2f" }'
   templates.movePass:
@@ -75,7 +75,7 @@ apiExamples:
   webhooks.subscribe:
     call: '{ target_url: "https://example.com/webhooks/passcreator", event: "pass_created" }'
   webhooks.unsubscribe:
-    call: '{ subscriptionUid: "f4379715-7a69-1742-38ae-836554724306" }'
+    call: '{ target_url: "https://example.com/webhooks/passcreator" }'
   webhooks.list:
     call: '{}'
   webhooks.getPublicKey:
@@ -89,5 +89,5 @@ apiNotes:
   templates.fields: 'The zapierStyle field list; use these keys to personalise passes.'
   templates.delete: 'The API refuses with 400 while scheduled push notifications exist for the template.'
   templates.movePass: 'API v2. Both templates must belong to the same project and share a signing certificate.'
-  webhooks.subscribe: 'Events include pass_created, pass_updated, pass_deleted, pass_scanned and the template, appscan and message hooks; pass_template scopes the subscription to one template.'
+  webhooks.subscribe: 'Events include pass_created, pass_updated, pass_voided, pushnotification_registered, pass_template_created, pass_template_updated and app_scan_created; pass_template scopes the subscription to one template, and signPayload defaults to true so deliveries can be verified.'
   webhooks.getPublicKey: 'Returns the PEM public key the deliveries are signed with; store it with keys.set_webhook_signature so the plugin verifies deliveries.'
