@@ -867,9 +867,9 @@ await corsair.piggy.api.contacts.update({ contactUuid: "1b7e3c4a-5f2d-4e8b-9a6c-
 
 `giftcards.create`
 
-Create a digital giftcard in a giftcard program
+Issue a digital giftcard with a balance; it carries real value and uses Leat tokens
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.piggy.api.giftcards.create({ giftcardProgramUuid: "8fb59dcf-fb5b-4cee-88d8-35e361e55a12" });
@@ -1209,9 +1209,9 @@ await corsair.piggy.api.giftcards.listPrograms({});
 
 `giftcards.sendByEmail`
 
-Email a giftcard to a contact
+Email a giftcard to a contact; the email cannot be recalled
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.piggy.api.giftcards.sendByEmail({ giftcardUuid: "5b3dab1c-bdde-4313-a74d-67de815c751c", contactUuid: "1b7e3c4a-5f2d-4e8b-9a6c-0d2f4e6a8b1c" });
@@ -2623,9 +2623,9 @@ One subscription per event type: creating again for the same event_type overwrit
 
 `webhooks.delete`
 
-Delete a webhook subscription
+Delete a webhook subscription; it cannot be restored
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.piggy.api.webhooks.delete({ webhookSubscriptionUuid: "f1dc2d67-caa8-4919-a537-66491a94ed2f" });
