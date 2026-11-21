@@ -1,0 +1,3252 @@
+{
+  "id": "lemlist",
+  "displayName": "Lemlist",
+  "description": "Sales engagement and cold email outreach platform for automating multi-channel campaigns, lead tracking, deliverability, and unsubscribes.",
+  "npmPackageName": "@corsair-dev/lemlist",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 60,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "lemlist.api.activities.deleteRecordingTranscript",
+      "shortPath": "activities.deleteRecordingTranscript",
+      "description": "Delete call recording and transcript of an activity",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "activityId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.activities.list",
+      "shortPath": "activities.list",
+      "description": "Retrieve outreach activities across team or campaigns",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "v2"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "emailsSent | emailsOpened | emailsClicked | emailsReplied | emailsExternalSent | emailsExternalReceived | emailsDone | emailsIgnored | emailsBounced | emailsFailed | emailsUnsubscribed | emailsInterested | emailsNotInterested | snoozed | annotated | aircallDone | aircallIgnored | aircallCreated | aircallEnded | aircallInterested | aircallNotInterested | apiDone | apiIgnored | apiInterested | apiNotInterested | apiFailed | apiUnsubscribed | enrichmentDone | enrichmentFailed | enrichmentSkipped | linkedinVisitDone | linkedinVisitFailed | linkedinVisitSkipped | linkedinCommentLastPostDone | linkedinCommentLastPostFailed | linkedinCommentLastPostSkipped | linkedinFollowDone | linkedinFollowFailed | linkedinFollowSkipped | linkedinLikeLastPostDone | linkedinLikeLastPostNoPost | linkedinLikeLastPostFailed | linkedinLikeLastPostSkipped | linkedinInviteDone | linkedinEndorseDone | linkedinEndorseFailed | linkedinEndorseSkipped | linkedinSent | linkedinInMailSent | linkedinOpened | linkedinInviteAccepted | linkedinInviteFailed | linkedinSendFailed | linkedinInMailFailed | linkedinInMailSkipped | linkedinVoiceNoteDone | linkedinVoiceNoteFailed | linkedinWithdrawInvitationDone | linkedinWithdrawInvitationFailed | linkedinVoiceNoteReplied | whatsappMessageSent | whatsappMessageDelivered | whatsappMessageOpened | whatsappReplied | whatsappMessageFailed | whatsappDone | whatsappIgnored | whatsappVoiceNoteSent | whatsappVoiceNoteDelivered | whatsappVoiceNoteOpened | whatsappVoiceNoteReplied | whatsappVoiceNoteFailed | whatsappVoiceNoteIgnored | smsSent | smsDone | smsDelivered | smsReplied | smsIgnored | smsFailed | aiVariableDone | aiVariableFailed | linkedinReplied | linkedinInterested | linkedinNotInterested | linkedinDone | linkedinIgnored | manualDone | manualIgnored | manualInterested | manualNotInterested | manualUnsubscribed | scheduleCancelled | paused | stopped | resumed | skipped | meetingBooked | conditionChosen | conditionalFailed | sendToAnotherCampaign | manualEmailQueued | manualLinkedinSendQueued | manualLinkedinVoiceNoteQueued | manualLinkedinInviteQueued | manualLinkedinCommentLastPostQueued | manualWhatsappMessageQueued | manualWhatsappVoiceNoteQueued | outOfOffice | mailinblackDetected | entityUnsubscribed | variableUnsubscribed | entitySubscribed | variableSubscribed"
+          },
+          {
+            "key": "campaignId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isFirst",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "leadId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "minDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, type: emailsSent | emailsOpened | emailsClicked | emailsReplied | emailsExternalSent | emailsExternalReceived | emailsDone | emailsIgnored | emailsBounced | emailsFailed | emailsUnsubscribed | emailsInterested | emailsNotInterested | snoozed | annotated | aircallDone | aircallIgnored | aircallCreated | aircallEnded | aircallInterested | aircallNotInterested | apiDone | apiIgnored | apiInterested | apiNotInterested | apiFailed | apiUnsubscribed | enrichmentDone | enrichmentFailed | enrichmentSkipped | linkedinVisitDone | linkedinVisitFailed | linkedinVisitSkipped | linkedinCommentLastPostDone | linkedinCommentLastPostFailed | linkedinCommentLastPostSkipped | linkedinFollowDone | linkedinFollowFailed | linkedinFollowSkipped | linkedinLikeLastPostDone | linkedinLikeLastPostNoPost | linkedinLikeLastPostFailed | linkedinLikeLastPostSkipped | linkedinInviteDone | linkedinEndorseDone | linkedinEndorseFailed | linkedinEndorseSkipped | linkedinSent | linkedinInMailSent | linkedinOpened | linkedinInviteAccepted | linkedinInviteFailed | linkedinSendFailed | linkedinInMailFailed | linkedinInMailSkipped | linkedinVoiceNoteDone | linkedinVoiceNoteFailed | linkedinWithdrawInvitationDone | linkedinWithdrawInvitationFailed | linkedinVoiceNoteReplied | whatsappMessageSent | whatsappMessageDelivered | whatsappMessageOpened | whatsappReplied | whatsappMessageFailed | whatsappDone | whatsappIgnored | whatsappVoiceNoteSent | whatsappVoiceNoteDelivered | whatsappVoiceNoteOpened | whatsappVoiceNoteReplied | whatsappVoiceNoteFailed | whatsappVoiceNoteIgnored | smsSent | smsDone | smsDelivered | smsReplied | smsIgnored | smsFailed | aiVariableDone | aiVariableFailed | linkedinReplied | linkedinInterested | linkedinNotInterested | linkedinDone | linkedinIgnored | manualDone | manualIgnored | manualInterested | manualNotInterested | manualUnsubscribed | scheduleCancelled | paused | stopped | resumed | skipped | meetingBooked | conditionChosen | conditionalFailed | sendToAnotherCampaign | manualEmailQueued | manualLinkedinSendQueued | manualLinkedinVoiceNoteQueued | manualLinkedinInviteQueued | manualLinkedinCommentLastPostQueued | manualWhatsappMessageQueued | manualWhatsappVoiceNoteQueued | outOfOffice | mailinblackDetected | entityUnsubscribed | variableUnsubscribed | entitySubscribed | variableSubscribed, userId?: string, userName?: string, bot?: boolean, createdAt?: string, campaignId?: string, campaignName?: string, leadId?: string, leadEmail?: string, leadFirstName?: string, leadLastName?: string, leadCompanyName?: string, contactId?: string }[]"
+      }
+    },
+    {
+      "path": "lemlist.api.campaigns.addAbmLeads",
+      "shortPath": "campaigns.addAbmLeads",
+      "description": "Add People Database contacts to an ABM campaign",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "leadIds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ addedCount: number, alreadyInCampaignCount: number, skipped: { leadId: string, code: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.campaigns.archive",
+      "shortPath": "campaigns.archive",
+      "description": "Archive a campaign",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.campaigns.create",
+      "shortPath": "campaigns.create",
+      "description": "Create a new campaign with schedule and settings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emoji",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoReview",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "autoReviewConditions",
+            "optional": true,
+            "type": "(deliverable | risky | undeliverable | unverified)[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emoji",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoReview",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sendUserIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ campaignId: string, timezone: string | null, senderStrategy: string, general: { labels: { id: string, name: string }[], sequenceId: string, sequenceSharing: boolean, unsubscribeMode: variable | contact, addUnsubscribeLink: boolean, unsubscribeLinkText: string }, senders: { espMatching: boolean, espRouting: { gmail?: any | gmail | outlook | other, outlook?: any | gmail | outlook | other, other?: any | gmail | outlook | other } | null }, schedule: { isTimezoneBasedSchedule: boolean, timezoneBasedScheduleId: string | null, scheduleIds: string[], holidayCountries: (US | FR | GB)[], sendingPattern?: { newLeadsPriorityRatio: number } }, tracking: { trackOpens: boolean, trackClicks: boolean, trackReplies: boolean }, automation: { autoReview: boolean, autoReviewConditions: (deliverable | risky | unknown | undeliverable | unverified)[] }, onReplied: { createNewTask: boolean, campaignProgress: continue | pause | stop, propagateProgressToCompany: boolean, disableOutOfOffice: boolean }, onLinkClicked: { createNewTask: boolean, campaignProgress: continue | pause | stop, propagateProgressToCompany: boolean, specificLinks: string[] }, onMeetingBooked: { campaignProgress: continue | pause | stop, propagateProgressToCompany: boolean }, aiFeatures: { scoreReplies: boolean, onInterestedReply: { enabled: boolean, pauseAllCampaignsForLead: boolean, pauseCampaignForCompany: boolean, pauseAllCampaignsForCompany: boolean }, onNotInterestedReply: { enabled: boolean, pauseAllCampaignsForLead: boolean, pauseCampaignForCompany: boolean, pauseAllCampaignsForCompany: boolean } } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.campaigns.duplicate",
+      "shortPath": "campaigns.duplicate",
+      "description": "Duplicate an existing campaign with sequences and schedules",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emoji",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoReview",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sendUserIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ campaignId: string, timezone: string | null, senderStrategy: string, general: { labels: { id: string, name: string }[], sequenceId: string, sequenceSharing: boolean, unsubscribeMode: variable | contact, addUnsubscribeLink: boolean, unsubscribeLinkText: string }, senders: { espMatching: boolean, espRouting: { gmail?: any | gmail | outlook | other, outlook?: any | gmail | outlook | other, other?: any | gmail | outlook | other } | null }, schedule: { isTimezoneBasedSchedule: boolean, timezoneBasedScheduleId: string | null, scheduleIds: string[], holidayCountries: (US | FR | GB)[], sendingPattern?: { newLeadsPriorityRatio: number } }, tracking: { trackOpens: boolean, trackClicks: boolean, trackReplies: boolean }, automation: { autoReview: boolean, autoReviewConditions: (deliverable | risky | unknown | undeliverable | unverified)[] }, onReplied: { createNewTask: boolean, campaignProgress: continue | pause | stop, propagateProgressToCompany: boolean, disableOutOfOffice: boolean }, onLinkClicked: { createNewTask: boolean, campaignProgress: continue | pause | stop, propagateProgressToCompany: boolean, specificLinks: string[] }, onMeetingBooked: { campaignProgress: continue | pause | stop, propagateProgressToCompany: boolean }, aiFeatures: { scoreReplies: boolean, onInterestedReply: { enabled: boolean, pauseAllCampaignsForLead: boolean, pauseCampaignForCompany: boolean, pauseAllCampaignsForCompany: boolean }, onNotInterestedReply: { enabled: boolean, pauseAllCampaignsForLead: boolean, pauseCampaignForCompany: boolean, pauseAllCampaignsForCompany: boolean } } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.campaigns.exportLeads",
+      "shortPath": "campaigns.exportLeads",
+      "description": "Export leads from campaign with state filtering",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "json | csv"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, string | number | boolean | null>[] | string"
+      }
+    },
+    {
+      "path": "lemlist.api.campaigns.get",
+      "shortPath": "campaigns.get",
+      "description": "Retrieve details of a specific campaign by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emoji",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoReview",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sendUserIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ campaignId: string, timezone: string | null, senderStrategy: string, general: { labels: { id: string, name: string }[], sequenceId: string, sequenceSharing: boolean, unsubscribeMode: variable | contact, addUnsubscribeLink: boolean, unsubscribeLinkText: string }, senders: { espMatching: boolean, espRouting: { gmail?: any | gmail | outlook | other, outlook?: any | gmail | outlook | other, other?: any | gmail | outlook | other } | null }, schedule: { isTimezoneBasedSchedule: boolean, timezoneBasedScheduleId: string | null, scheduleIds: string[], holidayCountries: (US | FR | GB)[], sendingPattern?: { newLeadsPriorityRatio: number } }, tracking: { trackOpens: boolean, trackClicks: boolean, trackReplies: boolean }, automation: { autoReview: boolean, autoReviewConditions: (deliverable | risky | unknown | undeliverable | unverified)[] }, onReplied: { createNewTask: boolean, campaignProgress: continue | pause | stop, propagateProgressToCompany: boolean, disableOutOfOffice: boolean }, onLinkClicked: { createNewTask: boolean, campaignProgress: continue | pause | stop, propagateProgressToCompany: boolean, specificLinks: string[] }, onMeetingBooked: { campaignProgress: continue | pause | stop, propagateProgressToCompany: boolean }, aiFeatures: { scoreReplies: boolean, onInterestedReply: { enabled: boolean, pauseAllCampaignsForLead: boolean, pauseCampaignForCompany: boolean, pauseAllCampaignsForCompany: boolean }, onNotInterestedReply: { enabled: boolean, pauseAllCampaignsForLead: boolean, pauseCampaignForCompany: boolean, pauseAllCampaignsForCompany: boolean } } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.campaigns.getBatchStats",
+      "shortPath": "campaigns.getBatchStats",
+      "description": "Retrieve performance statistics for multiple campaigns",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignIds",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "startDate",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sendUser",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ABSelected",
+            "optional": true,
+            "type": "A | B"
+          },
+          {
+            "key": "channels",
+            "optional": true,
+            "type": "(email | linkedin | others)[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ campaignId?: string, nbLeads?: number, nbLeadsLaunched?: number, nbLeadsReached?: number, nbLeadsOpened?: number, nbLeadsInteracted?: number, nbLeadsAnswered?: number, nbLeadsInterested?: number, nbLeadsNotInterested?: number, nbLeadsUnsubscribed?: number, nbLeadsInterrupted?: number, messagesSent?: number, messagesNotSent?: number, messagesBounced?: number, delivered?: number, opened?: number, clicked?: number, replied?: number, invitationAccepted?: number, meetingBooked?: number, perChannel?: { email?: { sent?: number, delivered?: number, notDelivered?: number, opened?: number, clicked?: number, replied?: number, bounced?: number, unsubscribed?: number }, linkedin?: { sent?: number, delivered?: number, notDelivered?: number, opened?: number, replied?: number, invitationAccepted?: number, breakdown?: { sent: { messages: number, inMails: number, voiceNotes: number }, notDelivered: { messages: number, inMails: number, voiceNotes: number } } }, sms?: { sent?: number, delivered?: number, notDelivered?: number, replied?: number }, whatsapp?: { sent?: number, delivered?: number, notDelivered?: number, opened?: number, replied?: number }, others?: { unsubscribed?: number, interested?: number, notInterested?: number } }, steps?: { index?: number, sequenceId?: string, sequenceStep?: number, abTest?: string, taskType?: email | linkedinVisit | linkedinInvite | linkedinSend | phone | manual | conditional, conditionLabel?: string, invited?: number, invitationAccepted?: number, sent?: number, delivered?: number, opened?: number, clicked?: number, replied?: number, notDelivered?: number, bounced?: number, unsubscribed?: number }[] }[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "{ campaignId: string, error: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.campaigns.getExportStatus",
+      "shortPath": "campaigns.getExportStatus",
+      "description": "Check status of an asynchronous campaign export",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "exportId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "{ _id?: string, id?: string, teamId?: string, campaignId?: string, campaignName?: string, status: pending | done | error, startedAt?: string, endedAt?: string, progress?: number, total?: number, url?: string, fileSize?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.campaigns.getReports",
+      "shortPath": "campaigns.getReports",
+      "description": "Retrieve aggregated reports for one or multiple campaigns",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignIds",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, name?: string, totalCount?: number, reviewedCount?: number, inSequenceLeadCount?: number, state?: string, status?: string, emailsSent?: number, emailsOpened?: number, emailsClicked?: number, emailsReplied?: number }[]"
+      }
+    },
+    {
+      "path": "lemlist.api.campaigns.getSettings",
+      "shortPath": "campaigns.getSettings",
+      "description": "Retrieve all settings of a campaign",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "senderStrategy",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "general",
+            "optional": false,
+            "type": "{ labels: { id: string, name: string }[], sequenceId: string, sequenceSharing: boolean, unsubscribeMode: variable | contact, addUnsubscribeLink: boolean, unsubscribeLinkText: string }"
+          },
+          {
+            "key": "senders",
+            "optional": false,
+            "type": "{ espMatching: boolean, espRouting: { gmail?: any | gmail | outlook | other, outlook?: any | gmail | outlook | other, other?: any | gmail | outlook | other } | null }"
+          },
+          {
+            "key": "schedule",
+            "optional": false,
+            "type": "{ isTimezoneBasedSchedule: boolean, timezoneBasedScheduleId: string | null, scheduleIds: string[], holidayCountries: (US | FR | GB)[], sendingPattern?: { newLeadsPriorityRatio: number } }"
+          },
+          {
+            "key": "tracking",
+            "optional": false,
+            "type": "{ trackOpens: boolean, trackClicks: boolean, trackReplies: boolean }"
+          },
+          {
+            "key": "automation",
+            "optional": false,
+            "type": "{ autoReview: boolean, autoReviewConditions: (deliverable | risky | unknown | undeliverable | unverified)[] }"
+          },
+          {
+            "key": "onReplied",
+            "optional": false,
+            "type": "{ createNewTask: boolean, campaignProgress: continue | pause | stop, propagateProgressToCompany: boolean, disableOutOfOffice: boolean }"
+          },
+          {
+            "key": "onLinkClicked",
+            "optional": false,
+            "type": "{ createNewTask: boolean, campaignProgress: continue | pause | stop, propagateProgressToCompany: boolean, specificLinks: string[] }"
+          },
+          {
+            "key": "onMeetingBooked",
+            "optional": false,
+            "type": "{ campaignProgress: continue | pause | stop, propagateProgressToCompany: boolean }"
+          },
+          {
+            "key": "aiFeatures",
+            "optional": false,
+            "type": "{ scoreReplies: boolean, onInterestedReply: { enabled: boolean, pauseAllCampaignsForLead: boolean, pauseCampaignForCompany: boolean, pauseAllCampaignsForCompany: boolean }, onNotInterestedReply: { enabled: boolean, pauseAllCampaignsForLead: boolean, pauseCampaignForCompany: boolean, pauseAllCampaignsForCompany: boolean } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.campaigns.getStats",
+      "shortPath": "campaigns.getStats",
+      "description": "Retrieve performance statistics for a specific campaign",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "startDate",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sendUser",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ABSelected",
+            "optional": true,
+            "type": "A | B"
+          },
+          {
+            "key": "channels",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nbLeads",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "nbLeadsLaunched",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "nbLeadsReached",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "nbLeadsOpened",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "nbLeadsInteracted",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "nbLeadsAnswered",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "nbLeadsInterested",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "nbLeadsNotInterested",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "nbLeadsUnsubscribed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "nbLeadsInterrupted",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "messagesSent",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "messagesNotSent",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "messagesBounced",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "delivered",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "opened",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "clicked",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "replied",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "invitationAccepted",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "meetingBooked",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perChannel",
+            "optional": true,
+            "type": "{ email?: { sent?: number, delivered?: number, notDelivered?: number, opened?: number, clicked?: number, replied?: number, bounced?: number, unsubscribed?: number }, linkedin?: { sent?: number, delivered?: number, notDelivered?: number, opened?: number, replied?: number, invitationAccepted?: number, breakdown?: { sent: { messages: number, inMails: number, voiceNotes: number }, notDelivered: { messages: number, inMails: number, voiceNotes: number } } }, sms?: { sent?: number, delivered?: number, notDelivered?: number, replied?: number }, whatsapp?: { sent?: number, delivered?: number, notDelivered?: number, opened?: number, replied?: number }, others?: { unsubscribed?: number, interested?: number, notInterested?: number } }"
+          },
+          {
+            "key": "steps",
+            "optional": true,
+            "type": "{ index?: number, sequenceId?: string, sequenceStep?: number, abTest?: string, taskType?: email | linkedinVisit | linkedinInvite | linkedinSend | phone | manual | conditional, conditionLabel?: string, invited?: number, invitationAccepted?: number, sent?: number, delivered?: number, opened?: number, clicked?: number, replied?: number, notDelivered?: number, bounced?: number, unsubscribed?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.campaigns.getStatutes",
+      "shortPath": "campaigns.getStatutes",
+      "description": "Retrieve validation statutes and launch blockers for a campaign",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "statutes",
+            "optional": false,
+            "type": "{ type: issue | information, level: 1 | 2 | 3, message: string, category?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.campaigns.list",
+      "shortPath": "campaigns.list",
+      "description": "Retrieve a paginated list of all campaigns in team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "v2"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "createdAt"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "running | draft | archived | ended | paused | errors"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaigns",
+            "optional": false,
+            "type": "{ _id: string, name: string, status?: string, createdAt?: string, updatedAt?: string, timezone?: string, emoji?: string, autoReview?: boolean, sendUserIds?: string[], settings?: { campaignId: string, timezone: string | null, senderStrategy: string, general: { labels: { id: string, name: string }[], sequenceId: string, sequenceSharing: boolean, unsubscribeMode: variable | contact, addUnsubscribeLink: boolean, unsubscribeLinkText: string }, senders: { espMatching: boolean, espRouting: { gmail?: any | gmail | outlook | other, outlook?: any | gmail | outlook | other, other?: any | gmail | outlook | other } | null }, schedule: { isTimezoneBasedSchedule: boolean, timezoneBasedScheduleId: string | null, scheduleIds: string[], holidayCountries: (US | FR | GB)[], sendingPattern?: { newLeadsPriorityRatio: number } }, tracking: { trackOpens: boolean, trackClicks: boolean, trackReplies: boolean }, automation: { autoReview: boolean, autoReviewConditions: (deliverable | risky | unknown | undeliverable | unverified)[] }, onReplied: { createNewTask: boolean, campaignProgress: continue | pause | stop, propagateProgressToCompany: boolean, disableOutOfOffice: boolean }, onLinkClicked: { createNewTask: boolean, campaignProgress: continue | pause | stop, propagateProgressToCompany: boolean, specificLinks: string[] }, onMeetingBooked: { campaignProgress: continue | pause | stop, propagateProgressToCompany: boolean }, aiFeatures: { scoreReplies: boolean, onInterestedReply: { enabled: boolean, pauseAllCampaignsForLead: boolean, pauseCampaignForCompany: boolean, pauseAllCampaignsForCompany: boolean }, onNotInterestedReply: { enabled: boolean, pauseAllCampaignsForLead: boolean, pauseCampaignForCompany: boolean, pauseAllCampaignsForCompany: boolean } } } }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ totalRecords?: number, currentPage?: number, nextPage?: number, totalPage?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.campaigns.pause",
+      "shortPath": "campaigns.pause",
+      "description": "Pause a running campaign",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.campaigns.setExportEmail",
+      "shortPath": "campaigns.setExportEmail",
+      "description": "Email the campaign export download link to an address when the export completes",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "exportId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "{ _id?: string, id?: string, teamId?: string, campaignId?: string, campaignName?: string, status: pending | done | error, startedAt?: string, endedAt?: string, progress?: number, total?: number, url?: string, fileSize?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.campaigns.skipStepForEveryone",
+      "shortPath": "campaigns.skipStepForEveryone",
+      "description": "Skip one sequence step for every lead in campaign",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "stepId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "skipped",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.campaigns.skipStepForLeads",
+      "shortPath": "campaigns.skipStepForLeads",
+      "description": "Skip one sequence step for specific leads in campaign",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "stepId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "leads",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "skipped",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "alreadySkipped",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "notFound",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ lead: string, status: skipped | already_skipped | not_found }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.campaigns.start",
+      "shortPath": "campaigns.start",
+      "description": "Resume a paused campaign and allow its outreach messages to send",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.campaigns.startExport",
+      "shortPath": "campaigns.startExport",
+      "description": "Initiate asynchronous export of campaign statistics",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "campaignId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "campaignName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "pending | done | error"
+          },
+          {
+            "key": "startedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "progress",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fileSize",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.campaigns.unarchive",
+      "shortPath": "campaigns.unarchive",
+      "description": "Restore an archived campaign",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.campaigns.update",
+      "shortPath": "campaigns.update",
+      "description": "Update settings and configuration of a campaign",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emoji",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sendUserIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "stopOnEmailReplied",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "stopOnMeetingBooked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "stopOnLinkClicked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "leadsPausedByInterest",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "opportunityReplied",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "opportunityClicked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "autoLeadInterest",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "disableTrackOpen",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "disableTrackClick",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "disableTrackReply",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "disableOutOfOffice",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sequenceSharing",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "stopOnLinkClickedFilter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoReview",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "autoReviewConditions",
+            "optional": true,
+            "type": "(deliverable | risky | undeliverable | unverified)[]"
+          },
+          {
+            "key": "aiFeatures",
+            "optional": true,
+            "type": "{ scoreReplies?: boolean, onInterestedReply?: { enabled?: boolean, pauseAllCampaignsForLead?: boolean, pauseCampaignForCompany?: boolean, pauseAllCampaignsForCompany?: boolean }, onNotInterestedReply?: { enabled?: boolean, pauseAllCampaignsForLead?: boolean, pauseCampaignForCompany?: boolean, pauseAllCampaignsForCompany?: boolean } }"
+          },
+          {
+            "key": "tracking",
+            "optional": true,
+            "type": "{ trackOpens?: boolean, trackClicks?: boolean, trackReplies?: boolean }"
+          },
+          {
+            "key": "onReplied",
+            "optional": true,
+            "type": "{ createNewTask?: boolean, campaignProgress?: continue | pause | stop, propagateProgressToCompany?: boolean, disableOutOfOffice?: boolean }"
+          },
+          {
+            "key": "onLinkClicked",
+            "optional": true,
+            "type": "{ createNewTask?: boolean, campaignProgress?: continue | pause | stop, propagateProgressToCompany?: boolean, specificLinks?: string[] }"
+          },
+          {
+            "key": "onMeetingBooked",
+            "optional": true,
+            "type": "{ campaignProgress?: continue | pause | stop, propagateProgressToCompany?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emoji",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sendUsers",
+            "optional": true,
+            "type": "{ id: string, mailboxes?: { sendUserMailboxId: string, email: string }[], phoneNumbers?: string[], whatsappAccountIds?: string[] }[]"
+          },
+          {
+            "key": "stopOnEmailReplied",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "stopOnMeetingBooked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "stopOnLinkClicked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "leadsPausedByInterest",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "opportunityReplied",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "opportunityClicked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "autoLeadInterest",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "disableTrackOpen",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "disableTrackClick",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "disableTrackReply",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "disableOutOfOffice",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sequenceSharing",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "stopOnLinkClickedFilter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "aiFeatures",
+            "optional": true,
+            "type": "{ scoreReplies: boolean, onInterestedReply: { enabled: boolean, pauseAllCampaignsForLead: boolean, pauseCampaignForCompany: boolean, pauseAllCampaignsForCompany: boolean }, onNotInterestedReply: { enabled: boolean, pauseAllCampaignsForLead: boolean, pauseCampaignForCompany: boolean, pauseAllCampaignsForCompany: boolean } }"
+          },
+          {
+            "key": "tracking",
+            "optional": true,
+            "type": "{ trackOpens: boolean, trackClicks: boolean, trackReplies: boolean }"
+          },
+          {
+            "key": "onReplied",
+            "optional": true,
+            "type": "{ createNewTask: boolean, campaignProgress: continue | pause | stop, propagateProgressToCompany: boolean, disableOutOfOffice: boolean }"
+          },
+          {
+            "key": "onLinkClicked",
+            "optional": true,
+            "type": "{ createNewTask: boolean, campaignProgress: continue | pause | stop, propagateProgressToCompany: boolean, specificLinks: string[] }"
+          },
+          {
+            "key": "onMeetingBooked",
+            "optional": true,
+            "type": "{ campaignProgress: continue | pause | stop, propagateProgressToCompany: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.campaigns.updateSettings",
+      "shortPath": "campaigns.updateSettings",
+      "description": "Update settings of a campaign",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "senderStrategy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "general",
+            "optional": true,
+            "type": "{ sequenceSharing?: boolean, unsubscribeMode?: variable | contact, addUnsubscribeLink?: boolean, unsubscribeLinkText?: string | null }"
+          },
+          {
+            "key": "senders",
+            "optional": true,
+            "type": "{ espMatching?: boolean }"
+          },
+          {
+            "key": "automation",
+            "optional": true,
+            "type": "{ autoReview?: boolean, autoReviewConditions?: (deliverable | risky | unknown | undeliverable | unverified)[] }"
+          },
+          {
+            "key": "tracking",
+            "optional": true,
+            "type": "{ trackOpens?: boolean, trackClicks?: boolean, trackReplies?: boolean }"
+          },
+          {
+            "key": "onReplied",
+            "optional": true,
+            "type": "{ createNewTask?: boolean, campaignProgress?: continue | pause | stop, propagateProgressToCompany?: boolean, disableOutOfOffice?: boolean }"
+          },
+          {
+            "key": "onLinkClicked",
+            "optional": true,
+            "type": "{ createNewTask?: boolean, campaignProgress?: continue | pause | stop, propagateProgressToCompany?: boolean, specificLinks?: string[] }"
+          },
+          {
+            "key": "onMeetingBooked",
+            "optional": true,
+            "type": "{ campaignProgress?: continue | pause | stop, propagateProgressToCompany?: boolean }"
+          },
+          {
+            "key": "aiFeatures",
+            "optional": true,
+            "type": "{ scoreReplies?: boolean, onInterestedReply?: { enabled?: boolean, pauseAllCampaignsForLead?: boolean, pauseCampaignForCompany?: boolean, pauseAllCampaignsForCompany?: boolean }, onNotInterestedReply?: { enabled?: boolean, pauseAllCampaignsForLead?: boolean, pauseCampaignForCompany?: boolean, pauseAllCampaignsForCompany?: boolean } }"
+          },
+          {
+            "key": "schedule",
+            "optional": true,
+            "type": "{ isTimezoneBasedSchedule?: boolean, holidayCountries?: (US | FR | GB)[], sendingPattern?: { newLeadsPriorityRatio?: number } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "senderStrategy",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "general",
+            "optional": false,
+            "type": "{ labels: { id: string, name: string }[], sequenceId: string, sequenceSharing: boolean, unsubscribeMode: variable | contact, addUnsubscribeLink: boolean, unsubscribeLinkText: string }"
+          },
+          {
+            "key": "senders",
+            "optional": false,
+            "type": "{ espMatching: boolean, espRouting: { gmail?: any | gmail | outlook | other, outlook?: any | gmail | outlook | other, other?: any | gmail | outlook | other } | null }"
+          },
+          {
+            "key": "schedule",
+            "optional": false,
+            "type": "{ isTimezoneBasedSchedule: boolean, timezoneBasedScheduleId: string | null, scheduleIds: string[], holidayCountries: (US | FR | GB)[], sendingPattern?: { newLeadsPriorityRatio: number } }"
+          },
+          {
+            "key": "tracking",
+            "optional": false,
+            "type": "{ trackOpens: boolean, trackClicks: boolean, trackReplies: boolean }"
+          },
+          {
+            "key": "automation",
+            "optional": false,
+            "type": "{ autoReview: boolean, autoReviewConditions: (deliverable | risky | unknown | undeliverable | unverified)[] }"
+          },
+          {
+            "key": "onReplied",
+            "optional": false,
+            "type": "{ createNewTask: boolean, campaignProgress: continue | pause | stop, propagateProgressToCompany: boolean, disableOutOfOffice: boolean }"
+          },
+          {
+            "key": "onLinkClicked",
+            "optional": false,
+            "type": "{ createNewTask: boolean, campaignProgress: continue | pause | stop, propagateProgressToCompany: boolean, specificLinks: string[] }"
+          },
+          {
+            "key": "onMeetingBooked",
+            "optional": false,
+            "type": "{ campaignProgress: continue | pause | stop, propagateProgressToCompany: boolean }"
+          },
+          {
+            "key": "aiFeatures",
+            "optional": false,
+            "type": "{ scoreReplies: boolean, onInterestedReply: { enabled: boolean, pauseAllCampaignsForLead: boolean, pauseCampaignForCompany: boolean, pauseAllCampaignsForCompany: boolean }, onNotInterestedReply: { enabled: boolean, pauseAllCampaignsForLead: boolean, pauseCampaignForCompany: boolean, pauseAllCampaignsForCompany: boolean } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.leads.addVariables",
+      "shortPath": "leads.addVariables",
+      "description": "Add custom variables to a lead",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "variables",
+            "optional": false,
+            "type": "Record<string, string>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ code: string, message: string, params?: Record<string, string | string[]> }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.leads.createInCampaign",
+      "shortPath": "leads.createInCampaign",
+      "description": "Create a new lead and add it to a campaign",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedinUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "picture",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyDomain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contactOwner",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "crmId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "icebreaker",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deduplicate",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "linkedinEnrichment",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "findEmail",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "verifyEmail",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "findPhone",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "updateStrategy",
+            "optional": true,
+            "type": "overwrite | overwriteIgnoreEmpty | fillEmptyOnly"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyDomain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isPaused",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "campaignId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contactId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emailStatus",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "variables",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.leads.deleteFromCampaign",
+      "shortPath": "leads.deleteFromCampaign",
+      "description": "Remove a lead from a campaign by ID (use leads.unsubscribeFromCampaign to unsubscribe)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "action",
+            "optional": false,
+            "type": "remove"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyDomain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isPaused",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "campaignId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contactId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emailStatus",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "variables",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.leads.deleteVariables",
+      "shortPath": "leads.deleteVariables",
+      "description": "Erase custom variables of a lead",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "variableNames",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ code: string, message: string, params?: Record<string, string | string[]> }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.leads.get",
+      "shortPath": "leads.get",
+      "description": "Retrieve lead by email address or lead ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "v2"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, email?: string, firstName?: string, lastName?: string, companyName?: string, jobTitle?: string, companyDomain?: string, isPaused?: boolean, campaignId?: string, contactId?: string, emailStatus?: string, state?: string, status?: string, variables?: Record<string, any> }[]"
+      }
+    },
+    {
+      "path": "lemlist.api.leads.getByEmail",
+      "shortPath": "leads.getByEmail",
+      "description": "Retrieve lead details by email address",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "v2"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, email?: string, firstName?: string, lastName?: string, companyName?: string, jobTitle?: string, companyDomain?: string, isPaused?: boolean, campaignId?: string, contactId?: string, emailStatus?: string, state?: string, status?: string, variables?: Record<string, any> }[]"
+      }
+    },
+    {
+      "path": "lemlist.api.leads.getCrmFilters",
+      "shortPath": "leads.getCrmFilters",
+      "description": "Retrieve filters and list views from connected CRM",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "lead | contact | report"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string | number, name: string, type?: string }[]"
+      }
+    },
+    {
+      "path": "lemlist.api.leads.importFromCrm",
+      "shortPath": "leads.importFromCrm",
+      "description": "Import leads from connected CRM filter into campaign",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filterId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "filterType",
+            "optional": true,
+            "type": "lead | contact | report"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deduplicate",
+            "optional": true,
+            "type": "boolean | off | all | activeOnly"
+          },
+          {
+            "key": "enrichFeature",
+            "optional": true,
+            "type": "(find_email | find_phone | verify | linkedin_enrichment)[] | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "importPending",
+            "optional": true,
+            "type": "true"
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "campaign_paused | campaign_archived | campaign_crm_sync_paused"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.leads.listInCampaign",
+      "shortPath": "leads.listInCampaign",
+      "description": "Retrieve leads from a specific campaign",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, email?: string, firstName?: string, lastName?: string, companyName?: string, jobTitle?: string, companyDomain?: string, isPaused?: boolean, campaignId?: string, contactId?: string, emailStatus?: string, state?: string, status?: string, variables?: Record<string, any> }[]"
+      }
+    },
+    {
+      "path": "lemlist.api.leads.markInterested",
+      "shortPath": "leads.markInterested",
+      "description": "Mark lead as interested across all campaigns",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leadIdOrEmail",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, email?: string, firstName?: string, lastName?: string, companyName?: string, jobTitle?: string, companyDomain?: string, isPaused?: boolean, campaignId?: string, contactId?: string, emailStatus?: string, state?: string, status?: string, variables?: Record<string, any> }[]"
+      }
+    },
+    {
+      "path": "lemlist.api.leads.markInterestedInCampaign",
+      "shortPath": "leads.markInterestedInCampaign",
+      "description": "Mark lead as interested in a specific campaign",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "leadIdOrEmail",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyDomain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isPaused",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "campaignId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contactId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emailStatus",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "variables",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.leads.markNotInterested",
+      "shortPath": "leads.markNotInterested",
+      "description": "Mark lead as not interested across all campaigns",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leadIdOrEmail",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, email?: string, firstName?: string, lastName?: string, companyName?: string, jobTitle?: string, companyDomain?: string, isPaused?: boolean, campaignId?: string, contactId?: string, emailStatus?: string, state?: string, status?: string, variables?: Record<string, any> }[]"
+      }
+    },
+    {
+      "path": "lemlist.api.leads.markNotInterestedInCampaign",
+      "shortPath": "leads.markNotInterestedInCampaign",
+      "description": "Mark lead as not interested in a specific campaign",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "leadIdOrEmail",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyDomain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isPaused",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "campaignId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contactId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emailStatus",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "variables",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.leads.pause",
+      "shortPath": "leads.pause",
+      "description": "Pause lead activity across campaigns or in a specific campaign",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "campaignId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, email?: string, firstName?: string, lastName?: string, companyName?: string, jobTitle?: string, companyDomain?: string, isPaused?: boolean, campaignId?: string, contactId?: string, emailStatus?: string, state?: string, status?: string, variables?: Record<string, any> }[]"
+      }
+    },
+    {
+      "path": "lemlist.api.leads.personalizeStep",
+      "shortPath": "leads.personalizeStep",
+      "description": "Personalize step message for a single lead",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "leadIdOrEmail",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "stepId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "variant",
+            "optional": true,
+            "type": "A | B"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cc",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "plainText",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "altMessage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "altMessagePremium",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "stepId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "variant",
+            "optional": false,
+            "type": "A | B"
+          },
+          {
+            "key": "emailTemplateId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ subject?: string, message?: string, cc?: string[], plainText?: boolean, altMessage?: string, altMessagePremium?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.leads.resetStepPersonalization",
+      "shortPath": "leads.resetStepPersonalization",
+      "description": "Reset step personalization for a single lead",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "leadIdOrEmail",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "stepId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reset",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.leads.resume",
+      "shortPath": "leads.resume",
+      "description": "Resume a paused lead in all campaigns or one campaign, allowing outreach to continue",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "campaignId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, email?: string, firstName?: string, lastName?: string, companyName?: string, jobTitle?: string, companyDomain?: string, isPaused?: boolean, campaignId?: string, contactId?: string, emailStatus?: string, state?: string, status?: string, variables?: Record<string, any> }[]"
+      }
+    },
+    {
+      "path": "lemlist.api.leads.review",
+      "shortPath": "leads.review",
+      "description": "Manually launch a lead into its campaign, allowing outreach to begin",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "launched",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.leads.skipStep",
+      "shortPath": "leads.skipStep",
+      "description": "Skip one step of a running campaign for a single lead",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "leadIdOrEmail",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "stepId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.leads.unsubscribeFromCampaign",
+      "shortPath": "leads.unsubscribeFromCampaign",
+      "description": "Unsubscribe a lead from a campaign by email",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyDomain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isPaused",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "campaignId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contactId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emailStatus",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "variables",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.leads.updateInCampaign",
+      "shortPath": "leads.updateInCampaign",
+      "description": "Update lead information in a campaign",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "preferredContactMethod",
+            "optional": true,
+            "type": "email | linkedIn"
+          },
+          {
+            "key": "updateStrategy",
+            "optional": true,
+            "type": "overwrite | overwriteIgnoreEmpty | fillEmptyOnly"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyDomain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isPaused",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "campaignId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contactId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emailStatus",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "variables",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.leads.updateVariables",
+      "shortPath": "leads.updateVariables",
+      "description": "Update custom variables of a lead",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "variables",
+            "optional": false,
+            "type": "Record<string, string>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ code: string, message: string, params?: Record<string, string | string[]> }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.team.get",
+      "shortPath": "team.get",
+      "description": "Retrieve team details and members",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "v2"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hooks",
+            "optional": true,
+            "type": "{ _id?: string, targetUrl?: string, createdAt?: string, type?: string, campaignId?: string, isFirst?: boolean }[]"
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "{ userId?: string, name?: string, email?: string, role?: string }[]"
+          },
+          {
+            "key": "pictureId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customDomain",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.team.getCredits",
+      "shortPath": "team.getCredits",
+      "description": "Retrieve team remaining credits balance",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credits",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "details",
+            "optional": true,
+            "type": "{ remaining?: { total?: number, freemium?: number, subscription?: number, gifted?: number, paid?: number } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.team.getCrmUsers",
+      "shortPath": "team.getCrmUsers",
+      "description": "List team members connected to CRM",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ userId: string, crm: string }[]"
+      }
+    },
+    {
+      "path": "lemlist.api.team.getSenders",
+      "shortPath": "team.getSenders",
+      "description": "Retrieve all team members and their associated campaigns",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "state",
+            "optional": true,
+            "type": "running | paused | draft | ended | archived | errors"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ userId: string, campaigns?: { _id?: string, name?: string, status?: string, sendingChannels?: string[] }[] }[]"
+      }
+    },
+    {
+      "path": "lemlist.api.unsubscribes.bulkUnsubscribeVariables",
+      "shortPath": "unsubscribes.bulkUnsubscribeVariables",
+      "description": "Bulk unsubscribe variables up to 10,000 items",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "values",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ message?: string, count?: number, values?: string[], skippedValues?: string[] } | string"
+      }
+    },
+    {
+      "path": "lemlist.api.unsubscribes.exportContacts",
+      "shortPath": "unsubscribes.exportContacts",
+      "description": "Export all contacts with their subscription status in CSV or JSON; filter for doNotContact true to get only opted-out contacts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "format",
+            "optional": true,
+            "type": "csv | json"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, doNotContact: boolean }[] | string"
+      }
+    },
+    {
+      "path": "lemlist.api.unsubscribes.exportVariables",
+      "shortPath": "unsubscribes.exportVariables",
+      "description": "Export unsubscribed variables in CSV or JSON format",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "format",
+            "optional": true,
+            "type": "csv | json"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, value: string, variable?: string, source?: api | bounced | lead | user | abuse, createdAt?: string }[] | string"
+      }
+    },
+    {
+      "path": "lemlist.api.unsubscribes.getContactStatus",
+      "shortPath": "unsubscribes.getContactStatus",
+      "description": "Get subscription status of a contact",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "doNotContact",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.unsubscribes.getVariable",
+      "shortPath": "unsubscribes.getVariable",
+      "description": "Get unsubscribed status of a variable",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "variable",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "api | bounced | lead | user | abuse"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemlist.api.unsubscribes.listVariables",
+      "shortPath": "unsubscribes.listVariables",
+      "description": "List unsubscribed variables (emails, domains, phones)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, value: string, variable?: string, source?: api | bounced | lead | user | abuse, createdAt?: string }[]"
+      }
+    },
+    {
+      "path": "lemlist.api.unsubscribes.resubscribeContact",
+      "shortPath": "unsubscribes.resubscribeContact",
+      "description": "Re-subscribe a contact by ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "lemlist.api.unsubscribes.resubscribeVariable",
+      "shortPath": "unsubscribes.resubscribeVariable",
+      "description": "Re-subscribe a variable to allow future outreach",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "lemlist.api.unsubscribes.unsubscribeContact",
+      "shortPath": "unsubscribes.unsubscribeContact",
+      "description": "Unsubscribe a contact by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "lemlist.api.unsubscribes.unsubscribeVariable",
+      "shortPath": "unsubscribes.unsubscribeVariable",
+      "description": "Unsubscribe a single variable (email, domain, or phone)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "variable",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "api | bounced | lead | user | abuse"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
