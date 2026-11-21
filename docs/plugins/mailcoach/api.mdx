@@ -1,0 +1,3582 @@
+---
+title: "Mailcoach API reference"
+sidebarTitle: "API"
+description: "API reference for the Mailcoach plugin in Corsair: every `mailcoach.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Automation Mails
+
+### create
+
+`automationMails.create`
+
+Create an automation mail without starting its automation.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailcoach.api.automationMails.create({ name: 'Welcome email', subject: 'Welcome aboard', html: '<p>Welcome</p>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `subject` | `string` | No | — |
+| `html` | `string` | No | — |
+| `template_uuid` | `string` | No | — |
+| `fields` | `Record<string, JsonValue>` | No | — |
+| `utm_tags` | `boolean` | No | — |
+| `add_subscriber_tags` | `boolean` | No | — |
+| `add_subscriber_link_tags` | `boolean` | No | — |
+
+Creates a reusable automation email and does not start an automation or send to subscribers.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  name?: string,
+  subject?: string | null,
+  html?: string | null,
+  template_uuid?: string | null,
+  structured_html?: JsonValue | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`automationMails.delete`
+
+Delete an automation mail.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailcoach.api.automationMails.delete({ automationMailUuid: '0762df4d-8516-4eb3-95db-b26492cf221c' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationMailUuid` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`automationMails.get`
+
+Get an automation mail by UUID.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailcoach.api.automationMails.get({ automationMailUuid: '0762df4d-8516-4eb3-95db-b26492cf221c' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationMailUuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  name?: string,
+  subject?: string | null,
+  html?: string | null,
+  template_uuid?: string | null,
+  structured_html?: JsonValue | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`automationMails.list`
+
+List automation mails with filters, sorting, and pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailcoach.api.automationMails.list({
+	query: {
+		filter: { search: 'welcome' },
+		sort: '-created_at',
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  filter?: {
+    search?: string,
+    name?: string,
+    uuid?: string
+  },
+  sort?: name | -name | created_at | -created_at
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | Yes | — |
+| `meta` | `Record<string, JsonValue>` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  name?: string,
+  subject?: string | null,
+  html?: string | null,
+  template_uuid?: string | null,
+  structured_html?: JsonValue | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`automationMails.update`
+
+Update an automation mail by UUID.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailcoach.api.automationMails.update({
+	automationMailUuid: '0762df4d-8516-4eb3-95db-b26492cf221c',
+	body: { name: 'Welcome email', html: '<p>Updated</p>' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationMailUuid` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+Include name and only the documented fields you want to update.
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  subject?: string,
+  html?: string,
+  template_uuid?: string,
+  fields?: Record<string, JsonValue>,
+  utm_tags?: boolean,
+  add_subscriber_tags?: boolean,
+  add_subscriber_link_tags?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  name?: string,
+  subject?: string | null,
+  html?: string | null,
+  template_uuid?: string | null,
+  structured_html?: JsonValue | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Campaigns
+
+### bounces
+
+`campaigns.bounces`
+
+List paginated bounce statistics for a sent campaign.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailcoach.api.campaigns.bounces({ campaignUuid: '0762df4d-8516-4eb3-95db-b26492cf221c' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignUuid` | `string` | Yes | — |
+| `next` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `object` | Yes | — |
+| `meta` | `Record<string, JsonValue>` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### clicks
+
+`campaigns.clicks`
+
+List paginated click statistics; this route also has a 5 requests/second burst limit.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailcoach.api.campaigns.clicks({ campaignUuid: '0762df4d-8516-4eb3-95db-b26492cf221c' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignUuid` | `string` | Yes | — |
+| `next` | `string` | No | — |
+
+Has an additional 5 requests/second burst limit per team, in addition to the normal authenticated limit.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `object` | Yes | — |
+| `meta` | `Record<string, JsonValue>` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`campaigns.create`
+
+Create a campaign draft; this operation does not send it.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailcoach.api.campaigns.create({
+	name: 'November newsletter',
+	email_list_uuid: 'a69075c6-ff5c-4b6a-b217-12026cb72e4f',
+	subject: 'News from our team',
+	html: '<p>Latest news</p>',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `email_list_uuid` | `string` | Yes | — |
+| `subject` | `string` | No | — |
+| `template_uuid` | `string` | No | — |
+| `fields` | `Record<string, JsonValue>` | No | — |
+| `segment_uuid` | `string` | No | — |
+| `html` | `string` | No | — |
+| `schedule_at` | `string` | No | — |
+| `utm_tags` | `boolean` | No | — |
+| `add_subscriber_tags` | `boolean` | No | — |
+| `add_subscriber_link_tags` | `boolean` | No | — |
+| `disable_webview` | `boolean` | No | — |
+
+Creates a draft; sending is a separate destructive operation. Use either template fields or inline HTML as appropriate.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  name?: string,
+  subject?: string | null,
+  html?: string | null,
+  scheduled_at?: string | null,
+  status?: string,
+  email_list_uuid?: string,
+  segment_uuid?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`campaigns.delete`
+
+Delete a campaign.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailcoach.api.campaigns.delete({ campaignUuid: '0762df4d-8516-4eb3-95db-b26492cf221c' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignUuid` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`campaigns.get`
+
+Get a campaign draft or sent campaign by UUID.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailcoach.api.campaigns.get({ campaignUuid: '0762df4d-8516-4eb3-95db-b26492cf221c' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignUuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  name?: string,
+  subject?: string | null,
+  html?: string | null,
+  scheduled_at?: string | null,
+  status?: string,
+  email_list_uuid?: string,
+  segment_uuid?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`campaigns.list`
+
+List campaigns with documented filters, sorting, and pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailcoach.api.campaigns.list({
+	query: {
+		filter: { status: 'draft' },
+		sort: '-name',
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  filter?: {
+    search?: string,
+    status?: string,
+    email_list_id?: string | number,
+    emailList.uuid?: string,
+    contentItem.template.uuid?: string
+  },
+  sort?: name | -name | email_list_id | -email_list_id | unique_open_count | -unique_open_count | unique_click_count | -unique_click_count | unsubscribe_rate | -unsubscribe_rate | sent_to_number_of_subscribers | -sent_to_number_of_subscribers | sent | -sent
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | Yes | — |
+| `meta` | `Record<string, JsonValue>` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  name?: string,
+  subject?: string | null,
+  html?: string | null,
+  scheduled_at?: string | null,
+  status?: string,
+  email_list_uuid?: string,
+  segment_uuid?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### opens
+
+`campaigns.opens`
+
+List paginated open statistics for a sent campaign.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailcoach.api.campaigns.opens({ campaignUuid: '0762df4d-8516-4eb3-95db-b26492cf221c' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignUuid` | `string` | Yes | — |
+| `next` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `object` | Yes | — |
+| `meta` | `Record<string, JsonValue>` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`campaigns.send`
+
+Send a campaign to its eligible audience; never automatically retry after a timeout.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailcoach.api.campaigns.send({ campaignUuid: '0762df4d-8516-4eb3-95db-b26492cf221c' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignUuid` | `string` | Yes | — |
+
+Sends to the campaign audience. Never blindly retry after a timeout because the first request may already have been accepted.
+
+
+
+**Output:** `void`
+
+
+---
+
+### sendTest
+
+`campaigns.sendTest`
+
+Send a test campaign email to up to ten comma-separated addresses.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailcoach.api.campaigns.sendTest({ campaignUuid: '0762df4d-8516-4eb3-95db-b26492cf221c', email: 'test@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignUuid` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+
+Sends a test email to up to ten comma-separated addresses. This sends real mail.
+
+
+
+**Output:** `void`
+
+
+---
+
+### unsubscribes
+
+`campaigns.unsubscribes`
+
+List paginated unsubscribe statistics for a sent campaign.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailcoach.api.campaigns.unsubscribes({ campaignUuid: '0762df4d-8516-4eb3-95db-b26492cf221c' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignUuid` | `string` | Yes | — |
+| `next` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `object` | Yes | — |
+| `meta` | `Record<string, JsonValue>` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`campaigns.update`
+
+Replace campaign settings; include all intended fields because omitted values can reset.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailcoach.api.campaigns.update({
+	campaignUuid: '0762df4d-8516-4eb3-95db-b26492cf221c',
+	body: { name: 'November newsletter', email_list_uuid: 'a69075c6-ff5c-4b6a-b217-12026cb72e4f', html: '<p>Latest news</p>' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignUuid` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+This is not a sparse patch: omitted content, segment, or scheduling values can reset. Resend the full intended draft settings. schedule_at uses UTC in YYYY-MM-DD HH:mm:ss form.
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  email_list_uuid: string,
+  subject?: string,
+  template_uuid?: string,
+  fields?: Record<string, JsonValue>,
+  segment_uuid?: string,
+  html?: string,
+  schedule_at?: string,
+  utm_tags?: boolean,
+  add_subscriber_tags?: boolean,
+  add_subscriber_link_tags?: boolean,
+  disable_webview?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  name?: string,
+  subject?: string | null,
+  html?: string | null,
+  scheduled_at?: string | null,
+  status?: string,
+  email_list_uuid?: string,
+  segment_uuid?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Email Lists
+
+### create
+
+`emailLists.create`
+
+Create an email list with its required sender address.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailcoach.api.emailLists.create({ name: 'Newsletter', default_from_email: 'hello@example.com', default_from_name: 'Example team' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `default_from_email` | `string` | Yes | — |
+| `default_from_name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  name?: string,
+  default_from_email?: string,
+  default_from_name?: string | null,
+  active_subscribers_count?: number,
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`emailLists.delete`
+
+Delete an email list and schedule its associated-data cleanup.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailcoach.api.emailLists.delete({ emailListUuid: 'a69075c6-ff5c-4b6a-b217-12026cb72e4f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailListUuid` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`emailLists.get`
+
+Get an email list by its UUID.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailcoach.api.emailLists.get({ emailListUuid: 'a69075c6-ff5c-4b6a-b217-12026cb72e4f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailListUuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  name?: string,
+  default_from_email?: string,
+  default_from_name?: string | null,
+  active_subscribers_count?: number,
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`emailLists.list`
+
+List email lists with documented name filters, sorting, and pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailcoach.api.emailLists.list({
+	query: {
+		filter: { search: 'newsletter' },
+		sort: '-created_at',
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  filter?: {
+    search?: string,
+    name?: string
+  },
+  sort?: name | -name | created_at | -created_at | active_subscribers_count | -active_subscribers_count
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | Yes | — |
+| `meta` | `Record<string, JsonValue>` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  name?: string,
+  default_from_email?: string,
+  default_from_name?: string | null,
+  active_subscribers_count?: number,
+  created_at?: string,
+  updated_at?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`emailLists.update`
+
+Update an email list and its required sender defaults.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailcoach.api.emailLists.update({
+	emailListUuid: 'a69075c6-ff5c-4b6a-b217-12026cb72e4f',
+	body: { name: 'Newsletter', default_from_email: 'hello@example.com' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailListUuid` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  default_from_email: string,
+  default_from_name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  name?: string,
+  default_from_email?: string,
+  default_from_name?: string | null,
+  active_subscribers_count?: number,
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Links
+
+### get
+
+`links.get`
+
+Get a tracked link and click records; this route has a 5 requests/second burst limit.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailcoach.api.links.get({ linkUuid: 'e2cf1b63-6505-3d7a-9c51-a9eb67d97a48' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `linkUuid` | `string` | Yes | — |
+
+Has an additional 5 requests/second burst limit per team.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  url: string,
+  unique_click_count: number,
+  click_count: number,
+  clicks: {
+    uuid: string,
+    send_uuid: string,
+    link_uuid: string,
+    subscriber_uuid: string,
+    created_at: string,
+    updated_at: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Segments
+
+### create
+
+`segments.create`
+
+Create a segment with positive and negative tag conditions.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailcoach.api.segments.create({
+	emailListUuid: 'a69075c6-ff5c-4b6a-b217-12026cb72e4f',
+	body: {
+		name: 'Readers',
+		all_positive_tags_required: false,
+		all_negative_tags_required: false,
+		positive_tags: ['reader'],
+		negative_tags: [],
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailListUuid` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  all_positive_tags_required?: boolean,
+  all_negative_tags_required?: boolean,
+  positive_tags?: string[],
+  negative_tags?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  name?: string,
+  email_list_uuid?: string,
+  positive_tags?: string[],
+  negative_tags?: string[],
+  all_positive_tags_required?: boolean,
+  all_negative_tags_required?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`segments.delete`
+
+Delete a segment from an email list.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailcoach.api.segments.delete({ emailListUuid: 'a69075c6-ff5c-4b6a-b217-12026cb72e4f', segmentUuid: '4efdbe3c-25e2-46b0-b799-1e1b6b5c28e6' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailListUuid` | `string` | Yes | — |
+| `segmentUuid` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`segments.get`
+
+Get a tag-based segment by UUID.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailcoach.api.segments.get({ emailListUuid: 'a69075c6-ff5c-4b6a-b217-12026cb72e4f', segmentUuid: '4efdbe3c-25e2-46b0-b799-1e1b6b5c28e6' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailListUuid` | `string` | Yes | — |
+| `segmentUuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  name?: string,
+  email_list_uuid?: string,
+  positive_tags?: string[],
+  negative_tags?: string[],
+  all_positive_tags_required?: boolean,
+  all_negative_tags_required?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`segments.list`
+
+List tag-based segments belonging to an email list.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailcoach.api.segments.list({ emailListUuid: 'a69075c6-ff5c-4b6a-b217-12026cb72e4f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailListUuid` | `string` | Yes | — |
+| `next` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | Yes | — |
+| `meta` | `Record<string, JsonValue>` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  name?: string,
+  email_list_uuid?: string,
+  positive_tags?: string[],
+  negative_tags?: string[],
+  all_positive_tags_required?: boolean,
+  all_negative_tags_required?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`segments.update`
+
+Replace a segment name and its complete tag conditions.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailcoach.api.segments.update({
+	emailListUuid: 'a69075c6-ff5c-4b6a-b217-12026cb72e4f',
+	segmentUuid: '4efdbe3c-25e2-46b0-b799-1e1b6b5c28e6',
+	body: {
+		name: 'Readers',
+		all_positive_tags_required: false,
+		all_negative_tags_required: false,
+		positive_tags: ['reader'],
+		negative_tags: [],
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailListUuid` | `string` | Yes | — |
+| `segmentUuid` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+Send the complete desired positive and negative tag conditions; updates replace existing conditions.
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  all_positive_tags_required: boolean,
+  all_negative_tags_required: boolean,
+  positive_tags: string[],
+  negative_tags: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  name?: string,
+  email_list_uuid?: string,
+  positive_tags?: string[],
+  negative_tags?: string[],
+  all_positive_tags_required?: boolean,
+  all_negative_tags_required?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sends
+
+### delete
+
+`sends.delete`
+
+Delete a send record; this cannot recall a delivered email.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailcoach.api.sends.delete({ sendUuid: 'e2cf1b63-6505-3d7a-9c51-a9eb67d97a48' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sendUuid` | `string` | Yes | — |
+
+Deletes the send record but cannot recall an email already delivered.
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`sends.get`
+
+Get a delivery attempt and its recorded engagement events.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailcoach.api.sends.get({ sendUuid: 'e2cf1b63-6505-3d7a-9c51-a9eb67d97a48' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sendUuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  campaign_uuid?: string | null,
+  automation_mail_uuid?: string | null,
+  transactional_mail_log_item_uuid?: string | null,
+  subscriber_uuid?: string | null,
+  sent_at?: string | null,
+  failed_at?: string | null,
+  failure_reason?: string | null,
+  open_count?: number,
+  click_count?: number,
+  first_opened_at?: string | null,
+  last_opened_at?: string | null,
+  first_clicked_at?: string | null,
+  last_clicked_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`sends.list`
+
+List delivery attempts with association filters and pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailcoach.api.sends.list({
+	query: {
+		filter: { subscriber_uuid: '2051c60c-a9f3-31d0-a58c-7adcc32ea2e3' },
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  filter?: {
+    subscriber_uuid?: string,
+    campaign_uuid?: string,
+    automation_mail_uuid?: string,
+    transactional_mail_log_item_uuid?: string
+  },
+  sort?: sent_at | -sent_at
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | Yes | — |
+| `meta` | `Record<string, JsonValue>` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  campaign_uuid?: string | null,
+  automation_mail_uuid?: string | null,
+  transactional_mail_log_item_uuid?: string | null,
+  subscriber_uuid?: string | null,
+  sent_at?: string | null,
+  failed_at?: string | null,
+  failure_reason?: string | null,
+  open_count?: number,
+  click_count?: number,
+  first_opened_at?: string | null,
+  last_opened_at?: string | null,
+  first_clicked_at?: string | null,
+  last_clicked_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Subscriber Imports
+
+### append
+
+`subscriberImports.append`
+
+Append CSV rows without repeating the header to a draft import.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailcoach.api.subscriberImports.append({ importUuid: '2ca0e737-b907-468f-819f-5d16e6bd6852', subscribers_csv: 'next@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `importUuid` | `string` | Yes | — |
+| `subscribers_csv` | `string` | Yes | — |
+
+Append CSV rows without repeating the header, then call start separately.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  status?: draft | pending | importing | completed | failed,
+  email_list_uuid?: string,
+  imported_subscribers_count?: number,
+  error_count?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`subscriberImports.create`
+
+Create a draft CSV subscriber import without starting processing.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailcoach.api.subscriberImports.create({
+	subscribers_csv: 'email
+person@example.com',
+	email_list_uuid: 'a69075c6-ff5c-4b6a-b217-12026cb72e4f',
+	subscribe_unsubscribed: false,
+	unsubscribe_others: false,
+	replace_tags: false,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscribers_csv` | `string` | Yes | — |
+| `email_list_uuid` | `string` | Yes | — |
+| `subscribe_unsubscribed` | `boolean` | No | — |
+| `unsubscribe_others` | `boolean` | No | — |
+| `replace_tags` | `boolean` | No | — |
+
+Creates a draft only. CSV imports bypass confirmation and can resubscribe or unsubscribe existing contacts depending on the optional flags. Import only consented addresses.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  status?: draft | pending | importing | completed | failed,
+  email_list_uuid?: string,
+  imported_subscribers_count?: number,
+  error_count?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`subscriberImports.delete`
+
+Delete a subscriber import.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailcoach.api.subscriberImports.delete({ importUuid: '2ca0e737-b907-468f-819f-5d16e6bd6852' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `importUuid` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`subscriberImports.get`
+
+Get subscriber-import status and processing counts.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailcoach.api.subscriberImports.get({ importUuid: '2ca0e737-b907-468f-819f-5d16e6bd6852' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `importUuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  status?: draft | pending | importing | completed | failed,
+  email_list_uuid?: string,
+  imported_subscribers_count?: number,
+  error_count?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`subscriberImports.list`
+
+List subscriber imports with pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailcoach.api.subscriberImports.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | Yes | — |
+| `meta` | `Record<string, JsonValue>` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  status?: draft | pending | importing | completed | failed,
+  email_list_uuid?: string,
+  imported_subscribers_count?: number,
+  error_count?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### start
+
+`subscriberImports.start`
+
+Start processing an import that can subscribe or unsubscribe contacts.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailcoach.api.subscriberImports.start({ importUuid: '2ca0e737-b907-468f-819f-5d16e6bd6852' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `importUuid` | `string` | Yes | — |
+
+Starts asynchronous processing and returns 204 with no body. Poll subscriberImports.get until completed or failed; completed imports may still have row errors.
+
+
+
+**Output:** `void`
+
+
+---
+
+### update
+
+`subscriberImports.update`
+
+Replace the CSV and options of a draft subscriber import.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailcoach.api.subscriberImports.update({
+	importUuid: '2ca0e737-b907-468f-819f-5d16e6bd6852',
+	body: { subscribers_csv: 'email
+person@example.com', email_list_uuid: 'a69075c6-ff5c-4b6a-b217-12026cb72e4f' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `importUuid` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+Only draft imports can be updated; resend both required fields.
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  subscribers_csv: string,
+  email_list_uuid: string,
+  subscribe_unsubscribed?: boolean,
+  unsubscribe_others?: boolean,
+  replace_tags?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  status?: draft | pending | importing | completed | failed,
+  email_list_uuid?: string,
+  imported_subscribers_count?: number,
+  error_count?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Subscribers
+
+### addTags
+
+`subscribers.addTags`
+
+Add tags to a subscriber without replacing their existing tags.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailcoach.api.subscribers.addTags({
+	subscriberUuid: '2a0c72d9-f91a-4fd2-88a7-589dfd75f464',
+	body: {
+		tags: ['reader'],
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriberUuid` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  tags: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  email_list_uuid?: string,
+  email?: string,
+  first_name?: string | null,
+  last_name?: string | null,
+  extra_attributes?: Record<string, JsonValue>,
+  tags?: string[],
+  status?: unconfirmed | subscribed | unsubscribed,
+  subscribed_at?: string | null,
+  unsubscribed_at?: string | null,
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### confirm
+
+`subscribers.confirm`
+
+Confirm a subscriber by UUID, changing their subscription state.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailcoach.api.subscribers.confirm({ subscriberUuid: '2a0c72d9-f91a-4fd2-88a7-589dfd75f464' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriberUuid` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### confirmByEmail
+
+`subscribers.confirmByEmail`
+
+Confirm a subscriber using their email address and list UUID.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailcoach.api.subscribers.confirmByEmail({ emailListUuid: 'a69075c6-ff5c-4b6a-b217-12026cb72e4f', email: 'person@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailListUuid` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### delete
+
+`subscribers.delete`
+
+Permanently remove a subscriber record and its subscription history.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailcoach.api.subscribers.delete({ subscriberUuid: '2a0c72d9-f91a-4fd2-88a7-589dfd75f464' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriberUuid` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`subscribers.get`
+
+Get a subscriber by UUID.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailcoach.api.subscribers.get({ subscriberUuid: '2a0c72d9-f91a-4fd2-88a7-589dfd75f464' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriberUuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  email_list_uuid?: string,
+  email?: string,
+  first_name?: string | null,
+  last_name?: string | null,
+  extra_attributes?: Record<string, JsonValue>,
+  tags?: string[],
+  status?: unconfirmed | subscribed | unsubscribed,
+  subscribed_at?: string | null,
+  unsubscribed_at?: string | null,
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`subscribers.list`
+
+List subscribers for an email list with documented filters and sorting.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailcoach.api.subscribers.list({
+	emailListUuid: 'a69075c6-ff5c-4b6a-b217-12026cb72e4f',
+	query: {
+		filter: { status: 'subscribed' },
+		sort: '-created_at',
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailListUuid` | `string` | Yes | — |
+| `query` | `object` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  filter?: {
+    email?: string,
+    search?: string,
+    status?: unconfirmed | subscribed | unsubscribed
+  },
+  sort?: created_at | -created_at | updated_at | -updated_at | subscribed_at | -subscribed_at | unsubscribed_at | -unsubscribed_at | email | -email | first_name | -first_name | last_name | -last_name
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | Yes | — |
+| `meta` | `Record<string, JsonValue>` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  email_list_uuid?: string,
+  email?: string,
+  first_name?: string | null,
+  last_name?: string | null,
+  extra_attributes?: Record<string, JsonValue>,
+  tags?: string[],
+  status?: unconfirmed | subscribed | unsubscribed,
+  subscribed_at?: string | null,
+  unsubscribed_at?: string | null,
+  created_at?: string,
+  updated_at?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeTags
+
+`subscribers.removeTags`
+
+Remove the specified tags from a subscriber.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailcoach.api.subscribers.removeTags({
+	subscriberUuid: '2a0c72d9-f91a-4fd2-88a7-589dfd75f464',
+	body: {
+		tags: ['reader'],
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriberUuid` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  tags: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  email_list_uuid?: string,
+  email?: string,
+  first_name?: string | null,
+  last_name?: string | null,
+  extra_attributes?: Record<string, JsonValue>,
+  tags?: string[],
+  status?: unconfirmed | subscribed | unsubscribed,
+  subscribed_at?: string | null,
+  unsubscribed_at?: string | null,
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### resendConfirmation
+
+`subscribers.resendConfirmation`
+
+Send a confirmation email to a subscriber.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailcoach.api.subscribers.resendConfirmation({ subscriberUuid: '2a0c72d9-f91a-4fd2-88a7-589dfd75f464' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriberUuid` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### resendConfirmationByEmail
+
+`subscribers.resendConfirmationByEmail`
+
+Send a list confirmation email to the supplied address.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailcoach.api.subscribers.resendConfirmationByEmail({ emailListUuid: 'a69075c6-ff5c-4b6a-b217-12026cb72e4f', email: 'person@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailListUuid` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### subscribe
+
+`subscribers.subscribe`
+
+Subscribe or update an address; this can restart an unsubscribed contact.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailcoach.api.subscribers.subscribe({
+	emailListUuid: 'a69075c6-ff5c-4b6a-b217-12026cb72e4f',
+	body: { email: 'person@example.com', first_name: 'Sample' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailListUuid` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+This can restart an unsubscribed address. Supplied tags replace existing tags; only use skip_confirmation when consent is already established.
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  email: string,
+  first_name?: string,
+  last_name?: string,
+  extra_attributes?: Record<string, JsonValue>,
+  tags?: string[],
+  skip_confirmation?: boolean,
+  strict?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  email_list_uuid?: string,
+  email?: string,
+  first_name?: string | null,
+  last_name?: string | null,
+  extra_attributes?: Record<string, JsonValue>,
+  tags?: string[],
+  status?: unconfirmed | subscribed | unsubscribed,
+  subscribed_at?: string | null,
+  unsubscribed_at?: string | null,
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unsubscribe
+
+`subscribers.unsubscribe`
+
+Unsubscribe a subscriber while retaining subscription history.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailcoach.api.subscribers.unsubscribe({ subscriberUuid: '2a0c72d9-f91a-4fd2-88a7-589dfd75f464' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriberUuid` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### unsubscribeByEmail
+
+`subscribers.unsubscribeByEmail`
+
+Unsubscribe an address from a list while retaining subscription history.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailcoach.api.subscribers.unsubscribeByEmail({ emailListUuid: 'a69075c6-ff5c-4b6a-b217-12026cb72e4f', email: 'person@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailListUuid` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### update
+
+`subscribers.update`
+
+Update subscriber profile data and replace or append tags.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailcoach.api.subscribers.update({
+	subscriberUuid: '2a0c72d9-f91a-4fd2-88a7-589dfd75f464',
+	body: { first_name: 'Sample', append_tags: true },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriberUuid` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  email?: string,
+  first_name?: string,
+  last_name?: string,
+  extra_attributes?: Record<string, JsonValue>,
+  tags?: string[],
+  append_tags?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  email_list_uuid?: string,
+  email?: string,
+  first_name?: string | null,
+  last_name?: string | null,
+  extra_attributes?: Record<string, JsonValue>,
+  tags?: string[],
+  status?: unconfirmed | subscribed | unsubscribed,
+  subscribed_at?: string | null,
+  unsubscribed_at?: string | null,
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Suppressions
+
+### create
+
+`suppressions.create`
+
+Block an address across the team by adding a manual suppression.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailcoach.api.suppressions.create({ email: 'info@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+Creates a team-wide manual sending block.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  email?: string,
+  reason?: hard_bounce | spam_complaint | manual,
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`suppressions.delete`
+
+Remove an allowed suppression; hosted Mailcoach forbids deleting spam complaints.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailcoach.api.suppressions.delete({ identifier: 'info@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string \| string` | Yes | — |
+
+Hosted Mailcoach forbids deleting spam-complaint suppressions. Removing an allowed suppression can permit future sends.
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`suppressions.get`
+
+Get a suppression by UUID or URL-encoded email address.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailcoach.api.suppressions.get({ identifier: 'info@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  email?: string,
+  reason?: hard_bounce | spam_complaint | manual,
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`suppressions.list`
+
+List sending suppressions with documented search and reason filters.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailcoach.api.suppressions.list({
+	query: {
+		filter: { reason: 'manual' },
+		sort: '-created_at',
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  filter?: {
+    search?: string,
+    reason?: hard_bounce | spam_complaint | manual
+  },
+  sort?: created_at | -created_at
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | Yes | — |
+| `meta` | `Record<string, JsonValue>` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  email?: string,
+  reason?: hard_bounce | spam_complaint | manual,
+  created_at?: string,
+  updated_at?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tags
+
+### create
+
+`tags.create`
+
+Create or retrieve a regular tag by its case-insensitive name.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailcoach.api.tags.create({
+	emailListUuid: 'a69075c6-ff5c-4b6a-b217-12026cb72e4f',
+	body: { name: 'reader', visible_in_preferences: false },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailListUuid` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  visible_in_preferences?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  name?: string,
+  email_list_uuid?: string,
+  visible_in_preferences?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`tags.delete`
+
+Delete a tag from an email list.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailcoach.api.tags.delete({ emailListUuid: 'a69075c6-ff5c-4b6a-b217-12026cb72e4f', tagUuid: '38b9e5cf-d10f-4463-b74d-bf26495e9f5b' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailListUuid` | `string` | Yes | — |
+| `tagUuid` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`tags.get`
+
+Get a tag by its UUID within an email list.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailcoach.api.tags.get({ emailListUuid: 'a69075c6-ff5c-4b6a-b217-12026cb72e4f', tagUuid: '38b9e5cf-d10f-4463-b74d-bf26495e9f5b' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailListUuid` | `string` | Yes | — |
+| `tagUuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  name?: string,
+  email_list_uuid?: string,
+  visible_in_preferences?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tags.list`
+
+List tags belonging to an email list.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailcoach.api.tags.list({ emailListUuid: 'a69075c6-ff5c-4b6a-b217-12026cb72e4f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailListUuid` | `string` | Yes | — |
+| `next` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | Yes | — |
+| `meta` | `Record<string, JsonValue>` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  name?: string,
+  email_list_uuid?: string,
+  visible_in_preferences?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`tags.update`
+
+Update a tag name and preference visibility.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailcoach.api.tags.update({
+	emailListUuid: 'a69075c6-ff5c-4b6a-b217-12026cb72e4f',
+	tagUuid: '38b9e5cf-d10f-4463-b74d-bf26495e9f5b',
+	body: { name: 'reader', visible_in_preferences: false },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailListUuid` | `string` | Yes | — |
+| `tagUuid` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+Send both name and visible_in_preferences.
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  visible_in_preferences: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  name?: string,
+  email_list_uuid?: string,
+  visible_in_preferences?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Templates
+
+### create
+
+`templates.create`
+
+Create a campaign template using HTML and optional editor data.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailcoach.api.templates.create({ name: 'Newsletter template', html: '<html><body>[[[content]]]</body></html>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `html` | `string` | No | — |
+| `structured_html` | `JsonValue` | No | — |
+
+structured_html is editor-specific and has no editor-independent schema; omit it unless required by the chosen editor.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  name?: string,
+  html?: string,
+  structured_html?: JsonValue | null,
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`templates.delete`
+
+Delete a campaign template.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailcoach.api.templates.delete({ templateUuid: '11ce123b-57c4-429b-9840-c79f8047d8aa' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateUuid` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`templates.get`
+
+Get a campaign template by UUID.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailcoach.api.templates.get({ templateUuid: '11ce123b-57c4-429b-9840-c79f8047d8aa' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateUuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  name?: string,
+  html?: string,
+  structured_html?: JsonValue | null,
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`templates.list`
+
+List campaign templates with name search, sorting, and pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailcoach.api.templates.list({
+	query: {
+		filter: { search: 'newsletter' },
+		sort: '-updated_at',
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  filter?: {
+    search: string
+  },
+  sort?: name | -name | updated_at | -updated_at
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | Yes | — |
+| `meta` | `Record<string, JsonValue>` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  name?: string,
+  html?: string,
+  structured_html?: JsonValue | null,
+  created_at?: string,
+  updated_at?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`templates.update`
+
+Update a campaign template; include its required name.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailcoach.api.templates.update({
+	templateUuid: '11ce123b-57c4-429b-9840-c79f8047d8aa',
+	body: { name: 'Newsletter template', html: '<html><body>[[[content]]]</body></html>' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateUuid` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+Include name along with the content to update.
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  html?: string,
+  structured_html?: JsonValue
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  name?: string,
+  html?: string,
+  structured_html?: JsonValue | null,
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Transactional Mails
+
+### getTemplate
+
+`transactionalMails.getTemplate`
+
+Get a saved transactional email template by UUID.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailcoach.api.transactionalMails.getTemplate({ templateUuid: '11ce123b-57c4-429b-9840-c79f8047d8aa' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateUuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  name?: string,
+  subject?: string | null,
+  html?: string | null,
+  store_mail?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listTemplates
+
+`transactionalMails.listTemplates`
+
+List saved transactional email templates, not sent-mail log items.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailcoach.api.transactionalMails.listTemplates({
+	query: {
+		filter: { name: 'welcome' },
+		sort: '-created_at',
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `next` | `string` | No | — |
+
+Lists saved transactional email templates, not sent-message log items.
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  filter?: {
+    name: string
+  },
+  sort?: created_at | -created_at
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | Yes | — |
+| `meta` | `Record<string, JsonValue>` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  name?: string,
+  subject?: string | null,
+  html?: string | null,
+  store_mail?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`transactionalMails.send`
+
+Send or fake-send a transactional email using inline content or a saved mail.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailcoach.api.transactionalMails.send({
+	from: 'Example team <hello@example.com>',
+	to: 'person@example.com',
+	subject: 'Welcome',
+	html: '<p>Welcome</p>',
+	fake: true,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `cc` | `string` | No | — |
+| `bcc` | `string` | No | — |
+| `reply_to` | `string` | No | — |
+| `mail_name` | `string` | No | — |
+| `replacements` | `Record<string, JsonValue>` | No | — |
+| `subject` | `string` | No | — |
+| `html` | `string` | No | — |
+| `text` | `string` | No | — |
+| `store` | `boolean` | No | — |
+| `mailer` | `string` | No | — |
+| `attachments` | `object[]` | No | — |
+| `fake` | `boolean` | No | — |
+
+Provide either mail_name for a saved transactional template or subject plus at least one of html/text. fake=true logs without delivering. The default store=true returns a top-level uuid; store=false returns 204. Failures can be plain text and are surfaced as sanitized status errors.
+
+<AccordionGroup>
+<Accordion title="attachments full type">
+
+```ts
+{
+  name: string,
+  content: string,
+  content_type: string,
+  content_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  uuid: string
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Uploads
+
+### create
+
+`uploads.create`
+
+Upload up to ten JPEG, PNG, GIF, or WebP images via documented JSON base64 input.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailcoach.api.uploads.create({
+	images: [{ name: 'pixel.png', base64: 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/mk0AAAAASUVORK5CYII=' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `images` | `object[]` | Yes | — |
+
+Uses the documented JSON base64 form. Upload up to 10 JPEG, PNG, GIF, or WebP images, each no larger than 8 MB; SVG is not accepted. The upload does not alter any email until you reference the returned URL in its HTML.
+
+<AccordionGroup>
+<Accordion title="images full type">
+
+```ts
+{
+  name: string,
+  base64: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  name: string,
+  url: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## User
+
+### get
+
+`user.get`
+
+Get the user associated with the configured Mailcoach API token.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailcoach.api.user.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  email: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
