@@ -1,0 +1,479 @@
+---
+title: "Payhere API reference"
+sidebarTitle: "API"
+description: "API reference for the Payhere plugin in Corsair: every `payhere.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Company
+
+### get
+
+`company.get`
+
+Read the company of the authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.payhere.api.company.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The Payhere company of the authenticated user |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  legal_name?: string | null,
+  slug?: string | null,
+  country_code?: string | null,
+  currency?: string | null,
+  stripe_connected?: boolean | null,
+  gocardless_connected?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### stats
+
+`company.stats`
+
+Read the payment stats of the last 30 days with comparisons
+
+**Risk:** `read`
+
+```ts
+await corsair.payhere.api.company.stats({});
+```
+
+**Input:** _empty object_
+
+Comparison fields cover the 30-60 days before the last 30.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `currency` | `string` | Yes | Currency the stats are reported in |
+| `payments_last_30` | `number` | Yes | Payment volume of the last 30 days |
+| `payments_comparison` | `number` | Yes | Payment volume of the 30-60 days before, for comparison |
+| `subscribers_last_30` | `number` | Yes | New subscribers of the last 30 days |
+| `subscribers_comparison` | `number` | Yes | New subscribers of the 30-60 days before, for comparison |
+| `payments_all_time` | `number` | Yes | Payment volume across all time |
+
+
+
+---
+
+## Customers
+
+### get
+
+`customers.get`
+
+Read one customer with their subscriptions and payment history
+
+**Risk:** `read`
+
+```ts
+await corsair.payhere.api.customers.get({ customerId: 989899294 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `number` | Yes | Customer id |
+
+The answer embeds the customer's subscriptions and payment history.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  email?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  subscriptions?: {
+  }[] | null,
+  payments?: {
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`customers.list`
+
+List customers, most recent first, paged
+
+**Risk:** `read`
+
+```ts
+await corsair.payhere.api.customers.list({ page: 1, per_page: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number |
+| `per_page` | `number` | No | Records per page; default 20, maximum 100 |
+
+Ordered chronologically, most recent first; meta.next_page is the next page number or null on the last page.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | Customers on this page |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  email?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number | null,
+  next_page?: number | null,
+  prev_page?: number | null,
+  total_pages?: number | null,
+  total_count?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Payments
+
+### list
+
+`payments.list`
+
+List payments, most recent first, paged
+
+**Risk:** `read`
+
+```ts
+await corsair.payhere.api.payments.list({ page: 1, per_page: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number |
+| `per_page` | `number` | No | Records per page; default 20, maximum 100 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | Payments on this page |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  hashid?: string | null,
+  reference?: string | null,
+  amount?: number | null,
+  currency?: string | null,
+  refund_amount?: number | null,
+  card_brand?: string | null,
+  status?: string | null,
+  success?: boolean | null,
+  created_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number | null,
+  next_page?: number | null,
+  prev_page?: number | null,
+  total_pages?: number | null,
+  total_count?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Plans
+
+### list
+
+`plans.list`
+
+List the payment plans, paged
+
+**Risk:** `read`
+
+```ts
+await corsair.payhere.api.plans.list({ page: 1, per_page: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number |
+| `per_page` | `number` | No | Records per page; default 20, maximum 100 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | Plans on this page |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  payment_type?: string | null,
+  name?: string | null,
+  description?: string | null,
+  price?: number | null,
+  price_in_cents?: number | null,
+  currency?: string | null,
+  slug?: string | null,
+  billing_interval?: string | null,
+  hidden?: boolean | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number | null,
+  next_page?: number | null,
+  prev_page?: number | null,
+  total_pages?: number | null,
+  total_count?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Refunds
+
+### create
+
+`refunds.create`
+
+Refund a payment fully or partially; money leaves the account and the refund cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.payhere.api.refunds.create({ payment_id: 373, amount: 0.5, reason: "requested_by_customer" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `payment_id` | `number` | Yes | Id of the payment to refund |
+| `amount` | `number` | Yes | Amount to refund, in the payment currency; decimals allowed (1.5 is $1.50 USD) |
+| `reason` | `requested_by_customer \| duplicate \| fraudulent` | Yes | Reason for the refund |
+
+Answers 204 with no body. The reason must be one of requested_by_customer, duplicate or fraudulent; the amount uses the payment currency.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `paymentId` | `number` | Yes | Refunded payment id |
+| `amount` | `number` | Yes | Refunded amount |
+| `success` | `boolean` | Yes | Whether the refund succeeded |
+
+
+
+---
+
+## Subscriptions
+
+### list
+
+`subscriptions.list`
+
+List subscriptions, most recent payment first, paged
+
+**Risk:** `read`
+
+```ts
+await corsair.payhere.api.subscriptions.list({ page: 1, per_page: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number |
+| `per_page` | `number` | No | Records per page; default 20, maximum 100 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | Subscriptions on this page |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  customer_id?: number | null,
+  last_charged?: string | null,
+  next_charge_at?: string | null,
+  status?: string | null,
+  billing_interval?: string | null,
+  membership_plan_id?: number | null,
+  provider?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number | null,
+  next_page?: number | null,
+  prev_page?: number | null,
+  total_pages?: number | null,
+  total_count?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## User
+
+### get
+
+`user.get`
+
+Read the authenticated Payhere user
+
+**Risk:** `read`
+
+```ts
+await corsair.payhere.api.user.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The authenticated Payhere user |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  display_name?: string | null,
+  email?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
