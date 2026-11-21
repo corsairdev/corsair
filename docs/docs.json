@@ -4145,6 +4145,14 @@
                 ]
               },
               {
+                "group": "Perigon",
+                "pages": [
+                  "plugins/perigon/overview",
+                  "plugins/perigon/api",
+                  "plugins/perigon/database"
+                ]
+              },
+              {
                 "group": "Perplexity",
                 "pages": [
                   "plugins/perplexityai/overview",
