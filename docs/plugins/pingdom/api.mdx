@@ -19,7 +19,7 @@ Create an alerting contact with notification targets
 **Risk:** `write`
 
 ```ts
-await corsair.pingdom.api.alerting.contacts.create({ name: "John Doe", notificationTargets: [{ email: "john@example.com", severity: "H" }] });
+await corsair.pingdom.api.alerting.contacts.create({ name: "John Doe", notificationTargets: [{ email: "john@example.com", severity: "HIGH" }, { email: "john@example.com", severity: "LOW" }] });
 ```
 
 **Input**
@@ -28,19 +28,20 @@ await corsair.pingdom.api.alerting.contacts.create({ name: "John Doe", notificat
 |------|------|----------|-------------|
 | `name` | `string` | Yes | Contact name |
 | `paused` | `boolean` | No | Create the contact paused |
-| `notificationTargets` | `object[]` | Yes | Notification targets; each takes email or number (+countryCode) and an optional severity |
+| `notificationTargets` | `object[]` | Yes | Notification targets, each an email or a number (+countryCode) with severity HIGH or LOW; Pingdom wants at least one HIGH and one LOW |
 
-notificationTargets each take email or number with countryCode, plus an optional severity (H, M or L).
+notificationTargets each take email, or number with countryCode, plus severity HIGH or LOW; Pingdom wants at least one HIGH and one LOW target.
 
 <AccordionGroup>
 <Accordion title="notificationTargets full type">
 
 ```ts
 {
-  severity?: string,
-  countryCode?: string,
+  severity: HIGH | LOW,
+  email?: string,
   number?: string,
-  email?: string
+  countryCode?: string,
+  provider?: string
 }[]
 ```
 </Accordion>
@@ -135,11 +136,21 @@ await corsair.pingdom.api.alerting.contacts.get({ contactId: 111250 });
   paused?: boolean | null,
   type?: string | null,
   notification_targets?: {
-    severity?: string | null,
-    country_code?: string | null,
-    number?: string | null,
-    email?: string | null
-  }[] | null
+    email?: {
+      severity?: string | null,
+      address?: string | null,
+      country_code?: string | null,
+      number?: string | null,
+      provider?: string | null
+    }[] | null,
+    sms?: {
+      severity?: string | null,
+      address?: string | null,
+      country_code?: string | null,
+      number?: string | null,
+      provider?: string | null
+    }[] | null
+  } | null
 } | null
 ```
 </Accordion>
@@ -180,11 +191,21 @@ await corsair.pingdom.api.alerting.contacts.list({});
   paused?: boolean | null,
   type?: string | null,
   notification_targets?: {
-    severity?: string | null,
-    country_code?: string | null,
-    number?: string | null,
-    email?: string | null
-  }[] | null
+    email?: {
+      severity?: string | null,
+      address?: string | null,
+      country_code?: string | null,
+      number?: string | null,
+      provider?: string | null
+    }[] | null,
+    sms?: {
+      severity?: string | null,
+      address?: string | null,
+      country_code?: string | null,
+      number?: string | null,
+      provider?: string | null
+    }[] | null
+  } | null
 }[]
 ```
 </Accordion>
@@ -203,7 +224,7 @@ Modify an alerting contact
 **Risk:** `write`
 
 ```ts
-await corsair.pingdom.api.alerting.contacts.update({ contactId: 111250, name: "John Doe", paused: true, notificationTargets: [{ email: "john@example.com" }] });
+await corsair.pingdom.api.alerting.contacts.update({ contactId: 111250, name: "John Doe", paused: true, notificationTargets: [{ email: "john@example.com", severity: "HIGH" }, { email: "john@example.com", severity: "LOW" }] });
 ```
 
 **Input**
@@ -213,17 +234,18 @@ await corsair.pingdom.api.alerting.contacts.update({ contactId: 111250, name: "J
 | `contactId` | `number` | Yes | The contact id |
 | `name` | `string` | Yes | Contact name |
 | `paused` | `boolean` | Yes | Whether alerts are paused |
-| `notificationTargets` | `object[]` | Yes | Notification targets; each takes email or number (+countryCode) and an optional severity |
+| `notificationTargets` | `object[]` | Yes | Notification targets, each an email or a number (+countryCode) with severity HIGH or LOW; Pingdom wants at least one HIGH and one LOW |
 
 <AccordionGroup>
 <Accordion title="notificationTargets full type">
 
 ```ts
 {
-  severity?: string,
-  countryCode?: string,
+  severity: HIGH | LOW,
+  email?: string,
   number?: string,
-  email?: string
+  countryCode?: string,
+  provider?: string
 }[]
 ```
 </Accordion>
@@ -247,11 +269,21 @@ await corsair.pingdom.api.alerting.contacts.update({ contactId: 111250, name: "J
   paused?: boolean | null,
   type?: string | null,
   notification_targets?: {
-    severity?: string | null,
-    country_code?: string | null,
-    number?: string | null,
-    email?: string | null
-  }[] | null
+    email?: {
+      severity?: string | null,
+      address?: string | null,
+      country_code?: string | null,
+      number?: string | null,
+      provider?: string | null
+    }[] | null,
+    sms?: {
+      severity?: string | null,
+      address?: string | null,
+      country_code?: string | null,
+      number?: string | null,
+      provider?: string | null
+    }[] | null
+  } | null
 } | null
 ```
 </Accordion>
@@ -701,9 +733,9 @@ await corsair.pingdom.api.checks.get({ checkId: 100 });
   created?: number | null,
   paused?: any | null,
   resolution?: number | null,
-  send_notification_when_down?: number | null,
-  notify_again_every?: number | null,
-  notify_when_backup?: boolean | null,
+  sendnotificationwhendown?: number | null,
+  notifyagainevery?: number | null,
+  notifywhenbackup?: boolean | null,
   userids?: number[] | null,
   teamids?: number[] | null,
   integrationids?: number[] | null,
@@ -833,7 +865,7 @@ await corsair.pingdom.api.checks.update({ checkId: 100, name: "renamed" });
 
 `checks.updateMulti`
 
-Pause or re-time multiple checks at once
+Pause, unpause or re-time the listed checks at once
 
 **Risk:** `write`
 
@@ -845,6 +877,7 @@ await corsair.pingdom.api.checks.updateMulti({ paused: true });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `checkIds` | `number[]` | Yes | Checks to modify (sent as checkids); Pingdom changes every check in the account when the list is missing |
 | `paused` | `boolean` | No | Pause (true) or unpause (false) |
 | `resolution` | `1 \| 5 \| 15 \| 30 \| 60` | Yes | New test interval in minutes |
 
@@ -873,7 +906,7 @@ Create a maintenance window
 **Risk:** `write`
 
 ```ts
-await corsair.pingdom.api.maintenance.create({ description: "Deploy window", from: 1700000000, to: 1700003600, recurrence: "weekly", checks: [100] });
+await corsair.pingdom.api.maintenance.create({ description: "Deploy window", from: 1700000000, to: 1700003600, recurrenceType: "week", repeatEvery: 1, uptimeIds: [100] });
 ```
 
 **Input**
@@ -881,14 +914,13 @@ await corsair.pingdom.api.maintenance.create({ description: "Deploy window", fro
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `description` | `string` | Yes | Description |
-| `from` | `number` | Yes | Window start, UNIX time; only future allowed (use 1 for now) |
-| `to` | `number` | Yes | Window end, UNIX time; only future allowed (use 1 for now) |
-| `recurrence` | `none \| daily \| weekly \| monthly` | Yes | Recurrence interval |
-| `recurring` | `0 \| 1` | Yes | Whether the window recurs (1) or is one-off (0) |
-| `effectiveTo` | `number` | No | When the recurrence stops, UNIX time (0 = never) |
-| `checks` | `number[]` | No | Check ids the window covers |
-| `teams` | `number[]` | No | Team ids the window covers |
-| `contacts` | `number[]` | No | Contact ids the window covers |
+| `from` | `number` | Yes | Window start, UNIX time (future only) |
+| `to` | `number` | Yes | Window end, UNIX time (future only) |
+| `recurrenceType` | `none \| day \| week \| month` | No | Recurrence (sent as recurrencetype); default none |
+| `repeatEvery` | `number` | No | Repeat every N recurrence units (sent as repeatevery) |
+| `effectiveTo` | `number` | No | When the recurrence stops, UNIX time (sent as effectiveto) |
+| `uptimeIds` | `number[]` | No | Uptime check ids the window covers (sent as uptimeids) |
+| `tmsIds` | `number[]` | No | Transaction check ids the window covers (sent as tmsids) |
 
 recurrence is none, daily, weekly or monthly; from and to must be in the future (use 1 for now); effectiveTo 0 means the recurrence never stops.
 
@@ -1010,12 +1042,15 @@ await corsair.pingdom.api.maintenance.get({ id: 777 });
   description?: string | null,
   from?: number | null,
   to?: number | null,
-  recurrence?: string | null,
-  recurring?: boolean | null,
-  effective_to?: number | null,
-  checks?: number[] | null,
-  teams?: number[] | null,
-  contacts?: number[] | null
+  duration?: number | null,
+  durationunit?: string | null,
+  recurrencetype?: string | null,
+  repeatevery?: number | null,
+  effectiveto?: number | null,
+  checks?: {
+    uptime?: number[] | null,
+    tms?: number[] | null
+  } | null
 } | null
 ```
 </Accordion>
@@ -1063,12 +1098,15 @@ await corsair.pingdom.api.maintenance.list({});
   description?: string | null,
   from?: number | null,
   to?: number | null,
-  recurrence?: string | null,
-  recurring?: boolean | null,
-  effective_to?: number | null,
-  checks?: number[] | null,
-  teams?: number[] | null,
-  contacts?: number[] | null
+  duration?: number | null,
+  durationunit?: string | null,
+  recurrencetype?: string | null,
+  repeatevery?: number | null,
+  effectiveto?: number | null,
+  checks?: {
+    uptime?: number[] | null,
+    tms?: number[] | null
+  } | null
 }[]
 ```
 </Accordion>
@@ -1095,15 +1133,14 @@ await corsair.pingdom.api.maintenance.update({ id: 777, description: "Changed" }
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | The maintenance window id |
-| `description` | `string` | No | New description |
-| `from` | `number` | No | New start, UNIX time |
-| `to` | `number` | No | New end, UNIX time |
-| `recurrence` | `none \| daily \| weekly \| monthly` | No | New recurrence |
-| `recurring` | `boolean` | No | New recurring flag |
-| `effectiveTo` | `number` | No | New recurrence stop, UNIX time |
-| `checks` | `number[]` | No | New check ids |
-| `teams` | `number[]` | No | New team ids |
-| `contacts` | `number[]` | No | New contact ids |
+| `description` | `string` | No | Description |
+| `from` | `number` | No | Window start, UNIX time (future only) |
+| `to` | `number` | No | Window end, UNIX time (future only) |
+| `recurrenceType` | `none \| day \| week \| month` | No | Recurrence (sent as recurrencetype); default none |
+| `repeatEvery` | `number` | No | Repeat every N recurrence units (sent as repeatevery) |
+| `effectiveTo` | `number` | No | When the recurrence stops, UNIX time (sent as effectiveto) |
+| `uptimeIds` | `number[]` | No | Uptime check ids the window covers (sent as uptimeids) |
+| `tmsIds` | `number[]` | No | Transaction check ids the window covers (sent as tmsids) |
 
 
 
@@ -1173,17 +1210,19 @@ await corsair.pingdom.api.occurrences.get({ id: 3 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `maintenance_occurrence` | `object \| null` | No | The occurrence |
+| `occurrence` | `object \| null` | No | The occurrence |
 
 <AccordionGroup>
-<Accordion title="maintenance_occurrence full type">
+<Accordion title="occurrence full type">
 
 ```ts
 {
   id?: number | null,
-  maintenance_id?: number | null,
+  maintenanceid?: number | null,
   from?: number | null,
-  to?: number | null
+  to?: number | null,
+  duration?: number | null,
+  durationunit?: string | null
 } | null
 ```
 </Accordion>
@@ -1219,17 +1258,19 @@ await corsair.pingdom.api.occurrences.list({ maintenanceId: 777 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `maintenance_occurrences` | `object[]` | Yes | — |
+| `occurrences` | `object[]` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="maintenance_occurrences full type">
+<Accordion title="occurrences full type">
 
 ```ts
 {
   id?: number | null,
-  maintenance_id?: number | null,
+  maintenanceid?: number | null,
   from?: number | null,
-  to?: number | null
+  to?: number | null,
+  duration?: number | null,
+  durationunit?: string | null
 }[]
 ```
 </Accordion>
@@ -1317,7 +1358,7 @@ status filters to up, down, unconfirmed or unknown; probes takes a comma-separat
 {
   probeid?: number | null,
   time?: number | null,
-  status?: up | down | unconfirmed | unknown | null,
+  status?: string | null,
   responsetime?: number | null,
   probedesc?: string | null,
   probeip?: string | null,
@@ -1412,15 +1453,16 @@ await corsair.pingdom.api.summaries.hoursOfDay({ checkId: 100 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `summary` | `object` | Yes | — |
+| `hoursofday` | `object[]` | Yes | Per-hour average response times |
 
 <AccordionGroup>
-<Accordion title="summary full type">
+<Accordion title="hoursofday full type">
 
 ```ts
 {
-  hours?: any[] | null
-}
+  hour?: number | null,
+  avgresponse?: number | null
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -1550,18 +1592,7 @@ await corsair.pingdom.api.summaries.probes({ checkId: 100 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `summary` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="summary full type">
-
-```ts
-{
-  probes?: any[] | null
-}
-```
-</Accordion>
-</AccordionGroup>
+| `probes` | `number[]` | Yes | Ids of the probes that tested the check in the period |
 
 
 
@@ -1671,7 +1702,7 @@ await corsair.pingdom.api.tools.listActions({ checkId: 100 });
     checkid?: number | null,
     checkname?: string | null,
     time?: number | null,
-    via?: email | sms | twitter | apns | agcm | null
+    via?: string | null
   }[]
 }
 ```
@@ -1735,7 +1766,7 @@ Run a one-off check against a host
 **Risk:** `write`
 
 ```ts
-await corsair.pingdom.api.tools.runSingle({ host: "example.com" });
+await corsair.pingdom.api.tools.runSingle({ host: "example.com", type: "http", typeSettings: { encryption: true, url: "/" } });
 ```
 
 **Input**
@@ -1743,11 +1774,10 @@ await corsair.pingdom.api.tools.runSingle({ host: "example.com" });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `host` | `string` | Yes | Target host to test |
-| `publicName` | `string` | No | Name shown on the public status page |
-| `resolution` | `1 \| 5 \| 15 \| 30 \| 60` | Yes | Test interval for the created check in minutes |
-| `integrationIds` | `number[]` | No | Integration ids to alert |
-| `userIds` | `number[]` | No | User ids to alert |
-| `teamIds` | `number[]` | No | Team ids to alert |
+| `type` | `http \| httpcustom \| tcp \| ping \| dns \| udp \| smtp \| pop3 \| imap` | Yes | Type of test |
+| `probeId` | `number` | No | Run from this probe (sent as probeid) |
+| `ipv6` | `boolean` | No | Use IPv6 instead of IPv4 |
+| `typeSettings` | `Record<string, string \| number \| boolean>` | No | Type-specific query fields, e.g. http: url, encryption, port, shouldcontain, verify_certificate; dns: nameserver, expectedip |
 
 Performs a single test without creating a check; the answer carries status, responsetime and the probe that ran it.
 
