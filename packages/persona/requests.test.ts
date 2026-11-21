@@ -11,9 +11,11 @@ import {
 	inquiry,
 	inquirySession,
 	inquiryTemplate,
-	oneTimeLink,
-	rotatedWebhook,
+	LINKS,
+	oneTimeLinkMeta,
+	templateVersion,
 	webhookConfig,
+	webhookWithSecret,
 } from './test-fixtures';
 
 jest.mock('corsair/core', () => ({
@@ -79,14 +81,27 @@ afterEach(() => {
 	fetchMock.mockRestore();
 });
 
+function sentBody() {
+	return JSON.parse(lastRequest().body as string);
+}
+
 describe('accounts', () => {
-	it('list sends page params', async () => {
-		respond({ data: [account] });
-		await invoke(Accounts.list, { pageAfter: 'cur1', pageSize: 25 });
+	it('list sends page and filter params and reads links', async () => {
+		respond({ data: [account], links: LINKS });
+		const page = (await invoke(Accounts.list, {
+			pageAfter: 'act_1',
+			pageSize: 25,
+			referenceId: 'user-42',
+		})) as { links?: { next?: string | null } };
+		expect(page.links?.next).toBe(LINKS.next);
 		const sent = lastRequest();
 		expectAuthenticated('/accounts');
-		expect(sent.query['page[after]']).toBe('cur1');
-		expect(sent.query['page[size]']).toBe('25');
+		expect(sent.query).toEqual({
+			'page[after]': 'act_1',
+			'page[size]': '25',
+			'filter[reference-id]': 'user-42',
+		});
+		expect(sent.headers.get('persona-version')).toBe('2023-01-05');
 	});
 
 	it('get reads one account', async () => {
@@ -95,173 +110,187 @@ describe('accounts', () => {
 		expectAuthenticated(`/accounts/${account.id}`);
 	});
 
-	it('create posts the attributes wrapper', async () => {
-		respond({ data: account });
+	it('create and update send { data: { attributes } } with kebab keys', async () => {
+		respond({ data: account }, 201);
 		await invoke(Accounts.create, {
-			attributes: { name: 'John Doe', email: 'john.doe@example.com' },
+			attributes: { 'reference-id': 'user-42', 'name-first': 'Jane' },
 		});
-		const sent = lastRequest();
 		expectAuthenticated('/accounts', 'POST');
-		expect(JSON.parse(sent.body as string)).toEqual({
-			data: { attributes: { name: 'John Doe', email: 'john.doe@example.com' } },
+		expect(sentBody()).toEqual({
+			data: { attributes: { 'reference-id': 'user-42', 'name-first': 'Jane' } },
 		});
-	});
 
-	it('update PATCHes the attributes wrapper', async () => {
 		respond({ data: account });
 		await invoke(Accounts.update, {
 			accountId: account.id,
-			attributes: { name: 'Jane Doe' },
+			attributes: { tags: ['vip'] },
 		});
 		expectAuthenticated(`/accounts/${account.id}`, 'PATCH');
+		expect(sentBody()).toEqual({ data: { attributes: { tags: ['vip'] } } });
 	});
 
-	it('redact DELETEs and accepts a 204', async () => {
-		respond(null, 204);
+	it('redact reads the redacted account Persona returns', async () => {
+		respond({ data: { ...account, attributes: { 'redacted-at': 'now' } } });
 		const result = (await invoke(Accounts.redact, {
 			accountId: account.id,
-		})) as { success: boolean };
-		expect(result.success).toBe(true);
+		})) as { data: { id: string } };
+		expect(result.data.id).toBe(account.id);
 		expectAuthenticated(`/accounts/${account.id}`, 'DELETE');
 	});
 
-	it('search posts the query', async () => {
-		respond({ data: [account] });
-		await invoke(Accounts.search, { query: 'John' });
+	it('search posts the predicate query, sort and page', async () => {
+		respond({ data: [account], links: LINKS });
+		await invoke(Accounts.search, {
+			query: { attribute: 'reference-id', operator: 'eq', value: 'user-42' },
+			page: { size: 5 },
+		});
 		expectAuthenticated('/accounts/search', 'POST');
-		expect(JSON.parse(lastRequest().body as string)).toEqual({ query: 'John' });
+		expect(sentBody()).toEqual({
+			query: { attribute: 'reference-id', operator: 'eq', value: 'user-42' },
+			page: { size: 5 },
+		});
 	});
 
-	it('addTag and removeTag post the tag', async () => {
-		respond({ success: true });
-		await invoke(Accounts.addTag, { accountId: account.id, tag: 'vip' });
+	it('addTag and removeTag send { meta: { tag-name } } and read the account', async () => {
+		respond({ data: account });
+		const result = (await invoke(Accounts.addTag, {
+			accountId: account.id,
+			tagName: 'vip',
+		})) as { data: { attributes?: { tags?: string[] } } };
+		expect(result.data.attributes?.tags).toEqual(['vip']);
 		expectAuthenticated(`/accounts/${account.id}/add-tag`, 'POST');
-		expect(JSON.parse(lastRequest().body as string)).toEqual({
-			data: { attributes: { tag: 'vip' } },
-		});
+		expect(sentBody()).toEqual({ meta: { 'tag-name': 'vip' } });
 
-		respond({ success: true });
-		await invoke(Accounts.removeTag, { accountId: account.id, tag: 'vip' });
+		respond({ data: account });
+		await invoke(Accounts.removeTag, { accountId: account.id, tagId: 'tag_1' });
 		expectAuthenticated(`/accounts/${account.id}/remove-tag`, 'POST');
+		expect(sentBody()).toEqual({ meta: { 'tag-id': 'tag_1' } });
+	});
+
+	it('addTag needs a tag name or id', async () => {
+		await expect(
+			invoke(Accounts.addTag, { accountId: account.id }),
+		).rejects.toThrow('tagName or tagId');
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });
 
 describe('inquiries', () => {
-	it('list sends status filter', async () => {
-		respond({ data: [inquiry] });
-		await invoke(Inquiries.list, { status: 'completed' });
-		const sent = lastRequest();
+	it('list sends the documented filter params', async () => {
+		respond({ data: [inquiry], links: LINKS });
+		await invoke(Inquiries.list, {
+			status: 'completed,needs_review',
+			inquiryTemplateId: 'itmpl_1',
+			pageSize: 10,
+		});
 		expectAuthenticated('/inquiries');
-		expect(sent.query['status']).toBe('completed');
+		expect(lastRequest().query).toEqual({
+			'page[size]': '10',
+			'filter[status]': 'completed,needs_review',
+			'filter[inquiry-template-id]': 'itmpl_1',
+		});
 	});
 
-	it('get reads one inquiry', async () => {
-		respond({ data: inquiry });
-		await invoke(Inquiries.get, { inquiryId: inquiry.id });
-		expectAuthenticated(`/inquiries/${inquiry.id}`);
-	});
-
-	it('create posts the template id', async () => {
-		respond({ data: inquiry });
+	it('create sends data.attributes and meta', async () => {
+		respond({ data: inquiry, meta: {} }, 201);
 		await invoke(Inquiries.create, {
 			attributes: {
-				'inquiry-template-id': inquiryTemplate.id,
-				fields: { name: 'John' },
+				'inquiry-template-id': 'itmpl_1',
+				'reference-id': 'user-42',
 			},
+			meta: { 'auto-create-account': false },
 		});
-		const sent = lastRequest();
 		expectAuthenticated('/inquiries', 'POST');
-		// unknown: the request body is parsed JSON whose keys are
-		// provider-defined, so the test narrows per assertion.
-		const body = JSON.parse(sent.body as string) as {
-			data: { attributes: Record<string, unknown> };
-		};
-		expect(body.data.attributes['inquiry-template-id']).toBe(
-			inquiryTemplate.id,
-		);
-		expect(body.data.attributes['fields']).toEqual({ name: 'John' });
+		expect(sentBody()).toEqual({
+			data: {
+				attributes: {
+					'inquiry-template-id': 'itmpl_1',
+					'reference-id': 'user-42',
+				},
+			},
+			meta: { 'auto-create-account': false },
+		});
 	});
 
 	it('update PATCHes the attributes', async () => {
 		respond({ data: inquiry });
 		await invoke(Inquiries.update, {
 			inquiryId: inquiry.id,
-			attributes: { note: 'Updated' },
+			attributes: { note: 'checked' },
 		});
 		expectAuthenticated(`/inquiries/${inquiry.id}`, 'PATCH');
+		expect(sentBody()).toEqual({ data: { attributes: { note: 'checked' } } });
 	});
 
-	it('redact DELETEs and accepts a 204', async () => {
-		respond(null, 204);
-		const result = (await invoke(Inquiries.redact, {
-			inquiryId: inquiry.id,
-		})) as { success: boolean };
-		expect(result.success).toBe(true);
+	it('redact reads the redacted inquiry', async () => {
+		respond({ data: inquiry });
+		await invoke(Inquiries.redact, { inquiryId: inquiry.id });
 		expectAuthenticated(`/inquiries/${inquiry.id}`, 'DELETE');
 	});
 
-	it('approve and decline post their bodies', async () => {
-		respond({ data: inquiry });
-		await invoke(Inquiries.approve, { inquiryId: inquiry.id });
+	it('approve and decline send an optional meta.comment', async () => {
+		respond({ data: { ...inquiry, attributes: { status: 'approved' } } });
+		await invoke(Inquiries.approve, { inquiryId: inquiry.id, comment: 'ok' });
 		expectAuthenticated(`/inquiries/${inquiry.id}/approve`, 'POST');
+		expect(sentBody()).toEqual({ meta: { comment: 'ok' } });
 
-		respond({ data: inquiry });
-		await invoke(Inquiries.decline, {
-			inquiryId: inquiry.id,
-			attributes: { declineReasons: ['fraud'] },
-		});
-		const sent = lastRequest();
+		respond({ data: { ...inquiry, attributes: { status: 'declined' } } });
+		await invoke(Inquiries.decline, { inquiryId: inquiry.id });
 		expectAuthenticated(`/inquiries/${inquiry.id}/decline`, 'POST');
-		expect(JSON.parse(sent.body as string)).toEqual({
-			data: { attributes: { declineReasons: ['fraud'] } },
-		});
+		expect(lastRequest().body).toBeUndefined();
 	});
 
-	it('markForReview and generateOneTimeLink call their RPCs', async () => {
+	it('markForReview posts with no body', async () => {
 		respond({ data: inquiry });
 		await invoke(Inquiries.markForReview, { inquiryId: inquiry.id });
 		expectAuthenticated(`/inquiries/${inquiry.id}/mark-for-review`, 'POST');
+	});
 
-		respond({ data: oneTimeLink });
-		const link = (await invoke(Inquiries.generateOneTimeLink, {
+	it('generateOneTimeLink reads the link from meta', async () => {
+		respond({ data: inquiry, meta: oneTimeLinkMeta });
+		const result = (await invoke(Inquiries.generateOneTimeLink, {
 			inquiryId: inquiry.id,
-		})) as { data: { reference?: string } };
-		expect(link.data.reference).toContain('withpersona.com');
+			expiresInSeconds: 600,
+		})) as { meta: { 'one-time-link'?: string } };
+		expect(result.meta['one-time-link']).toBe(oneTimeLinkMeta['one-time-link']);
 		expectAuthenticated(
 			`/inquiries/${inquiry.id}/generate-one-time-link`,
 			'POST',
 		);
+		expect(sentBody()).toEqual({ meta: { 'expires-in-seconds': 600 } });
 	});
 
-	it('addTag and removeTag post the tag', async () => {
-		respond({ success: true });
-		await invoke(Inquiries.addTag, { inquiryId: inquiry.id, tag: 'follow-up' });
+	it('addTag and removeTag send meta.tag-name', async () => {
+		respond({ data: inquiry });
+		await invoke(Inquiries.addTag, { inquiryId: inquiry.id, tagName: 'vip' });
 		expectAuthenticated(`/inquiries/${inquiry.id}/add-tag`, 'POST');
+		expect(sentBody()).toEqual({ meta: { 'tag-name': 'vip' } });
 
-		respond({ success: true });
+		respond({ data: inquiry });
 		await invoke(Inquiries.removeTag, {
 			inquiryId: inquiry.id,
-			tag: 'follow-up',
+			tagName: 'vip',
 		});
 		expectAuthenticated(`/inquiries/${inquiry.id}/remove-tag`, 'POST');
 	});
 });
 
 describe('inquiry sessions', () => {
-	it('create posts an empty attributes object', async () => {
-		respond({ data: inquirySession });
-		await invoke(InquirySessions.create, {});
+	it('create sends the inquiry id', async () => {
+		respond({ data: inquirySession }, 201);
+		await invoke(InquirySessions.create, { inquiryId: inquiry.id });
 		expectAuthenticated('/inquiry-sessions', 'POST');
+		expect(sentBody()).toEqual({
+			data: { attributes: { 'inquiry-id': inquiry.id } },
+		});
 	});
 
-	it('get reads one session', async () => {
+	it('get and expire', async () => {
 		respond({ data: inquirySession });
 		await invoke(InquirySessions.get, { inquirySessionId: inquirySession.id });
 		expectAuthenticated(`/inquiry-sessions/${inquirySession.id}`);
-	});
 
-	it('expire and expireAll call their RPCs', async () => {
-		respond({ data: inquirySession });
+		respond({ data: { ...inquirySession, attributes: { status: 'expired' } } });
 		await invoke(InquirySessions.expire, {
 			inquirySessionId: inquirySession.id,
 		});
@@ -269,20 +298,24 @@ describe('inquiry sessions', () => {
 			`/inquiry-sessions/${inquirySession.id}/expire`,
 			'POST',
 		);
-
-		respond(null, 204);
-		const result = (await invoke(InquirySessions.expireAll, {})) as {
-			success: boolean;
-		};
-		expect(result.success).toBe(true);
-		expectAuthenticated('/inquiry-sessions/expire-all', 'POST');
 	});
 
-	it('generateOneTimeLink calls its RPC', async () => {
-		respond({ data: oneTimeLink });
-		await invoke(InquirySessions.generateOneTimeLink, {
+	it('expireAll sends meta.inquiry-ids and reads the expired sessions', async () => {
+		respond({ data: [inquirySession] });
+		const result = (await invoke(InquirySessions.expireAll, {
+			inquiryIds: [inquiry.id],
+		})) as { data: unknown[] }; // unknown: session records are provider-shaped
+		expect(result.data).toHaveLength(1);
+		expectAuthenticated('/inquiry-sessions/expire-all', 'POST');
+		expect(sentBody()).toEqual({ meta: { 'inquiry-ids': [inquiry.id] } });
+	});
+
+	it('generateOneTimeLink reads the link from meta', async () => {
+		respond({ data: inquirySession, meta: oneTimeLinkMeta });
+		const result = (await invoke(InquirySessions.generateOneTimeLink, {
 			inquirySessionId: inquirySession.id,
-		});
+		})) as { meta: { 'one-time-link-short'?: string } };
+		expect(result.meta['one-time-link-short']).toBe('https://perso.na/abc');
 		expectAuthenticated(
 			`/inquiry-sessions/${inquirySession.id}/generate-one-time-link`,
 			'POST',
@@ -291,92 +324,109 @@ describe('inquiry sessions', () => {
 });
 
 describe('inquiry templates', () => {
-	it('list and get call their RPCs', async () => {
-		respond({ data: [inquiryTemplate] });
-		const page = (await invoke(InquiryTemplates.list, {})) as {
-			data: unknown[]; // unknown: template records are provider-shaped
-		};
-		expect(page.data).toHaveLength(1);
+	it('list, get and listVersions', async () => {
+		respond({ data: [inquiryTemplate], links: LINKS });
+		await invoke(InquiryTemplates.list, {});
 		expectAuthenticated('/inquiry-templates');
 
 		respond({ data: inquiryTemplate });
-		await invoke(InquiryTemplates.get, {
-			inquiryTemplateId: inquiryTemplate.id,
-		});
-		expectAuthenticated(`/inquiry-templates/${inquiryTemplate.id}`);
-	});
+		await invoke(InquiryTemplates.get, { inquiryTemplateId: 'itmpl_1' });
+		expectAuthenticated('/inquiry-templates/itmpl_1');
 
-	it('listVersions calls its RPC', async () => {
-		respond({ data: [] });
-		await invoke(InquiryTemplates.listVersions, {});
+		respond({ data: [templateVersion], links: LINKS });
+		await invoke(InquiryTemplates.listVersions, {
+			inquiryTemplateId: 'itmpl_1',
+		});
 		expectAuthenticated('/inquiry-template-versions');
+		expect(lastRequest().query).toEqual({
+			'filter[inquiry-template-id]': 'itmpl_1',
+		});
 	});
 });
 
 describe('webhooks', () => {
-	it('list GETs the configurations', async () => {
-		respond({ data: [webhookConfig] });
-		const page = (await invoke(Webhooks.list, {})) as { data: unknown[] }; // unknown: webhook records are provider-shaped
-		expect(page.data).toHaveLength(1);
+	it('list reads webhooks of type "webhook"', async () => {
+		respond({ data: [webhookConfig], links: LINKS });
+		const page = (await invoke(Webhooks.list, {})) as {
+			data: Array<{ attributes?: { status?: string } }>;
+		};
+		expect(page.data[0]?.attributes?.status).toBe('enabled');
 		expectAuthenticated('/webhooks');
 	});
 
-	it('create posts the attributes with enabled events', async () => {
-		respond({ data: webhookConfig });
-		await invoke(Webhooks.create, {
+	it('create sends the attributes and reads the secret', async () => {
+		respond({ data: webhookWithSecret }, 201);
+		const result = (await invoke(Webhooks.create, {
 			attributes: {
-				name: 'Main',
 				url: 'https://example.com/webhooks/persona',
 				'enabled-events': ['inquiry.approved'],
 			},
-		});
-		const sent = lastRequest();
+		})) as { data: { attributes?: { secret?: string } } };
+		expect(result.data.attributes?.secret).toBe('wbhsec_new_value');
 		expectAuthenticated('/webhooks', 'POST');
-		// unknown: the request body is parsed JSON whose keys are
-		// provider-defined, so the test narrows per assertion.
-		const body = JSON.parse(sent.body as string) as {
-			data: { attributes: Record<string, unknown> };
-		};
-		expect(body.data.attributes['enabled-events']).toEqual([
-			'inquiry.approved',
-		]);
+		expect(sentBody()).toEqual({
+			data: {
+				attributes: {
+					url: 'https://example.com/webhooks/persona',
+					'enabled-events': ['inquiry.approved'],
+				},
+			},
+		});
+	});
+
+	it('get reads one webhook', async () => {
+		respond({ data: webhookConfig });
+		const result = (await invoke(Webhooks.get, {
+			webhookId: webhookConfig.id,
+		})) as { data: { id: string; attributes?: { url?: string } } };
+		expect(result.data.id).toBe(webhookConfig.id);
+		expect(result.data.attributes?.url).toBe(
+			'https://example.com/webhooks/persona',
+		);
+		expectAuthenticated(`/webhooks/${webhookConfig.id}`);
 	});
 
 	it('update PATCHes the attributes', async () => {
 		respond({ data: webhookConfig });
 		await invoke(Webhooks.update, {
 			webhookId: webhookConfig.id,
-			attributes: { enabled: false },
+			attributes: { name: 'Renamed' },
 		});
 		expectAuthenticated(`/webhooks/${webhookConfig.id}`, 'PATCH');
+		expect(sentBody()).toEqual({ data: { attributes: { name: 'Renamed' } } });
 	});
 
-	it('enable, disable and archive call their RPCs', async () => {
-		respond({ data: webhookConfig });
-		await invoke(Webhooks.enable, { webhookId: webhookConfig.id });
-		expectAuthenticated(`/webhooks/${webhookConfig.id}/enable`, 'POST');
-
-		respond({ data: webhookConfig });
-		await invoke(Webhooks.disable, { webhookId: webhookConfig.id });
-		expectAuthenticated(`/webhooks/${webhookConfig.id}/disable`, 'POST');
-
-		respond({ data: webhookConfig });
-		await invoke(Webhooks.archive, { webhookId: webhookConfig.id });
-		expectAuthenticated(`/webhooks/${webhookConfig.id}/archive`, 'POST');
+	it('enable, disable and archive post to their routes', async () => {
+		for (const [endpoint, route] of [
+			[Webhooks.enable, 'enable'],
+			[Webhooks.disable, 'disable'],
+			[Webhooks.archive, 'archive'],
+		] as const) {
+			respond({ data: webhookConfig });
+			await invoke(endpoint, { webhookId: webhookConfig.id });
+			expectAuthenticated(`/webhooks/${webhookConfig.id}/${route}`, 'POST');
+		}
 	});
 
-	it('rotateSecret posts to its RPC', async () => {
-		respond({ data: rotatedWebhook });
-		const result = (await invoke(Webhooks.rotateSecret, {
+	it('rotateSecret sends meta.expires-in-seconds and keeps the secret out of the log', async () => {
+		respond({ data: webhookWithSecret });
+		await invoke(Webhooks.rotateSecret, {
 			webhookId: webhookConfig.id,
-		})) as { data: { attributes?: { secret?: string } } };
-		expect(result.data.attributes?.secret).toBe('whsec_new_value');
+			expiresInSeconds: 3600,
+		});
 		expectAuthenticated(`/webhooks/${webhookConfig.id}/rotate-secret`, 'POST');
+		expect(sentBody()).toEqual({ meta: { 'expires-in-seconds': 3600 } });
+		expect(JSON.stringify(mockLog.mock.calls)).not.toContain('wbhsec_');
 	});
 
-	it('searchEvents posts the query', async () => {
-		respond({ data: [] });
-		await invoke(Webhooks.searchEvents, { query: 'inquiry.approved' });
+	it('searchEvents posts the search body', async () => {
+		respond({ data: [{ type: 'webhook-event', id: 'whev_1' }], links: LINKS });
+		await invoke(Webhooks.searchEvents, {
+			sort: { attribute: 'updated_at', direction: 'desc' },
+		});
 		expectAuthenticated('/webhook-events/search', 'POST');
+		expect(sentBody()).toEqual({
+			sort: { attribute: 'updated_at', direction: 'desc' },
+		});
 	});
 });

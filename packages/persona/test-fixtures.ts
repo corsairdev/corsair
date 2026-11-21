@@ -1,6 +1,7 @@
 /**
- * Response fixtures shaped after the Persona API reference
- * (docs.withpersona.com/api-reference).
+ * Response fixtures shaped after the Persona API reference, version
+ * 2023-01-05 (docs.withpersona.com/2023-01-05/api-reference): JSON:API
+ * objects with kebab-case attribute keys.
  */
 
 export const authRequired = {
@@ -8,70 +9,109 @@ export const authRequired = {
 };
 
 export const account = {
-	id: 'af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c72',
 	type: 'account',
+	id: 'act_ABC123',
 	attributes: {
-		name: 'John Doe',
-		email: 'john.doe@example.com',
+		'reference-id': 'user-42',
+		'account-type-name': 'User',
+		'account-status': 'Default',
+		'created-at': '2025-11-20T10:00:00.000Z',
+		'updated-at': '2025-11-20T10:00:00.000Z',
+		'redacted-at': null,
+		tags: ['vip'],
+		fields: { name: { type: 'hash', value: null } },
+		'name-first': 'Jane',
+		'name-last': 'Example',
+		'email-address': 'jane@example.com',
+	},
+	relationships: {
+		'account-type': { data: { type: 'account-type', id: 'acttp_1' } },
 	},
 };
 
 export const inquiry = {
-	id: 'af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c71',
 	type: 'inquiry',
+	id: 'inq_ABC123',
 	attributes: {
 		status: 'completed',
-		inquiryTemplateId: 'af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c74',
-		referenceId: 'user-42',
-		createdAt: '2025-11-20T10:00:00.000Z',
+		'reference-id': 'user-42',
+		note: null,
+		tags: [],
+		fields: {},
+		'created-at': '2025-11-20T10:00:00.000Z',
+		'completed-at': '2025-11-20T10:05:00.000Z',
+		'expires-at': null,
+	},
+	relationships: {
+		'inquiry-template': { data: { type: 'inquiry-template', id: 'itmpl_1' } },
 	},
 };
 
 export const inquirySession = {
-	id: 'af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c73',
 	type: 'inquiry-session',
+	id: 'iqse_ABC123',
 	attributes: {
-		sessionStatus: 'created',
+		status: 'new',
+		'created-at': '2025-11-20T10:00:00.000Z',
+		'started-at': null,
+		'expired-at': null,
 	},
 };
 
 export const inquiryTemplate = {
-	id: 'af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c74',
 	type: 'inquiry-template',
-	attributes: {
-		name: 'KYC Basic',
-	},
+	id: 'itmpl_1',
+	attributes: { name: 'KYC Basic', status: 'active' },
+};
+
+export const templateVersion = {
+	type: 'inquiry-template-version',
+	id: 'itmplv_1',
+	attributes: { 'name-display': 'v1', status: 'published', live: true },
 };
 
 export const webhookConfig = {
-	id: 'af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c75',
-	type: 'webhook-configuration',
+	type: 'webhook',
+	id: 'wbh_ABC123',
 	attributes: {
+		status: 'enabled',
 		url: 'https://example.com/webhooks/persona',
-		enabled: true,
 		name: 'Main',
+		description: null,
+		'enabled-events': ['inquiry.approved'],
+		'api-version': '2023-01-05',
+		'api-key-inflection': 'kebab',
 	},
 };
 
-export const rotatedWebhook = {
-	id: 'af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c75',
-	type: 'webhook-configuration',
+export const webhookWithSecret = {
+	...webhookConfig,
 	attributes: {
-		url: 'https://example.com/webhooks/persona',
-		secret: 'whsec_new_value',
+		...webhookConfig.attributes,
+		secret: 'wbhsec_new_value',
+		secrets: [{ value: 'wbhsec_new_value', 'expires-at': null }],
 	},
 };
 
-export const oneTimeLink = {
-	id: 'otl_1',
-	reference: 'https://withpersona.com/verify?inquiry-id=inq_1&session-id=otl_1',
+export const LINKS = {
+	prev: null,
+	next: '/api/v1/inquiries?page%5Bafter%5D=inq_ABC123',
+};
+
+export const oneTimeLinkMeta = {
+	'one-time-link': 'https://withpersona.com/verify?code=abc',
+	'one-time-link-short': 'https://perso.na/abc',
 };
 
 /** A webhook delivery body, as Persona posts it. */
 export const webhookEvent = {
-	type: 'inquiry.approved',
 	data: {
-		id: 'af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c71',
-		attributes: { status: 'approved' },
+		type: 'event',
+		id: 'evt_ABC123',
+		attributes: {
+			name: 'inquiry.approved',
+			payload: { data: inquiry },
+			'created-at': '2025-11-20T10:06:00.000Z',
+		},
 	},
 };

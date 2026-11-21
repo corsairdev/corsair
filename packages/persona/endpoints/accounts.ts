@@ -1,5 +1,5 @@
 import type { PersonaEndpoints } from '..';
-import { attributesBody, call } from './call';
+import { attributesBody, call, metaBody, pageQuery, segment } from './call';
 import {
 	PersonaEndpointInputSchemas as Inputs,
 	PersonaEndpointOutputSchemas as Outputs,
@@ -14,15 +14,17 @@ export const list: PersonaEndpoints['accountsList'] = (ctx, input) =>
 			output: Outputs.accountsList,
 		},
 		input,
-		({ pageAfter, pageSize }) => ({
+		({ referenceId, ...page }) => ({
 			method: 'GET',
 			path: '/accounts',
-			query: {
-				'page[after]': pageAfter,
-				'page[size]': pageSize,
-			},
+			query: { ...pageQuery(page), 'filter[reference-id]': referenceId },
 		}),
-		{ log: (_, page) => ({ count: page.data.length }) },
+		{
+			log: (_, result) => ({
+				count: result.data.length,
+				hasMore: Boolean(result.links?.next),
+			}),
+		},
 	);
 
 export const get: PersonaEndpoints['accountsGet'] = (ctx, input) =>
@@ -36,9 +38,9 @@ export const get: PersonaEndpoints['accountsGet'] = (ctx, input) =>
 		input,
 		({ accountId }) => ({
 			method: 'GET',
-			path: `/accounts/${encodeURIComponent(accountId)}`,
+			path: `/accounts/${segment(accountId)}`,
 		}),
-		{ log: (_, result) => ({ accountId: result.data?.id ?? undefined }) },
+		{ log: (_, result) => ({ id: result.data.id }) },
 	);
 
 export const create: PersonaEndpoints['accountsCreate'] = (ctx, input) =>
@@ -55,7 +57,7 @@ export const create: PersonaEndpoints['accountsCreate'] = (ctx, input) =>
 			path: '/accounts',
 			body: attributesBody(attributes),
 		}),
-		{ log: (_, result) => ({ accountId: result.data?.id ?? undefined }) },
+		{ log: (_, result) => ({ id: result.data.id }) },
 	);
 
 export const update: PersonaEndpoints['accountsUpdate'] = (ctx, input) =>
@@ -69,10 +71,10 @@ export const update: PersonaEndpoints['accountsUpdate'] = (ctx, input) =>
 		input,
 		({ accountId, attributes }) => ({
 			method: 'PATCH',
-			path: `/accounts/${encodeURIComponent(accountId)}`,
+			path: `/accounts/${segment(accountId)}`,
 			body: attributesBody(attributes),
 		}),
-		{ log: (_, result) => ({ accountId: result.data?.id ?? undefined }) },
+		{ log: (_, result) => ({ id: result.data.id }) },
 	);
 
 export const redact: PersonaEndpoints['accountsRedact'] = (ctx, input) =>
@@ -86,20 +88,9 @@ export const redact: PersonaEndpoints['accountsRedact'] = (ctx, input) =>
 		input,
 		({ accountId }) => ({
 			method: 'DELETE',
-			path: `/accounts/${encodeURIComponent(accountId)}`,
+			path: `/accounts/${segment(accountId)}`,
 		}),
-		{
-			// A 204 no-body answer means Persona accepted the redaction.
-			shape: (raw, { accountId }) => {
-				if (raw !== undefined && raw !== null && raw !== '') {
-					throw new Error(
-						`Persona accounts.redact: unexpected body ${JSON.stringify(raw)}`,
-					);
-				}
-				return { success: true };
-			},
-			log: (_parsed, result) => ({ success: result.success }),
-		},
+		{ log: (_, result) => ({ id: result.data.id }) },
 	);
 
 export const search: PersonaEndpoints['accountsSearch'] = (ctx, input) =>
@@ -111,12 +102,17 @@ export const search: PersonaEndpoints['accountsSearch'] = (ctx, input) =>
 			output: Outputs.accountsSearch,
 		},
 		input,
-		({ query }) => ({
+		(body) => ({
 			method: 'POST',
 			path: '/accounts/search',
-			body: { query },
+			body,
 		}),
-		{ log: (_, page) => ({ count: page.data.length }) },
+		{
+			log: (_, result) => ({
+				count: result.data.length,
+				hasMore: Boolean(result.links?.next),
+			}),
+		},
 	);
 
 export const addTag: PersonaEndpoints['accountsAddTag'] = (ctx, input) =>
@@ -128,12 +124,12 @@ export const addTag: PersonaEndpoints['accountsAddTag'] = (ctx, input) =>
 			output: Outputs.accountsAddTag,
 		},
 		input,
-		({ accountId, tag }) => ({
+		({ accountId, tagName, tagId }) => ({
 			method: 'POST',
-			path: `/accounts/${encodeURIComponent(accountId)}/add-tag`,
-			body: attributesBody({ tag }),
+			path: `/accounts/${segment(accountId)}/add-tag`,
+			body: metaBody({ 'tag-name': tagName, 'tag-id': tagId }),
 		}),
-		{ log: (_parsed, result) => ({ success: result.success }) },
+		{ log: (_, result) => ({ id: result.data.id }) },
 	);
 
 export const removeTag: PersonaEndpoints['accountsRemoveTag'] = (ctx, input) =>
@@ -145,10 +141,10 @@ export const removeTag: PersonaEndpoints['accountsRemoveTag'] = (ctx, input) =>
 			output: Outputs.accountsRemoveTag,
 		},
 		input,
-		({ accountId, tag }) => ({
+		({ accountId, tagName, tagId }) => ({
 			method: 'POST',
-			path: `/accounts/${encodeURIComponent(accountId)}/remove-tag`,
-			body: attributesBody({ tag }),
+			path: `/accounts/${segment(accountId)}/remove-tag`,
+			body: metaBody({ 'tag-name': tagName, 'tag-id': tagId }),
 		}),
-		{ log: (_parsed, result) => ({ success: result.success }) },
+		{ log: (_, result) => ({ id: result.data.id }) },
 	);

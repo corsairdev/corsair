@@ -55,8 +55,10 @@ describe('retries through createCorsair', () => {
 	it("retries a 429 through the transport's rate-limit handling", async () => {
 		const { corsair, testDb } = await createClient();
 		try {
-			respond({ errors: [{ title: 'Slow down' }] }, 429, { 'Retry-After': '0' });
-			respond({ data: [inquiry] });
+			respond({ errors: [{ title: 'Slow down' }] }, 429, {
+				'Retry-After': '0',
+			});
+			respond({ data: [inquiry], links: { prev: null, next: null } });
 
 			await expect(
 				corsair.persona.api.inquiries.list({}),
@@ -71,7 +73,7 @@ describe('retries through createCorsair', () => {
 		const { corsair, testDb } = await createClient();
 		try {
 			respond({ errors: [{ title: 'Something went wrong' }] }, 503);
-			respond({ data: [inquiry] });
+			respond({ data: [inquiry], links: { prev: null, next: null } });
 
 			await expect(
 				corsair.persona.api.inquiries.list({}),
@@ -102,7 +104,9 @@ describe('retries through createCorsair', () => {
 		const { corsair, testDb } = await createClient();
 		try {
 			respond(
-				{ errors: [{ title: 'Must be authenticated to access this endpoint' }] },
+				{
+					errors: [{ title: 'Must be authenticated to access this endpoint' }],
+				},
 				401,
 			);
 

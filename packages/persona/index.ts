@@ -38,7 +38,10 @@ import { matchPersonaWebhook, PersonaEventSchema } from './webhooks/types';
 export type PersonaPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
-	/** Date the API version header carries, e.g. 2023-01-18. */
+	/**
+	 * Persona-Version header value. Defaults to 2023-01-05, the version the
+	 * schemas follow; another version may change the response shapes.
+	 */
 	apiVersion?: string;
 	webhookSecret?: string;
 	hooks?: InternalPersonaPlugin['hooks'];
@@ -290,7 +293,7 @@ const personaWebhookSchemas = {
 const personaEndpointMeta = {
 	'accounts.list': {
 		riskLevel: 'read',
-		description: 'List accounts, paged by cursor',
+		description: 'List accounts, filtered by reference id, page by page',
 	},
 	'accounts.get': {
 		riskLevel: 'read',
@@ -302,7 +305,7 @@ const personaEndpointMeta = {
 	},
 	'accounts.update': {
 		riskLevel: 'write',
-		description: 'Update an account name or email',
+		description: "Update an account's attributes, status or tags",
 	},
 	'accounts.redact': {
 		riskLevel: 'destructive',
@@ -311,7 +314,7 @@ const personaEndpointMeta = {
 	},
 	'accounts.search': {
 		riskLevel: 'read',
-		description: 'Search accounts by a query string',
+		description: 'Search accounts with a predicate query',
 	},
 	'accounts.addTag': {
 		riskLevel: 'write',
@@ -323,7 +326,8 @@ const personaEndpointMeta = {
 	},
 	'inquiries.list': {
 		riskLevel: 'read',
-		description: 'List inquiries, paged and filtered by status',
+		description:
+			'List inquiries filtered by status, account, reference or template',
 	},
 	'inquiries.get': {
 		riskLevel: 'read',
@@ -345,12 +349,12 @@ const personaEndpointMeta = {
 	'inquiries.approve': {
 		riskLevel: 'destructive',
 		description:
-			'Approve an inquiry; the decision is final and notifies the holder',
+			'Approve an inquiry; the decision is final and runs any approval workflow',
 		irreversible: true,
 	},
 	'inquiries.decline': {
 		riskLevel: 'destructive',
-		description: 'Decline an inquiry with reasons; the decision is final',
+		description: 'Decline an inquiry; the decision is final',
 		irreversible: true,
 	},
 	'inquiries.markForReview': {
@@ -372,7 +376,7 @@ const personaEndpointMeta = {
 	},
 	'inquirySessions.create': {
 		riskLevel: 'write',
-		description: 'Create an inquiry session',
+		description: 'Create a session for an inquiry',
 	},
 	'inquirySessions.get': {
 		riskLevel: 'read',
@@ -384,7 +388,7 @@ const personaEndpointMeta = {
 	},
 	'inquirySessions.expireAll': {
 		riskLevel: 'destructive',
-		description: 'Expire every inquiry session of the account',
+		description: 'Expire every session of the given inquiries',
 		irreversible: true,
 	},
 	'inquirySessions.generateOneTimeLink': {
@@ -401,19 +405,19 @@ const personaEndpointMeta = {
 	},
 	'inquiryTemplates.listVersions': {
 		riskLevel: 'read',
-		description: 'List the inquiry template versions',
+		description: 'List the versions of one inquiry template',
 	},
 	'webhooks.list': {
 		riskLevel: 'read',
-		description: 'List the webhook configurations',
+		description: 'List the webhooks',
 	},
 	'webhooks.create': {
 		riskLevel: 'write',
-		description: 'Create a webhook configuration',
+		description: 'Create a webhook; the answer carries its signing secret',
 	},
 	'webhooks.get': {
 		riskLevel: 'read',
-		description: 'Read one webhook configuration',
+		description: 'Read one webhook',
 	},
 	'webhooks.update': {
 		riskLevel: 'write',
@@ -433,9 +437,10 @@ const personaEndpointMeta = {
 		irreversible: true,
 	},
 	'webhooks.rotateSecret': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Rotate the webhook signing secret; the old secret stops verifying immediately',
+			'Rotate the webhook signing secret; the old one stops signing once its window ends',
+		irreversible: true,
 	},
 	'webhooks.searchEvents': {
 		riskLevel: 'read',
@@ -513,7 +518,7 @@ export function persona<const T extends PersonaPluginOptions>(
 	} satisfies InternalPersonaPlugin;
 }
 
-export { PersonaAPIError } from './client';
+export { DEFAULT_API_VERSION } from './client';
 
 export type {
 	Account,

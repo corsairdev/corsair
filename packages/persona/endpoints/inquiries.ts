@@ -1,5 +1,5 @@
 import type { PersonaEndpoints } from '..';
-import { attributesBody, call } from './call';
+import { attributesBody, call, metaBody, pageQuery, segment } from './call';
 import {
 	PersonaEndpointInputSchemas as Inputs,
 	PersonaEndpointOutputSchemas as Outputs,
@@ -14,16 +14,31 @@ export const list: PersonaEndpoints['inquiriesList'] = (ctx, input) =>
 			output: Outputs.inquiriesList,
 		},
 		input,
-		({ pageAfter, pageSize, status }) => ({
+		({
+			status,
+			accountId,
+			referenceId,
+			inquiryTemplateId,
+			templateId,
+			...page
+		}) => ({
 			method: 'GET',
 			path: '/inquiries',
 			query: {
-				'page[after]': pageAfter,
-				'page[size]': pageSize,
-				status,
+				...pageQuery(page),
+				'filter[status]': status,
+				'filter[account-id]': accountId,
+				'filter[reference-id]': referenceId,
+				'filter[inquiry-template-id]': inquiryTemplateId,
+				'filter[template-id]': templateId,
 			},
 		}),
-		{ log: (_, page) => ({ count: page.data.length }) },
+		{
+			log: (_, result) => ({
+				count: result.data.length,
+				hasMore: Boolean(result.links?.next),
+			}),
+		},
 	);
 
 export const get: PersonaEndpoints['inquiriesGet'] = (ctx, input) =>
@@ -37,9 +52,9 @@ export const get: PersonaEndpoints['inquiriesGet'] = (ctx, input) =>
 		input,
 		({ inquiryId }) => ({
 			method: 'GET',
-			path: `/inquiries/${encodeURIComponent(inquiryId)}`,
+			path: `/inquiries/${segment(inquiryId)}`,
 		}),
-		{ log: (_, result) => ({ inquiryId: result.data?.id ?? undefined }) },
+		{ log: (_, result) => ({ id: result.data.id }) },
 	);
 
 export const create: PersonaEndpoints['inquiriesCreate'] = (ctx, input) =>
@@ -51,12 +66,12 @@ export const create: PersonaEndpoints['inquiriesCreate'] = (ctx, input) =>
 			output: Outputs.inquiriesCreate,
 		},
 		input,
-		({ attributes }) => ({
+		({ attributes, meta }) => ({
 			method: 'POST',
 			path: '/inquiries',
-			body: attributesBody(attributes),
+			body: { data: { attributes }, ...(meta ? { meta } : {}) },
 		}),
-		{ log: (_, result) => ({ inquiryId: result.data?.id ?? undefined }) },
+		{ log: (_, result) => ({ id: result.data.id }) },
 	);
 
 export const update: PersonaEndpoints['inquiriesUpdate'] = (ctx, input) =>
@@ -70,10 +85,10 @@ export const update: PersonaEndpoints['inquiriesUpdate'] = (ctx, input) =>
 		input,
 		({ inquiryId, attributes }) => ({
 			method: 'PATCH',
-			path: `/inquiries/${encodeURIComponent(inquiryId)}`,
+			path: `/inquiries/${segment(inquiryId)}`,
 			body: attributesBody(attributes),
 		}),
-		{ log: (_, result) => ({ inquiryId: result.data?.id ?? undefined }) },
+		{ log: (_, result) => ({ id: result.data.id }) },
 	);
 
 export const redact: PersonaEndpoints['inquiriesRedact'] = (ctx, input) =>
@@ -87,19 +102,9 @@ export const redact: PersonaEndpoints['inquiriesRedact'] = (ctx, input) =>
 		input,
 		({ inquiryId }) => ({
 			method: 'DELETE',
-			path: `/inquiries/${encodeURIComponent(inquiryId)}`,
+			path: `/inquiries/${segment(inquiryId)}`,
 		}),
-		{
-			shape: (raw, { inquiryId }) => {
-				if (raw !== undefined && raw !== null && raw !== '') {
-					throw new Error(
-						`Persona inquiries.redact: unexpected body ${JSON.stringify(raw)}`,
-					);
-				}
-				return { success: true };
-			},
-			log: (_parsed, result) => ({ success: result.success }),
-		},
+		{ log: (_, result) => ({ id: result.data.id }) },
 	);
 
 export const approve: PersonaEndpoints['inquiriesApprove'] = (ctx, input) =>
@@ -111,12 +116,12 @@ export const approve: PersonaEndpoints['inquiriesApprove'] = (ctx, input) =>
 			output: Outputs.inquiriesApprove,
 		},
 		input,
-		({ inquiryId, attributes }) => ({
+		({ inquiryId, comment }) => ({
 			method: 'POST',
-			path: `/inquiries/${encodeURIComponent(inquiryId)}/approve`,
-			body: attributes === undefined ? undefined : attributesBody(attributes),
+			path: `/inquiries/${segment(inquiryId)}/approve`,
+			body: metaBody({ comment }),
 		}),
-		{ log: (_, result) => ({ inquiryId: result.data?.id ?? undefined }) },
+		{ log: (_, result) => ({ id: result.data.id }) },
 	);
 
 export const decline: PersonaEndpoints['inquiriesDecline'] = (ctx, input) =>
@@ -128,12 +133,12 @@ export const decline: PersonaEndpoints['inquiriesDecline'] = (ctx, input) =>
 			output: Outputs.inquiriesDecline,
 		},
 		input,
-		({ inquiryId, attributes }) => ({
+		({ inquiryId, comment }) => ({
 			method: 'POST',
-			path: `/inquiries/${encodeURIComponent(inquiryId)}/decline`,
-			body: attributes === undefined ? undefined : attributesBody(attributes),
+			path: `/inquiries/${segment(inquiryId)}/decline`,
+			body: metaBody({ comment }),
 		}),
-		{ log: (_, result) => ({ inquiryId: result.data?.id ?? undefined }) },
+		{ log: (_, result) => ({ id: result.data.id }) },
 	);
 
 export const markForReview: PersonaEndpoints['inquiriesMarkForReview'] = (
@@ -150,9 +155,9 @@ export const markForReview: PersonaEndpoints['inquiriesMarkForReview'] = (
 		input,
 		({ inquiryId }) => ({
 			method: 'POST',
-			path: `/inquiries/${encodeURIComponent(inquiryId)}/mark-for-review`,
+			path: `/inquiries/${segment(inquiryId)}/mark-for-review`,
 		}),
-		{ log: (_, result) => ({ inquiryId: result.data?.id ?? undefined }) },
+		{ log: (_, result) => ({ id: result.data.id }) },
 	);
 
 export const generateOneTimeLink: PersonaEndpoints['inquiriesGenerateOneTimeLink'] =
@@ -165,11 +170,12 @@ export const generateOneTimeLink: PersonaEndpoints['inquiriesGenerateOneTimeLink
 				output: Outputs.inquiriesGenerateOneTimeLink,
 			},
 			input,
-			({ inquiryId }) => ({
+			({ inquiryId, expiresInSeconds }) => ({
 				method: 'POST',
-				path: `/inquiries/${encodeURIComponent(inquiryId)}/generate-one-time-link`,
+				path: `/inquiries/${segment(inquiryId)}/generate-one-time-link`,
+				body: metaBody({ 'expires-in-seconds': expiresInSeconds }),
 			}),
-			{ log: (_, result) => ({ inquiryId: result.data?.id ?? undefined }) },
+			{ log: (_, result) => ({ id: result.data.id }) },
 		);
 
 export const addTag: PersonaEndpoints['inquiriesAddTag'] = (ctx, input) =>
@@ -181,12 +187,12 @@ export const addTag: PersonaEndpoints['inquiriesAddTag'] = (ctx, input) =>
 			output: Outputs.inquiriesAddTag,
 		},
 		input,
-		({ inquiryId, tag }) => ({
+		({ inquiryId, tagName, tagId }) => ({
 			method: 'POST',
-			path: `/inquiries/${encodeURIComponent(inquiryId)}/add-tag`,
-			body: attributesBody({ tag }),
+			path: `/inquiries/${segment(inquiryId)}/add-tag`,
+			body: metaBody({ 'tag-name': tagName, 'tag-id': tagId }),
 		}),
-		{ log: (_parsed, result) => ({ success: result.success }) },
+		{ log: (_, result) => ({ id: result.data.id }) },
 	);
 
 export const removeTag: PersonaEndpoints['inquiriesRemoveTag'] = (ctx, input) =>
@@ -198,10 +204,10 @@ export const removeTag: PersonaEndpoints['inquiriesRemoveTag'] = (ctx, input) =>
 			output: Outputs.inquiriesRemoveTag,
 		},
 		input,
-		({ inquiryId, tag }) => ({
+		({ inquiryId, tagName, tagId }) => ({
 			method: 'POST',
-			path: `/inquiries/${encodeURIComponent(inquiryId)}/remove-tag`,
-			body: attributesBody({ tag }),
+			path: `/inquiries/${segment(inquiryId)}/remove-tag`,
+			body: metaBody({ 'tag-name': tagName, 'tag-id': tagId }),
 		}),
-		{ log: (_parsed, result) => ({ success: result.success }) },
+		{ log: (_, result) => ({ id: result.data.id }) },
 	);

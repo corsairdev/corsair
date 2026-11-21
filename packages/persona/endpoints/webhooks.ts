@@ -1,5 +1,5 @@
 import type { PersonaEndpoints } from '..';
-import { attributesBody, call } from './call';
+import { attributesBody, call, metaBody, pageQuery, segment } from './call';
 import {
 	PersonaEndpointInputSchemas as Inputs,
 	PersonaEndpointOutputSchemas as Outputs,
@@ -14,8 +14,17 @@ export const list: PersonaEndpoints['webhooksList'] = (ctx, input) =>
 			output: Outputs.webhooksList,
 		},
 		input,
-		() => ({ method: 'GET', path: '/webhooks' }),
-		{ log: (_, page) => ({ count: page.data.length }) },
+		(page) => ({
+			method: 'GET',
+			path: '/webhooks',
+			query: pageQuery(page),
+		}),
+		{
+			log: (_, result) => ({
+				count: result.data.length,
+				hasMore: Boolean(result.links?.next),
+			}),
+		},
 	);
 
 export const create: PersonaEndpoints['webhooksCreate'] = (ctx, input) =>
@@ -32,10 +41,7 @@ export const create: PersonaEndpoints['webhooksCreate'] = (ctx, input) =>
 			path: '/webhooks',
 			body: attributesBody(attributes),
 		}),
-		{
-			// The signing secret is not logged, only the webhook id.
-			log: (_, result) => ({ webhookId: result.data?.id ?? undefined }),
-		},
+		{ log: (_, result) => ({ id: result.data.id }) },
 	);
 
 export const get: PersonaEndpoints['webhooksGet'] = (ctx, input) =>
@@ -49,9 +55,9 @@ export const get: PersonaEndpoints['webhooksGet'] = (ctx, input) =>
 		input,
 		({ webhookId }) => ({
 			method: 'GET',
-			path: `/webhooks/${encodeURIComponent(webhookId)}`,
+			path: `/webhooks/${segment(webhookId)}`,
 		}),
-		{ log: (_, result) => ({ webhookId: result.data?.id ?? undefined }) },
+		{ log: (_, result) => ({ id: result.data.id }) },
 	);
 
 export const update: PersonaEndpoints['webhooksUpdate'] = (ctx, input) =>
@@ -65,10 +71,10 @@ export const update: PersonaEndpoints['webhooksUpdate'] = (ctx, input) =>
 		input,
 		({ webhookId, attributes }) => ({
 			method: 'PATCH',
-			path: `/webhooks/${encodeURIComponent(webhookId)}`,
+			path: `/webhooks/${segment(webhookId)}`,
 			body: attributesBody(attributes),
 		}),
-		{ log: (_, result) => ({ webhookId: result.data?.id ?? undefined }) },
+		{ log: (_, result) => ({ id: result.data.id }) },
 	);
 
 export const enable: PersonaEndpoints['webhooksEnable'] = (ctx, input) =>
@@ -82,9 +88,9 @@ export const enable: PersonaEndpoints['webhooksEnable'] = (ctx, input) =>
 		input,
 		({ webhookId }) => ({
 			method: 'POST',
-			path: `/webhooks/${encodeURIComponent(webhookId)}/enable`,
+			path: `/webhooks/${segment(webhookId)}/enable`,
 		}),
-		{ log: (_, result) => ({ webhookId: result.data?.id ?? undefined }) },
+		{ log: (_, result) => ({ id: result.data.id }) },
 	);
 
 export const disable: PersonaEndpoints['webhooksDisable'] = (ctx, input) =>
@@ -98,9 +104,9 @@ export const disable: PersonaEndpoints['webhooksDisable'] = (ctx, input) =>
 		input,
 		({ webhookId }) => ({
 			method: 'POST',
-			path: `/webhooks/${encodeURIComponent(webhookId)}/disable`,
+			path: `/webhooks/${segment(webhookId)}/disable`,
 		}),
-		{ log: (_, result) => ({ webhookId: result.data?.id ?? undefined }) },
+		{ log: (_, result) => ({ id: result.data.id }) },
 	);
 
 export const archive: PersonaEndpoints['webhooksArchive'] = (ctx, input) =>
@@ -114,9 +120,9 @@ export const archive: PersonaEndpoints['webhooksArchive'] = (ctx, input) =>
 		input,
 		({ webhookId }) => ({
 			method: 'POST',
-			path: `/webhooks/${encodeURIComponent(webhookId)}/archive`,
+			path: `/webhooks/${segment(webhookId)}/archive`,
 		}),
-		{ log: (_, result) => ({ webhookId: result.data?.id ?? undefined }) },
+		{ log: (_, result) => ({ id: result.data.id }) },
 	);
 
 export const rotateSecret: PersonaEndpoints['webhooksRotateSecret'] = (
@@ -131,14 +137,12 @@ export const rotateSecret: PersonaEndpoints['webhooksRotateSecret'] = (
 			output: Outputs.webhooksRotateSecret,
 		},
 		input,
-		({ webhookId }) => ({
+		({ webhookId, expiresInSeconds }) => ({
 			method: 'POST',
-			path: `/webhooks/${encodeURIComponent(webhookId)}/rotate-secret`,
+			path: `/webhooks/${segment(webhookId)}/rotate-secret`,
+			body: metaBody({ 'expires-in-seconds': expiresInSeconds }),
 		}),
-		{
-			// The new secret value is not logged, only that the rotation ran.
-			log: (_, result) => ({ webhookId: result.data?.id ?? undefined }),
-		},
+		{ log: (_, result) => ({ id: result.data.id }) },
 	);
 
 export const searchEvents: PersonaEndpoints['webhookEventsSearch'] = (
@@ -153,10 +157,15 @@ export const searchEvents: PersonaEndpoints['webhookEventsSearch'] = (
 			output: Outputs.webhookEventsSearch,
 		},
 		input,
-		({ query }) => ({
+		(body) => ({
 			method: 'POST',
 			path: '/webhook-events/search',
-			body: query === undefined ? undefined : { query },
+			body,
 		}),
-		{ log: (_, page) => ({ count: page.data.length }) },
+		{
+			log: (_, result) => ({
+				count: result.data.length,
+				hasMore: Boolean(result.links?.next),
+			}),
+		},
 	);

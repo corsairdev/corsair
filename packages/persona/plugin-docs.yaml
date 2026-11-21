@@ -7,19 +7,23 @@ recommendedAuth: api_key
 overviewNote: >
   Authenticate with the environment API key from the Persona dashboard
   (sandbox or production); the plugin sends it as an Authorization Bearer
-  token. Persona requires a dated version header (the plugin sends
-  Persona-Version: 2023-01-18) — without it the API answers 400.
+  token and pins Persona-Version: 2023-01-05, the version its schemas
+  follow (override with the apiVersion option).
 
-  Every operation is a JSON:API call: bodies wrap attributes in a
-  data.attributes object, and answers carry data plus optional included
-  resources. Redactions, approvals and declines are final. One-time links
-  let a holder resume an inquiry or session; anyone with the link can use
-  it, so share it only with the intended holder.
+  Every operation is a JSON:API call. Create and update bodies wrap fields in
+  data.attributes; tag, decision and link options go in meta. Answers carry
+  data (attribute keys in kebab-case, e.g. reference-id, created-at), plus
+  included resources, and lists carry links.next: pass its page[after] value
+  as pageAfter for the next page. Redactions, approvals and declines are
+  final. One-time links let a holder resume an inquiry or session; anyone
+  with the link can use it, so share it only with the intended holder.
 
-  Webhook deliveries are HMAC-SHA256 signed over the raw body with the
-  webhook's signing secret in the Persona-Signature header. Rotate the
-  secret with webhooks.rotateSecret and store the new value with
-  keys.set_webhook_signature (or set webhookSecret on the plugin).
+  Webhook deliveries carry a Persona-Signature header of
+  t=<unix time>,v1=<hex> sets: HMAC-SHA256 over "<t>.<raw body>" with the
+  webhook's secret, one set per active secret while it rotates. webhooks.create
+  and webhooks.rotateSecret return the secret; store it with
+  keys.set_webhook_signature (or set webhookSecret on the plugin). The
+  delivery body is { data: { type: "event", attributes: { name, payload } } }.
 
   The Persona API has 200+ operations; this plugin covers accounts,
   inquiries, inquiry sessions, inquiry templates, and webhook management.
@@ -28,99 +32,100 @@ overviewNote: >
   part of this plugin.
 
   Every operation is described in the official reference:
-  https://docs.withpersona.com/api-reference
+  https://docs.withpersona.com/2023-01-05/api-reference
 examples:
   read:
     path: inquiries.get
     title: Read an inquiry
     args:
-      inquiryId: af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c71
+      inquiryId: inq_ABC123
   write:
     path: inquiries.create
     title: Create an inquiry
     args:
       attributes:
-        inquiry-template-id: af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c74
+        inquiry-template-id: itmpl_ABC123
         reference-id: user-42
 apiExamples:
   accounts.list:
     call: '{ pageSize: 25 }'
   accounts.get:
-    call: '{ accountId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c72" }'
+    call: '{ accountId: "act_ABC123" }'
   accounts.create:
-    call: '{ attributes: { name: "John Doe", email: "john.doe@example.com" } }'
+    call: '{ attributes: { "reference-id": "user-42", "name-first": "Jane", "email-address": "jane@example.com" } }'
   accounts.update:
-    call: '{ accountId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c72", attributes: { name: "Jane Doe" } }'
+    call: '{ accountId: "act_ABC123", attributes: { "name-last": "Example" } }'
   accounts.redact:
-    call: '{ accountId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c72" }'
+    call: '{ accountId: "act_ABC123" }'
   accounts.search:
-    call: '{ query: "John" }'
+    call: '{ query: { attribute: "reference-id", operator: "eq", value: "user-42" } }'
   accounts.addTag:
-    call: '{ accountId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c72", tag: "vip" }'
+    call: '{ accountId: "act_ABC123", tagName: "vip" }'
   accounts.removeTag:
-    call: '{ accountId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c72", tag: "vip" }'
+    call: '{ accountId: "act_ABC123", tagName: "vip" }'
   inquiries.list:
     call: '{ status: "completed", pageSize: 25 }'
   inquiries.get:
-    call: '{ inquiryId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c71" }'
+    call: '{ inquiryId: "inq_ABC123" }'
   inquiries.create:
-    call: '{ attributes: { "inquiry-template-id": "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c74", "reference-id": "user-42" } }'
+    call: '{ attributes: { "inquiry-template-id": "itmpl_ABC123", "reference-id": "user-42" } }'
   inquiries.update:
-    call: '{ inquiryId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c71", attributes: { note: "Updated" } }'
+    call: '{ inquiryId: "inq_ABC123", attributes: { note: "Updated" } }'
   inquiries.redact:
-    call: '{ inquiryId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c71" }'
+    call: '{ inquiryId: "inq_ABC123" }'
   inquiries.approve:
-    call: '{ inquiryId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c71" }'
+    call: '{ inquiryId: "inq_ABC123", comment: "Documents checked" }'
   inquiries.decline:
-    call: '{ inquiryId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c71", attributes: { declineReasons: ["fraud"] } }'
+    call: '{ inquiryId: "inq_ABC123", comment: "Document mismatch" }'
   inquiries.markForReview:
-    call: '{ inquiryId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c71" }'
+    call: '{ inquiryId: "inq_ABC123" }'
   inquiries.generateOneTimeLink:
-    call: '{ inquiryId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c71" }'
+    call: '{ inquiryId: "inq_ABC123", expiresInSeconds: 3600 }'
   inquiries.addTag:
-    call: '{ inquiryId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c71", tag: "follow-up" }'
+    call: '{ inquiryId: "inq_ABC123", tagName: "follow-up" }'
   inquiries.removeTag:
-    call: '{ inquiryId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c71", tag: "follow-up" }'
+    call: '{ inquiryId: "inq_ABC123", tagName: "follow-up" }'
   inquirySessions.create:
-    call: '{}'
+    call: '{ inquiryId: "inq_ABC123" }'
   inquirySessions.get:
-    call: '{ inquirySessionId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c73" }'
+    call: '{ inquirySessionId: "iqse_ABC123" }'
   inquirySessions.expire:
-    call: '{ inquirySessionId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c73" }'
+    call: '{ inquirySessionId: "iqse_ABC123" }'
   inquirySessions.expireAll:
-    call: '{}'
+    call: '{ inquiryIds: ["inq_ABC123"] }'
   inquirySessions.generateOneTimeLink:
-    call: '{ inquirySessionId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c73" }'
+    call: '{ inquirySessionId: "iqse_ABC123" }'
   inquiryTemplates.list:
     call: '{}'
   inquiryTemplates.get:
-    call: '{ inquiryTemplateId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c74" }'
+    call: '{ inquiryTemplateId: "itmpl_ABC123" }'
   inquiryTemplates.listVersions:
-    call: '{}'
+    call: '{ inquiryTemplateId: "itmpl_ABC123" }'
   webhooks.list:
     call: '{}'
   webhooks.create:
     call: '{ attributes: { name: "Main", url: "https://example.com/webhooks/persona", "enabled-events": ["inquiry.approved", "inquiry.declined"] } }'
   webhooks.get:
-    call: '{ webhookId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c75" }'
+    call: '{ webhookId: "wbh_ABC123" }'
   webhooks.update:
-    call: '{ webhookId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c75", attributes: { enabled: false } }'
+    call: '{ webhookId: "wbh_ABC123", attributes: { "enabled-events": ["inquiry.completed"] } }'
   webhooks.enable:
-    call: '{ webhookId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c75" }'
+    call: '{ webhookId: "wbh_ABC123" }'
   webhooks.disable:
-    call: '{ webhookId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c75" }'
+    call: '{ webhookId: "wbh_ABC123" }'
   webhooks.archive:
-    call: '{ webhookId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c75" }'
+    call: '{ webhookId: "wbh_ABC123" }'
   webhooks.rotateSecret:
-    call: '{ webhookId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c75" }'
+    call: '{ webhookId: "wbh_ABC123", expiresInSeconds: 3600 }'
   webhooks.searchEvents:
-    call: '{ query: "inquiry.approved" }'
+    call: '{ sort: { attribute: "updated_at", direction: "desc" }, page: { size: 10 } }'
 apiNotes:
-  accounts.redact: 'Answers 204 with no body; redaction is permanent.'
-  inquiries.create: 'Pass inquiry-template-id for itmpl_… templates or template-id for legacy tmpl_… flows; fields carries the template field values.'
-  inquiries.approve: 'Final decision; notifies the holder.'
-  inquiries.decline: 'Final decision; declineReasons carries the documented decline reason strings.'
-  inquiries.generateOneTimeLink: 'The answer wraps a link reference; anyone with the link can resume the inquiry.'
-  inquirySessions.expireAll: 'Expires every session of the environment; answers 204 with no body.'
-  webhooks.create: 'enabled-events lists the Persona event names to subscribe to, e.g. inquiry.approved, inquiry.declined, inquiry.created.'
-  webhooks.rotateSecret: 'The answer carries the new signing secret; store it with keys.set_webhook_signature.'
+  accounts.redact: 'Answers the redacted account; redaction is permanent.'
+  accounts.search: 'query is a predicate tree: { attribute, operator, value } leaves combined with and/or/not.'
+  inquiries.create: 'Pass inquiry-template-id for itmpl_ templates, template-id for legacy tmpl_ flows, or inquiry-template-version-id; fields carries the template field values.'
+  inquiries.approve: 'Final decision; comment is kept for auditing.'
+  inquiries.decline: 'Final decision; comment is kept for auditing.'
+  inquiries.generateOneTimeLink: 'The link is in meta.one-time-link; anyone with it can resume the inquiry.'
+  inquirySessions.expireAll: 'Expires every session of the given inquiries and answers the expired sessions.'
+  webhooks.create: 'enabled-events lists Persona event names, e.g. inquiry.approved, inquiry.declined, or * for all. The answer carries the signing secret.'
+  webhooks.rotateSecret: 'The answer carries the new signing secret; store it with keys.set_webhook_signature. expiresInSeconds keeps the old one signing meanwhile.'

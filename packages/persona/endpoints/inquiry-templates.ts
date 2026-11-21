@@ -1,5 +1,5 @@
 import type { PersonaEndpoints } from '..';
-import { call } from './call';
+import { call, pageQuery, segment } from './call';
 import {
 	PersonaEndpointInputSchemas as Inputs,
 	PersonaEndpointOutputSchemas as Outputs,
@@ -14,8 +14,17 @@ export const list: PersonaEndpoints['inquiryTemplatesList'] = (ctx, input) =>
 			output: Outputs.inquiryTemplatesList,
 		},
 		input,
-		() => ({ method: 'GET', path: '/inquiry-templates' }),
-		{ log: (_, page) => ({ count: page.data.length }) },
+		(page) => ({
+			method: 'GET',
+			path: '/inquiry-templates',
+			query: pageQuery(page),
+		}),
+		{
+			log: (_, result) => ({
+				count: result.data.length,
+				hasMore: Boolean(result.links?.next),
+			}),
+		},
 	);
 
 export const get: PersonaEndpoints['inquiryTemplatesGet'] = (ctx, input) =>
@@ -29,9 +38,9 @@ export const get: PersonaEndpoints['inquiryTemplatesGet'] = (ctx, input) =>
 		input,
 		({ inquiryTemplateId }) => ({
 			method: 'GET',
-			path: `/inquiry-templates/${encodeURIComponent(inquiryTemplateId)}`,
+			path: `/inquiry-templates/${segment(inquiryTemplateId)}`,
 		}),
-		{ log: (_, result) => ({ templateId: result.data?.id ?? undefined }) },
+		{ log: (_, result) => ({ id: result.data.id }) },
 	);
 
 export const listVersions: PersonaEndpoints['inquiryTemplateVersionsList'] = (
@@ -46,6 +55,18 @@ export const listVersions: PersonaEndpoints['inquiryTemplateVersionsList'] = (
 			output: Outputs.inquiryTemplateVersionsList,
 		},
 		input,
-		() => ({ method: 'GET', path: '/inquiry-template-versions' }),
-		{ log: (_, page) => ({ count: page.data.length }) },
+		({ inquiryTemplateId, ...page }) => ({
+			method: 'GET',
+			path: '/inquiry-template-versions',
+			query: {
+				...pageQuery(page),
+				'filter[inquiry-template-id]': inquiryTemplateId,
+			},
+		}),
+		{
+			log: (_, result) => ({
+				count: result.data.length,
+				hasMore: Boolean(result.links?.next),
+			}),
+		},
 	);

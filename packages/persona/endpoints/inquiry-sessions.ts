@@ -1,5 +1,5 @@
 import type { PersonaEndpoints } from '..';
-import { attributesBody, call } from './call';
+import { attributesBody, call, metaBody, segment } from './call';
 import {
 	PersonaEndpointInputSchemas as Inputs,
 	PersonaEndpointOutputSchemas as Outputs,
@@ -14,13 +14,12 @@ export const create: PersonaEndpoints['inquirySessionsCreate'] = (ctx, input) =>
 			output: Outputs.inquirySessionsCreate,
 		},
 		input,
-		() => ({
+		({ inquiryId }) => ({
 			method: 'POST',
 			path: '/inquiry-sessions',
-			// The session RPC takes an empty data object.
-			body: attributesBody({}),
+			body: attributesBody({ 'inquiry-id': inquiryId }),
 		}),
-		{ log: (_, result) => ({ sessionId: result.data?.id ?? undefined }) },
+		{ log: (_, result) => ({ id: result.data.id }) },
 	);
 
 export const get: PersonaEndpoints['inquirySessionsGet'] = (ctx, input) =>
@@ -34,9 +33,9 @@ export const get: PersonaEndpoints['inquirySessionsGet'] = (ctx, input) =>
 		input,
 		({ inquirySessionId }) => ({
 			method: 'GET',
-			path: `/inquiry-sessions/${encodeURIComponent(inquirySessionId)}`,
+			path: `/inquiry-sessions/${segment(inquirySessionId)}`,
 		}),
-		{ log: (_, result) => ({ sessionId: result.data?.id ?? undefined }) },
+		{ log: (_, result) => ({ id: result.data.id }) },
 	);
 
 export const expire: PersonaEndpoints['inquirySessionsExpire'] = (ctx, input) =>
@@ -50,9 +49,9 @@ export const expire: PersonaEndpoints['inquirySessionsExpire'] = (ctx, input) =>
 		input,
 		({ inquirySessionId }) => ({
 			method: 'POST',
-			path: `/inquiry-sessions/${encodeURIComponent(inquirySessionId)}/expire`,
+			path: `/inquiry-sessions/${segment(inquirySessionId)}/expire`,
 		}),
-		{ log: (_, result) => ({ sessionId: result.data?.id ?? undefined }) },
+		{ log: (_, result) => ({ id: result.data.id }) },
 	);
 
 export const expireAll: PersonaEndpoints['inquirySessionsExpireAll'] = (
@@ -67,22 +66,12 @@ export const expireAll: PersonaEndpoints['inquirySessionsExpireAll'] = (
 			output: Outputs.inquirySessionsExpireAll,
 		},
 		input,
-		() => ({
+		({ inquiryIds }) => ({
 			method: 'POST',
 			path: '/inquiry-sessions/expire-all',
+			body: metaBody({ 'inquiry-ids': inquiryIds }),
 		}),
-		{
-			shape: (raw) => {
-				// A 204 no-body answer means Persona accepted the expiry.
-				if (raw !== undefined && raw !== null && raw !== '') {
-					throw new Error(
-						`Persona inquirySessions.expireAll: unexpected body ${JSON.stringify(raw)}`,
-					);
-				}
-				return { success: true };
-			},
-			log: (_parsed, result) => ({ success: result.success }),
-		},
+		{ log: (_, result) => ({ count: result.data.length }) },
 	);
 
 export const generateOneTimeLink: PersonaEndpoints['inquirySessionsGenerateOneTimeLink'] =
@@ -97,7 +86,7 @@ export const generateOneTimeLink: PersonaEndpoints['inquirySessionsGenerateOneTi
 			input,
 			({ inquirySessionId }) => ({
 				method: 'POST',
-				path: `/inquiry-sessions/${encodeURIComponent(inquirySessionId)}/generate-one-time-link`,
+				path: `/inquiry-sessions/${segment(inquirySessionId)}/generate-one-time-link`,
 			}),
-			{ log: (_, result) => ({ sessionId: result.data?.id ?? undefined }) },
+			{ log: (_, result) => ({ id: result.data.id }) },
 		);

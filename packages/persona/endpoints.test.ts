@@ -55,10 +55,10 @@ describe('output parsing', () => {
 	it('parses an account with its attributes', async () => {
 		respond({ data: account });
 		const result = (await invoke(Accounts.get, { accountId: account.id })) as {
-			data: { id?: string; attributes?: { email?: string } };
+			data: { id?: string; attributes?: { 'email-address'?: string } };
 		};
 		expect(result.data.id).toBe(account.id);
-		expect(result.data.attributes?.email).toBe('john.doe@example.com');
+		expect(result.data.attributes?.['email-address']).toBe('jane@example.com');
 	});
 
 	it('parses an inquiry with its status', async () => {
@@ -89,12 +89,25 @@ describe('output parsing', () => {
 });
 
 describe('input validation', () => {
-	it('rejects a create-inquiry without a template id', async () => {
+	it('rejects a create-inquiry without any template id', async () => {
 		await rejects(Inquiries.create, { attributes: {} }, 'inquiry-template-id');
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
-	it('rejects a get-inquiry id that is not a UUID before the request goes out', async () => {
-		await rejects(Inquiries.get, { inquiryId: 'not-a-uuid' }, 'UUID');
+	it('accepts a legacy template-id on create-inquiry', async () => {
+		respond({ data: inquiry, meta: {} }, 201);
+		await invoke(Inquiries.create, { attributes: { 'template-id': 'tmpl_1' } });
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+	});
+
+	it('accepts Persona inquiry ids (inq_...), which are not UUIDs', async () => {
+		respond({ data: inquiry });
+		await invoke(Inquiries.get, { inquiryId: 'inq_ABC123' });
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+	});
+
+	it('refuses . and .. as ids so the path cannot change route', async () => {
+		await rejects(Inquiries.get, { inquiryId: '..' }, 'not a valid id');
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });
