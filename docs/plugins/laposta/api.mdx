@@ -69,11 +69,11 @@ await corsair.laposta.api.campaigns.create({ type: 'regular', name: 'Monthly new
 
 ```ts
 {
-  account_id?: string,
+  account_id?: string | null,
   campaign_id: string,
-  timezone?: string,
-  created?: string,
-  created_iso?: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
   modified?: string | null,
   modified_iso?: string | null,
   type?: regular,
@@ -84,8 +84,8 @@ await corsair.laposta.api.campaigns.create({ type: 'regular', name: 'Monthly new
   delivery_ended?: string | null,
   delivery_ended_iso?: string | null,
   name: string,
-  subject?: string,
-  previewtext?: string,
+  subject?: string | null,
+  previewtext?: string | null,
   from?: {
     name: string,
     email: string
@@ -95,9 +95,9 @@ await corsair.laposta.api.campaigns.create({ type: 'regular', name: 'Monthly new
   stats?: {
     ga: string
   },
-  web?: string,
+  web?: string | null,
   screenshot?: Record<string, string>,
-  state?: string
+  state?: string | null
 }
 ```
 </Accordion>
@@ -138,11 +138,11 @@ await corsair.laposta.api.campaigns.delete({ campaign_id: 'campaign-1' });
 
 ```ts
 {
-  account_id?: string,
+  account_id?: string | null,
   campaign_id: string,
-  timezone?: string,
-  created?: string,
-  created_iso?: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
   modified?: string | null,
   modified_iso?: string | null,
   type?: regular,
@@ -153,8 +153,8 @@ await corsair.laposta.api.campaigns.delete({ campaign_id: 'campaign-1' });
   delivery_ended?: string | null,
   delivery_ended_iso?: string | null,
   name: string,
-  subject?: string,
-  previewtext?: string,
+  subject?: string | null,
+  previewtext?: string | null,
   from?: {
     name: string,
     email: string
@@ -164,9 +164,9 @@ await corsair.laposta.api.campaigns.delete({ campaign_id: 'campaign-1' });
   stats?: {
     ga: string
   },
-  web?: string,
+  web?: string | null,
   screenshot?: Record<string, string>,
-  state?: string
+  state?: string | null
 }
 ```
 </Accordion>
@@ -207,11 +207,11 @@ await corsair.laposta.api.campaigns.get({ campaign_id: 'campaign-1' });
 
 ```ts
 {
-  account_id?: string,
+  account_id?: string | null,
   campaign_id: string,
-  timezone?: string,
-  created?: string,
-  created_iso?: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
   modified?: string | null,
   modified_iso?: string | null,
   type?: regular,
@@ -222,8 +222,8 @@ await corsair.laposta.api.campaigns.get({ campaign_id: 'campaign-1' });
   delivery_ended?: string | null,
   delivery_ended_iso?: string | null,
   name: string,
-  subject?: string,
-  previewtext?: string,
+  subject?: string | null,
+  previewtext?: string | null,
   from?: {
     name: string,
     email: string
@@ -233,9 +233,9 @@ await corsair.laposta.api.campaigns.get({ campaign_id: 'campaign-1' });
   stats?: {
     ga: string
   },
-  web?: string,
+  web?: string | null,
   screenshot?: Record<string, string>,
-  state?: string
+  state?: string | null
 }
 ```
 </Accordion>
@@ -276,11 +276,11 @@ await corsair.laposta.api.campaigns.get_content({ campaign_id: 'campaign-1' });
 
 ```ts
 {
-  account_id?: string,
+  account_id?: string | null,
   campaign_id: string,
-  plaintext?: string,
-  html?: string,
-  import_url?: string,
+  plaintext?: string | null,
+  html?: string | null,
+  import_url?: string | null,
   report?: {
     javascript?: boolean,
     flash?: boolean,
@@ -383,16 +383,16 @@ Campaign history uses cursor pagination with a default limit of 100 and maximum 
       deleted: boolean
     },
     details: {
-      source?: string,
-      source_url?: string,
-      unsubscribe_source?: string,
-      url?: string,
-      link_type?: string,
-      reason?: string,
-      automation_name?: string,
-      feedback_reason?: string,
-      feedback_comments?: string,
-      bounce_type?: string,
+      source?: string | null,
+      source_url?: string | null,
+      unsubscribe_source?: string | null,
+      url?: string | null,
+      link_type?: string | null,
+      reason?: string | null,
+      automation_name?: string | null,
+      feedback_reason?: string | null,
+      feedback_comments?: string | null,
+      bounce_type?: string | null,
       bounce_code?: string | number,
       softbounce_count?: number,
       softbounce_max_count?: number
@@ -444,11 +444,11 @@ Use `limit` (1–1000) and `cursor` to page through campaigns. `status` may be `
 ```ts
 {
   campaign: {
-    account_id?: string,
+    account_id?: string | null,
     campaign_id: string,
-    timezone?: string,
-    created?: string,
-    created_iso?: string,
+    timezone?: string | null,
+    created?: string | null,
+    created_iso?: string | null,
     modified?: string | null,
     modified_iso?: string | null,
     type?: regular,
@@ -459,8 +459,8 @@ Use `limit` (1–1000) and `cursor` to page through campaigns. `status` may be `
     delivery_ended?: string | null,
     delivery_ended_iso?: string | null,
     name: string,
-    subject?: string,
-    previewtext?: string,
+    subject?: string | null,
+    previewtext?: string | null,
     from?: {
       name: string,
       email: string
@@ -470,9 +470,9 @@ Use `limit` (1–1000) and `cursor` to page through campaigns. `status` may be `
     stats?: {
       ga: string
     },
-    web?: string,
+    web?: string | null,
     screenshot?: Record<string, string>,
-    state?: string
+    state?: string | null
   }
 }[]
 ```
@@ -528,11 +528,11 @@ Scheduling starts email delivery at the specified time; a campaign sent before m
 
 ```ts
 {
-  account_id?: string,
+  account_id?: string | null,
   campaign_id: string,
-  timezone?: string,
-  created?: string,
-  created_iso?: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
   modified?: string | null,
   modified_iso?: string | null,
   type?: regular,
@@ -543,8 +543,8 @@ Scheduling starts email delivery at the specified time; a campaign sent before m
   delivery_ended?: string | null,
   delivery_ended_iso?: string | null,
   name: string,
-  subject?: string,
-  previewtext?: string,
+  subject?: string | null,
+  previewtext?: string | null,
   from?: {
     name: string,
     email: string
@@ -554,9 +554,9 @@ Scheduling starts email delivery at the specified time; a campaign sent before m
   stats?: {
     ga: string
   },
-  web?: string,
+  web?: string | null,
   screenshot?: Record<string, string>,
-  state?: string
+  state?: string | null
 }
 ```
 </Accordion>
@@ -599,11 +599,11 @@ This sends the campaign to configured recipients. A previously sent campaign may
 
 ```ts
 {
-  account_id?: string,
+  account_id?: string | null,
   campaign_id: string,
-  timezone?: string,
-  created?: string,
-  created_iso?: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
   modified?: string | null,
   modified_iso?: string | null,
   type?: regular,
@@ -614,8 +614,8 @@ This sends the campaign to configured recipients. A previously sent campaign may
   delivery_ended?: string | null,
   delivery_ended_iso?: string | null,
   name: string,
-  subject?: string,
-  previewtext?: string,
+  subject?: string | null,
+  previewtext?: string | null,
   from?: {
     name: string,
     email: string
@@ -625,9 +625,9 @@ This sends the campaign to configured recipients. A previously sent campaign may
   stats?: {
     ga: string
   },
-  web?: string,
+  web?: string | null,
   screenshot?: Record<string, string>,
-  state?: string
+  state?: string | null
 }
 ```
 </Accordion>
@@ -671,11 +671,11 @@ This sends an actual test email, and only works when content exists for a campai
 
 ```ts
 {
-  account_id?: string,
+  account_id?: string | null,
   campaign_id: string,
-  timezone?: string,
-  created?: string,
-  created_iso?: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
   modified?: string | null,
   modified_iso?: string | null,
   type?: regular,
@@ -686,8 +686,8 @@ This sends an actual test email, and only works when content exists for a campai
   delivery_ended?: string | null,
   delivery_ended_iso?: string | null,
   name: string,
-  subject?: string,
-  previewtext?: string,
+  subject?: string | null,
+  previewtext?: string | null,
   from?: {
     name: string,
     email: string
@@ -697,9 +697,9 @@ This sends an actual test email, and only works when content exists for a campai
   stats?: {
     ga: string
   },
-  web?: string,
+  web?: string | null,
   screenshot?: Record<string, string>,
-  state?: string
+  state?: string | null
 }
 ```
 </Accordion>
@@ -768,11 +768,11 @@ await corsair.laposta.api.campaigns.update({ campaign_id: 'campaign-1', subject:
 
 ```ts
 {
-  account_id?: string,
+  account_id?: string | null,
   campaign_id: string,
-  timezone?: string,
-  created?: string,
-  created_iso?: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
   modified?: string | null,
   modified_iso?: string | null,
   type?: regular,
@@ -783,8 +783,8 @@ await corsair.laposta.api.campaigns.update({ campaign_id: 'campaign-1', subject:
   delivery_ended?: string | null,
   delivery_ended_iso?: string | null,
   name: string,
-  subject?: string,
-  previewtext?: string,
+  subject?: string | null,
+  previewtext?: string | null,
   from?: {
     name: string,
     email: string
@@ -794,9 +794,9 @@ await corsair.laposta.api.campaigns.update({ campaign_id: 'campaign-1', subject:
   stats?: {
     ga: string
   },
-  web?: string,
+  web?: string | null,
   screenshot?: Record<string, string>,
-  state?: string
+  state?: string | null
 }
 ```
 </Accordion>
@@ -842,11 +842,11 @@ Provide `html` or `import_url`. Laposta imports HTML from the URL when selected;
 
 ```ts
 {
-  account_id?: string,
+  account_id?: string | null,
   campaign_id: string,
-  plaintext?: string,
-  html?: string,
-  import_url?: string,
+  plaintext?: string | null,
+  html?: string | null,
+  import_url?: string | null,
   report?: {
     javascript?: boolean,
     flash?: boolean,
@@ -909,15 +909,15 @@ The `required`, `in_form`, and `in_list` booleans are mandatory. Select fields n
 {
   field_id: string,
   list_id: string,
-  timezone?: string,
-  created?: string,
-  created_iso?: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
   modified?: string | null,
   state?: active | deleted,
   name: string,
-  tag?: string,
-  custom_name?: string,
-  defaultvalue?: string,
+  tag?: string | null,
+  custom_name?: string | null,
+  defaultvalue?: string | null,
   datatype: text | numeric | date | select_single | select_multiple | labels,
   datatype_display?: select | radio | input | textarea | null,
   options?: string[],
@@ -973,15 +973,15 @@ await corsair.laposta.api.fields.delete({ list_id: 'list-1', field_id: 'field-1'
 {
   field_id: string,
   list_id: string,
-  timezone?: string,
-  created?: string,
-  created_iso?: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
   modified?: string | null,
   state?: active | deleted,
   name: string,
-  tag?: string,
-  custom_name?: string,
-  defaultvalue?: string,
+  tag?: string | null,
+  custom_name?: string | null,
+  defaultvalue?: string | null,
   datatype: text | numeric | date | select_single | select_multiple | labels,
   datatype_display?: select | radio | input | textarea | null,
   options?: string[],
@@ -1037,15 +1037,15 @@ await corsair.laposta.api.fields.get({ list_id: 'list-1', field_id: 'field-1' })
 {
   field_id: string,
   list_id: string,
-  timezone?: string,
-  created?: string,
-  created_iso?: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
   modified?: string | null,
   state?: active | deleted,
   name: string,
-  tag?: string,
-  custom_name?: string,
-  defaultvalue?: string,
+  tag?: string | null,
+  custom_name?: string | null,
+  defaultvalue?: string | null,
   datatype: text | numeric | date | select_single | select_multiple | labels,
   datatype_display?: select | radio | input | textarea | null,
   options?: string[],
@@ -1101,15 +1101,15 @@ await corsair.laposta.api.fields.list({ list_id: 'list-1' });
   field: {
     field_id: string,
     list_id: string,
-    timezone?: string,
-    created?: string,
-    created_iso?: string,
+    timezone?: string | null,
+    created?: string | null,
+    created_iso?: string | null,
     modified?: string | null,
     state?: active | deleted,
     name: string,
-    tag?: string,
-    custom_name?: string,
-    defaultvalue?: string,
+    tag?: string | null,
+    custom_name?: string | null,
+    defaultvalue?: string | null,
     datatype: text | numeric | date | select_single | select_multiple | labels,
     datatype_display?: select | radio | input | textarea | null,
     options?: string[],
@@ -1188,15 +1188,15 @@ Record<string, string> | {
 {
   field_id: string,
   list_id: string,
-  timezone?: string,
-  created?: string,
-  created_iso?: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
   modified?: string | null,
   state?: active | deleted,
   name: string,
-  tag?: string,
-  custom_name?: string,
-  defaultvalue?: string,
+  tag?: string | null,
+  custom_name?: string | null,
+  defaultvalue?: string | null,
   datatype: text | numeric | date | select_single | select_multiple | labels,
   datatype_display?: select | radio | input | textarea | null,
   options?: string[],
@@ -1256,17 +1256,17 @@ await corsair.laposta.api.lists.create({ name: 'Newsletter' });
 ```ts
 {
   list_id: string,
-  timezone?: string,
-  created?: string,
-  created_iso?: string,
-  modified?: string,
-  modified_iso?: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
+  modified?: string | null,
+  modified_iso?: string | null,
   state: active | deleted,
   name: string,
   locked?: boolean,
-  remarks?: string,
-  subscribe_notification_email?: string,
-  unsubscribe_notification_email?: string,
+  remarks?: string | null,
+  subscribe_notification_email?: string | null,
+  unsubscribe_notification_email?: string | null,
   members?: {
     active: number,
     unsubscribed: number,
@@ -1313,17 +1313,17 @@ await corsair.laposta.api.lists.delete({ list_id: 'list-1' });
 ```ts
 {
   list_id: string,
-  timezone?: string,
-  created?: string,
-  created_iso?: string,
-  modified?: string,
-  modified_iso?: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
+  modified?: string | null,
+  modified_iso?: string | null,
   state: active | deleted,
   name: string,
   locked?: boolean,
-  remarks?: string,
-  subscribe_notification_email?: string,
-  unsubscribe_notification_email?: string,
+  remarks?: string | null,
+  subscribe_notification_email?: string | null,
+  unsubscribe_notification_email?: string | null,
   members?: {
     active: number,
     unsubscribed: number,
@@ -1370,17 +1370,17 @@ await corsair.laposta.api.lists.get({ list_id: 'list-1' });
 ```ts
 {
   list_id: string,
-  timezone?: string,
-  created?: string,
-  created_iso?: string,
-  modified?: string,
-  modified_iso?: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
+  modified?: string | null,
+  modified_iso?: string | null,
   state: active | deleted,
   name: string,
   locked?: boolean,
-  remarks?: string,
-  subscribe_notification_email?: string,
-  unsubscribe_notification_email?: string,
+  remarks?: string | null,
+  subscribe_notification_email?: string | null,
+  unsubscribe_notification_email?: string | null,
   members?: {
     active: number,
     unsubscribed: number,
@@ -1423,17 +1423,17 @@ await corsair.laposta.api.lists.list({});
 {
   list: {
     list_id: string,
-    timezone?: string,
-    created?: string,
-    created_iso?: string,
-    modified?: string,
-    modified_iso?: string,
+    timezone?: string | null,
+    created?: string | null,
+    created_iso?: string | null,
+    modified?: string | null,
+    modified_iso?: string | null,
     state: active | deleted,
     name: string,
     locked?: boolean,
-    remarks?: string,
-    subscribe_notification_email?: string,
-    unsubscribe_notification_email?: string,
+    remarks?: string | null,
+    subscribe_notification_email?: string | null,
+    unsubscribe_notification_email?: string | null,
     members?: {
       active: number,
       unsubscribed: number,
@@ -1481,17 +1481,17 @@ await corsair.laposta.api.lists.purge_members({ list_id: 'list-1' });
 ```ts
 {
   list_id: string,
-  timezone?: string,
-  created?: string,
-  created_iso?: string,
-  modified?: string,
-  modified_iso?: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
+  modified?: string | null,
+  modified_iso?: string | null,
   state: active | deleted,
   name: string,
   locked?: boolean,
-  remarks?: string,
-  subscribe_notification_email?: string,
-  unsubscribe_notification_email?: string,
+  remarks?: string | null,
+  subscribe_notification_email?: string | null,
+  unsubscribe_notification_email?: string | null,
   members?: {
     active: number,
     unsubscribed: number,
@@ -1609,14 +1609,14 @@ This bulk endpoint is available only to paid accounts and requires JSON. The `un
     list_id: string,
     email: string,
     state: active | unsubscribed | unconfirmed | cleaned | deleted,
-    timezone?: string,
-    signup_date?: string,
-    signup_date_iso?: string,
+    timezone?: string | null,
+    signup_date?: string | null,
+    signup_date_iso?: string | null,
     modified?: string | null,
     modified_iso?: string | null,
     confirm_date?: string | null,
     confirm_date_iso?: string | null,
-    ip?: string,
+    ip?: string | null,
     source_url?: string | null,
     custom_fields?: Record<string, any>
   }
@@ -1640,14 +1640,14 @@ This bulk endpoint is available only to paid accounts and requires JSON. The `un
     list_id: string,
     email: string,
     state: active | unsubscribed | unconfirmed | cleaned | deleted,
-    timezone?: string,
-    signup_date?: string,
-    signup_date_iso?: string,
+    timezone?: string | null,
+    signup_date?: string | null,
+    signup_date_iso?: string | null,
     modified?: string | null,
     modified_iso?: string | null,
     confirm_date?: string | null,
     confirm_date_iso?: string | null,
-    ip?: string,
+    ip?: string | null,
     source_url?: string | null,
     custom_fields?: Record<string, any>
   }
@@ -1671,14 +1671,14 @@ This bulk endpoint is available only to paid accounts and requires JSON. The `un
     list_id: string,
     email: string,
     state: active | unsubscribed | unconfirmed | cleaned | deleted,
-    timezone?: string,
-    signup_date?: string,
-    signup_date_iso?: string,
+    timezone?: string | null,
+    signup_date?: string | null,
+    signup_date_iso?: string | null,
     modified?: string | null,
     modified_iso?: string | null,
     confirm_date?: string | null,
     confirm_date_iso?: string | null,
-    ip?: string,
+    ip?: string | null,
     source_url?: string | null,
     custom_fields?: Record<string, any>
   }
@@ -1728,17 +1728,17 @@ await corsair.laposta.api.lists.update({ list_id: 'list-1', name: 'Customers' })
 ```ts
 {
   list_id: string,
-  timezone?: string,
-  created?: string,
-  created_iso?: string,
-  modified?: string,
-  modified_iso?: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
+  modified?: string | null,
+  modified_iso?: string | null,
   state: active | deleted,
   name: string,
   locked?: boolean,
-  remarks?: string,
-  subscribe_notification_email?: string,
-  unsubscribe_notification_email?: string,
+  remarks?: string | null,
+  subscribe_notification_email?: string | null,
+  unsubscribe_notification_email?: string | null,
   members?: {
     active: number,
     unsubscribed: number,
@@ -1813,14 +1813,14 @@ The `ip` is mandatory. On a double-opt-in list Laposta can send a confirmation e
   list_id: string,
   email: string,
   state: active | unsubscribed | unconfirmed | cleaned | deleted,
-  timezone?: string,
-  signup_date?: string,
-  signup_date_iso?: string,
+  timezone?: string | null,
+  signup_date?: string | null,
+  signup_date_iso?: string | null,
   modified?: string | null,
   modified_iso?: string | null,
   confirm_date?: string | null,
   confirm_date_iso?: string | null,
-  ip?: string,
+  ip?: string | null,
   source_url?: string | null,
   custom_fields?: Record<string, any>
 }
@@ -1868,14 +1868,14 @@ await corsair.laposta.api.members.delete({ list_id: 'list-1', member_id: 'member
   list_id: string,
   email: string,
   state: active | unsubscribed | unconfirmed | cleaned | deleted,
-  timezone?: string,
-  signup_date?: string,
-  signup_date_iso?: string,
+  timezone?: string | null,
+  signup_date?: string | null,
+  signup_date_iso?: string | null,
   modified?: string | null,
   modified_iso?: string | null,
   confirm_date?: string | null,
   confirm_date_iso?: string | null,
-  ip?: string,
+  ip?: string | null,
   source_url?: string | null,
   custom_fields?: Record<string, any>
 }
@@ -1923,14 +1923,14 @@ await corsair.laposta.api.members.get({ list_id: 'list-1', member_id: 'member-1'
   list_id: string,
   email: string,
   state: active | unsubscribed | unconfirmed | cleaned | deleted,
-  timezone?: string,
-  signup_date?: string,
-  signup_date_iso?: string,
+  timezone?: string | null,
+  signup_date?: string | null,
+  signup_date_iso?: string | null,
   modified?: string | null,
   modified_iso?: string | null,
   confirm_date?: string | null,
   confirm_date_iso?: string | null,
-  ip?: string,
+  ip?: string | null,
   source_url?: string | null,
   custom_fields?: Record<string, any>
 }
@@ -2019,16 +2019,16 @@ History uses cursor pagination with a default limit of 100 and maximum of 1000. 
       deleted?: boolean
     } | null,
     details: {
-      source?: string,
-      source_url?: string,
-      unsubscribe_source?: string,
-      url?: string,
-      link_type?: string,
-      reason?: string,
-      automation_name?: string,
-      feedback_reason?: string,
-      feedback_comments?: string,
-      bounce_type?: string,
+      source?: string | null,
+      source_url?: string | null,
+      unsubscribe_source?: string | null,
+      url?: string | null,
+      link_type?: string | null,
+      reason?: string | null,
+      automation_name?: string | null,
+      feedback_reason?: string | null,
+      feedback_comments?: string | null,
+      bounce_type?: string | null,
       bounce_code?: string | number,
       softbounce_count?: number,
       softbounce_max_count?: number
@@ -2089,14 +2089,14 @@ Use `limit` (1–1000) and `cursor` to page. Pass `pagination.next_cursor` uncha
     list_id: string,
     email: string,
     state: active | unsubscribed | unconfirmed | cleaned | deleted,
-    timezone?: string,
-    signup_date?: string,
-    signup_date_iso?: string,
+    timezone?: string | null,
+    signup_date?: string | null,
+    signup_date_iso?: string | null,
     modified?: string | null,
     modified_iso?: string | null,
     confirm_date?: string | null,
     confirm_date_iso?: string | null,
-    ip?: string,
+    ip?: string | null,
     source_url?: string | null,
     custom_fields?: Record<string, any>
   }
@@ -2161,14 +2161,14 @@ Pass an empty array for a multiselect custom field to clear its current value. L
   list_id: string,
   email: string,
   state: active | unsubscribed | unconfirmed | cleaned | deleted,
-  timezone?: string,
-  signup_date?: string,
-  signup_date_iso?: string,
+  timezone?: string | null,
+  signup_date?: string | null,
+  signup_date_iso?: string | null,
   modified?: string | null,
   modified_iso?: string | null,
   confirm_date?: string | null,
   confirm_date_iso?: string | null,
-  ip?: string,
+  ip?: string | null,
   source_url?: string | null,
   custom_fields?: Record<string, any>
 }
@@ -2318,7 +2318,7 @@ Create a segment for a mailing list
 **Risk:** `write`
 
 ```ts
-await corsair.laposta.api.segments.create({ list_id: 'list-1', name: 'Local members', definition: '{"city"} = \'Utrecht\'' });
+await corsair.laposta.api.segments.create({ list_id: 'list-1', name: 'Members at example.com', definition: '{"blocks":[{"rules":[{"input":{"subject":"domain","comparator":"equal","multi":"","text":"example.com"},"type":"members"}]}]}' });
 ```
 
 **Input**
@@ -2327,9 +2327,9 @@ await corsair.laposta.api.segments.create({ list_id: 'list-1', name: 'Local memb
 |------|------|----------|-------------|
 | `list_id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `definition` | `string` | Yes | — |
+| `definition` | `string` | Yes | Segment definition as a JSON string of blocks and rules, e.g. &#123;"blocks":[&#123;"rules":[...]&#125;]&#125;; read one from segments.get |
 
-Laposta recommends creating a segment in its application first and retrieving it through `segments.get` before composing a definition string.
+The definition is a JSON string of selection blocks and rules, for example `{"blocks":[{"rules":[{"input":{"subject":"domain","comparator":"equal","multi":"","text":"example.com"},"type":"members"}]}]}`. Laposta rejects anything else with "definition is no valid JSON". The easiest way to get one is to build the segment in Laposta and read it with `segments.get`.
 
 
 
@@ -2348,9 +2348,9 @@ Laposta recommends creating a segment in its application first and retrieving it
   list_id: string,
   name: string,
   definition: string,
-  timezone?: string,
-  created?: string,
-  created_iso?: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
   modified?: string | null,
   modified_iso?: string | null,
   state?: active | deleted
@@ -2399,9 +2399,9 @@ await corsair.laposta.api.segments.delete({ list_id: 'list-1', segment_id: 'segm
   list_id: string,
   name: string,
   definition: string,
-  timezone?: string,
-  created?: string,
-  created_iso?: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
   modified?: string | null,
   modified_iso?: string | null,
   state?: active | deleted
@@ -2450,9 +2450,9 @@ await corsair.laposta.api.segments.get({ list_id: 'list-1', segment_id: 'segment
   list_id: string,
   name: string,
   definition: string,
-  timezone?: string,
-  created?: string,
-  created_iso?: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
   modified?: string | null,
   modified_iso?: string | null,
   state?: active | deleted
@@ -2501,9 +2501,9 @@ await corsair.laposta.api.segments.list({ list_id: 'list-1' });
     list_id: string,
     name: string,
     definition: string,
-    timezone?: string,
-    created?: string,
-    created_iso?: string,
+    timezone?: string | null,
+    created?: string | null,
+    created_iso?: string | null,
     modified?: string | null,
     modified_iso?: string | null,
     state?: active | deleted
@@ -2555,9 +2555,9 @@ await corsair.laposta.api.segments.update({ list_id: 'list-1', segment_id: 'segm
   list_id: string,
   name: string,
   definition: string,
-  timezone?: string,
-  created?: string,
-  created_iso?: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
   modified?: string | null,
   modified_iso?: string | null,
   state?: active | deleted
@@ -2610,9 +2610,9 @@ Creates a Laposta subscription that POSTs member events to the configured URL. T
 {
   webhook_id: string,
   list_id: string,
-  timezone?: string,
-  created?: string,
-  created_iso?: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
   modified?: string | null,
   modified_iso?: string | null,
   state: active | deleted,
@@ -2663,9 +2663,9 @@ await corsair.laposta.api.webhooks.delete({ list_id: 'list-1', webhook_id: 'webh
 {
   webhook_id: string,
   list_id: string,
-  timezone?: string,
-  created?: string,
-  created_iso?: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
   modified?: string | null,
   modified_iso?: string | null,
   state: active | deleted,
@@ -2718,9 +2718,9 @@ Laposta returns the webhook signing secret in the webhook object. Keep it privat
 {
   webhook_id: string,
   list_id: string,
-  timezone?: string,
-  created?: string,
-  created_iso?: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
   modified?: string | null,
   modified_iso?: string | null,
   state: active | deleted,
@@ -2771,9 +2771,9 @@ await corsair.laposta.api.webhooks.list({ list_id: 'list-1' });
   webhook: {
     webhook_id: string,
     list_id: string,
-    timezone?: string,
-    created?: string,
-    created_iso?: string,
+    timezone?: string | null,
+    created?: string | null,
+    created_iso?: string | null,
     modified?: string | null,
     modified_iso?: string | null,
     state: active | deleted,
@@ -2828,9 +2828,9 @@ await corsair.laposta.api.webhooks.update({ list_id: 'list-1', webhook_id: 'webh
 {
   webhook_id: string,
   list_id: string,
-  timezone?: string,
-  created?: string,
-  created_iso?: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
   modified?: string | null,
   modified_iso?: string | null,
   state: active | deleted,
