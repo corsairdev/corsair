@@ -316,10 +316,20 @@ describe('storage', () => {
 		});
 	});
 
+	it('puts a location slug after /v1 on location-scoped routes (checked live)', async () => {
+		respond([]);
+		await invoke(Vm.list, { location: 'tll01' });
+		expectCall({ path: '/v1/tll01/user-resource/vm/list', method: 'GET' });
+	});
+
+	it('refuses a location that is not a slug', async () => {
+		await expect(invoke(Vm.list, { location: '../x' })).rejects.toThrow();
+	});
+
 	it('disk routes hang off the UUID', async () => {
 		respond(disk);
 		await invoke(Storage.getDisk, {
-			name: '05a61876-86f3-4b05-b0ec-53ee6fa03ced',
+			uuid: '05a61876-86f3-4b05-b0ec-53ee6fa03ced',
 		});
 		expectCall({
 			path: '/v1/storage/disks/05a61876-86f3-4b05-b0ec-53ee6fa03ced',

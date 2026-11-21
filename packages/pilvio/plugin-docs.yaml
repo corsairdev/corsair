@@ -92,7 +92,7 @@ apiExamples:
   storage.disks.create:
     call: '{ sizeGb: 50, sourceImageType: "EMPTY", displayName: "DB data" }'
   storage.disks.get:
-    call: '{ name: "05a61876-86f3-4b05-b0ec-53ee6fa03ced" }'
+    call: '{ uuid: "05a61876-86f3-4b05-b0ec-53ee6fa03ced" }'
   storage.disks.update:
     call: '{ uuid: "05a61876-…", displayName: "Web server backup" }'
   storage.disks.delete:

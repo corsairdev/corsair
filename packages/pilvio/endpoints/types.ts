@@ -10,6 +10,7 @@ export const StorageEntrySchema = z
 		pool: z.string().nullish().describe('Storage pool'),
 		primary: z.boolean().nullish().describe('Whether this is the boot disk'),
 		replica: z
+			// unknown: provider-shaped and not documented field by field; kept open on output.
 			.array(z.unknown())
 			.nullish()
 			.describe('Snapshots or replicas of the disk'),
@@ -45,6 +46,7 @@ export const VmSchema = z
 		backup: z.boolean().nullish().describe('Whether auto backup is on'),
 		billing_account: z.number().nullish().describe('Billing account id'),
 		storage: z.array(StorageEntrySchema).nullish().describe('Attached disks'),
+		// unknown: provider-shaped and not documented field by field; kept open on output.
 		tags: z.unknown().nullish().describe('Tags'),
 		user_id: z.number().nullish().describe('Owner user id'),
 		created_at: z.string().nullish().describe('Creation timestamp'),
@@ -168,6 +170,7 @@ export const FirewallSchema = z
 		billing_account_id: z.number().nullish().describe('Billing account id'),
 		rules: z.array(FirewallRuleSchema).nullish().describe('Firewall rules'),
 		resources_assigned: z
+			// unknown: provider-shaped and not documented field by field; kept open on output.
 			.array(z.unknown())
 			.nullish()
 			.describe('Resources the firewall is assigned to'),
@@ -201,6 +204,7 @@ export const UserSchema = z
 			.loose()
 			.nullish()
 			.describe('Profile details'),
+		// unknown: provider-shaped and not documented field by field; kept open on output.
 		state: z.unknown().nullish().describe('User state'),
 	})
 	.loose()
@@ -299,6 +303,7 @@ export const PricingLineSchema = z
 			.describe('Human-readable service name'),
 		numCpus: z.number().nullish().describe('CPU count the line prices'),
 		megsRam: z.number().nullish().describe('RAM the line prices'),
+		// unknown: provider-shaped and not documented field by field; kept open on output.
 		serviceNameInUptime: z.unknown().nullish().describe('Service attributes'),
 	})
 	.loose()
@@ -705,6 +710,25 @@ export type FirewallsDeleteInput = z.infer<typeof FirewallsDeleteInputSchema>;
 
 // ── Operation registry ─────────────────────────────────────────────────────
 
+/**
+ * VMs, disks and networks live in a location: /v1/{slug}/... (live: jhv02
+ * and tll01 answer, an unknown slug 404s). Without one the API uses the
+ * account's default location. Slugs come from config.listLocations.
+ */
+const located = <T extends z.ZodRawShape>(schema: z.ZodObject<T>) =>
+	schema.extend({
+		location: z
+			.string()
+			.regex(/^[a-z0-9-]+$/, 'A location slug from config.listLocations')
+			.optional()
+			.describe('Location slug, e.g. tll01; the default location when unset'),
+	});
+
+export const DisksGetInputSchema = z
+	.object({ uuid: z.string().min(1).describe('UUID of the disk') })
+	.describe('Input for reading one disk');
+export type DisksGetInput = z.infer<typeof DisksGetInputSchema>;
+
 export const PilvioEndpointInputSchemas = {
 	userGet: UserGetInputSchema,
 	userUpdateProfile: UserUpdateProfileInputSchema,
@@ -722,30 +746,30 @@ export const PilvioEndpointInputSchemas = {
 	configListBootImages: EmptyInputSchema,
 	configListResourcePools: EmptyInputSchema,
 	configGetPricingPolicy: EmptyInputSchema,
-	vmList: EmptyInputSchema,
-	vmGet: VmGetInputSchema,
-	vmCreate: VmCreateInputSchema,
-	vmStart: VmStartStopInputSchema,
-	vmStop: VmStartStopInputSchema,
-	vmReinstall: VmReinstallInputSchema,
-	vmDelete: VmDeleteInputSchema,
-	disksList: EmptyInputSchema,
-	disksCreate: DisksCreateInputSchema,
-	disksGet: BucketsGetInputSchema,
-	disksUpdate: DisksUpdateInputSchema,
-	disksDelete: DisksDeleteInputSchema,
+	vmList: located(EmptyInputSchema),
+	vmGet: located(VmGetInputSchema),
+	vmCreate: located(VmCreateInputSchema),
+	vmStart: located(VmStartStopInputSchema),
+	vmStop: located(VmStartStopInputSchema),
+	vmReinstall: located(VmReinstallInputSchema),
+	vmDelete: located(VmDeleteInputSchema),
+	disksList: located(EmptyInputSchema),
+	disksCreate: located(DisksCreateInputSchema),
+	disksGet: located(DisksGetInputSchema),
+	disksUpdate: located(DisksUpdateInputSchema),
+	disksDelete: located(DisksDeleteInputSchema),
 	bucketsList: EmptyInputSchema,
 	bucketsCreate: BucketsCreateInputSchema,
 	bucketsGet: BucketsGetInputSchema,
 	bucketsUpdate: BucketsUpdateInputSchema,
 	bucketsDelete: BucketsDeleteInputSchema,
-	networksList: EmptyInputSchema,
-	networksGet: NetworksGetInputSchema,
-	networksCreate: NetworksCreateInputSchema,
-	networksDelete: NetworksDeleteInputSchema,
-	firewallsList: EmptyInputSchema,
-	firewallsCreate: FirewallsCreateInputSchema,
-	firewallsDelete: FirewallsDeleteInputSchema,
+	networksList: located(EmptyInputSchema),
+	networksGet: located(NetworksGetInputSchema),
+	networksCreate: located(NetworksCreateInputSchema),
+	networksDelete: located(NetworksDeleteInputSchema),
+	firewallsList: located(EmptyInputSchema),
+	firewallsCreate: located(FirewallsCreateInputSchema),
+	firewallsDelete: located(FirewallsDeleteInputSchema),
 };
 
 export const PilvioEndpointOutputSchemas = {

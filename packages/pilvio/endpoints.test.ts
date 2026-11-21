@@ -145,7 +145,7 @@ describe('output parsing', () => {
 
 		respond(disk);
 		const one = (await invoke(Storage.getDisk, {
-			name: '05a61876-86f3-4b05-b0ec-53ee6fa03ced',
+			uuid: '05a61876-86f3-4b05-b0ec-53ee6fa03ced',
 		})) as { uuid?: string };
 		expect(one.uuid).toBe(disk.uuid);
 	});

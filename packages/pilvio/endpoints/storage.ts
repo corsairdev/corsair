@@ -59,7 +59,7 @@ export const getDisk: PilvioEndpoints['disksGet'] = (ctx, input) =>
 			output: Outputs.disksGet,
 		},
 		input,
-		({ name: uuid }) => ({
+		({ uuid }) => ({
 			method: 'GET',
 			path: `${DISKS}/${encodeURIComponent(uuid)}`,
 		}),

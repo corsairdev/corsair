@@ -611,6 +611,7 @@ await corsair.pilvio.api.network.firewalls.create({ displayName: "Database Firew
 | `displayName` | `string` | Yes | Firewall name |
 | `billingAccountId` | `number` | No | Billing account |
 | `rules` | `object[]` | Yes | The firewall rules |
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
 
 Rules take protocol tcp/udp/icmp, direction inbound/outbound, a port range and endpointSpecType ip_prefixes (with CIDR list) or any.
 
@@ -683,6 +684,7 @@ await corsair.pilvio.api.network.firewalls.delete({ uuid: "2a874f44-310f-4df8-93
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `uuid` | `string` | Yes | UUID of the firewall to delete |
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
 
 
 
@@ -703,7 +705,12 @@ List the firewalls and their rules
 await corsair.pilvio.api.network.firewalls.list({});
 ```
 
-**Input:** _empty object_
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
+
 
 
 **Output:** `object[]`
@@ -754,6 +761,7 @@ await corsair.pilvio.api.network.networks.create({ name: "network3" });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | Descriptive network name, sent as the name query parameter |
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
 
 
 
@@ -794,6 +802,7 @@ await corsair.pilvio.api.network.networks.delete({ uuid: "2e8cd389-27fe-45ce-a63
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `uuid` | `string` | Yes | UUID of the network; it must be empty and not the default |
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
 
 Only works when the network holds no resources and is not the user default.
 
@@ -821,6 +830,7 @@ await corsair.pilvio.api.network.networks.get({ uuid: "2e8cd389-27fe-45ce-a63d-d
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `uuid` | `string` | Yes | UUID of the network |
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
 
 
 
@@ -856,7 +866,12 @@ List the private networks
 await corsair.pilvio.api.network.networks.list({});
 ```
 
-**Input:** _empty object_
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
+
 
 
 **Output:** `object[]`
@@ -1082,6 +1097,7 @@ await corsair.pilvio.api.storage.disks.create({ sizeGb: 50, sourceImageType: "EM
 | `sourceImage` | `string` | No | Image reference: e.g. ubuntu_20.04 for OS_BASE or a UUID |
 | `displayName` | `string` | No | Display name |
 | `billingAccountId` | `number` | No | Billing account |
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
 
 source_image_type EMPTY needs no source; OS_BASE takes e.g. ubuntu_20.04, DISK and SNAPSHOT take a UUID. sizeGb is required when the size is not apparent from the source image.
 
@@ -1140,6 +1156,7 @@ await corsair.pilvio.api.storage.disks.delete({ uuid: "05a61876-86f3-4b05-b0ec-5
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `uuid` | `string` | Yes | UUID of the disk to delete |
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
 
 
 
@@ -1157,14 +1174,15 @@ Read one disk by UUID
 **Risk:** `read`
 
 ```ts
-await corsair.pilvio.api.storage.disks.get({ name: "05a61876-86f3-4b05-b0ec-53ee6fa03ced" });
+await corsair.pilvio.api.storage.disks.get({ uuid: "05a61876-86f3-4b05-b0ec-53ee6fa03ced" });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `name` | `string` | Yes | The bucket name |
+| `uuid` | `string` | Yes | UUID of the disk |
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
 
 
 
@@ -1216,7 +1234,12 @@ List the block storage disks
 await corsair.pilvio.api.storage.disks.list({});
 ```
 
-**Input:** _empty object_
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
+
 
 
 **Output:** `object[]`
@@ -1271,6 +1294,7 @@ await corsair.pilvio.api.storage.disks.update({ uuid: "05a61876-…", displayNam
 | `uuid` | `string` | Yes | UUID of the disk to update |
 | `displayName` | `string` | No | New display name |
 | `billingAccountId` | `number` | No | Billing account |
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
 
 
 
@@ -1344,6 +1368,7 @@ await corsair.pilvio.api.vm.create({ name: "Ubuntu-22-04", osName: "ubuntu", osV
 | `sourceUuid` | `string` | No | VM UUID to create the VM from (copy of a backup or snapshot) |
 | `sourceReplica` | `string` | No | Snapshot or backup UUID used with sourceUuid |
 | `diskUuid` | `string` | No | Existing unattached disk to use as the boot disk |
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
 
 osName/osVersion come from config.listVmImages; use osName "_custom" and osVersion "_" for an empty disk booted from an ISO. cloudInit takes a YAML or JSON object as a string and overrides username/password.
 
@@ -1418,6 +1443,7 @@ await corsair.pilvio.api.vm.delete({ uuid: "fc880f74-cf03-4a7a-93da-74c506157023
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `uuid` | `string` | Yes | UUID of the VM to delete |
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
 
 
 
@@ -1443,6 +1469,7 @@ await corsair.pilvio.api.vm.get({ uuid: "fc880f74-cf03-4a7a-93da-74c506157023" }
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `uuid` | `string` | Yes | UUID of the VM |
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
 
 
 
@@ -1510,7 +1537,12 @@ List the virtual machines
 await corsair.pilvio.api.vm.list({});
 ```
 
-**Input:** _empty object_
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
+
 
 
 **Output:** `object[]`
@@ -1581,6 +1613,7 @@ await corsair.pilvio.api.vm.reinstall({ uuid: "fc880f74-…", osName: "ubuntu", 
 | `uuid` | `string` | Yes | UUID of the VM to reinstall |
 | `osName` | `string` | Yes | New OS name |
 | `osVersion` | `string` | Yes | New OS version |
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
 
 Destructive: the VM is reinstalled with the new OS and existing data is replaced.
 
@@ -1655,6 +1688,7 @@ await corsair.pilvio.api.vm.start({ uuid: "fc880f74-cf03-4a7a-93da-74c506157023"
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `uuid` | `string` | Yes | UUID of the VM |
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
 
 
 
@@ -1727,6 +1761,7 @@ await corsair.pilvio.api.vm.stop({ uuid: "fc880f74-cf03-4a7a-93da-74c506157023" 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `uuid` | `string` | Yes | UUID of the VM |
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
 
 
 

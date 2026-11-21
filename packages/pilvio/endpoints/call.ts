@@ -24,7 +24,16 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	} = {},
 ): Promise<z.output<Output>> {
 	const parsed = operation.input.parse(rawInput ?? {});
-	const raw = await makePilvioRequest(ctx.key, toRequest(parsed));
+	const request = toRequest(parsed);
+	// Location-scoped routes take the slug after /v1 (see located() in types).
+	const location = (parsed as { location?: unknown }).location;
+	if (typeof location === 'string' && location.length > 0) {
+		request.path = request.path.replace(
+			/^\/v1\//,
+			`/v1/${encodeURIComponent(location)}/`,
+		);
+	}
+	const raw = await makePilvioRequest(ctx.key, request);
 	const result = operation.output.parse(
 		options.shape ? options.shape(raw, parsed) : raw,
 	);
