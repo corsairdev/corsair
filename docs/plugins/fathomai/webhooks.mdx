@@ -1,0 +1,295 @@
+---
+title: "Fathom AI Notetaker webhooks"
+sidebarTitle: "Webhooks"
+description: "Fathom AI Notetaker incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
+---
+
+The Fathom AI Notetaker plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/fathomai/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `meetings`
+  - `contentReady` (`meetings.contentReady`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
+}
+```
+
+## Events
+
+## Meetings
+
+### Content Ready
+
+`meetings.contentReady`
+
+A recorded meeting finished processing; carries the meeting with the transcript, summary, action items and CRM matches the webhook was set to include
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `meeting_title` | `string \| null` | Yes | — |
+| `meeting_type` | `string \| null` | Yes | — |
+| `recording_id` | `number` | Yes | — |
+| `url` | `string` | Yes | — |
+| `meeting_url` | `string \| null` | No | — |
+| `share_url` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `scheduled_start_time` | `string` | Yes | — |
+| `scheduled_end_time` | `string` | Yes | — |
+| `recording_start_time` | `string` | Yes | — |
+| `recording_end_time` | `string` | Yes | — |
+| `calendar_invitees_domains_type` | `only_internal \| one_or_more_external` | Yes | — |
+| `shared_with` | `no_teams \| single_team \| multiple_teams \| all_teams` | Yes | — |
+| `transcript_language` | `string` | Yes | — |
+| `transcript` | `object[] \| null` | No | — |
+| `default_summary` | `object \| null` | No | — |
+| `action_items` | `object[] \| null` | No | — |
+| `highlights` | `object[] \| null` | No | — |
+| `calendar_invitees` | `object[]` | Yes | — |
+| `recorded_by` | `object` | Yes | — |
+| `crm_matches` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="transcript full type">
+
+```ts
+{
+  speaker: {
+    display_name: string,
+    matched_calendar_invitee_email?: string | null
+  },
+  text: string,
+  timestamp: string
+}[] | null
+```
+</Accordion>
+
+<Accordion title="default_summary full type">
+
+```ts
+{
+  template_name: string | null,
+  markdown_formatted: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="action_items full type">
+
+```ts
+{
+  description: string,
+  user_generated: boolean,
+  completed: boolean,
+  recording_timestamp: string,
+  recording_playback_url: string,
+  assignee: {
+    name: string | null,
+    email: string | null,
+    team: string | null
+  }
+}[] | null
+```
+</Accordion>
+
+<Accordion title="highlights full type">
+
+```ts
+{
+  type: string,
+  summary: string | null,
+  text?: string,
+  start_time: number,
+  end_time: number
+}[] | null
+```
+</Accordion>
+
+<Accordion title="calendar_invitees full type">
+
+```ts
+{
+  name: string | null,
+  matched_speaker_display_name?: string | null,
+  email: string | null,
+  email_domain: string | null,
+  is_external: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="recorded_by full type">
+
+```ts
+{
+  name: string,
+  email: string,
+  email_domain: string,
+  team: string | null
+}
+```
+</Accordion>
+
+<Accordion title="crm_matches full type">
+
+```ts
+{
+  contacts?: {
+    name: string,
+    email: string,
+    record_url: string
+  }[],
+  companies?: {
+    name: string,
+    record_url: string
+  }[],
+  deals?: {
+    name: string,
+    amount: number,
+    record_url: string
+  }[],
+  error?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  title: string,
+  meeting_title: string | null,
+  meeting_type: string | null,
+  recording_id: number,
+  url: string,
+  meeting_url?: string | null,
+  share_url: string,
+  created_at: string,
+  scheduled_start_time: string,
+  scheduled_end_time: string,
+  recording_start_time: string,
+  recording_end_time: string,
+  calendar_invitees_domains_type: only_internal | one_or_more_external,
+  shared_with: no_teams | single_team | multiple_teams | all_teams,
+  transcript_language: string,
+  transcript?: {
+    speaker: {
+      display_name: string,
+      matched_calendar_invitee_email?: string | null
+    },
+    text: string,
+    timestamp: string
+  }[] | null,
+  default_summary?: {
+    template_name: string | null,
+    markdown_formatted: string | null
+  } | null,
+  action_items?: {
+    description: string,
+    user_generated: boolean,
+    completed: boolean,
+    recording_timestamp: string,
+    recording_playback_url: string,
+    assignee: {
+      name: string | null,
+      email: string | null,
+      team: string | null
+    }
+  }[] | null,
+  highlights?: {
+    type: string,
+    summary: string | null,
+    text?: string,
+    start_time: number,
+    end_time: number
+  }[] | null,
+  calendar_invitees: {
+    name: string | null,
+    matched_speaker_display_name?: string | null,
+    email: string | null,
+    email_domain: string | null,
+    is_external: boolean
+  }[],
+  recorded_by: {
+    name: string,
+    email: string,
+    email_domain: string,
+    team: string | null
+  },
+  crm_matches?: {
+    contacts?: {
+      name: string,
+      email: string,
+      record_url: string
+    }[],
+    companies?: {
+      name: string,
+      record_url: string
+    }[],
+    deals?: {
+      name: string,
+      amount: number,
+      record_url: string
+    }[],
+    error?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+fathomai({
+    webhookHooks: {
+        meetings: {
+            contentReady: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

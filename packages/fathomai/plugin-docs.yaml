@@ -1,0 +1,37 @@
+displayName: Fathom AI Notetaker
+description: AI meeting recorder that records, transcribes and summarizes calls, with endpoints for meetings, summaries, transcripts, recording downloads, teams, users and webhooks.
+domain: fathom.ai
+recommendedAuth: api_key
+overviewNote: |
+  This plugin is for the Fathom AI Notetaker (fathom.ai). The `fathom` plugin is a different product, Fathom Analytics.
+  Generate an API key in the API Access section of your Fathom User Settings and provide it as `key` or store it under `api_key`. The key sees meetings its owner recorded or that were shared with them or their team.
+
+  Things to know:
+  - **Rate limits:** 60 requests per minute per account. Summary and transcript calls, and `meetings.list` with `include_summary` or `include_transcript`, count against a stricter 30 per minute. `recordings.requestDownload` has its own 30 per minute limit.
+  - **Webhooks:** Create one with `webhooks.create` and store the returned `whsec_` secret with `keys.set_webhook_signature`, or pass it as the `webhookSecret` option. Deliveries are verified with the Standard Webhooks signature and a five minute replay window. Fathom sends one delivery shape, a meeting whose content is ready.
+  - **Admin only:** `users.list` returns 403 unless the key belongs to an account admin.
+  - **Recording downloads:** `recordings.requestDownload` starts a job. Poll `recordings.getDownload` until `status` is `completed`, then fetch the signed `video.url` before `expires_at`.
+references:
+  - title: Fathom API Reference
+    url: https://developers.fathom.ai/api-reference
+  - title: Fathom Webhooks
+    url: https://developers.fathom.ai/webhooks
+examples:
+  read:
+    path: meetings.list
+    title: List recent meetings with action items
+    args:
+      created_after: '2025-01-01T00:00:00Z'
+      include_action_items: true
+  write:
+    path: webhooks.create
+    title: Send summaries for my recordings to a webhook
+    args:
+      destination_url: https://example.com/webhooks/fathom
+      triggered_for:
+        - my_recordings
+      include_summary: true
+dbExample:
+  entity: meetings
+  note: Search synced meetings without calling Fathom again.
+  limit: 50
