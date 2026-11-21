@@ -4137,6 +4137,15 @@
                 ]
               },
               {
+                "group": "Penpot",
+                "pages": [
+                  "plugins/penpot/overview",
+                  "plugins/penpot/api",
+                  "plugins/penpot/database",
+                  "plugins/penpot/webhooks"
+                ]
+              },
+              {
                 "group": "People Data Labs",
                 "pages": [
                   "plugins/pdl/overview",
