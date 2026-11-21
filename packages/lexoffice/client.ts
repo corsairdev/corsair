@@ -53,6 +53,35 @@ export function compactQuery(
 	return defined;
 }
 
+/**
+ * Provider text kept on a sanitized error only when it carries no email
+ * address, bearer token or long token-like value.
+ */
+function safeProviderText(value: unknown): string | undefined {
+	if (typeof value !== 'string' || value.length === 0 || value.length > 300) {
+		return undefined;
+	}
+	if (/@|bearer/i.test(value) || /[A-Za-z0-9_-]{24,}/.test(value)) {
+		return undefined;
+	}
+	return value;
+}
+
+// `unknown` because provider error bodies are untyped JSON.
+function safeIssueList(value: unknown): Record<string, string>[] | undefined {
+	if (!Array.isArray(value)) return undefined;
+	const issues = value.flatMap((issue: unknown) => {
+		if (typeof issue !== 'object' || issue === null) return [];
+		const kept: Record<string, string> = {};
+		for (const field of ['i18nKey', 'source', 'type'] as const) {
+			const text = safeProviderText((issue as Record<string, unknown>)[field]);
+			if (text !== undefined) kept[field] = text;
+		}
+		return Object.keys(kept).length > 0 ? [kept] : [];
+	});
+	return issues.length > 0 ? issues : undefined;
+}
+
 export function sanitizeApiError<T>(error: T): T {
 	if (!(error instanceof ApiError)) return error;
 
@@ -66,14 +95,26 @@ export function sanitizeApiError<T>(error: T): T {
 		});
 	}
 
-	// Keep the shared ApiError instance and retry metadata but discard provider
-	// text and request/response payloads that may contain customer data.
-	error.message = 'Lexware API request failed';
+	// Keep the shared ApiError instance and retry metadata. Drop request data and
+	// provider payloads, except Lexware's own validation text and issue keys,
+	// which name the failing field without echoing customer values.
+	// `unknown` because provider error bodies are untyped JSON.
+	const providerBody: Record<string, unknown> =
+		typeof error.body === 'object' && error.body !== null ? error.body : {};
+	const providerMessage = safeProviderText(providerBody.message);
+	const issueList = safeIssueList(providerBody.IssueList);
+	const message = providerMessage
+		? `Lexware API request failed: ${providerMessage}`
+		: 'Lexware API request failed';
+	error.message = message;
 	Object.assign(error, {
 		url: LEXOFFICE_API_BASE,
 		statusText: 'Lexware API Error',
-		stack: 'ApiError: Lexware API request failed',
-		body: { message: 'Lexware API request failed' },
+		stack: `ApiError: ${message}`,
+		body: {
+			message: providerMessage ?? 'Lexware API request failed',
+			...(issueList ? { IssueList: issueList } : {}),
+		},
 	});
 
 	return error;

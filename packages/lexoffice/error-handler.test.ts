@@ -37,6 +37,21 @@ describe('Lexoffice error handlers', () => {
 		).resolves.toEqual({ maxRetries: 5, headersRetryAfterMs: 2500 });
 	});
 
+	it('does not treat a non-429 ApiError mentioning 429 as a rate limit', () => {
+		const error = new ApiError(
+			{ method: 'POST', url: '/invoices' },
+			{
+				url: 'https://api.lexware.io/v1/invoices',
+				ok: false,
+				status: 406,
+				statusText: 'Not Acceptable',
+				body: {},
+			},
+			'Lexware API request failed: unitPrice 429 is not acceptable',
+		);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(false);
+	});
+
 	it('routes 401 and 403 to AUTH_ERROR without retrying', async () => {
 		expect(route(apiError(401, 'Unauthorized'))).toBe('AUTH_ERROR');
 		expect(route(apiError(403, 'Forbidden'))).toBe('AUTH_ERROR');

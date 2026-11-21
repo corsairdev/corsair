@@ -268,7 +268,6 @@ describe('makeLexofficeRequest', () => {
 
 		const sanitized = sanitizeApiError(err);
 		expect(sanitized).toBe(err);
-		expect(err.message).toBe('Lexware API request failed');
 		expect(err.stack).not.toContain('customer@example.com');
 		expect(err.stack).not.toContain('secret-token');
 		expect(err.url).toBe(LEXOFFICE_API_BASE);
@@ -277,10 +276,73 @@ describe('makeLexofficeRequest', () => {
 		expect(err.request.headers).toBeUndefined();
 		expect(err.request.query).toBeUndefined();
 		expect(err.request.body).toBeUndefined();
-		expect(err.body).toEqual({ message: 'Lexware API request failed' });
+		expect(err.body).toEqual({ message: 'invalid' });
+		expect(err.message).toBe('Lexware API request failed: invalid');
 
 		const plainError = new Error('regular error');
 		expect(sanitizeApiError(plainError)).toBe(plainError);
+	});
+
+	it('keeps Lexware validation messages and issue keys an agent can act on', () => {
+		const notAcceptable = new ApiError(
+			{ method: 'POST', url: '/invoices', body: { address: { name: 'Acme' } } },
+			{
+				url: 'https://api.lexware.io/v1/invoices',
+				ok: false,
+				status: 406,
+				statusText: 'Not Acceptable',
+				// Trimmed from a live 406 on a 18% tax rate (11-21).
+				body: {
+					status: 406,
+					error: 'Not Acceptable',
+					path: '/v1/invoices',
+					traceId: '86dec2837e5f',
+					message:
+						'Invalid taxRatePercentage or does not match booking date or country code.',
+				},
+			},
+			'Not Acceptable',
+		);
+		sanitizeApiError(notAcceptable);
+		expect(notAcceptable.status).toBe(406);
+		expect(notAcceptable.message).toBe(
+			'Lexware API request failed: Invalid taxRatePercentage or does not match booking date or country code.',
+		);
+		expect(notAcceptable.request.body).toBeUndefined();
+
+		const badRequest = new ApiError(
+			{ method: 'POST', url: '/contacts' },
+			{
+				url: 'https://api.lexware.io/v1/contacts',
+				ok: false,
+				status: 400,
+				statusText: 'Bad Request',
+				body: {
+					IssueList: [
+						{
+							i18nKey: 'missing_entity',
+							source: 'company and person',
+							type: 'validation_failure',
+						},
+						{ i18nKey: 'invalid_value', source: 'customer@example.com' },
+					],
+				},
+			},
+			'Bad Request',
+		);
+		sanitizeApiError(badRequest);
+		expect(badRequest.body).toEqual({
+			message: 'Lexware API request failed',
+			IssueList: [
+				{
+					i18nKey: 'missing_entity',
+					source: 'company and person',
+					type: 'validation_failure',
+				},
+				{ i18nKey: 'invalid_value' },
+			],
+		});
+		expect(JSON.stringify(badRequest.body)).not.toContain('example.com');
 	});
 
 	it('preserves retryAfter from HTTP response in real transport', async () => {
