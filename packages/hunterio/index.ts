@@ -1147,53 +1147,53 @@ const hunterioEndpointMeta = {
 		description: 'Suggest similar company domains',
 	},
 	'domainSearch.search': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
-			'List the email addresses found for a domain. Charges 1 credit per 10 emails returned [DESTRUCTIVE · SPENDS CREDITS]',
+			'List the email addresses found for a domain. Charges 1 credit per 10 emails returned',
 	},
 	'domainSearch.searchPost': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
-			'List the email addresses found for a domain (POST form). Charges 1 credit per 10 emails returned [DESTRUCTIVE · SPENDS CREDITS]',
+			'List the email addresses found for a domain (POST form). Charges 1 credit per 10 emails returned',
 	},
 	'domainSearch.found': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
-			'Search the email addresses Hunter found on the web for a domain, without generated guesses. Charges 1 credit per 10 emails returned [DESTRUCTIVE · SPENDS CREDITS]',
+			'Search the email addresses Hunter found on the web for a domain, without generated guesses. Charges 1 credit per 10 emails returned',
 	},
 	'domainSearch.foundPost': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
-			'Search found email addresses for a domain with body filters, including location. Charges 1 credit per 10 emails returned [DESTRUCTIVE · SPENDS CREDITS]',
+			'Search found email addresses for a domain with body filters, including location. Charges 1 credit per 10 emails returned',
 	},
 	'multiDomainSearch.search': {
 		riskLevel: 'read',
 		description: 'Find email addresses across multiple domains',
 	},
 	'multiDomainSearch.reveal': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
-			'Reveal the verified email addresses of a multi-domain search. Charges 1 credit per email revealed for the first time this billing period [DESTRUCTIVE · SPENDS CREDITS]',
+			'Reveal the verified email addresses of a multi-domain search. Charges 1 credit per email revealed for the first time this billing period',
 	},
 	'emailFinder.find': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
-			'Find the most likely email of a person. Charges 1 credit when an email is found [DESTRUCTIVE · SPENDS CREDITS]',
+			'Find the most likely email of a person. Charges 1 credit when an email is found',
 	},
 	'emailFinder.findFound': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
-			'Check whether an email was already found for a person. Charges 1 credit when an email is found [DESTRUCTIVE · SPENDS CREDITS]',
+			'Check whether an email was already found for a person. Charges 1 credit when an email is found',
 	},
 	'emailFinder.findFoundPost': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
-			'Check whether an email was already found (POST form). Charges 1 credit when an email is found [DESTRUCTIVE · SPENDS CREDITS]',
+			'Check whether an email was already found (POST form). Charges 1 credit when an email is found',
 	},
 	'emailVerifier.verify': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
-			'Verify the deliverability of an email address. Charges 0.5 credit per verification [DESTRUCTIVE · SPENDS CREDITS]',
+			'Verify the deliverability of an email address. Charges 0.5 credit per verification',
 	},
 	'emailInsight.get': {
 		riskLevel: 'read',
@@ -1204,19 +1204,19 @@ const hunterioEndpointMeta = {
 		description: 'Count the email addresses found for a domain',
 	},
 	'enrichment.person': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
-			'Enrich a person profile from an email or name. Charges 0.2 credit when data is found [DESTRUCTIVE · SPENDS CREDITS]',
+			'Enrich a person profile from an email or name. Charges 0.2 credit when data is found',
 	},
 	'enrichment.company': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
-			'Enrich a company profile from a domain or name. Charges 0.2 credit when data is found [DESTRUCTIVE · SPENDS CREDITS]',
+			'Enrich a company profile from a domain or name. Charges 0.2 credit when data is found',
 	},
 	'enrichment.combined': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
-			'Enrich a person and their company together. Charges 0.2 credit when data is found [DESTRUCTIVE · SPENDS CREDITS]',
+			'Enrich a person and their company together. Charges 0.2 credit when data is found',
 	},
 	'lookalikes.list': {
 		riskLevel: 'read',

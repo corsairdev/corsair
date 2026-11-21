@@ -9,6 +9,7 @@ import {
 	DiscoverViews,
 	DomainSearch,
 	EmailVerifier,
+	Enrichment,
 	Leads,
 	LeadsLists,
 	MonitoredSignals,
@@ -25,7 +26,7 @@ import type { HunterioContext } from './index';
 // Every call goes through the plugin's own handlers (input schema, request,
 // output schema). Writes only touch records the suite creates and deletes
 // again, with a per-run name. Calls that spend credits (Domain Search found,
-// Email Verifier: 1.5 credits in all) also need HUNTERIO_LIVE_CREDITS=1.
+// Enrichment, Email Verifier: 1.7 credits in all) also need HUNTERIO_LIVE_CREDITS=1.
 jest.mock('corsair/core', () => {
 	const actual = jest.requireActual('corsair/core');
 	return { ...actual, logEventFromContext: jest.fn() };
@@ -67,6 +68,7 @@ function need<T>(value: T | undefined, what: string): T {
 }
 
 // Hunter answers 403 with one of these ids when the plan lacks a feature.
+// Stricter typing is not feasible because a catch clause receives `unknown`; only an ApiError carries the Hunter error body read here.
 function planErrorId(error: unknown): string | undefined {
 	const body = (error as { body?: { errors?: Array<{ id?: string }> } }).body;
 	return body?.errors?.[0]?.id;
@@ -166,42 +168,83 @@ describeLive('Hunter.io live API', () => {
 		});
 	});
 
+	// Each round-trip registers a cleanup as soon as a record exists. The
+	// cleanups run in reverse order, each one even when an earlier one
+	// fails, and any failures are reported together at the end.
+	async function runCleanups(steps: Array<() => Promise<unknown>>) {
+		const failures: unknown[] = [];
+		for (const step of [...steps].reverse()) {
+			try {
+				await step();
+			} catch (error) {
+				failures.push(error);
+			}
+		}
+		if (failures.length > 0) {
+			throw new AggregateError(
+				failures,
+				`${failures.length} cleanup step(s) failed`,
+			);
+		}
+	}
+
+	// Stricter typing is not feasible because a rejected promise carries `unknown`; only an ApiError has the status checked here.
+	function ignoreNotFound(error: unknown): void {
+		if ((error as { status?: number }).status !== 404) throw error;
+	}
+
+	async function deleteLeadsWithEmail(email: string): Promise<void> {
+		// Only addresses unique to this run reach here, so every match is ours.
+		const id = await leadIdFor(email, 4);
+		if (id !== undefined) await Leads.delete(ctx, { id });
+	}
+
 	describe('round-trips on records the suite creates', () => {
 		it('lead tags: create, get, delete', async () => {
-			const created = await Tags.create(ctx, { name: `${RUN}-tag` });
-			const id = need(created.data.id, 'tag id');
+			const cleanup: Array<() => Promise<unknown>> = [];
 			try {
+				const created = await Tags.create(ctx, { name: `${RUN}-tag` });
+				const id = need(created.data.id, 'tag id');
+				cleanup.push(() => Tags.delete(ctx, { id }));
 				const fetched = await Tags.get(ctx, { id });
 				expect(fetched.data.name).toBe(`${RUN}-tag`);
 			} finally {
-				await Tags.delete(ctx, { id });
+				await runCleanups(cleanup);
 			}
 		});
 
 		it('company tags: create, list, delete', async () => {
-			const created = await CompanyTags.create(ctx, { name: `${RUN}-ctag` });
-			const id = need(created.data.id, 'tag id');
+			const cleanup: Array<() => Promise<unknown>> = [];
 			try {
+				const created = await CompanyTags.create(ctx, { name: `${RUN}-ctag` });
+				const id = need(created.data.id, 'company tag id');
+				cleanup.push(() => CompanyTags.delete(ctx, { id }));
 				const list = await CompanyTags.list(ctx, {});
 				expect(list.data.company_tags.map((tag) => tag.id)).toContain(id);
 			} finally {
-				await CompanyTags.delete(ctx, { id });
+				await runCleanups(cleanup);
 			}
 		});
 
 		it('leads lists: merge moves the leads and deletes the source list', async () => {
-			const source = await LeadsLists.create(ctx, { name: `${RUN}-from` });
-			const destination = await LeadsLists.create(ctx, { name: `${RUN}-to` });
-			const sourceId = need(source.data.id, 'list id');
-			const destinationId = need(destination.data.id, 'list id');
-			let leadId: string | number | undefined;
+			const cleanup: Array<() => Promise<unknown>> = [];
+			const email = `${RUN}@example.com`;
 			try {
-				const lead = await Leads.create(ctx, {
-					email: `${RUN}@example.com`,
+				const source = await LeadsLists.create(ctx, { name: `${RUN}-from` });
+				const sourceId = need(source.data.id, 'list id');
+				// The merge deletes the source list, so a 404 here is success.
+				cleanup.push(() =>
+					LeadsLists.delete(ctx, { id: sourceId }).catch(ignoreNotFound),
+				);
+				const destination = await LeadsLists.create(ctx, { name: `${RUN}-to` });
+				const destinationId = need(destination.data.id, 'list id');
+				cleanup.push(() => LeadsLists.delete(ctx, { id: destinationId }));
+				cleanup.push(() => deleteLeadsWithEmail(email));
+				await Leads.create(ctx, {
+					email,
 					first_name: 'Live',
 					leads_list_id: sourceId,
 				});
-				leadId = lead.data.id;
 				await LeadsLists.merge(ctx, {
 					id: sourceId,
 					destination_leads_list_id: destinationId,
@@ -213,23 +256,30 @@ describeLive('Hunter.io live API', () => {
 					LeadsLists.get(ctx, { id: sourceId }),
 				).rejects.toMatchObject({ status: 404 });
 			} finally {
-				leadId ??= await leadIdFor(`${RUN}@example.com`, 4);
-				if (leadId !== undefined) await Leads.delete(ctx, { id: leadId });
-				await LeadsLists.delete(ctx, { id: destinationId }).catch(() => {});
-				await LeadsLists.delete(ctx, { id: sourceId }).catch(() => {});
+				await runCleanups(cleanup);
 			}
 		});
 
 		it('company lists: add a company, list it, remove it', async () => {
-			const list = await CompanyLists.create(ctx, {
-				name: `${RUN}-companies`,
-				type: 'static',
-			});
-			const listId = need(list.data.id, 'list id');
-			let companyId: string | number | undefined;
+			const cleanup: Array<() => Promise<unknown>> = [];
+			const domain = 'stripe.com';
 			try {
-				const company = await Companies.create(ctx, { domain: 'stripe.com' });
-				companyId = need(company.data.id, 'company id');
+				const list = await CompanyLists.create(ctx, {
+					name: `${RUN}-companies`,
+					type: 'static',
+				});
+				const listId = need(list.data.id, 'list id');
+				cleanup.push(() => CompanyLists.delete(ctx, { id: listId }));
+				// Delete the company afterwards only if this run saved it.
+				const before = await Companies.list(ctx, { query: domain });
+				const alreadySaved = before.data.companies.some(
+					(entry) => entry.domain === domain,
+				);
+				const company = await Companies.create(ctx, { domain });
+				const companyId = need(company.data.id, 'company id');
+				if (!alreadySaved) {
+					cleanup.push(() => Companies.delete(ctx, { id: companyId }));
+				}
 				await CompanyLists.addCompany(ctx, {
 					company_list_id: listId,
 					company_id: companyId,
@@ -237,18 +287,13 @@ describeLive('Hunter.io live API', () => {
 				const companies = await CompanyLists.listCompanies(ctx, {
 					company_list_id: listId,
 				});
-				expect(companies.data.map((entry) => entry.domain)).toContain(
-					'stripe.com',
-				);
+				expect(companies.data.map((entry) => entry.domain)).toContain(domain);
 				await CompanyLists.removeCompany(ctx, {
 					company_list_id: listId,
 					company_id: companyId,
 				});
 			} finally {
-				await CompanyLists.delete(ctx, { id: listId });
-				if (companyId !== undefined) {
-					await Companies.delete(ctx, { id: companyId }).catch(() => {});
-				}
+				await runCleanups(cleanup);
 			}
 		});
 	});
@@ -265,19 +310,27 @@ describeLive('Hunter.io live API', () => {
 			},
 		);
 
+		itCredits(
+			'enrichment.combined parses a real profile (0.2 credit)',
+			async () => {
+				const result = await Enrichment.combined(ctx, {
+					email: 'patrick@stripe.com',
+				});
+				expect(result).toMatchObject({
+					data: { company: { domain: 'stripe.com' } },
+				});
+			},
+		);
+
 		itCredits('emailVerifier.verify (0.5 credit)', async () => {
-			const email = 'patrick@stripe.com';
-			const savedBefore = await leadIdFor(email);
+			// A per-run address: with automatic lead saving on, Hunter saves the
+			// verified address as a lead, and only this run can own that lead.
+			const email = `${RUN}@stripe.com`;
 			try {
 				const result = await EmailVerifier.verify(ctx, { email });
 				expect(result.data?.status).toEqual(expect.any(String));
 			} finally {
-				// With automatic lead saving on, Hunter saves the verified address
-				// as a lead. Remove it unless it was a lead before the test.
-				const savedAfter = await leadIdFor(email, 4);
-				if (savedBefore === undefined && savedAfter !== undefined) {
-					await Leads.delete(ctx, { id: savedAfter });
-				}
+				await deleteLeadsWithEmail(email);
 			}
 		});
 	});

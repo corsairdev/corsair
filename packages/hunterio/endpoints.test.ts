@@ -8,6 +8,7 @@ import {
 	Companies,
 	CompanyLists,
 	DomainSearch,
+	Enrichment,
 	Leads,
 	LeadsLists,
 	Messages,
@@ -620,6 +621,7 @@ describe('briefing, signals and opportunities', () => {
 			Signals.list(ctx, {
 				source: 'leads',
 				types: ['not_a_type'],
+				// Stricter typing is not feasible because the test feeds an input the schema must reject; the double cast gets the invalid value past the compiler.
 			} as unknown as Parameters<typeof Signals.list>[1]),
 		).rejects.toThrow();
 	});
@@ -656,6 +658,22 @@ describe('briefing, signals and opportunities', () => {
 		);
 	});
 
+	it('opportunities.results accepts a person with a null name and no provenance', async () => {
+		const { provenance: _omitted, ...person } =
+			OPPORTUNITY_RESULTS_FIXTURE.data[0] ?? {};
+		mockedRequest.mockResolvedValue({
+			...OPPORTUNITY_RESULTS_FIXTURE,
+			data: [{ ...person, name: null }],
+		});
+
+		const result = await Opportunities.results(ctx, { id: 812345 });
+
+		const first = result.data[0];
+		expect(
+			first && 'reveal_handle' in first ? first.name : 'wrong branch',
+		).toBeNull();
+	});
+
 	it('opportunities.list parses the documented example', async () => {
 		mockedRequest.mockResolvedValue(OPPORTUNITIES_FIXTURE);
 
@@ -667,6 +685,50 @@ describe('briefing, signals and opportunities', () => {
 			'test-api-key',
 			{ method: 'GET', query: {} },
 		);
+	});
+});
+
+describe('enrichment with the live response shape', () => {
+	// Values from a live Combined Enrichment call on 2026-11-21.
+	it('parses string emailProvider, employees ranges and funding amounts', async () => {
+		mockedRequest.mockResolvedValue({
+			data: {
+				person: {
+					email: 'person@example.com',
+					github: { handle: null, id: null },
+					twitter: { handle: null, id: null },
+					emailProvider: 'google.com',
+				},
+				company: {
+					domain: 'example.com',
+					emailProvider: 'google.com',
+					tags: ['financial services', 'payment processing'],
+					emailsCount: null,
+					metrics: {
+						trafficRank: 'very_high',
+						employees: '10K-50K',
+						marketCap: null,
+						estimatedAnnualRevenue: null,
+						fiscalYearEnd: null,
+						raised: 7708000000,
+					},
+					fundingRounds: [
+						{ date: '2020-04-16', type: 'Series G', amount: '$600M' },
+					],
+				},
+			},
+		});
+
+		const result = await Enrichment.combined(ctx, {
+			email: 'person@example.com',
+		});
+
+		expect(result).toMatchObject({
+			data: {
+				person: { emailProvider: 'google.com' },
+				company: { metrics: { employees: '10K-50K' } },
+			},
+		});
 	});
 });
 
@@ -766,9 +828,18 @@ describe('company list companies, domain search found, leads list merge', () => 
 describe('risk levels', () => {
 	const meta = hunterio({ key: 'k' }).endpointMeta as unknown as Record<
 		string,
-		{ riskLevel: string }
+		{ riskLevel: string; description: string }
 	>;
 
+	it.each(['messages.send', 'sequences.start', 'sequences.test'])(
+		'%s sends real email, so it is destructive',
+		(key) => {
+			expect(meta[key]?.riskLevel).toBe('destructive');
+		},
+	);
+
+	// R8: a metered read (a lookup or search whose only cost is credits)
+	// stays read. The description names the cost.
 	it.each([
 		'domainSearch.search',
 		'domainSearch.searchPost',
@@ -782,11 +853,9 @@ describe('risk levels', () => {
 		'enrichment.company',
 		'enrichment.combined',
 		'multiDomainSearch.reveal',
-		'messages.send',
-		'sequences.start',
-		'sequences.test',
-	])('%s spends credits or sends email, so it is destructive', (key) => {
-		expect(meta[key]?.riskLevel).toBe('destructive');
+	])('%s is a metered read and names its credit cost', (key) => {
+		expect(meta[key]?.riskLevel).toBe('read');
+		expect(meta[key]?.description).toMatch(/Charges .*credit/);
 	});
 
 	it.each([

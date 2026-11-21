@@ -1178,6 +1178,11 @@ export type EmailCountGetOutput = z.infer<typeof EmailCountGetOutputSchema>;
 
 // ── Enrichment ──────────────────────────────────────────────────────────────
 
+// Field types checked against a live Combined Enrichment response (2026-11-21):
+// emailProvider is a domain string ("google.com"), metrics.employees a range
+// string ("10K-50K"), fundingRounds[].amount a string ("$6000M"), trafficRank
+// a string ("very_high"; the OpenAPI spec says number). Fields seen only as
+// null accept both shapes the docs and the spec give.
 export const EnrichmentPersonSchema = z
 	.object({
 		id: z.string().nullable().optional(),
@@ -1248,7 +1253,7 @@ export const EnrichmentPersonSchema = z
 				site: z.string().nullable().optional(),
 				statuses: z.number().nullable().optional(),
 				favorites: z.number().nullable().optional(),
-				id: z.number().nullable().optional(),
+				id: z.union([z.string(), z.number()]).nullable().optional(),
 			})
 			.passthrough()
 			.nullable()
@@ -1261,7 +1266,7 @@ export const EnrichmentPersonSchema = z
 				company: z.string().nullable().optional(),
 				followers: z.number().nullable().optional(),
 				following: z.number().nullable().optional(),
-				id: z.number().nullable().optional(),
+				id: z.union([z.string(), z.number()]).nullable().optional(),
 			})
 			.passthrough()
 			.nullable()
@@ -1279,7 +1284,7 @@ export const EnrichmentPersonSchema = z
 			.nullable()
 			.optional(),
 		fuzzy: z.boolean().optional(),
-		emailProvider: z.boolean().optional(),
+		emailProvider: z.string().nullable().optional(),
 		phone: z.string().nullable().optional(),
 		indexedAt: z.string().nullable().optional(),
 		activeAt: z.string().nullable().optional(),
@@ -1318,7 +1323,7 @@ export const EnrichmentCompanySchema = z
 			.passthrough()
 			.nullable()
 			.optional(),
-		tags: z.array(z.string()).optional(),
+		tags: z.array(z.string()).nullable().optional(),
 		description: z.string().nullable().optional(),
 		foundedYear: z.number().nullable().optional(),
 		location: z.string().nullable().optional(),
@@ -1360,7 +1365,7 @@ export const EnrichmentCompanySchema = z
 			.passthrough()
 			.nullable()
 			.optional(),
-		emailProvider: z.boolean().optional(),
+		emailProvider: z.string().nullable().optional(),
 		type: z.string().nullable().optional(),
 		companyType: z.string().nullable().optional(),
 		ticker: z.string().nullable().optional(),
@@ -1372,15 +1377,18 @@ export const EnrichmentCompanySchema = z
 		phone: z.string().nullable().optional(),
 		metrics: z
 			.object({
-				employees: z.number().nullable().optional(),
+				employees: z.string().nullable().optional(),
 				employeesCount: z.number().nullable().optional(),
 				alexaGlobalRank: z.number().nullable().optional(),
 				alexaUsRank: z.number().nullable().optional(),
 				annualRevenue: z.number().nullable().optional(),
-				estimatedAnnualRevenue: z.string().nullable().optional(),
-				marketCap: z.string().nullable().optional(),
+				estimatedAnnualRevenue: z
+					.union([z.string(), z.number()])
+					.nullable()
+					.optional(),
+				marketCap: z.union([z.string(), z.number()]).nullable().optional(),
 				raised: z.number().nullable().optional(),
-				fiscalYearEnd: z.number().nullable().optional(),
+				fiscalYearEnd: z.union([z.string(), z.number()]).nullable().optional(),
 				trafficRank: z.string().nullable().optional(),
 			})
 			.passthrough()
@@ -1394,7 +1402,7 @@ export const EnrichmentCompanySchema = z
 			.array(
 				z
 					.object({
-						amount: z.number().nullable().optional(),
+						amount: z.string().nullable().optional(),
 						date: z.string().nullable().optional(),
 						investors: z.array(z.string()).optional(),
 						type: z.string().nullable().optional(),
@@ -1413,7 +1421,19 @@ export const EnrichmentCompanySchema = z
 			.nullable()
 			.optional(),
 		alreadySaved: z.boolean().optional(),
-		emailsCount: z.number().optional(),
+		emailsCount: z
+			.union([
+				z.number(),
+				z
+					.object({
+						personal: z.number().nullable().optional(),
+						generic: z.number().nullable().optional(),
+						total: z.number().nullable().optional(),
+					})
+					.passthrough(),
+			])
+			.nullable()
+			.optional(),
 	})
 	.passthrough();
 
@@ -3042,12 +3062,13 @@ export type OpportunitiesResultsInput = z.infer<
 // `reveal_handle` values to multiDomainSearch.reveal to get the addresses.
 export const OpportunityPersonSchema = z
 	.object({
-		name: z.string(),
+		// "Ada L."; null when Hunter is missing a name part (OpenAPI spec).
+		name: z.string().nullable(),
 		position: z.string().nullable(),
 		department: z.string().nullable(),
 		seniority: z.string().nullable(),
 		type: z.string(),
-		provenance: z.string().nullable(),
+		provenance: z.string().nullable().optional(),
 		decision_maker: z.boolean().nullable(),
 		domain: z.string(),
 		company_name: z.string().nullable(),
@@ -3064,7 +3085,9 @@ export const OpportunityCompanySchema = z
 	.object({
 		domain: z.string(),
 		company_name: z.string().nullable(),
-		emails_count: z.number(),
+		emails_count: z
+			.object({ personal: z.number(), generic: z.number(), total: z.number() })
+			.passthrough(),
 	})
 	.passthrough();
 

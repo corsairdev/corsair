@@ -33,6 +33,7 @@ export const HUNTERIO_RATE_LIMIT_CONFIG: RateLimitConfig = {
 		remaining: 'x-ratelimit-remaining',
 		limit: 'x-ratelimit-limit',
 	},
+	// Stricter typing is not feasible because core hands over the parsed error body as-is: JSON of any shape, text, or undefined.
 	isRateLimitError: (status: number, body: unknown) =>
 		status === 403 && isHunterThrottleBody(body),
 };
@@ -41,11 +42,13 @@ export const HUNTERIO_RATE_LIMIT_CONFIG: RateLimitConfig = {
 // `no_opportunities_access`, `optional_ai_features_off`, ...). Only the
 // throttle id `too_many_requests` is transient; a 403 whose body carries
 // no error id is treated as a throttle, as before.
+// Stricter typing is not feasible because the body is whatever the API sent back; it is narrowed below before any field is read.
 export function isHunterThrottleBody(body: unknown): boolean {
 	const ids = hunterErrorIds(body);
 	return ids.length === 0 || ids.includes('too_many_requests');
 }
 
+// Stricter typing is not feasible because error bodies are unvalidated wire JSON; each level is checked (object, array, string id) before use.
 export function hunterErrorIds(body: unknown): string[] {
 	if (body === null || typeof body !== 'object') return [];
 	const errors = (body as { errors?: unknown }).errors;

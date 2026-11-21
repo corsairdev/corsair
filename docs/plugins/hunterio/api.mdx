@@ -3934,9 +3934,9 @@ await corsair.hunterio.api.domainFinder.findPost({});
 
 `domainSearch.found`
 
-Search the email addresses Hunter found on the web for a domain, without generated guesses. Charges 1 credit per 10 emails returned [DESTRUCTIVE · SPENDS CREDITS]
+Search the email addresses Hunter found on the web for a domain, without generated guesses. Charges 1 credit per 10 emails returned
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.hunterio.api.domainSearch.found({});
@@ -4039,9 +4039,9 @@ await corsair.hunterio.api.domainSearch.found({});
 
 `domainSearch.foundPost`
 
-Search found email addresses for a domain with body filters, including location. Charges 1 credit per 10 emails returned [DESTRUCTIVE · SPENDS CREDITS]
+Search found email addresses for a domain with body filters, including location. Charges 1 credit per 10 emails returned
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.hunterio.api.domainSearch.foundPost({});
@@ -4169,9 +4169,9 @@ await corsair.hunterio.api.domainSearch.foundPost({});
 
 `domainSearch.search`
 
-List the email addresses found for a domain. Charges 1 credit per 10 emails returned [DESTRUCTIVE · SPENDS CREDITS]
+List the email addresses found for a domain. Charges 1 credit per 10 emails returned
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.hunterio.api.domainSearch.search({});
@@ -4273,9 +4273,9 @@ await corsair.hunterio.api.domainSearch.search({});
 
 `domainSearch.searchPost`
 
-List the email addresses found for a domain (POST form). Charges 1 credit per 10 emails returned [DESTRUCTIVE · SPENDS CREDITS]
+List the email addresses found for a domain (POST form). Charges 1 credit per 10 emails returned
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.hunterio.api.domainSearch.searchPost({});
@@ -5167,9 +5167,9 @@ await corsair.hunterio.api.emailCount.get({});
 
 `emailFinder.find`
 
-Find the most likely email of a person. Charges 1 credit when an email is found [DESTRUCTIVE · SPENDS CREDITS]
+Find the most likely email of a person. Charges 1 credit when an email is found
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.hunterio.api.emailFinder.find({});
@@ -5252,9 +5252,9 @@ await corsair.hunterio.api.emailFinder.find({});
 
 `emailFinder.findFound`
 
-Check whether an email was already found for a person. Charges 1 credit when an email is found [DESTRUCTIVE · SPENDS CREDITS]
+Check whether an email was already found for a person. Charges 1 credit when an email is found
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.hunterio.api.emailFinder.findFound({});
@@ -5337,9 +5337,9 @@ await corsair.hunterio.api.emailFinder.findFound({});
 
 `emailFinder.findFoundPost`
 
-Check whether an email was already found (POST form). Charges 1 credit when an email is found [DESTRUCTIVE · SPENDS CREDITS]
+Check whether an email was already found (POST form). Charges 1 credit when an email is found
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.hunterio.api.emailFinder.findFoundPost({});
@@ -5488,9 +5488,9 @@ await corsair.hunterio.api.emailInsight.get({});
 
 `emailVerifier.verify`
 
-Verify the deliverability of an email address. Charges 0.5 credit per verification [DESTRUCTIVE · SPENDS CREDITS]
+Verify the deliverability of an email address. Charges 0.5 credit per verification
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.hunterio.api.emailVerifier.verify({});
@@ -5576,9 +5576,9 @@ await corsair.hunterio.api.emailVerifier.verify({});
 
 `enrichment.combined`
 
-Enrich a person and their company together. Charges 0.2 credit when data is found [DESTRUCTIVE · SPENDS CREDITS]
+Enrich a person and their company together. Charges 0.2 credit when data is found
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.hunterio.api.enrichment.combined({});
@@ -5653,7 +5653,7 @@ await corsair.hunterio.api.enrichment.combined({});
         site?: string | null,
         statuses?: number | null,
         favorites?: number | null,
-        id?: number | null
+        id?: string | number | null
       } | null,
       github?: {
         handle?: string | null,
@@ -5662,7 +5662,7 @@ await corsair.hunterio.api.enrichment.combined({});
         company?: string | null,
         followers?: number | null,
         following?: number | null,
-        id?: number | null
+        id?: string | number | null
       } | null,
       gravatar?: {
         handle?: string | null,
@@ -5671,7 +5671,7 @@ await corsair.hunterio.api.enrichment.combined({});
         urls?: any[]
       } | null,
       fuzzy?: boolean,
-      emailProvider?: boolean,
+      emailProvider?: string | null,
       phone?: string | null,
       indexedAt?: string | null,
       activeAt?: string | null,
@@ -5699,7 +5699,7 @@ await corsair.hunterio.api.enrichment.combined({});
         naics6Codes2022?: string[],
         gicsCode?: string | null
       } | null,
-      tags?: string[],
+      tags?: string[] | null,
       description?: string | null,
       foundedYear?: number | null,
       location?: string | null,
@@ -5726,7 +5726,7 @@ await corsair.hunterio.api.enrichment.combined({});
       instagram?: {
         handle?: string | null
       } | null,
-      emailProvider?: boolean,
+      emailProvider?: string | null,
       type?: string | null,
       companyType?: string | null,
       ticker?: string | null,
@@ -5735,22 +5735,22 @@ await corsair.hunterio.api.enrichment.combined({});
       } | null,
       phone?: string | null,
       metrics?: {
-        employees?: number | null,
+        employees?: string | null,
         employeesCount?: number | null,
         alexaGlobalRank?: number | null,
         alexaUsRank?: number | null,
         annualRevenue?: number | null,
-        estimatedAnnualRevenue?: string | null,
-        marketCap?: string | null,
+        estimatedAnnualRevenue?: string | number | null,
+        marketCap?: string | number | null,
         raised?: number | null,
-        fiscalYearEnd?: number | null,
+        fiscalYearEnd?: string | number | null,
         trafficRank?: string | null
       } | null,
       indexedAt?: string | null,
       tech?: string[],
       techCategories?: string[],
       fundingRounds?: {
-        amount?: number | null,
+        amount?: string | null,
         date?: string | null,
         investors?: string[],
         type?: string | null
@@ -5762,7 +5762,11 @@ await corsair.hunterio.api.enrichment.combined({});
         domain?: string | null
       } | null,
       alreadySaved?: boolean,
-      emailsCount?: number
+      emailsCount?: number | {
+        personal?: number | null,
+        generic?: number | null,
+        total?: number | null
+      } | null
     }
   },
   meta?: {
@@ -5823,7 +5827,7 @@ await corsair.hunterio.api.enrichment.combined({});
       site?: string | null,
       statuses?: number | null,
       favorites?: number | null,
-      id?: number | null
+      id?: string | number | null
     } | null,
     github?: {
       handle?: string | null,
@@ -5832,7 +5836,7 @@ await corsair.hunterio.api.enrichment.combined({});
       company?: string | null,
       followers?: number | null,
       following?: number | null,
-      id?: number | null
+      id?: string | number | null
     } | null,
     gravatar?: {
       handle?: string | null,
@@ -5841,7 +5845,7 @@ await corsair.hunterio.api.enrichment.combined({});
       urls?: any[]
     } | null,
     fuzzy?: boolean,
-    emailProvider?: boolean,
+    emailProvider?: string | null,
     phone?: string | null,
     indexedAt?: string | null,
     activeAt?: string | null,
@@ -5869,7 +5873,7 @@ await corsair.hunterio.api.enrichment.combined({});
       naics6Codes2022?: string[],
       gicsCode?: string | null
     } | null,
-    tags?: string[],
+    tags?: string[] | null,
     description?: string | null,
     foundedYear?: number | null,
     location?: string | null,
@@ -5896,7 +5900,7 @@ await corsair.hunterio.api.enrichment.combined({});
     instagram?: {
       handle?: string | null
     } | null,
-    emailProvider?: boolean,
+    emailProvider?: string | null,
     type?: string | null,
     companyType?: string | null,
     ticker?: string | null,
@@ -5905,22 +5909,22 @@ await corsair.hunterio.api.enrichment.combined({});
     } | null,
     phone?: string | null,
     metrics?: {
-      employees?: number | null,
+      employees?: string | null,
       employeesCount?: number | null,
       alexaGlobalRank?: number | null,
       alexaUsRank?: number | null,
       annualRevenue?: number | null,
-      estimatedAnnualRevenue?: string | null,
-      marketCap?: string | null,
+      estimatedAnnualRevenue?: string | number | null,
+      marketCap?: string | number | null,
       raised?: number | null,
-      fiscalYearEnd?: number | null,
+      fiscalYearEnd?: string | number | null,
       trafficRank?: string | null
     } | null,
     indexedAt?: string | null,
     tech?: string[],
     techCategories?: string[],
     fundingRounds?: {
-      amount?: number | null,
+      amount?: string | null,
       date?: string | null,
       investors?: string[],
       type?: string | null
@@ -5932,7 +5936,11 @@ await corsair.hunterio.api.enrichment.combined({});
       domain?: string | null
     } | null,
     alreadySaved?: boolean,
-    emailsCount?: number
+    emailsCount?: number | {
+      personal?: number | null,
+      generic?: number | null,
+      total?: number | null
+    } | null
   }
 }
 ```
@@ -5946,9 +5954,9 @@ await corsair.hunterio.api.enrichment.combined({});
 
 `enrichment.company`
 
-Enrich a company profile from a domain or name. Charges 0.2 credit when data is found [DESTRUCTIVE · SPENDS CREDITS]
+Enrich a company profile from a domain or name. Charges 0.2 credit when data is found
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.hunterio.api.enrichment.company({});
@@ -5993,7 +6001,7 @@ await corsair.hunterio.api.enrichment.company({});
       naics6Codes2022?: string[],
       gicsCode?: string | null
     } | null,
-    tags?: string[],
+    tags?: string[] | null,
     description?: string | null,
     foundedYear?: number | null,
     location?: string | null,
@@ -6020,7 +6028,7 @@ await corsair.hunterio.api.enrichment.company({});
     instagram?: {
       handle?: string | null
     } | null,
-    emailProvider?: boolean,
+    emailProvider?: string | null,
     type?: string | null,
     companyType?: string | null,
     ticker?: string | null,
@@ -6029,22 +6037,22 @@ await corsair.hunterio.api.enrichment.company({});
     } | null,
     phone?: string | null,
     metrics?: {
-      employees?: number | null,
+      employees?: string | null,
       employeesCount?: number | null,
       alexaGlobalRank?: number | null,
       alexaUsRank?: number | null,
       annualRevenue?: number | null,
-      estimatedAnnualRevenue?: string | null,
-      marketCap?: string | null,
+      estimatedAnnualRevenue?: string | number | null,
+      marketCap?: string | number | null,
       raised?: number | null,
-      fiscalYearEnd?: number | null,
+      fiscalYearEnd?: string | number | null,
       trafficRank?: string | null
     } | null,
     indexedAt?: string | null,
     tech?: string[],
     techCategories?: string[],
     fundingRounds?: {
-      amount?: number | null,
+      amount?: string | null,
       date?: string | null,
       investors?: string[],
       type?: string | null
@@ -6056,7 +6064,11 @@ await corsair.hunterio.api.enrichment.company({});
       domain?: string | null
     } | null,
     alreadySaved?: boolean,
-    emailsCount?: number
+    emailsCount?: number | {
+      personal?: number | null,
+      generic?: number | null,
+      total?: number | null
+    } | null
   },
   meta?: {
     total?: number,
@@ -6087,7 +6099,7 @@ await corsair.hunterio.api.enrichment.company({});
     naics6Codes2022?: string[],
     gicsCode?: string | null
   } | null,
-  tags?: string[],
+  tags?: string[] | null,
   description?: string | null,
   foundedYear?: number | null,
   location?: string | null,
@@ -6114,7 +6126,7 @@ await corsair.hunterio.api.enrichment.company({});
   instagram?: {
     handle?: string | null
   } | null,
-  emailProvider?: boolean,
+  emailProvider?: string | null,
   type?: string | null,
   companyType?: string | null,
   ticker?: string | null,
@@ -6123,22 +6135,22 @@ await corsair.hunterio.api.enrichment.company({});
   } | null,
   phone?: string | null,
   metrics?: {
-    employees?: number | null,
+    employees?: string | null,
     employeesCount?: number | null,
     alexaGlobalRank?: number | null,
     alexaUsRank?: number | null,
     annualRevenue?: number | null,
-    estimatedAnnualRevenue?: string | null,
-    marketCap?: string | null,
+    estimatedAnnualRevenue?: string | number | null,
+    marketCap?: string | number | null,
     raised?: number | null,
-    fiscalYearEnd?: number | null,
+    fiscalYearEnd?: string | number | null,
     trafficRank?: string | null
   } | null,
   indexedAt?: string | null,
   tech?: string[],
   techCategories?: string[],
   fundingRounds?: {
-    amount?: number | null,
+    amount?: string | null,
     date?: string | null,
     investors?: string[],
     type?: string | null
@@ -6150,7 +6162,11 @@ await corsair.hunterio.api.enrichment.company({});
     domain?: string | null
   } | null,
   alreadySaved?: boolean,
-  emailsCount?: number
+  emailsCount?: number | {
+    personal?: number | null,
+    generic?: number | null,
+    total?: number | null
+  } | null
 }
 ```
 </Accordion>
@@ -6163,9 +6179,9 @@ await corsair.hunterio.api.enrichment.company({});
 
 `enrichment.person`
 
-Enrich a person profile from an email or name. Charges 0.2 credit when data is found [DESTRUCTIVE · SPENDS CREDITS]
+Enrich a person profile from an email or name. Charges 0.2 credit when data is found
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.hunterio.api.enrichment.person({});
@@ -6239,7 +6255,7 @@ await corsair.hunterio.api.enrichment.person({});
       site?: string | null,
       statuses?: number | null,
       favorites?: number | null,
-      id?: number | null
+      id?: string | number | null
     } | null,
     github?: {
       handle?: string | null,
@@ -6248,7 +6264,7 @@ await corsair.hunterio.api.enrichment.person({});
       company?: string | null,
       followers?: number | null,
       following?: number | null,
-      id?: number | null
+      id?: string | number | null
     } | null,
     gravatar?: {
       handle?: string | null,
@@ -6257,7 +6273,7 @@ await corsair.hunterio.api.enrichment.person({});
       urls?: any[]
     } | null,
     fuzzy?: boolean,
-    emailProvider?: boolean,
+    emailProvider?: string | null,
     phone?: string | null,
     indexedAt?: string | null,
     activeAt?: string | null,
@@ -6320,7 +6336,7 @@ await corsair.hunterio.api.enrichment.person({});
     site?: string | null,
     statuses?: number | null,
     favorites?: number | null,
-    id?: number | null
+    id?: string | number | null
   } | null,
   github?: {
     handle?: string | null,
@@ -6329,7 +6345,7 @@ await corsair.hunterio.api.enrichment.person({});
     company?: string | null,
     followers?: number | null,
     following?: number | null,
-    id?: number | null
+    id?: string | number | null
   } | null,
   gravatar?: {
     handle?: string | null,
@@ -6338,7 +6354,7 @@ await corsair.hunterio.api.enrichment.person({});
     urls?: any[]
   } | null,
   fuzzy?: boolean,
-  emailProvider?: boolean,
+  emailProvider?: string | null,
   phone?: string | null,
   indexedAt?: string | null,
   activeAt?: string | null,
@@ -6685,14 +6701,14 @@ await corsair.hunterio.api.leads.bulkUpsert({});
       status?: string | null
     } | null,
     leads_list?: {
-      id?: number,
-      name?: string,
-      leads_count?: number
+      id?: number | null,
+      name?: string | null,
+      leads_count?: number | null
     } | null,
     leads_lists?: {
-      id?: number,
-      name?: string,
-      leads_count?: number
+      id?: number | null,
+      name?: string | null,
+      leads_count?: number | null
     }[],
     custom_attributes?: Record<string, any>,
     created_at?: string | null,
@@ -6806,14 +6822,14 @@ await corsair.hunterio.api.leads.create({});
     status?: string | null
   } | null,
   leads_list?: {
-    id?: number,
-    name?: string,
-    leads_count?: number
+    id?: number | null,
+    name?: string | null,
+    leads_count?: number | null
   } | null,
   leads_lists?: {
-    id?: number,
-    name?: string,
-    leads_count?: number
+    id?: number | null,
+    name?: string | null,
+    leads_count?: number | null
   }[],
   custom_attributes?: Record<string, any>,
   created_at?: string | null,
@@ -6924,14 +6940,14 @@ await corsair.hunterio.api.leads.enrich({});
     status?: string | null
   } | null,
   leads_list?: {
-    id?: number,
-    name?: string,
-    leads_count?: number
+    id?: number | null,
+    name?: string | null,
+    leads_count?: number | null
   } | null,
   leads_lists?: {
-    id?: number,
-    name?: string,
-    leads_count?: number
+    id?: number | null,
+    name?: string | null,
+    leads_count?: number | null
   }[],
   custom_attributes?: Record<string, any>,
   created_at?: string | null,
@@ -7075,14 +7091,14 @@ await corsair.hunterio.api.leads.get({});
     status?: string | null
   } | null,
   leads_list?: {
-    id?: number,
-    name?: string,
-    leads_count?: number
+    id?: number | null,
+    name?: string | null,
+    leads_count?: number | null
   } | null,
   leads_lists?: {
-    id?: number,
-    name?: string,
-    leads_count?: number
+    id?: number | null,
+    name?: string | null,
+    leads_count?: number | null
   }[],
   custom_attributes?: Record<string, any>,
   created_at?: string | null,
@@ -7351,14 +7367,14 @@ await corsair.hunterio.api.leads.list({});
       status?: string | null
     } | null,
     leads_list?: {
-      id?: number,
-      name?: string,
-      leads_count?: number
+      id?: number | null,
+      name?: string | null,
+      leads_count?: number | null
     } | null,
     leads_lists?: {
-      id?: number,
-      name?: string,
-      leads_count?: number
+      id?: number | null,
+      name?: string | null,
+      leads_count?: number | null
     }[],
     custom_attributes?: Record<string, any>,
     created_at?: string | null,
@@ -7562,14 +7578,14 @@ await corsair.hunterio.api.leads.upsert({});
     status?: string | null
   } | null,
   leads_list?: {
-    id?: number,
-    name?: string,
-    leads_count?: number
+    id?: number | null,
+    name?: string | null,
+    leads_count?: number | null
   } | null,
   leads_lists?: {
-    id?: number,
-    name?: string,
-    leads_count?: number
+    id?: number | null,
+    name?: string | null,
+    leads_count?: number | null
   }[],
   custom_attributes?: Record<string, any>,
   created_at?: string | null,
@@ -8094,14 +8110,14 @@ await corsair.hunterio.api.leadsLists.get({});
       status?: string | null
     } | null,
     leads_list?: {
-      id?: number,
-      name?: string,
-      leads_count?: number
+      id?: number | null,
+      name?: string | null,
+      leads_count?: number | null
     } | null,
     leads_lists?: {
-      id?: number,
-      name?: string,
-      leads_count?: number
+      id?: number | null,
+      name?: string | null,
+      leads_count?: number | null
     }[],
     custom_attributes?: Record<string, any>,
     created_at?: string | null,
@@ -9109,9 +9125,9 @@ await corsair.hunterio.api.monitoredSignals.list({});
 
 `multiDomainSearch.reveal`
 
-Reveal the verified email addresses of a multi-domain search. Charges 1 credit per email revealed for the first time this billing period [DESTRUCTIVE · SPENDS CREDITS]
+Reveal the verified email addresses of a multi-domain search. Charges 1 credit per email revealed for the first time this billing period
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.hunterio.api.multiDomainSearch.reveal({});
@@ -9353,12 +9369,12 @@ await corsair.hunterio.api.opportunities.results({});
 ```ts
 (
   {
-    name: string,
+    name: string | null,
     position: string | null,
     department: string | null,
     seniority: string | null,
     type: string,
-    provenance: string | null,
+    provenance?: string | null,
     decision_maker: boolean | null,
     domain: string,
     company_name: string | null,
@@ -9372,7 +9388,11 @@ await corsair.hunterio.api.opportunities.results({});
   } | {
     domain: string,
     company_name: string | null,
-    emails_count: number
+    emails_count: {
+      personal: number,
+      generic: number,
+      total: number
+    }
   }
 )[]
 ```

@@ -73,10 +73,10 @@ pnpm add @corsair-dev/hunterio
 | `domainCount.get` | `hunterio.api.domainCount.get` | `read` | Count the email addresses available for a domain |
 | `domainFinder.find` | `hunterio.api.domainFinder.find` | `read` | Find the domain of a company by name |
 | `domainFinder.findPost` | `hunterio.api.domainFinder.findPost` | `read` | Find the domain of a company by name (POST form) |
-| `domainSearch.found` | `hunterio.api.domainSearch.found` | `destructive` | Search the email addresses Hunter found on the web for a domain, without generated guesses. Charges 1 credit per 10 emails returned [DESTRUCTIVE · SPENDS CREDITS] |
-| `domainSearch.foundPost` | `hunterio.api.domainSearch.foundPost` | `destructive` | Search found email addresses for a domain with body filters, including location. Charges 1 credit per 10 emails returned [DESTRUCTIVE · SPENDS CREDITS] |
-| `domainSearch.search` | `hunterio.api.domainSearch.search` | `destructive` | List the email addresses found for a domain. Charges 1 credit per 10 emails returned [DESTRUCTIVE · SPENDS CREDITS] |
-| `domainSearch.searchPost` | `hunterio.api.domainSearch.searchPost` | `destructive` | List the email addresses found for a domain (POST form). Charges 1 credit per 10 emails returned [DESTRUCTIVE · SPENDS CREDITS] |
+| `domainSearch.found` | `hunterio.api.domainSearch.found` | `read` | Search the email addresses Hunter found on the web for a domain, without generated guesses. Charges 1 credit per 10 emails returned |
+| `domainSearch.foundPost` | `hunterio.api.domainSearch.foundPost` | `read` | Search found email addresses for a domain with body filters, including location. Charges 1 credit per 10 emails returned |
+| `domainSearch.search` | `hunterio.api.domainSearch.search` | `read` | List the email addresses found for a domain. Charges 1 credit per 10 emails returned |
+| `domainSearch.searchPost` | `hunterio.api.domainSearch.searchPost` | `read` | List the email addresses found for a domain (POST form). Charges 1 credit per 10 emails returned |
 | `domainsSuggestion.get` | `hunterio.api.domainsSuggestion.get` | `read` | Suggest similar company domains |
 | `emailAccounts.capacities` | `hunterio.api.emailAccounts.capacities` | `read` | Get the sending capacities of all email accounts |
 | `emailAccounts.get` | `hunterio.api.emailAccounts.get` | `read` | Get a connected email account |
@@ -88,14 +88,14 @@ pnpm add @corsair-dev/hunterio
 | `emailAccounts.usage` | `hunterio.api.emailAccounts.usage` | `read` | Get sending usage and limits of an email account |
 | `emailAccounts.warmupReport` | `hunterio.api.emailAccounts.warmupReport` | `read` | Get the warmup report of an email account |
 | `emailCount.get` | `hunterio.api.emailCount.get` | `read` | Count the email addresses found for a domain |
-| `emailFinder.find` | `hunterio.api.emailFinder.find` | `destructive` | Find the most likely email of a person. Charges 1 credit when an email is found [DESTRUCTIVE · SPENDS CREDITS] |
-| `emailFinder.findFound` | `hunterio.api.emailFinder.findFound` | `destructive` | Check whether an email was already found for a person. Charges 1 credit when an email is found [DESTRUCTIVE · SPENDS CREDITS] |
-| `emailFinder.findFoundPost` | `hunterio.api.emailFinder.findFoundPost` | `destructive` | Check whether an email was already found (POST form). Charges 1 credit when an email is found [DESTRUCTIVE · SPENDS CREDITS] |
+| `emailFinder.find` | `hunterio.api.emailFinder.find` | `read` | Find the most likely email of a person. Charges 1 credit when an email is found |
+| `emailFinder.findFound` | `hunterio.api.emailFinder.findFound` | `read` | Check whether an email was already found for a person. Charges 1 credit when an email is found |
+| `emailFinder.findFoundPost` | `hunterio.api.emailFinder.findFoundPost` | `read` | Check whether an email was already found (POST form). Charges 1 credit when an email is found |
 | `emailInsight.get` | `hunterio.api.emailInsight.get` | `read` | Get insight data for an email address |
-| `emailVerifier.verify` | `hunterio.api.emailVerifier.verify` | `destructive` | Verify the deliverability of an email address. Charges 0.5 credit per verification [DESTRUCTIVE · SPENDS CREDITS] |
-| `enrichment.combined` | `hunterio.api.enrichment.combined` | `destructive` | Enrich a person and their company together. Charges 0.2 credit when data is found [DESTRUCTIVE · SPENDS CREDITS] |
-| `enrichment.company` | `hunterio.api.enrichment.company` | `destructive` | Enrich a company profile from a domain or name. Charges 0.2 credit when data is found [DESTRUCTIVE · SPENDS CREDITS] |
-| `enrichment.person` | `hunterio.api.enrichment.person` | `destructive` | Enrich a person profile from an email or name. Charges 0.2 credit when data is found [DESTRUCTIVE · SPENDS CREDITS] |
+| `emailVerifier.verify` | `hunterio.api.emailVerifier.verify` | `read` | Verify the deliverability of an email address. Charges 0.5 credit per verification |
+| `enrichment.combined` | `hunterio.api.enrichment.combined` | `read` | Enrich a person and their company together. Charges 0.2 credit when data is found |
+| `enrichment.company` | `hunterio.api.enrichment.company` | `read` | Enrich a company profile from a domain or name. Charges 0.2 credit when data is found |
+| `enrichment.person` | `hunterio.api.enrichment.person` | `read` | Enrich a person profile from an email or name. Charges 0.2 credit when data is found |
 | `feedback.create` | `hunterio.api.feedback.create` | `write` | Send product feedback to Hunter |
 | `leadTags.attach` | `hunterio.api.leadTags.attach` | `write` | Attach a tag to a lead |
 | `leadTags.detach` | `hunterio.api.leadTags.detach` | `destructive` | Detach a tag from a lead [DESTRUCTIVE] |
@@ -138,7 +138,7 @@ pnpm add @corsair-dev/hunterio
 | `messages.list` | `hunterio.api.messages.list` | `read` | List messages sent or received |
 | `messages.send` | `hunterio.api.messages.send` | `destructive` | Send a message from a connected email account. Sends a real email [DESTRUCTIVE · SENDS EMAIL] |
 | `monitoredSignals.list` | `hunterio.api.monitoredSignals.list` | `read` | List the Monitored Signals of the team: funding signals, job openings signals and company follows |
-| `multiDomainSearch.reveal` | `hunterio.api.multiDomainSearch.reveal` | `destructive` | Reveal the verified email addresses of a multi-domain search. Charges 1 credit per email revealed for the first time this billing period [DESTRUCTIVE · SPENDS CREDITS] |
+| `multiDomainSearch.reveal` | `hunterio.api.multiDomainSearch.reveal` | `read` | Reveal the verified email addresses of a multi-domain search. Charges 1 credit per email revealed for the first time this billing period |
 | `multiDomainSearch.search` | `hunterio.api.multiDomainSearch.search` | `read` | Find email addresses across multiple domains |
 | `opportunities.list` | `hunterio.api.opportunities.list` | `read` | List the opportunities of this week: groups of people or companies similar to the leads and companies you saved |
 | `opportunities.results` | `hunterio.api.opportunities.results` | `read` | List the masked people or the companies of one opportunity; reveal emails with multiDomainSearch.reveal |
