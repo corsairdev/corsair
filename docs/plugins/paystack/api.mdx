@@ -27,10 +27,10 @@ await corsair.paystack.api.customers.create({ email: "john.doe@example.com", fir
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `email` | `string` | Yes | Customer email address |
-| `first_name` | `string` | Yes | Customer first name |
-| `last_name` | `string` | Yes | Customer last name |
+| `first_name` | `string` | No | Customer first name |
+| `last_name` | `string` | No | Customer last name |
 | `phone` | `string` | No | Customer phone number |
-| `metadata` | `Record<string, unknown>` | No | Custom data stored with the customer |
+| `metadata` | `Record<string, any>` | No | Custom data stored with the customer |
 
 
 
@@ -254,10 +254,10 @@ await corsair.paystack.api.customers.update({ code: "CUS_1idh4psjybv", first_nam
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `code` | `string` | Yes | Customer code |
-| `first_name` | `string` | Yes | Customer first name |
-| `last_name` | `string` | Yes | Customer last name |
+| `first_name` | `string` | No | Customer first name |
+| `last_name` | `string` | No | Customer last name |
 | `phone` | `string` | No | Customer phone number |
-| `metadata` | `Record<string, unknown>` | No | Custom data stored with the customer |
+| `metadata` | `Record<string, any>` | No | Custom data stored with the customer |
 
 
 
@@ -311,7 +311,7 @@ await corsair.paystack.api.plans.create({ name: "Monthly Retainer", amount: 5000
 |------|------|----------|-------------|
 | `name` | `string` | Yes | Plan name |
 | `amount` | `number` | Yes | Amount in the currency subunit |
-| `interval` | `daily \| weekly \| monthly \| quarterly \| biannually \| annually` | Yes | Billing interval |
+| `interval` | `hourly \| daily \| weekly \| monthly \| quarterly \| biannually \| annually` | Yes | Billing interval |
 | `description` | `string` | No | Plan description |
 | `currency` | `string` | No | Plan currency |
 | `send_invoices` | `boolean` | No | Email invoices to customers |
@@ -419,7 +419,7 @@ await corsair.paystack.api.plans.list({ perPage: 25, interval: "monthly" });
 | `perPage` | `number` | No | Records per page; default 50 |
 | `page` | `number` | No | Page number |
 | `status` | `string` | No | Filter by plan status |
-| `interval` | `daily \| weekly \| monthly \| quarterly \| biannually \| annually` | No | Filter by billing interval |
+| `interval` | `hourly \| daily \| weekly \| monthly \| quarterly \| biannually \| annually` | No | Filter by billing interval |
 | `amount` | `number` | No | Filter by amount in the currency subunit |
 
 
@@ -486,9 +486,9 @@ await corsair.paystack.api.plans.update({ idOrCode: "PLN_0peioxfhpn", name: "Mon
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `idOrCode` | `string` | Yes | Plan id or code |
-| `name` | `string` | Yes | Plan name |
-| `amount` | `number` | Yes | Amount in the currency subunit |
-| `interval` | `daily \| weekly \| monthly \| quarterly \| biannually \| annually` | Yes | Billing interval |
+| `name` | `string` | No | Plan name |
+| `amount` | `number` | No | Amount in the currency subunit |
+| `interval` | `hourly \| daily \| weekly \| monthly \| quarterly \| biannually \| annually` | No | Billing interval |
 | `description` | `string` | No | Plan description |
 | `currency` | `string` | No | Plan currency |
 | `send_invoices` | `boolean` | No | Email invoices to customers |
@@ -505,25 +505,6 @@ update_existing_subscriptions defaults to true; pass false to leave running subs
 |------|------|----------|-------------|
 | `status` | `boolean` | Yes | — |
 | `message` | `string` | Yes | — |
-| `data` | `object` | Yes | A Paystack plan |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-  id: number,
-  plan_code?: string | null,
-  name?: string | null,
-  amount?: number | null,
-  interval?: string | null,
-  description?: string | null,
-  currency?: string | null,
-  created_at?: string | null
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -715,9 +696,9 @@ await corsair.paystack.api.refunds.list({ perPage: 25, page: 1 });
 
 `subscriptions.create`
 
-Subscribe a customer to a plan
+Subscribe a customer to a plan; Paystack then debits the customer's saved card on every interval
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.paystack.api.subscriptions.create({ customer: "john.doe@example.com", plan: "PLN_0peioxfhpn" });
@@ -794,9 +775,9 @@ await corsair.paystack.api.subscriptions.disable({ code: "SUB_vsy260vl9vvrcv9", 
 
 `subscriptions.enable`
 
-Enable a subscription with its email token
+Enable a subscription with its email token; debits of the customer's card resume
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.paystack.api.subscriptions.enable({ code: "SUB_vsy260vl9vvrcv9", token: "uhslf0re31yqu1w2x21d" });
@@ -1046,7 +1027,7 @@ await corsair.paystack.api.transactions.initialize({ amount: "10000", email: "jo
 | `reference` | `string` | No | Your unique transaction reference |
 | `callback_url` | `string` | No | Where the checkout redirects after payment |
 | `plan` | `string` | No | Plan code to charge the customer for |
-| `metadata` | `Record<string, unknown>` | No | Custom data returned with the transaction |
+| `metadata` | `Record<string, any>` | No | Custom data returned with the transaction |
 
 The answer carries authorization_url (redirect the customer), access_code (inline JS) and reference. Amount is in the currency subunit.
 
@@ -1101,7 +1082,7 @@ await corsair.paystack.api.transactions.list({ perPage: 25, page: 1, status: "su
 | `to` | `string` | No | Transactions to this datetime |
 | `amount` | `number` | No | Filter by amount in the currency subunit |
 
-Status filter accepts failed, success or abandoned; meta.next holds the next page URL.
+Status filter accepts failed, success or abandoned; meta.next is an opaque cursor, not a URL; page through with page and perPage.
 
 
 

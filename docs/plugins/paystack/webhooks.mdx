@@ -58,7 +58,7 @@ A Paystack webhook delivery: charge, transfer or refund events
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `event` | `string` | Yes | — |
-| `data` | `Record<string, any> \| null` | No | — |
+| `data` | `Record<string, any> \| Record<string, any>[] \| null` | No | — |
 
 
 
@@ -68,7 +68,7 @@ A Paystack webhook delivery: charge, transfer or refund events
 ```ts
 {
   event: string,
-  data?: Record<string, any> | null
+  data?: Record<string, any> | Record<string, any>[] | null
 }
 ```
 </Accordion>
