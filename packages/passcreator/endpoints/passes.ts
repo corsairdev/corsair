@@ -269,11 +269,9 @@ export const sendEmail: PasscreatorEndpoints['passesSendEmail'] = (
 		}),
 		{
 			shape: (raw, { passUid }) => {
-				// A success envelope or an empty answer both mean sent.
-				const record = raw as { success?: unknown } | undefined;
-				if (record && typeof record === 'object' && record.success === false) {
-					throw new Error('Passcreator passes.sendEmail: the send failed');
-				}
+				// The API documents a 200 with no body; anything else is not a
+				// confirmed send.
+				expectEmpty(raw, 'passes.sendEmail');
 				return { passUid, success: true };
 			},
 			log: (_, result) => ({ success: result.success }),

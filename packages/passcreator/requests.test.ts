@@ -218,8 +218,8 @@ describe('passes', () => {
 		});
 	});
 
-	it('sendEmail POSTs to the deliver route', async () => {
-		respond(writeResult);
+	it('sendEmail POSTs to the deliver route and accepts the empty 200', async () => {
+		respond(undefined, 200);
 		await invoke(Passes.sendEmail, {
 			passUid: 'uid1',
 			email: 'john.doe@example.com',
@@ -228,6 +228,18 @@ describe('passes', () => {
 			'/api/pass/deliver/uid1/email/john.doe@example.com',
 			'POST',
 		);
+	});
+});
+
+describe('sendEmail answers', () => {
+	it('refuses a body that is not the documented empty answer', async () => {
+		respond(['unexpected']);
+		await expect(
+			invoke(Passes.sendEmail, {
+				passUid: 'uid1',
+				email: 'john.doe@example.com',
+			}),
+		).rejects.toThrow('unexpected response body');
 	});
 });
 
