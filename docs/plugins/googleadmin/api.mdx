@@ -1,0 +1,2875 @@
+---
+title: "Google Admin API reference"
+sidebarTitle: "API"
+description: "API reference for the Google Admin plugin in Corsair: every `googleadmin.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Customers
+
+### get
+
+`customers.get`
+
+Read the account's customer record, including its primary domain
+
+**Risk:** `read`
+
+```ts
+await corsair.googleadmin.api.customers.get({ customerKey: 'my_customer' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerKey` | `string` | Yes | The customer ID, or `my_customer` for the caller's own account |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | The customer ID, the `my_customer` alias target |
+| `customerDomain` | `string \| null` | No | — |
+| `alternateEmail` | `string \| null` | No | — |
+| `phoneNumber` | `string \| null` | No | E.164 format |
+| `language` | `string \| null` | No | ISO 639-2 language code |
+| `customerCreationTime` | `string \| null` | No | — |
+| `postalAddress` | `object \| null` | No | — |
+| `etag` | `string \| null` | No | ETag of the resource |
+| `kind` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="postalAddress full type">
+
+```ts
+{
+  contactName?: string | null,
+  organizationName?: string | null,
+  addressLine1?: string | null,
+  addressLine2?: string | null,
+  addressLine3?: string | null,
+  locality?: string | null,
+  region?: string | null,
+  postalCode?: string | null,
+  countryCode?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Domains
+
+### aliases.list
+
+`domains.aliases.list`
+
+List the account's domain aliases, optionally for one parent domain
+
+**Risk:** `read`
+
+```ts
+await corsair.googleadmin.api.domains.aliases.list({ customer: 'my_customer', parentDomainName: 'example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer` | `string` | Yes | — |
+| `parentDomainName` | `string \| null` | No | Only list the aliases of this parent domain |
+
+The API caps an account at 20 domain aliases.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string \| null` | No | — |
+| `etag` | `string \| null` | No | — |
+| `domainAliases` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="domainAliases full type">
+
+```ts
+{
+  domainAliasName?: string | null,
+  parentDomainName?: string | null,
+  verified?: boolean | null,
+  creationTime?: string | null,
+  etag?: string | null,
+  kind?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`domains.get`
+
+Read one domain
+
+**Risk:** `read`
+
+```ts
+await corsair.googleadmin.api.domains.get({ customer: 'my_customer', domainName: 'example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer` | `string` | Yes | — |
+| `domainName` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domainName` | `string \| null` | No | — |
+| `domainAliases` | `object[] \| null` | No | Read-only |
+| `isPrimary` | `boolean \| null` | No | Read-only |
+| `verified` | `boolean \| null` | No | Read-only |
+| `creationTime` | `string \| null` | No | Unix time in milliseconds |
+| `etag` | `string \| null` | No | ETag of the resource |
+| `kind` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="domainAliases full type">
+
+```ts
+{
+  domainAliasName?: string | null,
+  parentDomainName?: string | null,
+  verified?: boolean | null,
+  creationTime?: string | null,
+  etag?: string | null,
+  kind?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`domains.list`
+
+List the account's domains
+
+**Risk:** `read`
+
+```ts
+await corsair.googleadmin.api.domains.list({ customer: 'my_customer' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer` | `string` | Yes | The customer ID, or `my_customer` for the caller's own account |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string \| null` | No | — |
+| `etag` | `string \| null` | No | — |
+| `domains` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="domains full type">
+
+```ts
+{
+  domainName?: string | null,
+  domainAliases?: {
+    domainAliasName?: string | null,
+    parentDomainName?: string | null,
+    verified?: boolean | null,
+    creationTime?: string | null,
+    etag?: string | null,
+    kind?: string | null
+  }[] | null,
+  isPrimary?: boolean | null,
+  verified?: boolean | null,
+  creationTime?: string | null,
+  etag?: string | null,
+  kind?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Groups
+
+### aliases.delete
+
+`groups.aliases.delete`
+
+Remove an alias email address from a group
+
+**Risk:** `destructive`
+
+```ts
+await corsair.googleadmin.api.groups.aliases.delete({ groupKey: 'engineering@example.com', alias: 'eng@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupKey` | `string` | Yes | — |
+| `alias` | `string` | Yes | The alias to remove |
+
+
+
+**Output:** `void`
+
+
+---
+
+### aliases.insert
+
+`groups.aliases.insert`
+
+Add an alias email address to a group
+
+**Risk:** `write`
+
+```ts
+await corsair.googleadmin.api.groups.aliases.insert({ groupKey: 'engineering@example.com', alias: 'eng@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupKey` | `string` | Yes | — |
+| `alias` | `string` | Yes | The alias email address to add |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `primaryEmail` | `string \| null` | No | — |
+| `alias` | `string \| null` | No | — |
+| `etag` | `string \| null` | No | ETag of the resource |
+| `kind` | `string \| null` | No | — |
+
+
+
+---
+
+### aliases.list
+
+`groups.aliases.list`
+
+List a group's aliases
+
+**Risk:** `read`
+
+```ts
+await corsair.googleadmin.api.groups.aliases.list({ groupKey: 'engineering@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupKey` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string \| null` | No | — |
+| `etag` | `string \| null` | No | — |
+| `aliases` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="aliases full type">
+
+```ts
+{
+  id?: string | null,
+  primaryEmail?: string | null,
+  alias?: string | null,
+  etag?: string | null,
+  kind?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`groups.delete`
+
+Delete a group and its memberships
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.googleadmin.api.groups.delete({ groupKey: 'engineering@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupKey` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`groups.get`
+
+Read one group by email, alias or ID
+
+**Risk:** `read`
+
+```ts
+await corsair.googleadmin.api.groups.get({ groupKey: 'engineering@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupKey` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Unique group ID, usable as groupKey |
+| `email` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | At most 4,096 characters |
+| `adminCreated` | `boolean \| null` | No | Read-only |
+| `directMembersCount` | `string \| null` | No | int64 as a string. Nested members of a child group are not counted |
+| `etag` | `string \| null` | No | ETag of the resource |
+| `kind` | `string \| null` | No | — |
+| `aliases` | `string[] \| null` | No | Read-only |
+| `nonEditableAliases` | `string[] \| null` | No | Read-only |
+
+
+
+---
+
+### insert
+
+`groups.insert`
+
+Create a group
+
+**Risk:** `write`
+
+```ts
+await corsair.googleadmin.api.groups.insert({ email: 'engineering@example.com', name: 'Engineering' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | Required. The group address, unique in the account |
+| `name` | `string \| null` | No | The group display name |
+| `description` | `string \| null` | No | At most 4,096 characters |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Unique group ID, usable as groupKey |
+| `email` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | At most 4,096 characters |
+| `adminCreated` | `boolean \| null` | No | Read-only |
+| `directMembersCount` | `string \| null` | No | int64 as a string. Nested members of a child group are not counted |
+| `etag` | `string \| null` | No | ETag of the resource |
+| `kind` | `string \| null` | No | — |
+| `aliases` | `string[] \| null` | No | Read-only |
+| `nonEditableAliases` | `string[] \| null` | No | Read-only |
+
+
+
+---
+
+### list
+
+`groups.list`
+
+List groups in the account, one domain, or the groups a user belongs to
+
+**Risk:** `read`
+
+```ts
+await corsair.googleadmin.api.groups.list({ customer: 'my_customer', maxResults: 200 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer` | `string \| null` | No | The unique customer ID, or `my_customer` for the caller's own account |
+| `domain` | `string \| null` | No | A domain name. Send this or customer, not both |
+| `userKey` | `string \| null` | No | List only the groups this user belongs to. Cannot be combined with customer |
+| `query` | `string \| null` | No | Search clauses such as `name:engineering` or `email:eng*` |
+| `maxResults` | `number \| null` | No | 1 to 200. 200 is both the default and the maximum, per the limits page |
+| `pageToken` | `string \| null` | No | nextPageToken from a previous page |
+| `orderBy` | `email \| null` | No | The only documented value |
+| `sortOrder` | `ASCENDING \| DESCENDING \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string \| null` | No | — |
+| `etag` | `string \| null` | No | — |
+| `groups` | `object[] \| null` | No | Absent when the domain has no groups |
+| `nextPageToken` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="groups full type">
+
+```ts
+{
+  id?: string | null,
+  email?: string | null,
+  name?: string | null,
+  description?: string | null,
+  adminCreated?: boolean | null,
+  directMembersCount?: string | null,
+  etag?: string | null,
+  kind?: string | null,
+  aliases?: string[] | null,
+  nonEditableAliases?: string[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`groups.update`
+
+Update a group's email, display name or description
+
+**Risk:** `write`
+
+```ts
+await corsair.googleadmin.api.groups.update({ groupKey: 'engineering@example.com', description: 'Platform team' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupKey` | `string` | Yes | — |
+| `email` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+
+Sends PATCH, so an omitted field keeps its value.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Unique group ID, usable as groupKey |
+| `email` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | At most 4,096 characters |
+| `adminCreated` | `boolean \| null` | No | Read-only |
+| `directMembersCount` | `string \| null` | No | int64 as a string. Nested members of a child group are not counted |
+| `etag` | `string \| null` | No | ETag of the resource |
+| `kind` | `string \| null` | No | — |
+| `aliases` | `string[] \| null` | No | Read-only |
+| `nonEditableAliases` | `string[] \| null` | No | Read-only |
+
+
+
+---
+
+## Members
+
+### delete
+
+`members.delete`
+
+Remove a member from a group; the member loses the group's mail and access
+
+**Risk:** `destructive`
+
+```ts
+await corsair.googleadmin.api.members.delete({ groupKey: 'engineering@example.com', memberKey: 'ada@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupKey` | `string` | Yes | — |
+| `memberKey` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`members.get`
+
+Read one group membership
+
+**Risk:** `read`
+
+```ts
+await corsair.googleadmin.api.members.get({ groupKey: 'engineering@example.com', memberKey: 'ada@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupKey` | `string` | Yes | — |
+| `memberKey` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Unique member ID, usable as memberKey |
+| `email` | `string \| null` | No | — |
+| `role` | `string \| null` | No | `OWNER`, `MANAGER` or `MEMBER` |
+| `type` | `string \| null` | No | `USER`, `GROUP`, `CUSTOMER` or `EXTERNAL` |
+| `status` | `string \| null` | No | Read-only |
+| `delivery_settings` | `string \| null` | No | `ALL_MAIL`, `DAILY`, `DIGEST`, `DISABLED` or `NONE`. Snake case is Google's spelling |
+| `etag` | `string \| null` | No | ETag of the resource |
+| `kind` | `string \| null` | No | — |
+
+
+
+---
+
+### hasMember
+
+`members.hasMember`
+
+Check whether a user is a direct or nested member of a group
+
+**Risk:** `read`
+
+```ts
+await corsair.googleadmin.api.members.hasMember({ groupKey: 'engineering@example.com', memberKey: 'ada@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupKey` | `string` | Yes | — |
+| `memberKey` | `string` | Yes | The user's primary email, alias, or unique ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `isMember` | `boolean` | Yes | True for a direct or nested membership |
+
+
+
+---
+
+### insert
+
+`members.insert`
+
+Add a user or group to a group with a role and a mail delivery preference
+
+**Risk:** `write`
+
+```ts
+await corsair.googleadmin.api.members.insert({ groupKey: 'engineering@example.com', email: 'ada@example.com', role: 'MEMBER' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupKey` | `string` | Yes | — |
+| `email` | `string` | Yes | Required. The member address |
+| `role` | `OWNER \| MANAGER \| MEMBER \| null` | No | Defaults to MEMBER |
+| `type` | `USER \| GROUP \| CUSTOMER \| EXTERNAL \| null` | No | Required when the member is outside the account domains |
+| `delivery_settings` | `ALL_MAIL \| DAILY \| DIGEST \| DISABLED \| NONE \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Unique member ID, usable as memberKey |
+| `email` | `string \| null` | No | — |
+| `role` | `string \| null` | No | `OWNER`, `MANAGER` or `MEMBER` |
+| `type` | `string \| null` | No | `USER`, `GROUP`, `CUSTOMER` or `EXTERNAL` |
+| `status` | `string \| null` | No | Read-only |
+| `delivery_settings` | `string \| null` | No | `ALL_MAIL`, `DAILY`, `DIGEST`, `DISABLED` or `NONE`. Snake case is Google's spelling |
+| `etag` | `string \| null` | No | ETag of the resource |
+| `kind` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`members.list`
+
+List a group's members, optionally including members inherited from nested groups and filtered by role
+
+**Risk:** `read`
+
+```ts
+await corsair.googleadmin.api.members.list({ groupKey: 'engineering@example.com', maxResults: 200 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupKey` | `string` | Yes | — |
+| `includeDerivedMembership` | `boolean \| null` | No | Also list members inherited from nested groups |
+| `roles` | `string \| null` | No | A comma-separated subset of `OWNER`, `MANAGER`, `MEMBER` |
+| `maxResults` | `number \| null` | No | 1 to 200. 200 is both the default and the maximum |
+| `pageToken` | `string \| null` | No | — |
+
+`roles` takes a comma-separated subset of `OWNER`, `MANAGER` and `MEMBER`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string \| null` | No | — |
+| `etag` | `string \| null` | No | — |
+| `members` | `object[] \| null` | No | Absent when the group has no members |
+| `nextPageToken` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  id?: string | null,
+  email?: string | null,
+  role?: string | null,
+  type?: string | null,
+  status?: string | null,
+  delivery_settings?: string | null,
+  etag?: string | null,
+  kind?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`members.update`
+
+Change a member's role or mail delivery preference
+
+**Risk:** `write`
+
+```ts
+await corsair.googleadmin.api.members.update({ groupKey: 'engineering@example.com', memberKey: 'ada@example.com', role: 'OWNER' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupKey` | `string` | Yes | — |
+| `memberKey` | `string` | Yes | — |
+| `role` | `OWNER \| MANAGER \| MEMBER \| null` | No | — |
+| `delivery_settings` | `ALL_MAIL \| DAILY \| DIGEST \| DISABLED \| NONE \| null` | No | Needs `role` too: Google takes a delivery change only through the PUT update, which replaces the role as well |
+
+A role change alone sends PATCH. A delivery preference change sends the PUT, which replaces the role too, so pass `role` with `delivery_settings`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Unique member ID, usable as memberKey |
+| `email` | `string \| null` | No | — |
+| `role` | `string \| null` | No | `OWNER`, `MANAGER` or `MEMBER` |
+| `type` | `string \| null` | No | `USER`, `GROUP`, `CUSTOMER` or `EXTERNAL` |
+| `status` | `string \| null` | No | Read-only |
+| `delivery_settings` | `string \| null` | No | `ALL_MAIL`, `DAILY`, `DIGEST`, `DISABLED` or `NONE`. Snake case is Google's spelling |
+| `etag` | `string \| null` | No | ETag of the resource |
+| `kind` | `string \| null` | No | — |
+
+
+
+---
+
+## Org Units
+
+### delete
+
+`orgUnits.delete`
+
+Delete an organizational unit. It must hold no users or child units first
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.googleadmin.api.orgUnits.delete({ customerId: 'my_customer', orgUnitPath: 'engineering/apps' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | — |
+| `orgUnitPath` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`orgUnits.get`
+
+Read one organizational unit
+
+**Risk:** `read`
+
+```ts
+await corsair.googleadmin.api.orgUnits.get({ customerId: 'my_customer', orgUnitPath: 'engineering/apps' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | — |
+| `orgUnitPath` | `string` | Yes | Full path without the leading slash, e.g. `engineering/apps`, or the unique ID |
+
+The path is the full one without a leading slash, e.g. `engineering/apps`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgUnitId` | `string \| null` | No | — |
+| `orgUnitPath` | `string \| null` | No | Derived full path, e.g. `/engineering/apps` |
+| `name` | `string \| null` | No | The path segment, e.g. `apps` |
+| `description` | `string \| null` | No | — |
+| `parentOrgUnitId` | `string \| null` | No | — |
+| `parentOrgUnitPath` | `string \| null` | No | — |
+| `etag` | `string \| null` | No | ETag of the resource |
+| `kind` | `string \| null` | No | — |
+
+
+
+---
+
+### insert
+
+`orgUnits.insert`
+
+Create an organizational unit under a parent
+
+**Risk:** `write`
+
+```ts
+await corsair.googleadmin.api.orgUnits.insert({ customerId: 'my_customer', name: 'apps', parentOrgUnitPath: '/engineering' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | — |
+| `name` | `string` | Yes | Required. The path segment, e.g. `sales_support` |
+| `description` | `string \| null` | No | — |
+| `parentOrgUnitPath` | `string \| null` | No | Required unless parentOrgUnitId is set, e.g. `/corp/sales` |
+| `parentOrgUnitId` | `string \| null` | No | Required unless parentOrgUnitPath is set |
+
+Send `parentOrgUnitPath` or `parentOrgUnitId`; one of them is required.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgUnitId` | `string \| null` | No | — |
+| `orgUnitPath` | `string \| null` | No | Derived full path, e.g. `/engineering/apps` |
+| `name` | `string \| null` | No | The path segment, e.g. `apps` |
+| `description` | `string \| null` | No | — |
+| `parentOrgUnitId` | `string \| null` | No | — |
+| `parentOrgUnitPath` | `string \| null` | No | — |
+| `etag` | `string \| null` | No | ETag of the resource |
+| `kind` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`orgUnits.list`
+
+List organizational units: immediate children, all descendants, or all descendants plus the unit itself
+
+**Risk:** `read`
+
+```ts
+await corsair.googleadmin.api.orgUnits.list({ customerId: 'my_customer', type: 'children' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | The customer ID, or `my_customer` for the caller's own account |
+| `orgUnitPath` | `string \| null` | No | Full path or unique ID; lists the children of this unit |
+| `type` | `all \| children \| allIncludingParent \| null` | No | Defaults to `children` |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string \| null` | No | — |
+| `etag` | `string \| null` | No | — |
+| `organizationUnits` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="organizationUnits full type">
+
+```ts
+{
+  orgUnitId?: string | null,
+  orgUnitPath?: string | null,
+  name?: string | null,
+  description?: string | null,
+  parentOrgUnitId?: string | null,
+  parentOrgUnitPath?: string | null,
+  etag?: string | null,
+  kind?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`orgUnits.update`
+
+Rename an organizational unit or move it under another parent, which changes the settings its users inherit
+
+**Risk:** `write`
+
+```ts
+await corsair.googleadmin.api.orgUnits.update({ customerId: 'my_customer', orgUnitPath: 'engineering/apps', description: 'Client apps' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | — |
+| `orgUnitPath` | `string` | Yes | Full path of the unit to update, e.g. `engineering/apps` |
+| `name` | `string \| null` | No | A new path segment |
+| `description` | `string \| null` | No | — |
+| `parentOrgUnitPath` | `string \| null` | No | — |
+| `parentOrgUnitId` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgUnitId` | `string \| null` | No | — |
+| `orgUnitPath` | `string \| null` | No | Derived full path, e.g. `/engineering/apps` |
+| `name` | `string \| null` | No | The path segment, e.g. `apps` |
+| `description` | `string \| null` | No | — |
+| `parentOrgUnitId` | `string \| null` | No | — |
+| `parentOrgUnitPath` | `string \| null` | No | — |
+| `etag` | `string \| null` | No | ETag of the resource |
+| `kind` | `string \| null` | No | — |
+
+
+
+---
+
+## Users
+
+### aliases.delete
+
+`users.aliases.delete`
+
+Remove alias email addresses from a user; mail to a removed alias is no longer delivered
+
+**Risk:** `destructive`
+
+```ts
+await corsair.googleadmin.api.users.aliases.delete({ userKey: 'ada@example.com', alias: 'ada.l@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userKey` | `string` | Yes | — |
+| `alias` | `string` | Yes | The alias to remove |
+
+
+
+**Output:** `void`
+
+
+---
+
+### aliases.insert
+
+`users.aliases.insert`
+
+Add an alias email address to a user
+
+**Risk:** `write`
+
+```ts
+await corsair.googleadmin.api.users.aliases.insert({ userKey: 'ada@example.com', alias: 'ada.l@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userKey` | `string` | Yes | — |
+| `alias` | `string` | Yes | The alias email address, inside one of the account domains |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `primaryEmail` | `string \| null` | No | — |
+| `alias` | `string \| null` | No | — |
+| `etag` | `string \| null` | No | ETag of the resource |
+| `kind` | `string \| null` | No | — |
+
+
+
+---
+
+### aliases.list
+
+`users.aliases.list`
+
+List a user's alias email addresses
+
+**Risk:** `read`
+
+```ts
+await corsair.googleadmin.api.users.aliases.list({ userKey: 'ada@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userKey` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string \| null` | No | — |
+| `etag` | `string \| null` | No | — |
+| `aliases` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="aliases full type">
+
+```ts
+{
+  id?: string | null,
+  primaryEmail?: string | null,
+  alias?: string | null,
+  etag?: string | null,
+  kind?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`users.delete`
+
+Delete a user account. The account stays recoverable through users.undelete while it is in the trash
+
+**Risk:** `destructive`
+
+```ts
+await corsair.googleadmin.api.users.delete({ userKey: 'ada@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userKey` | `string` | Yes | Primary email, alias email, or unique user ID |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`users.get`
+
+Read one user by email, alias or ID
+
+**Risk:** `read`
+
+```ts
+await corsair.googleadmin.api.users.get({ userKey: 'ada@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userKey` | `string` | Yes | Primary email, alias email, or the unique user ID |
+| `projection` | `basic \| custom \| full \| null` | No | `basic` omits custom fields, `custom` returns the schemas named in customFieldMask, `full` returns everything. |
+| `customFieldMask` | `string \| null` | No | Comma-separated schema names, only with projection `custom` |
+| `viewType` | `admin_view \| domain_public \| null` | No | `admin_view` includes administrator-only fields; `domain_public` is what another user in the domain can see. |
+
+A `customFieldMask` is only read when `projection` is `custom`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique user ID, usable as userKey |
+| `primaryEmail` | `string` | Yes | — |
+| `name` | `object \| null` | No | — |
+| `etag` | `string \| null` | No | ETag of the resource |
+| `kind` | `string \| null` | No | — |
+| `aliases` | `string[] \| null` | No | Read-only. Alias email addresses of the user |
+| `nonEditableAliases` | `string[] \| null` | No | Read-only. Aliases outside the account domains |
+| `customerId` | `string \| null` | No | — |
+| `orgUnitPath` | `string \| null` | No | Full path of the parent organizational unit, `/` at the top level |
+| `isAdmin` | `boolean \| null` | No | Read-only. Edited through users.makeAdmin |
+| `isDelegatedAdmin` | `boolean \| null` | No | — |
+| `lastLoginTime` | `string \| null` | No | RFC 3339 timestamp |
+| `creationTime` | `string \| null` | No | RFC 3339 timestamp |
+| `deletionTime` | `string \| null` | No | RFC 3339 timestamp |
+| `agreedToTerms` | `boolean \| null` | No | — |
+| `suspended` | `boolean \| null` | No | — |
+| `suspensionReason` | `string \| null` | No | — |
+| `suspensionTime` | `string \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `archivalTime` | `string \| null` | No | — |
+| `changePasswordAtNextLogin` | `boolean \| null` | No | — |
+| `ipWhitelisted` | `boolean \| null` | No | — |
+| `includeInGlobalAddressList` | `boolean \| null` | No | — |
+| `isMailboxSetup` | `boolean \| null` | No | — |
+| `isEnrolledIn2Sv` | `boolean \| null` | No | — |
+| `isEnforcedIn2Sv` | `boolean \| null` | No | — |
+| `isGuestUser` | `boolean \| null` | No | — |
+| `thumbnailPhotoUrl` | `string \| null` | No | Output only. The URL may be temporary or private |
+| `thumbnailPhotoEtag` | `string \| null` | No | — |
+| `recoveryEmail` | `string \| null` | No | — |
+| `recoveryPhone` | `string \| null` | No | E.164 format, e.g. +16506661212 |
+| `emails` | `object[] \| null` | No | — |
+| `phones` | `object[] \| null` | No | — |
+| `addresses` | `object[] \| null` | No | — |
+| `organizations` | `object[] \| null` | No | — |
+| `externalIds` | `object[] \| null` | No | — |
+| `relations` | `object[] \| null` | No | — |
+| `websites` | `object[] \| null` | No | — |
+| `ims` | `object[] \| null` | No | — |
+| `locations` | `object[] \| null` | No | — |
+| `languages` | `object[] \| null` | No | — |
+| `keywords` | `object[] \| null` | No | — |
+| `gender` | `object \| null` | No | — |
+| `notes` | `object \| null` | No | — |
+| `posixAccounts` | `object[] \| null` | No | — |
+| `sshPublicKeys` | `object[] \| null` | No | — |
+| `customSchemas` | `Record<string, Record<string, any>> \| null` | No | Custom fields, keyed by schema name then field name |
+
+<AccordionGroup>
+<Accordion title="name full type">
+
+```ts
+{
+  givenName?: string | null,
+  familyName?: string | null,
+  fullName?: string | null,
+  displayName?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="emails full type">
+
+```ts
+{
+  address?: string | null,
+  type?: string | null,
+  customType?: string | null,
+  primary?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="phones full type">
+
+```ts
+{
+  value?: string | null,
+  type?: string | null,
+  customType?: string | null,
+  primary?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="addresses full type">
+
+```ts
+{
+  type?: string | null,
+  customType?: string | null,
+  primary?: boolean | null,
+  formatted?: string | null,
+  streetAddress?: string | null,
+  extendedAddress?: string | null,
+  poBox?: string | null,
+  locality?: string | null,
+  region?: string | null,
+  postalCode?: string | null,
+  country?: string | null,
+  countryCode?: string | null,
+  sourceIsStructured?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="organizations full type">
+
+```ts
+{
+  name?: string | null,
+  title?: string | null,
+  department?: string | null,
+  description?: string | null,
+  location?: string | null,
+  costCenter?: string | null,
+  primary?: boolean | null,
+  type?: string | null,
+  customType?: string | null,
+  domain?: string | null,
+  symbol?: string | null,
+  fullTimeEquivalent?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="externalIds full type">
+
+```ts
+{
+  value?: string | null,
+  type?: string | null,
+  customType?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="relations full type">
+
+```ts
+{
+  value?: string | null,
+  type?: string | null,
+  customType?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="websites full type">
+
+```ts
+{
+  value?: string | null,
+  type?: string | null,
+  customType?: string | null,
+  primary?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="ims full type">
+
+```ts
+{
+  im?: string | null,
+  type?: string | null,
+  protocol?: string | null,
+  customProtocol?: string | null,
+  customType?: string | null,
+  primary?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="locations full type">
+
+```ts
+{
+  type?: string | null,
+  customType?: string | null,
+  area?: string | null,
+  buildingId?: string | null,
+  floorName?: string | null,
+  floorSection?: string | null,
+  deskCode?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="languages full type">
+
+```ts
+{
+  languageCode?: string | null,
+  preference?: string | null,
+  customLanguage?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="keywords full type">
+
+```ts
+{
+  value?: string | null,
+  type?: string | null,
+  customType?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="gender full type">
+
+```ts
+{
+  type?: string | null,
+  customGender?: string | null,
+  addressMeAs?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="notes full type">
+
+```ts
+{
+  contentType?: string | null,
+  value?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="posixAccounts full type">
+
+```ts
+{
+  username?: string | null,
+  uid?: string | null,
+  gid?: string | null,
+  systemId?: string | null,
+  homeDirectory?: string | null,
+  shell?: string | null,
+  gecos?: string | null,
+  primary?: boolean | null,
+  accountId?: string | null,
+  operatingSystemType?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="sshPublicKeys full type">
+
+```ts
+{
+  key?: string | null,
+  expirationTimeUsec?: string | null,
+  fingerprint?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### insert
+
+`users.insert`
+
+Create a user account with an initial password. On a flexible Workspace plan the new user is a billed licence
+
+**Risk:** `destructive`
+
+```ts
+await corsair.googleadmin.api.users.insert({ primaryEmail: 'ada@example.com', name: { givenName: 'Ada', familyName: 'Lovelace' }, password: 'change-me-now', orgUnitPath: '/engineering' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `primaryEmail` | `string` | Yes | Required. Unique, and not an alias of another user |
+| `name` | `object` | Yes | — |
+| `password` | `string` | Yes | Required. Either the plain password (8 to 100 characters) or a hash when hashFunction is set |
+| `hashFunction` | `MD5 \| SHA-1 \| crypt \| null` | No | Set when `password` is already a hash: hex for MD5 and SHA-1; `crypt` takes DES, $1$, $5$ and $6$ hashes |
+| `orgUnitPath` | `string \| null` | No | Full path of the parent organizational unit, `/` for the top level |
+| `includeInGlobalAddressList` | `boolean \| null` | No | — |
+| `changePasswordAtNextLogin` | `boolean \| null` | No | — |
+| `suspended` | `boolean \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `ipWhitelisted` | `boolean \| null` | No | — |
+| `recoveryEmail` | `string \| null` | No | — |
+| `recoveryPhone` | `string \| null` | No | E.164 format starting with +, e.g. +16506661212 |
+| `isGuestUser` | `boolean \| null` | No | Immutable once set |
+| `emails` | `object[] \| null` | No | — |
+| `phones` | `object[] \| null` | No | — |
+| `addresses` | `object[] \| null` | No | — |
+| `organizations` | `object[] \| null` | No | — |
+| `externalIds` | `object[] \| null` | No | — |
+| `relations` | `object[] \| null` | No | — |
+| `websites` | `object[] \| null` | No | — |
+| `ims` | `object[] \| null` | No | — |
+| `locations` | `object[] \| null` | No | — |
+| `languages` | `object[] \| null` | No | — |
+| `keywords` | `object[] \| null` | No | — |
+| `gender` | `object \| null` | No | — |
+| `notes` | `object \| null` | No | — |
+| `posixAccounts` | `object[] \| null` | No | — |
+| `sshPublicKeys` | `object[] \| null` | No | — |
+| `customSchemas` | `Record<string, Record<string, any>> \| null` | No | — |
+
+A plain `password` is 8 to 100 characters. With `hashFunction` set it is a hash, which can be longer.
+
+<AccordionGroup>
+<Accordion title="name full type">
+
+```ts
+{
+  givenName: string,
+  familyName: string,
+  displayName?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="emails full type">
+
+```ts
+{
+  address?: string | null,
+  type?: string | null,
+  customType?: string | null,
+  primary?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="phones full type">
+
+```ts
+{
+  value?: string | null,
+  type?: string | null,
+  customType?: string | null,
+  primary?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="addresses full type">
+
+```ts
+{
+  type?: string | null,
+  customType?: string | null,
+  primary?: boolean | null,
+  formatted?: string | null,
+  streetAddress?: string | null,
+  extendedAddress?: string | null,
+  poBox?: string | null,
+  locality?: string | null,
+  region?: string | null,
+  postalCode?: string | null,
+  country?: string | null,
+  countryCode?: string | null,
+  sourceIsStructured?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="organizations full type">
+
+```ts
+{
+  name?: string | null,
+  title?: string | null,
+  department?: string | null,
+  description?: string | null,
+  location?: string | null,
+  costCenter?: string | null,
+  primary?: boolean | null,
+  type?: string | null,
+  customType?: string | null,
+  domain?: string | null,
+  symbol?: string | null,
+  fullTimeEquivalent?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="externalIds full type">
+
+```ts
+{
+  value?: string | null,
+  type?: string | null,
+  customType?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="relations full type">
+
+```ts
+{
+  value?: string | null,
+  type?: string | null,
+  customType?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="websites full type">
+
+```ts
+{
+  value?: string | null,
+  type?: string | null,
+  customType?: string | null,
+  primary?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="ims full type">
+
+```ts
+{
+  im?: string | null,
+  type?: string | null,
+  protocol?: string | null,
+  customProtocol?: string | null,
+  customType?: string | null,
+  primary?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="locations full type">
+
+```ts
+{
+  type?: string | null,
+  customType?: string | null,
+  area?: string | null,
+  buildingId?: string | null,
+  floorName?: string | null,
+  floorSection?: string | null,
+  deskCode?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="languages full type">
+
+```ts
+{
+  languageCode?: string | null,
+  preference?: string | null,
+  customLanguage?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="keywords full type">
+
+```ts
+{
+  value?: string | null,
+  type?: string | null,
+  customType?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="gender full type">
+
+```ts
+{
+  type?: string | null,
+  customGender?: string | null,
+  addressMeAs?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="notes full type">
+
+```ts
+{
+  contentType?: string | null,
+  value?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="posixAccounts full type">
+
+```ts
+{
+  username?: string | null,
+  uid?: string | null,
+  gid?: string | null,
+  systemId?: string | null,
+  homeDirectory?: string | null,
+  shell?: string | null,
+  gecos?: string | null,
+  primary?: boolean | null,
+  accountId?: string | null,
+  operatingSystemType?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="sshPublicKeys full type">
+
+```ts
+{
+  key?: string | null,
+  expirationTimeUsec?: string | null,
+  fingerprint?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique user ID, usable as userKey |
+| `primaryEmail` | `string` | Yes | — |
+| `name` | `object \| null` | No | — |
+| `etag` | `string \| null` | No | ETag of the resource |
+| `kind` | `string \| null` | No | — |
+| `aliases` | `string[] \| null` | No | Read-only. Alias email addresses of the user |
+| `nonEditableAliases` | `string[] \| null` | No | Read-only. Aliases outside the account domains |
+| `customerId` | `string \| null` | No | — |
+| `orgUnitPath` | `string \| null` | No | Full path of the parent organizational unit, `/` at the top level |
+| `isAdmin` | `boolean \| null` | No | Read-only. Edited through users.makeAdmin |
+| `isDelegatedAdmin` | `boolean \| null` | No | — |
+| `lastLoginTime` | `string \| null` | No | RFC 3339 timestamp |
+| `creationTime` | `string \| null` | No | RFC 3339 timestamp |
+| `deletionTime` | `string \| null` | No | RFC 3339 timestamp |
+| `agreedToTerms` | `boolean \| null` | No | — |
+| `suspended` | `boolean \| null` | No | — |
+| `suspensionReason` | `string \| null` | No | — |
+| `suspensionTime` | `string \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `archivalTime` | `string \| null` | No | — |
+| `changePasswordAtNextLogin` | `boolean \| null` | No | — |
+| `ipWhitelisted` | `boolean \| null` | No | — |
+| `includeInGlobalAddressList` | `boolean \| null` | No | — |
+| `isMailboxSetup` | `boolean \| null` | No | — |
+| `isEnrolledIn2Sv` | `boolean \| null` | No | — |
+| `isEnforcedIn2Sv` | `boolean \| null` | No | — |
+| `isGuestUser` | `boolean \| null` | No | — |
+| `thumbnailPhotoUrl` | `string \| null` | No | Output only. The URL may be temporary or private |
+| `thumbnailPhotoEtag` | `string \| null` | No | — |
+| `recoveryEmail` | `string \| null` | No | — |
+| `recoveryPhone` | `string \| null` | No | E.164 format, e.g. +16506661212 |
+| `emails` | `object[] \| null` | No | — |
+| `phones` | `object[] \| null` | No | — |
+| `addresses` | `object[] \| null` | No | — |
+| `organizations` | `object[] \| null` | No | — |
+| `externalIds` | `object[] \| null` | No | — |
+| `relations` | `object[] \| null` | No | — |
+| `websites` | `object[] \| null` | No | — |
+| `ims` | `object[] \| null` | No | — |
+| `locations` | `object[] \| null` | No | — |
+| `languages` | `object[] \| null` | No | — |
+| `keywords` | `object[] \| null` | No | — |
+| `gender` | `object \| null` | No | — |
+| `notes` | `object \| null` | No | — |
+| `posixAccounts` | `object[] \| null` | No | — |
+| `sshPublicKeys` | `object[] \| null` | No | — |
+| `customSchemas` | `Record<string, Record<string, any>> \| null` | No | Custom fields, keyed by schema name then field name |
+
+<AccordionGroup>
+<Accordion title="name full type">
+
+```ts
+{
+  givenName?: string | null,
+  familyName?: string | null,
+  fullName?: string | null,
+  displayName?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="emails full type">
+
+```ts
+{
+  address?: string | null,
+  type?: string | null,
+  customType?: string | null,
+  primary?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="phones full type">
+
+```ts
+{
+  value?: string | null,
+  type?: string | null,
+  customType?: string | null,
+  primary?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="addresses full type">
+
+```ts
+{
+  type?: string | null,
+  customType?: string | null,
+  primary?: boolean | null,
+  formatted?: string | null,
+  streetAddress?: string | null,
+  extendedAddress?: string | null,
+  poBox?: string | null,
+  locality?: string | null,
+  region?: string | null,
+  postalCode?: string | null,
+  country?: string | null,
+  countryCode?: string | null,
+  sourceIsStructured?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="organizations full type">
+
+```ts
+{
+  name?: string | null,
+  title?: string | null,
+  department?: string | null,
+  description?: string | null,
+  location?: string | null,
+  costCenter?: string | null,
+  primary?: boolean | null,
+  type?: string | null,
+  customType?: string | null,
+  domain?: string | null,
+  symbol?: string | null,
+  fullTimeEquivalent?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="externalIds full type">
+
+```ts
+{
+  value?: string | null,
+  type?: string | null,
+  customType?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="relations full type">
+
+```ts
+{
+  value?: string | null,
+  type?: string | null,
+  customType?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="websites full type">
+
+```ts
+{
+  value?: string | null,
+  type?: string | null,
+  customType?: string | null,
+  primary?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="ims full type">
+
+```ts
+{
+  im?: string | null,
+  type?: string | null,
+  protocol?: string | null,
+  customProtocol?: string | null,
+  customType?: string | null,
+  primary?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="locations full type">
+
+```ts
+{
+  type?: string | null,
+  customType?: string | null,
+  area?: string | null,
+  buildingId?: string | null,
+  floorName?: string | null,
+  floorSection?: string | null,
+  deskCode?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="languages full type">
+
+```ts
+{
+  languageCode?: string | null,
+  preference?: string | null,
+  customLanguage?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="keywords full type">
+
+```ts
+{
+  value?: string | null,
+  type?: string | null,
+  customType?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="gender full type">
+
+```ts
+{
+  type?: string | null,
+  customGender?: string | null,
+  addressMeAs?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="notes full type">
+
+```ts
+{
+  contentType?: string | null,
+  value?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="posixAccounts full type">
+
+```ts
+{
+  username?: string | null,
+  uid?: string | null,
+  gid?: string | null,
+  systemId?: string | null,
+  homeDirectory?: string | null,
+  shell?: string | null,
+  gecos?: string | null,
+  primary?: boolean | null,
+  accountId?: string | null,
+  operatingSystemType?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="sshPublicKeys full type">
+
+```ts
+{
+  key?: string | null,
+  expirationTimeUsec?: string | null,
+  fingerprint?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`users.list`
+
+List users in the account or one domain, with Google's search query and paging
+
+**Risk:** `read`
+
+```ts
+await corsair.googleadmin.api.users.list({ customer: 'my_customer', maxResults: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer` | `string \| null` | No | The unique customer ID, or `my_customer` for the caller's own account |
+| `domain` | `string \| null` | No | A domain name. Send this or customer, not both |
+| `query` | `string \| null` | No | Search clauses such as `email:ada*`, `orgUnitPath=/sales`, or `isSuspended=true`; see Search for users |
+| `maxResults` | `number \| null` | No | 1 to 500. The API default is 100 |
+| `pageToken` | `string \| null` | No | nextPageToken from a previous page. Valid for three days |
+| `orderBy` | `email \| familyName \| givenName \| null` | No | Column to sort by |
+| `sortOrder` | `ASCENDING \| DESCENDING \| null` | No | — |
+| `projection` | `basic \| custom \| full \| null` | No | `basic` omits custom fields, `custom` returns the schemas named in customFieldMask, `full` returns everything. |
+| `customFieldMask` | `string \| null` | No | Comma-separated schema names. Only read when projection is `custom` |
+| `showDeleted` | `string \| null` | No | Google types this one as a string, not a boolean. `true` lists deleted users |
+| `viewType` | `admin_view \| domain_public \| null` | No | `admin_view` includes administrator-only fields; `domain_public` is what another user in the domain can see. |
+
+Send `customer` or `domain`; `my_customer` names the caller's own account.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string \| null` | No | — |
+| `etag` | `string \| null` | No | — |
+| `users` | `object[] \| null` | No | Absent when the domain has no matching users |
+| `nextPageToken` | `string \| null` | No | — |
+| `trigger_event` | `string \| null` | No | Only set on a push notification response |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id: string,
+  primaryEmail: string,
+  name?: {
+    givenName?: string | null,
+    familyName?: string | null,
+    fullName?: string | null,
+    displayName?: string | null
+  } | null,
+  etag?: string | null,
+  kind?: string | null,
+  aliases?: string[] | null,
+  nonEditableAliases?: string[] | null,
+  customerId?: string | null,
+  orgUnitPath?: string | null,
+  isAdmin?: boolean | null,
+  isDelegatedAdmin?: boolean | null,
+  lastLoginTime?: string | null,
+  creationTime?: string | null,
+  deletionTime?: string | null,
+  agreedToTerms?: boolean | null,
+  suspended?: boolean | null,
+  suspensionReason?: string | null,
+  suspensionTime?: string | null,
+  archived?: boolean | null,
+  archivalTime?: string | null,
+  changePasswordAtNextLogin?: boolean | null,
+  ipWhitelisted?: boolean | null,
+  includeInGlobalAddressList?: boolean | null,
+  isMailboxSetup?: boolean | null,
+  isEnrolledIn2Sv?: boolean | null,
+  isEnforcedIn2Sv?: boolean | null,
+  isGuestUser?: boolean | null,
+  thumbnailPhotoUrl?: string | null,
+  thumbnailPhotoEtag?: string | null,
+  recoveryEmail?: string | null,
+  recoveryPhone?: string | null,
+  emails?: {
+    address?: string | null,
+    type?: string | null,
+    customType?: string | null,
+    primary?: boolean | null
+  }[] | null,
+  phones?: {
+    value?: string | null,
+    type?: string | null,
+    customType?: string | null,
+    primary?: boolean | null
+  }[] | null,
+  addresses?: {
+    type?: string | null,
+    customType?: string | null,
+    primary?: boolean | null,
+    formatted?: string | null,
+    streetAddress?: string | null,
+    extendedAddress?: string | null,
+    poBox?: string | null,
+    locality?: string | null,
+    region?: string | null,
+    postalCode?: string | null,
+    country?: string | null,
+    countryCode?: string | null,
+    sourceIsStructured?: boolean | null
+  }[] | null,
+  organizations?: {
+    name?: string | null,
+    title?: string | null,
+    department?: string | null,
+    description?: string | null,
+    location?: string | null,
+    costCenter?: string | null,
+    primary?: boolean | null,
+    type?: string | null,
+    customType?: string | null,
+    domain?: string | null,
+    symbol?: string | null,
+    fullTimeEquivalent?: number | null
+  }[] | null,
+  externalIds?: {
+    value?: string | null,
+    type?: string | null,
+    customType?: string | null
+  }[] | null,
+  relations?: {
+    value?: string | null,
+    type?: string | null,
+    customType?: string | null
+  }[] | null,
+  websites?: {
+    value?: string | null,
+    type?: string | null,
+    customType?: string | null,
+    primary?: boolean | null
+  }[] | null,
+  ims?: {
+    im?: string | null,
+    type?: string | null,
+    protocol?: string | null,
+    customProtocol?: string | null,
+    customType?: string | null,
+    primary?: boolean | null
+  }[] | null,
+  locations?: {
+    type?: string | null,
+    customType?: string | null,
+    area?: string | null,
+    buildingId?: string | null,
+    floorName?: string | null,
+    floorSection?: string | null,
+    deskCode?: string | null
+  }[] | null,
+  languages?: {
+    languageCode?: string | null,
+    preference?: string | null,
+    customLanguage?: string | null
+  }[] | null,
+  keywords?: {
+    value?: string | null,
+    type?: string | null,
+    customType?: string | null
+  }[] | null,
+  gender?: {
+    type?: string | null,
+    customGender?: string | null,
+    addressMeAs?: string | null
+  } | null,
+  notes?: {
+    contentType?: string | null,
+    value?: string | null
+  } | null,
+  posixAccounts?: {
+    username?: string | null,
+    uid?: string | null,
+    gid?: string | null,
+    systemId?: string | null,
+    homeDirectory?: string | null,
+    shell?: string | null,
+    gecos?: string | null,
+    primary?: boolean | null,
+    accountId?: string | null,
+    operatingSystemType?: string | null
+  }[] | null,
+  sshPublicKeys?: {
+    key?: string | null,
+    expirationTimeUsec?: string | null,
+    fingerprint?: string | null
+  }[] | null,
+  customSchemas?: Record<string, Record<string, any>> | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### makeAdmin
+
+`users.makeAdmin`
+
+Grant or revoke super administrator on a user. The caller cannot revoke its own last admin right
+
+**Risk:** `destructive`
+
+```ts
+await corsair.googleadmin.api.users.makeAdmin({ userKey: 'ada@example.com', status: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userKey` | `string` | Yes | — |
+| `status` | `boolean` | Yes | true grants super administrator, false revokes it |
+
+A caller cannot revoke its own last super admin right.
+
+
+
+**Output:** `void`
+
+
+---
+
+### photos.delete
+
+`users.photos.delete`
+
+Remove a user's profile photo
+
+**Risk:** `destructive`
+
+```ts
+await corsair.googleadmin.api.users.photos.delete({ userKey: 'ada@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userKey` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### photos.get
+
+`users.photos.get`
+
+Read a user's profile photo as base64 bytes
+
+**Risk:** `read`
+
+```ts
+await corsair.googleadmin.api.users.photos.get({ userKey: 'ada@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userKey` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `primaryEmail` | `string \| null` | No | — |
+| `photoData` | `string \| null` | No | Base64-encoded image bytes, on read and on write |
+| `mimeType` | `string \| null` | No | — |
+| `width` | `number \| null` | No | — |
+| `height` | `number \| null` | No | — |
+| `etag` | `string \| null` | No | ETag of the resource |
+| `kind` | `string \| null` | No | — |
+
+
+
+---
+
+### photos.update
+
+`users.photos.update`
+
+Replace a user's profile photo
+
+**Risk:** `write`
+
+```ts
+await corsair.googleadmin.api.users.photos.update({ userKey: 'ada@example.com', photoData: 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII.', mimeType: 'image/png' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userKey` | `string` | Yes | — |
+| `photoData` | `string` | Yes | Base64-encoded image bytes |
+| `mimeType` | `string \| null` | No | `image/jpeg` or `image/png`; the API infers it when omitted |
+
+`photoData` is Google's web-safe base64 of a JPEG or PNG: `-` and `_` in place of `+` and `/`, and `.` (not `=`) for padding.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `primaryEmail` | `string \| null` | No | — |
+| `photoData` | `string \| null` | No | Base64-encoded image bytes, on read and on write |
+| `mimeType` | `string \| null` | No | — |
+| `width` | `number \| null` | No | — |
+| `height` | `number \| null` | No | — |
+| `etag` | `string \| null` | No | ETag of the resource |
+| `kind` | `string \| null` | No | — |
+
+
+
+---
+
+### signOut
+
+`users.signOut`
+
+Sign a user out of all web and device sessions, clearing their sign-in cookies
+
+**Risk:** `destructive`
+
+```ts
+await corsair.googleadmin.api.users.signOut({ userKey: 'ada@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userKey` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### undelete
+
+`users.undelete`
+
+Restore a deleted user by ID and optionally set the organizational unit it returns to
+
+**Risk:** `write`
+
+```ts
+await corsair.googleadmin.api.users.undelete({ userKey: '1029837465', orgUnitPath: '/engineering' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userKey` | `string` | Yes | The immutable user ID. An email address is not accepted here |
+| `orgUnitPath` | `string \| null` | No | Organizational unit to restore the user into |
+
+Takes the immutable user ID. An email address answers 404.
+
+
+
+**Output:** `void`
+
+
+---
+
+### update
+
+`users.update`
+
+Update a user through the PUT that keeps the patch semantics Google documents for it: omitted fields are preserved, a field sent as null is cleared
+
+**Risk:** `write`
+
+```ts
+await corsair.googleadmin.api.users.update({ userKey: 'ada@example.com', suspended: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userKey` | `string` | Yes | Primary email, alias email, or unique user ID |
+| `primaryEmail` | `string \| null` | No | Renaming can take up to 10 minutes to propagate |
+| `name` | `object \| null` | No | Only the name parts that are sent change; the others keep their value |
+| `password` | `string \| null` | No | Optional on update. Setting it changes the password: plain text of 8 to 100 characters, or a hash when hashFunction is set |
+| `hashFunction` | `MD5 \| SHA-1 \| crypt \| null` | No | — |
+| `orgUnitPath` | `string \| null` | No | — |
+| `includeInGlobalAddressList` | `boolean \| null` | No | — |
+| `changePasswordAtNextLogin` | `boolean \| null` | No | — |
+| `suspended` | `boolean \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `ipWhitelisted` | `boolean \| null` | No | — |
+| `recoveryEmail` | `string \| null` | No | — |
+| `recoveryPhone` | `string \| null` | No | — |
+| `emails` | `object[] \| null` | No | — |
+| `phones` | `object[] \| null` | No | — |
+| `addresses` | `object[] \| null` | No | — |
+| `organizations` | `object[] \| null` | No | — |
+| `externalIds` | `object[] \| null` | No | — |
+| `relations` | `object[] \| null` | No | — |
+| `websites` | `object[] \| null` | No | — |
+| `ims` | `object[] \| null` | No | — |
+| `locations` | `object[] \| null` | No | — |
+| `languages` | `object[] \| null` | No | — |
+| `keywords` | `object[] \| null` | No | — |
+| `gender` | `object \| null` | No | — |
+| `notes` | `object \| null` | No | — |
+| `posixAccounts` | `object[] \| null` | No | — |
+| `sshPublicKeys` | `object[] \| null` | No | — |
+| `customSchemas` | `Record<string, Record<string, any>> \| null` | No | — |
+
+Absent fields keep their value; a field sent as null is cleared.
+
+<AccordionGroup>
+<Accordion title="name full type">
+
+```ts
+{
+  givenName?: string,
+  familyName?: string,
+  displayName?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="emails full type">
+
+```ts
+{
+  address?: string | null,
+  type?: string | null,
+  customType?: string | null,
+  primary?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="phones full type">
+
+```ts
+{
+  value?: string | null,
+  type?: string | null,
+  customType?: string | null,
+  primary?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="addresses full type">
+
+```ts
+{
+  type?: string | null,
+  customType?: string | null,
+  primary?: boolean | null,
+  formatted?: string | null,
+  streetAddress?: string | null,
+  extendedAddress?: string | null,
+  poBox?: string | null,
+  locality?: string | null,
+  region?: string | null,
+  postalCode?: string | null,
+  country?: string | null,
+  countryCode?: string | null,
+  sourceIsStructured?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="organizations full type">
+
+```ts
+{
+  name?: string | null,
+  title?: string | null,
+  department?: string | null,
+  description?: string | null,
+  location?: string | null,
+  costCenter?: string | null,
+  primary?: boolean | null,
+  type?: string | null,
+  customType?: string | null,
+  domain?: string | null,
+  symbol?: string | null,
+  fullTimeEquivalent?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="externalIds full type">
+
+```ts
+{
+  value?: string | null,
+  type?: string | null,
+  customType?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="relations full type">
+
+```ts
+{
+  value?: string | null,
+  type?: string | null,
+  customType?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="websites full type">
+
+```ts
+{
+  value?: string | null,
+  type?: string | null,
+  customType?: string | null,
+  primary?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="ims full type">
+
+```ts
+{
+  im?: string | null,
+  type?: string | null,
+  protocol?: string | null,
+  customProtocol?: string | null,
+  customType?: string | null,
+  primary?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="locations full type">
+
+```ts
+{
+  type?: string | null,
+  customType?: string | null,
+  area?: string | null,
+  buildingId?: string | null,
+  floorName?: string | null,
+  floorSection?: string | null,
+  deskCode?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="languages full type">
+
+```ts
+{
+  languageCode?: string | null,
+  preference?: string | null,
+  customLanguage?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="keywords full type">
+
+```ts
+{
+  value?: string | null,
+  type?: string | null,
+  customType?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="gender full type">
+
+```ts
+{
+  type?: string | null,
+  customGender?: string | null,
+  addressMeAs?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="notes full type">
+
+```ts
+{
+  contentType?: string | null,
+  value?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="posixAccounts full type">
+
+```ts
+{
+  username?: string | null,
+  uid?: string | null,
+  gid?: string | null,
+  systemId?: string | null,
+  homeDirectory?: string | null,
+  shell?: string | null,
+  gecos?: string | null,
+  primary?: boolean | null,
+  accountId?: string | null,
+  operatingSystemType?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="sshPublicKeys full type">
+
+```ts
+{
+  key?: string | null,
+  expirationTimeUsec?: string | null,
+  fingerprint?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique user ID, usable as userKey |
+| `primaryEmail` | `string` | Yes | — |
+| `name` | `object \| null` | No | — |
+| `etag` | `string \| null` | No | ETag of the resource |
+| `kind` | `string \| null` | No | — |
+| `aliases` | `string[] \| null` | No | Read-only. Alias email addresses of the user |
+| `nonEditableAliases` | `string[] \| null` | No | Read-only. Aliases outside the account domains |
+| `customerId` | `string \| null` | No | — |
+| `orgUnitPath` | `string \| null` | No | Full path of the parent organizational unit, `/` at the top level |
+| `isAdmin` | `boolean \| null` | No | Read-only. Edited through users.makeAdmin |
+| `isDelegatedAdmin` | `boolean \| null` | No | — |
+| `lastLoginTime` | `string \| null` | No | RFC 3339 timestamp |
+| `creationTime` | `string \| null` | No | RFC 3339 timestamp |
+| `deletionTime` | `string \| null` | No | RFC 3339 timestamp |
+| `agreedToTerms` | `boolean \| null` | No | — |
+| `suspended` | `boolean \| null` | No | — |
+| `suspensionReason` | `string \| null` | No | — |
+| `suspensionTime` | `string \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `archivalTime` | `string \| null` | No | — |
+| `changePasswordAtNextLogin` | `boolean \| null` | No | — |
+| `ipWhitelisted` | `boolean \| null` | No | — |
+| `includeInGlobalAddressList` | `boolean \| null` | No | — |
+| `isMailboxSetup` | `boolean \| null` | No | — |
+| `isEnrolledIn2Sv` | `boolean \| null` | No | — |
+| `isEnforcedIn2Sv` | `boolean \| null` | No | — |
+| `isGuestUser` | `boolean \| null` | No | — |
+| `thumbnailPhotoUrl` | `string \| null` | No | Output only. The URL may be temporary or private |
+| `thumbnailPhotoEtag` | `string \| null` | No | — |
+| `recoveryEmail` | `string \| null` | No | — |
+| `recoveryPhone` | `string \| null` | No | E.164 format, e.g. +16506661212 |
+| `emails` | `object[] \| null` | No | — |
+| `phones` | `object[] \| null` | No | — |
+| `addresses` | `object[] \| null` | No | — |
+| `organizations` | `object[] \| null` | No | — |
+| `externalIds` | `object[] \| null` | No | — |
+| `relations` | `object[] \| null` | No | — |
+| `websites` | `object[] \| null` | No | — |
+| `ims` | `object[] \| null` | No | — |
+| `locations` | `object[] \| null` | No | — |
+| `languages` | `object[] \| null` | No | — |
+| `keywords` | `object[] \| null` | No | — |
+| `gender` | `object \| null` | No | — |
+| `notes` | `object \| null` | No | — |
+| `posixAccounts` | `object[] \| null` | No | — |
+| `sshPublicKeys` | `object[] \| null` | No | — |
+| `customSchemas` | `Record<string, Record<string, any>> \| null` | No | Custom fields, keyed by schema name then field name |
+
+<AccordionGroup>
+<Accordion title="name full type">
+
+```ts
+{
+  givenName?: string | null,
+  familyName?: string | null,
+  fullName?: string | null,
+  displayName?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="emails full type">
+
+```ts
+{
+  address?: string | null,
+  type?: string | null,
+  customType?: string | null,
+  primary?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="phones full type">
+
+```ts
+{
+  value?: string | null,
+  type?: string | null,
+  customType?: string | null,
+  primary?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="addresses full type">
+
+```ts
+{
+  type?: string | null,
+  customType?: string | null,
+  primary?: boolean | null,
+  formatted?: string | null,
+  streetAddress?: string | null,
+  extendedAddress?: string | null,
+  poBox?: string | null,
+  locality?: string | null,
+  region?: string | null,
+  postalCode?: string | null,
+  country?: string | null,
+  countryCode?: string | null,
+  sourceIsStructured?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="organizations full type">
+
+```ts
+{
+  name?: string | null,
+  title?: string | null,
+  department?: string | null,
+  description?: string | null,
+  location?: string | null,
+  costCenter?: string | null,
+  primary?: boolean | null,
+  type?: string | null,
+  customType?: string | null,
+  domain?: string | null,
+  symbol?: string | null,
+  fullTimeEquivalent?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="externalIds full type">
+
+```ts
+{
+  value?: string | null,
+  type?: string | null,
+  customType?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="relations full type">
+
+```ts
+{
+  value?: string | null,
+  type?: string | null,
+  customType?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="websites full type">
+
+```ts
+{
+  value?: string | null,
+  type?: string | null,
+  customType?: string | null,
+  primary?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="ims full type">
+
+```ts
+{
+  im?: string | null,
+  type?: string | null,
+  protocol?: string | null,
+  customProtocol?: string | null,
+  customType?: string | null,
+  primary?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="locations full type">
+
+```ts
+{
+  type?: string | null,
+  customType?: string | null,
+  area?: string | null,
+  buildingId?: string | null,
+  floorName?: string | null,
+  floorSection?: string | null,
+  deskCode?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="languages full type">
+
+```ts
+{
+  languageCode?: string | null,
+  preference?: string | null,
+  customLanguage?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="keywords full type">
+
+```ts
+{
+  value?: string | null,
+  type?: string | null,
+  customType?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="gender full type">
+
+```ts
+{
+  type?: string | null,
+  customGender?: string | null,
+  addressMeAs?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="notes full type">
+
+```ts
+{
+  contentType?: string | null,
+  value?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="posixAccounts full type">
+
+```ts
+{
+  username?: string | null,
+  uid?: string | null,
+  gid?: string | null,
+  systemId?: string | null,
+  homeDirectory?: string | null,
+  shell?: string | null,
+  gecos?: string | null,
+  primary?: boolean | null,
+  accountId?: string | null,
+  operatingSystemType?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="sshPublicKeys full type">
+
+```ts
+{
+  key?: string | null,
+  expirationTimeUsec?: string | null,
+  fingerprint?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
