@@ -71,7 +71,6 @@ const pexelsEndpointsNested = {
 	collections: {
 		list: Collections.list,
 		listFeatured: Collections.listFeatured,
-		get: Collections.get,
 		listMedia: Collections.listMedia,
 	},
 } as const;
@@ -108,10 +107,6 @@ export const pexelsEndpointSchemas = {
 	'collections.listFeatured': {
 		input: PexelsEndpointInputSchemas.collectionsListFeatured,
 		output: PexelsEndpointOutputSchemas.collectionsListFeatured,
-	},
-	'collections.get': {
-		input: PexelsEndpointInputSchemas.collectionsGet,
-		output: PexelsEndpointOutputSchemas.collectionsGet,
 	},
 	'collections.listMedia': {
 		input: PexelsEndpointInputSchemas.collectionsListMedia,
@@ -154,13 +149,9 @@ const pexelsEndpointMeta = {
 		riskLevel: 'read',
 		description: 'List the featured collections',
 	},
-	'collections.get': {
-		riskLevel: 'read',
-		description: 'Read one collection by id',
-	},
 	'collections.listMedia': {
 		riskLevel: 'read',
-		description: 'List the mixed photos and videos of a collection',
+		description: 'List the photos and videos of a collection, filtered by type',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof pexelsEndpointsNested>;
 
@@ -222,8 +213,6 @@ export function pexels<const T extends PexelsPluginOptions>(
 		},
 	} satisfies InternalPexelsPlugin;
 }
-
-export { PexelsAPIError } from './client';
 
 export type {
 	Collection,

@@ -37,3 +37,15 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	);
 	return result;
 }
+
+/**
+ * Encodes one path segment. `encodeURIComponent` leaves `.` and `..` as
+ * they are, and URL parsing would resolve them into another route, so those
+ * are refused.
+ */
+export function segment(value: string): string {
+	if (value === '.' || value === '..') {
+		throw new Error(`Pexels: "${value}" is not a valid id`);
+	}
+	return encodeURIComponent(value);
+}

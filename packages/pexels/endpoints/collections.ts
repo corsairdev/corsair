@@ -1,5 +1,5 @@
 import type { PexelsEndpoints } from '..';
-import { call } from './call';
+import { call, segment } from './call';
 import {
 	PexelsEndpointInputSchemas as Inputs,
 	PexelsEndpointOutputSchemas as Outputs,
@@ -38,22 +38,6 @@ export const listFeatured: PexelsEndpoints['collectionsListFeatured'] = (
 		{ log: (_, page) => ({ count: page.collections.length }) },
 	);
 
-export const get: PexelsEndpoints['collectionsGet'] = (ctx, input) =>
-	call(
-		ctx,
-		{
-			event: 'collections.get',
-			input: Inputs.collectionsGet,
-			output: Outputs.collectionsGet,
-		},
-		input,
-		({ collectionId }) => ({
-			method: 'GET',
-			path: `/v1/collections/${encodeURIComponent(collectionId)}`,
-		}),
-		{ log: (_, collection) => ({ collectionId: collection.id ?? undefined }) },
-	);
-
 export const listMedia: PexelsEndpoints['collectionsListMedia'] = (
 	ctx,
 	input,
@@ -68,7 +52,7 @@ export const listMedia: PexelsEndpoints['collectionsListMedia'] = (
 		input,
 		({ collectionId, ...paging }) => ({
 			method: 'GET',
-			path: `/v1/collections/${encodeURIComponent(collectionId)}/media`,
+			path: `/v1/collections/${segment(collectionId)}`,
 			query: paging,
 		}),
 		{ log: (_, page) => ({ count: page.media.length }) },

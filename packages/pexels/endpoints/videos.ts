@@ -14,10 +14,10 @@ export const search: PexelsEndpoints['videosSearch'] = (ctx, input) =>
 			output: Outputs.videosSearch,
 		},
 		input,
-		({ query, orientation, ...paging }) => ({
+		(query) => ({
 			method: 'GET',
-			path: '/videos/search',
-			query: { query, orientation, ...paging },
+			path: '/v1/videos/search',
+			query,
 		}),
 		{ log: (_, page) => ({ count: page.videos.length }) },
 	);
@@ -31,7 +31,7 @@ export const get: PexelsEndpoints['videosGet'] = (ctx, input) =>
 			output: Outputs.videosGet,
 		},
 		input,
-		({ videoId }) => ({ method: 'GET', path: `/videos/videos/${videoId}` }),
+		({ videoId }) => ({ method: 'GET', path: `/v1/videos/videos/${videoId}` }),
 		{ log: (_, video) => ({ videoId: video.id ?? undefined }) },
 	);
 
@@ -46,7 +46,7 @@ export const popular: PexelsEndpoints['videosPopular'] = (ctx, input) =>
 		input,
 		({ min_width, min_height, min_duration, max_duration, ...paging }) => ({
 			method: 'GET',
-			path: '/videos/popular',
+			path: '/v1/videos/popular',
 			query: { min_width, min_height, min_duration, max_duration, ...paging },
 		}),
 		{ log: (_, page) => ({ count: page.videos.length }) },

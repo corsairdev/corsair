@@ -48,11 +48,9 @@ apiExamples:
     call: '{ per_page: 25 }'
   collections.listFeatured:
     call: '{ per_page: 25 }'
-  collections.get:
-    call: '{ collectionId: "9nkrlyb" }'
   collections.listMedia:
-    call: '{ collectionId: "9nkrlyb", per_page: 25 }'
+    call: '{ collectionId: "9nkrlyb", type: "photos", sort: "desc", per_page: 25 }'
 apiNotes:
   photos.search: 'color takes a color name or a hex value; src carries all rendition URLs, original included. per_page is capped at 80 results per page across every list endpoint.'
   videos.get: 'video_files lists every downloadable rendition with quality and file type.'
-  collections.listMedia: 'Returns mixed photos and videos; each item carries a type of Photo or Video and the corresponding object.'
+  collections.listMedia: 'Returns photos and videos together unless type is set; each item is a photo or video object with a type of Photo or Video.'

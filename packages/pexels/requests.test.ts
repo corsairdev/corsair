@@ -1,7 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import { Collections, Photos, Videos } from './endpoints';
 import {
-	collection,
 	collectionMedia,
 	collectionsList,
 	curatedPhotos,
@@ -117,9 +116,16 @@ describe('photos', () => {
 describe('videos', () => {
 	it('search sends the query', async () => {
 		respond(searchVideos);
-		await invoke(Videos.search, { query: 'waves', orientation: 'portrait' });
+		await invoke(Videos.search, {
+			query: 'waves',
+			orientation: 'portrait',
+			size: 'medium',
+			locale: 'de-DE',
+		});
 		const sent = lastRequest();
-		expectAuthenticated('/videos/search');
+		expect(sent.query['size']).toBe('medium');
+		expect(sent.query['locale']).toBe('de-DE');
+		expectAuthenticated('/v1/videos/search');
 		expect(sent.query['query']).toBe('waves');
 		expect(sent.query['orientation']).toBe('portrait');
 	});
@@ -127,14 +133,14 @@ describe('videos', () => {
 	it('get reads one video', async () => {
 		respond(video);
 		await invoke(Videos.get, { videoId: 2499611 });
-		expectAuthenticated('/videos/videos/2499611');
+		expectAuthenticated('/v1/videos/videos/2499611');
 	});
 
 	it('popular sends size and duration filters', async () => {
 		respond(popularVideos);
 		await invoke(Videos.popular, { min_width: 1280, min_duration: 5 });
 		const sent = lastRequest();
-		expectAuthenticated('/videos/popular');
+		expectAuthenticated('/v1/videos/popular');
 		expect(sent.query['min_width']).toBe('1280');
 		expect(sent.query['min_duration']).toBe('5');
 	});
@@ -151,20 +157,41 @@ describe('collections', () => {
 		expectAuthenticated('/v1/collections/featured');
 	});
 
-	it('get reads one collection by string id', async () => {
-		respond(collection);
-		await invoke(Collections.get, { collectionId: '9nkrlyb' });
-		expectAuthenticated('/v1/collections/9nkrlyb');
+	it('list reads the documented snake_case counts', async () => {
+		respond(collectionsList);
+		const page = (await invoke(Collections.list, {})) as {
+			collections: Array<{ media_count?: number }>;
+		};
+		expect(page.collections[0]?.media_count).toBe(24);
 	});
 
-	it('listMedia reads the mixed media of a collection', async () => {
-		respond(collectionMedia);
+	it('listMedia GETs /v1/collections/:id with type and sort', async () => {
+		respond({ id: '9nkrlyb', ...collectionMedia });
 		const page = (await invoke(Collections.listMedia, {
 			collectionId: '9nkrlyb',
-		})) as { media: Array<{ type?: string }> };
+			type: 'photos',
+			sort: 'asc',
+		})) as {
+			media: Array<{
+				type?: string;
+				photographer_url?: string;
+				video_files?: unknown[];
+			}>; // unknown: rendition records are provider-shaped
+		};
 		expect(page.media).toHaveLength(2);
 		expect(page.media[0]?.type).toBe('Photo');
+		expect(page.media[0]?.photographer_url).toBe(
+			'https://www.pexels.com/@jane',
+		);
 		expect(page.media[1]?.type).toBe('Video');
-		expectAuthenticated('/v1/collections/9nkrlyb/media');
+		expect(page.media[1]?.video_files?.length).toBeGreaterThan(0);
+		expectAuthenticated('/v1/collections/9nkrlyb');
+		expect(lastRequest().query).toEqual({ type: 'photos', sort: 'asc' });
+	});
+
+	it('listMedia refuses . and .. as the collection id', async () => {
+		await expect(
+			invoke(Collections.listMedia, { collectionId: '..' }),
+		).rejects.toThrow('not a valid id');
 	});
 });

@@ -15,8 +15,9 @@ export const photo = {
 	height: 6000,
 	url: 'https://www.pexels.com/photo/2014422/',
 	photographer: 'Jane Roe',
-	photographerUrl: 'https://www.pexels.com/@jane',
-	photographerId: 100,
+	photographer_url: 'https://www.pexels.com/@jane',
+	photographer_id: 100,
+	avg_color: '#374824',
 	liked: false,
 	alt: 'A mountain lake at dawn',
 	src: {
@@ -83,14 +84,15 @@ export const popularVideos = {
 	next_page: 'https://api.pexels.com/videos/popular?page=2',
 };
 
+/** A collection as the collection lists return it. */
 export const collection = {
 	id: '9nkrlyb',
 	title: 'Mountain landscapes',
 	description: 'Best mountain shots.',
 	private: false,
-	itemsCount: 24,
-	photosCount: 20,
-	videosCount: 4,
+	media_count: 24,
+	photos_count: 20,
+	videos_count: 4,
 };
 
 export const collectionsList = {
@@ -103,11 +105,11 @@ export const collectionsList = {
 
 export const collectionMedia = {
 	media: [
-		{ id: 2014422, type: 'Photo', photo },
-		{ id: 2499611, type: 'Video', video },
+		{ ...photo, type: 'Photo' },
+		{ ...video, type: 'Video' },
 	],
 	page: 1,
 	per_page: 2,
 	total_results: 24,
-	next_page: 'https://api.pexels.com/v1/collections/9nkrlyb/media?page=2',
+	next_page: 'https://api.pexels.com/v1/collections/9nkrlyb/?page=2&per_page=2',
 };

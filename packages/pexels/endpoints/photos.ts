@@ -14,10 +14,10 @@ export const search: PexelsEndpoints['photosSearch'] = (ctx, input) =>
 			output: Outputs.photosSearch,
 		},
 		input,
-		({ query, orientation, size, color, ...paging }) => ({
+		(query) => ({
 			method: 'GET',
 			path: '/v1/search',
-			query: { query, orientation, size, color, ...paging },
+			query,
 		}),
 		{
 			log: (_, page) => ({

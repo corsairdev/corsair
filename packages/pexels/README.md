@@ -12,10 +12,9 @@ pnpm add @corsair-dev/pexels
 
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
-| `collections.get` | `pexels.api.collections.get` | `read` | Read one collection by id |
 | `collections.list` | `pexels.api.collections.list` | `read` | List the collections of the API key |
 | `collections.listFeatured` | `pexels.api.collections.listFeatured` | `read` | List the featured collections |
-| `collections.listMedia` | `pexels.api.collections.listMedia` | `read` | List the mixed photos and videos of a collection |
+| `collections.listMedia` | `pexels.api.collections.listMedia` | `read` | List the photos and videos of a collection, filtered by type |
 | `photos.curated` | `pexels.api.photos.curated` | `read` | List the curated photo feed |
 | `photos.get` | `pexels.api.photos.get` | `read` | Read one photo by id with its rendition URLs |
 | `photos.search` | `pexels.api.photos.search` | `read` | Search photos by query, orientation, size and color |

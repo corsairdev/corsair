@@ -34,8 +34,9 @@ export const PhotoSchema = z
 		height: z.number().nullish().describe('Height in pixels'),
 		url: z.string().nullish().describe('Photo page URL on Pexels'),
 		photographer: z.string().nullish().describe('Photographer name'),
-		photographerUrl: z.string().nullish().describe('Photographer profile URL'),
-		photographerId: z.number().nullish().describe('Photographer id'),
+		photographer_url: z.string().nullish().describe('Photographer profile URL'),
+		photographer_id: z.number().nullish().describe('Photographer id'),
+		avg_color: z.string().nullish().describe('Average colour, e.g. #374824'),
 		src: PhotoSourcesSchema.nullish().describe('Rendition URLs'),
 		liked: z
 			.boolean()
@@ -69,6 +70,24 @@ export const VideoSchema = z
 		url: z.string().nullish().describe('Video page URL on Pexels'),
 		image: z.string().nullish().describe('Poster image URL'),
 		duration: z.number().nullish().describe('Duration in seconds'),
+		full_res: z
+			.unknown()
+			.nullish()
+			.describe('Full-resolution info, when Pexels has it'),
+		tags: z.array(z.string()).nullish().describe('Tags'),
+		avg_color: z.string().nullish().describe('Average colour'),
+		video_pictures: z
+			.array(
+				z
+					.object({
+						id: z.number().nullish().describe('Picture id'),
+						nr: z.number().nullish().describe('Position in the video'),
+						picture: z.string().nullish().describe('Preview image URL'),
+					})
+					.loose(),
+			)
+			.nullish()
+			.describe('Preview pictures'),
 		user: PhotographerSchema.nullish().describe('Video creator'),
 		video_files: z
 			.array(VideoFileSchema)
@@ -89,31 +108,29 @@ export const CollectionSchema = z
 			.boolean()
 			.nullish()
 			.describe('Whether the collection is private'),
-		itemsCount: z.number().nullish().describe('Media items in the collection'),
-		mediaCount: z
-			.number()
-			.nullish()
-			.describe('Media items in the collection (alternate field)'),
-		photosCount: z.number().nullish().describe('Photos in the collection'),
-		videosCount: z.number().nullish().describe('Videos in the collection'),
+		media_count: z.number().nullish().describe('Media items in the collection'),
+		photos_count: z.number().nullish().describe('Photos in the collection'),
+		videos_count: z.number().nullish().describe('Videos in the collection'),
 	})
 	.loose()
 	.describe('A Pexels media collection');
 export type Collection = z.infer<typeof CollectionSchema>;
 
-/** A collection media item: a photo or a video, distinguished by type. */
+/**
+ * A collection media item: a photo or a video object with a `type` of
+ * "Photo" or "Video" beside its own fields.
+ */
 export const CollectionMediaSchema = z
 	.object({
-		id: z.number().nullish().describe('Media id'),
+		...PhotoSchema.shape,
+		...VideoSchema.shape,
 		type: z
-			.enum(['Photo', 'Video'])
+			.string()
 			.nullish()
-			.describe('Which kind of media this is'),
-		photo: PhotoSchema.nullish().describe('Present when type is Photo'),
-		video: VideoSchema.nullish().describe('Present when type is Video'),
+			.describe('Photo or Video; the other fields follow that object'),
 	})
 	.loose()
-	.describe('A photo or video from a collection');
+	.describe('A photo or video in a collection');
 export type CollectionMedia = z.infer<typeof CollectionMediaSchema>;
 
 /** The page block every list answer carries. */
@@ -163,6 +180,11 @@ export const SearchPhotosInputSchema = z
 			.string()
 			.optional()
 			.describe('Dominant color filter: a color name or a hex value'),
+		locale: z
+			.string()
+			.min(2)
+			.optional()
+			.describe('Search locale, e.g. en-US, de-DE, ja-JP'),
 		...pagingParams,
 	})
 	.describe('Search photos by query');
@@ -216,6 +238,15 @@ export const SearchVideosInputSchema = z
 			.enum(['landscape', 'portrait', 'square'])
 			.optional()
 			.describe('Aspect orientation filter'),
+		size: z
+			.enum(['large', 'medium', 'small'])
+			.optional()
+			.describe('Minimum size: large 4K, medium full HD, small HD'),
+		locale: z
+			.string()
+			.min(2)
+			.optional()
+			.describe('Search locale, e.g. en-US, de-DE, ja-JP'),
 		...pagingParams,
 	})
 	.describe('Search videos by query');
@@ -326,18 +357,17 @@ export type ListFeaturedCollectionsOutput = z.infer<
 	typeof ListFeaturedCollectionsOutputSchema
 >;
 
-export const GetCollectionInputSchema = z
-	.object({ collectionId: z.string().min(1).describe('Collection id') })
-	.describe('Input for reading one collection');
-export type GetCollectionInput = z.infer<typeof GetCollectionInputSchema>;
-
-export const GetCollectionOutputSchema =
-	CollectionSchema.describe('The collection');
-export type GetCollectionOutput = z.infer<typeof GetCollectionOutputSchema>;
-
 export const ListCollectionMediaInputSchema = z
 	.object({
 		collectionId: z.string().min(1).describe('Collection id'),
+		type: z
+			.enum(['photos', 'videos'])
+			.optional()
+			.describe('Only photos or only videos; both when omitted'),
+		sort: z
+			.enum(['asc', 'desc'])
+			.optional()
+			.describe('Order by when the item was added'),
 		...pagingParams,
 	})
 	.describe('Query parameters for the media of a collection');
@@ -371,7 +401,6 @@ export const PexelsEndpointInputSchemas = {
 	videosPopular: ListPopularVideosInputSchema,
 	collectionsList: ListCollectionsInputSchema,
 	collectionsListFeatured: ListFeaturedCollectionsInputSchema,
-	collectionsGet: GetCollectionInputSchema,
 	collectionsListMedia: ListCollectionMediaInputSchema,
 };
 
@@ -384,7 +413,6 @@ export const PexelsEndpointOutputSchemas = {
 	videosPopular: ListPopularVideosOutputSchema,
 	collectionsList: ListCollectionsOutputSchema,
 	collectionsListFeatured: ListFeaturedCollectionsOutputSchema,
-	collectionsGet: GetCollectionOutputSchema,
 	collectionsListMedia: ListCollectionMediaOutputSchema,
 };
 
