@@ -107,6 +107,14 @@ export function litescrape<const T extends LitescrapePluginOptions>(
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+	// managed_pricing runs on Corsair's key, which core gets from Hub without
+	// asking the keyBuilder, so an explicit key would be dropped silently and
+	// the call billed to Corsair credits. The two can't both apply.
+	if (options.authType === 'managed_pricing' && options.key) {
+		throw new Error(
+			"litescrape: `key` can't be used with authType 'managed_pricing', which runs on Corsair's LiteScrape key. Drop `key`, or use authType 'api_key' to call LiteScrape with your own key.",
+		);
+	}
 	return {
 		id: 'litescrape',
 		authConfig: litescrapeAuthConfig,
