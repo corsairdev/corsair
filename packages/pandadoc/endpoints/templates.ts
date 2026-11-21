@@ -26,7 +26,8 @@ export const list: PandadocEndpoints['templatesList'] = (ctx, input) =>
 				deleted: query.deleted,
 				shared: query.shared,
 				tag: query.tag,
-				fields: query.fields?.join(','),
+				// An empty list would send fields=, which the API answers 400.
+				fields: query.fields?.length ? query.fields.join(',') : undefined,
 			},
 		}),
 		{ log: (_, page) => ({ count: page.results.length }) },

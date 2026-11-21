@@ -373,6 +373,10 @@ describe('templates', () => {
 		expect(sent.query['q']).toBe('nda');
 		expect(sent.query['shared']).toBe('true');
 		expect(sent.query['fields']).toBe('content_date_modified');
+
+		respond({ results: [] });
+		await invoke(Templates.list, { fields: [] });
+		expect(lastRequest().query['fields']).toBeUndefined();
 	});
 
 	it('get reads template details', async () => {
