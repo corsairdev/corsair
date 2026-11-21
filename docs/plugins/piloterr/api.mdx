@@ -1,0 +1,949 @@
+---
+title: "Piloterr API reference"
+sidebarTitle: "API"
+description: "API reference for the Piloterr plugin in Corsair: every `piloterr.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### getJob
+
+`account.getJob`
+
+Poll the status and result of an async job (free)
+
+**Risk:** `read`
+
+```ts
+await corsair.piloterr.api.account.getJob({ id: "abc123" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The job_id returned by an endpoint called with is_async=true |
+
+Free; status Queued, Running, CompletedJob, Error, NotFound or BadRequest, with the endpoint answer in result once completed.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Job ID |
+| `success` | `boolean \| null` | No | Whether the job succeeded |
+| `status` | `Queued \| Running \| CompletedJob \| Error \| NotFound \| BadRequest \| null` | No | Job state; CompletedJob, Error, NotFound and BadRequest are terminal |
+| `endpoint` | `string \| null` | No | Endpoint the job runs |
+| `created_at` | `string \| null` | No | Creation timestamp |
+| `started_at` | `string \| null` | No | Start timestamp |
+| `completed_at` | `string \| null` | No | Completion timestamp |
+| `duration_ms` | `number \| null` | No | Duration in milliseconds |
+| `progress` | `number \| null` | No | Progress from 0 to 100 |
+| `args` | `Record<string, any> \| null` | No | Arguments the job was started with |
+| `result` | `any \| null` | No | The endpoint answer, once completed |
+
+
+
+---
+
+### usage
+
+`account.usage`
+
+Read remaining quota, packs, credits and rate limits (free)
+
+**Risk:** `read`
+
+```ts
+await corsair.piloterr.api.account.usage({});
+```
+
+**Input:** _empty object_
+
+Free; remaining spans subscription quota, one-time packs and credits.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `remaining` | `number` | Yes | Total still available across all balances |
+| `total_used` | `number` | Yes | Total consumed across all balances |
+| `renewal_date` | `string \| null` | No | Subscription renewal date (ISO 8601) |
+| `period` | `object \| null` | No | Current billing period |
+| `subscription` | `object \| null` | No | Combined subscription quota plus packs |
+| `packs` | `any \| null` | No | One-time pack balances |
+| `credits` | `object \| null` | No | Credit ledger balances |
+| `rate_limit` | `Record<string, any> \| null` | No | Per-second and per-minute plan limits |
+| `account` | `Record<string, any> \| null` | No | Account name and slug |
+| `api_key` | `Record<string, any> \| null` | No | Key alias, active flag, category, expiry and quotas |
+
+<AccordionGroup>
+<Accordion title="period full type">
+
+```ts
+{
+  start?: string | null,
+  end?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="subscription full type">
+
+```ts
+{
+  used?: number | null,
+  total?: number | null,
+  remaining?: number | null,
+  percent_used?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="credits full type">
+
+```ts
+{
+  given?: number | null,
+  consumed?: number | null,
+  remaining?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Email
+
+### analyzes
+
+`email.analyzes`
+
+Analyze a domain email infrastructure and SPF records
+
+**Risk:** `read`
+
+```ts
+await corsair.piloterr.api.email.analyzes({ query: "example.com" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | Bare domain to analyze, e.g. airbus.com |
+| `softFail` | `boolean` | No | Answer 200 even on errors, with the message in the error field; errors stay unbilled |
+| `fields` | `string` | No | Comma-separated fields to keep, with dot notation for nested objects; unknown names are ignored |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `is_microsoft_365` | `boolean \| null` | No | Whether the domain uses Microsoft 365 |
+| `is_google_workspace` | `boolean \| null` | No | Whether the domain uses Google Workspace |
+| `microsoft_365_domains` | `string[] \| null` | No | Associated Microsoft 365 domains |
+| `google_workspace_domains` | `string[] \| null` | No | Associated Google Workspace domains |
+| `domains` | `Record<string, any> \| null` | No | SPF and DNS records per associated domain |
+
+
+
+---
+
+### finder
+
+`email.finder`
+
+Find a verified professional email by name and company
+
+**Risk:** `read`
+
+```ts
+await corsair.piloterr.api.email.finder({ query: "Alex Martin", companyDomain: "example.com" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | Full name of the person whose email to find |
+| `companyDomain` | `string` | No | Company domain, e.g. piloterr.com or a full URL |
+| `companyName` | `string` | No | Company name; domain is preferred when available |
+| `softFail` | `boolean` | No | Answer 200 even on errors, with the message in the error field; errors stay unbilled |
+| `fields` | `string` | No | Comma-separated fields to keep, with dot notation for nested objects; unknown names are ignored |
+
+At least one of companyDomain or companyName is required; domain produces more accurate results.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string \| null` | No | The found email address |
+| `status` | `string \| null` | No | Verification status of the email |
+| `first_name` | `string \| null` | No | First name |
+| `last_name` | `string \| null` | No | Last name |
+| `company_domain` | `string \| null` | No | Company domain |
+
+
+
+---
+
+### verify
+
+`email.verify`
+
+Verify whether an email address is deliverable
+
+**Risk:** `read`
+
+```ts
+await corsair.piloterr.api.email.verify({ query: "alex.martin@example.com" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | The email address to verify |
+| `softFail` | `boolean` | No | Answer 200 even on errors, with the message in the error field; errors stay unbilled |
+| `fields` | `string` | No | Comma-separated fields to keep, with dot notation for nested objects; unknown names are ignored |
+
+status is valid, invalid or unknown.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string \| null` | No | The verified email address |
+| `status` | `valid \| invalid \| unknown \| null` | No | Deliverability verdict |
+
+
+
+---
+
+## Google
+
+### news
+
+`google.news`
+
+Scrape Google News results for a query
+
+**Risk:** `read`
+
+```ts
+await corsair.piloterr.api.google.news({ query: "artificial intelligence", page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | News search query; supports Google operators |
+| `page` | `number` | No | Page number (default 1) |
+| `googleDomain` | `string` | No | Google domain to use, e.g. google.com or google.fr |
+| `gl` | `string` | No | Two-letter country code for the search, e.g. us |
+| `hl` | `string` | No | Language code for the search, e.g. en or en-gb |
+| `cr` | `string` | No | Country restriction as country&#123;XX&#125; joined with \| |
+| `lr` | `string` | No | Language restriction as lang_&#123;xx&#125; joined with \| |
+| `softFail` | `boolean` | No | Answer 200 even on errors, with the message in the error field; errors stay unbilled |
+| `fields` | `string` | No | Comma-separated fields to keep, with dot notation for nested objects; unknown names are ignored |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object \| null` | No | Result pagination |
+| `organic_results` | `object[] \| null` | No | News listings, each with a date |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  next?: number | null,
+  current?: number | null,
+  per_page?: number | null,
+  other_pages?: number[] | null,
+  has_next_page?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="organic_results full type">
+
+```ts
+{
+  link?: string | null,
+  title?: string | null,
+  domain?: string | null,
+  source?: string | null,
+  snippet?: string | null,
+  position?: number | null,
+  displayed_link?: string | null,
+  snippet_matched?: any[] | null,
+  date?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`google.search`
+
+Scrape Google search results with filters and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.piloterr.api.google.search({ query: "best electric cars 2024", gl: "us", hl: "en", tbs: "qdr:w" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | Search query; supports Google operators |
+| `tbs` | `string` | No | Time-range filter, e.g. qdr:w for the last week |
+| `location` | `string` | No | City or region the search originates from |
+| `uule` | `string` | No | Google-encoded location string |
+| `page` | `number` | No | Page number (default 1) |
+| `num` | `number` | No | Results per page; deprecated by Google and may not apply |
+| `safe` | `active \| off` | No | SafeSearch filter |
+| `googleDomain` | `string` | No | Google domain to use, e.g. google.com or google.fr |
+| `gl` | `string` | No | Two-letter country code for the search, e.g. us |
+| `hl` | `string` | No | Language code for the search, e.g. en or en-gb |
+| `cr` | `string` | No | Country restriction as country&#123;XX&#125; joined with \| |
+| `lr` | `string` | No | Language restriction as lang_&#123;xx&#125; joined with \| |
+| `softFail` | `boolean` | No | Answer 200 even on errors, with the message in the error field; errors stay unbilled |
+| `fields` | `string` | No | Comma-separated fields to keep, with dot notation for nested objects; unknown names are ignored |
+
+tbs takes Google time filters like qdr:h (hour) through qdr:y (year); cr/lr take country&#123;XX&#125; / lang_&#123;xx&#125; joined with |.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object \| null` | No | Result pagination |
+| `organic_results` | `object[] \| null` | No | Organic listings |
+| `related_searches` | `Record<string, any>[] \| null` | No | Related searches |
+| `knowledge_graph` | `any \| null` | No | Knowledge graph, when present |
+| `search_parameters` | `Record<string, any> \| null` | No | Parameters echoed back |
+| `search_information` | `object \| null` | No | Search metadata |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  next?: number | null,
+  current?: number | null,
+  per_page?: number | null,
+  other_pages?: number[] | null,
+  has_next_page?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="organic_results full type">
+
+```ts
+{
+  link?: string | null,
+  title?: string | null,
+  domain?: string | null,
+  source?: string | null,
+  snippet?: string | null,
+  position?: number | null,
+  displayed_link?: string | null,
+  snippet_matched?: any[] | null,
+  date?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+  total_results?: any | null,
+  time_taken_displayed?: any | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchAutocomplete
+
+`google.searchAutocomplete`
+
+Fetch Google autocomplete suggestions for a query
+
+**Risk:** `read`
+
+```ts
+await corsair.piloterr.api.google.searchAutocomplete({ query: "coff", gl: "us", hl: "en" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | Partial or complete query to autocomplete |
+| `cp` | `number` | No | Cursor position in the query the suggestions complete |
+| `googleDomain` | `string` | No | Google domain to use, e.g. google.com or google.fr |
+| `gl` | `string` | No | Two-letter country code for the search, e.g. us |
+| `hl` | `string` | No | Language code for the search, e.g. en or en-gb |
+| `cr` | `string` | No | Country restriction as country&#123;XX&#125; joined with \| |
+| `lr` | `string` | No | Language restriction as lang_&#123;xx&#125; joined with \| |
+| `softFail` | `boolean` | No | Answer 200 even on errors, with the message in the error field; errors stay unbilled |
+| `fields` | `string` | No | Comma-separated fields to keep, with dot notation for nested objects; unknown names are ignored |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `Record<string, any>[] \| null` | No | Suggested completions, each with a value field |
+| `search_parameters` | `Record<string, any> \| null` | No | Parameters echoed back |
+
+
+
+---
+
+## Linkedin
+
+### companyInfo
+
+`linkedin.companyInfo`
+
+Read LinkedIn company firmographics by slug, URL, ID or domain
+
+**Risk:** `read`
+
+```ts
+await corsair.piloterr.api.linkedin.companyInfo({ domain: "guideflow.com" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | LinkedIn company slug, URL, numeric ID or school URL; mutually exclusive with domain |
+| `domain` | `string` | No | Company website domain for reverse lookup; mutually exclusive with query |
+| `softFail` | `boolean` | No | Answer 200 even on errors, with the message in the error field; errors stay unbilled |
+| `fields` | `string` | No | Comma-separated fields to keep, with dot notation for nested objects; unknown names are ignored |
+
+Pass query (slug, URL, numeric ID or school URL) or domain for reverse lookup — exactly one; a domain lookup resolves the LinkedIn slug from indexed company data.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company_id` | `number \| null` | No | LinkedIn company ID |
+| `company_name` | `string \| null` | No | Company name |
+| `company_url` | `string \| null` | No | LinkedIn company URL |
+| `tagline` | `string \| null` | No | Company tagline |
+| `description` | `string \| null` | No | Company description |
+| `website` | `string \| null` | No | Company website |
+| `industry` | `string \| null` | No | Industry |
+| `founded` | `number \| null` | No | Founding year |
+| `staff_count` | `number \| null` | No | Employee count |
+| `staff_range` | `string \| null` | No | Employee range label |
+| `follower_count` | `number \| null` | No | Follower count |
+| `headquarter` | `object \| null` | No | Headquarters address |
+| `locations` | `string[] \| null` | No | Office locations |
+| `specialities` | `string[] \| null` | No | Specialities |
+| `employees` | `Record<string, any>[] \| null` | No | Employee profiles |
+| `posts` | `Record<string, any>[] \| null` | No | Recent posts |
+| `logo_url` | `string \| null` | No | Logo URL |
+
+<AccordionGroup>
+<Accordion title="headquarter full type">
+
+```ts
+{
+  city?: string | null,
+  line1?: string | null,
+  country?: string | null,
+  postal_code?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### jobInfo
+
+`linkedin.jobInfo`
+
+Read a LinkedIn job posting by ID or URL
+
+**Risk:** `read`
+
+```ts
+await corsair.piloterr.api.linkedin.jobInfo({ query: "https://www.linkedin.com/jobs/view/4390885746" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | LinkedIn numeric job ID or full job posting URL |
+| `softFail` | `boolean` | No | Answer 200 even on errors, with the message in the error field; errors stay unbilled |
+| `fields` | `string` | No | Comma-separated fields to keep, with dot notation for nested objects; unknown names are ignored |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | LinkedIn job ID |
+| `title` | `string \| null` | No | Job title |
+| `job_url` | `string \| null` | No | Job posting URL |
+| `job_description` | `string \| null` | No | Job description |
+| `location` | `string \| null` | No | Location label |
+| `address` | `Record<string, any> \| null` | No | Structured address |
+| `industry` | `string[] \| null` | No | Industries |
+| `functions` | `string[] \| null` | No | Job functions |
+| `list_date` | `string \| null` | No | Posting date |
+| `employment_type` | `string \| null` | No | Employment type |
+| `seniority_level` | `string \| null` | No | Seniority level |
+| `total_applicants` | `number \| null` | No | Applicant count |
+| `compensation_salary` | `string \| null` | No | Salary range |
+| `company_name` | `string \| null` | No | Company name |
+| `company_url` | `string \| null` | No | Company URL |
+| `company_logo` | `string \| null` | No | Company logo |
+| `recruiter` | `Record<string, any> \| null` | No | Recruiter profile |
+
+
+
+---
+
+### jobSearch
+
+`linkedin.jobSearch`
+
+Search LinkedIn jobs with seniority, type and location filters
+
+**Risk:** `read`
+
+```ts
+await corsair.piloterr.api.linkedin.jobSearch({ keyword: "Software Engineer", experienceLevel: "mid_senior", geoId: "92000000" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keyword` | `string` | No | Job title or keyword; leave empty to match filters only |
+| `experienceLevel` | `internship \| entry_level \| associate \| mid_senior \| director` | No | Seniority filter |
+| `jobType` | `full_time \| part_time \| contract \| temporary \| internship \| volunteer` | No | Employment type filter |
+| `when` | `day \| week \| month` | No | Posting recency filter |
+| `flexibility` | `remote \| flexible \| on_site` | No | Work arrangement filter |
+| `distance` | `5 \| 10 \| 25 \| 50 \| 100` | No | Radius in miles from the geo_id location |
+| `geoId` | `string` | No | LinkedIn geo ID (default 92000000, worldwide) |
+| `companyId` | `string` | No | LinkedIn numeric company ID filter |
+| `page` | `number` | No | Page number (default 1) |
+| `softFail` | `boolean` | No | Answer 200 even on errors, with the message in the error field; errors stay unbilled |
+| `fields` | `string` | No | Comma-separated fields to keep, with dot notation for nested objects; unknown names are ignored |
+
+Each page returns up to 10 jobs; distance (5/10/25/50/100 miles) requires geoId.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | Job listings, up to 10 per page |
+| `pagination` | `object \| null` | No | Result pagination |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: number | null,
+  url?: string | null,
+  title?: string | null,
+  city?: string | null,
+  country?: string | null,
+  location?: string | null,
+  geo_id?: string | null,
+  list_date?: string | null,
+  company_name?: string | null,
+  company_url?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  next?: number | null,
+  current?: number | null,
+  per_page?: number | null,
+  other_pages?: number[] | null,
+  has_next_page?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### postInfo
+
+`linkedin.postInfo`
+
+Read a LinkedIn post with its comments
+
+**Risk:** `read`
+
+```ts
+await corsair.piloterr.api.linkedin.postInfo({ query: "7027826235833520128" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | LinkedIn numeric post ID or full post URL |
+| `softFail` | `boolean` | No | Answer 200 even on errors, with the message in the error field; errors stay unbilled |
+| `fields` | `string` | No | Comma-separated fields to keep, with dot notation for nested objects; unknown names are ignored |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Post ID |
+| `url` | `string \| null` | No | Post URL |
+| `text` | `string \| null` | No | Post text |
+| `author` | `Record<string, any> \| null` | No | Author profile |
+| `images` | `string[] \| null` | No | Post images |
+| `comments` | `Record<string, any>[] \| null` | No | First batch of comments; deep threads may be truncated |
+
+
+
+---
+
+### profileInfo
+
+`linkedin.profileInfo`
+
+Read a LinkedIn member profile by username, URL or member ID
+
+**Risk:** `read`
+
+```ts
+await corsair.piloterr.api.linkedin.profileInfo({ query: "https://www.linkedin.com/in/example-user" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | LinkedIn username, profile URL or encoded member ID |
+| `softFail` | `boolean` | No | Answer 200 even on errors, with the message in the error field; errors stay unbilled |
+| `fields` | `string` | No | Comma-separated fields to keep, with dot notation for nested objects; unknown names are ignored |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string \| null` | No | LinkedIn username |
+| `member_identifier` | `string \| null` | No | Encoded member ID |
+| `full_name` | `string \| null` | No | Full name |
+| `headline` | `string \| null` | No | Profile headline |
+| `summary` | `string \| null` | No | Profile summary |
+| `profile_url` | `string \| null` | No | Profile URL |
+| `photo_url` | `string \| null` | No | Photo URL |
+| `address` | `any \| null` | No | Address |
+| `connection_count` | `number \| null` | No | Connection count |
+| `follower_count` | `number \| null` | No | Follower count |
+| `skills` | `any[] \| null` | No | Skills |
+| `experiences` | `Record<string, any>[] \| null` | No | Work experience entries |
+| `educations` | `Record<string, any>[] \| null` | No | Education entries |
+| `certifications` | `any[] \| null` | No | Certifications |
+| `languages` | `any[] \| null` | No | Languages |
+| `recommendations` | `any[] \| null` | No | Recommendations |
+| `articles` | `Record<string, any>[] \| null` | No | Published articles |
+
+
+
+---
+
+## Web
+
+### crawler
+
+`web.crawler`
+
+Fetch a public page with fast HTTP crawling, no JavaScript
+
+**Risk:** `read`
+
+```ts
+await corsair.piloterr.api.web.crawler({ query: "https://example.com", returnPageSource: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | Public website URL to fetch; must include http:// or https:// |
+| `allowRedirects` | `boolean` | No | Follow HTTP redirects (default true); set false to inspect the redirect chain |
+| `returnPageSource` | `boolean` | No | Return the exact HTML source instead of processed content (default false) |
+| `softFail` | `boolean` | No | Answer 200 even on errors, with the message in the error field; errors stay unbilled |
+| `fields` | `string` | No | Comma-separated fields to keep, with dot notation for nested objects; unknown names are ignored |
+
+Answers a JSON-encoded HTML string; start here for static pages and escalate to web.rendering (2 credits) or web.webunlocker (3 credits, whitelisted domains) when JavaScript or bot protection blocks you.
+
+
+
+**Output:** `string`
+
+
+---
+
+### emailPhoneExtractor
+
+`web.emailPhoneExtractor`
+
+Extract emails, phone numbers and social profiles from a site
+
+**Risk:** `read`
+
+```ts
+await corsair.piloterr.api.web.emailPhoneExtractor({ query: "https://example.com", countryCode: "FR" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | Website URL to crawl for contact information; must include http:// or https:// |
+| `countryCode` | `string` | No | ISO 3166-1 alpha-2 country code improving phone number parsing, e.g. FR |
+| `softFail` | `boolean` | No | Answer 200 even on errors, with the message in the error field; errors stay unbilled |
+| `fields` | `string` | No | Comma-separated fields to keep, with dot notation for nested objects; unknown names are ignored |
+
+Results may contain personal data; ensure a legitimate reason for collection. country_code improves phone number parsing for country-specific sites.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emails` | `string[] \| null` | No | Found email addresses |
+| `phone_numbers` | `any[] \| null` | No | Found phone numbers |
+| `contact_pages` | `any[] \| null` | No | Pages the extractor found contacts on |
+| `twitter_profiles` | `string[] \| null` | No | X/Twitter profiles |
+| `linkedin_profiles` | `string[] \| null` | No | LinkedIn profiles |
+| `instagram_profiles` | `string[] \| null` | No | Instagram profiles |
+| `facebook_profiles` | `any[] \| null` | No | Facebook profiles |
+| `youtube_channels` | `any[] \| null` | No | YouTube channels |
+| `tiktok_profiles` | `any[] \| null` | No | TikTok profiles |
+| `reddit_profiles` | `any[] \| null` | No | Reddit profiles |
+| `snapchat_profiles` | `any[] \| null` | No | Snapchat profiles |
+| `telegram_channels` | `any[] \| null` | No | Telegram channels |
+| `pinterest_profiles` | `any[] \| null` | No | Pinterest profiles |
+| `crunchbase_profiles` | `any[] \| null` | No | Crunchbase profiles |
+
+
+
+---
+
+### rendering
+
+`web.rendering`
+
+Render a JavaScript-heavy page in a headless browser
+
+**Risk:** `read`
+
+```ts
+await corsair.piloterr.api.web.rendering({ query: "https://example.com", waitFor: "#content", timeout: 30 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | Public website URL to render in a headless browser; must include http:// or https:// |
+| `waitInSeconds` | `number` | No | Seconds to wait after page load before returning |
+| `waitFor` | `string` | No | CSS or XPath selector to wait for before returning the rendered HTML |
+| `blockAds` | `boolean` | No | Block ad network requests during rendering |
+| `timeout` | `number` | No | Maximum seconds to wait for the page to load |
+| `returnPageSource` | `boolean` | No | Return &#123;"result": html&#125; instead of the raw HTML string |
+| `softFail` | `boolean` | No | Answer 200 even on errors, with the message in the error field; errors stay unbilled |
+| `fields` | `string` | No | Comma-separated fields to keep, with dot notation for nested objects; unknown names are ignored |
+
+
+
+**Output:** `string`
+
+
+---
+
+### screenshot
+
+`web.screenshot`
+
+Capture a webpage as an image or PDF file
+
+**Risk:** `read`
+
+```ts
+await corsair.piloterr.api.web.screenshot({ url: "https://example.com", format: "png", fullPage: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The URL of the webpage to capture |
+| `format` | `jpeg \| jpg \| pdf \| png \| webp` | No | Output format of the screenshot |
+| `device` | `galaxy_fold4 \| galaxy_s23 \| galaxy_s23_ultra \| galaxy_s8 \| huawei_mate_50_pro \| huawei_p60_pro \| ipad \| iphone_12 \| iphone_13_mini \| iphone_13_pro_max \| iphone_14_pro \| iphone_14_pro_max \| iphone_x \| pixel_5 \| pixel_6a \| pixel_7_pro \| redmi_note_11 \| redmi_note_12_pro` | No | Device type to emulate |
+| `fullPage` | `boolean` | No | Capture the entire page instead of the viewport |
+| `fullPageScroll` | `boolean` | No | Scroll the page to load lazy elements before capturing |
+| `fullPageScrollDuration` | `number` | No | Scroll duration in milliseconds before a full-page capture |
+| `viewportWidth` | `number` | No | Viewport width in pixels |
+| `viewportHeight` | `number` | No | Viewport height in pixels |
+| `scaleFactor` | `number` | No | Scale factor for high-resolution screenshots |
+| `imageQuality` | `string` | No | Custom image quality (jpeg and webp) |
+| `selector` | `string` | No | Capture a specific element instead of the viewport |
+| `cache` | `boolean` | No | Cache the response |
+| `cacheTtl` | `number` | No | Cache TTL in seconds |
+| `removeSelectors` | `string` | No | Comma-separated elements to hide before capturing |
+| `removeCookieBanners` | `boolean` | No | Remove cookie banners before capturing |
+| `removeAds` | `boolean` | No | Remove ads before capturing |
+| `blockResources` | `string` | No | Comma-separated resource types to block, e.g. image,stylesheet,font |
+| `blockUrls` | `string` | No | Comma-separated URL patterns to block |
+| `delay` | `number` | No | Delay in seconds before capturing |
+| `waitForSelector` | `string` | No | Element to wait for before capturing |
+| `softFail` | `boolean` | No | Answer 200 even on errors, with the message in the error field; errors stay unbilled |
+| `fields` | `string` | No | Comma-separated fields to keep, with dot notation for nested objects; unknown names are ignored |
+
+Answers &#123; contentType, fileContent &#125; with the capture base64-encoded; format takes jpeg, jpg, pdf, png or webp and device one of the 19 documented emulations.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentType` | `string \| null` | No | Image content type, e.g. image/png or application/pdf |
+| `fileContent` | `string` | Yes | The captured file, base64-encoded |
+
+
+
+---
+
+### technology
+
+`web.technology`
+
+Detect the technology stack behind a website
+
+**Risk:** `read`
+
+```ts
+await corsair.piloterr.api.web.technology({ query: "https://example.com", mode: "expert" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | Website URL to analyze; must include http:// or https:// |
+| `mode` | `expert \| simple` | No | expert (default) adds confidence scores, versions and descriptions; simple keeps names and status codes |
+| `softFail` | `boolean` | No | Answer 200 even on errors, with the message in the error field; errors stay unbilled |
+| `fields` | `string` | No | Comma-separated fields to keep, with dot notation for nested objects; unknown names are ignored |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cms` | `string \| null` | No | Detected CMS |
+| `urls` | `Record<string, any> \| null` | No | Checked URLs with their status codes |
+| `technologies` | `any[] \| null` | No | Detected technologies; names in simple mode |
+
+
+
+---
+
+### webunlocker
+
+`web.webunlocker`
+
+Unlock a bot-protected page on a whitelisted domain
+
+**Risk:** `read`
+
+```ts
+await corsair.piloterr.api.web.webunlocker({ query: "https://www.example-whitelisted.com/page", allowRedirects: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | Public website URL to unlock; the target domain must be on the Piloterr whitelist |
+| `allowRedirects` | `boolean` | No | Follow HTTP redirects (default true); set false to inspect the redirect chain |
+| `returnPageSource` | `boolean` | No | Return the exact HTML source instead of processed content (default false) |
+| `softFail` | `boolean` | No | Answer 200 even on errors, with the message in the error field; errors stay unbilled |
+| `fields` | `string` | No | Comma-separated fields to keep, with dot notation for nested objects; unknown names are ignored |
+
+
+
+**Output:** `string`
+
+
+---
+

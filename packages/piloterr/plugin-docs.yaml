@@ -1,0 +1,88 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+# `pnpm validate:plugins` fails until the TODO is replaced.
+displayName: "Piloterr"
+description: "Piloterr is a scraping API for public web data. This plugin fetches and renders pages, captures screenshots, detects website technology, extracts contact details, scrapes Google search and news, reads LinkedIn companies, profiles, jobs and posts, and finds and verifies professional emails."
+domain: piloterr.com
+recommendedAuth: api_key
+overviewNote: >
+  Authenticate with the API key from your Piloterr dashboard; the plugin
+  sends it in the x-api-key header. Every operation is a GET against
+  https://api.piloterr.com and each call costs the credits listed on the
+  endpoint page (account.usage and account.getJob are free). Errors answer
+  {"error": "<message>"}; Piloterr signals rate limits as 401 with a
+  "Rate limit exceeded" message rather than 429, and the plugin retries
+  those with backoff (2s, then 4s). The docs prescribe exponential backoff
+  for 500s only; 400/402/403 are never retried.
+
+  Global parameters ride along on every endpoint: softFail answers 200 with
+  the error in the body (errors stay unbilled) and fields filters the
+  response by comma-separated field names with dot notation. is_async is
+  not part of this plugin; poll jobs started elsewhere with
+  account.getJob.
+
+  web.crawler and web.webunlocker answer a JSON-encoded HTML string,
+  web.rendering the rendered HTML, and web.screenshot a base64-encoded
+  file. web.webunlocker only works for domains on Piloterr's whitelist.
+  Every operation is described in the official reference:
+  https://docs.piloterr.com/reference
+examples:
+  read:
+    path: linkedin.companyInfo
+    title: Enrich a company by domain
+    args:
+      domain: guideflow.com
+  write:
+    path: google.search
+    title: Scrape a Google search
+    args:
+      query: best electric cars 2024
+apiExamples:
+  web.crawler:
+    call: '{ query: "https://example.com", returnPageSource: false }'
+  web.rendering:
+    call: '{ query: "https://example.com", waitFor: "#content", timeout: 30 }'
+  web.screenshot:
+    call: '{ url: "https://example.com", format: "png", fullPage: true }'
+  web.technology:
+    call: '{ query: "https://example.com", mode: "expert" }'
+  web.emailPhoneExtractor:
+    call: '{ query: "https://example.com", countryCode: "FR" }'
+  web.webunlocker:
+    call: '{ query: "https://www.example-whitelisted.com/page", allowRedirects: true }'
+  google.search:
+    call: '{ query: "best electric cars 2024", gl: "us", hl: "en", tbs: "qdr:w" }'
+  google.searchAutocomplete:
+    call: '{ query: "coff", gl: "us", hl: "en" }'
+  google.news:
+    call: '{ query: "artificial intelligence", page: 1 }'
+  linkedin.companyInfo:
+    call: '{ domain: "guideflow.com" }'
+  linkedin.profileInfo:
+    call: '{ query: "https://www.linkedin.com/in/example-user" }'
+  linkedin.jobInfo:
+    call: '{ query: "https://www.linkedin.com/jobs/view/4390885746" }'
+  linkedin.jobSearch:
+    call: '{ keyword: "Software Engineer", experienceLevel: "mid_senior", geoId: "92000000" }'
+  linkedin.postInfo:
+    call: '{ query: "7027826235833520128" }'
+  email.finder:
+    call: '{ query: "Alex Martin", companyDomain: "example.com" }'
+  email.verify:
+    call: '{ query: "alex.martin@example.com" }'
+  email.analyzes:
+    call: '{ query: "example.com" }'
+  account.usage:
+    call: '{}'
+  account.getJob:
+    call: '{ id: "abc123" }'
+apiNotes:
+  web.crawler: 'Answers a JSON-encoded HTML string; start here for static pages and escalate to web.rendering (2 credits) or web.webunlocker (3 credits, whitelisted domains) when JavaScript or bot protection blocks you.'
+  web.screenshot: 'Answers { contentType, fileContent } with the capture base64-encoded; format takes jpeg, jpg, pdf, png or webp and device one of the 19 documented emulations.'
+  web.emailPhoneExtractor: 'Results may contain personal data; ensure a legitimate reason for collection. country_code improves phone number parsing for country-specific sites.'
+  google.search: 'tbs takes Google time filters like qdr:h (hour) through qdr:y (year); cr/lr take country{XX} / lang_{xx} joined with |.'
+  linkedin.companyInfo: 'Pass query (slug, URL, numeric ID or school URL) or domain for reverse lookup — exactly one; a domain lookup resolves the LinkedIn slug from indexed company data.'
+  linkedin.jobSearch: 'Each page returns up to 10 jobs; distance (5/10/25/50/100 miles) requires geoId.'
+  email.finder: 'At least one of companyDomain or companyName is required; domain produces more accurate results.'
+  email.verify: 'status is valid, invalid or unknown.'
+  account.usage: 'Free; remaining spans subscription quota, one-time packs and credits.'
+  account.getJob: 'Free; status Queued, Running, CompletedJob, Error, NotFound or BadRequest, with the endpoint answer in result once completed.'
