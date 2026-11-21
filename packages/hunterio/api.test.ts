@@ -171,7 +171,11 @@ describeLive('Hunter.io live API', () => {
 	// Each round-trip registers a cleanup as soon as a record exists. The
 	// cleanups run in reverse order, each one even when an earlier one
 	// fails, and any failures are reported together at the end.
-	async function runCleanups(steps: Array<() => Promise<unknown>>) {
+	// Stricter typing is not feasible because each step wraps a different endpoint (tags, lists, leads, companies) with its own output type; the result is never read, only awaited.
+	type CleanupStep = () => Promise<unknown>;
+
+	async function runCleanups(steps: CleanupStep[]) {
+		// Stricter typing is not feasible because a catch clause receives `unknown`; the values are passed on to AggregateError as they are.
 		const failures: unknown[] = [];
 		for (const step of [...steps].reverse()) {
 			try {
@@ -193,6 +197,18 @@ describeLive('Hunter.io live API', () => {
 		if ((error as { status?: number }).status !== 404) throw error;
 	}
 
+	// Reads every page of /companies so a match past the first page counts.
+	async function isCompanySaved(domain: string): Promise<boolean> {
+		const limit = 100;
+		for (let offset = 0; offset <= 9900; offset += limit) {
+			const page = await Companies.list(ctx, { query: domain, limit, offset });
+			const companies = page.data.companies;
+			if (companies.some((entry) => entry.domain === domain)) return true;
+			if (companies.length < limit) return false;
+		}
+		throw new Error('Too many saved companies to check; refusing to clean up');
+	}
+
 	async function deleteLeadsWithEmail(email: string): Promise<void> {
 		// Only addresses unique to this run reach here, so every match is ours.
 		const id = await leadIdFor(email, 4);
@@ -201,7 +217,7 @@ describeLive('Hunter.io live API', () => {
 
 	describe('round-trips on records the suite creates', () => {
 		it('lead tags: create, get, delete', async () => {
-			const cleanup: Array<() => Promise<unknown>> = [];
+			const cleanup: CleanupStep[] = [];
 			try {
 				const created = await Tags.create(ctx, { name: `${RUN}-tag` });
 				const id = need(created.data.id, 'tag id');
@@ -214,7 +230,7 @@ describeLive('Hunter.io live API', () => {
 		});
 
 		it('company tags: create, list, delete', async () => {
-			const cleanup: Array<() => Promise<unknown>> = [];
+			const cleanup: CleanupStep[] = [];
 			try {
 				const created = await CompanyTags.create(ctx, { name: `${RUN}-ctag` });
 				const id = need(created.data.id, 'company tag id');
@@ -227,7 +243,7 @@ describeLive('Hunter.io live API', () => {
 		});
 
 		it('leads lists: merge moves the leads and deletes the source list', async () => {
-			const cleanup: Array<() => Promise<unknown>> = [];
+			const cleanup: CleanupStep[] = [];
 			const email = `${RUN}@example.com`;
 			try {
 				const source = await LeadsLists.create(ctx, { name: `${RUN}-from` });
@@ -261,7 +277,7 @@ describeLive('Hunter.io live API', () => {
 		});
 
 		it('company lists: add a company, list it, remove it', async () => {
-			const cleanup: Array<() => Promise<unknown>> = [];
+			const cleanup: CleanupStep[] = [];
 			const domain = 'stripe.com';
 			try {
 				const list = await CompanyLists.create(ctx, {
@@ -271,10 +287,7 @@ describeLive('Hunter.io live API', () => {
 				const listId = need(list.data.id, 'list id');
 				cleanup.push(() => CompanyLists.delete(ctx, { id: listId }));
 				// Delete the company afterwards only if this run saved it.
-				const before = await Companies.list(ctx, { query: domain });
-				const alreadySaved = before.data.companies.some(
-					(entry) => entry.domain === domain,
-				);
+				const alreadySaved = await isCompanySaved(domain);
 				const company = await Companies.create(ctx, { domain });
 				const companyId = need(company.data.id, 'company id');
 				if (!alreadySaved) {
