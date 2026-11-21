@@ -7,6 +7,8 @@ overviewNote: |
 
   `pipes.run` only supports JSON responses in this plugin: `stream: true` is rejected and the request sends `stream: false`. Use the thread endpoints to retrieve conversation context; the current v1 API reference does not define a separate run-history retrieval route.
 
+  `agent.run` also uses JSON responses only and relies on an LLM keyset configured in Langbase for the selected model. MCP server configuration is not exposed because its documented options can carry authorization tokens and custom headers in tool arguments.
+
   Document upload follows Langbase's two-step signed URL contract. Pass the file contents as base64 and a supported content type; the signed URL remains internal and is never returned. Lists are complete arrays; the documented Langbase list APIs do not expose pagination parameters.
 
   Web search is not included because Langbase requires a separate Exa key in `LB-WEB-SEARCH-KEY`. Pipe deletion and single-memory GET are also omitted because the current v1 API reference does not define those routes.
@@ -15,6 +17,10 @@ references:
     url: https://langbase.com/docs/api-reference
   - title: Pipes API
     url: https://langbase.com/docs/api-reference/pipe
+  - title: Agent Run API
+    url: https://langbase.com/docs/api-reference/agent
+  - title: Run a pipe with a User or Organization API key
+    url: https://langbase.com/docs/guides/run-pipe-user-org-api-keys
   - title: Memory and documents API
     url: https://langbase.com/docs/api-reference/memory
   - title: Threads API
@@ -31,7 +37,8 @@ examples:
     args:
       name: sample-support-pipe
 apiNotes:
-  pipes.run: "This endpoint accepts JSON responses only. `stream: true` is rejected; the plugin sends `stream: false`. Use `threadId` to continue a conversation and `threads.listMessages` to retrieve its context."
+  pipes.run: "Run the named pipe with the configured User/Organization API key, as documented in the Langbase guide. This endpoint accepts JSON responses only: `stream: true` is rejected and the plugin sends `stream: false`. Use `threadId` to continue a conversation and `threads.listMessages` to retrieve its context."
+  agent.run: "Uses the User/Organization API key. Configure an LLM keyset in Langbase for the selected model; the plugin does not accept a provider API key in tool arguments. Streaming and MCP server configuration are not exposed because the shared transport is JSON-only and MCP server configuration can contain authorization secrets."
   pipes.get: "Provide both `ownerLogin` and `pipeName`; the GET route contains both path segments."
   memory.retrieve: "`topK` is optional and ranges from 1 to 100. Filters use Langbase's documented nested tuple format."
   documents.upload: "Upload requires `memoryName`, `documentName`, base64 file contents, and a supported MIME type (`application/pdf`, `text/plain`, `text/markdown`, or `text/csv`). The content type should match the document name; code files use `text/plain`. The signed URL is created and consumed internally; the output contains only the upload status."
@@ -39,8 +46,13 @@ apiNotes:
   threads.appendMessages: "Langbase accepts an array of messages as the request body; tool messages may have null content and a `tool_call_id`."
   threads.listMessages: "Messages are returned in chronological order."
 apiExamples:
+  agent.run:
+    args:
+      model: openai:gpt-4o-mini
+      input: Hello
   pipes.run:
     args:
+      name: support-agent
       messages:
         - role: user
           content: Hello

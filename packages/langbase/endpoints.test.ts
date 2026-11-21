@@ -81,10 +81,49 @@ describe('Langbase bound endpoints', () => {
 		);
 	}
 
+	it('runs a runtime agent with the documented JSON response contract', async () => {
+		mockFetchResponse({
+			output: 'Hello',
+			id: 'chatcmpl-123',
+			object: 'chat.completion',
+			created: 1_720_131_129,
+			model: 'openai:gpt-4o-mini',
+			choices: [
+				{
+					index: 0,
+					message: { role: 'assistant', content: 'Hello' },
+					logprobs: null,
+					finish_reason: 'stop',
+				},
+			],
+			usage: { prompt_tokens: 2, completion_tokens: 1, total_tokens: 3 },
+			system_fingerprint: 'fp-test',
+		});
+
+		const result = await api.agent.run({
+			model: 'openai:gpt-4o-mini',
+			input: [{ role: 'user', content: 'Hello' }],
+			instructions: 'Be concise.',
+		});
+
+		expect(capturedMethod).toBe('POST');
+		expect(capturedUrl).toContain('/v1/agent/run');
+		expect(capturedBody).toEqual({
+			model: 'openai:gpt-4o-mini',
+			input: [{ role: 'user', content: 'Hello' }],
+			instructions: 'Be concise.',
+			stream: false,
+		});
+		expect(result.output).toBe('Hello');
+		expect(result.usage.total_tokens).toBe(3);
+	});
+
 	it('uses ctx.key through a bound Corsair client for pipe execution', async () => {
 		mockFetchResponse({ completion: 'Answer', raw: { id: 'run-1' } });
 
 		const result = await api.pipes.run({
+			name: 'support-agent',
+			threadId: 'thread-123',
 			messages: [
 				{ role: 'user', content: 'Hello' },
 				{
@@ -103,6 +142,8 @@ describe('Langbase bound endpoints', () => {
 		expect(capturedMethod).toBe('POST');
 		expect(capturedUrl).toContain('/v1/pipes/run');
 		expect(capturedBody).toEqual({
+			name: 'support-agent',
+			threadId: 'thread-123',
 			messages: [
 				{ role: 'user', content: 'Hello' },
 				{
@@ -479,7 +520,8 @@ describe('Langbase bound endpoints', () => {
 
 		// `unknown` because these calls exercise endpoint rejection paths, not outputs.
 		const invalidCalls: Array<() => Promise<unknown>> = [
-			() => api.pipes.run({ messages: [] }),
+			() => api.agent.run({ model: '', input: 'Hello' }),
+			() => api.pipes.run({ name: 'pipe', messages: [] }),
 			() => api.pipes.get({ ownerLogin: '', pipeName: 'pipe' }),
 			() => api.pipes.create({ name: '' }),
 			() => api.pipes.update({ name: '' }),

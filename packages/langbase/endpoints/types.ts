@@ -130,6 +130,7 @@ const PipeConfigurationShape = {
 
 export const RunPipeInputSchema = z
 	.object({
+		name: z.string().min(1),
 		messages: z.array(RunMessageSchema).min(1),
 		stream: z.literal(false).default(false),
 		threadId: z.string().min(1).optional(),
@@ -146,6 +147,71 @@ export const RunPipeOutputSchema = z.object({
 	raw: JsonObjectSchema,
 });
 export type RunPipeOutput = z.infer<typeof RunPipeOutputSchema>;
+
+export const RunAgentInputSchema = z
+	.object({
+		model: z.string().min(1),
+		input: z.union([z.string(), z.array(RunMessageSchema)]),
+		instructions: z.string().optional(),
+		stream: z.literal(false).default(false),
+		tools: z.array(PipeToolSchema).optional(),
+		tool_choice: ToolChoiceSchema.optional(),
+		parallel_tool_calls: z.boolean().optional(),
+		reasoning_effort: z.enum(['none', 'low', 'medium', 'high']).optional(),
+		top_p: z.number().min(0).max(1).optional(),
+		max_tokens: z.number().int().positive().optional(),
+		temperature: z.number().min(0).max(2).optional(),
+		presence_penalty: z.number().optional(),
+		frequency_penalty: z.number().optional(),
+		stop: z.array(z.string()).max(4).optional(),
+		// Provider-defined model options remain JSON-only and cannot carry functions.
+		customModelParams: JsonObjectSchema.optional(),
+	})
+	.strict();
+export type RunAgentInput = z.input<typeof RunAgentInputSchema>;
+
+const AgentChoiceMessageSchema = z
+	.object({
+		role: z.enum(['system', 'user', 'assistant', 'tool']),
+		content: z.string().nullable().optional(),
+		name: z.string().nullable().optional(),
+		tool_call_id: z.string().nullable().optional(),
+		tool_calls: z.array(ToolCallSchema).optional(),
+	})
+	.strict();
+
+const AgentChoiceSchema = z
+	.object({
+		index: z.number().int(),
+		message: AgentChoiceMessageSchema,
+		logprobs: z.boolean().nullable(),
+		finish_reason: z.string(),
+	})
+	.strict();
+
+export const RunAgentOutputSchema = z
+	.object({
+		output: z.string().nullable(),
+		id: z.string(),
+		object: z.string(),
+		created: z.number(),
+		model: z.string(),
+		choices: z.array(AgentChoiceSchema),
+		usage: z
+			.object({
+				prompt_tokens: z.number(),
+				completion_tokens: z.number(),
+				total_tokens: z.number(),
+			})
+			.strict(),
+		system_fingerprint: z.string().nullable(),
+		rawResponse: z
+			.object({ headers: StringMetadataSchema })
+			.strict()
+			.optional(),
+	})
+	.strict();
+export type RunAgentOutput = z.infer<typeof RunAgentOutputSchema>;
 
 export const ListPipesInputSchema = z.object({}).strict();
 export type ListPipesInput = z.infer<typeof ListPipesInputSchema>;
@@ -536,6 +602,7 @@ export type ListThreadMessagesOutput = z.infer<
 
 // Input and output registries are kept in lockstep with the endpoint tree.
 export const LangbaseEndpointInputSchemas = {
+	'agent.run': RunAgentInputSchema,
 	'pipes.run': RunPipeInputSchema,
 	'pipes.list': ListPipesInputSchema,
 	'pipes.get': GetPipeInputSchema,
@@ -558,6 +625,7 @@ export const LangbaseEndpointInputSchemas = {
 } as const;
 
 export const LangbaseEndpointOutputSchemas = {
+	'agent.run': RunAgentOutputSchema,
 	'pipes.run': RunPipeOutputSchema,
 	'pipes.list': ListPipesOutputSchema,
 	'pipes.get': GetPipeOutputSchema,
@@ -580,6 +648,7 @@ export const LangbaseEndpointOutputSchemas = {
 } as const;
 
 export type LangbaseEndpointInputs = {
+	'agent.run': RunAgentInput;
 	'pipes.run': RunPipeInput;
 	'pipes.list': ListPipesInput;
 	'pipes.get': GetPipeInput;
@@ -602,6 +671,7 @@ export type LangbaseEndpointInputs = {
 };
 
 export type LangbaseEndpointOutputs = {
+	'agent.run': RunAgentOutput;
 	'pipes.run': RunPipeOutput;
 	'pipes.list': ListPipesOutput;
 	'pipes.get': GetPipeOutput;

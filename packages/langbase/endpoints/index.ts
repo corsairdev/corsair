@@ -1,3 +1,4 @@
+export { agent } from './agent';
 export { documents } from './documents';
 export { memory } from './memory';
 export { pipes } from './pipes';

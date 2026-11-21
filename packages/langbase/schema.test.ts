@@ -31,6 +31,8 @@ import {
 	RetrieveMemoryOutputSchema,
 	RetryDocumentEmbeddingsInputSchema,
 	RetryDocumentEmbeddingsOutputSchema,
+	RunAgentInputSchema,
+	RunAgentOutputSchema,
 	RunPipeInputSchema,
 	RunPipeOutputSchema,
 	UpdatePipeInputSchema,
@@ -75,17 +77,61 @@ describe('Langbase schema', () => {
 
 		expect(inputKeys).toEqual(outputKeys);
 		expect(inputKeys).toEqual(pluginSchemaKeys);
-		expect(inputKeys).toHaveLength(19);
+		expect(inputKeys).toHaveLength(20);
+	});
+
+	it('validates runtime agent inputs and non-streaming response shapes', () => {
+		expect(
+			RunAgentInputSchema.safeParse({
+				model: 'openai:gpt-4o-mini',
+				input: [{ role: 'user', content: 'Hello' }],
+			}).success,
+		).toBe(true);
+		expect(
+			RunAgentInputSchema.safeParse({
+				model: 'openai:gpt-4o-mini',
+				input: 'Hello',
+				stream: true,
+			}).success,
+		).toBe(false);
+		expect(
+			RunAgentInputSchema.safeParse({
+				model: 'openai:gpt-4o-mini',
+				input: 'Hello',
+				mcp_servers: [],
+			}).success,
+		).toBe(false);
+		expect(
+			RunAgentOutputSchema.safeParse({
+				output: 'Hello',
+				id: 'chatcmpl-123',
+				object: 'chat.completion',
+				created: 1_720_131_129,
+				model: 'openai:gpt-4o-mini',
+				choices: [
+					{
+						index: 0,
+						message: { role: 'assistant', content: 'Hello' },
+						logprobs: null,
+						finish_reason: 'stop',
+					},
+				],
+				usage: { prompt_tokens: 2, completion_tokens: 1, total_tokens: 3 },
+				system_fingerprint: 'fp-test',
+			}).success,
+		).toBe(true);
 	});
 
 	it('validates pipe run text, structured, null, tool-call, and thread inputs', () => {
 		expect(
 			RunPipeInputSchema.safeParse({
+				name: 'support-agent',
 				messages: [{ role: 'user', content: 'Hello' }],
 			}).success,
 		).toBe(true);
 		expect(
 			RunPipeInputSchema.safeParse({
+				name: 'support-agent',
 				messages: [
 					{
 						role: 'user',
@@ -103,6 +149,7 @@ describe('Langbase schema', () => {
 		).toMatchObject({ success: true });
 		expect(
 			RunPipeInputSchema.safeParse({
+				name: 'support-agent',
 				messages: [{ role: 'user', content: 'Hello' }],
 				stream: true,
 			}).success,
@@ -111,8 +158,15 @@ describe('Langbase schema', () => {
 			RunPipeInputSchema.safeParse({ messages: [], stream: false }).success,
 		).toBe(false);
 		expect(
-			RunPipeInputSchema.parse({ messages: [{ role: 'user', content: 'Hi' }] })
-				.stream,
+			RunPipeInputSchema.safeParse({
+				messages: [{ role: 'user', content: 'Hello' }],
+			}).success,
+		).toBe(false);
+		expect(
+			RunPipeInputSchema.parse({
+				name: 'support-agent',
+				messages: [{ role: 'user', content: 'Hi' }],
+			}).stream,
 		).toBe(false);
 		expect(
 			RunPipeOutputSchema.safeParse({

@@ -8,6 +8,156 @@ description: "API reference for the Langbase plugin in Corsair: every `langbase.
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
 </Info>
 
+## Agent
+
+### run
+
+`agent.run`
+
+Run a metered Langbase runtime LLM agent
+
+**Risk:** `destructive`
+
+```ts
+await corsair.langbase.api.agent.run({ model: 'openai:gpt-4o-mini', input: 'Hello' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | — |
+| `input` | `string \| object[]` | Yes | — |
+| `instructions` | `string` | No | — |
+| `stream` | `false` | No | Defaults to false. |
+| `tools` | `object[]` | No | — |
+| `tool_choice` | `auto \| required \| object` | No | — |
+| `parallel_tool_calls` | `boolean` | No | — |
+| `reasoning_effort` | `none \| low \| medium \| high` | No | — |
+| `top_p` | `number` | No | — |
+| `max_tokens` | `number` | No | — |
+| `temperature` | `number` | No | — |
+| `presence_penalty` | `number` | No | — |
+| `frequency_penalty` | `number` | No | — |
+| `stop` | `string[]` | No | — |
+| `customModelParams` | `Record<string, JsonValue>` | No | — |
+
+Uses the User/Organization API key. Configure an LLM keyset in Langbase for the selected model; the plugin does not accept a provider API key in tool arguments. Streaming and MCP server configuration are not exposed because the shared transport is JSON-only and MCP server configuration can contain authorization secrets.
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+string | {
+  role: system | user | assistant | tool,
+  content?: string | {
+    type: string,
+    text?: string,
+    image_url?: {
+      url: string,
+      detail?: string
+    }
+  }[] | null,
+  tool_call_id?: string,
+  name?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="tools full type">
+
+```ts
+{
+  type: function,
+  function: {
+    name: string,
+    description?: string,
+    parameters?: Record<string, JsonValue>
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="tool_choice full type">
+
+```ts
+auto | required | {
+  type: function,
+  function: {
+    name: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `output` | `string \| null` | Yes | — |
+| `id` | `string` | Yes | — |
+| `object` | `string` | Yes | — |
+| `created` | `number` | Yes | — |
+| `model` | `string` | Yes | — |
+| `choices` | `object[]` | Yes | — |
+| `usage` | `object` | Yes | — |
+| `system_fingerprint` | `string \| null` | Yes | — |
+| `rawResponse` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="choices full type">
+
+```ts
+{
+  index: number,
+  message: {
+    role: system | user | assistant | tool,
+    content?: string | null,
+    name?: string | null,
+    tool_call_id?: string | null,
+    tool_calls?: {
+      id: string,
+      type: function,
+      function: {
+        name: string,
+        arguments: string
+      }
+    }[]
+  },
+  logprobs: boolean | null,
+  finish_reason: string
+}[]
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  prompt_tokens: number,
+  completion_tokens: number,
+  total_tokens: number
+}
+```
+</Accordion>
+
+<Accordion title="rawResponse full type">
+
+```ts
+{
+  headers: Record<string, string>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Documents
 
 ### delete
@@ -638,6 +788,7 @@ Run an AI pipe, which can consume Langbase usage credits
 
 ```ts
 await corsair.langbase.api.pipes.run({
+	name: 'support-agent',
 	messages: [{ role: 'user', content: 'Hello' }],
 });
 ```
@@ -646,6 +797,7 @@ await corsair.langbase.api.pipes.run({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `name` | `string` | Yes | — |
 | `messages` | `object[]` | Yes | — |
 | `stream` | `false` | No | Defaults to false. |
 | `threadId` | `string` | No | — |
@@ -653,7 +805,7 @@ await corsair.langbase.api.pipes.run({
 | `variables` | `Record<string, string>` | No | — |
 | `tools` | `object[]` | No | — |
 
-This endpoint accepts JSON responses only. `stream: true` is rejected; the plugin sends `stream: false`. Use `threadId` to continue a conversation and `threads.listMessages` to retrieve its context.
+Run the named pipe with the configured User/Organization API key, as documented in the Langbase guide. This endpoint accepts JSON responses only: `stream: true` is rejected and the plugin sends `stream: false`. Use `threadId` to continue a conversation and `threads.listMessages` to retrieve its context.
 
 <AccordionGroup>
 <Accordion title="messages full type">

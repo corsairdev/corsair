@@ -13,7 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { documents, memory, pipes, threads } from './endpoints';
+import { agent, documents, memory, pipes, threads } from './endpoints';
 import type {
 	LangbaseEndpointInputs,
 	LangbaseEndpointOutputs,
@@ -59,6 +59,9 @@ export type LangbaseEndpoints = {
 };
 
 const langbaseEndpointsNested = {
+	agent: {
+		run: agent.run,
+	},
 	pipes: {
 		run: pipes.run,
 		list: pipes.list,
@@ -89,6 +92,10 @@ const langbaseEndpointsNested = {
 } as const;
 
 export const langbaseEndpointSchemas = {
+	'agent.run': {
+		input: LangbaseEndpointInputSchemas['agent.run'],
+		output: LangbaseEndpointOutputSchemas['agent.run'],
+	},
 	'pipes.run': {
 		input: LangbaseEndpointInputSchemas['pipes.run'],
 		output: LangbaseEndpointOutputSchemas['pipes.run'],
@@ -172,6 +179,10 @@ export const langbaseEndpointSchemas = {
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const langbaseEndpointMeta = {
+	'agent.run': {
+		riskLevel: 'destructive',
+		description: 'Run a metered Langbase runtime LLM agent',
+	},
 	'pipes.run': {
 		riskLevel: 'destructive',
 		description: 'Run an AI pipe, which can consume Langbase usage credits',
@@ -337,6 +348,8 @@ export type {
 	RetrieveMemoryOutput,
 	RetryDocumentEmbeddingsInput,
 	RetryDocumentEmbeddingsOutput,
+	RunAgentInput,
+	RunAgentOutput,
 	RunPipeInput,
 	RunPipeOutput,
 	Thread,

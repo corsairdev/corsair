@@ -10,13 +10,15 @@ Configure a Langbase User or Organization API key as the tenant's `api_key` cred
 
 `pipes.run` only supports JSON responses in this plugin: `stream: true` is rejected and the request sends `stream: false`. Use the thread endpoints to retrieve conversation context; the current v1 API reference does not define a separate run-history retrieval route.
 
+`agent.run` also uses JSON responses only and relies on an LLM keyset configured in Langbase for the selected model. MCP server configuration is not exposed because its documented options can carry authorization tokens and custom headers in tool arguments.
+
 Document upload follows Langbase's two-step signed URL contract. Pass the file contents as base64 and a supported content type; the signed URL remains internal and is never returned. Lists are complete arrays; the documented Langbase list APIs do not expose pagination parameters.
 
 Web search is not included because Langbase requires a separate Exa key in `LB-WEB-SEARCH-KEY`. Pipe deletion and single-memory GET are also omitted because the current v1 API reference does not define those routes.
 
 **What you get:**
 
-- 19 typed API operations
+- 20 typed API operations
 
 ## Setup
 

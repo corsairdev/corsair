@@ -14,11 +14,12 @@ Configure a Langbase User or Organization API key with Corsair's `api_key` auth.
 
 ## Operations
 
-The plugin exposes 19 operations:
+The plugin exposes 20 operations:
 
 | Operation | Method and route | Risk | Official reference |
 |---|---|---|---|
-| `pipes.run` | `POST /v1/pipes/run` | destructive | [Run pipe](https://langbase.com/docs/api-reference/pipe/run) |
+| `agent.run` | `POST /v1/agent/run` | destructive | [Agent Run API](https://langbase.com/docs/api-reference/agent) |
+| `pipes.run` | `POST /v1/pipes/run` (`name` in body) | destructive | [Run pipe](https://langbase.com/docs/api-reference/pipe/run), [User/Org key guide](https://langbase.com/docs/guides/run-pipe-user-org-api-keys) |
 | `pipes.list` | `GET /v1/pipes` | read | [List pipes](https://langbase.com/docs/api-reference/pipe/list) |
 | `pipes.get` | `GET /v1/pipes/{ownerLogin}/{pipeName}` | read | [Pipe API](https://langbase.com/docs/api-reference/pipe) |
 | `pipes.create` | `POST /v1/pipes` | write | [Create pipe](https://langbase.com/docs/api-reference/pipe/create) |
@@ -38,7 +39,9 @@ The plugin exposes 19 operations:
 | `threads.appendMessages` | `POST /v1/threads/{threadId}/messages` | destructive | [Append messages](https://langbase.com/docs/api-reference/threads/append-messages) |
 | `threads.listMessages` | `GET /v1/threads/{threadId}/messages` | read | [List messages](https://langbase.com/docs/api-reference/threads/list-messages) |
 
-Pipe runs are marked destructive because they can consume usage credits. The run operation accepts JSON mode only; `stream: true` is rejected and the plugin sends `stream: false`. Thread/message operations provide conversation context and history. Langbase's documented list routes do not expose pagination parameters.
+`agent.run` uses the User/Organization key and the Langbase account's configured LLM keyset. It accepts JSON responses only; `stream: true` is rejected and the plugin sends `stream: false`. `mcp_servers` is not exposed because its documented options can carry authorization tokens and custom headers in tool arguments.
+
+Pipe runs use the configured User/Organization API key and a required `name` body field to select the pipe, per Langbase's [User/Org key guide](https://langbase.com/docs/guides/run-pipe-user-org-api-keys). Runs are marked destructive because they can consume usage credits. The run operation accepts JSON mode only; `stream: true` is rejected and the plugin sends `stream: false`. Thread/message operations provide conversation context and history. Langbase's documented list routes do not expose pagination parameters.
 
 Thread creation and message append are destructive because they persist conversation content and Langbase documents no per-message delete operation.
 
