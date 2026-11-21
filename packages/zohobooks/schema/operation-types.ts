@@ -11,12 +11,16 @@ import type {
 type Operation = (typeof zohoBooksOperationContracts)[number];
 type OperationGroup = keyof typeof openApiSchemaContracts;
 type SchemaGroups = typeof openApiSchemaContracts;
-type Depth = readonly unknown[];
+type Depth = readonly 0[];
+
+export const zohoBooksOperationId: unique symbol = Symbol(
+	'zohoBooksOperationId',
+);
 
 type Simplify<T> = { [Key in keyof T]: T[Key] } & {};
 
 type UnionToIntersection<Union> = (
-	Union extends unknown
+	Union extends Union
 		? (value: Union) => void
 		: never
 ) extends (value: infer Intersection) => void
@@ -43,7 +47,7 @@ type PatternProperties<
 	Properties,
 	Group extends OperationGroup,
 	CurrentDepth extends Depth,
-> = Properties extends Record<string, unknown>
+> = Properties extends object
 	? UnionToIntersection<
 			{
 				[Pattern in keyof Properties]: Pattern extends '^cf_[A-Za-z0-9_]+$'
@@ -67,7 +71,7 @@ type ObjectProperties<
 	Group extends OperationGroup,
 	CurrentDepth extends Depth,
 > = Schema extends {
-	properties: infer Properties extends Record<string, unknown>;
+	properties: infer Properties extends object;
 }
 	? Simplify<
 			{
@@ -264,3 +268,29 @@ export type ZohoBooksOperationOutputFor<Id extends ZohoBooksOperationId> =
 	OutputForOperation<ZohoBooksOperationFor<Id>>;
 
 export type AnyZohoBooksOperationInput = InputForOperation<Operation>;
+
+type OperationIdOf<Endpoint> = Endpoint extends {
+	readonly [zohoBooksOperationId]: infer Id;
+}
+	? Id
+	: never;
+
+type BindZohoBooksOperationEndpoint<Endpoint> =
+	OperationIdOf<Endpoint> extends infer Id
+		? Id extends ZohoBooksOperationId
+			? (
+					input: ZohoBooksOperationInputFor<Id>,
+				) => Promise<ZohoBooksOperationOutputFor<Id>>
+			: never
+		: never;
+
+type BindZohoBooksOperationTree<Tree> = {
+	[Key in keyof Tree]: [OperationIdOf<Tree[Key]>] extends [never]
+		? Tree[Key] extends object
+			? BindZohoBooksOperationTree<Tree[Key]>
+			: never
+		: BindZohoBooksOperationEndpoint<Tree[Key]>;
+};
+
+export type BindZohoBooksOperationEndpoints<Tree> =
+	BindZohoBooksOperationTree<Tree>;

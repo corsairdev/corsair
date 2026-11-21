@@ -18,6 +18,7 @@ import type {
 	ZohoBooksOperationInputFor,
 	ZohoBooksOperationOutputFor,
 } from '../schema/operation-types';
+import { zohoBooksOperationId } from '../schema/operation-types';
 
 export type ZohoBooksOperationContext = Pick<
 	ZohoBooksContext,
@@ -26,10 +27,13 @@ export type ZohoBooksOperationContext = Pick<
 
 export type ZohoBooksOperationEndpoint<
 	Id extends ZohoBooksOperationId = ZohoBooksOperationId,
-> = (
-	ctx: ZohoBooksOperationContext,
-	input: ZohoBooksOperationInputFor<Id>,
-) => Promise<ZohoBooksOperationOutputFor<Id>>;
+> = {
+	(
+		ctx: ZohoBooksOperationContext,
+		input: ZohoBooksOperationInputFor<Id>,
+	): Promise<ZohoBooksOperationOutputFor<Id>>;
+	readonly [zohoBooksOperationId]: Id;
+};
 
 export type ZohoBooksRuntimeOperationEndpoint = (
 	ctx: ZohoBooksOperationContext,
@@ -76,7 +80,10 @@ export function createZohoBooksOperationEndpoint<
 >(operationId: Id): ZohoBooksOperationEndpoint<Id> {
 	const operation = getOperation(operationId);
 
-	return async (ctx, input) => {
+	const endpoint = async (
+		ctx: ZohoBooksOperationContext,
+		input: ZohoBooksOperationInputFor<Id>,
+	) => {
 		const parsedInput = parseZohoBooksTypedInput(operation, input);
 		const response = await makeZohoBooksRequest(ctx, operation, parsedInput);
 		const parsedOutput = parseZohoBooksTypedOutput(operation, response);
@@ -88,4 +95,5 @@ export function createZohoBooksOperationEndpoint<
 		);
 		return parsedOutput;
 	};
+	return Object.assign(endpoint, { [zohoBooksOperationId]: operationId });
 }

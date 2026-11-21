@@ -1,6 +1,5 @@
 import type {
 	AuthTypes,
-	BindEndpoints,
 	BindWebhooks,
 	CorsairErrorHandler,
 	CorsairPlugin,
@@ -26,6 +25,7 @@ import { errorHandlers } from './error-handlers';
 import { zohoBooksOAuthScopes } from './openapi';
 import { ZohoBooksSchema } from './schema';
 import type { ZohoBooksRegion } from './schema/openapi-types';
+import type { BindZohoBooksOperationEndpoints } from './schema/operation-types';
 
 const zohoBooksWebhooks = {} as const;
 const zohoBooksWebhookSchemas = {} satisfies RequiredPluginWebhookSchemas<
@@ -61,7 +61,7 @@ export type ZohoBooksKeyBuilderContext = KeyBuilderContext<
 	typeof zohoBooksAuthConfig
 >;
 
-export type ZohoBooksBoundEndpoints = BindEndpoints<
+export type ZohoBooksBoundEndpoints = BindZohoBooksOperationEndpoints<
 	typeof zohoBooksEndpointsNested
 >;
 
@@ -88,14 +88,17 @@ const defaultAuthType: AuthTypes = 'oauth_2' as const;
 export function zohobooks<const T extends ZohoBooksPluginOptions>(
 	incomingOptions: ZohoBooksPluginOptions & T = {} as ZohoBooksPluginOptions &
 		T,
-): ExternalZohoBooksPlugin<T> {
+) {
 	const options = {
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
 	const { DEFAULT: builtInDefault, ...builtIns } = errorHandlers;
 	const { DEFAULT: callerDefault, ...callers } = options.errorHandlers ?? {};
-	return {
+	const plugin: Omit<
+		ExternalZohoBooksPlugin<T>,
+		'endpoints' | 'endpointMeta' | 'endpointSchemas'
+	> = {
 		id: 'zohobooks',
 		authConfig: zohoBooksAuthConfig,
 		oauthConfig: {
@@ -110,10 +113,7 @@ export function zohobooks<const T extends ZohoBooksPluginOptions>(
 		schema: ZohoBooksSchema,
 		options,
 		hooks: options.hooks,
-		endpoints: zohoBooksEndpointsNested,
 		webhooks: zohoBooksWebhooks,
-		endpointMeta: zohoBooksEndpointMetaValidated,
-		endpointSchemas: zohoBooksEndpointSchemasValidated,
 		webhookSchemas: zohoBooksWebhookSchemas,
 		pluginWebhookMatcher: () => false,
 		errorHandlers: {
@@ -130,7 +130,12 @@ export function zohobooks<const T extends ZohoBooksPluginOptions>(
 				tokenAuthMethod: 'body',
 			});
 		},
-	} satisfies InternalZohoBooksPlugin;
+	};
+	return Object.assign(plugin, {
+		endpoints: zohoBooksEndpointsNested,
+		endpointMeta: zohoBooksEndpointMetaValidated,
+		endpointSchemas: zohoBooksEndpointSchemasValidated,
+	});
 }
 
 export type {
@@ -144,6 +149,7 @@ export type {
 	ZohoBooksRegion,
 } from './schema/openapi-types';
 export type {
+	BindZohoBooksOperationEndpoints,
 	ZohoBooksOperationId,
 	ZohoBooksOperationInputFor,
 	ZohoBooksOperationOutputFor,
