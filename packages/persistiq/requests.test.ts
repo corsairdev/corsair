@@ -12,18 +12,18 @@ import {
 } from './endpoints';
 import {
 	campaign,
+	campaignLead,
 	dncDomain,
 	event,
 	lead,
 	leadField,
 	leadStatus,
+	PAGE,
 	reply,
 	tag,
 	user,
 	webhookSettings,
 } from './test-fixtures';
-
-const PAGE = { has_more: false, next_page: null };
 
 jest.mock('corsair/core', () => ({
 	...jest.requireActual('corsair/core'),
@@ -87,120 +87,176 @@ afterEach(() => {
 });
 
 describe('users and metadata', () => {
-	it('users.list GETs the team', async () => {
-		respond({ status: 'success', data: [user], page: PAGE });
-		const page = (await invoke(Users.list, {})) as { data: unknown[] }; // unknown: user records are provider-shaped
-		expect(page.data).toHaveLength(1);
+	it('users.list GETs the team from the users array', async () => {
+		respond({ ...PAGE, users: [user] });
+		const page = (await invoke(Users.list, { page: 2 })) as {
+			users: Array<{ mailboxes?: unknown[] }>; // unknown: mailbox records are provider-shaped
+		};
+		expect(page.users[0]?.mailboxes).toHaveLength(1);
 		expectAuthenticated('/v1/users');
+		expect(lastRequest().query).toEqual({ page: '2' });
 	});
 
 	it('leadFields.list GETs the field definitions', async () => {
-		respond({ status: 'success', data: [leadField], page: PAGE });
-		await invoke(LeadFields.list, {});
+		respond({ ...PAGE, lead_fields: [leadField] });
+		const page = (await invoke(LeadFields.list, {})) as {
+			lead_fields: Array<{ name?: string }>;
+		};
+		expect(page.lead_fields[0]?.name).toBe('first_name');
 		expectAuthenticated('/v1/lead_fields');
 	});
 
 	it('leadStatuses.list GETs the statuses', async () => {
-		respond({ status: 'success', data: [leadStatus], page: PAGE });
+		respond({ ...PAGE, lead_statuses: [leadStatus] });
 		await invoke(LeadStatuses.list, {});
 		expectAuthenticated('/v1/lead_statuses');
 	});
 
 	it('tags.list GETs the tags', async () => {
-		respond({ status: 'success', data: [tag], page: PAGE });
+		respond({ ...PAGE, tags: [tag] });
 		await invoke(Tags.list, {});
 		expectAuthenticated('/v1/tags');
 	});
 });
 
 describe('leads', () => {
-	it('list passes the next_page cursor', async () => {
+	it('list sends the page number and filters as query parameters', async () => {
 		respond({
-			status: 'success',
-			data: [lead],
-			page: { has_more: true, next_page: 'cur1' },
+			...PAGE,
+			has_more: true,
+			next_page: 'https://api.persistiq.com/v1/leads?page=3',
+			leads: [lead],
 		});
-		await invoke(Leads.list, { next_page: 'cur1' });
+		const page = (await invoke(Leads.list, {
+			page: 2,
+			status_id: 's_1',
+			updated_after: '2025-11-01T00:00:00Z',
+		})) as { leads: Array<{ id: string }>; has_more?: boolean };
+		expect(page.leads[0]?.id).toBe('l_1');
+		expect(page.has_more).toBe(true);
 		expectAuthenticated('/v1/leads');
-		expect(lastRequest().query['next_page']).toBe('cur1');
+		expect(lastRequest().query).toEqual({
+			page: '2',
+			status_id: 's_1',
+			updated_after: '2025-11-01T00:00:00Z',
+		});
 	});
 
-	it('create posts the lead body', async () => {
-		respond({ status: 'success', data: [lead], page: PAGE });
-		await invoke(Leads.create, {
-			email: 'john@example.com',
-			data: { first_name: 'John' },
-		});
+	it('create posts the lead wrapped in lead, with dup and creator_id', async () => {
+		respond({ status: 'success', error: null, lead });
+		const result = (await invoke(Leads.create, {
+			lead: { email: 'john@example.com', first_name: 'John' },
+			dup: 'skip',
+			creator_id: 'u_1',
+		})) as { lead: { id: string } };
+		expect(result.lead.id).toBe('l_1');
 		const sent = lastRequest();
 		expectAuthenticated('/v1/leads', 'POST');
 		expect(JSON.parse(sent.body as string)).toEqual({
-			email: 'john@example.com',
-			data: { first_name: 'John' },
+			lead: { email: 'john@example.com', first_name: 'John' },
+			dup: 'skip',
+			creator_id: 'u_1',
 		});
 	});
 
-	it('get reads one lead', async () => {
-		respond({ status: 'success', data: [lead], page: PAGE });
-		await invoke(Leads.get, { id: 'l_1' });
+	it('get reads the lead from the lead key', async () => {
+		respond({ status: 'success', error: null, lead });
+		const result = (await invoke(Leads.get, { id: 'l_1' })) as {
+			lead: { id: string };
+		};
+		expect(result.lead.id).toBe('l_1');
 		expectAuthenticated('/v1/leads/l_1');
 	});
 
-	it('update PATCHes the data map', async () => {
-		respond({ status: 'success', data: [lead], page: PAGE });
+	it('update PATCHes status, flags and the data map', async () => {
+		respond({ status: 'success', error: null, lead });
 		await invoke(Leads.update, {
 			id: 'l_1',
+			status: 'Replied',
+			optedout: true,
 			data: { first_name: 'Jane' },
 		});
 		const sent = lastRequest();
 		expectAuthenticated('/v1/leads/l_1', 'PATCH');
 		expect(JSON.parse(sent.body as string)).toEqual({
+			status: 'Replied',
+			optedout: true,
 			data: { first_name: 'Jane' },
 		});
+	});
+
+	it('refuses . and .. as ids so the path cannot change route', async () => {
+		await expect(invoke(Leads.get, { id: '..' })).rejects.toThrow(
+			'not a valid id',
+		);
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });
 
 describe('campaigns', () => {
-	it('list GETs campaigns', async () => {
-		respond({ status: 'success', data: [campaign], page: PAGE });
-		await invoke(Campaigns.list, {});
+	it('list GETs campaigns with filters', async () => {
+		respond({ ...PAGE, campaigns: [campaign] });
+		const page = (await invoke(Campaigns.list, { owner_id: 'u_1' })) as {
+			campaigns: Array<{ stats?: { total_prospects?: number } }>;
+		};
+		expect(page.campaigns[0]?.stats?.total_prospects).toBe(12);
 		expectAuthenticated('/v1/campaigns');
+		expect(lastRequest().query).toEqual({ owner_id: 'u_1' });
 	});
 
-	it('create posts the campaign body', async () => {
-		respond({ status: 'success', data: [campaign], page: PAGE });
-		await invoke(Campaigns.create, { name: 'Q4 outbound' });
+	it('create posts campaign_name and owner_id and reads the bare campaign', async () => {
+		respond(campaign);
+		const created = (await invoke(Campaigns.create, {
+			campaign_name: 'Q4 outbound',
+			owner_id: 'u_1',
+		})) as { id: string };
+		expect(created.id).toBe('c_1');
 		expect(JSON.parse(lastRequest().body as string)).toEqual({
-			name: 'Q4 outbound',
+			campaign_name: 'Q4 outbound',
+			owner_id: 'u_1',
 		});
 		expectAuthenticated('/v1/campaigns', 'POST');
 	});
 
-	it('duplicate posts the campaign id', async () => {
-		respond({ status: 'success', data: [campaign], page: PAGE });
+	it('duplicate posts the campaign id, owner and name', async () => {
+		respond(campaign);
 		await invoke(Campaigns.duplicate, {
 			campaign_id: 'c_1',
-			num_duplicates: 2,
+			owner_id: 'u_1',
+			name: 'Q4 copy',
 		});
 		expectAuthenticated('/v1/campaigns/duplicate', 'POST');
+		expect(JSON.parse(lastRequest().body as string)).toEqual({
+			campaign_id: 'c_1',
+			owner_id: 'u_1',
+			name: 'Q4 copy',
+		});
 	});
 
 	it('listLeads, addLead and removeLead manage membership', async () => {
-		respond({ status: 'success', data: [lead], page: PAGE });
-		await invoke(Campaigns.listLeads, { campaignId: 'c_1' });
+		respond({ ...PAGE, campaign_leads: [campaignLead] });
+		const page = (await invoke(Campaigns.listLeads, {
+			campaignId: 'c_1',
+			page: 2,
+		})) as { campaign_leads: Array<{ lead?: { id: string } }> };
+		expect(page.campaign_leads[0]?.lead?.id).toBe('l_1');
 		expectAuthenticated('/v1/campaigns/c_1/leads');
+		expect(lastRequest().query).toEqual({ page: '2' });
 
-		respond({ status: 'success' });
+		respond({ status: 'success', error: null, campaign_lead: campaignLead });
 		const added = (await invoke(Campaigns.addLead, {
 			campaignId: 'c_1',
 			lead_id: 'l_1',
-		})) as { status: string };
-		expect(added.status).toBe('success');
+			skip_if_exists: true,
+		})) as { campaign_lead?: { id: string } };
+		expect(added.campaign_lead?.id).toBe('cl_1');
 		expectAuthenticated('/v1/campaigns/c_1/leads', 'POST');
 		expect(JSON.parse(lastRequest().body as string)).toEqual({
 			lead_id: 'l_1',
+			skip_if_exists: true,
 		});
 
-		respond({ status: 'success' });
+		respond(undefined);
 		const removed = (await invoke(Campaigns.removeLead, {
 			campaignId: 'c_1',
 			leadId: 'l_1',
@@ -209,59 +265,100 @@ describe('campaigns', () => {
 		expectAuthenticated('/v1/campaigns/c_1/leads/l_1', 'DELETE');
 	});
 
-	it('listReplies and replyToMessage call their RPCs', async () => {
-		respond({ status: 'success', data: [reply], page: PAGE });
-		await invoke(Campaigns.listReplies, { campaignId: 'c_1' });
-		expectAuthenticated('/v1/campaigns/c_1/replies');
+	it('addLead needs lead_id or leads', async () => {
+		await expect(
+			invoke(Campaigns.addLead, { campaignId: 'c_1' }),
+		).rejects.toThrow('lead_id or leads');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
 
-		respond({ status: 'success', data: [reply], page: PAGE });
-		await invoke(Campaigns.replyToMessage, {
+	it('removeLead fails on an error answer instead of reporting success', async () => {
+		respond({ status: 'error', error: { reason: 'not_found' } });
+		await expect(
+			invoke(Campaigns.removeLead, { campaignId: 'c_1', leadId: 'l_1' }),
+		).rejects.toThrow('did not confirm');
+	});
+
+	it('listReplies filters and replyToMessage posts inbox_message_id and body', async () => {
+		respond({ ...PAGE, replies: [reply] });
+		const page = (await invoke(Campaigns.listReplies, {
 			campaignId: 'c_1',
 			lead_id: 'l_1',
-			message_id: 'm_1',
-			reply_message: 'Thanks for the reply!',
-		});
+		})) as { replies: Array<{ subject?: string | null }> };
+		expect(page.replies[0]?.subject).toBe('Re: hello');
+		expectAuthenticated('/v1/campaigns/c_1/replies');
+		expect(lastRequest().query).toEqual({ lead_id: 'l_1' });
+
+		respond({ status: 'queued', message: 'Reply queued' }, 201);
+		const result = (await invoke(Campaigns.replyToMessage, {
+			campaignId: 'c_1',
+			inbox_message_id: 'r_1',
+			body: '<p>Thanks for the reply!</p>',
+		})) as { status?: string };
+		expect(result.status).toBe('queued');
 		expectAuthenticated('/v1/campaigns/c_1/replies', 'POST');
+		expect(JSON.parse(lastRequest().body as string)).toEqual({
+			inbox_message_id: 'r_1',
+			body: '<p>Thanks for the reply!</p>',
+		});
 	});
 });
 
 describe('events, dnc and webhooks', () => {
-	it('events.list passes the cursor', async () => {
-		respond({
-			status: 'success',
-			data: [event],
-			page: { has_more: true, next_page: 'cur2' },
-		});
-		await invoke(Events.list, { next_page: 'cur2' });
+	it('events.list sends the page and filters', async () => {
+		respond({ ...PAGE, events: [event] });
+		await invoke(Events.list, { page: 3, campaign: 'c_1' });
 		expectAuthenticated('/v1/events');
+		expect(lastRequest().query).toEqual({ page: '3', campaign: 'c_1' });
 	});
 
-	it('dncDomains.list and create call their RPCs', async () => {
-		respond({ status: 'success', data: [dncDomain], page: PAGE });
-		await invoke(DncDomains.list, {});
+	it('dncDomains.list and create use the name field', async () => {
+		respond({ ...PAGE, dnc_domains: [dncDomain] });
+		const page = (await invoke(DncDomains.list, {})) as {
+			dnc_domains: Array<{ name?: string | null }>;
+		};
+		expect(page.dnc_domains[0]?.name).toBe('example.com');
 		expectAuthenticated('/v1/dnc_domains');
 
-		respond({ status: 'success' });
+		respond({ status: 'success', error: null, dnc_domain: dncDomain });
 		const result = (await invoke(DncDomains.create, {
-			domain: 'example.com',
-		})) as { status: string };
-		expect(result.status).toBe('success');
+			name: 'example.com',
+		})) as { dnc_domain?: { id: string } };
+		expect(result.dnc_domain?.id).toBe('d_1');
 		expectAuthenticated('/v1/dnc_domains', 'POST');
+		expect(JSON.parse(lastRequest().body as string)).toEqual({
+			name: 'example.com',
+		});
 	});
 
-	it('webhook settings get and update call their RPCs', async () => {
-		respond({ status: 'success', data: [webhookSettings], page: PAGE });
-		const page = (await invoke(Webhooks.getSettings, {})) as {
-			data: Array<{ enabled?: boolean }>;
+	it('dncDomains.create fails on an error answer', async () => {
+		respond({ status: 'error', error: { message: 'invalid' } });
+		await expect(invoke(DncDomains.create, { name: 'x' })).rejects.toThrow();
+	});
+
+	it('webhook settings get and update read the bare settings object', async () => {
+		respond(webhookSettings);
+		const settings = (await invoke(Webhooks.getSettings, {})) as {
+			post_new_prospect?: boolean;
 		};
-		expect(page.data[0]?.enabled).toBe(true);
+		expect(settings.post_new_prospect).toBe(true);
 		expectAuthenticated('/v1/webhook_plugin');
 
-		respond({ status: 'success', data: [webhookSettings], page: PAGE });
+		respond(webhookSettings);
 		await invoke(Webhooks.updateSettings, {
-			url: 'https://example.com/webhooks/persistiq',
-			enabled: true,
+			post_new_prospect: true,
+			post_new_prospect_url: 'https://example.com/webhooks/persistiq',
 		});
 		expectAuthenticated('/v1/webhook_plugin', 'PUT');
+		expect(JSON.parse(lastRequest().body as string)).toEqual({
+			post_new_prospect: true,
+			post_new_prospect_url: 'https://example.com/webhooks/persistiq',
+		});
+	});
+
+	it('webhooks.updateSettings needs at least one setting', async () => {
+		await expect(invoke(Webhooks.updateSettings, {})).rejects.toThrow(
+			'at least one setting',
+		);
 	});
 });

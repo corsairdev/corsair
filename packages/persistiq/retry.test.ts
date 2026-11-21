@@ -61,12 +61,14 @@ describe('retries through createCorsair', () => {
 			});
 			respond({
 				status: 'success',
-				data: [lead],
-				page: { has_more: false, next_page: null },
+				errors: [],
+				has_more: false,
+				next_page: null,
+				leads: [lead],
 			});
 
 			await expect(corsair.persistiq.api.leads.list({})).resolves.toMatchObject(
-				{ data: [lead] },
+				{ leads: [lead] },
 			);
 			expect(fetchMock).toHaveBeenCalledTimes(2);
 		} finally {
@@ -83,12 +85,14 @@ describe('retries through createCorsair', () => {
 			);
 			respond({
 				status: 'success',
-				data: [lead],
-				page: { has_more: false, next_page: null },
+				errors: [],
+				has_more: false,
+				next_page: null,
+				leads: [lead],
 			});
 
 			await expect(corsair.persistiq.api.leads.list({})).resolves.toMatchObject(
-				{ data: [lead] },
+				{ leads: [lead] },
 			);
 			expect(fetchMock).toHaveBeenCalledTimes(2);
 		} finally {
@@ -106,7 +110,7 @@ describe('retries through createCorsair', () => {
 
 			await expect(
 				corsair.persistiq.api.leads.create({
-					email: 'john@example.com',
+					lead: { email: 'john@example.com' },
 				}),
 			).rejects.toMatchObject({ status: 502 });
 			expect(fetchMock).toHaveBeenCalledTimes(1);

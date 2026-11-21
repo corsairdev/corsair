@@ -14,10 +14,15 @@ export const list: PersistiqEndpoints['dncDomainsList'] = (ctx, input) =>
 			output: Outputs.dncDomainsList,
 		},
 		input,
-		() => ({ method: 'GET', path: '/v1/dnc_domains' }),
-		{ log: (_, page) => ({ count: page.data.length }) },
+		(query) => ({ method: 'GET', path: '/v1/dnc_domains', query }),
+		{ log: (_, page) => ({ count: page.dnc_domains.length }) },
 	);
 
+/**
+ * The create answers `{ status, error, dnc_domain }`. The output schema
+ * requires `status: "success"`, so an error answer fails loudly instead of
+ * reading as a success.
+ */
 export const create: PersistiqEndpoints['dncDomainsCreate'] = (ctx, input) =>
 	call(
 		ctx,
@@ -29,19 +34,8 @@ export const create: PersistiqEndpoints['dncDomainsCreate'] = (ctx, input) =>
 		input,
 		(body) => ({ method: 'POST', path: '/v1/dnc_domains', body }),
 		{
-			shape: (raw) => {
-				// The create answers { status: "success" }; anything else is a
-				// failure the caller must see rather than a fabricated success.
-				// unknown: raw is the untouched response body; only the status
-				// flag is inspected before the output schema parses it.
-				const record = (raw ?? {}) as { status?: unknown };
-				if (record.status !== 'success') {
-					throw new Error(
-						`PersistIQ dncDomains.create: unexpected answer ${JSON.stringify(raw)}`,
-					);
-				}
-				return { status: 'success' };
-			},
-			log: (_, result) => ({ success: result.status === 'success' }),
+			log: (_, result) => ({
+				dncDomainId: result.dnc_domain?.id ?? undefined,
+			}),
 		},
 	);

@@ -1,5 +1,10 @@
 import { z } from 'zod';
 
+// Shapes follow the official spec, generated from PersistIQ's own request
+// specs: https://persistiq.com/api-docs/v1/swagger.json. Response objects
+// stay loose and nullish so a field PersistIQ adds or drops does not break
+// a read; inputs stay strict.
+
 // ── Shared building blocks ─────────────────────────────────────────────────
 
 /** A lead: a prospect record whose custom fields live in `data`. */
@@ -31,11 +36,33 @@ export const LeadSchema = z
 	.describe('A PersistIQ lead');
 export type Lead = z.infer<typeof LeadSchema>;
 
+export const MailboxSchema = z
+	.object({
+		id: z.string().nullish().describe('Mailbox id'),
+		email: z.string().nullish().describe('Mailbox address'),
+		campaign_ids: z
+			.array(z.string())
+			.nullish()
+			.describe('Campaigns that send from this mailbox'),
+	})
+	.loose()
+	.describe('A mailbox connected to a user');
+
 export const UserSchema = z
 	.object({
 		id: z.string().min(1).describe('User id'),
 		name: z.string().nullish().describe('User name'),
 		email: z.string().nullish().describe('User email address'),
+		activated: z.boolean().nullish().describe('Whether the user is active'),
+		salesforce_id: z.string().nullish().describe('Linked Salesforce user id'),
+		default_mailbox_id: z
+			.string()
+			.nullish()
+			.describe('Mailbox used when none is given'),
+		mailboxes: z
+			.array(MailboxSchema)
+			.nullish()
+			.describe('Mailboxes connected to the user'),
 	})
 	.loose()
 	.describe('A PersistIQ team member');
@@ -45,14 +72,52 @@ export const CampaignSchema = z
 	.object({
 		id: z.string().min(1).describe('Campaign id'),
 		name: z.string().nullish().describe('Campaign name'),
+		creator: z
+			.object({
+				id: z.string().nullish().describe('Creator user id'),
+				name: z.string().nullish().describe('Creator name'),
+				email: z.string().nullish().describe('Creator email address'),
+			})
+			.loose()
+			.nullish()
+			.describe('The user who created the campaign'),
+		stats: z
+			.object({
+				prospects_contacted: z.number().nullish(),
+				prospects_reached: z.number().nullish(),
+				prospects_opened: z.number().nullish(),
+				prospects_replied: z.number().nullish(),
+				prospects_bounced: z.number().nullish(),
+				prospects_optedout: z.number().nullish(),
+				total_prospects: z.number().nullish(),
+			})
+			.loose()
+			.nullish()
+			.describe('Campaign counters'),
 	})
 	.loose()
 	.describe('A PersistIQ campaign');
 export type Campaign = z.infer<typeof CampaignSchema>;
 
+/** A lead's membership in a campaign. */
+export const CampaignLeadSchema = z
+	.object({
+		id: z.string().min(1).describe('Campaign lead id'),
+		campaign_id: z.string().nullish().describe('Campaign id'),
+		mailbox_id: z
+			.string()
+			.nullish()
+			.describe('Mailbox the campaign sends from'),
+		lead: LeadSchema.nullish().describe('The lead'),
+	})
+	.loose()
+	.describe('A lead in a campaign');
+export type CampaignLead = z.infer<typeof CampaignLeadSchema>;
+
 export const LeadFieldSchema = z
 	.object({
 		id: z.string().min(1).describe('Field id'),
+		name: z.string().nullish().describe('Field key used in a lead data map'),
 		label: z.string().nullish().describe('Field label shown in the UI'),
 	})
 	.loose()
@@ -71,7 +136,7 @@ export type LeadStatus = z.infer<typeof LeadStatusSchema>;
 export const DncDomainSchema = z
 	.object({
 		id: z.string().min(1).describe('DNC domain id'),
-		domain: z.string().nullish().describe('Do-not-contact domain'),
+		name: z.string().nullish().describe('Do-not-contact domain'),
 	})
 	.loose()
 	.describe('A do-not-contact domain');
@@ -99,129 +164,213 @@ export const TagSchema = z
 	.describe('A PersistIQ tag');
 export type Tag = z.infer<typeof TagSchema>;
 
+export const ReplySchema = z
+	.object({
+		id: z.string().min(1).describe('Reply id'),
+		from_email: z.string().nullish().describe('Sender address'),
+		to_emails: z.array(z.string()).nullish().describe('Recipient addresses'),
+		cc_emails: z.array(z.string()).nullish().describe('Cc addresses'),
+		subject: z.string().nullish().describe('Subject line'),
+		body: z.string().nullish().describe('Message body'),
+		preview: z.string().nullish().describe('Short preview of the body'),
+		sent_at: z.string().nullish().describe('When the message was sent'),
+		sentiment: z.string().nullish().describe('Reply sentiment'),
+		kind: z.string().nullish().describe('Message kind'),
+		lead_id: z.string().nullish().describe('Lead the message belongs to'),
+		campaign_id: z.string().nullish().describe('Campaign id'),
+		step_message_id: z
+			.string()
+			.nullish()
+			.describe('Campaign step message the reply answers'),
+	})
+	.loose()
+	.describe('A reply received in a campaign');
+export type Reply = z.infer<typeof ReplySchema>;
+
+const webhookToggle = (what: string) =>
+	z.boolean().nullish().describe(`Whether ${what} deliveries are on`);
+const webhookUrl = (what: string) =>
+	z.string().nullish().describe(`Endpoint ${what} deliveries are posted to`);
+
 export const WebhookSettingsSchema = z
 	.object({
-		url: z.string().nullish().describe('Endpoint deliveries are posted to'),
-		enabled: z.boolean().nullish().describe('Whether deliveries are active'),
+		post_new_prospect: webhookToggle('new-lead'),
+		post_new_prospect_url: webhookUrl('new-lead'),
+		post_updated_prospect: webhookToggle('updated-lead'),
+		post_updated_prospect_url: webhookUrl('updated-lead'),
+		raw_events: webhookToggle('raw-event'),
+		raw_events_url: webhookUrl('raw-event'),
+		post_email_reply: webhookToggle('email-reply'),
+		post_email_reply_url: webhookUrl('email-reply'),
+		post_email_opened: webhookToggle('email-opened'),
+		post_email_opened_url: webhookUrl('email-opened'),
 	})
 	.loose()
 	.describe('The webhook plugin settings');
 export type WebhookSettings = z.infer<typeof WebhookSettingsSchema>;
 
-/** The pagination block list answers carry. */
-export const PaginationSchema = z
-	.object({
-		has_more: z.boolean().describe('Whether more pages exist'),
-		next_page: z
-			.string()
-			.nullish()
-			.describe('Cursor of the next page; pass it back as next_page'),
-	})
-	.loose()
-	.describe('PersistIQ pagination');
+/**
+ * The fields every list answer carries beside its named array:
+ * `{ status, errors, has_more, next_page, <items>: [...] }`.
+ */
+const listEnvelope = {
+	status: z.string().nullish().describe('success or error'),
+	errors: z
+		.array(z.string())
+		.nullish()
+		.describe('Problems PersistIQ reports with the request'),
+	has_more: z.boolean().nullish().describe('Whether more pages exist'),
+	next_page: z
+		.string()
+		.nullish()
+		.describe('Link to the next page; pass page + 1 to fetch it'),
+};
 
-/** Wraps a named result array plus the pagination block. */
-const ListEnvelopeSchema = z
-	.object({
-		status: z.string().describe('success'),
-		// unknown: the data array's element type differs per endpoint, so the
-	// shared envelope keeps it open and each endpoint extends it.
-	data: z.array(z.unknown()),
-		page: PaginationSchema,
-	})
-	.loose()
-	.describe('The list envelope PersistIQ answers with');
+/** The `{ status, error, <record> }` answer single-record calls give. */
+const recordEnvelope = {
+	status: z.string().nullish().describe('success or error'),
+	// unknown: the spec types error only as a nullable object.
+	error: z.unknown().nullish().describe('Error details, null on success'),
+};
 
-/** The delete-style answer. */
-export const DeletedSchema = z
-	.object({
-		status: z.string().describe('success'),
-	})
-	.loose()
-	.describe('A PersistIQ delete answer');
-export type Deleted = z.infer<typeof DeletedSchema>;
+const page = z
+	.number()
+	.int()
+	.min(1)
+	.optional()
+	.describe('Page number, from 1; ask for the next one while has_more is true');
+
+const noInput = (what: string) =>
+	z.object({}).describe(`Input for listing ${what} (none)`);
 
 // ── users ──────────────────────────────────────────────────────────────────
 
 export const ListUsersInputSchema = z
-	.object({})
-	.describe('Input for listing team members (none)');
+	.object({ page })
+	.describe('Input for listing team members');
 export type ListUsersInput = z.infer<typeof ListUsersInputSchema>;
 
-export const ListUsersOutputSchema = ListEnvelopeSchema.extend({
-	data: z.array(UserSchema).describe('Team members'),
-});
+export const ListUsersOutputSchema = z
+	.object({
+		...listEnvelope,
+		users: z.array(UserSchema).describe('Team members'),
+	})
+	.loose();
 export type ListUsersOutput = z.infer<typeof ListUsersOutputSchema>;
 
 // ── leadFields / leadStatuses / tags ───────────────────────────────────────
 
-export const ListLeadFieldsInputSchema = z
-	.object({})
-	.describe('Input for listing lead fields (none)');
+export const ListLeadFieldsInputSchema = noInput('lead fields');
 export type ListLeadFieldsInput = z.infer<typeof ListLeadFieldsInputSchema>;
 
-export const ListLeadFieldsOutputSchema = ListEnvelopeSchema.extend({
-	data: z.array(LeadFieldSchema).describe('Lead field definitions'),
-});
+export const ListLeadFieldsOutputSchema = z
+	.object({
+		...listEnvelope,
+		lead_fields: z.array(LeadFieldSchema).describe('Lead field definitions'),
+	})
+	.loose();
 export type ListLeadFieldsOutput = z.infer<typeof ListLeadFieldsOutputSchema>;
 
-export const ListLeadStatusesInputSchema = z
-	.object({})
-	.describe('Input for listing lead statuses (none)');
+export const ListLeadStatusesInputSchema = noInput('lead statuses');
 export type ListLeadStatusesInput = z.infer<typeof ListLeadStatusesInputSchema>;
 
-export const ListLeadStatusesOutputSchema = ListEnvelopeSchema.extend({
-	data: z.array(LeadStatusSchema).describe('Lead statuses'),
-});
+export const ListLeadStatusesOutputSchema = z
+	.object({
+		...listEnvelope,
+		lead_statuses: z.array(LeadStatusSchema).describe('Lead statuses'),
+	})
+	.loose();
 export type ListLeadStatusesOutput = z.infer<
 	typeof ListLeadStatusesOutputSchema
 >;
 
 export const ListTagsInputSchema = z
-	.object({})
-	.describe('Input for listing tags (none)');
+	.object({ page })
+	.describe('Input for listing tags');
 export type ListTagsInput = z.infer<typeof ListTagsInputSchema>;
 
-export const ListTagsOutputSchema = ListEnvelopeSchema.extend({
-	data: z.array(TagSchema).describe('Tags'),
-});
+export const ListTagsOutputSchema = z
+	.object({
+		...listEnvelope,
+		tags: z.array(TagSchema).describe('Tags'),
+	})
+	.loose();
 export type ListTagsOutput = z.infer<typeof ListTagsOutputSchema>;
 
 // ── leads ──────────────────────────────────────────────────────────────────
 
 export const ListLeadsInputSchema = z
 	.object({
-		next_page: z
+		page,
+		status: z
 			.string()
+			.min(1)
 			.optional()
-			.describe(
-				'Cursor of the next page; take it from page.next_page of the prior answer',
-			),
+			.describe('Only leads with this status name'),
+		status_id: z
+			.string()
+			.min(1)
+			.optional()
+			.describe('Only leads with this status id'),
+		updated_after: z
+			.string()
+			.min(1)
+			.optional()
+			.describe('Only leads updated after this ISO 8601 time'),
+		created_after: z
+			.string()
+			.min(1)
+			.optional()
+			.describe('Only leads created after this ISO 8601 time'),
+		email: z
+			.string()
+			.min(1)
+			.optional()
+			.describe('Only the lead with this email'),
 	})
 	.describe('Query parameters for listing leads');
 export type ListLeadsInput = z.infer<typeof ListLeadsInputSchema>;
 
-export const ListLeadsOutputSchema = ListEnvelopeSchema.extend({
-	data: z.array(LeadSchema).describe('Leads on this page'),
-});
+export const ListLeadsOutputSchema = z
+	.object({
+		...listEnvelope,
+		leads: z.array(LeadSchema).describe('Leads on this page'),
+	})
+	.loose();
 export type ListLeadsOutput = z.infer<typeof ListLeadsOutputSchema>;
 
 export const CreateLeadInputSchema = z
 	.object({
-		email: z.string().email().describe('Lead email address'),
-		data: z
-			// unknown: `data` keys are the account's lead fields, so the record
-			// cannot be stricter.
+		lead: z
+			// unknown: lead keys are the account's lead fields (email,
+			// first_name, company_name, ...), so the record cannot be stricter.
 			.record(z.string(), z.unknown())
+			.describe(
+				'Lead data keyed by field name (email, first_name, last_name, company_name, ...); see leadFields.list',
+			),
+		dup: z
+			.enum(['update', 'skip'])
 			.optional()
-			.describe('Lead attributes keyed by field name'),
+			.describe('What to do when a lead with the same email exists'),
+		creator_id: z
+			.string()
+			.min(1)
+			.optional()
+			.describe('User id recorded as the creator'),
 	})
 	.describe('Create a lead');
 export type CreateLeadInput = z.infer<typeof CreateLeadInputSchema>;
 
-export const CreateLeadOutputSchema = ListEnvelopeSchema.extend({
-	data: z.array(LeadSchema).describe('The lead as created'),
-});
+const LeadRecordOutputSchema = z
+	.object({
+		...recordEnvelope,
+		lead: LeadSchema.describe('The lead'),
+	})
+	.loose();
+
+export const CreateLeadOutputSchema = LeadRecordOutputSchema.describe(
+	'The lead as created',
+);
 export type CreateLeadOutput = z.infer<typeof CreateLeadOutputSchema>;
 
 export const GetLeadInputSchema = z
@@ -229,88 +378,119 @@ export const GetLeadInputSchema = z
 	.describe('Input for reading one lead');
 export type GetLeadInput = z.infer<typeof GetLeadInputSchema>;
 
-export const GetLeadOutputSchema = ListEnvelopeSchema.extend({
-	data: z.array(LeadSchema).describe('The lead'),
-});
+export const GetLeadOutputSchema = LeadRecordOutputSchema.describe('The lead');
 export type GetLeadOutput = z.infer<typeof GetLeadOutputSchema>;
 
 export const UpdateLeadInputSchema = z
 	.object({
 		id: z.string().min(1).describe('Lead id'),
+		status: z.string().min(1).optional().describe('New status name'),
+		status_id: z.string().min(1).optional().describe('New status id'),
+		owner_id: z.string().min(1).optional().describe('New owner user id'),
+		bounced: z.boolean().optional().describe('Mark the lead bounced'),
+		optedout: z.boolean().optional().describe('Mark the lead opted out'),
 		// unknown: `data` keys are the account's lead fields, so the record
 		// cannot be stricter.
 		data: z
 			.record(z.string(), z.unknown())
-			.describe('Lead attributes to update'),
+			.optional()
+			.describe('Lead attributes to update, keyed by field name'),
+	})
+	.refine(({ id: _id, ...fields }) => Object.keys(fields).length > 0, {
+		message: 'Give at least one field to update',
 	})
 	.describe('Update a lead');
 export type UpdateLeadInput = z.infer<typeof UpdateLeadInputSchema>;
 
-export const UpdateLeadOutputSchema = ListEnvelopeSchema.extend({
-	data: z.array(LeadSchema).describe('The lead as updated'),
-});
+export const UpdateLeadOutputSchema = LeadRecordOutputSchema.describe(
+	'The lead as updated',
+);
 export type UpdateLeadOutput = z.infer<typeof UpdateLeadOutputSchema>;
 
 // ── campaigns ──────────────────────────────────────────────────────────────
 
 export const ListCampaignsInputSchema = z
-	.object({})
-	.describe('Input for listing campaigns (none)');
+	.object({
+		page,
+		name: z
+			.string()
+			.min(1)
+			.optional()
+			.describe('Only campaigns with this name'),
+		owner_id: z
+			.string()
+			.min(1)
+			.optional()
+			.describe('Only campaigns owned by this user id'),
+		lead_id: z
+			.string()
+			.min(1)
+			.optional()
+			.describe('Only campaigns this lead is in'),
+	})
+	.describe('Query parameters for listing campaigns');
 export type ListCampaignsInput = z.infer<typeof ListCampaignsInputSchema>;
 
-export const ListCampaignsOutputSchema = ListEnvelopeSchema.extend({
-	data: z.array(CampaignSchema).describe('Campaigns'),
-});
+export const ListCampaignsOutputSchema = z
+	.object({
+		...listEnvelope,
+		campaigns: z.array(CampaignSchema).describe('Campaigns'),
+	})
+	.loose();
 export type ListCampaignsOutput = z.infer<typeof ListCampaignsOutputSchema>;
 
 export const CreateCampaignInputSchema = z
 	.object({
-		name: z.string().min(1).describe('Campaign name'),
-		do_not_automate: z
-			.boolean()
-			.optional()
-			.describe('Draft the emails instead of automating sends'),
+		campaign_name: z.string().min(1).describe('Campaign name'),
+		owner_id: z
+			.string()
+			.min(1)
+			.describe('User id of the campaign owner; see users.list'),
 	})
 	.describe('Create a campaign');
 export type CreateCampaignInput = z.infer<typeof CreateCampaignInputSchema>;
 
-export const CreateCampaignOutputSchema = ListEnvelopeSchema.extend({
-	data: z.array(CampaignSchema).describe('The campaign as created'),
-});
+export const CreateCampaignOutputSchema = CampaignSchema.describe(
+	'The campaign as created',
+);
 export type CreateCampaignOutput = z.infer<typeof CreateCampaignOutputSchema>;
 
 export const DuplicateCampaignInputSchema = z
 	.object({
 		campaign_id: z.string().min(1).describe('Campaign id to duplicate'),
-		num_duplicates: z
-			.number()
-			.int()
+		owner_id: z.string().min(1).describe('User id that owns the copy'),
+		name: z
+			.string()
 			.min(1)
 			.optional()
-			.describe('How many copies to make'),
+			.describe('Name of the copy; PersistIQ picks one when omitted'),
 	})
 	.describe('Duplicate a campaign');
 export type DuplicateCampaignInput = z.infer<
 	typeof DuplicateCampaignInputSchema
 >;
 
-export const DuplicateCampaignOutputSchema = ListEnvelopeSchema.extend({
-	data: z.array(CampaignSchema).describe('The duplicated campaigns'),
-});
+export const DuplicateCampaignOutputSchema =
+	CampaignSchema.describe('The copy');
 export type DuplicateCampaignOutput = z.infer<
 	typeof DuplicateCampaignOutputSchema
 >;
 
 export const ListCampaignLeadsInputSchema = z
-	.object({ campaignId: z.string().min(1).describe('Campaign id') })
+	.object({ campaignId: z.string().min(1).describe('Campaign id'), page })
 	.describe('Input for listing the leads in a campaign');
 export type ListCampaignLeadsInput = z.infer<
 	typeof ListCampaignLeadsInputSchema
 >;
 
-export const ListCampaignLeadsOutputSchema = ListEnvelopeSchema.extend({
-	data: z.array(LeadSchema).describe('Leads in the campaign'),
-});
+export const ListCampaignLeadsOutputSchema = z
+	.object({
+		...listEnvelope,
+		campaign_leads: z
+			.array(CampaignLeadSchema)
+			.describe('Leads in the campaign'),
+	})
+	.loose();
 export type ListCampaignLeadsOutput = z.infer<
 	typeof ListCampaignLeadsOutputSchema
 >;
@@ -318,105 +498,187 @@ export type ListCampaignLeadsOutput = z.infer<
 export const AddCampaignLeadInputSchema = z
 	.object({
 		campaignId: z.string().min(1).describe('Campaign id'),
-		lead_id: z.string().min(1).describe('Lead id to add'),
+		lead_id: z.string().min(1).optional().describe('Lead id to add'),
+		leads: z
+			.array(z.string().min(1))
+			.min(1)
+			.max(100)
+			.optional()
+			.describe('Bulk add: up to 100 lead ids'),
+		mailbox_id: z
+			.string()
+			.min(1)
+			.optional()
+			.describe("Mailbox to send from; defaults to the campaign owner's"),
+		skip_if_exists: z
+			.boolean()
+			.optional()
+			.describe('Return the existing membership instead of an error'),
+		override_lead_limit: z
+			.boolean()
+			.optional()
+			.describe("Add past the campaign's lead limit"),
+	})
+	.refine((input) => input.lead_id !== undefined || input.leads !== undefined, {
+		message: 'Give lead_id or leads',
 	})
 	.describe('Add a lead to a campaign');
 export type AddCampaignLeadInput = z.infer<typeof AddCampaignLeadInputSchema>;
 
-export const AddCampaignLeadOutputSchema = DeletedSchema.describe(
-	'The lead was added to the campaign',
-);
+export const AddCampaignLeadOutputSchema = z
+	.object({
+		...recordEnvelope,
+		campaign_lead: CampaignLeadSchema.nullish().describe(
+			'The membership created (single add)',
+		),
+	})
+	.loose()
+	.describe('The lead was added to the campaign');
 export type AddCampaignLeadOutput = z.infer<typeof AddCampaignLeadOutputSchema>;
 
 export const RemoveCampaignLeadInputSchema = z
 	.object({
 		campaignId: z.string().min(1).describe('Campaign id'),
-		leadId: z.string().min(1).describe('Lead id to remove'),
+		leadId: z
+			.string()
+			.min(1)
+			.describe('Lead id to remove (the id of the lead, as the spec names it)'),
 	})
 	.describe('Remove a lead from a campaign');
 export type RemoveCampaignLeadInput = z.infer<
 	typeof RemoveCampaignLeadInputSchema
 >;
 
-export const RemoveCampaignLeadOutputSchema = DeletedSchema.describe(
-	'The lead was removed from the campaign',
-);
+export const RemoveCampaignLeadOutputSchema = z
+	.object({
+		status: z.literal('success').describe('success'),
+		leadId: z.string().describe('The lead removed'),
+	})
+	.describe('The lead was removed from the campaign');
 export type RemoveCampaignLeadOutput = z.infer<
 	typeof RemoveCampaignLeadOutputSchema
 >;
 
 export const ListRepliesInputSchema = z
-	.object({ campaignId: z.string().min(1).describe('Campaign id') })
+	.object({
+		campaignId: z.string().min(1).describe('Campaign id'),
+		page,
+		lead_id: z
+			.string()
+			.min(1)
+			.optional()
+			.describe('Only replies from this lead'),
+		start_at: z
+			.string()
+			.min(1)
+			.optional()
+			.describe('Only replies after this ISO 8601 time'),
+		end_at: z
+			.string()
+			.min(1)
+			.optional()
+			.describe('Only replies before this ISO 8601 time'),
+	})
 	.describe('Input for listing the replies in a campaign');
 export type ListRepliesInput = z.infer<typeof ListRepliesInputSchema>;
 
-export const ReplySchema = z
+export const ListRepliesOutputSchema = z
 	.object({
-		id: z.string().min(1).describe('Reply id'),
+		...listEnvelope,
+		replies: z.array(ReplySchema).describe('Replies'),
 	})
-	.loose()
-	.describe('A reply to an inbox message');
-export type Reply = z.infer<typeof ReplySchema>;
-
-export const ListRepliesOutputSchema = ListEnvelopeSchema.extend({
-	data: z.array(ReplySchema).describe('Replies'),
-});
+	.loose();
 export type ListRepliesOutput = z.infer<typeof ListRepliesOutputSchema>;
 
 export const ReplyToMessageInputSchema = z
 	.object({
 		campaignId: z.string().min(1).describe('Campaign id'),
-		lead_id: z.string().min(1).describe('Lead id the message belongs to'),
-		message_id: z.string().min(1).describe('Inbox message id to reply to'),
-		reply_message: z.string().min(1).describe('Reply body'),
+		inbox_message_id: z
+			.string()
+			.min(1)
+			.describe('Inbox message id to reply to (a reply id from listReplies)'),
+		body: z.string().min(1).describe('HTML body of the reply'),
 	})
 	.describe('Reply to an inbox message in a campaign');
 export type ReplyToMessageInput = z.infer<typeof ReplyToMessageInputSchema>;
 
-export const ReplyToMessageOutputSchema = ListEnvelopeSchema.extend({
-	data: z.array(ReplySchema).describe('The reply as sent'),
-});
+export const ReplyToMessageOutputSchema = z
+	.object({
+		status: z.string().nullish().describe('queued once accepted'),
+		message: z.string().nullish().describe('What PersistIQ did'),
+	})
+	.loose()
+	.describe('The reply was queued for sending');
 export type ReplyToMessageOutput = z.infer<typeof ReplyToMessageOutputSchema>;
 
 // ── dncDomains ─────────────────────────────────────────────────────────────
 
 export const ListDncDomainsInputSchema = z
-	.object({})
-	.describe('Input for listing do-not-contact domains (none)');
+	.object({ page })
+	.describe('Input for listing do-not-contact domains');
 export type ListDncDomainsInput = z.infer<typeof ListDncDomainsInputSchema>;
 
-export const ListDncDomainsOutputSchema = ListEnvelopeSchema.extend({
-	data: z.array(DncDomainSchema).describe('Do-not-contact domains'),
-});
+export const ListDncDomainsOutputSchema = z
+	.object({
+		...listEnvelope,
+		dnc_domains: z.array(DncDomainSchema).describe('Do-not-contact domains'),
+	})
+	.loose();
 export type ListDncDomainsOutput = z.infer<typeof ListDncDomainsOutputSchema>;
 
 export const CreateDncDomainInputSchema = z
 	.object({
-		domain: z
+		name: z
 			.string()
 			.min(1)
-			.describe('Domain to add to the do-not-contact list'),
+			.describe('Domain to add to the do-not-contact list, e.g. example.com'),
 	})
 	.describe('Add a do-not-contact domain');
 export type CreateDncDomainInput = z.infer<typeof CreateDncDomainInputSchema>;
 
-export const CreateDncDomainOutputSchema = DeletedSchema.describe(
-	'The domain was added',
-);
+export const CreateDncDomainOutputSchema = z
+	.object({
+		...recordEnvelope,
+		status: z.literal('success').describe('success'),
+		dnc_domain: DncDomainSchema.nullish().describe('The domain added'),
+	})
+	.loose()
+	.describe('The domain was added');
 export type CreateDncDomainOutput = z.infer<typeof CreateDncDomainOutputSchema>;
 
 // ── events ─────────────────────────────────────────────────────────────────
 
 export const ListEventsInputSchema = z
 	.object({
-		next_page: z.string().optional().describe('Cursor of the next page'),
+		page,
+		group: z.string().min(1).optional().describe('Only events of this group'),
+		campaign: z
+			.string()
+			.min(1)
+			.optional()
+			.describe('Only events of this campaign id'),
+		lead: z.string().min(1).optional().describe('Only events of this lead id'),
+		user: z.string().min(1).optional().describe('Only events of this user id'),
+		start_at: z
+			.string()
+			.min(1)
+			.optional()
+			.describe('Only events after this ISO 8601 time'),
+		end_at: z
+			.string()
+			.min(1)
+			.optional()
+			.describe('Only events before this ISO 8601 time'),
 	})
 	.describe('Query parameters for listing events');
 export type ListEventsInput = z.infer<typeof ListEventsInputSchema>;
 
-export const ListEventsOutputSchema = ListEnvelopeSchema.extend({
-	data: z.array(EventSchema).describe('Events on this page'),
-});
+export const ListEventsOutputSchema = z
+	.object({
+		...listEnvelope,
+		events: z.array(EventSchema).describe('Events on this page'),
+	})
+	.loose();
 export type ListEventsOutput = z.infer<typeof ListEventsOutputSchema>;
 
 // ── webhooks ───────────────────────────────────────────────────────────────
@@ -428,28 +690,40 @@ export type GetWebhookSettingsInput = z.infer<
 	typeof GetWebhookSettingsInputSchema
 >;
 
-export const GetWebhookSettingsOutputSchema = ListEnvelopeSchema.extend({
-	data: z.array(WebhookSettingsSchema).describe('The webhook plugin settings'),
-});
+export const GetWebhookSettingsOutputSchema = WebhookSettingsSchema;
 export type GetWebhookSettingsOutput = z.infer<
 	typeof GetWebhookSettingsOutputSchema
 >;
 
+const toggleInput = (what: string) =>
+	z.boolean().optional().describe(`Turn ${what} deliveries on or off`);
+const urlInput = (what: string) =>
+	z.url().optional().describe(`Endpoint ${what} deliveries are posted to`);
+
 export const UpdateWebhookSettingsInputSchema = z
 	.object({
-		url: z.string().url().describe('Endpoint deliveries are posted to'),
-		enabled: z.boolean().optional().describe('Whether deliveries are active'),
+		post_new_prospect: toggleInput('new-lead'),
+		post_new_prospect_url: urlInput('new-lead'),
+		post_updated_prospect: toggleInput('updated-lead'),
+		post_updated_prospect_url: urlInput('updated-lead'),
+		raw_events: toggleInput('raw-event'),
+		raw_events_url: urlInput('raw-event'),
+		post_email_reply: toggleInput('email-reply'),
+		post_email_reply_url: urlInput('email-reply'),
+		post_email_opened: toggleInput('email-opened'),
+		post_email_opened_url: urlInput('email-opened'),
+	})
+	.refine((input) => Object.keys(input).length > 0, {
+		message: 'Give at least one setting to change',
 	})
 	.describe('Update the webhook plugin settings');
 export type UpdateWebhookSettingsInput = z.infer<
 	typeof UpdateWebhookSettingsInputSchema
 >;
 
-export const UpdateWebhookSettingsOutputSchema = ListEnvelopeSchema.extend({
-	data: z
-		.array(WebhookSettingsSchema)
-		.describe('The webhook plugin settings as updated'),
-});
+export const UpdateWebhookSettingsOutputSchema = WebhookSettingsSchema.describe(
+	'The webhook plugin settings as updated',
+);
 export type UpdateWebhookSettingsOutput = z.infer<
 	typeof UpdateWebhookSettingsOutputSchema
 >;

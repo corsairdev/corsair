@@ -1,5 +1,5 @@
 import type { PersistiqEndpoints } from '..';
-import { call } from './call';
+import { call, segment } from './call';
 import {
 	PersistiqEndpointInputSchemas as Inputs,
 	PersistiqEndpointOutputSchemas as Outputs,
@@ -14,8 +14,13 @@ export const list: PersistiqEndpoints['campaignsList'] = (ctx, input) =>
 			output: Outputs.campaignsList,
 		},
 		input,
-		() => ({ method: 'GET', path: '/v1/campaigns' }),
-		{ log: (_, page) => ({ count: page.data.length }) },
+		(query) => ({ method: 'GET', path: '/v1/campaigns', query }),
+		{
+			log: (_, page) => ({
+				count: page.campaigns.length,
+				hasMore: page.has_more ?? undefined,
+			}),
+		},
 	);
 
 export const create: PersistiqEndpoints['campaignsCreate'] = (ctx, input) =>
@@ -28,7 +33,7 @@ export const create: PersistiqEndpoints['campaignsCreate'] = (ctx, input) =>
 		},
 		input,
 		(body) => ({ method: 'POST', path: '/v1/campaigns', body }),
-		{ log: (_, page) => ({ campaignId: page.data[0]?.id ?? undefined }) },
+		{ log: (_, campaign) => ({ campaignId: campaign.id }) },
 	);
 
 export const duplicate: PersistiqEndpoints['campaignsDuplicate'] = (
@@ -44,7 +49,7 @@ export const duplicate: PersistiqEndpoints['campaignsDuplicate'] = (
 		},
 		input,
 		(body) => ({ method: 'POST', path: '/v1/campaigns/duplicate', body }),
-		{ log: (_, page) => ({ count: page.data.length }) },
+		{ log: (_, campaign) => ({ campaignId: campaign.id }) },
 	);
 
 export const listLeads: PersistiqEndpoints['campaignsListLeads'] = (
@@ -59,11 +64,17 @@ export const listLeads: PersistiqEndpoints['campaignsListLeads'] = (
 			output: Outputs.campaignsListLeads,
 		},
 		input,
-		({ campaignId }) => ({
+		({ campaignId, ...query }) => ({
 			method: 'GET',
-			path: `/v1/campaigns/${encodeURIComponent(campaignId)}/leads`,
+			path: `/v1/campaigns/${segment(campaignId)}/leads`,
+			query,
 		}),
-		{ log: (_, page) => ({ count: page.data.length }) },
+		{
+			log: (_, page) => ({
+				count: page.campaign_leads.length,
+				hasMore: page.has_more ?? undefined,
+			}),
+		},
 	);
 
 export const addLead: PersistiqEndpoints['campaignsAddLead'] = (ctx, input) =>
@@ -77,10 +88,14 @@ export const addLead: PersistiqEndpoints['campaignsAddLead'] = (ctx, input) =>
 		input,
 		({ campaignId, ...body }) => ({
 			method: 'POST',
-			path: `/v1/campaigns/${encodeURIComponent(campaignId)}/leads`,
+			path: `/v1/campaigns/${segment(campaignId)}/leads`,
 			body,
 		}),
-		{ log: (_, result) => ({ success: result.status === 'success' }) },
+		{
+			log: (_, result) => ({
+				campaignLeadId: result.campaign_lead?.id ?? undefined,
+			}),
+		},
 	);
 
 export const removeLead: PersistiqEndpoints['campaignsRemoveLead'] = (
@@ -97,23 +112,30 @@ export const removeLead: PersistiqEndpoints['campaignsRemoveLead'] = (
 		input,
 		({ campaignId, leadId }) => ({
 			method: 'DELETE',
-			path: `/v1/campaigns/${encodeURIComponent(campaignId)}/leads/${encodeURIComponent(leadId)}`,
+			path: `/v1/campaigns/${segment(campaignId)}/leads/${segment(leadId)}`,
 		}),
 		{
 			shape: (raw, { leadId }) => {
-				// The delete answers { status: "success" }; anything else is a
-				// failure the caller must see rather than a fabricated success.
+				// The spec documents a 200 with no body; PersistIQ's other
+				// writes answer { status: "success" }. Either confirms the
+				// removal. Anything else (an error status) is a failure the
+				// caller must see rather than a fabricated success.
+				const empty =
+					raw === undefined ||
+					raw === null ||
+					raw === '' ||
+					(typeof raw === 'object' && Object.keys(raw).length === 0);
 				// unknown: raw is the untouched response body; only the status
 				// flag is inspected before the output schema parses it.
-				const record = (raw ?? {}) as { status?: unknown };
-				if (record.status !== 'success') {
+				const status = empty ? 'success' : (raw as { status?: unknown }).status;
+				if (status !== 'success') {
 					throw new Error(
-						`PersistIQ campaigns.removeLead: unexpected answer ${JSON.stringify(raw)}`,
+						'PersistIQ campaigns.removeLead: the answer did not confirm the removal',
 					);
 				}
 				return { status: 'success', leadId };
 			},
-			log: (_parsed, result) => ({ leadId: String(result.leadId) }),
+			log: (_parsed, result) => ({ leadId: result.leadId }),
 		},
 	);
 
@@ -129,11 +151,17 @@ export const listReplies: PersistiqEndpoints['campaignsListReplies'] = (
 			output: Outputs.campaignsListReplies,
 		},
 		input,
-		({ campaignId }) => ({
+		({ campaignId, ...query }) => ({
 			method: 'GET',
-			path: `/v1/campaigns/${encodeURIComponent(campaignId)}/replies`,
+			path: `/v1/campaigns/${segment(campaignId)}/replies`,
+			query,
 		}),
-		{ log: (_, page) => ({ count: page.data.length }) },
+		{
+			log: (_, page) => ({
+				count: page.replies.length,
+				hasMore: page.has_more ?? undefined,
+			}),
+		},
 	);
 
 export const replyToMessage: PersistiqEndpoints['campaignsReplyToMessage'] = (
@@ -150,8 +178,8 @@ export const replyToMessage: PersistiqEndpoints['campaignsReplyToMessage'] = (
 		input,
 		({ campaignId, ...body }) => ({
 			method: 'POST',
-			path: `/v1/campaigns/${encodeURIComponent(campaignId)}/replies`,
+			path: `/v1/campaigns/${segment(campaignId)}/replies`,
 			body,
 		}),
-		{ log: (_, page) => ({ count: page.data.length }) },
+		{ log: (_, result) => ({ status: result.status ?? undefined }) },
 	);

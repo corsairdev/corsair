@@ -12,22 +12,27 @@ pnpm add @corsair-dev/persistiq
 
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
-| `campaigns.addLead` | `persistiq.api.campaigns.addLead` | `write` | Add a lead to a campaign |
+| `campaigns.addLead` | `persistiq.api.campaigns.addLead` | `destructive` | Add leads to a campaign; the campaign's automated emails start going to them |
 | `campaigns.create` | `persistiq.api.campaigns.create` | `write` | Create a campaign |
-| `campaigns.duplicate` | `persistiq.api.campaigns.duplicate` | `write` | Duplicate a campaign |
+| `campaigns.duplicate` | `persistiq.api.campaigns.duplicate` | `write` | Copy a campaign to a new owner |
 | `campaigns.list` | `persistiq.api.campaigns.list` | `read` | List the campaigns |
 | `campaigns.listLeads` | `persistiq.api.campaigns.listLeads` | `read` | List the leads in a campaign |
 | `campaigns.listReplies` | `persistiq.api.campaigns.listReplies` | `read` | List the replies in a campaign |
 | `campaigns.removeLead` | `persistiq.api.campaigns.removeLead` | `write` | Remove a lead from a campaign |
-| `campaigns.replyToMessage` | `persistiq.api.campaigns.replyToMessage` | `destructive` | Reply to an inbox message; the email goes out and cannot be recalled |
-| `events.list` | `persistiq.api.events.list` | `read` | List activity events, paged by cursor |
+| `campaigns.replyToMessage` | `persistiq.api.campaigns.replyToMessage` | `destructive` | Reply to a message received in a campaign; the email goes out and cannot be recalled |
+| `dncDomains.create` | `persistiq.api.dncDomains.create` | `write` | Add a domain to the do-not-contact list; emails to it stop |
+| `dncDomains.list` | `persistiq.api.dncDomains.list` | `read` | List the do-not-contact domains |
+| `events.list` | `persistiq.api.events.list` | `read` | List activity events, with filters, page by page |
 | `leads.create` | `persistiq.api.leads.create` | `write` | Create a lead with its attributes |
 | `leads.get` | `persistiq.api.leads.get` | `read` | Read one lead by id |
-| `leads.list` | `persistiq.api.leads.list` | `read` | List leads, paged by cursor |
-| `leads.update` | `persistiq.api.leads.update` | `write` | Update a lead attributes map |
+| `leads.list` | `persistiq.api.leads.list` | `read` | List leads, with filters, page by page |
+| `leadFields.list` | `persistiq.api.leadFields.list` | `read` | List the lead field definitions |
+| `leadStatuses.list` | `persistiq.api.leadStatuses.list` | `read` | List the lead status vocabulary |
+| `leads.update` | `persistiq.api.leads.update` | `write` | Update a lead's status, owner, flags or attributes |
+| `tags.list` | `persistiq.api.tags.list` | `read` | List the tags |
 | `users.list` | `persistiq.api.users.list` | `read` | List the team members |
 | `webhooks.getSettings` | `persistiq.api.webhooks.getSettings` | `read` | Read the webhook plugin settings |
-| `webhooks.updateSettings` | `persistiq.api.webhooks.updateSettings` | `write` | Update the webhook plugin delivery URL and active state |
+| `webhooks.updateSettings` | `persistiq.api.webhooks.updateSettings` | `write` | Turn webhook deliveries on or off and set the URL each one posts to |
 
 ## Auth
 

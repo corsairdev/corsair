@@ -14,15 +14,11 @@ export const list: PersistiqEndpoints['eventsList'] = (ctx, input) =>
 			output: Outputs.eventsList,
 		},
 		input,
-		({ next_page }) => ({
-			method: 'GET',
-			path: '/v1/events',
-			query: { next_page },
-		}),
+		(query) => ({ method: 'GET', path: '/v1/events', query }),
 		{
 			log: (_, page) => ({
-				count: page.data.length,
-				hasMore: page.page.has_more,
+				count: page.events.length,
+				hasMore: page.has_more ?? undefined,
 			}),
 		},
 	);

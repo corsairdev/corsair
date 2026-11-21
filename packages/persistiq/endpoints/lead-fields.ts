@@ -15,5 +15,5 @@ export const list: PersistiqEndpoints['leadFieldsList'] = (ctx, input) =>
 		},
 		input,
 		() => ({ method: 'GET', path: '/v1/lead_fields' }),
-		{ log: (_, page) => ({ count: page.data.length }) },
+		{ log: (_, page) => ({ count: page.lead_fields.length }) },
 	);

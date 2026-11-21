@@ -1,5 +1,5 @@
 import type { PersistiqEndpoints } from '..';
-import { call } from './call';
+import { call, segment } from './call';
 import {
 	PersistiqEndpointInputSchemas as Inputs,
 	PersistiqEndpointOutputSchemas as Outputs,
@@ -14,15 +14,11 @@ export const list: PersistiqEndpoints['leadsList'] = (ctx, input) =>
 			output: Outputs.leadsList,
 		},
 		input,
-		({ next_page }) => ({
-			method: 'GET',
-			path: '/v1/leads',
-			query: { next_page },
-		}),
+		(query) => ({ method: 'GET', path: '/v1/leads', query }),
 		{
 			log: (_, page) => ({
-				count: page.data.length,
-				hasMore: page.page.has_more,
+				count: page.leads.length,
+				hasMore: page.has_more ?? undefined,
 			}),
 		},
 	);
@@ -37,7 +33,7 @@ export const create: PersistiqEndpoints['leadsCreate'] = (ctx, input) =>
 		},
 		input,
 		(body) => ({ method: 'POST', path: '/v1/leads', body }),
-		{ log: (_, page) => ({ leadId: page.data[0]?.id ?? undefined }) },
+		{ log: (_, result) => ({ leadId: result.lead.id }) },
 	);
 
 export const get: PersistiqEndpoints['leadsGet'] = (ctx, input) =>
@@ -51,9 +47,9 @@ export const get: PersistiqEndpoints['leadsGet'] = (ctx, input) =>
 		input,
 		({ id }) => ({
 			method: 'GET',
-			path: `/v1/leads/${encodeURIComponent(id)}`,
+			path: `/v1/leads/${segment(id)}`,
 		}),
-		{ log: (_, page) => ({ leadId: page.data[0]?.id ?? undefined }) },
+		{ log: (_, result) => ({ leadId: result.lead.id }) },
 	);
 
 export const update: PersistiqEndpoints['leadsUpdate'] = (ctx, input) =>
@@ -67,8 +63,8 @@ export const update: PersistiqEndpoints['leadsUpdate'] = (ctx, input) =>
 		input,
 		({ id, ...body }) => ({
 			method: 'PATCH',
-			path: `/v1/leads/${encodeURIComponent(id)}`,
+			path: `/v1/leads/${segment(id)}`,
 			body,
 		}),
-		{ log: (_, page) => ({ leadId: page.data[0]?.id ?? undefined }) },
+		{ log: (_, result) => ({ leadId: result.lead.id }) },
 	);

@@ -52,51 +52,53 @@ afterEach(() => {
 });
 
 describe('output parsing', () => {
-	it('parses a lead page with its pagination block', async () => {
+	it('parses a lead page with has_more and next_page beside the leads', async () => {
 		respond({
 			status: 'success',
-			data: [lead],
-			page: { has_more: true, next_page: 'cur1' },
+			errors: [],
+			has_more: true,
+			next_page: 'https://api.persistiq.com/v1/leads?page=2',
+			leads: [lead],
 		});
 		const page = (await invoke(Leads.list, {})) as {
-			data: Array<{ id?: string }>;
-			page: { has_more?: boolean; next_page?: string | null };
+			leads: Array<{ id?: string }>;
+			has_more?: boolean;
 		};
-		expect(page.data[0]?.id).toBe('l_1');
-		expect(page.page.has_more).toBe(true);
-		expect(page.page.next_page).toBe('cur1');
+		expect(page.leads[0]?.id).toBe('l_1');
+		expect(page.has_more).toBe(true);
 	});
 
 	it('keeps the data map as an open record', async () => {
-		respond({ status: 'success', data: [lead], page: PAGE_ANY });
-		const page = (await invoke(Leads.list, {})) as {
+		respond({ status: 'success', error: null, lead });
+		const result = (await invoke(Leads.get, { id: 'l_1' })) as {
 			// unknown: the lead data map is caller-defined, so the cast keeps
 			// it open.
-			data: Array<{ data?: Record<string, unknown> }>;
+			lead: { data?: Record<string, unknown> };
 		};
-		expect(page.data[0]?.data?.['email']).toBe('john@example.com');
+		expect(result.lead.data?.['email']).toBe('john@example.com');
 	});
 
 	it('rejects a lead with no id', async () => {
-		respond({ status: 'success', data: [{ data: {} }], page: PAGE_ANY });
+		respond({ status: 'success', error: null, lead: { data: {} } });
 		await rejects(Leads.get, { id: 'x' }, 'id');
 	});
 
-	it('rejects a list envelope without the pagination block', async () => {
-		respond({ status: 'success', data: [] });
-		await rejects(Leads.list, {}, 'page');
+	it('rejects a list answer without its named array', async () => {
+		respond({ status: 'success', has_more: false, data: [] });
+		await rejects(Leads.list, {}, 'leads');
 	});
 });
 
 describe('input validation', () => {
-	it('rejects a lead create without a valid email', async () => {
-		await rejects(Leads.create, { email: 'not-an-email' }, 'email');
+	it('rejects a lead create without the lead object', async () => {
+		await rejects(Leads.create, { email: 'john@example.com' }, 'lead');
 	});
 
-	it('rejects an update with no data map', async () => {
-		await rejects(Leads.update, { id: 'l_1' }, 'data');
+	it('rejects an update with nothing to change', async () => {
+		await rejects(Leads.update, { id: 'l_1' }, 'at least one field');
+	});
+
+	it('rejects a page below 1', async () => {
+		await rejects(Leads.list, { page: 0 }, 'page');
 	});
 });
-
-// The pagination block differs per fixture; any object passes the schema.
-const PAGE_ANY = { has_more: false, next_page: null };

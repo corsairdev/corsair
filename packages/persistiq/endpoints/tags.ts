@@ -14,6 +14,6 @@ export const list: PersistiqEndpoints['tagsList'] = (ctx, input) =>
 			output: Outputs.tagsList,
 		},
 		input,
-		() => ({ method: 'GET', path: '/v1/tags' }),
-		{ log: (_, page) => ({ count: page.data.length }) },
+		(query) => ({ method: 'GET', path: '/v1/tags', query }),
+		{ log: (_, page) => ({ count: page.tags.length }) },
 	);

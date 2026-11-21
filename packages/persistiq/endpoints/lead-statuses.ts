@@ -15,5 +15,5 @@ export const list: PersistiqEndpoints['leadStatusesList'] = (ctx, input) =>
 		},
 		input,
 		() => ({ method: 'GET', path: '/v1/lead_statuses' }),
-		{ log: (_, page) => ({ count: page.data.length }) },
+		{ log: (_, page) => ({ count: page.lead_statuses.length }) },
 	);

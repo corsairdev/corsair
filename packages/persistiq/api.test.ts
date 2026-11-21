@@ -25,16 +25,16 @@ describeIfKey('persistiq live smoke', () => {
 
 	it('lists users through the output schema', async () => {
 		const page = await plugin.endpoints!.users.list(ctx, {});
-		expect(Array.isArray(page.data)).toBe(true);
+		expect(Array.isArray(page.users)).toBe(true);
 	});
 
 	it('lists leads through the output schema', async () => {
 		const page = await plugin.endpoints!.leads.list(ctx, {});
-		expect(Array.isArray(page.data)).toBe(true);
+		expect(Array.isArray(page.leads)).toBe(true);
 	});
 
 	it('lists campaigns through the output schema', async () => {
 		const page = await plugin.endpoints!.campaigns.list(ctx, {});
-		expect(Array.isArray(page.data)).toBe(true);
+		expect(Array.isArray(page.campaigns)).toBe(true);
 	});
 });

@@ -208,7 +208,7 @@ const persistiqEndpointMeta = {
 	},
 	'leads.list': {
 		riskLevel: 'read',
-		description: 'List leads, paged by cursor',
+		description: 'List leads, with filters, page by page',
 	},
 	'leads.create': {
 		riskLevel: 'write',
@@ -220,7 +220,7 @@ const persistiqEndpointMeta = {
 	},
 	'leads.update': {
 		riskLevel: 'write',
-		description: 'Update a lead attributes map',
+		description: "Update a lead's status, owner, flags or attributes",
 	},
 	'campaigns.list': {
 		riskLevel: 'read',
@@ -232,15 +232,16 @@ const persistiqEndpointMeta = {
 	},
 	'campaigns.duplicate': {
 		riskLevel: 'write',
-		description: 'Duplicate a campaign',
+		description: 'Copy a campaign to a new owner',
 	},
 	'campaigns.listLeads': {
 		riskLevel: 'read',
 		description: 'List the leads in a campaign',
 	},
 	'campaigns.addLead': {
-		riskLevel: 'write',
-		description: 'Add a lead to a campaign',
+		riskLevel: 'destructive',
+		description:
+			"Add leads to a campaign; the campaign's automated emails start going to them",
 	},
 	'campaigns.removeLead': {
 		riskLevel: 'write',
@@ -253,7 +254,7 @@ const persistiqEndpointMeta = {
 	'campaigns.replyToMessage': {
 		riskLevel: 'destructive',
 		description:
-			'Reply to an inbox message; the email goes out and cannot be recalled',
+			'Reply to a message received in a campaign; the email goes out and cannot be recalled',
 		irreversible: true,
 	},
 	'leadFields.list': {
@@ -278,7 +279,7 @@ const persistiqEndpointMeta = {
 	},
 	'events.list': {
 		riskLevel: 'read',
-		description: 'List activity events, paged by cursor',
+		description: 'List activity events, with filters, page by page',
 	},
 	'webhooks.getSettings': {
 		riskLevel: 'read',
@@ -286,7 +287,8 @@ const persistiqEndpointMeta = {
 	},
 	'webhooks.updateSettings': {
 		riskLevel: 'write',
-		description: 'Update the webhook plugin delivery URL and active state',
+		description:
+			'Turn webhook deliveries on or off and set the URL each one posts to',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof persistiqEndpointsNested
@@ -354,11 +356,8 @@ export function persistiq<const T extends PersistiqPluginOptions>(
 	} satisfies InternalPersistiqPlugin;
 }
 
-export { PersistiqAPIError } from './client';
-
 export type {
 	Campaign,
-	Deleted,
 	Event,
 	Lead,
 	PersistiqEndpointInputs,

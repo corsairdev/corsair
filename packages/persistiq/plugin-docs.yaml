@@ -5,14 +5,16 @@ description: "PersistIQ is an outbound sales automation platform. This plugin ma
 domain: persistiq.com
 recommendedAuth: api_key
 overviewNote: >
-  Authenticate with the API key from the PersistIQ integrations settings;
-  the plugin sends it in the x-api-key header. List operations answer
-  { status, data, page } where page.has_more and page.next_page drive cursor
-  pagination — pass page.next_page back as next_page.
+  Authenticate with the API key from the PersistIQ integrations settings
+  (Settings > Integrations > API Key); the plugin sends it in the x-api-key
+  header. List operations answer { status, errors, has_more, next_page }
+  plus a named array (leads, campaigns, campaign_leads, replies, events,
+  ...). Pages are numbered: pass page: 2, 3, ... while has_more is true.
 
   Lead attributes live in a `data` map keyed by the account's lead fields
-  (read them with leadFields.list). Campaign emails are automated by
-  default; campaigns.create with do_not_automate: true drafts them instead.
+  (read them with leadFields.list); leads.create takes them in `lead`.
+  Adding a lead to a campaign (campaigns.addLead) starts the campaign's
+  automated emails to that lead, so it asks for approval like a send.
 
   PersistIQ delivers outbound webhooks through its webhook plugin; the
   plugin reads and updates those settings (webhooks.getSettings and
@@ -31,8 +33,8 @@ examples:
     path: leads.create
     title: Create a lead
     args:
-      email: john@example.com
-      data:
+      lead:
+        email: john@example.com
         first_name: John
 apiExamples:
   users.list:
@@ -44,19 +46,19 @@ apiExamples:
   tags.list:
     call: '{}'
   leads.list:
-    call: '{}'
+    call: '{ page: 1, updated_after: "2025-11-01T00:00:00Z" }'
   leads.create:
-    call: '{ email: "john@example.com", data: { first_name: "John" } }'
+    call: '{ lead: { email: "john@example.com", first_name: "John" }, dup: "skip" }'
   leads.get:
     call: '{ id: "l_1" }'
   leads.update:
-    call: '{ id: "l_1", data: { first_name: "Jane" } }'
+    call: '{ id: "l_1", status: "Replied", data: { first_name: "Jane" } }'
   campaigns.list:
     call: '{}'
   campaigns.create:
-    call: '{ name: "Q4 outbound", do_not_automate: true }'
+    call: '{ campaign_name: "Q4 outbound", owner_id: "u_1" }'
   campaigns.duplicate:
-    call: '{ campaign_id: "c_1", num_duplicates: 2 }'
+    call: '{ campaign_id: "c_1", owner_id: "u_1", name: "Q4 outbound copy" }'
   campaigns.listLeads:
     call: '{ campaignId: "c_1" }'
   campaigns.addLead:
@@ -66,23 +68,24 @@ apiExamples:
   campaigns.listReplies:
     call: '{ campaignId: "c_1" }'
   campaigns.replyToMessage:
-    call: '{ campaignId: "c_1", lead_id: "l_1", message_id: "m_1", reply_message: "Thanks for the reply!" }'
+    call: '{ campaignId: "c_1", inbox_message_id: "r_1", body: "<p>Thanks for the reply!</p>" }'
   dncDomains.list:
     call: '{}'
   dncDomains.create:
-    call: '{ domain: "example.com" }'
+    call: '{ name: "example.com" }'
   events.list:
     call: '{}'
   webhooks.getSettings:
     call: '{}'
   webhooks.updateSettings:
-    call: '{ url: "https://example.com/webhooks/persistiq", enabled: true }'
+    call: '{ post_new_prospect: true, post_new_prospect_url: "https://example.com/webhooks/persistiq" }'
 apiNotes:
-  leads.list: 'Paged by cursor: pass page.next_page from the prior answer back as next_page.'
-  leads.create: 'The answer wraps the created lead in the data array.'
-  leads.update: 'The data map replaces the given attribute values; keys come from leadFields.list.'
-  campaigns.create: 'do_not_automate: true drafts emails instead of automating sends.'
-  campaigns.removeLead: 'Answers { status: "success" }; the operation echoes the removed lead id.'
-  dncDomains.create: 'Adds the domain to the do-not-contact list; emails to it stop.'
-  campaigns.replyToMessage: 'Sends the reply immediately; it cannot be recalled.'
-  webhooks.updateSettings: 'Configures the outbound webhook plugin delivery URL.'
+  leads.list: 'Numbered pages: pass page 2, 3, ... while has_more is true. Filters: status, status_id, updated_after, created_after, email.'
+  leads.create: 'The lead fields go in `lead`; dup "skip" or "update" handles an existing email. The answer is { status, error, lead }.'
+  leads.update: 'Changes status, owner, bounced/optedout flags and the data attributes; keys come from leadFields.list.'
+  campaigns.create: 'campaign_name and owner_id (a user id from users.list) are required. The answer is the campaign itself.'
+  campaigns.addLead: "Starts the campaign's automated emails to the lead. Give lead_id, or up to 100 ids in leads."
+  campaigns.removeLead: 'PersistIQ answers 200 with no body; the operation echoes the removed lead id.'
+  dncDomains.create: 'Adds the domain to the do-not-contact list; emails to it stop. The API has no route to remove one.'
+  campaigns.replyToMessage: 'Queues the reply email at once; it cannot be recalled. inbox_message_id is a reply id from listReplies.'
+  webhooks.updateSettings: 'Each delivery type (new lead, updated lead, raw events, email reply, email opened) has its own on/off flag and URL.'

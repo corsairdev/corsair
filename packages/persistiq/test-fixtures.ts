@@ -12,12 +12,22 @@ export const unauthorized = {
 	},
 };
 
-export const PAGE = { has_more: false, next_page: null };
+/** The fields every list answer carries beside its named array. */
+export const PAGE = {
+	status: 'success',
+	errors: [],
+	has_more: false,
+	next_page: null,
+};
 
 export const user = {
 	id: 'u_1',
 	name: 'Jane Roe',
 	email: 'jane@example.com',
+	activated: true,
+	salesforce_id: null,
+	default_mailbox_id: 'mb_1',
+	mailboxes: [{ id: 'mb_1', email: 'jane@example.com', campaign_ids: ['c_1'] }],
 };
 
 export const lead = {
@@ -36,10 +46,28 @@ export const lead = {
 export const campaign = {
 	id: 'c_1',
 	name: 'Q4 outbound',
+	creator: { id: 'u_1', name: 'Jane Roe', email: 'jane@example.com' },
+	stats: {
+		prospects_contacted: 10,
+		prospects_reached: 9,
+		prospects_opened: 5,
+		prospects_replied: 1,
+		prospects_bounced: 1,
+		prospects_optedout: 0,
+		total_prospects: 12,
+	},
+};
+
+export const campaignLead = {
+	id: 'cl_1',
+	campaign_id: 'c_1',
+	mailbox_id: 'mb_1',
+	lead,
 };
 
 export const leadField = {
 	id: 'f_1',
+	name: 'first_name',
 	label: 'First Name',
 };
 
@@ -50,7 +78,7 @@ export const leadStatus = {
 
 export const dncDomain = {
 	id: 'd_1',
-	domain: 'example.com',
+	name: 'example.com',
 };
 
 export const event = {
@@ -66,10 +94,30 @@ export const tag = {
 };
 
 export const webhookSettings = {
-	url: 'https://example.com/webhooks/persistiq',
-	enabled: true,
+	post_new_prospect: true,
+	post_new_prospect_url: 'https://example.com/webhooks/persistiq',
+	post_updated_prospect: false,
+	post_updated_prospect_url: null,
+	raw_events: false,
+	raw_events_url: null,
+	post_email_reply: false,
+	post_email_reply_url: null,
+	post_email_opened: false,
+	post_email_opened_url: null,
 };
 
 export const reply = {
 	id: 'r_1',
+	from_email: 'john@example.com',
+	to_emails: ['jane@example.com'],
+	cc_emails: [],
+	subject: 'Re: hello',
+	body: '<p>Sounds good</p>',
+	preview: 'Sounds good',
+	sent_at: '2025-11-20T11:00:00.000Z',
+	sentiment: 'positive',
+	kind: 'reply',
+	lead_id: 'l_1',
+	campaign_id: 'c_1',
+	step_message_id: 'sm_1',
 };

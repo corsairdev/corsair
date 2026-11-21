@@ -14,6 +14,6 @@ export const list: PersistiqEndpoints['usersList'] = (ctx, input) =>
 			output: Outputs.usersList,
 		},
 		input,
-		() => ({ method: 'GET', path: '/v1/users' }),
-		{ log: (_, page) => ({ count: page.data.length }) },
+		(query) => ({ method: 'GET', path: '/v1/users', query }),
+		{ log: (_, page) => ({ count: page.users.length }) },
 	);
