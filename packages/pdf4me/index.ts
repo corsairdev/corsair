@@ -141,7 +141,7 @@ const pdf4meEndpointMeta = {
 	'pdf.split': {
 		riskLevel: 'destructive',
 		description:
-			'Split a PDF by pages, text separator, barcode or Swiss QR code',
+			'Split a PDF after a page, every N pages, after listed pages or by page ranges; the parts come back in documents',
 	},
 	'pdf.compress': {
 		riskLevel: 'destructive',
@@ -163,7 +163,8 @@ const pdf4meEndpointMeta = {
 	},
 	'convert.pdfToWord': {
 		riskLevel: 'destructive',
-		description: 'Convert a PDF to a Word document',
+		description:
+			'Convert a PDF to a Word document; the API answers a job, so poll jobs.status for the file',
 	},
 	'convert.htmlToPdf': {
 		riskLevel: 'destructive',
@@ -171,7 +172,8 @@ const pdf4meEndpointMeta = {
 	},
 	'convert.ocrPdf': {
 		riskLevel: 'destructive',
-		description: 'Run OCR on a scanned PDF to make its text editable',
+		description:
+			'Run OCR on a scanned PDF to make its text editable; the API answers a job, so poll jobs.status for the file',
 	},
 	'extract.tableFromPdf': {
 		riskLevel: 'read',
@@ -183,7 +185,8 @@ const pdf4meEndpointMeta = {
 	},
 	'jobs.status': {
 		riskLevel: 'read',
-		description: 'Poll an asynchronous processing job started with isAsync',
+		description:
+			'Poll a job (isAsync, or PDF-to-Word and OCR, which always run as jobs); a finished job answers its file',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof pdf4meEndpointsNested>;
 

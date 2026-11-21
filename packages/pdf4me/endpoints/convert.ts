@@ -19,10 +19,18 @@ export const pdfToWord: Pdf4meEndpoints['convertPdfToWord'] = (
 			output: Outputs.convertPdfToWord,
 		},
 		input,
-		({ docContent, docName, ...rest }) => ({
+		({ docContent, docName, ocrWhenNeeded, ...rest }) => ({
 			method: 'POST',
 			path: '/api/v2/ConvertPdfToWord',
-			body: { docContent, docName, ...rest },
+			// The docs type ocrWhenNeeded as a string the API parses.
+			body: {
+				docContent,
+				docName,
+				...rest,
+				...(ocrWhenNeeded === undefined
+					? {}
+					: { ocrWhenNeeded: String(ocrWhenNeeded) }),
+			},
 			binary: true,
 		}),
 		{
@@ -40,10 +48,15 @@ export const htmlToPdf: Pdf4meEndpoints['convertHtmlToPdf'] = (ctx, input) =>
 			output: Outputs.convertHtmlToPdf,
 		},
 		input,
+		// The API reads the HTML from docContent, base64-encoded.
 		({ htmlContent, docName, ...rest }) => ({
 			method: 'POST',
 			path: '/api/v2/ConvertHtmlToPdf',
-			body: { htmlContent, docName, ...rest },
+			body: {
+				docContent: Buffer.from(htmlContent, 'utf8').toString('base64'),
+				docName,
+				...rest,
+			},
 			binary: true,
 		}),
 		{
@@ -61,10 +74,17 @@ export const ocrPdf: Pdf4meEndpoints['convertOcrPdf'] = (ctx, input) =>
 			output: Outputs.convertOcrPdf,
 		},
 		input,
-		({ docContent, docName, ...rest }) => ({
+		({ docContent, docName, ocrWhenNeeded, ...rest }) => ({
 			method: 'POST',
 			path: '/api/v2/ConvertOcrPdf',
-			body: { docContent, docName, ...rest },
+			body: {
+				docContent,
+				docName,
+				...rest,
+				...(ocrWhenNeeded === undefined
+					? {}
+					: { ocrWhenNeeded: String(ocrWhenNeeded) }),
+			},
 			binary: true,
 		}),
 		{

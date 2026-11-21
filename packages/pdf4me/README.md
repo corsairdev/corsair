@@ -1,64 +1,38 @@
-# @corsair-dev/pdfco
+# @corsair-dev/pdf4me
 
-Pdfco plugin for Corsair.
+PDF4me is a PDF and document processing SaaS. This plugin merges, splits, compresses and organizes PDFs, converts them to Word and renders HTML to PDF, runs OCR, reads PDF metadata, extracts tables and form data, and polls asynchronous processing jobs. File answers come back base64-encoded.
 
 ## Install
 
 ```bash
-pnpm add @corsair-dev/pdfco
+pnpm add @corsair-dev/pdf4me
 ```
 
 ## Endpoints
 
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
-| `accountBalance` | `pdfco.api.accountBalance` | `read` | Get remaining PDF.co credit balance |
-| `barcodeGenerate` | `pdfco.api.barcodeGenerate` | `write` | Generate a barcode image |
-| `documentParser` | `pdfco.api.documentParser` | `read` | Extract structured data with a parser template |
-| `excelToCsv` | `pdfco.api.excelToCsv` | `read` | Convert Excel to CSV |
-| `excelToHtml` | `pdfco.api.excelToHtml` | `read` | Convert Excel to HTML |
-| `excelToJson` | `pdfco.api.excelToJson` | `read` | Convert Excel to JSON |
-| `excelToText` | `pdfco.api.excelToText` | `read` | Convert Excel to plain text |
-| `excelToXml` | `pdfco.api.excelToXml` | `read` | Convert Excel to XML |
-| `fileUpload` | `pdfco.api.fileUpload` | `write` | Upload a file URL to PDF.co storage |
-| `fileUploadBase64` | `pdfco.api.fileUploadBase64` | `write` | Upload base64 content to PDF.co storage |
-| `jobCheck` | `pdfco.api.jobCheck` | `read` | Check an async job status |
-| `pdfAdd` | `pdfco.api.pdfAdd` | `write` | Overlay text, images, or form values on a PDF |
-| `pdfChangeTextSearchable` | `pdfco.api.pdfChangeTextSearchable` | `write` | Make scanned PDF text searchable with OCR |
-| `pdfDeletePages` | `pdfco.api.pdfDeletePages` | `write` | Delete pages from a PDF |
-| `pdfExtractAttachments` | `pdfco.api.pdfExtractAttachments` | `read` | Extract embedded PDF attachments |
-| `pdfFind` | `pdfco.api.pdfFind` | `read` | Find text and coordinates in a PDF |
-| `pdfFormsInfoReader` | `pdfco.api.pdfFormsInfoReader` | `read` | Read PDF form field info |
-| `pdfFromEmail` | `pdfco.api.pdfFromEmail` | `write` | Convert an email file to PDF |
-| `pdfFromHtml` | `pdfco.api.pdfFromHtml` | `write` | Generate PDF from HTML markup |
-| `pdfFromText` | `pdfco.api.pdfFromText` | `write` | Convert a text document to PDF |
-| `pdfInfoReader` | `pdfco.api.pdfInfoReader` | `read` | Read PDF metadata and properties |
-| `pdfMerge` | `pdfco.api.pdfMerge` | `write` | Merge multiple PDFs into one |
-| `pdfRotate` | `pdfco.api.pdfRotate` | `write` | Rotate selected PDF pages |
-| `pdfSearchAndDeleteText` | `pdfco.api.pdfSearchAndDeleteText` | `write` | Search and delete text in a PDF |
-| `pdfSearchAndReplaceText` | `pdfco.api.pdfSearchAndReplaceText` | `write` | Search and replace text in a PDF |
-| `pdfSplit` | `pdfco.api.pdfSplit` | `write` | Split a PDF into multiple files |
-| `pdfToCsv` | `pdfco.api.pdfToCsv` | `read` | Convert PDF to CSV |
-| `pdfToHtml` | `pdfco.api.pdfToHtml` | `read` | Convert PDF to HTML |
-| `pdfToImage` | `pdfco.api.pdfToImage` | `read` | Convert PDF pages to images |
-| `pdfToJson` | `pdfco.api.pdfToJson` | `read` | Convert PDF to JSON |
-| `pdfToText` | `pdfco.api.pdfToText` | `read` | Convert PDF to plain text |
-| `pdfToXls` | `pdfco.api.pdfToXls` | `read` | Convert PDF to XLS |
-| `pdfToXlsx` | `pdfco.api.pdfToXlsx` | `read` | Convert PDF to XLSX |
-| `pdfToXml` | `pdfco.api.pdfToXml` | `read` | Convert PDF to XML |
+| `pdf.merge` | `pdf4me.api.pdf.merge` | `destructive` | Merge multiple PDFs into one; array order is the merge order |
+| `pdf.split` | `pdf4me.api.pdf.split` | `destructive` | Split a PDF after a page, every N pages, after listed pages or by page ranges; the parts come back in documents |
+| `pdf.compress` | `pdf4me.api.pdf.compress` | `destructive` | Compress a PDF with a documented profile (Max, Web, Print, Default) |
+| `pdf.extractPages` | `pdf4me.api.pdf.extractPages` | `destructive` | Extract the given pages into a new PDF |
+| `pdf.deletePages` | `pdf4me.api.pdf.deletePages` | `destructive` | Return a copy of a PDF without the given pages; the source file is not changed |
+| `pdf.getInfo` | `pdf4me.api.pdf.getInfo` | `read` | Read PDF metadata: page count, dimensions, author and more |
+| `convert.pdfToWord` | `pdf4me.api.convert.pdfToWord` | `destructive` | Convert a PDF to a Word document; the API answers a job, so poll jobs.status for the file |
+| `convert.htmlToPdf` | `pdf4me.api.convert.htmlToPdf` | `destructive` | Render HTML content into a PDF |
+| `convert.ocrPdf` | `pdf4me.api.convert.ocrPdf` | `destructive` | Run OCR on a scanned PDF to make its text editable; the API answers a job, so poll jobs.status for the file |
+| `extract.tableFromPdf` | `pdf4me.api.extract.tableFromPdf` | `read` | Extract tables from a PDF |
+| `extract.pdfFormData` | `pdf4me.api.extract.pdfFormData` | `read` | Extract the values of filled PDF form fields |
+| `jobs.status` | `pdf4me.api.jobs.status` | `read` | Poll a job (isAsync, or PDF-to-Word and OCR, which always run as jobs); a finished job answers its file |
 
 ## Auth
 
-Auth: API key. Corsair prompts your tenant for credentials on first use.
+Auth: API key (the raw key in the Authorization header). Corsair prompts your tenant for credentials on first use.
 
 ## Webhooks
 
-No webhooks.
+No webhooks. Async jobs report through `jobs.status` (or the optional `callBackUrl`).
 
 ## Reference
 
-Full docs, types, and examples: https://docs.corsair.dev/plugins/pdfco
-
-## License
-
-Apache-2.0
+Full docs, types, and examples: https://docs.corsair.dev/plugins/pdf4me

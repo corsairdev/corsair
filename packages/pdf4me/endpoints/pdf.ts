@@ -3,6 +3,7 @@ import { call } from './call';
 import {
 	Pdf4meEndpointInputSchemas as Inputs,
 	Pdf4meEndpointOutputSchemas as Outputs,
+	pageList,
 	shapeBinaryFile,
 } from './types';
 
@@ -83,10 +84,15 @@ export const extractPages: Pdf4meEndpoints['pdfExtractPages'] = (ctx, input) =>
 			output: Outputs.pdfExtractPages,
 		},
 		input,
-		({ docContent, docName, ...rest }) => ({
+		({ docContent, docName, pageNumbers, ...rest }) => ({
 			method: 'POST',
 			path: '/api/v2/Extract',
-			body: { docContent, docName, ...rest },
+			body: {
+				docContent,
+				docName,
+				pageNumbers: pageList(pageNumbers),
+				...rest,
+			},
 			binary: true,
 		}),
 		{
@@ -104,10 +110,15 @@ export const deletePages: Pdf4meEndpoints['pdfDeletePages'] = (ctx, input) =>
 			output: Outputs.pdfDeletePages,
 		},
 		input,
-		({ docContent, docName, ...rest }) => ({
+		({ docContent, docName, pageNumbers, ...rest }) => ({
 			method: 'POST',
 			path: '/api/v2/DeletePages',
-			body: { docContent, docName, ...rest },
+			body: {
+				docContent,
+				docName,
+				pageNumbers: pageList(pageNumbers),
+				...rest,
+			},
 			binary: true,
 		}),
 		{
@@ -125,10 +136,12 @@ export const getInfo: Pdf4meEndpoints['pdfGetInfo'] = (ctx, input) =>
 			output: Outputs.pdfGetInfo,
 		},
 		input,
+		// The docs page says GetPdfInformation, which answers 404 to any body
+		// (live, 2026-11-21); GetPdfMetadata takes the same body.
 		({ docContent, docName }) => ({
 			method: 'POST',
-			path: '/api/v2/GetPdfInformation',
+			path: '/api/v2/GetPdfMetadata',
 			body: { docContent, docName },
 		}),
-		{ log: () => ({}) },
+		{ log: (_, info) => ({ pageCount: info.pageCount ?? undefined }) },
 	);

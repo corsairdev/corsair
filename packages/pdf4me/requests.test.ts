@@ -3,8 +3,6 @@ import { Convert, Extract, Jobs, Pdf } from './endpoints';
 import {
 	fileAnswer,
 	formFields,
-	jobDone,
-	jobFailed,
 	jobPending,
 	pdfInfo,
 	tableResult,
@@ -58,6 +56,7 @@ function lastRequest() {
 		path: parsed.pathname,
 		method: init.method,
 		headers: new Headers(init.headers),
+		query: Object.fromEntries(new URL(url).searchParams),
 		body: init.body === undefined ? undefined : String(init.body),
 	};
 }
@@ -127,6 +126,8 @@ describe('pdf', () => {
 			pageNumbers: [1, 3],
 		});
 		expectAuthenticated('/api/v2/Extract');
+		// The API takes pages as one string.
+		expect(JSON.parse(lastRequest().body as string).pageNumbers).toBe('1,3');
 	});
 
 	it('deletePages POSTs to DeletePages', async () => {
@@ -134,19 +135,21 @@ describe('pdf', () => {
 		await invoke(Pdf.deletePages, {
 			docContent: 'AAAA',
 			docName: 'in.pdf',
-			pageNumbers: [2],
+			pageNumbers: '2, 4-5',
 		});
 		expectAuthenticated('/api/v2/DeletePages');
+		expect(JSON.parse(lastRequest().body as string).pageNumbers).toBe('2,4-5');
 	});
 
-	it('getInfo POSTs to GetPdfInformation', async () => {
+	it('getInfo POSTs to GetPdfMetadata', async () => {
 		respond(pdfInfo);
 		const result = (await invoke(Pdf.getInfo, {
 			docContent: 'AAAA',
 			docName: 'in.pdf',
 		})) as { pageCount?: number };
 		expect(result.pageCount).toBe(12);
-		expectAuthenticated('/api/v2/GetPdfInformation');
+		// GetPdfInformation (the docs' route) answers 404 to any body.
+		expectAuthenticated('/api/v2/GetPdfMetadata');
 	});
 });
 
@@ -161,27 +164,35 @@ describe('convert', () => {
 		respond(new Uint8Array([1]), 200, 'application/pdf');
 		await invoke(Convert.htmlToPdf, {
 			htmlContent: '<p>hi</p>',
-			docName: 'out.pdf',
+			docName: 'page.html',
+			layout: 'Landscape',
 		});
 		const sent = lastRequest();
 		expectAuthenticated('/api/v2/ConvertHtmlToPdf');
 		// unknown: parsed JSON with provider-defined keys.
 		const body = JSON.parse(sent.body as string) as Record<string, unknown>;
-		expect(body['htmlContent']).toBe('<p>hi</p>');
+		// The API reads the HTML from docContent, base64-encoded.
+		expect(body['htmlContent']).toBeUndefined();
+		expect(Buffer.from(String(body['docContent']), 'base64').toString()).toBe(
+			'<p>hi</p>',
+		);
+		expect(body['layout']).toBe('Landscape');
 	});
 
-	it('ocrPdf POSTs to ConvertOcrPdf with the documented boolean field', async () => {
+	it('ocrPdf POSTs to ConvertOcrPdf with ocrWhenNeeded as the documented string', async () => {
 		respond(new Uint8Array([1]), 200, 'application/pdf');
 		await invoke(Convert.ocrPdf, {
 			docContent: 'AAAA',
 			docName: 'scan.pdf',
 			ocrWhenNeeded: true,
+			language: 'English',
 		});
 		const sent = lastRequest();
 		expectAuthenticated('/api/v2/ConvertOcrPdf');
 		// unknown: parsed JSON with provider-defined keys.
 		const body = JSON.parse(sent.body as string) as Record<string, unknown>;
-		expect(body['ocrWhenNeeded']).toBe(true);
+		expect(body['ocrWhenNeeded']).toBe('true');
+		expect(body['language']).toBe('English');
 	});
 });
 
@@ -193,8 +204,8 @@ describe('extract', () => {
 			docName: 'in.pdf',
 			// unknown: table records are provider-shaped, so the cast keeps
 			// them open.
-		})) as { tables?: unknown[] };
-		expect(result.tables).toHaveLength(1);
+		})) as { tableList?: unknown[] };
+		expect(result.tableList).toHaveLength(1);
 		expectAuthenticated('/api/v2/ExtractTableFromPdf');
 	});
 
@@ -205,39 +216,34 @@ describe('extract', () => {
 			docName: 'in.pdf',
 			// unknown: form field records are provider-shaped, so the cast
 			// keeps them open.
-		})) as { fields?: unknown[] };
-		expect(result.fields).toHaveLength(1);
+		})) as { formData?: Record<string, unknown> };
+		expect(result.formData).toEqual({ email: 'jane@example.com' });
 		expectAuthenticated('/api/v2/ExtractPdfFormData');
 	});
 });
 
 describe('jobs', () => {
-	it('status POSTs the jobId to GetActionStatus', async () => {
-		respond(jobDone);
+	it('status GETs GetActionStatus with the job id in the query (POST answers 405)', async () => {
+		respond(
+			new Uint8Array([0x25, 0x50, 0x44, 0x46]),
+			200,
+			'application/octet-stream',
+		);
 		const job = (await invoke(Jobs.status, { jobId: 'job-1' })) as {
-			isSuccess?: boolean;
+			isFinished?: boolean;
 		};
-		expect(job.isSuccess).toBe(true);
-		expectAuthenticated('/api/v2/GetActionStatus');
-		expect(JSON.parse(lastRequest().body as string)).toEqual({
-			jobId: 'job-1',
-		});
+		expect(job.isFinished).toBe(true);
+		expectAuthenticated('/api/v2/GetActionStatus', 'GET');
+		expect(lastRequest().query).toEqual({ id: 'job-1' });
 	});
 
-	it('parses a pending job', async () => {
+	it('parses a running job', async () => {
 		respond(jobPending);
 		const job = (await invoke(Jobs.status, { jobId: 'job-1' })) as {
-			isWorking?: boolean;
+			status?: string;
+			isFinished?: boolean;
 		};
-		expect(job.isWorking).toBe(true);
-	});
-
-	it('parses a failed job', async () => {
-		respond(jobFailed);
-		const job = (await invoke(Jobs.status, { jobId: 'job-1' })) as {
-			hasFailed?: boolean;
-		};
-		expect(job.hasFailed).toBe(true);
+		expect(job).toMatchObject({ status: 'Running', isFinished: false });
 	});
 });
 

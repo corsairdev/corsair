@@ -1,12 +1,12 @@
 import { logEventFromContext } from 'corsair/core';
-import { Jobs, Pdf } from './endpoints';
+import { Convert, Jobs, Pdf } from './endpoints';
 import {
 	fileAnswer,
-	jobDone,
-	jobFailed,
+	jobAccepted,
 	jobPending,
 	mergedPdfBytes,
 	pdfInfo,
+	splitAnswer,
 } from './test-fixtures';
 
 jest.mock('corsair/core', () => ({
@@ -85,19 +85,50 @@ describe('output parsing', () => {
 		expect(info.pageCount).toBe(12);
 	});
 
-	it('parses a job in each documented state', async () => {
-		for (const [fixture, field] of [
-			[jobPending, 'isWorking'],
-			[jobDone, 'isSuccess'],
-			[jobFailed, 'hasFailed'],
-		] as const) {
-			respond(fixture);
-			const job = (await invoke(Jobs.status, { jobId: 'job-1' })) as Record<
-				string,
-				unknown
-			>;
-			expect(job[field]).toBe(true);
-		}
+	it('parses a running job and a finished one, which answers its file', async () => {
+		respond(jobPending);
+		const running = (await invoke(Jobs.status, { jobId: 'job-1' })) as Record<
+			string,
+			unknown
+		>;
+		expect(running).toMatchObject({ jobId: 'job-1', isFinished: false });
+
+		respond(
+			new Uint8Array([0x25, 0x50, 0x44, 0x46]),
+			200,
+			'application/octet-stream',
+		);
+		const done = (await invoke(Jobs.status, { jobId: 'job-1' })) as Record<
+			string,
+			unknown
+		>;
+		expect(done).toMatchObject({
+			jobId: 'job-1',
+			isFinished: true,
+			fileContent: Buffer.from('%PDF').toString('base64'),
+		});
+	});
+
+	it('returns the job, not a file, when the API answers 202 (isAsync, PDF-to-Word, OCR)', async () => {
+		respond(jobAccepted, 202, 'application/json');
+		const out = (await invoke(Convert.pdfToWord, {
+			docContent: 'AAAA',
+			docName: 'in.pdf',
+		})) as Record<string, unknown>;
+		expect(out).toMatchObject({ jobId: jobAccepted.jobId, status: 'Accepted' });
+		expect(out.fileContent).toBeUndefined();
+	});
+
+	it('returns the parts of a split from splitedDocuments', async () => {
+		respond(splitAnswer, 200, 'application/json');
+		const out = (await invoke(Pdf.split, {
+			docContent: 'AAAA',
+			docName: 'in.pdf',
+		})) as { documents?: { fileName?: string; fileContent?: string }[] };
+		expect(out.documents).toEqual([
+			{ fileName: 'three 1.pdf', fileContent: 'JVBERi0xLjc=' },
+			{ fileName: 'three 2-3.pdf', fileContent: 'JVBERi0xLjc=' },
+		]);
 	});
 
 	it('parses the JSON file answer shape', async () => {
@@ -107,11 +138,6 @@ describe('output parsing', () => {
 			docName: 'in.pdf',
 		})) as { fileName?: string };
 		expect(file.fileName).toBe('output.pdf');
-	});
-
-	it('rejects a job status whose booleans are strings', async () => {
-		respond({ jobId: 'job-1', isWorking: 'yes' });
-		await rejects(Jobs.status, { jobId: 'x' }, 'boolean');
 	});
 
 	it('rejects a binary answer of zero bytes as no file', async () => {

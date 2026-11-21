@@ -7,7 +7,8 @@ description: "PDF4me is a PDF and document processing SaaS. This plugin merges, 
 Use **PDF4me** through Corsair: one client, typed API calls.
 
 Authenticate with the API key from the PDF4me dashboard; the plugin sends it as the raw value of the Authorization header, without a Bearer prefix, as the API expects. File payloads go in the docContent field as base64, a pdf4meblobid:// reference or an https URL, with docName always set — the API dispatches on the extension.
-PDF-producing actions answer the raw file unless isAsync is set; the plugin decodes both the binary answer and the documented JSON shape (&#123;"File Content", "File Name"&#125;) into fileContent. Pass isAsync: true to get a job and poll it with jobs.status (the plugin declares that as a job, so the agent can wait on it). Processing calls consume credits.
+PDF-producing actions answer the raw file or a JSON file shape; the plugin returns either as fileContent (base64), and the parts of a split as documents. With isAsync: true, and always for PDF-to-Word and OCR, the API answers a job (jobId, statusUrl) instead: poll jobs.status, which answers the produced file once the job has finished. Every processing call uses one PDF4me API call from the plan, so the file-producing operations are marked destructive.
+Checked live (2026-11-21): the docs' GetPdfInformation route answers 404, so pdf.getInfo uses GetPdfMetadata; table and form extraction answer tableList and formData, not the tables and formFields the docs show.
 This plugin covers a working subset: merge, split, compress, page organization, metadata, PDF-to-Word, HTML-to-PDF, OCR, and table and form extraction. The barcode, Excel, image, Word-suite, generate and signature families are documented by PDF4me but not part of this plugin.
 Every operation is described in the official docs: https://docs.pdf4me.com/pdf4me-api/
 

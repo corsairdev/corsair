@@ -74,6 +74,7 @@ export function describePdf4meError(
 export type Pdf4meRequest = {
 	method: 'GET' | 'POST';
 	path: string;
+	query?: Record<string, string>;
 	/** JSON body. Undefined sends no body. */
 	// unknown: callers send whatever the input schema parsed; the client
 	// cannot name a stricter body type across POST shapes.
@@ -91,7 +92,7 @@ export type Pdf4meRequest = {
  */
 export async function makePdf4meRequest(
 	apiKey: string,
-	{ method, path, body, binary }: Pdf4meRequest,
+	{ method, path, query, body, binary }: Pdf4meRequest,
 	// unknown: callers parse the response with the endpoint's zod output
 	// schema, so the client cannot name a stricter return type.
 ): Promise<unknown> {
@@ -109,6 +110,7 @@ export async function makePdf4meRequest(
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: path,
+		query,
 		body: method === 'POST' ? body : undefined,
 		mediaType: method === 'POST' ? 'application/json' : undefined,
 		responseType: binary ? 'binary' : undefined,

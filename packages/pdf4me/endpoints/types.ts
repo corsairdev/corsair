@@ -18,6 +18,25 @@ const docName = z
 		'Source file name including its extension; the API dispatches on it',
 	);
 
+/** Pages as numbers or the API's own "1,3,5-7" string; sent as the string. */
+const pageNumbers = z.union([
+	z.array(z.number().int().min(1)).min(1),
+	z
+		.string()
+		.regex(
+			/^\s*\d+(\s*-\s*\d+)?(\s*,\s*\d+(\s*-\s*\d+)?)*\s*$/,
+			'Expected pages like 1,3,5-7',
+		),
+]);
+
+/** The API takes pages as one "1,3,5-7" string. */
+export function pageList(
+	pages: number[] | string | undefined,
+): string | undefined {
+	if (pages === undefined) return undefined;
+	return Array.isArray(pages) ? pages.join(',') : pages.replace(/\s+/g, '');
+}
+
 /** Parameters every processing action accepts, as the docs document them. */
 const sharedParams = {
 	jobIdExt: z
@@ -37,31 +56,30 @@ const sharedParams = {
 		.describe('URL notified when an asynchronous job completes'),
 };
 
-/** The async job status answer, as GetActionStatus returns it. */
-export const JobStatusSchema = z
+/** The job fields an async answer (202) and GetActionStatus carry. */
+const jobFields = {
+	jobId: z.string().nullish().describe('Job id; poll it with jobs.status'),
+	status: z
+		.string()
+		.nullish()
+		.describe('Job state the API reports, e.g. Accepted'),
+	statusUrl: z.string().nullish().describe('GetActionStatus URL for this job'),
+	message: z.string().nullish().describe('The API message about the job'),
+};
+
+/** A produced document, one part of a split. */
+export const FilePartSchema = z
 	.object({
-		jobId: z.string().nullish().describe('Job id'),
-		isSuccess: z
-			.boolean()
-			.nullish()
-			.describe('Whether the job finished successfully'),
-		isWorking: z
-			.boolean()
-			.nullish()
-			.describe('Whether the job is still running'),
-		isFinished: z
-			.boolean()
-			.nullish()
-			.describe('Whether the job reached a terminal state'),
-		hasFailed: z.boolean().nullish().describe('Whether the job failed'),
-		jobStatusText: z.string().nullish().describe('Human-readable job status'),
-		blobId: z.string().nullish().describe('Blob id of the result document'),
+		fileName: z.string().nullish().describe('File name of this part'),
+		fileContent: z.string().nullish().describe('This part, base64-encoded'),
 	})
 	.loose()
-	.describe('An asynchronous processing job status');
-export type JobStatus = z.infer<typeof JobStatusSchema>;
+	.describe('One produced document');
 
-/** A processed file the API answers with, per the docs' JSON response shape. */
+/**
+ * What a processing call answers: the produced file (base64), the parts of
+ * a split, or, when isAsync was set, the job to poll.
+ */
 export const FileOutputSchema = z
 	.object({
 		fileName: z
@@ -72,68 +90,132 @@ export const FileOutputSchema = z
 			.string()
 			.nullish()
 			.describe('The produced document, base64-encoded'),
+		documents: z
+			.array(FilePartSchema)
+			.optional()
+			.describe('The produced documents, when the action makes several'),
+		...jobFields,
 	})
 	.loose()
-	.describe('A produced document');
+	.describe('A produced document, or the job when isAsync was set');
 export type FileOutput = z.infer<typeof FileOutputSchema>;
 
-/**
- * Shapes a binary answer (the raw merged PDF) or a JSON file answer into
- * the FileOutput contract.
- */
-// unknown: raw is the untouched response body — binary bytes, the docs'
-// JSON file shape or plain text — so the shaper stays untyped.
-export function shapeBinaryFile(raw: unknown): unknown {
-	// Binary mode hands back { bytes, contentType } even when the API answers
-	// its documented JSON shape ({ "File Content", "File Name" }), so JSON
-	// bytes are decoded before anything else.
-	const file = (raw ?? {}) as {
+/** The async job status answer, as GetActionStatus returns it. */
+export const JobStatusSchema = z
+	.object({
+		...jobFields,
+		isFinished: z
+			.boolean()
+			.nullish()
+			.describe('True once GetActionStatus answered the finished file'),
+		fileName: z
+			.string()
+			.nullish()
+			.describe('File name of the result, once finished'),
+		fileContent: z
+			.string()
+			.nullish()
+			.describe('The result document, base64-encoded, once finished'),
+	})
+	.loose()
+	.describe('An asynchronous processing job status');
+export type JobStatus = z.infer<typeof JobStatusSchema>;
+
+// unknown: a JSON answer of any action, narrowed by asRecord.
+function fileFromRecord(record: Record<string, unknown>): unknown {
+	// Most actions: { "File Name", "File Content" }. OCR: { docName, docContent }.
+	// Split parts: { fileName, streamFile } (live, 2026-11-21).
+	const content =
+		record['File Content'] ??
+		record.fileContent ??
+		record.docContent ??
+		record.streamFile;
+	const name = record['File Name'] ?? record.fileName ?? record.docName;
+	const parts = record['splited Documents'] ?? record['splitedDocuments'];
+	const out: Record<string, unknown> = {};
+	if (typeof content === 'string') out.fileContent = content;
+	if (typeof name === 'string') out.fileName = name;
+	if (Array.isArray(parts)) {
+		out.documents = parts.map((part) => {
+			const partRecord = asRecord(part);
+			return partRecord ? fileFromRecord(partRecord) : part;
+		});
+	}
+	for (const key of ['jobId', 'status', 'statusUrl', 'message'] as const) {
+		if (record[key] !== undefined) out[key] = record[key];
+	}
+	return Object.keys(out).length > 0 ? out : record;
+}
+
+/** Decodes a binary-mode answer: JSON when the bytes are JSON, else the file. */
+// unknown: raw is the untouched response body (binary bytes, JSON or text).
+function decodeAnswer(
+	raw: unknown,
+): { json: unknown } | { file: string } | { other: unknown } {
+	const file = asRecord(raw) as {
 		bytes?: Uint8Array;
 		contentType?: string | null;
 	} | null;
-	if (file?.bytes && file.bytes.byteLength > 0) {
-		const contentType = file.contentType ?? '';
-		if (contentType.includes('json')) {
+	if (file?.bytes instanceof Uint8Array) {
+		// An empty answer is no file; never report one.
+		if (file.bytes.byteLength === 0) return { other: {} };
+		const text = Buffer.from(file.bytes).toString('utf8');
+		const looksJson =
+			(file.contentType ?? '').includes('json') || /^\s*[{[]/.test(text);
+		if (looksJson) {
 			try {
-				const parsed = JSON.parse(
-					Buffer.from(file.bytes).toString('utf8'),
-				) as unknown;
-				const record = asRecord(parsed);
-				if (record && typeof record['File Content'] === 'string') {
-					return {
-						fileName:
-							typeof record['File Name'] === 'string'
-								? record['File Name']
-								: undefined,
-						fileContent: record['File Content'],
-					};
-				}
+				return { json: JSON.parse(text) as unknown };
 			} catch {
-				// unknown: JSON.parse throws with any value; falling through to
-				// the file interpretation is correct either way.
+				// Not JSON after all; it is the produced file.
 			}
 		}
+		return { file: Buffer.from(file.bytes).toString('base64') };
+	}
+	if (typeof raw === 'string' && raw.length > 0) return { file: raw };
+	return asRecord(raw) ? { json: raw } : { other: raw };
+}
+
+/**
+ * Shapes a processing answer into the FileOutput contract: the raw file
+ * (merge, finished jobs), the documented JSON file shapes, the parts of a
+ * split, or the 202 job answer when isAsync was set (all seen live).
+ */
+// unknown: raw is the untouched response body; the output schema checks the result.
+export function shapeBinaryFile(raw: unknown): unknown {
+	const answer = decodeAnswer(raw);
+	if ('file' in answer) return { fileContent: answer.file };
+	if ('json' in answer) {
+		const record = asRecord(answer.json);
+		return record ? fileFromRecord(record) : answer.json;
+	}
+	return answer.other;
+}
+
+/**
+ * Shapes a GetActionStatus answer: JSON while the job runs, the produced
+ * file itself once it has finished (seen live).
+ */
+// unknown: raw is the untouched response body; the output schema checks the result.
+export function shapeJobStatus(raw: unknown, jobId: string): unknown {
+	const answer = decodeAnswer(raw);
+	if ('file' in answer) {
+		return { jobId, isFinished: true, fileContent: answer.file };
+	}
+	if ('json' in answer) {
+		const record = asRecord(answer.json);
+		if (!record) return answer.json;
+		const shaped = asRecord(fileFromRecord(record)) ?? {};
 		return {
-			fileName: undefined,
-			fileContent: Buffer.from(file.bytes).toString('base64'),
+			jobId,
+			...record,
+			...shaped,
+			isFinished:
+				typeof record.isFinished === 'boolean'
+					? record.isFinished
+					: typeof shaped.fileContent === 'string',
 		};
 	}
-	// Some actions answer the JSON shape without binary mode at all.
-	const record = asRecord(raw);
-	if (record && typeof record['File Content'] === 'string') {
-		return {
-			fileName:
-				typeof record['File Name'] === 'string'
-					? record['File Name']
-					: undefined,
-			fileContent: record['File Content'],
-		};
-	}
-	if (typeof raw === 'string' && raw.length > 0) {
-		// A bare base64 answer, as some actions return.
-		return { fileName: undefined, fileContent: raw };
-	}
-	return raw;
+	return answer.other;
 }
 
 // ── pdf ────────────────────────────────────────────────────────────────────
@@ -161,27 +243,42 @@ export const SplitPdfInputSchema = z
 	.object({
 		docContent: docContent,
 		docName: docName,
-		splitMode: z
-			.enum(['pages', 'text', 'barcode', 'swissQr'])
+		splitAction: z
+			.enum([
+				'SplitAfterPage',
+				'RecurringSplitAfterPage',
+				'SplitSequence',
+				'SplitRanges',
+			])
 			.optional()
-			.describe('Splitting strategy the API applies'),
-		splitPageNr: z
+			.describe('How to split'),
+		splitActionNumber: z
 			.number()
 			.int()
 			.min(1)
 			.optional()
-			.describe('Split before this page number (pages mode)'),
-		textSeparator: z
+			.describe(
+				'Page to split after (SplitAfterPage) or every N pages (RecurringSplitAfterPage)',
+			),
+		splitSequence: z
+			.array(z.number().int().min(1))
+			.optional()
+			.describe('Pages to split after (SplitSequence)'),
+		splitRanges: z
 			.string()
 			.optional()
-			.describe('Text the API splits on (text mode)'),
+			.describe('Page ranges, one document each, e.g. "1-2,3" (SplitRanges)'),
+		fileNaming: z
+			.string()
+			.optional()
+			.describe('How parts are named, e.g. NameAsPerOrder'),
 		...sharedParams,
 	})
 	.describe('Split a PDF into multiple documents');
 export type SplitPdfInput = z.infer<typeof SplitPdfInputSchema>;
 
 export const SplitPdfOutputSchema = FileOutputSchema.describe(
-	'The split result; a zip of the parts when the API answers a file',
+	'The split result; the parts are in documents',
 );
 export type SplitPdfOutput = z.infer<typeof SplitPdfOutputSchema>;
 
@@ -209,11 +306,7 @@ export const ExtractPagesInputSchema = z
 	.object({
 		docContent: docContent,
 		docName: docName,
-		pageNumbers: z
-			.array(z.number().int().min(1))
-			.min(1)
-			.optional()
-			.describe('Page numbers to extract'),
+		pageNumbers: pageNumbers.describe('Pages to extract: [1, 3] or "1,3,5-7"'),
 		...sharedParams,
 	})
 	.describe('Extract pages from a PDF');
@@ -228,11 +321,7 @@ export const DeletePagesInputSchema = z
 	.object({
 		docContent: docContent,
 		docName: docName,
-		pageNumbers: z
-			.array(z.number().int().min(1))
-			.min(1)
-			.optional()
-			.describe('Page numbers to delete'),
+		pageNumbers: pageNumbers.describe('Pages to delete: [1, 3] or "1,3,5-7"'),
 		...sharedParams,
 	})
 	.describe('Delete pages from a PDF');
@@ -252,7 +341,33 @@ export const GetPdfInfoInputSchema = z
 export type GetPdfInfoInput = z.infer<typeof GetPdfInfoInputSchema>;
 
 export const GetPdfInfoOutputSchema = z
-	.object({})
+	.object({
+		title: z.string().nullish().describe('Document title'),
+		subject: z.string().nullish().describe('Document subject'),
+		author: z.string().nullish().describe('Document author'),
+		creator: z.string().nullish().describe('Creating application'),
+		producer: z.string().nullish().describe('Producing application'),
+		keywords: z.string().nullish().describe('Document keywords'),
+		pageCount: z.number().nullish().describe('Number of pages'),
+		size: z.number().nullish().describe('File size in bytes'),
+		pdfVersion: z.string().nullish().describe('PDF version, e.g. 1.4'),
+		pdfCompliance: z.string().nullish().describe('PDF/A compliance, if any'),
+		documentId: z.string().nullish().describe('PDF document id'),
+		isEncrypted: z.boolean().nullish().describe('Whether the PDF is encrypted'),
+		isLinearized: z
+			.boolean()
+			.nullish()
+			.describe('Whether the PDF is linearized'),
+		isSigned: z.boolean().nullish().describe('Whether the PDF is signed'),
+		creationDate: z.string().nullish().describe('Creation date'),
+		modDate: z.string().nullish().describe('Last modification date'),
+		pageHeightInMM: z.number().nullish().describe('First page height, mm'),
+		pageWidthInMM: z.number().nullish().describe('First page width, mm'),
+		orientation: z
+			.string()
+			.nullish()
+			.describe('Orientation as the API spells it (Potrait, Landscape)'),
+	})
 	.loose()
 	.describe('PDF metadata: page count, dimensions, author and more');
 export type GetPdfInfoOutput = z.infer<typeof GetPdfInfoOutputSchema>;
@@ -263,10 +378,15 @@ export const ConvertPdfToWordInputSchema = z
 	.object({
 		docContent: docContent,
 		docName: docName,
-		docType: z
-			.enum(['docx', 'doc', 'rtf', 'text'])
+		qualityType: z
+			.enum(['Draft', 'High'])
 			.optional()
-			.describe('Word format the API produces'),
+			.describe('Conversion quality; other values are refused'),
+		ocrWhenNeeded: z.boolean().optional().describe('Run OCR on scanned pages'),
+		language: z
+			.string()
+			.optional()
+			.describe('Document language for OCR, e.g. English'),
 		...sharedParams,
 	})
 	.describe('Convert a PDF to a Word document');
@@ -284,8 +404,50 @@ export const ConvertHtmlToPdfInputSchema = z
 		htmlContent: z
 			.string()
 			.min(1)
-			.describe('HTML content to render into a PDF'),
-		docName: docName,
+			.describe('HTML to render into a PDF; the plugin base64-encodes it'),
+		docName: z
+			.string()
+			.min(1)
+			.describe('Name of the HTML source including .html, e.g. page.html'),
+		layout: z
+			.enum(['Portrait', 'Landscape'])
+			.optional()
+			.describe('Page layout'),
+		format: z
+			.enum([
+				'A0',
+				'A1',
+				'A2',
+				'A3',
+				'A4',
+				'A5',
+				'A6',
+				'A7',
+				'A8',
+				'Legal',
+				'Tabloid',
+				'Statement',
+				'Executive',
+			])
+			.optional()
+			.describe('Page format; A4 when unset'),
+		scale: z
+			.number()
+			.positive()
+			.optional()
+			.describe('Render scale; 0.8 when unset'),
+		topMargin: z.string().optional().describe('CSS length, e.g. 40px'),
+		bottomMargin: z.string().optional().describe('CSS length, e.g. 40px'),
+		leftMargin: z.string().optional().describe('CSS length, e.g. 40px'),
+		rightMargin: z.string().optional().describe('CSS length, e.g. 40px'),
+		printBackground: z
+			.boolean()
+			.optional()
+			.describe('Print CSS backgrounds; true when unset'),
+		displayHeaderFooter: z
+			.boolean()
+			.optional()
+			.describe('Show the header and footer; false when unset'),
 		...sharedParams,
 	})
 	.describe('Render HTML into a PDF');
@@ -304,13 +466,12 @@ export const OcrPdfInputSchema = z
 	.object({
 		docContent: docContent,
 		docName: docName,
+		qualityType: z.enum(['Draft', 'High']).optional().describe('OCR quality'),
 		ocrWhenNeeded: z
 			.boolean()
 			.optional()
-			.describe(
-				'Run OCR only when the document needs it (documented mixed field type)',
-			),
-		ocrLang: z.string().optional().describe('OCR language code, e.g. eng'),
+			.describe('Run OCR only when the document needs it'),
+		language: z.string().optional().describe('Document language, e.g. English'),
 		...sharedParams,
 	})
 	.describe('Run OCR on a scanned PDF to make its text editable');
@@ -333,7 +494,22 @@ export const ExtractTableInputSchema = z
 export type ExtractTableInput = z.infer<typeof ExtractTableInputSchema>;
 
 export const ExtractTableOutputSchema = z
-	.object({})
+	.object({
+		// unknown: cells are whatever the table holds (text, numbers, nulls).
+		// The docs show { tables }; the API answers { tableList } (live).
+		tableList: z
+			.array(
+				z
+					.object({
+						pageNumber: z.number().nullish().describe('Page the table is on'),
+						// unknown: rows of cells holding text, numbers or nulls.
+						table: z.array(z.unknown()).nullish().describe('The table rows'),
+					})
+					.loose(),
+			)
+			.nullish()
+			.describe('One entry per page with its table rows'),
+	})
 	.loose()
 	.describe('The extracted tables');
 export type ExtractTableOutput = z.infer<typeof ExtractTableOutputSchema>;
@@ -350,7 +526,15 @@ export type ExtractFormFieldsInput = z.infer<
 >;
 
 export const ExtractFormFieldsOutputSchema = z
-	.object({})
+	.object({
+		// The docs show { formFields }; the API answers { formData }, keyed by
+		// field name (live).
+		formData: z
+			// unknown: a field value is text, a checkbox state or a list.
+			.record(z.string(), z.unknown())
+			.nullish()
+			.describe('Form field values keyed by field name'),
+	})
 	.loose()
 	.describe('The extracted form field values');
 export type ExtractFormFieldsOutput = z.infer<
