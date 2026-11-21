@@ -374,7 +374,9 @@ export const CreateLeadOutputSchema = LeadRecordOutputSchema.describe(
 export type CreateLeadOutput = z.infer<typeof CreateLeadOutputSchema>;
 
 export const GetLeadInputSchema = z
-	.object({ id: z.string().min(1).describe('Lead id') })
+	.object({
+		id: z.string().min(1).describe('Lead id, or the lead email address'),
+	})
 	.describe('Input for reading one lead');
 export type GetLeadInput = z.infer<typeof GetLeadInputSchema>;
 
@@ -383,7 +385,7 @@ export type GetLeadOutput = z.infer<typeof GetLeadOutputSchema>;
 
 export const UpdateLeadInputSchema = z
 	.object({
-		id: z.string().min(1).describe('Lead id'),
+		id: z.string().min(1).describe('Lead id, or the lead email address'),
 		status: z.string().min(1).optional().describe('New status name'),
 		status_id: z.string().min(1).optional().describe('New status id'),
 		owner_id: z.string().min(1).optional().describe('New owner user id'),
@@ -396,9 +398,11 @@ export const UpdateLeadInputSchema = z
 			.optional()
 			.describe('Lead attributes to update, keyed by field name'),
 	})
-	.refine(({ id: _id, ...fields }) => Object.keys(fields).length > 0, {
-		message: 'Give at least one field to update',
-	})
+	.refine(
+		({ id: _id, ...fields }) =>
+			Object.values(fields).some((value) => value !== undefined),
+		{ message: 'Give at least one field to update' },
+	)
 	.describe('Update a lead');
 export type UpdateLeadInput = z.infer<typeof UpdateLeadInputSchema>;
 
@@ -572,12 +576,12 @@ export const ListRepliesInputSchema = z
 			.string()
 			.min(1)
 			.optional()
-			.describe('Only replies after this ISO 8601 time'),
+			.describe('Only replies sent on or after this ISO 8601 time'),
 		end_at: z
 			.string()
 			.min(1)
 			.optional()
-			.describe('Only replies before this ISO 8601 time'),
+			.describe('Only replies sent on or before this ISO 8601 time'),
 	})
 	.describe('Input for listing the replies in a campaign');
 export type ListRepliesInput = z.infer<typeof ListRepliesInputSchema>;
@@ -639,10 +643,13 @@ export type CreateDncDomainInput = z.infer<typeof CreateDncDomainInputSchema>;
 export const CreateDncDomainOutputSchema = z
 	.object({
 		...recordEnvelope,
-		status: z.literal('success').describe('success'),
 		dnc_domain: DncDomainSchema.nullish().describe('The domain added'),
 	})
 	.loose()
+	// A 200 that still says status "error" is a failure, not a success.
+	.refine((result) => result.status !== 'error', {
+		message: 'PersistIQ answered status "error"',
+	})
 	.describe('The domain was added');
 export type CreateDncDomainOutput = z.infer<typeof CreateDncDomainOutputSchema>;
 
@@ -713,9 +720,10 @@ export const UpdateWebhookSettingsInputSchema = z
 		post_email_opened: toggleInput('email-opened'),
 		post_email_opened_url: urlInput('email-opened'),
 	})
-	.refine((input) => Object.keys(input).length > 0, {
-		message: 'Give at least one setting to change',
-	})
+	.refine(
+		(input) => Object.values(input).some((value) => value !== undefined),
+		{ message: 'Give at least one setting to change' },
+	)
 	.describe('Update the webhook plugin settings');
 export type UpdateWebhookSettingsInput = z.infer<
 	typeof UpdateWebhookSettingsInputSchema

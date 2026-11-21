@@ -343,8 +343,8 @@ await corsair.persistiq.api.campaigns.listReplies({ campaignId: "c_1" });
 | `campaignId` | `string` | Yes | Campaign id |
 | `page` | `number` | No | Page number, from 1; ask for the next one while has_more is true |
 | `lead_id` | `string` | No | Only replies from this lead |
-| `start_at` | `string` | No | Only replies after this ISO 8601 time |
-| `end_at` | `string` | No | Only replies before this ISO 8601 time |
+| `start_at` | `string` | No | Only replies sent on or after this ISO 8601 time |
+| `end_at` | `string` | No | Only replies sent on or before this ISO 8601 time |
 
 
 
@@ -482,7 +482,7 @@ Adds the domain to the do-not-contact list; emails to it stop. The API has no ro
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `success` | Yes | success |
+| `status` | `string \| null` | No | success or error |
 | `error` | `any \| null` | No | Error details, null on success |
 | `dnc_domain` | `object \| null` | No | The domain added |
 
@@ -722,7 +722,7 @@ await corsair.persistiq.api.leads.get({ id: "l_1" });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | Yes | Lead id |
+| `id` | `string` | Yes | Lead id, or the lead email address |
 
 
 
@@ -835,7 +835,7 @@ await corsair.persistiq.api.leads.update({ id: "l_1", status: "Replied", data: {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | Yes | Lead id |
+| `id` | `string` | Yes | Lead id, or the lead email address |
 | `status` | `string` | No | New status name |
 | `status_id` | `string` | No | New status id |
 | `owner_id` | `string` | No | New owner user id |

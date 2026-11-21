@@ -102,6 +102,19 @@ describe('makePersistiqRequest', () => {
 		expect(inspect(error, { depth: 10 })).not.toContain(API_KEY);
 	});
 
+	it('masks an email address used as the lead id in the error URL', async () => {
+		respond({ status: 'error', error: { reason: 'not_found' } }, 404);
+
+		const error = await failure(
+			makePersistiqRequest(API_KEY, {
+				method: 'GET',
+				path: `/v1/leads/${encodeURIComponent('john@example.com')}`,
+			}),
+		);
+		expect(error.url).toBe('/v1/leads/[email]');
+		expect(inspect(error, { depth: 10 })).not.toContain('example.com');
+	});
+
 	it('lets transport failures through unwrapped', async () => {
 		fetchMock.mockRejectedValueOnce(new Error('connection reset'));
 

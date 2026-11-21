@@ -78,7 +78,11 @@ function expectAuthenticated(path: string, method = 'GET') {
 }
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	// Any call a test did not queue a response for throws, so no test can
+	// reach the real API.
+	fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
+		throw new Error('unmocked fetch in a unit test');
+	});
 	mockLog.mockClear();
 });
 
@@ -279,6 +283,15 @@ describe('campaigns', () => {
 		).rejects.toThrow('did not confirm');
 	});
 
+	it('removeLead refuses an empty JSON container as confirmation', async () => {
+		for (const body of [[], {}]) {
+			respond(body);
+			await expect(
+				invoke(Campaigns.removeLead, { campaignId: 'c_1', leadId: 'l_1' }),
+			).rejects.toThrow('did not confirm');
+		}
+	});
+
 	it('listReplies filters and replyToMessage posts inbox_message_id and body', async () => {
 		respond({ ...PAGE, replies: [reply] });
 		const page = (await invoke(Campaigns.listReplies, {
@@ -331,6 +344,13 @@ describe('events, dnc and webhooks', () => {
 		});
 	});
 
+	it('dncDomains.create accepts a success answer without a status', async () => {
+		respond({ error: null, dnc_domain: dncDomain });
+		await expect(
+			invoke(DncDomains.create, { name: 'example.com' }),
+		).resolves.toBeDefined();
+	});
+
 	it('dncDomains.create fails on an error answer', async () => {
 		respond({ status: 'error', error: { message: 'invalid' } });
 		await expect(invoke(DncDomains.create, { name: 'x' })).rejects.toThrow();
@@ -360,5 +380,13 @@ describe('events, dnc and webhooks', () => {
 		await expect(invoke(Webhooks.updateSettings, {})).rejects.toThrow(
 			'at least one setting',
 		);
+		await expect(
+			invoke(Webhooks.updateSettings, { post_email_reply: undefined }),
+		).rejects.toThrow('at least one setting');
+		respond(webhookSettings);
+		await invoke(Webhooks.updateSettings, { post_email_reply: false });
+		expect(JSON.parse(lastRequest().body as string)).toEqual({
+			post_email_reply: false,
+		});
 	});
 });

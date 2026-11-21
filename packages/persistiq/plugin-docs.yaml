@@ -14,7 +14,8 @@ overviewNote: >
   Lead attributes live in a `data` map keyed by the account's lead fields
   (read them with leadFields.list); leads.create takes them in `lead`.
   Adding a lead to a campaign (campaigns.addLead) starts the campaign's
-  automated emails to that lead, so it asks for approval like a send.
+  automated emails to that lead, so it is marked destructive like a send
+  (permission modes that pause destructive calls ask before it runs).
 
   PersistIQ delivers outbound webhooks through its webhook plugin; the
   plugin reads and updates those settings (webhooks.getSettings and

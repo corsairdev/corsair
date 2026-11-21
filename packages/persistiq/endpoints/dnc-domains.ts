@@ -20,7 +20,7 @@ export const list: PersistiqEndpoints['dncDomainsList'] = (ctx, input) =>
 
 /**
  * The create answers `{ status, error, dnc_domain }`. The output schema
- * requires `status: "success"`, so an error answer fails loudly instead of
+ * refuses a 200 that says status "error", so it fails loudly instead of
  * reading as a success.
  */
 export const create: PersistiqEndpoints['dncDomainsCreate'] = (ctx, input) =>

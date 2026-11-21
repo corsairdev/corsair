@@ -116,18 +116,17 @@ export const removeLead: PersistiqEndpoints['campaignsRemoveLead'] = (
 		}),
 		{
 			shape: (raw, { leadId }) => {
-				// The spec documents a 200 with no body; PersistIQ's other
-				// writes answer { status: "success" }. Either confirms the
-				// removal. Anything else (an error status) is a failure the
-				// caller must see rather than a fabricated success.
-				const empty =
-					raw === undefined ||
-					raw === null ||
-					raw === '' ||
-					(typeof raw === 'object' && Object.keys(raw).length === 0);
-				// unknown: raw is the untouched response body; only the status
-				// flag is inspected before the output schema parses it.
-				const status = empty ? 'success' : (raw as { status?: unknown }).status;
+				// The spec documents a 200 with no body. An empty container
+				// ([] or {}) is not that, so only a missing body or an explicit
+				// status "success" confirms the removal.
+				const status =
+					raw === undefined || raw === null || raw === ''
+						? 'success'
+						: Array.isArray(raw)
+							? undefined
+							: // unknown: raw is the untouched response body; only the
+								// status flag is read.
+								(raw as { status?: unknown }).status;
 				if (status !== 'success') {
 					throw new Error(
 						'PersistIQ campaigns.removeLead: the answer did not confirm the removal',

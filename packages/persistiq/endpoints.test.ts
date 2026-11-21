@@ -43,7 +43,11 @@ async function rejects(
 }
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	// Any call a test did not queue a response for throws, so no test can
+	// reach the real API.
+	fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
+		throw new Error('unmocked fetch in a unit test');
+	});
 	mockLog.mockClear();
 });
 
@@ -96,6 +100,11 @@ describe('input validation', () => {
 
 	it('rejects an update with nothing to change', async () => {
 		await rejects(Leads.update, { id: 'l_1' }, 'at least one field');
+		await rejects(
+			Leads.update,
+			{ id: 'l_1', optedout: undefined },
+			'at least one field',
+		);
 	});
 
 	it('rejects a page below 1', async () => {

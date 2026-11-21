@@ -137,13 +137,19 @@ export async function makePersistiqRequest(
 				errorBody,
 				error.statusText || 'request failed',
 			);
+			// leads.get and leads.update take an email address as the id;
+			// mask any path segment that holds one.
+			const safePath = path
+				.split('/')
+				.map((part) => (/@|%40/i.test(part) ? '[email]' : part))
+				.join('/');
 			// R8: core's ApiError itself (management maps errors named
 			// ApiError to their real status), rebuilt with the method and path
 			// only, so status and retryAfter survive for the handlers.
 			throw new ApiError(
-				{ method, url: path },
+				{ method, url: safePath },
 				{
-					url: path,
+					url: safePath,
 					ok: false,
 					status: error.status,
 					statusText: error.statusText,
