@@ -24,12 +24,12 @@ async function safeLog(
 }
 
 /**
- * Persona posts each webhook's events to one endpoint, so this plugin
- * registers a single webhook and reports the event type in its result.
- * Deliveries carry their signature in the Persona-Signature header, over
- * the raw body, keyed with the webhook's signing secret (rotate it with
- * webhooks.rotateSecret and store the new value).
- * https://docs.withpersona.com/docs/webhooks
+ * Persona posts each webhook's events to one URL, so this plugin registers
+ * a single webhook and reports the event name in its result. Deliveries are
+ * signed in the Persona-Signature header with the webhook's secret (returned
+ * by webhooks.create and webhooks.rotateSecret; store it with
+ * keys.set_webhook_signature).
+ * https://docs.withpersona.com/webhooks-best-practices
  */
 export const event: CorsairWebhook<
 	PersonaContext,
@@ -57,8 +57,8 @@ export const event: CorsairWebhook<
 		}
 
 		await safeLog(ctx, 'persona.webhook.event', {
-			eventType: parsed.data.type,
-			resourceId: parsed.data.data?.id ?? undefined,
+			eventType: parsed.data.data.attributes.name,
+			eventId: parsed.data.data.id,
 		});
 
 		return { success: true, data: parsed.data };

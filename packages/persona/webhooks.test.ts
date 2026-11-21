@@ -9,8 +9,12 @@ import {
 
 const SECRET = 'whsec_test_secret';
 
-function sign(body: string, key: string): string {
-	return createHmac('sha256', key).update(body).digest('hex');
+const T = '1732190000';
+
+/** One documented `t=<time>,v1=<hex>` set over `<t>.<body>`. */
+function sign(body: string, key: string, t: string = T): string {
+	const v1 = createHmac('sha256', key).update(`${t}.${body}`).digest('hex');
+	return `t=${t},v1=${v1}`;
 }
 
 function rawRequest(
@@ -44,6 +48,25 @@ describe('verifyPersonaWebhook', () => {
 			sign(JSON.stringify(webhookEvent), SECRET),
 		);
 		expect(verifyPersonaWebhook(raw as never, SECRET)).toEqual({ valid: true });
+	});
+
+	it('accepts a header with two sets while the secret rotates', () => {
+		const body = JSON.stringify(webhookEvent);
+		const header = `${sign(body, 'wbhsec_old')} ${sign(body, SECRET)}`;
+		expect(
+			verifyPersonaWebhook(rawRequest(webhookEvent, header) as never, SECRET),
+		).toEqual({ valid: true });
+	});
+
+	it('rejects a bare hex digest of the body (the timestamp is part of the signed text)', () => {
+		const bare = createHmac('sha256', SECRET)
+			.update(JSON.stringify(webhookEvent))
+			.digest('hex');
+		const result = verifyPersonaWebhook(
+			rawRequest(webhookEvent, bare) as never,
+			SECRET,
+		);
+		expect(result.valid).toBe(false);
 	});
 
 	it('rejects a signature from another secret', () => {
@@ -95,27 +118,45 @@ describe('verifyPersonaWebhook', () => {
 });
 
 describe('matchPersonaWebhook', () => {
-	it('matches the documented envelope with type and data', () => {
-		expect(matchPersonaWebhook(rawRequest(webhookEvent) as never)).toBe(true);
+	it('matches the documented event envelope with the signature header', () => {
+		expect(
+			matchPersonaWebhook(rawRequest(webhookEvent, 't=1,v1=x') as never),
+		).toBe(true);
 	});
 
-	it('does not match bodies without type or data', () => {
-		expect(matchPersonaWebhook(rawRequest({ type: 'x' }) as never)).toBe(false);
-		expect(matchPersonaWebhook(rawRequest({ data: {} }) as never)).toBe(false);
-		expect(matchPersonaWebhook(rawRequest([webhookEvent]) as never)).toBe(
+	it('does not match a Stripe-style { type, data } delivery', () => {
+		const stripe = { type: 'invoice.paid', data: { object: {} } };
+		expect(matchPersonaWebhook(rawRequest(stripe, 't=1,v1=x') as never)).toBe(
 			false,
 		);
+		expect(
+			matchPersonaWebhook({
+				headers: { 'stripe-signature': 't=1,v1=x' },
+				body: stripe,
+			} as never),
+		).toBe(false);
+	});
+
+	it('does not match without the Persona-Signature header or the event envelope', () => {
+		expect(matchPersonaWebhook(rawRequest(webhookEvent) as never)).toBe(false);
+		expect(
+			matchPersonaWebhook(rawRequest({ data: {} }, 't=1,v1=x') as never),
+		).toBe(false);
+		expect(
+			matchPersonaWebhook(rawRequest([webhookEvent], 't=1,v1=x') as never),
+		).toBe(false);
 	});
 });
 
 describe('PersonaWebhookPayloadSchema', () => {
 	it('parses a delivery', () => {
 		const parsed = PersonaWebhookPayloadSchema.parse(webhookEvent);
-		expect(parsed.type).toBe('inquiry.approved');
-		expect(parsed.data?.id).toBe(inquiry.id);
+		expect(parsed.data.attributes.name).toBe('inquiry.approved');
+		expect(parsed.data.id).toBe('evt_ABC123');
+		expect(parsed.data.attributes.payload?.data).toEqual(inquiry);
 	});
 
-	it('rejects a delivery without a type', () => {
+	it('rejects a delivery without the event name', () => {
 		expect(() => PersonaWebhookPayloadSchema.parse({ data: {} })).toThrow();
 	});
 });
@@ -148,7 +189,9 @@ describe('persona.event handler', () => {
 		);
 		expect(result.success).toBe(true);
 		// unknown: the handler's data field is the parsed event object.
-		const data = (result as { data?: { type?: string } }).data;
-		expect(data?.type).toBe('inquiry.approved');
+		const data = (
+			result as { data?: { data?: { attributes?: { name?: string } } } }
+		).data;
+		expect(data?.data?.attributes?.name).toBe('inquiry.approved');
 	});
 });
