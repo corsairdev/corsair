@@ -18,8 +18,8 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	toRequest: (parsed: z.output<Input>) => string,
 	options: {
 		// unknown: the RPC body is whatever the input schema parsed; each
-	// operation shapes its own body object.
-	body: (parsed: z.output<Input>) => unknown;
+		// operation shapes its own body object.
+		body: (parsed: z.output<Input>) => unknown;
 		// unknown: raw is the response body. The output schema validates
 		// whatever this returns.
 		shape?: (raw: unknown, parsed: z.output<Input>) => unknown;
