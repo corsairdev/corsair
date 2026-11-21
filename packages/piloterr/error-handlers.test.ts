@@ -1,13 +1,13 @@
 import type { ErrorContext } from 'corsair/core';
-import { PiloterrAPIError } from './client';
+import { ApiError } from 'corsair/http';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
-function piloterrError(status: number, message?: string): PiloterrAPIError {
-	return new PiloterrAPIError(message ?? `Piloterr ${status}`, {
-		method: 'GET',
-		path: '/v2/usage',
-		status,
-	});
+function piloterrError(status: number, message?: string): ApiError {
+	return new ApiError(
+		{ method: 'GET', url: '/v2/usage' },
+		{ url: '/v2/usage', ok: false, status, statusText: '', body: null },
+		message ?? `Piloterr ${status}`,
+	);
 }
 
 function contextFor(error: Error): ErrorContext {
@@ -54,11 +54,15 @@ describe('errorHandlers', () => {
 				),
 			),
 		).toBe(2);
+	});
+
+	it('does not retry an exhausted daily quota (R8) or a 429 core already retried', async () => {
 		expect(
 			await retriesFor(
 				piloterrError(401, 'Rate limit exceeded for the API key: quota daily'),
 			),
-		).toBe(2);
+		).toBe(0);
+		expect(await retriesFor(piloterrError(429))).toBe(0);
 	});
 
 	it('does not retry an auth 401', async () => {
@@ -94,8 +98,7 @@ describe('mergeErrorHandlers', () => {
 	it('lets a caller handler run before the builtins it does not name', async () => {
 		const merged = mergeErrorHandlers(errorHandlers, {
 			NOT_FOUND_ERROR: {
-				match: (error) =>
-					error instanceof PiloterrAPIError && error.status === 404,
+				match: (error) => error instanceof ApiError && error.status === 404,
 				handler: async () => ({ maxRetries: 3 }),
 			},
 		});

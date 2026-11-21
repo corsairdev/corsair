@@ -1,30 +1,35 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { PiloterrAPIError } from './client';
+import { ApiError } from 'corsair/http';
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof PiloterrAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 function isRateLimit(error: Error): boolean {
-	if (!(error instanceof PiloterrAPIError)) return false;
+	if (!(error instanceof ApiError)) return false;
 	// Piloterr answers rate limits as 401 with a "Rate limit exceeded…"
-	// message, not 429 — the error-handling page prescribes waiting and
-	// retrying them. Auth failures carry any other message.
+	// message, not 429; the error-handling page prescribes waiting and
+	// retrying them. An exhausted quota is not retried (R8), and auth
+	// failures carry any other message.
 	const message = error.message.toLowerCase();
 	return (
-		(error.status ?? 0) === 401 &&
-		(message.includes('rate limit') || message.includes('quota'))
+		error.status === 401 &&
+		message.includes('rate limit') &&
+		!message.includes('quota')
 	);
 }
 
 // The client retries a 429 up to three times through core, honouring
-// Retry-After; the 401 rate-limit form is retried here (2s, then 4s).
-// Every documented operation is a GET, so both replays are safe.
+// Retry-After, so RATE_LIMIT_ERROR adds none (R8: one retry layer). Core
+// does not see the 401 rate-limit form, so that one is retried here (2s,
+// then 4s). Every documented operation is a GET, so replays are safe.
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) =>
-			isRateLimit(error) ||
-			(error instanceof PiloterrAPIError && error.status === 429),
+		match: (error: Error) => statusOf(error) === 429,
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	RATE_LIMIT_401_ERROR: {
+		match: (error: Error) => isRateLimit(error),
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

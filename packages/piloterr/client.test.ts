@@ -1,8 +1,5 @@
-import {
-	describePiloterrError,
-	makePiloterrRequest,
-	PiloterrAPIError,
-} from './client';
+import { ApiError } from 'corsair/http';
+import { describePiloterrError, makePiloterrRequest } from './client';
 import { invalidApiKey } from './test-fixtures';
 
 const KEY = 'pt-test-key';
@@ -20,10 +17,10 @@ function respond(body: unknown, status: number) {
 }
 
 // unknown: a rejection can be any value until the instanceof check narrows it.
-async function failure(promise: Promise<unknown>): Promise<PiloterrAPIError> {
+async function failure(promise: Promise<unknown>): Promise<ApiError> {
 	const error = await promise.catch((caught: unknown) => caught);
-	expect(error).toBeInstanceOf(PiloterrAPIError);
-	if (!(error instanceof PiloterrAPIError)) throw error;
+	expect(error).toBeInstanceOf(ApiError);
+	if (!(error instanceof ApiError)) throw error;
 	return error;
 }
 
@@ -80,7 +77,7 @@ describe('makePiloterrRequest', () => {
 		);
 		expect(error.status).toBe(401);
 		expect(error.message).toBe('Piloterr 401: Invalid API Key');
-		expect(error.method).toBe('GET');
+		expect(error.request.method).toBe('GET');
 		expect(error.url).toBe('/v2/usage');
 	});
 

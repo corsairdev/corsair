@@ -314,8 +314,6 @@ export function piloterr<const T extends PiloterrPluginOptions>(
 	} satisfies InternalPiloterrPlugin;
 }
 
-export { PiloterrAPIError } from './client';
-
 export type {
 	JobStatus,
 	OrganicResult,
