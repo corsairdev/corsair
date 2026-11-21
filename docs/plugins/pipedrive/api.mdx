@@ -5574,8 +5574,8 @@ POST https://api.pipedrive.com/v1/goals. The official OpenAPI x-token-cost is 10
     type?: {
       name?: string,
       params?: {
-        pipeline_id?: number[],
-        activity_type_id?: number[]
+        pipeline_id?: number[] | null,
+        activity_type_id?: number[] | null
       }
     },
     assignee?: {
@@ -5711,8 +5711,8 @@ GET https://api.pipedrive.com/v1/goals/&#123;id&#125;/results. The official Open
     type?: {
       name?: string,
       params?: {
-        pipeline_id?: number[],
-        activity_type_id?: number[]
+        pipeline_id?: number[] | null,
+        activity_type_id?: number[] | null
       }
     },
     assignee?: {
@@ -5804,8 +5804,8 @@ GET https://api.pipedrive.com/v1/goals/find. The official OpenAPI x-token-cost i
     type?: {
       name?: string,
       params?: {
-        pipeline_id?: number[],
-        activity_type_id?: number[]
+        pipeline_id?: number[] | null,
+        activity_type_id?: number[] | null
       }
     },
     assignee?: {
@@ -5917,8 +5917,8 @@ PUT https://api.pipedrive.com/v1/goals/&#123;id&#125;. The official OpenAPI x-to
     type?: {
       name?: string,
       params?: {
-        pipeline_id?: number[],
-        activity_type_id?: number[]
+        pipeline_id?: number[] | null,
+        activity_type_id?: number[] | null
       }
     },
     assignee?: {
@@ -19096,7 +19096,7 @@ await corsair.pipedrive.api.apiV2.dealInstallments.getInstallments({ query: { "d
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | `object` | No | — |
+| `query` | `object` | Yes | — |
 
 GET https://api.pipedrive.com/api/v2/deals/installments. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): deals:read, deals:full. See https://developers.pipedrive.com/docs/api/v1/DealInstallments. API tokens use x-api-token; OAuth access tokens use Bearer authorization.
 
@@ -19727,7 +19727,7 @@ await corsair.pipedrive.api.apiV2.dealProducts.getDealsProducts({ query: { "deal
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | `object` | No | — |
+| `query` | `object` | Yes | — |
 
 GET https://api.pipedrive.com/api/v2/deals/products. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): products:read, products:full, deals:read, deals:full. See https://developers.pipedrive.com/docs/api/v1/DealProducts. API tokens use x-api-token; OAuth access tokens use Bearer authorization.
 

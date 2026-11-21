@@ -219,6 +219,7 @@ describe('Pipedrive endpoint schemas', () => {
 	it('accepts open-ended durations in every goal response shape', () => {
 		const openEndedGoal = {
 			id: 'x',
+			type: { params: { pipeline_id: null, activity_type_id: null } },
 			duration: { start: '2026-01-01', end: null },
 		};
 		const cases = [
@@ -241,6 +242,24 @@ describe('Pipedrive endpoint schemas', () => {
 			expect(PipedriveCatalog[key].output.safeParse(response).success).toBe(
 				true,
 			);
+		}
+	});
+
+	it('requires and caps deal IDs for bulk product and installment lookups', () => {
+		const cases = [
+			'apiV2.dealProducts.getDealsProducts',
+			'apiV2.dealInstallments.getInstallments',
+		] as const;
+		const tooManyDealIds = Array.from({ length: 101 }, (_, index) => index + 1);
+
+		for (const key of cases) {
+			const input = PipedriveCatalog[key].input;
+			expect(input.safeParse({}).success).toBe(false);
+			expect(input.safeParse({ query: {} }).success).toBe(false);
+			expect(input.safeParse({ query: { deal_ids: [1] } }).success).toBe(true);
+			expect(
+				input.safeParse({ query: { deal_ids: tooManyDealIds } }).success,
+			).toBe(false);
 		}
 	});
 

@@ -4904,8 +4904,14 @@ export const PipedriveCatalog = {
 										name: z.string().optional(),
 										params: z
 											.object({
-												pipeline_id: z.array(z.number().int()).optional(),
-												activity_type_id: z.array(z.number().int()).optional(),
+												pipeline_id: z
+													.array(z.number().int())
+													.nullable()
+													.optional(),
+												activity_type_id: z
+													.array(z.number().int())
+													.nullable()
+													.optional(),
 											})
 											.passthrough()
 											.optional(),
@@ -5056,9 +5062,13 @@ export const PipedriveCatalog = {
 												name: z.string().optional(),
 												params: z
 													.object({
-														pipeline_id: z.array(z.number().int()).optional(),
+														pipeline_id: z
+															.array(z.number().int())
+															.nullable()
+															.optional(),
 														activity_type_id: z
 															.array(z.number().int())
+															.nullable()
 															.optional(),
 													})
 													.passthrough()
@@ -5184,8 +5194,14 @@ export const PipedriveCatalog = {
 										name: z.string().optional(),
 										params: z
 											.object({
-												pipeline_id: z.array(z.number().int()).optional(),
-												activity_type_id: z.array(z.number().int()).optional(),
+												pipeline_id: z
+													.array(z.number().int())
+													.nullable()
+													.optional(),
+												activity_type_id: z
+													.array(z.number().int())
+													.nullable()
+													.optional(),
 											})
 											.passthrough()
 											.optional(),
@@ -5288,8 +5304,14 @@ export const PipedriveCatalog = {
 										name: z.string().optional(),
 										params: z
 											.object({
-												pipeline_id: z.array(z.number().int()).optional(),
-												activity_type_id: z.array(z.number().int()).optional(),
+												pipeline_id: z
+													.array(z.number().int())
+													.nullable()
+													.optional(),
+												activity_type_id: z
+													.array(z.number().int())
+													.nullable()
+													.optional(),
 											})
 											.passthrough()
 											.optional(),
@@ -16301,25 +16323,23 @@ export const PipedriveCatalog = {
 		],
 		headerParams: [],
 		input: z.strictObject({
-			query: z
-				.strictObject({
-					deal_ids: z.array(z.number().int()),
-					cursor: z.string().optional(),
-					limit: z.number().int().optional(),
-					sort_by: z
-						.union([
-							z.literal('id'),
-							z.literal('deal_id'),
-							z.literal('add_time'),
-							z.literal('update_time'),
-							z.literal('order_nr'),
-						])
-						.optional(),
-					sort_direction: z
-						.union([z.literal('asc'), z.literal('desc')])
-						.optional(),
-				})
-				.optional(),
+			query: z.strictObject({
+				deal_ids: z.array(z.number().int()).max(100),
+				cursor: z.string().optional(),
+				limit: z.number().int().optional(),
+				sort_by: z
+					.union([
+						z.literal('id'),
+						z.literal('deal_id'),
+						z.literal('add_time'),
+						z.literal('update_time'),
+						z.literal('order_nr'),
+					])
+					.optional(),
+				sort_direction: z
+					.union([z.literal('asc'), z.literal('desc')])
+					.optional(),
+			}),
 		}),
 		output: z
 			.object({
@@ -17203,23 +17223,21 @@ export const PipedriveCatalog = {
 		],
 		headerParams: [],
 		input: z.strictObject({
-			query: z
-				.strictObject({
-					deal_ids: z.array(z.number().int()),
-					cursor: z.string().optional(),
-					limit: z.number().int().optional(),
-					sort_by: z
-						.union([
-							z.literal('id'),
-							z.literal('billing_date'),
-							z.literal('deal_id'),
-						])
-						.optional(),
-					sort_direction: z
-						.union([z.literal('asc'), z.literal('desc')])
-						.optional(),
-				})
-				.optional(),
+			query: z.strictObject({
+				deal_ids: z.array(z.number().int()).max(100),
+				cursor: z.string().optional(),
+				limit: z.number().int().optional(),
+				sort_by: z
+					.union([
+						z.literal('id'),
+						z.literal('billing_date'),
+						z.literal('deal_id'),
+					])
+					.optional(),
+				sort_direction: z
+					.union([z.literal('asc'), z.literal('desc')])
+					.optional(),
+			}),
 		}),
 		output: z
 			.object({

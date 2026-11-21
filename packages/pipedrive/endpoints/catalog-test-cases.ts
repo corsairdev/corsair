@@ -252,11 +252,13 @@ export const PipedriveCatalogTestCases = {
 		},
 	},
 	'apiV1.channels.deleteConversation': {
-		input: { path: { 'channel-id': 'x', 'conversation-id': 'x' } },
+		input: {
+			path: { 'channel-id': 'channel-1', 'conversation-id': 'conversation-2' },
+		},
 		response: { success: true },
 		expected: {
 			method: 'DELETE',
-			path: '/channels/x/conversations/x',
+			path: '/channels/channel-1/conversations/conversation-2',
 			apiVersion: 'v1',
 			query: {},
 			requestContentType: '',
@@ -547,11 +549,11 @@ export const PipedriveCatalogTestCases = {
 		},
 	},
 	'apiV1.deals.deleteDealFollower': {
-		input: { path: { id: 1, follower_id: 1 } },
+		input: { path: { id: 1, follower_id: 2 } },
 		response: { success: true, data: { id: 1 } },
 		expected: {
 			method: 'DELETE',
-			path: '/deals/1/followers/1',
+			path: '/deals/1/followers/2',
 			apiVersion: 'v1',
 			query: {},
 			requestContentType: '',
@@ -615,11 +617,11 @@ export const PipedriveCatalogTestCases = {
 		},
 	},
 	'apiV1.deals.deleteDealParticipant': {
-		input: { path: { id: 1, deal_participant_id: 1 } },
+		input: { path: { id: 1, deal_participant_id: 2 } },
 		response: { success: true, data: { id: 1 } },
 		expected: {
 			method: 'DELETE',
-			path: '/deals/1/participants/1',
+			path: '/deals/1/participants/2',
 			apiVersion: 'v1',
 			query: {},
 			requestContentType: '',
@@ -1906,11 +1908,11 @@ export const PipedriveCatalogTestCases = {
 		},
 	},
 	'apiV1.organizations.deleteOrganizationFollower': {
-		input: { path: { id: 1, follower_id: 1 } },
+		input: { path: { id: 1, follower_id: 2 } },
 		response: { success: true, data: { id: 1 } },
 		expected: {
 			method: 'DELETE',
-			path: '/organizations/1/followers/1',
+			path: '/organizations/1/followers/2',
 			apiVersion: 'v1',
 			query: {},
 			requestContentType: '',
@@ -2232,11 +2234,11 @@ export const PipedriveCatalogTestCases = {
 		},
 	},
 	'apiV1.persons.deletePersonFollower': {
-		input: { path: { id: 1, follower_id: 1 } },
+		input: { path: { id: 1, follower_id: 2 } },
 		response: { success: true, data: { id: 1 } },
 		expected: {
 			method: 'DELETE',
-			path: '/persons/1/followers/1',
+			path: '/persons/1/followers/2',
 			apiVersion: 'v1',
 			query: {},
 			requestContentType: '',
@@ -2561,11 +2563,11 @@ export const PipedriveCatalogTestCases = {
 		},
 	},
 	'apiV1.products.deleteProductFollower': {
-		input: { path: { id: 1, follower_id: 1 } },
+		input: { path: { id: 1, follower_id: 2 } },
 		response: { success: true, data: { id: 1 } },
 		expected: {
 			method: 'DELETE',
-			path: '/products/1/followers/1',
+			path: '/products/1/followers/2',
 			apiVersion: 'v1',
 			query: {},
 			requestContentType: '',
@@ -3503,11 +3505,11 @@ export const PipedriveCatalogTestCases = {
 		},
 	},
 	'apiV2.deals.deleteDealFollower': {
-		input: { path: { id: 1, follower_id: 1 } },
+		input: { path: { id: 1, follower_id: 2 } },
 		response: { success: true, data: { user_id: 1 } },
 		expected: {
 			method: 'DELETE',
-			path: '/deals/1/followers/1',
+			path: '/deals/1/followers/2',
 			apiVersion: 'v2',
 			query: {},
 			requestContentType: '',
@@ -3633,11 +3635,11 @@ export const PipedriveCatalogTestCases = {
 		},
 	},
 	'apiV2.dealProducts.updateDealProduct': {
-		input: { path: { id: 1, product_attachment_id: 1 }, body: {} },
+		input: { path: { id: 1, product_attachment_id: 2 }, body: {} },
 		response: { success: true, data: { id: 1 } },
 		expected: {
 			method: 'PATCH',
-			path: '/deals/1/products/1',
+			path: '/deals/1/products/2',
 			apiVersion: 'v2',
 			query: {},
 			requestContentType: 'application/json',
@@ -3645,11 +3647,11 @@ export const PipedriveCatalogTestCases = {
 		},
 	},
 	'apiV2.dealProducts.deleteDealProduct': {
-		input: { path: { id: 1, product_attachment_id: 1 } },
+		input: { path: { id: 1, product_attachment_id: 2 } },
 		response: { success: true, data: { id: 1 } },
 		expected: {
 			method: 'DELETE',
-			path: '/deals/1/products/1',
+			path: '/deals/1/products/2',
 			apiVersion: 'v2',
 			query: {},
 			requestContentType: '',
@@ -3764,11 +3766,11 @@ export const PipedriveCatalogTestCases = {
 		},
 	},
 	'apiV2.dealInstallments.updateInstallment': {
-		input: { path: { id: 1, installment_id: 1 }, body: {} },
+		input: { path: { id: 1, installment_id: 2 }, body: {} },
 		response: { success: true, data: { id: 1 } },
 		expected: {
 			method: 'PATCH',
-			path: '/deals/1/installments/1',
+			path: '/deals/1/installments/2',
 			apiVersion: 'v2',
 			query: {},
 			requestContentType: 'application/json',
@@ -3776,11 +3778,11 @@ export const PipedriveCatalogTestCases = {
 		},
 	},
 	'apiV2.dealInstallments.deleteInstallment': {
-		input: { path: { id: 1, installment_id: 1 } },
+		input: { path: { id: 1, installment_id: 2 } },
 		response: { success: true, data: { id: 1 } },
 		expected: {
 			method: 'DELETE',
-			path: '/deals/1/installments/1',
+			path: '/deals/1/installments/2',
 			apiVersion: 'v2',
 			query: {},
 			requestContentType: '',
@@ -4025,11 +4027,11 @@ export const PipedriveCatalogTestCases = {
 		},
 	},
 	'apiV2.persons.deletePersonFollower': {
-		input: { path: { id: 1, follower_id: 1 } },
+		input: { path: { id: 1, follower_id: 2 } },
 		response: { success: true, data: { user_id: 1 } },
 		expected: {
 			method: 'DELETE',
-			path: '/persons/1/followers/1',
+			path: '/persons/1/followers/2',
 			apiVersion: 'v2',
 			query: {},
 			requestContentType: '',
@@ -4254,11 +4256,11 @@ export const PipedriveCatalogTestCases = {
 		},
 	},
 	'apiV2.organizations.deleteOrganizationFollower': {
-		input: { path: { id: 1, follower_id: 1 } },
+		input: { path: { id: 1, follower_id: 2 } },
 		response: { success: true, data: { user_id: 1 } },
 		expected: {
 			method: 'DELETE',
-			path: '/organizations/1/followers/1',
+			path: '/organizations/1/followers/2',
 			apiVersion: 'v2',
 			query: {},
 			requestContentType: '',
@@ -4640,7 +4642,7 @@ export const PipedriveCatalogTestCases = {
 		},
 	},
 	'apiV2.leads.getLeadConversionStatus': {
-		input: { path: { id: 'x', conversion_id: 'x' } },
+		input: { path: { id: 'lead-1', conversion_id: 'conversion-2' } },
 		response: {
 			success: true,
 			data: { conversion_id: 'x', status: 'not_started' },
@@ -4648,7 +4650,7 @@ export const PipedriveCatalogTestCases = {
 		},
 		expected: {
 			method: 'GET',
-			path: '/leads/x/convert/status/x',
+			path: '/leads/lead-1/convert/status/conversion-2',
 			apiVersion: 'v2',
 			query: {},
 			requestContentType: '',

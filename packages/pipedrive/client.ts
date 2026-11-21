@@ -23,6 +23,154 @@ export const PIPEDRIVE_RATE_LIMIT_CONFIG: RateLimitConfig = {
 };
 
 type PipedriveAuthType = 'api_key' | 'oauth_2';
+const REDACTED_ERROR_VALUE = '[REDACTED]';
+const SENSITIVE_ERROR_FIELDS = new Set([
+	'accesskeyid',
+	'accesstoken',
+	'apikey',
+	'apitoken',
+	'appkey',
+	'authorization',
+	'authtoken',
+	'clientemail',
+	'clientsecret',
+	'email',
+	'password',
+	'privatekey',
+	'projectid',
+	'refreshtoken',
+	'sastoken',
+	'secret',
+	'secretaccesskey',
+	'sessiontoken',
+	'storageaccesskey',
+	'token',
+	'xapikey',
+	'xapitoken',
+]);
+
+function isSensitiveErrorField(fieldName: string): boolean {
+	return SENSITIVE_ERROR_FIELDS.has(
+		fieldName.toLowerCase().replace(/[-_]/g, ''),
+	);
+}
+
+function collectRequestValues(
+	// `unknown` because caller input may be JSON, form data, or multipart data.
+	value: unknown,
+	values: Set<string>,
+	fieldName = '',
+	contentType?: string,
+	visited = new WeakSet<object>(),
+): void {
+	if (typeof value === 'string') {
+		if (
+			value.length > 0 &&
+			(value.length >= 4 || isSensitiveErrorField(fieldName))
+		) {
+			values.add(value);
+		}
+		if (fieldName === 'body' && contentType?.includes('application/json')) {
+			try {
+				// `unknown` because parsed JSON remains untrusted request data.
+				const parsed: unknown = JSON.parse(value);
+				if (parsed !== null && typeof parsed === 'object') {
+					collectRequestValues(parsed, values, fieldName, contentType, visited);
+				}
+			} catch {
+				// Keep the raw request value for redaction when it is not valid JSON.
+			}
+		} else if (
+			fieldName === 'body' &&
+			contentType?.includes('application/x-www-form-urlencoded')
+		) {
+			new URLSearchParams(value).forEach((item, key) =>
+				collectRequestValues(item, values, key, contentType, visited),
+			);
+		}
+		return;
+	}
+	if (typeof value === 'number') {
+		const numericValue = String(value);
+		if (isSensitiveErrorField(fieldName) || numericValue.length >= 4) {
+			values.add(numericValue);
+		}
+		return;
+	}
+	if (value === null || typeof value !== 'object' || visited.has(value)) return;
+	visited.add(value);
+
+	if (value instanceof FormData) {
+		value.forEach((item, key) =>
+			collectRequestValues(item, values, key, contentType, visited),
+		);
+		return;
+	}
+	if (value instanceof URLSearchParams) {
+		value.forEach((item, key) =>
+			collectRequestValues(item, values, key, contentType, visited),
+		);
+		return;
+	}
+	if (value instanceof Headers) {
+		value.forEach((item, key) =>
+			collectRequestValues(item, values, key, contentType, visited),
+		);
+		return;
+	}
+	if (Array.isArray(value)) {
+		for (const item of value) {
+			collectRequestValues(item, values, fieldName, contentType, visited);
+		}
+		return;
+	}
+	for (const [key, item] of Object.entries(value)) {
+		collectRequestValues(item, values, key, contentType, visited);
+	}
+}
+
+function redactErrorText(value: string, values: Set<string>): string {
+	let redacted = value;
+	for (const sensitiveValue of [...values].sort(
+		(a, b) => b.length - a.length,
+	)) {
+		if (sensitiveValue.length > 0) {
+			redacted = redacted.split(sensitiveValue).join(REDACTED_ERROR_VALUE);
+		}
+	}
+	return redacted;
+}
+
+function redactProviderErrorValue(
+	// `unknown` because provider response bodies are untrusted JSON.
+	value: unknown,
+	values: Set<string>,
+	fieldName = '',
+): unknown {
+	if (isSensitiveErrorField(fieldName)) return REDACTED_ERROR_VALUE;
+	if (typeof value === 'string') return redactErrorText(value, values);
+	if (typeof value === 'number' && values.has(String(value))) {
+		return REDACTED_ERROR_VALUE;
+	}
+	if (value === null || typeof value !== 'object') return value;
+	if (Array.isArray(value)) {
+		const safeItems = value.map((item) =>
+			redactProviderErrorValue(item, values),
+		);
+		return safeItems.some((item, index) => item !== value[index])
+			? safeItems
+			: value;
+	}
+
+	let changed = false;
+	const safeEntries = Object.entries(value).map(([key, item]) => {
+		const safeItem = redactProviderErrorValue(item, values, key);
+		if (safeItem !== item) changed = true;
+		return [key, safeItem];
+	});
+	return changed ? Object.fromEntries(safeEntries) : value;
+}
+
 type PipedriveQueryValue =
 	| string
 	| number
@@ -82,37 +230,83 @@ export async function makePipedriveRequest<T>(
 		});
 	} catch (error: unknown) {
 		// `unknown` is required because transport failures may be non-Error rejection values.
-		// Request bodies and search/query values can contain customer data or credentials.
-		const hasQueryValues = Object.values(query ?? {}).some(
-			(value) => value !== undefined,
+		if (!(error instanceof ApiError)) throw error;
+		const values = new Set<string>();
+		if (apiKey) values.add(apiKey);
+		collectRequestValues(body, values, 'body', options.contentType);
+		collectRequestValues(query, values, 'query');
+		collectRequestValues(options.headers, values, 'headers');
+		collectRequestValues(
+			error.request.body,
+			values,
+			'body',
+			error.request.mediaType,
 		);
-		const hasErrorQueryValues =
-			error instanceof ApiError &&
-			Object.values(error.request.query ?? {}).some(
-				(value) => value !== undefined,
-			);
+		collectRequestValues(error.request.query, values, 'query');
+		collectRequestValues(error.request.headers, values, 'headers');
+		collectRequestValues(error.request.path, values, 'path');
+		collectRequestValues(error.request.cookies, values, 'cookies');
+		collectRequestValues(error.request.formData, values, 'formData');
+
+		const hasRequestData =
+			body !== undefined ||
+			query !== undefined ||
+			options.headers !== undefined ||
+			error.request.body !== undefined ||
+			error.request.query !== undefined ||
+			error.request.headers !== undefined ||
+			error.request.path !== undefined ||
+			error.request.cookies !== undefined ||
+			error.request.formData !== undefined;
+		const safeBody = redactProviderErrorValue(error.body, values);
+		const safeMessage = redactErrorText(error.message, values);
+		const safeStatusText = redactErrorText(error.statusText, values);
+		const safeUrl = error.url.split('?', 1)[0] ?? `${base}${endpoint}`;
 		if (
-			(body !== undefined || hasQueryValues || hasErrorQueryValues) &&
-			error instanceof ApiError
+			!hasRequestData &&
+			safeBody === error.body &&
+			safeMessage === error.message &&
+			safeStatusText === error.statusText &&
+			safeUrl === error.url
 		) {
-			const {
-				body: _requestBody,
-				query: _requestQuery,
-				headers: _requestHeaders,
-				...safeRequest
-			} = error.request;
-			void _requestBody;
-			void _requestQuery;
-			void _requestHeaders;
-			Reflect.set(error, 'request', safeRequest);
-			Reflect.set(
-				error,
-				'url',
-				error.url.split('?', 1)[0] ?? `${base}${endpoint}`,
-			);
 			throw error;
 		}
-		throw error;
+
+		const {
+			body: _requestBody,
+			query: _requestQuery,
+			headers: _requestHeaders,
+			path: _requestPath,
+			cookies: _requestCookies,
+			formData: _requestFormData,
+			...requestMetadata
+		} = error.request;
+		void _requestBody;
+		void _requestQuery;
+		void _requestHeaders;
+		void _requestPath;
+		void _requestCookies;
+		void _requestFormData;
+		throw new ApiError(
+			{
+				...requestMetadata,
+				url: requestMetadata.url.split('?', 1)[0] ?? safeUrl,
+			},
+			{
+				url: safeUrl,
+				ok: false,
+				status: error.status,
+				statusText: safeStatusText,
+				body: safeBody,
+			},
+			safeMessage,
+			{
+				retryAfter: error.retryAfter,
+				rateLimitReset: error.rateLimitReset,
+				rateLimitRemaining: error.rateLimitRemaining,
+				rateLimitLimit: error.rateLimitLimit,
+			},
+		);
 	}
 }
 
