@@ -16,13 +16,15 @@ overviewNote: >
   and resetAt. Article body text may be truncated on some plans; check
   articleContentTruncation in limits.get.
 
-  Filters are documented across the Search & Filtering pages (query logic,
-  dates, sources, topics, sentiment, deduplication); this plugin exposes the
-  common family. Monitors, Social (X, Reddit, LinkedIn), vector search and
+  Lists answer { status, numResults, articles } (articles) or
+  { status, numResults, results } (the rest); numResults is the total match
+  count and pages are numbered from 0. Filters that take several values
+  (source, topic, country, ...) accept a list and OR them. This plugin
+  exposes the common filters from Perigon's OpenAPI. Monitors, Social (X, Reddit, LinkedIn), vector search and
   the summarizer are documented by Perigon but not part of this plugin.
 
   Every operation is described in the official docs:
-  https://perigon.io/docs/api/authentication
+  https://docs.perigon.io/openapi.json
 examples:
   read:
     path: articles.list
@@ -31,23 +33,24 @@ examples:
       q: 'climate AND policy'
       from: '2025-11-01'
       size: 25
+      page: 0
 apiExamples:
   articles.list:
-    call: '{ q: "climate AND policy", topic: "Business", sentiment: "negative", from: "2025-11-01", size: 25 }'
+    call: '{ q: "climate AND policy", category: "Business", source: ["reuters.com", "apnews.com"], from: "2025-11-01", sortBy: "date", size: 25 }'
   stories.list:
-    call: '{ q: "semiconductor", sortBy: "date" }'
+    call: '{ q: "semiconductor", minUniqueSources: 3, sortBy: "updatedAt" }'
   journalists.list:
-    call: '{ source: "Example News" }'
+    call: '{ q: "technology", source: "example.com" }'
   people.list:
-    call: '{ q: "John Smith" }'
+    call: '{ name: "Ada Lovelace" }'
   companies.list:
-    call: '{ q: "Example Corp" }'
+    call: '{ q: "semiconductor", country: "us", size: 10 }'
   limits.get:
     call: '{}'
 apiNotes:
-  articles.list: 'One result per published article URL. Sentiment accepts positive, negative or neutral. Content may be plan-truncated; limits.get reports articleContentTruncation.'
+  articles.list: 'One result per published article URL; showReprints: false drops syndicated copies. Content may be plan-truncated; limits.get reports articleContentTruncation.'
   stories.list: 'Clustered narratives; use clusterId from an article to reach its story.'
-  journalists.list: 'Accepts a name query and a publisher filter.'
-  people.list: 'Resolved person entities with mention counts.'
-  companies.list: 'Resolved company entities with mention counts.'
-  limits.get: 'Free to poll and not rate-limited; reports requestsUsed, requestLimit (null means unlimited), maxPageSize and resetAt.'
+  journalists.list: 'q searches names, titles and bios; filter by publisher domain, topic or country.'
+  people.list: 'Person entities keyed by Wikidata id; search by name (this route has no q).'
+  companies.list: 'Company entities with domains, symbols, sector and size.'
+  limits.get: 'Answers { data: { requestsUsed, requestLimit, maxPageSize, paginationLimit, resetAt } }.'

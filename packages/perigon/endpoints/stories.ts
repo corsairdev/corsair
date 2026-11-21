@@ -15,5 +15,5 @@ export const list: PerigonEndpoints['storiesList'] = (ctx, input) =>
 		},
 		input,
 		(query) => ({ method: 'GET', path: '/v1/stories/all', query }),
-		{ log: (_, page) => ({ count: page.stories.length }) },
+		{ log: (_, page) => ({ count: page.results.length }) },
 	);

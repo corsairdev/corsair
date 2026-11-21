@@ -15,5 +15,5 @@ export const list: PerigonEndpoints['peopleList'] = (ctx, input) =>
 		},
 		input,
 		(query) => ({ method: 'GET', path: '/v1/people/all', query }),
-		{ log: (_, page) => ({ count: page.people.length }) },
+		{ log: (_, page) => ({ count: page.results.length }) },
 	);

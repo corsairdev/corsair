@@ -77,81 +77,118 @@ afterEach(() => {
 	fetchMock.mockRestore();
 });
 
+function allQuery(): Array<[string, string]> {
+	const [url] = fetchMock.mock.calls.at(-1) as [string];
+	return [...new URL(url).searchParams.entries()];
+}
+
 describe('articles', () => {
-	it('list sends the filter family', async () => {
+	it('list sends the documented filters and reads { status, numResults, articles }', async () => {
 		respond(articlesList);
 		const page = (await invoke(Articles.list, {
-			q: 'climate AND policy',
-			topic: 'Business',
-			sentiment: 'negative',
+			q: 'chips AND demand',
+			topic: 'Markets',
+			source: ['example.com', '*.example.org'],
 			from: '2025-11-01',
-			removeDuplicate: true,
-			page: 2,
+			showReprints: false,
+			sortBy: 'date',
+			page: 0,
 			size: 25,
-			// unknown: article records are provider-shaped, so the cast keeps
-			// them open.
-		})) as { articles: unknown[] };
+		})) as {
+			numResults?: number;
+			articles: Array<{ articleId?: string; source?: { domain?: string } }>;
+		};
 
-		expect(page.articles).toHaveLength(1);
-		const sent = lastRequest();
+		expect(page.numResults).toBe(1234);
+		expect(page.articles[0]?.articleId).toBe('a1b2c3');
+		expect(page.articles[0]?.source?.domain).toBe('example.com');
 		expectAuthenticated('/v1/articles/all');
-		expect(sent.query['q']).toBe('climate AND policy');
-		expect(sent.query['topic']).toBe('Business');
-		expect(sent.query['sentiment']).toBe('negative');
-		expect(sent.query['from']).toBe('2025-11-01');
-		expect(sent.query['removeDuplicate']).toBe('true');
-		expect(sent.query['page']).toBe('2');
-		expect(sent.query['size']).toBe('25');
+		expect(allQuery()).toEqual([
+			['q', 'chips AND demand'],
+			['from', '2025-11-01'],
+			['topic', 'Markets'],
+			['source', 'example.com'],
+			['source', '*.example.org'],
+			['showReprints', 'false'],
+			['sortBy', 'date'],
+			['page', '0'],
+			['size', '25'],
+		]);
 	});
 
 	it('list omits unset filters', async () => {
 		respond(articlesList);
 		await invoke(Articles.list, {});
-		const sent = lastRequest();
-		expect(`${sent.origin}${sent.path}${''}`).toBe(
-			'https://api.perigon.io/v1/articles/all',
-		);
-		expect(Object.keys(sent.query)).toHaveLength(0);
+		expect(allQuery()).toHaveLength(0);
+	});
+
+	it('sends no filters Perigon does not document', async () => {
+		respond(articlesList);
+		await invoke(Articles.list, {
+			sentiment: 'negative',
+			removeDuplicate: true,
+		});
+		expect(allQuery()).toHaveLength(0);
+	});
+
+	it('asks for page 0, the first page', async () => {
+		respond(articlesList);
+		await invoke(Articles.list, { page: 0 });
+		expect(lastRequest().query['page']).toBe('0');
 	});
 });
 
 describe('stories and entities', () => {
-	it('stories.list calls stories/all', async () => {
+	it('stories.list reads results', async () => {
 		respond(storiesList);
-		const page = (await invoke(Stories.list, {})) as { stories: unknown[] }; // unknown: story records are provider-shaped
-		expect(page.stories).toHaveLength(1);
+		const page = (await invoke(Stories.list, {
+			q: 'chips',
+			minUniqueSources: 3,
+			sortBy: 'updatedAt',
+		})) as { results: Array<{ name?: string; uniqueCount?: number }> };
+		expect(page.results[0]?.name).toBe('Chip demand story');
 		expectAuthenticated('/v1/stories/all');
+		expect(lastRequest().query['minUniqueSources']).toBe('3');
 	});
 
-	it('journalists.list calls journalists/all', async () => {
+	it('journalists.list reads results', async () => {
 		respond(journalistsList);
-		await invoke(Journalists.list, { source: 'Example News' });
+		const page = (await invoke(Journalists.list, {
+			source: 'example.com',
+		})) as { results: Array<{ fullName?: string }> };
+		expect(page.results[0]?.fullName).toBe('Jane Roe');
 		expectAuthenticated('/v1/journalists/all');
-		expect(lastRequest().query['source']).toBe('Example News');
+		expect(lastRequest().query['source']).toBe('example.com');
 	});
 
-	it('people.list calls people/all', async () => {
+	it('people.list searches by name, not q', async () => {
 		respond(peopleList);
-		await invoke(People.list, {});
+		const page = (await invoke(People.list, { name: 'John Example' })) as {
+			results: Array<{ wikidataId?: string }>;
+		};
+		expect(page.results[0]?.wikidataId).toBe('Q1');
 		expectAuthenticated('/v1/people/all');
+		expect(lastRequest().query).toEqual({ name: 'John Example' });
 	});
 
-	it('companies.list calls companies/all', async () => {
+	it('companies.list reads results', async () => {
 		respond(companiesList);
-		await invoke(Companies.list, {});
+		const page = (await invoke(Companies.list, { q: 'chips', size: 5 })) as {
+			results: Array<{ name?: string }>;
+		};
+		expect(page.results[0]?.name).toBe('Example Chips Inc');
 		expectAuthenticated('/v1/companies/all');
 	});
 });
 
 describe('limits', () => {
-	it('get calls limits and reports the usage fields', async () => {
+	it('get reads the limits from data', async () => {
 		respond(limits);
 		const result = (await invoke(Limits.get, {})) as {
-			requestsUsed?: number;
-			requestLimit?: number | null;
+			data: { requestsUsed?: number; requestLimit?: number | null };
 		};
-		expect(result.requestsUsed).toBe(1200);
-		expect(result.requestLimit).toBe(10000);
+		expect(result.data.requestsUsed).toBe(3);
+		expect(result.data.requestLimit).toBe(150);
 		expectAuthenticated('/v1/limits');
 	});
 });

@@ -1,278 +1,397 @@
 import { z } from 'zod';
 
-// ── Shared building blocks ─────────────────────────────────────────────────
+// Shapes follow Perigon's OpenAPI (https://docs.perigon.io/openapi.json) and
+// live answers from a free account (11-21). Lists answer
+// `{ status, numResults, <articles | results> }`: there is no pagination
+// block, pages are numbered from 0, and numResults is the total match
+// count. Responses stay loose and nullish so a field Perigon adds or drops
+// does not break a read.
+
+const text = (description: string) =>
+	z.string().nullish().describe(description);
+const count = (description: string) =>
+	z.number().nullish().describe(description);
+// unknown: Perigon's nested entity, label and location records vary by
+// record and plan, so they stay open.
+const records = (description: string) =>
+	z.array(z.unknown()).nullish().describe(description);
 
 /** A news article, as the Articles API returns it. */
 export const ArticleSchema = z
 	.object({
-		id: z.string().nullish().describe('Article id'),
-		url: z.string().nullish().describe('Canonical article URL'),
-		title: z.string().nullish().describe('Article title'),
-		description: z
-			.string()
+		articleId: text('Article id'),
+		url: text('Canonical article URL'),
+		title: text('Article title'),
+		description: text('Article description'),
+		content: text('Article body (may be truncated on some plans)'),
+		summary: text('Generated summary'),
+		imageUrl: text('Lead image URL'),
+		pubDate: text('Publication timestamp'),
+		addDate: text('When Perigon added the article'),
+		refreshDate: text('When Perigon last refreshed the article'),
+		authorsByline: text('Author byline'),
+		clusterId: text('Story cluster the article belongs to'),
+		country: text('Country code'),
+		language: text('Language code'),
+		medium: text('Medium, e.g. Article or Video'),
+		score: count('Relevance score'),
+		reprint: z.boolean().nullish().describe('Whether this is a reprint'),
+		source: z
+			.object({
+				domain: text('Publisher domain'),
+				location: z.unknown().nullish().describe('Publisher location'),
+			})
+			.loose()
 			.nullish()
-			.describe('Article description or summary'),
-		content: z
-			.string()
+			.describe('Publisher'),
+		sentiment: z
+			.object({
+				positive: count('Positive score'),
+				negative: count('Negative score'),
+				neutral: count('Neutral score'),
+			})
+			.loose()
 			.nullish()
-			.describe('Article body; plan-gated truncation may shorten it'),
-		imageUrl: z.string().nullish().describe('Lead image URL'),
-		publishedAt: z.string().nullish().describe('Publication timestamp'),
-		source: z.string().nullish().describe('Publisher name'),
-		topic: z.string().nullish().describe('Topic classification'),
-		sourceUrl: z.string().nullish().describe('Publisher home URL'),
-		clusterId: z
-			.string()
-			.nullish()
-			.describe('Story cluster this article belongs to'),
+			.describe('Sentiment scores'),
+		keywords: records('Keywords with weights'),
+		topics: records('Topics'),
+		categories: records('Categories'),
+		labels: records('Labels such as Opinion or Paid News'),
+		entities: records('Named entities'),
+		companies: records('Companies mentioned'),
+		people: records('People mentioned'),
+		locations: records('Locations mentioned'),
+		places: records('Places mentioned'),
+		links: z.array(z.string()).nullish().describe('Links in the article'),
 	})
 	.loose()
-	.describe('A news article from the Perigon index');
+	.describe('A news article');
 export type Article = z.infer<typeof ArticleSchema>;
 
 /** A story cluster: one narrative across many articles. */
 export const StorySchema = z
 	.object({
-		id: z.string().nullish().describe('Story id'),
-		title: z.string().nullish().describe('Cluster title'),
-		summary: z.string().nullish().describe('Cluster summary'),
-		articleCount: z.number().nullish().describe('Articles in the cluster'),
-		createdAt: z.string().nullish().describe('Cluster creation timestamp'),
-		updatedAt: z.string().nullish().describe('Cluster last update timestamp'),
+		id: text('Story (cluster) id'),
+		name: text('Story name'),
+		summary: text('Story summary'),
+		shortSummary: text('One-line summary'),
+		keyPoints: records('Key points'),
+		createdAt: text('Creation timestamp'),
+		updatedAt: text('Last update timestamp'),
+		initializedAt: text('When the story first appeared'),
+		uniqueCount: count('Unique articles in the story'),
+		reprintCount: count('Reprints in the story'),
+		totalCount: count('All articles in the story'),
+		uniqueSourcesCount: count('Distinct publishers'),
+		sourceDiversity: count('Publisher diversity score'),
+		sentiment: z.unknown().nullish().describe('Sentiment scores'),
+		topTopics: records('Main topics'),
+		topCategories: records('Main categories'),
+		topCountries: records('Main countries'),
+		topPeople: records('Main people'),
+		topCompanies: records('Main companies'),
+		topLocations: records('Main locations'),
 	})
 	.loose()
-	.describe('A Perigon story cluster');
+	.describe('A story cluster');
 export type Story = z.infer<typeof StorySchema>;
 
 /** A journalist entry. */
 export const JournalistSchema = z
 	.object({
-		id: z.string().nullish().describe('Journalist id'),
-		name: z.string().nullish().describe('Journalist name'),
-		source: z.string().nullish().describe('Primary publisher'),
+		id: text('Journalist id'),
+		name: text('Journalist name'),
+		fullName: text('Full name'),
+		title: text('Job title'),
+		headline: text('Profile headline'),
+		description: text('Profile description'),
+		imageUrl: text('Profile image URL'),
+		updatedAt: text('Last update timestamp'),
+		avgMonthlyPosts: count('Average articles a month'),
+		twitterHandle: text('Twitter/X handle'),
+		linkedinUrl: text('LinkedIn profile URL'),
+		websiteUrl: text('Website URL'),
+		topSources: records('Publishers they write for most'),
+		topTopics: records('Topics they cover most'),
+		topCategories: records('Categories they cover most'),
+		topCountries: records('Countries they cover most'),
+		locations: records('Where they are based'),
 	})
 	.loose()
-	.describe('A journalist in the Perigon directory');
+	.describe('A journalist');
 export type Journalist = z.infer<typeof JournalistSchema>;
 
-/** A resolved person entity. */
+/** A person entity (keyed by Wikidata id). */
 export const PersonSchema = z
 	.object({
-		id: z.string().nullish().describe('Person entity id'),
-		name: z.string().nullish().describe('Person name'),
-		mentions: z.number().nullish().describe('Mention count in the index'),
+		wikidataId: text('Wikidata id, e.g. Q312556'),
+		name: text('Person name'),
+		description: text('Short description'),
+		abstract: text('Longer abstract'),
+		aliases: z.array(z.string()).nullish().describe('Other names'),
+		occupation: records('Occupations'),
+		position: records('Positions held'),
+		politicalParty: records('Political parties'),
+		gender: z.unknown().nullish().describe('Gender record'),
+		dateOfBirth: z.unknown().nullish().describe('Date of birth record'),
+		dateOfDeath: z.unknown().nullish().describe('Date of death record'),
+		image: z.unknown().nullish().describe('Image record'),
+		updatedAt: text('Last update timestamp'),
 	})
 	.loose()
-	.describe('A resolved person entity');
+	.describe('A person');
 export type Person = z.infer<typeof PersonSchema>;
 
-/** A resolved company entity. */
+/** A company entity. */
 export const CompanySchema = z
 	.object({
-		id: z.string().nullish().describe('Company entity id'),
-		name: z.string().nullish().describe('Company name'),
-		mentions: z.number().nullish().describe('Mention count in the index'),
+		id: text('Company id'),
+		name: text('Company name'),
+		altNames: z.array(z.string()).nullish().describe('Other names'),
+		domains: z.array(z.string()).nullish().describe('Web domains'),
+		description: text('Description'),
+		ceo: text('Chief executive'),
+		industry: text('Industry'),
+		sector: text('Sector'),
+		country: text('Country'),
+		city: text('City'),
+		state: text('State'),
+		fullTimeEmployees: count('Full-time employees'),
+		yearFounded: count('Year founded'),
+		revenue: z
+			.union([z.string(), z.number()])
+			.nullish()
+			.describe('Revenue as Perigon reports it'),
+		symbols: records('Stock symbols'),
+		isin: text('ISIN'),
+		logo: text('Logo URL'),
+		favicon: text('Favicon URL'),
+		updatedAt: text('Last update timestamp'),
 	})
 	.loose()
-	.describe('A resolved company entity');
+	.describe('A company');
 export type Company = z.infer<typeof CompanySchema>;
 
-/** Pagination block the list endpoints carry. */
-export const PaginationSchema = z
-	.object({
-		page: z.number().nullish().describe('Page returned'),
-		size: z.number().nullish().describe('Page size'),
-		totalElements: z.number().nullish().describe('Total matching records'),
-		totalPages: z.number().nullish().describe('Total number of pages'),
-	})
-	.loose()
-	.describe('Pagination metadata');
-
-/** Each list endpoint answers its named array plus the pagination block. */
-const ListArticlesOutputSchema = z
-	.object({
-		articles: z.array(ArticleSchema).describe('Articles on this page'),
-		pagination: PaginationSchema,
-	})
-	.loose();
-const ListStoriesOutputSchema = z
-	.object({
-		stories: z.array(StorySchema).describe('Stories on this page'),
-		pagination: PaginationSchema,
-	})
-	.loose();
-const ListJournalistsOutputSchema = z
-	.object({
-		journalists: z.array(JournalistSchema).describe('Journalists on this page'),
-		pagination: PaginationSchema,
-	})
-	.loose();
-const ListPeopleOutputSchema = z
-	.object({
-		people: z.array(PersonSchema).describe('People on this page'),
-		pagination: PaginationSchema,
-	})
-	.loose();
-const ListCompaniesOutputSchema = z
-	.object({
-		companies: z.array(CompanySchema).describe('Companies on this page'),
-		pagination: PaginationSchema,
-	})
-	.loose();
-
-/** The shared filter family the list endpoints document. */
-const searchFilters = {
-	q: z
-		.string()
-		.optional()
-		.describe(
-			'Keyword or boolean query across titles, URLs, descriptions and body',
-		),
-	title: z.string().optional().describe('Query scoped to titles'),
-	from: z
-		.string()
-		.optional()
-		.describe('Published from this date (YYYY-MM-DD or ISO)'),
-	to: z.string().optional().describe('Published to this date'),
-	topic: z.string().optional().describe('Topic filter, e.g. Tech, Business'),
-	source: z.string().optional().describe('Publisher name filter'),
-	sourceUrl: z.string().optional().describe('Publisher home URL filter'),
-	country: z.string().optional().describe('Country filter (ISO code or name)'),
-	language: z.string().optional().describe('Language filter (ISO code)'),
-	sentiment: z
-		.enum(['positive', 'negative', 'neutral'])
-		.optional()
-		.describe('Sentiment filter'),
-	removeDuplicate: z
-		.boolean()
-		.optional()
-		.describe('Collapse reprints and duplicates'),
+/** The fields every list answer carries beside its array. */
+const listEnvelope = {
+	status: count('HTTP status Perigon echoes, 200 on success'),
+	numResults: count('Total matching records across all pages'),
 };
 
-const pagingParams = {
-	page: z.number().int().min(1).optional().describe('Page number'),
+const ListArticlesOutputSchema = z
+	.object({
+		...listEnvelope,
+		articles: z.array(ArticleSchema).describe('Articles on this page'),
+	})
+	.loose();
+
+const ListStoriesOutputSchema = z
+	.object({
+		...listEnvelope,
+		results: z.array(StorySchema).describe('Stories on this page'),
+	})
+	.loose();
+
+const ListJournalistsOutputSchema = z
+	.object({
+		...listEnvelope,
+		results: z.array(JournalistSchema).describe('Journalists on this page'),
+	})
+	.loose();
+
+const ListPeopleOutputSchema = z
+	.object({
+		...listEnvelope,
+		results: z.array(PersonSchema).describe('People on this page'),
+	})
+	.loose();
+
+const ListCompaniesOutputSchema = z
+	.object({
+		...listEnvelope,
+		results: z.array(CompanySchema).describe('Companies on this page'),
+	})
+	.loose();
+
+/** A value or a list of values; a list is an OR filter. */
+const oneOrMany = (description: string) =>
+	z
+		.union([z.string().min(1), z.array(z.string().min(1)).min(1)])
+		.optional()
+		.describe(`${description}; several values are ORed`);
+
+const paging = (maxSize: number) => ({
+	page: z
+		.number()
+		.int()
+		.min(0)
+		.optional()
+		.describe('Page number, starting at 0'),
 	size: z
 		.number()
 		.int()
 		.min(1)
-		.max(100)
+		.max(maxSize)
 		.optional()
-		.describe('Results per page, within the plan maxPageSize'),
-	sortBy: z
-		.enum(['date', 'relevance', 'source', 'topic'])
-		.optional()
-		.describe('Result ordering'),
-};
+		.describe(`Results per page (at most ${maxSize} on the free plan)`),
+});
 
-// ── articles ───────────────────────────────────────────────────────────────
+/** Filters the article and story searches share. */
+const searchFilters = {
+	q: z
+		.string()
+		.min(1)
+		.optional()
+		.describe(
+			'Keyword or boolean query (AND, OR, NOT, quotes) across title, description and content',
+		),
+	from: z
+		.string()
+		.min(1)
+		.optional()
+		.describe('Published after this time: ISO 8601 or yyyy-mm-dd'),
+	to: z
+		.string()
+		.min(1)
+		.optional()
+		.describe('Published before this time: ISO 8601 or yyyy-mm-dd'),
+	topic: oneOrMany('Topic, e.g. Markets, Cryptocurrency'),
+	category: oneOrMany('Category, e.g. Tech, Business, Politics'),
+	source: oneOrMany('Publisher domain, wildcards allowed (*.cnn.com)'),
+	country: oneOrMany('Country code, e.g. us'),
+};
 
 export const ListArticlesInputSchema = z
 	.object({
 		...searchFilters,
-		...pagingParams,
+		title: z.string().min(1).optional().describe('Query scoped to titles'),
+		language: oneOrMany('ISO-639 language code, e.g. en'),
+		label: oneOrMany('Label, e.g. Opinion, Paid News'),
+		excludeLabel: oneOrMany('Label to leave out'),
+		showReprints: z
+			.boolean()
+			.optional()
+			.describe('Include syndicated reprints (Perigon default true)'),
+		sortBy: z
+			.enum([
+				'relevance',
+				'date',
+				'reverseDate',
+				'addDate',
+				'reverseAddDate',
+				'pubDate',
+				'refreshDate',
+			])
+			.optional()
+			.describe('Sort order'),
+		...paging(100),
 	})
-	.describe(
-		'Query parameters for the Articles API (one result per published URL)',
-	);
+	.describe('Query parameters for the Articles API');
 export type ListArticlesInput = z.infer<typeof ListArticlesInputSchema>;
-
 export type ListArticlesOutput = z.infer<typeof ListArticlesOutputSchema>;
-
-// ── stories ────────────────────────────────────────────────────────────────
 
 export const ListStoriesInputSchema = z
 	.object({
 		...searchFilters,
-		...pagingParams,
+		name: z.string().min(1).optional().describe('Query scoped to story names'),
+		minUniqueSources: z
+			.number()
+			.int()
+			.min(1)
+			.optional()
+			.describe('Only stories covered by at least this many publishers'),
+		sortBy: z
+			.enum(['createdAt', 'updatedAt', 'relevance', 'count', 'totalCount'])
+			.optional()
+			.describe('Sort order'),
+		...paging(100),
 	})
-	.describe('Query parameters for the Stories API (clustered narratives)');
+	.describe('Query parameters for the Stories API');
 export type ListStoriesInput = z.infer<typeof ListStoriesInputSchema>;
 export type ListStoriesOutput = z.infer<typeof ListStoriesOutputSchema>;
 
-// ── journalists ────────────────────────────────────────────────────────────
-
 export const ListJournalistsInputSchema = z
 	.object({
-		q: z.string().optional().describe('Journalist name query'),
-		source: z.string().optional().describe('Publisher filter'),
-		page: z.number().int().min(1).optional().describe('Page number'),
-		size: z.number().int().min(1).optional().describe('Results per page'),
+		q: z
+			.string()
+			.min(1)
+			.optional()
+			.describe('Query across name, title and bio'),
+		name: z.string().min(1).optional().describe('Journalist name'),
+		source: oneOrMany('Publisher domain they write for'),
+		topic: oneOrMany('Topic they cover'),
+		country: oneOrMany('Country code they cover'),
+		sortBy: z
+			.enum(['avgMonthlyPosts', 'linkedinConnections', 'linkedinFollowers'])
+			.optional()
+			.describe('Sort order'),
+		...paging(100),
 	})
-	.describe('Query parameters for the Journalists API');
+	.describe('Query parameters for the journalist directory');
 export type ListJournalistsInput = z.infer<typeof ListJournalistsInputSchema>;
 export type ListJournalistsOutput = z.infer<typeof ListJournalistsOutputSchema>;
 
-// ── people ─────────────────────────────────────────────────────────────────
-
 export const ListPeopleInputSchema = z
 	.object({
-		q: z.string().optional().describe('Person name query'),
-		page: z.number().int().min(1).optional().describe('Page number'),
-		size: z.number().int().min(1).optional().describe('Results per page'),
+		name: z.string().min(1).optional().describe('Person name'),
+		wikidataId: oneOrMany('Wikidata id, e.g. Q312556'),
+		occupationLabel: z
+			.string()
+			.min(1)
+			.optional()
+			.describe('Occupation, e.g. politician'),
+		...paging(100),
 	})
-	.describe('Query parameters for the People API');
+	.describe('Query parameters for person entities');
 export type ListPeopleInput = z.infer<typeof ListPeopleInputSchema>;
 export type ListPeopleOutput = z.infer<typeof ListPeopleOutputSchema>;
 
-// ── companies ──────────────────────────────────────────────────────────────
-
 export const ListCompaniesInputSchema = z
 	.object({
-		q: z.string().optional().describe('Company name query'),
-		page: z.number().int().min(1).optional().describe('Page number'),
-		size: z.number().int().min(1).optional().describe('Results per page'),
+		q: z
+			.string()
+			.min(1)
+			.optional()
+			.describe('Query across company names and descriptions'),
+		name: z.string().min(1).optional().describe('Company name'),
+		domain: oneOrMany('Company web domain'),
+		symbol: oneOrMany('Stock symbol'),
+		industry: z.string().min(1).optional().describe('Industry'),
+		sector: z.string().min(1).optional().describe('Sector'),
+		country: oneOrMany('Country code'),
+		...paging(100),
 	})
-	.describe('Query parameters for the Companies API');
+	.describe('Query parameters for company entities');
 export type ListCompaniesInput = z.infer<typeof ListCompaniesInputSchema>;
 export type ListCompaniesOutput = z.infer<typeof ListCompaniesOutputSchema>;
 
-// ── limits ─────────────────────────────────────────────────────────────────
-
 export const GetLimitsInputSchema = z
 	.object({})
-	.describe('Input for reading the account usage and limits (none)');
+	.describe('Input for reading the plan limits (none)');
 export type GetLimitsInput = z.infer<typeof GetLimitsInputSchema>;
 
 export const LimitsSchema = z
 	.object({
-		organizationName: z
-			.string()
-			.nullish()
-			.describe('Account or organization name'),
-		requestsUsed: z
-			.number()
-			.nullish()
-			.describe('Billable requests used this period'),
-		requestLimit: z
-			.number()
-			.nullish()
-			.describe('Maximum billable requests; null means unlimited'),
-		maxPageSize: z
-			.number()
-			.nullish()
-			.describe('Largest page size the plan allows'),
-		paginationLimit: z
-			.number()
-			.nullish()
-			.describe('Maximum results you can page through'),
-		articleContentTruncation: z
-			.number()
-			.nullish()
-			.describe(
-				'Character limit applied to article content; null means no truncation',
-			),
-		since: z.string().nullish().describe('Start of the current usage period'),
-		lastMadeAt: z
-			.string()
-			.nullish()
-			.describe('Timestamp of the most recent billable request'),
-		resetAt: z.string().nullish().describe('When the request counter resets'),
+		organizationName: text('Workspace name'),
+		requestsUsed: count('Requests used this period'),
+		requestLimit: count('Requests the plan allows this period'),
+		maxPageSize: count('Largest page size the plan allows'),
+		paginationLimit: count('Deepest result the plan lets you page to'),
+		articleContentTruncation: count(
+			'Character limit on article content; null means no truncation',
+		),
+		since: text('Start of the current usage period'),
+		lastMadeAt: text('When the last request was made'),
+		resetAt: text('When the request counter resets'),
 	})
 	.loose()
-	.describe('Account usage and limits; free to poll and not rate-limited');
+	.describe('The plan limits and usage');
 export type Limits = z.infer<typeof LimitsSchema>;
 
-export const GetLimitsOutputSchema = LimitsSchema;
+export const GetLimitsOutputSchema = z
+	.object({ data: LimitsSchema })
+	.loose()
+	.describe('The plan limits, wrapped in data');
 export type GetLimitsOutput = z.infer<typeof GetLimitsOutputSchema>;
 
 // ── Operation registry ─────────────────────────────────────────────────────

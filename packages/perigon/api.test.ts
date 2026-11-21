@@ -24,13 +24,51 @@ describeIfKey('perigon live smoke', () => {
 	// rather than going through the runtime.
 	const ctx = { key: apiKey as string, options: {} } as never;
 
+	// Each call costs one request of the plan's monthly quota (150 on the
+	// free plan), so every list asks for one record.
 	it('lists articles through the output schema', async () => {
-		const page = await plugin.endpoints!.articles.list(ctx, { size: 5 });
-		expect(Array.isArray(page.articles)).toBe(true);
+		const page = await plugin.endpoints!.articles.list(ctx, {
+			q: 'semiconductors',
+			size: 1,
+		});
+		expect(page.articles.length).toBe(1);
+		expect(page.articles[0]?.articleId).toBeTruthy();
 	});
 
-	it('reads the account limits through the output schema', async () => {
+	it('lists stories through the output schema', async () => {
+		const page = await plugin.endpoints!.stories.list(ctx, {
+			q: 'semiconductors',
+			size: 1,
+		});
+		expect(Array.isArray(page.results)).toBe(true);
+	});
+
+	it('searches journalists through the output schema', async () => {
+		const page = await plugin.endpoints!.journalists.list(ctx, {
+			q: 'technology',
+			size: 1,
+		});
+		expect(Array.isArray(page.results)).toBe(true);
+	});
+
+	it('searches people by name through the output schema', async () => {
+		const page = await plugin.endpoints!.people.list(ctx, {
+			name: 'Ada Lovelace',
+			size: 1,
+		});
+		expect(page.results[0]?.wikidataId).toBeTruthy();
+	});
+
+	it('searches companies through the output schema', async () => {
+		const page = await plugin.endpoints!.companies.list(ctx, {
+			q: 'semiconductor',
+			size: 1,
+		});
+		expect(page.results[0]?.name).toBeTruthy();
+	});
+
+	it('reads the plan limits through the output schema', async () => {
 		const limits = await plugin.endpoints!.limits.get(ctx, {});
-		expect(limits.organizationName).toBeDefined();
+		expect(limits.data.requestLimit).toBeGreaterThan(0);
 	});
 });

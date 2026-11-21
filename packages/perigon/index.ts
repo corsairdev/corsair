@@ -120,7 +120,7 @@ const perigonEndpointMeta = {
 	'articles.list': {
 		riskLevel: 'read',
 		description:
-			'Search news articles: one result per published URL, filterable by query, topic, source, dates and sentiment',
+			'Search news articles: one result per published URL, filterable by query, topic, category, source, country, language and dates',
 	},
 	'stories.list': {
 		riskLevel: 'read',
@@ -203,8 +203,6 @@ export function perigon<const T extends PerigonPluginOptions>(
 		},
 	} satisfies InternalPerigonPlugin;
 }
-
-export { PerigonAPIError } from './client';
 
 export type {
 	Article,

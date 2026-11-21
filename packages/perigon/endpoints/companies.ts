@@ -15,5 +15,5 @@ export const list: PerigonEndpoints['companiesList'] = (ctx, input) =>
 		},
 		input,
 		(query) => ({ method: 'GET', path: '/v1/companies/all', query }),
-		{ log: (_, page) => ({ count: page.companies.length }) },
+		{ log: (_, page) => ({ count: page.results.length }) },
 	);

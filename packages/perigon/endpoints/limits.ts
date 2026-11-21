@@ -15,5 +15,5 @@ export const get: PerigonEndpoints['limitsGet'] = (ctx, input) =>
 		},
 		input,
 		() => ({ method: 'GET', path: '/v1/limits' }),
-		{ log: (_, limits) => ({ used: limits.requestsUsed ?? undefined }) },
+		{ log: (_, limits) => ({ used: limits.data.requestsUsed ?? undefined }) },
 	);

@@ -52,20 +52,22 @@ afterEach(() => {
 });
 
 describe('output parsing', () => {
-	it('parses an article page with pagination', async () => {
+	it('parses the live list shape: status, numResults and the articles', async () => {
 		respond(articlesList);
 		const page = (await invoke(Articles.list, {})) as {
-			articles: Array<{ id?: string }>;
-			pagination: { totalElements?: number };
+			numResults?: number;
+			articles: Array<{ articleId?: string; pubDate?: string }>;
 		};
-		expect(page.articles[0]?.id).toBe('art_1');
-		expect(page.pagination.totalElements).toBe(1);
+		expect(page.numResults).toBe(1234);
+		expect(page.articles[0]?.articleId).toBe('a1b2c3');
+		expect(page.articles[0]?.pubDate).toBe(article.pubDate);
 	});
 
 	it('keeps a null content field nullish rather than a string', async () => {
 		respond({
+			status: 200,
+			numResults: 1,
 			articles: [{ ...article, content: null }],
-			pagination: {},
 		});
 		const page = (await invoke(Articles.list, {})) as {
 			articles: Array<{ content?: string | null }>;
@@ -73,21 +75,31 @@ describe('output parsing', () => {
 		expect(page.articles[0]?.content).toBeNull();
 	});
 
-	it('rejects an article whose source is a number', async () => {
+	it('rejects an article whose source is a string, not the publisher object', async () => {
 		respond({
-			articles: [{ ...article, source: 42 }],
-			pagination: {},
+			status: 200,
+			numResults: 1,
+			articles: [{ ...article, source: 'x' }],
 		});
-		await rejects(Articles.list, {}, 'string');
+		await rejects(Articles.list, {}, 'object');
+	});
+
+	it('rejects a list answer without its array', async () => {
+		respond({ status: 200, numResults: 0 });
+		await rejects(Articles.list, {}, 'articles');
 	});
 });
 
 describe('input validation', () => {
-	it('rejects a sentiment outside the documented values', async () => {
-		await rejects(Articles.list, { sentiment: 'meh' }, 'invalid_value');
+	it('rejects a sortBy outside the documented values', async () => {
+		await rejects(Articles.list, { sortBy: 'source' }, 'invalid_value');
 	});
 
 	it('rejects a size over 100', async () => {
 		await rejects(Articles.list, { size: 101 }, '100');
+	});
+
+	it('rejects a negative page', async () => {
+		await rejects(Articles.list, { page: -1 }, 'page');
 	});
 });
