@@ -183,12 +183,12 @@ describe('wallet resolution', () => {
 
 describe('204 responses', () => {
 	it('rejects an archive that answers a body instead of the documented 204', async () => {
-		respond({ archived: true });
-		await rejects(
-			CredentialTemplates.archive,
-			{ credentialTemplateId: 'tmpl_1' },
-			'unexpected body',
-		);
+		respond({ archived: true, signatureSecret: 'whsec_should_not_leak' });
+		const error = await invoke(CredentialTemplates.archive, {
+			credentialTemplateId: 'tmpl_1',
+		}).catch((caught: unknown) => caught);
+		expect(String(error)).toContain('unexpected response body');
+		expect(String(error)).not.toContain('whsec_should_not_leak');
 	});
 
 	it('accepts an empty 204 for a delete', async () => {

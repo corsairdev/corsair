@@ -65,6 +65,7 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 // the caller decides it is a failure.
 export function expectEmptyBody(raw: unknown, what: string): void {
 	if (raw !== undefined && raw !== null && raw !== '') {
-		throw new Error(`Paradym ${what}: unexpected body ${JSON.stringify(raw)}`);
+		// The body is left out: it could carry a signing secret or holder data.
+		throw new Error(`Paradym ${what}: unexpected response body`);
 	}
 }
