@@ -456,7 +456,7 @@ describe('Zoho Books operation endpoints', () => {
 	});
 
 	it('keeps every published API example valid against its operation input schema', () => {
-		// `yaml.parse` returns untrusted data; narrow it to JSON before reading keys.
+		// The YAML parser returns untyped data; validate it as JSON before reading example fields.
 		const parsedDocs = parseYaml(
 			readFileSync(join(__dirname, 'plugin-docs.yaml'), 'utf8'),
 		);

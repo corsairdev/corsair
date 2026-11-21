@@ -2228,6 +2228,7 @@ export const zohoBooksEndpointsNested = {
 	},
 } as const;
 
+// Operation-ID tags derive metadata paths without expanding 884 specialized signatures; public call types remain in ZohoBooksBoundEndpoints.
 type EndpointKeyTree<Tree> = {
 	[Key in keyof Tree]: Tree[Key] extends {
 		readonly [zohoBooksOperationId]: ZohoBooksOperationId;
