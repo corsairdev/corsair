@@ -1,11 +1,26 @@
 import { z } from 'zod';
 import { defineMailerLiteOperation } from './operation';
 import {
+	MailerLiteCartItemListResponseSchema,
+	MailerLiteCartItemResponseSchema,
+	MailerLiteCartListResponseSchema,
+	MailerLiteCartResponseSchema,
+	MailerLiteCategoryListResponseSchema,
+	MailerLiteCategoryResponseSchema,
+	MailerLiteCategorySchema,
 	MailerLiteCountResponseSchema,
-	MailerLiteEntityResponseSchema,
-	MailerLiteEntitySchema,
+	MailerLiteCustomerListResponseSchema,
+	MailerLiteCustomerResponseSchema,
 	MailerLiteIdSchema,
-	MailerLiteListResponseSchema,
+	MailerLiteOrderListResponseSchema,
+	MailerLiteOrderResponseSchema,
+	MailerLiteProductListResponseSchema,
+	MailerLiteProductResponseSchema,
+	MailerLiteProductSchema,
+	MailerLiteProductVariantListResponseSchema,
+	MailerLiteProductVariantResponseSchema,
+	MailerLiteShopListResponseSchema,
+	MailerLiteShopResponseSchema,
 } from './types';
 
 const Identifier = z.string().min(1);
@@ -72,7 +87,7 @@ export const Shops = {
 					.optional(),
 			})
 			.strict(),
-		output: MailerLiteListResponseSchema,
+		output: MailerLiteShopListResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: '/ecommerce/shops',
@@ -82,7 +97,7 @@ export const Shops = {
 	create: defineMailerLiteOperation({
 		operation: 'shops.create',
 		input: z.object({ body: ShopBody }).strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteShopResponseSchema,
 		request: (input) => ({
 			method: 'POST',
 			url: '/ecommerce/shops',
@@ -92,7 +107,7 @@ export const Shops = {
 	get: defineMailerLiteOperation({
 		operation: 'shops.get',
 		input: z.object({ shopId: Identifier }).strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteShopResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}`,
@@ -101,7 +116,7 @@ export const Shops = {
 	update: defineMailerLiteOperation({
 		operation: 'shops.update',
 		input: z.object({ shopId: Identifier, body: ShopBody }).strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteShopResponseSchema,
 		request: (input) => ({
 			method: 'PUT',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}`,
@@ -121,7 +136,7 @@ export const Shops = {
 	delete: defineMailerLiteOperation({
 		operation: 'shops.delete',
 		input: z.object({ shopId: Identifier }).strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteShopResponseSchema,
 		request: (input) => ({
 			method: 'DELETE',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}`,
@@ -192,7 +207,7 @@ export const Carts = {
 					.optional(),
 			})
 			.strict(),
-		output: MailerLiteListResponseSchema,
+		output: MailerLiteCartListResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/carts`,
@@ -208,7 +223,7 @@ export const Carts = {
 				query: ResourceLookupQuery.optional(),
 			})
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteCartResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/carts/${encodeURIComponent(input.cartId)}`,
@@ -242,7 +257,7 @@ export const Carts = {
 					.strict(),
 			})
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteCartResponseSchema,
 		request: (input) => ({
 			method: 'PUT',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/carts/${encodeURIComponent(input.cartId)}`,
@@ -299,7 +314,7 @@ export const CartItems = {
 					.optional(),
 			})
 			.strict(),
-		output: MailerLiteListResponseSchema,
+		output: MailerLiteCartItemListResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/carts/${encodeURIComponent(input.cartId)}/items`,
@@ -316,7 +331,7 @@ export const CartItems = {
 				query: ResourceLookupQuery.optional(),
 			})
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteCartItemResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/carts/${encodeURIComponent(input.cartId)}/items/${encodeURIComponent(input.itemId)}`,
@@ -361,7 +376,7 @@ export const CartItems = {
 							'with_resource_id is required when product_resource_id is sent.',
 					});
 			}),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteCartItemResponseSchema,
 		request: (input) => ({
 			method: 'POST',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/carts/${encodeURIComponent(input.cartId)}/items`,
@@ -392,7 +407,7 @@ export const CartItems = {
 							'with_resource_id is required when product_resource_id is sent.',
 					});
 			}),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteCartItemResponseSchema,
 		request: (input) => ({
 			method: 'PUT',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/carts/${encodeURIComponent(input.cartId)}/items/${encodeURIComponent(input.itemId)}`,
@@ -410,7 +425,7 @@ export const CartItems = {
 				query: ResourceLookupQuery.optional(),
 			})
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteCartItemResponseSchema,
 		request: (input) => ({
 			method: 'DELETE',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/carts/${encodeURIComponent(input.cartId)}/items/${encodeURIComponent(input.itemId)}`,
@@ -437,7 +452,7 @@ export const Categories = {
 					.optional(),
 			})
 			.strict(),
-		output: MailerLiteListResponseSchema,
+		output: MailerLiteCategoryListResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/categories`,
@@ -453,7 +468,7 @@ export const Categories = {
 				query: ResourceLookupQuery.optional(),
 			})
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteCategoryResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/categories/${encodeURIComponent(input.categoryId)}`,
@@ -473,7 +488,7 @@ export const Categories = {
 	create: defineMailerLiteOperation({
 		operation: 'categories.create',
 		input: z.object({ shopId: Identifier, body: CategoryBody }).strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteCategoryResponseSchema,
 		request: (input) => ({
 			method: 'POST',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/categories`,
@@ -490,7 +505,7 @@ export const Categories = {
 				body: CategoryBody,
 			})
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteCategoryResponseSchema,
 		request: (input) => ({
 			method: 'PUT',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/categories/${encodeURIComponent(input.categoryId)}`,
@@ -507,7 +522,7 @@ export const Categories = {
 				query: ResourceLookupQuery.optional(),
 			})
 			.strict(),
-		output: MailerLiteEntitySchema,
+		output: MailerLiteCategorySchema,
 		request: (input) => ({
 			method: 'DELETE',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/categories/${encodeURIComponent(input.categoryId)}`,
@@ -526,7 +541,7 @@ export const CategoryProducts = {
 				query: ListPage.extend(ResourceLookupQuery.shape).strict().optional(),
 			})
 			.strict(),
-		output: MailerLiteListResponseSchema,
+		output: MailerLiteProductListResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/categories/${encodeURIComponent(input.categoryId)}/products`,
@@ -543,7 +558,7 @@ export const CategoryProducts = {
 				query: ResourceLookupQuery.optional(),
 			})
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteProductResponseSchema,
 		request: (input) => ({
 			method: 'PUT',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/categories/${encodeURIComponent(input.categoryId)}/products/${encodeURIComponent(input.productId)}`,
@@ -560,7 +575,7 @@ export const CategoryProducts = {
 				query: ResourceLookupQuery.optional(),
 			})
 			.strict(),
-		output: MailerLiteEntitySchema,
+		output: MailerLiteProductSchema,
 		request: (input) => ({
 			method: 'DELETE',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/categories/${encodeURIComponent(input.categoryId)}/products/${encodeURIComponent(input.productId)}`,
@@ -582,7 +597,7 @@ export const CategoryProducts = {
 					.strict(),
 			})
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteProductResponseSchema,
 		request: (input) => ({
 			method: 'PUT',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/products/${encodeURIComponent(input.productId)}/categories/multiple`,
@@ -618,7 +633,7 @@ export const Customers = {
 					.optional(),
 			})
 			.strict(),
-		output: MailerLiteListResponseSchema,
+		output: MailerLiteCustomerListResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/customers`,
@@ -634,7 +649,7 @@ export const Customers = {
 				query: ResourceLookupQuery.optional(),
 			})
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteCustomerResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/customers/${encodeURIComponent(input.customerId)}`,
@@ -655,7 +670,7 @@ export const Customers = {
 		operation: 'customers.create',
 		riskLevel: 'destructive',
 		input: z.object({ shopId: Identifier, body: CustomerBody }).strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteCustomerResponseSchema,
 		request: (input) => ({
 			method: 'POST',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/customers`,
@@ -673,7 +688,7 @@ export const Customers = {
 				body: CustomerBody,
 			})
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteCustomerResponseSchema,
 		request: (input) => ({
 			method: 'PUT',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/customers/${encodeURIComponent(input.customerId)}`,
@@ -690,7 +705,7 @@ export const Customers = {
 				query: ResourceLookupQuery.optional(),
 			})
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteCustomerResponseSchema,
 		request: (input) => ({
 			method: 'DELETE',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/customers/${encodeURIComponent(input.customerId)}`,
@@ -777,7 +792,7 @@ export const Orders = {
 					.optional(),
 			})
 			.strict(),
-		output: MailerLiteListResponseSchema,
+		output: MailerLiteOrderListResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/orders`,
@@ -793,7 +808,7 @@ export const Orders = {
 				query: ResourceLookupQuery.optional(),
 			})
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteOrderResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/orders/${encodeURIComponent(input.orderId)}`,
@@ -837,7 +852,7 @@ export const Orders = {
 						message: 'with_resource_id is required when resource IDs are sent.',
 					});
 			}),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteOrderResponseSchema,
 		request: (input) => ({
 			method: 'POST',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/orders`,
@@ -855,7 +870,7 @@ export const Orders = {
 				body: OrderUpdateBody,
 			})
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteOrderResponseSchema,
 		request: (input) => ({
 			method: 'PUT',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/orders/${encodeURIComponent(input.orderId)}`,
@@ -872,7 +887,7 @@ export const Orders = {
 				query: ResourceLookupQuery.optional(),
 			})
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteOrderResponseSchema,
 		request: (input) => ({
 			method: 'DELETE',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/orders/${encodeURIComponent(input.orderId)}`,
@@ -986,7 +1001,7 @@ export const Products = {
 					.optional(),
 			})
 			.strict(),
-		output: MailerLiteListResponseSchema,
+		output: MailerLiteProductListResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/products`,
@@ -1002,7 +1017,7 @@ export const Products = {
 				query: ResourceLookupQuery.optional(),
 			})
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteProductResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/products/${encodeURIComponent(input.productId)}`,
@@ -1022,7 +1037,7 @@ export const Products = {
 	create: defineMailerLiteOperation({
 		operation: 'products.create',
 		input: z.object({ shopId: Identifier, body: ProductBody }).strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteProductResponseSchema,
 		request: (input) => ({
 			method: 'POST',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/products`,
@@ -1039,7 +1054,7 @@ export const Products = {
 				body: ProductBody,
 			})
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteProductResponseSchema,
 		request: (input) => ({
 			method: 'PUT',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/products/${encodeURIComponent(input.productId)}`,
@@ -1057,7 +1072,7 @@ export const Products = {
 				body: z.object({ status: z.boolean() }).strict(),
 			})
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteProductResponseSchema,
 		request: (input) => ({
 			method: 'PUT',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/products/${encodeURIComponent(input.productId)}/change-status`,
@@ -1074,7 +1089,7 @@ export const Products = {
 				query: ResourceLookupQuery.optional(),
 			})
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteProductResponseSchema,
 		request: (input) => ({
 			method: 'DELETE',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/products/${encodeURIComponent(input.productId)}`,
@@ -1104,7 +1119,7 @@ export const ProductVariants = {
 				query: ResourceLookupQuery.optional(),
 			})
 			.strict(),
-		output: MailerLiteListResponseSchema,
+		output: MailerLiteProductVariantListResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/products/${encodeURIComponent(input.productId)}/variants`,
@@ -1121,7 +1136,7 @@ export const ProductVariants = {
 				body: z.array(ProductVariant).min(1),
 			})
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteProductVariantResponseSchema,
 		request: (input) => ({
 			method: 'POST',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/products/${encodeURIComponent(input.productId)}/variants`,
@@ -1140,7 +1155,7 @@ export const ProductVariants = {
 				body: ProductVariant,
 			})
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteProductVariantResponseSchema,
 		request: (input) => ({
 			method: 'PUT',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/products/${encodeURIComponent(input.productId)}/variants/${encodeURIComponent(input.variantId)}`,
@@ -1158,7 +1173,7 @@ export const ProductVariants = {
 				query: ResourceLookupQuery.optional(),
 			})
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteProductVariantResponseSchema,
 		request: (input) => ({
 			method: 'DELETE',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/products/${encodeURIComponent(input.productId)}/variants/${encodeURIComponent(input.variantId)}`,
@@ -1225,7 +1240,7 @@ export const EcommerceImports = {
 						message: 'with_resource_id is required when resource_id is sent.',
 					});
 			}),
-		output: MailerLiteListResponseSchema,
+		output: MailerLiteCategoryListResponseSchema,
 		request: (input) => ({
 			method: 'POST',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/categories/import`,
@@ -1278,7 +1293,7 @@ export const EcommerceImports = {
 						message: 'with_resource_id is required when resource_id is sent.',
 					});
 			}),
-		output: MailerLiteListResponseSchema,
+		output: MailerLiteProductListResponseSchema,
 		request: (input) => ({
 			method: 'POST',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/products/import`,
@@ -1294,7 +1309,7 @@ export const EcommerceImports = {
 				body: z.object({ orders: z.array(ImportOrder).min(1) }).strict(),
 			})
 			.strict(),
-		output: MailerLiteListResponseSchema,
+		output: MailerLiteOrderListResponseSchema,
 		request: (input) => ({
 			method: 'POST',
 			url: `/ecommerce/shops/${encodeURIComponent(input.shopId)}/orders/import`,

@@ -1,9 +1,11 @@
 import { z } from 'zod';
 import { defineMailerLiteOperation } from './operation';
 import {
-	MailerLiteEntityResponseSchema,
+	MailerLiteEmailBlockResponseSchema,
+	MailerLiteEmailVersionListResponseSchema,
+	MailerLiteEmailVersionResponseSchema,
 	MailerLiteIdSchema,
-	MailerLiteListResponseSchema,
+	MailerLiteJsonObjectSchema,
 } from './types';
 
 const Id = z.string().min(1);
@@ -217,11 +219,90 @@ const ValidationResult = z
 	})
 	.strict();
 
+const SimpleEmailResponseSchema = z
+	.object({
+		data: z
+			.object({
+				id: MailerLiteIdSchema,
+				type: z.literal('builder_inline_email'),
+				emailable_type: z.enum(['campaigns', 'automations']),
+				emailable_id: MailerLiteIdSchema,
+				settings: z
+					.object({
+						brand: z
+							.object({
+								mode: z.enum(['account', 'template', 'custom']).optional(),
+								font_family: z.string().optional(),
+								background_color: z.string().optional(),
+								text_color: z.string().optional(),
+								border_color: z.string().optional(),
+							})
+							.passthrough()
+							.optional(),
+						layout: z
+							.object({
+								width_mode: z.string().optional(),
+								alignment: z.string().optional(),
+							})
+							.passthrough()
+							.optional(),
+						typography: MailerLiteJsonObjectSchema.optional(),
+						button: MailerLiteJsonObjectSchema.optional(),
+						footer: z
+							.object({
+								show_preferences: z.boolean().optional(),
+								unsubscribe_text: z.string().optional(),
+								preferences_text: z.string().optional(),
+								company_name: z
+									.object({ editor_content: MailerLiteJsonObjectSchema })
+									.passthrough()
+									.optional(),
+								address: z
+									.object({ editor_content: MailerLiteJsonObjectSchema })
+									.passthrough()
+									.optional(),
+								info_text: z
+									.object({ editor_content: MailerLiteJsonObjectSchema })
+									.passthrough()
+									.optional(),
+								social_links: z
+									.array(
+										z
+											.object({
+												url: z.string(),
+												type: z.string(),
+												label: z.string(),
+												link_id: z.number().optional(),
+											})
+											.passthrough(),
+									)
+									.optional(),
+							})
+							.passthrough()
+							.optional(),
+					})
+					.passthrough(),
+				blocks: z.array(
+					z
+						.object({
+							id: MailerLiteIdSchema,
+							type: z.string(),
+							editor_content: MailerLiteJsonObjectSchema,
+							children: z.array(MailerLiteJsonObjectSchema).optional(),
+						})
+						.passthrough(),
+				),
+			})
+			.passthrough(),
+		etag: z.string(),
+	})
+	.passthrough();
+
 export const Emails = {
 	get: defineMailerLiteOperation({
 		operation: 'emails.get',
 		input: z.object({ emailId: Id }).strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: SimpleEmailResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: `/emails/${encodeURIComponent(input.emailId)}`,
@@ -244,7 +325,7 @@ export const Emails = {
 	getBlock: defineMailerLiteOperation({
 		operation: 'emails.getBlock',
 		input: z.object({ emailId: Id, blockId: Id }).strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteEmailBlockResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: `/emails/${encodeURIComponent(input.emailId)}/blocks/${encodeURIComponent(input.blockId)}`,
@@ -262,7 +343,7 @@ export const Emails = {
 				})
 				.strict(),
 		}).strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteEmailBlockResponseSchema,
 		request: (input) => ({
 			method: 'POST',
 			url: `/emails/${encodeURIComponent(input.emailId)}/blocks`,
@@ -301,7 +382,7 @@ export const Emails = {
 				.object({ editor_content: EditorContent, etag: z.string() })
 				.strict(),
 		}).strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteEmailBlockResponseSchema,
 		request: (input) => ({
 			method: 'PATCH',
 			url: `/emails/${encodeURIComponent(input.emailId)}/blocks/${encodeURIComponent(input.blockId)}`,
@@ -318,7 +399,7 @@ export const Emails = {
 			blockId: Id,
 			body: z.object({ etag: z.string(), placement: Placement }).strict(),
 		}).strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteEmailBlockResponseSchema,
 		request: (input) => ({
 			method: 'POST',
 			url: `/emails/${encodeURIComponent(input.emailId)}/blocks/${encodeURIComponent(input.blockId)}/move`,
@@ -422,7 +503,7 @@ export const Emails = {
 					.optional(),
 			})
 			.strict(),
-		output: MailerLiteListResponseSchema,
+		output: MailerLiteEmailVersionListResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: `/emails/${encodeURIComponent(input.emailId)}/versions`,
@@ -432,7 +513,7 @@ export const Emails = {
 	saveVersion: defineMailerLiteOperation({
 		operation: 'emails.saveVersion',
 		input: CommonMutation,
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteEmailVersionResponseSchema,
 		request: (input) => ({
 			method: 'POST',
 			url: `/emails/${encodeURIComponent(input.emailId)}/versions`,
@@ -445,7 +526,7 @@ export const Emails = {
 	restoreVersion: defineMailerLiteOperation({
 		operation: 'emails.restoreVersion',
 		input: CommonMutation.extend({ versionId: Id }).strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteEmailVersionResponseSchema,
 		request: (input) => ({
 			method: 'POST',
 			url: `/emails/${encodeURIComponent(input.emailId)}/versions/${encodeURIComponent(input.versionId)}/restore`,

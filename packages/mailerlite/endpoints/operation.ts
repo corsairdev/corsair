@@ -11,6 +11,9 @@ export type MailerLiteOperationContract = {
 	readonly outputSchema: z.ZodType;
 	// `unknown` is narrowed by the corresponding inputSchema before request building.
 	readonly requestBuilder: (input: unknown) => MailerLiteRequestOptions;
+	// `unknown` because tests invoke the heterogeneous registry; the endpoint
+	// parses it with this operation's input schema before making a request.
+	readonly invoke: (ctx: MailerLiteContext, input: unknown) => Promise<unknown>;
 	readonly riskLevel: 'read' | 'write' | 'destructive';
 	readonly description: string;
 };
@@ -69,6 +72,10 @@ export function defineMailerLiteOperation<
 		'unsubscribeReasons',
 		'validateBlock',
 		'validateSettings',
+		'subscribers',
+		'html',
+		'getBlock',
+		'versions',
 	]).has(action);
 	const isDestructive =
 		new Set([
@@ -101,10 +108,10 @@ export function defineMailerLiteOperation<
 	);
 	const riskLevel =
 		spec.riskLevel ??
-		(isRead
-			? 'read'
-			: isDestructive && spec.operation !== 'campaigns.cancel'
-				? 'destructive'
+		(isDestructive && spec.operation !== 'campaigns.cancel'
+			? 'destructive'
+			: isRead
+				? 'read'
 				: 'write');
 	const description =
 		spec.description ?? `MailerLite ${humanAction} ${humanResource}.`;
@@ -113,18 +120,7 @@ export function defineMailerLiteOperation<
 	// the operation schema validates it before the typed request callback runs.
 	const requestBuilder = (input: unknown) =>
 		spec.request(spec.input.parse(input));
-	mailerLiteOperationRegistry[spec.operation] = {
-		inputSchema: spec.input,
-		outputSchema: spec.output,
-		requestBuilder,
-		riskLevel,
-		description,
-	};
-	const endpoint: CorsairEndpoint<
-		MailerLiteContext,
-		z.infer<InputSchema>,
-		z.infer<OutputSchema>
-	> = async (ctx, input) => {
+	const invoke = async (ctx: MailerLiteContext, input: unknown) => {
 		const parsedInput = spec.input.parse(input);
 		const response = await makeMailerLiteRequest<z.infer<OutputSchema>>(
 			spec.request(parsedInput),
@@ -139,6 +135,19 @@ export function defineMailerLiteOperation<
 		);
 		return parsedOutput;
 	};
+	mailerLiteOperationRegistry[spec.operation] = {
+		inputSchema: spec.input,
+		outputSchema: spec.output,
+		requestBuilder,
+		invoke,
+		riskLevel,
+		description,
+	};
+	const endpoint: CorsairEndpoint<
+		MailerLiteContext,
+		z.infer<InputSchema>,
+		z.infer<OutputSchema>
+	> = invoke;
 	return Object.assign(endpoint, {
 		inputSchema: spec.input,
 		outputSchema: spec.output,

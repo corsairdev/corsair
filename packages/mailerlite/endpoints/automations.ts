@@ -1,25 +1,240 @@
 import { z } from 'zod';
 import { defineMailerLiteOperation } from './operation';
 import {
-	MailerLiteEntityResponseSchema,
+	MailerLiteAutomationListResponseSchema,
+	MailerLiteAutomationResponseSchema,
+	MailerLiteAutomationStepListResponseSchema,
+	MailerLiteAutomationStepResponseSchema,
+	MailerLiteAutomationTemplateListResponseSchema,
+	MailerLiteAutomationTemplateResponseSchema,
+	MailerLiteAutomationTriggerListResponseSchema,
+	MailerLiteAutomationTriggerResponseSchema,
+	MailerLiteEmailResponseSchema,
+	MailerLiteEmailSchema,
 	MailerLiteIdSchema,
+	MailerLiteJsonObjectSchema,
 	MailerLiteListResponseSchema,
 	MailerLiteNoContentSchema,
 } from './types';
 
 const Id = z.string().min(1);
 const Empty = z.object({}).strict();
-const EntityList = z
-	.object({ data: z.array(z.object({ id: MailerLiteIdSchema }).passthrough()) })
+const Metric = z
+	.object({ float: z.number().optional(), string: z.string() })
 	.passthrough();
-// Some report payloads have documented operation-specific keys, not resource IDs;
-// preserve those provider-defined report objects rather than inventing fields.
-const ReportObject = z
-	.object({ data: z.object({}).passthrough() })
+const EmailStatCounts = z
+	.object({
+		sent: z.number().optional(),
+		opens_count: z.number().optional(),
+		clicks_count: z.number().optional(),
+		total_opens_count: z.number().optional(),
+		total_clicks_count: z.number().optional(),
+		open_rate: Metric.optional(),
+		click_rate: Metric.optional(),
+		click_to_open_rate: Metric.optional(),
+		forwards_count: z.number().optional(),
+		forward_rate: Metric.optional(),
+		social_interactions_count: z.number().optional(),
+		social_interaction_rate: Metric.optional(),
+	})
 	.passthrough();
-const ReportRows = z
-	.object({ data: z.array(z.object({}).passthrough()) })
+const DeliverabilityCounts = z
+	.object({
+		sent: z.number().optional(),
+		delivered_count: z.number().optional(),
+		delivered_rate: Metric.optional(),
+		hard_bounces_count: z.number().optional(),
+		hard_bounce_rate: Metric.optional(),
+		soft_bounces_count: z.number().optional(),
+		soft_bounce_rate: Metric.optional(),
+		spam_count: z.number().optional(),
+		spam_rate: Metric.optional(),
+		unsubscribes_count: z.number().optional(),
+		unsubscribe_rate: Metric.optional(),
+	})
 	.passthrough();
+const AutomationEmailStats = z
+	.object({
+		data: z
+			.object({
+				engagement: EmailStatCounts.optional(),
+				deliverability: DeliverabilityCounts.optional(),
+			})
+			.passthrough(),
+	})
+	.passthrough();
+const EcommerceStats = z
+	.object({
+		data: z
+			.object({
+				ecommerce: z
+					.object({
+						orders_count: z.number().optional(),
+						revenue: z.number().optional(),
+						average_order_value: z.number().optional(),
+						conversion_rate: z.string().optional(),
+					})
+					.passthrough(),
+				best_performing_email: MailerLiteEmailSchema.nullable().optional(),
+			})
+			.passthrough(),
+	})
+	.passthrough();
+const TriggerRunCounts = z
+	.object({
+		data: z
+			.object({
+				triggers: z
+					.array(
+						z
+							.object({
+								id: MailerLiteIdSchema,
+								completed_runs: z.number(),
+								queued_runs: z.number(),
+							})
+							.passthrough(),
+					)
+					.optional(),
+				manual_runs: z
+					.object({
+						in_progress_runs: z.number(),
+						completed_runs: z.number(),
+					})
+					.nullable()
+					.optional(),
+			})
+			.passthrough(),
+	})
+	.passthrough();
+const TriggerRunCount = z
+	.object({
+		data: z
+			.object({
+				completed_runs: z.number().optional(),
+				queued_runs: z.number().optional(),
+			})
+			.passthrough(),
+	})
+	.passthrough();
+const AbPathStats = z
+	.object({
+		subscribers: z.number().optional(),
+		sent: z.number().optional(),
+		opens: z.number().optional(),
+		clicks: z.number().optional(),
+		open_rate: Metric.optional(),
+		click_rate: Metric.optional(),
+		click_to_open_rate: Metric.optional(),
+	})
+	.passthrough();
+const AbStepStats = z
+	.object({
+		step_id: MailerLiteIdSchema.optional(),
+		name: z.string().optional(),
+		ab_test_winner: z.string().nullable().optional(),
+		parent_id: MailerLiteIdSchema.nullable().optional(),
+		can_select_winner: z.boolean().optional(),
+		a_path_step_id: MailerLiteIdSchema.nullable().optional(),
+		b_path_step_id: MailerLiteIdSchema.nullable().optional(),
+		c_path_step_id: MailerLiteIdSchema.nullable().optional(),
+		split_percentages: z
+			.array(
+				z
+					.object({
+						label: z.string(),
+						path: z.enum(['a_path', 'b_path', 'c_path']),
+						value: z.number(),
+					})
+					.passthrough(),
+			)
+			.optional(),
+		stats: z.record(z.string(), AbPathStats).optional(),
+	})
+	.passthrough();
+const AbStepStatsList = z.object({ data: z.array(AbStepStats) }).passthrough();
+const AbStepStatsResponse = z.object({ data: AbStepStats }).passthrough();
+const AutomationSubscriberRow = z
+	.object({
+		id: MailerLiteIdSchema,
+		subscriber: z
+			.object({ id: MailerLiteIdSchema, email: z.string().email() })
+			.passthrough(),
+		date: z.string(),
+	})
+	.passthrough();
+const AutomationSubscriberList = MailerLiteListResponseSchema.extend({
+	data: z.array(AutomationSubscriberRow),
+});
+const AutomationOrderActivity = z
+	.object({
+		subscriber: z
+			.object({ id: MailerLiteIdSchema, email: z.string().email() })
+			.passthrough(),
+		total: z.number(),
+		updated_at: z.string(),
+		order: z.string(),
+		email: MailerLiteEmailSchema,
+	})
+	.passthrough();
+const AutomationOrderActivityList = MailerLiteListResponseSchema.extend({
+	data: z.array(AutomationOrderActivity),
+});
+const AutomationStepSummary = z
+	.object({
+		id: MailerLiteIdSchema,
+		type: z.string().optional(),
+		parent_id: MailerLiteIdSchema.nullable().optional(),
+		name: z.string().nullable().optional(),
+		subject: z.string().nullable().optional(),
+		from: z.string().nullable().optional(),
+		from_name: z.string().nullable().optional(),
+		email_id: MailerLiteIdSchema.nullable().optional(),
+		email: MailerLiteEmailSchema.nullable().optional(),
+		complete: z.boolean().optional(),
+		broken: z.boolean().optional(),
+		description: z.string().nullable().optional(),
+		scheduled_for: z.string().nullable().optional(),
+		yes_step_id: MailerLiteIdSchema.nullable().optional(),
+		no_step_id: MailerLiteIdSchema.nullable().optional(),
+		matching_type: z.string().optional(),
+		conditions: z.array(MailerLiteJsonObjectSchema).optional(),
+	})
+	.passthrough();
+const AutomationActivityList = MailerLiteListResponseSchema.extend({
+	data: z.array(
+		z
+			.object({
+				id: MailerLiteIdSchema,
+				status: z.string(),
+				date: z.string().optional(),
+				reason: z.string().nullable().optional(),
+				reason_description: z.string().optional(),
+				stepRuns: z
+					.array(
+						z
+							.object({
+								id: MailerLiteIdSchema,
+								step_id: MailerLiteIdSchema,
+								description: z.string(),
+								scheduled_for: z.string().nullable(),
+							})
+							.passthrough(),
+					)
+					.optional(),
+				nextStep: AutomationStepSummary.nullable().optional(),
+				currentStep: AutomationStepSummary.nullable().optional(),
+				subscriber: z
+					.object({
+						id: MailerLiteIdSchema,
+						email: z.string().email(),
+						name: z.string().nullable().optional(),
+					})
+					.passthrough()
+					.optional(),
+			})
+			.passthrough(),
+	),
+});
 const DateRange = z
 	.object({
 		start_date: z.string().optional(),
@@ -519,7 +734,7 @@ export const Automations = {
 					.optional(),
 			})
 			.strict(),
-		output: MailerLiteListResponseSchema,
+		output: MailerLiteAutomationListResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: '/automations',
@@ -537,7 +752,7 @@ export const Automations = {
 					.optional(),
 			})
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteAutomationResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: `/automations/${encodeURIComponent(input.automationId)}`,
@@ -570,7 +785,7 @@ export const Automations = {
 					.strict(),
 			})
 			.strict(),
-		output: MailerLiteListResponseSchema,
+		output: AutomationActivityList,
 		request: (input) => ({
 			method: 'GET',
 			url: `/automations/${encodeURIComponent(input.automationId)}/activity`,
@@ -582,7 +797,7 @@ export const Automations = {
 		input: z
 			.object({ body: z.object({ name: z.string().min(1).max(255) }).strict() })
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteAutomationResponseSchema,
 		request: (input) => ({
 			method: 'POST',
 			url: '/automations',
@@ -605,7 +820,7 @@ export const Automations = {
 					.strict(),
 			})
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteAutomationResponseSchema,
 		request: (input) => ({
 			method: 'PUT',
 			url: `/automations/${encodeURIComponent(input.automationId)}`,
@@ -615,7 +830,7 @@ export const Automations = {
 	copy: defineMailerLiteOperation({
 		operation: 'automations.copy',
 		input: z.object({ automationId: Id }).strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteAutomationResponseSchema,
 		request: (input) => ({
 			method: 'POST',
 			url: `/automations/${encodeURIComponent(input.automationId)}/copy`,
@@ -624,7 +839,7 @@ export const Automations = {
 	enable: defineMailerLiteOperation({
 		operation: 'automations.enable',
 		input: z.object({ automationId: Id }).strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteAutomationResponseSchema,
 		request: (input) => ({
 			method: 'POST',
 			url: `/automations/${encodeURIComponent(input.automationId)}/enable`,
@@ -633,7 +848,7 @@ export const Automations = {
 	disable: defineMailerLiteOperation({
 		operation: 'automations.disable',
 		input: z.object({ automationId: Id }).strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteAutomationResponseSchema,
 		request: (input) => ({
 			method: 'POST',
 			url: `/automations/${encodeURIComponent(input.automationId)}/disable`,
@@ -828,7 +1043,7 @@ export const AutomationSteps = {
 	list: defineMailerLiteOperation({
 		operation: 'automationSteps.list',
 		input: z.object({ automationId: Id }).strict(),
-		output: ReportRows,
+		output: MailerLiteAutomationStepListResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: `/automations/${encodeURIComponent(input.automationId)}/steps/index`,
@@ -837,7 +1052,7 @@ export const AutomationSteps = {
 	get: defineMailerLiteOperation({
 		operation: 'automationSteps.get',
 		input: z.object({ automationId: Id, stepId: Id }).strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteAutomationStepResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: `/automations/${encodeURIComponent(input.automationId)}/steps/${encodeURIComponent(input.stepId)}`,
@@ -846,7 +1061,7 @@ export const AutomationSteps = {
 	create: defineMailerLiteOperation({
 		operation: 'automationSteps.create',
 		input: z.object({ automationId: Id, body: StepCreateBody }).strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteAutomationStepResponseSchema,
 		request: (input) => ({
 			method: 'POST',
 			url: `/automations/${encodeURIComponent(input.automationId)}/steps`,
@@ -868,7 +1083,7 @@ export const AutomationSteps = {
 					.strict(),
 			})
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteAutomationStepResponseSchema,
 		request: (input) => ({
 			method: 'PUT',
 			url: `/automations/${encodeURIComponent(input.automationId)}/steps/${encodeURIComponent(input.stepId)}`,
@@ -925,7 +1140,7 @@ export const AutomationSteps = {
 					.optional(),
 			})
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteAutomationStepResponseSchema,
 		request: (input) => ({
 			method: 'POST',
 			url: `/automations/${encodeURIComponent(input.automationId)}/steps/${encodeURIComponent(input.stepId)}/copy`,
@@ -956,7 +1171,7 @@ export const AutomationSteps = {
 					),
 			})
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteAutomationStepResponseSchema,
 		request: (input) => ({
 			method: 'POST',
 			url: `/automations/${encodeURIComponent(input.automationId)}/steps/reorder`,
@@ -974,7 +1189,7 @@ export const AutomationSteps = {
 					.strict(),
 			})
 			.strict(),
-		output: ReportObject,
+		output: AbStepStatsResponse,
 		request: (input) => ({
 			method: 'PUT',
 			url: `/automations/${encodeURIComponent(input.automationId)}/steps/${encodeURIComponent(input.stepId)}/select-ab-test-winner`,
@@ -987,7 +1202,7 @@ export const AutomationTriggers = {
 	list: defineMailerLiteOperation({
 		operation: 'automationTriggers.list',
 		input: z.object({ automationId: Id }).strict(),
-		output: ReportRows,
+		output: MailerLiteAutomationTriggerListResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: `/automations/${encodeURIComponent(input.automationId)}/triggers`,
@@ -996,7 +1211,7 @@ export const AutomationTriggers = {
 	get: defineMailerLiteOperation({
 		operation: 'automationTriggers.get',
 		input: z.object({ automationId: Id, triggerId: Id }).strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteAutomationTriggerResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: `/automations/${encodeURIComponent(input.automationId)}/triggers/${encodeURIComponent(input.triggerId)}`,
@@ -1005,7 +1220,7 @@ export const AutomationTriggers = {
 	create: defineMailerLiteOperation({
 		operation: 'automationTriggers.create',
 		input: z.object({ automationId: Id, body: TriggerCreateBody }).strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteAutomationTriggerResponseSchema,
 		request: (input) => ({
 			method: 'POST',
 			url: `/automations/${encodeURIComponent(input.automationId)}/triggers`,
@@ -1021,7 +1236,7 @@ export const AutomationTriggers = {
 				body: z.object({ data: TriggerData.optional() }).strict(),
 			})
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteAutomationTriggerResponseSchema,
 		request: (input) => ({
 			method: 'PUT',
 			url: `/automations/${encodeURIComponent(input.automationId)}/triggers/${encodeURIComponent(input.triggerId)}`,
@@ -1064,7 +1279,7 @@ export const AutomationTemplates = {
 					.optional(),
 			})
 			.strict(),
-		output: MailerLiteListResponseSchema,
+		output: MailerLiteAutomationTemplateListResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: '/automation-templates',
@@ -1074,7 +1289,7 @@ export const AutomationTemplates = {
 	createFromTemplate: defineMailerLiteOperation({
 		operation: 'automationTemplates.createFromTemplate',
 		input: z.object({ templateId: Id }).strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteAutomationTemplateResponseSchema,
 		request: (input) => ({
 			method: 'POST',
 			url: `/automations/select-template/${encodeURIComponent(input.templateId)}`,
@@ -1143,7 +1358,7 @@ export const AutomationReports = {
 	triggerRunCounts: defineMailerLiteOperation({
 		operation: 'automationReports.triggerRunCounts',
 		input: z.object({ automationId: Id }).strict(),
-		output: ReportObject,
+		output: TriggerRunCounts,
 		request: (input) => ({
 			method: 'GET',
 			url: `/automations/${encodeURIComponent(input.automationId)}/triggers/run-counts`,
@@ -1152,7 +1367,7 @@ export const AutomationReports = {
 	triggerRunCount: defineMailerLiteOperation({
 		operation: 'automationReports.triggerRunCount',
 		input: z.object({ automationId: Id, triggerId: Id }).strict(),
-		output: ReportObject,
+		output: TriggerRunCount,
 		request: (input) => ({
 			method: 'GET',
 			url: `/automations/${encodeURIComponent(input.automationId)}/triggers/run-counts/${encodeURIComponent(input.triggerId)}`,
@@ -1161,7 +1376,7 @@ export const AutomationReports = {
 	abStepStats: defineMailerLiteOperation({
 		operation: 'automationReports.abStepStats',
 		input: z.object({ automationId: Id }).strict(),
-		output: ReportRows,
+		output: AbStepStatsList,
 		request: (input) => ({
 			method: 'GET',
 			url: `/automations/${encodeURIComponent(input.automationId)}/ab-steps-stats`,
@@ -1170,7 +1385,7 @@ export const AutomationReports = {
 	abStepStat: defineMailerLiteOperation({
 		operation: 'automationReports.abStepStat',
 		input: z.object({ automationId: Id, stepId: Id }).strict(),
-		output: ReportObject,
+		output: AbStepStatsResponse,
 		request: (input) => ({
 			method: 'GET',
 			url: `/automations/${encodeURIComponent(input.automationId)}/ab-steps-stats/${encodeURIComponent(input.stepId)}`,
@@ -1181,7 +1396,7 @@ export const AutomationReports = {
 		input: z
 			.object({ automationId: Id, stepId: Id, query: ActivitySubscriberQuery })
 			.strict(),
-		output: MailerLiteListResponseSchema,
+		output: AutomationSubscriberList,
 		request: (input) => ({
 			method: 'GET',
 			url: `/automations/${encodeURIComponent(input.automationId)}/activity/steps/${encodeURIComponent(input.stepId)}/subscribers`,
@@ -1202,7 +1417,7 @@ export const AutomationReports = {
 				query: ActivitySubscriberQuery,
 			})
 			.strict(),
-		output: MailerLiteListResponseSchema,
+		output: AutomationSubscriberList,
 		request: (input) => ({
 			method: 'GET',
 			url: `/automations/${encodeURIComponent(input.automationId)}/activity/triggers/${encodeURIComponent(input.triggerId)}/subscribers`,
@@ -1241,7 +1456,7 @@ export const AutomationReports = {
 					.strict(),
 			})
 			.strict(),
-		output: ReportRows,
+		output: AutomationOrderActivityList,
 		request: (input) => ({
 			method: 'GET',
 			url: `/automations/${encodeURIComponent(input.automationId)}/order-activity`,
@@ -1251,7 +1466,7 @@ export const AutomationReports = {
 	emailTotals: defineMailerLiteOperation({
 		operation: 'automationReports.emailTotals',
 		input: z.object({ automationId: Id, query: DateRange.optional() }).strict(),
-		output: ReportObject,
+		output: AutomationEmailStats,
 		request: (input) => ({
 			method: 'GET',
 			url: `/automations/${encodeURIComponent(input.automationId)}/monthly-totals/email`,
@@ -1261,7 +1476,7 @@ export const AutomationReports = {
 	ecommerceTotals: defineMailerLiteOperation({
 		operation: 'automationReports.ecommerceTotals',
 		input: z.object({ automationId: Id, query: DateRange.optional() }).strict(),
-		output: ReportObject,
+		output: EcommerceStats,
 		request: (input) => ({
 			method: 'GET',
 			url: `/automations/${encodeURIComponent(input.automationId)}/monthly-totals/ecommerce`,
@@ -1291,7 +1506,7 @@ export const AutomationEmails = {
 				body: z.object({ html: z.string() }).strict(),
 			})
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteEmailResponseSchema,
 		request: (input) => ({
 			method: 'PUT',
 			url: `/automations/${encodeURIComponent(input.automationId)}/emails/${encodeURIComponent(input.emailId)}/content`,
@@ -1303,7 +1518,7 @@ export const AutomationEmails = {
 		input: z
 			.object({ automationId: Id, emailId: Id, query: DateRange.optional() })
 			.strict(),
-		output: ReportObject,
+		output: AutomationEmailStats,
 		request: (input) => ({
 			method: 'GET',
 			url: `/automations/${encodeURIComponent(input.automationId)}/emails/${encodeURIComponent(input.emailId)}/report-stats`,
@@ -1315,7 +1530,7 @@ export const AutomationEmails = {
 		input: z
 			.object({ automationId: Id, emailId: Id, query: DateRange.optional() })
 			.strict(),
-		output: ReportObject,
+		output: EcommerceStats,
 		request: (input) => ({
 			method: 'GET',
 			url: `/automations/${encodeURIComponent(input.automationId)}/emails/${encodeURIComponent(input.emailId)}/ecommerce-overview-stats`,

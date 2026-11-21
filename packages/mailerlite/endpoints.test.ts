@@ -64,6 +64,7 @@ function makeSchemaSample(schema: z.ZodType): SampleValue | undefined {
 			'c_path',
 			'instant',
 			'simple',
+			'builder_inline_email',
 			'account',
 			'test',
 			'USD',
@@ -91,6 +92,7 @@ function makeSchemaSample(schema: z.ZodType): SampleValue | undefined {
 			'c_path',
 			'instant',
 			'simple',
+			'builder_inline_email',
 			'account',
 			'test',
 			'USD',
@@ -229,6 +231,377 @@ const operationInputOverrides: Record<string, SampleValue> = {
 	},
 };
 
+const operationResponseFixtures: Record<string, SampleValue> = {
+	'subscribers.get': {
+		data: {
+			id: 'subscriber-1',
+			email: 'reader@mailerlite.test',
+			status: 'active',
+			source: 'api',
+			sent: 3,
+			opens_count: 2,
+			clicks_count: 1,
+			open_rate: 66.67,
+			click_rate: 33.33,
+			ip_address: null,
+			subscribed_at: '2026-11-20 09:00:00',
+			unsubscribed_at: null,
+			created_at: '2026-11-20 09:00:00',
+			updated_at: '2026-11-20 09:00:00',
+			fields: { name: 'Reader', company: null },
+			groups: [
+				{
+					id: 'group-1',
+					name: 'Newsletter',
+					active_count: 20,
+					sent_count: 10,
+					opens_count: 6,
+					open_rate: { float: 0.6, string: '60%' },
+					click_rate: { float: 0.2, string: '20%' },
+				},
+			],
+			opted_in_at: null,
+			optin_ip: null,
+		},
+	},
+	'orders.get': {
+		data: {
+			id: 'order-1',
+			status: 'complete',
+			total: 123.4,
+			shop: {
+				id: 'shop-1',
+				name: 'Example shop',
+				url: 'https://shop.mailerlite.test',
+				currency: 'USD',
+				enabled: true,
+			},
+			customer: {
+				id: 'customer-1',
+				email: 'buyer@mailerlite.test',
+				accepts_marketing: false,
+				total_spent: 123.4,
+				orders_count: 1,
+				subscriber: {
+					id: 'subscriber-1',
+					email: 'buyer@mailerlite.test',
+					status: 'active',
+				},
+			},
+			cart: {
+				id: 'cart-1',
+				resource_id: null,
+				checkout_url: 'https://shop.mailerlite.test/checkout/1',
+				cart_total: 123.4,
+				items: [
+					{
+						id: 'item-1',
+						product: {
+							id: 'product-1',
+							name: 'Example product',
+							price: 123.4,
+							url: 'https://shop.mailerlite.test/product/1',
+							image: 'https://shop.mailerlite.test/product/1.png',
+							exclude_from_automations: false,
+							enabled: true,
+							categories: [{ id: 'category-1', name: 'Accessories' }],
+						},
+						variant: 'Blue',
+						quantity: 1,
+						price: 123.4,
+					},
+				],
+			},
+			attribution: { email_id: 'email-1', type: 'campaign' },
+			created_at: '2026-11-20 09:00:00',
+			updated_at: '2026-11-20 09:00:00',
+			completed_at: '2026-11-20 09:00:00',
+		},
+	},
+	'emails.get': {
+		data: {
+			id: 'email-1',
+			type: 'builder_inline_email',
+			emailable_type: 'campaigns',
+			emailable_id: 'campaign-1',
+			settings: {
+				brand: { mode: 'account', font_family: 'Inter, sans-serif' },
+				layout: { width_mode: 'default', alignment: 'center' },
+				typography: { heading: { font_weight: '700' } },
+				button: { background_color: '#2cb191' },
+				footer: {
+					show_preferences: false,
+					company_name: { editor_content: { content: [] } },
+					address: { editor_content: { content: [] } },
+					info_text: { editor_content: { content: [] } },
+					social_links: [
+						{
+							url: 'https://mailer.test',
+							type: 'website',
+							label: 'Website',
+							link_id: 1001,
+						},
+					],
+				},
+			},
+			blocks: [
+				{
+					id: 'block-1',
+					type: 'heading',
+					editor_content: {
+						attrs: { level: 1 },
+						content: [{ type: 'text', text: 'October update' }],
+					},
+				},
+			],
+		},
+		etag: '42',
+	},
+	'forms.get': {
+		data: {
+			id: 'form-1',
+			type: 'embedded',
+			slug: 'signup',
+			name: 'Newsletter form',
+			created_at: '2026-11-20 09:00:00',
+			conversions_count: 2,
+			opens_count: 0,
+			conversion_rate: { float: 0.02, string: '2%' },
+			settings: [],
+			last_registration_at: null,
+			active: true,
+			is_broken: false,
+			has_content: true,
+			can: { update: true },
+			used_in_automations: false,
+			warnings: [],
+			double_optin: null,
+			screenshot_url: null,
+		},
+	},
+	'automations.get': {
+		data: {
+			id: 'automation-1',
+			name: 'Welcome series',
+			enabled: false,
+			trigger_data: { track_ecommerce: false, valid: true },
+			triggers: [
+				{
+					id: 'trigger-1',
+					type: 'subscriber_joins_group',
+					group_ids: ['group-1'],
+					groups: [{ id: 'group-1', name: 'Newsletter' }],
+					broken: false,
+				},
+			],
+			steps: [
+				{
+					id: 'step-1',
+					type: 'email',
+					parent_id: null,
+					name: 'Welcome',
+					subject: 'Welcome aboard',
+					from: 'team@mailerlite.test',
+					email_id: 'email-1',
+					complete: true,
+				},
+			],
+			complete: true,
+			broken: false,
+			warnings: [],
+			emails_count: 1,
+			stats: {
+				completed_subscribers_count: 1,
+				subscribers_in_queue_count: 2,
+				sent: 5,
+				open_rate: { float: 0.5, string: '50%' },
+			},
+			created_at: '2026-11-20 09:00:00',
+		},
+	},
+	'automations.activity': {
+		data: [
+			{
+				id: 'run-1',
+				status: 'Completed',
+				date: '2026-11-20 09:00:00',
+				reason: null,
+				reason_description: '',
+				stepRuns: [
+					{
+						id: 'run-step-1',
+						step_id: 'step-1',
+						description: 'Wait for one day',
+						scheduled_for: null,
+					},
+				],
+				currentStep: { id: 'step-1', type: 'delay', complete: true },
+			},
+		],
+	},
+	'automationReports.triggerRunCounts': {
+		data: {
+			triggers: [{ id: 'trigger-1', completed_runs: 3, queued_runs: 1 }],
+			manual_runs: null,
+		},
+	},
+	'automationReports.abStepStats': {
+		data: [
+			{
+				step_id: 'step-ab-1',
+				name: 'Subject test',
+				ab_test_winner: null,
+				parent_id: 'step-parent-1',
+				can_select_winner: true,
+				a_path_step_id: 'step-a',
+				b_path_step_id: 'step-b',
+				c_path_step_id: null,
+				split_percentages: [
+					{ label: 'A', path: 'a_path', value: 50 },
+					{ label: 'B', path: 'b_path', value: 50 },
+				],
+				stats: {
+					a_path: {
+						subscribers: 10,
+						sent: 10,
+						opens: 5,
+						clicks: 2,
+						open_rate: { float: 0.5, string: '50%' },
+					},
+				},
+			},
+		],
+	},
+	'automationReports.abStepStat': {
+		data: {
+			step_id: 'step-ab-1',
+			name: 'Subject test',
+			ab_test_winner: 'a_path',
+			can_select_winner: false,
+			stats: {
+				a_path: { subscribers: 10, sent: 10, opens: 5, clicks: 2 },
+			},
+		},
+	},
+	'automationReports.stepSubscribers': {
+		data: [
+			{
+				id: 'run-1',
+				subscriber: { id: 'subscriber-1', email: 'reader@mailerlite.test' },
+				date: '2026-11-20 09:00:00',
+			},
+		],
+	},
+	'automationReports.triggerSubscribers': {
+		data: [
+			{
+				id: 'run-1',
+				subscriber: { id: 'subscriber-1', email: 'reader@mailerlite.test' },
+				date: '2026-11-20 09:00:00',
+			},
+		],
+	},
+	'automationReports.orders': {
+		data: [
+			{
+				subscriber: { id: 'subscriber-1', email: 'reader@mailerlite.test' },
+				total: 59.9,
+				updated_at: '2026-11-20 09:00:00',
+				order: 'One product',
+				email: {
+					id: 'email-1',
+					name: 'Welcome email',
+					subject: 'Welcome',
+					from: 'team@mailerlite.test',
+					stats: { sent: 5, opens_count: 2 },
+				},
+			},
+		],
+	},
+	'automationReports.emailTotals': {
+		data: {
+			engagement: {
+				sent: 10,
+				opens_count: 7,
+				clicks_count: 2,
+				open_rate: { string: '70%' },
+				click_rate: { string: '20%' },
+			},
+			deliverability: {
+				sent: 10,
+				delivered_count: 10,
+				delivered_rate: { string: '100%' },
+				spam_count: 0,
+				spam_rate: { string: '0%' },
+			},
+		},
+	},
+	'automationEmails.stats': {
+		data: {
+			engagement: {
+				sent: 10,
+				opens_count: 7,
+				clicks_count: 2,
+				open_rate: { string: '70%' },
+				click_rate: { string: '20%' },
+			},
+			deliverability: {
+				sent: 10,
+				delivered_count: 10,
+				delivered_rate: { string: '100%' },
+			},
+		},
+	},
+	'automationReports.ecommerceTotals': {
+		data: {
+			ecommerce: {
+				orders_count: 3,
+				revenue: 120,
+				average_order_value: 40,
+				conversion_rate: '10%',
+			},
+			best_performing_email: null,
+		},
+	},
+	'automationEmails.ecommerceStats': {
+		data: {
+			ecommerce: {
+				orders_count: 3,
+				revenue: 120,
+				average_order_value: 40,
+				conversion_rate: '10%',
+			},
+		},
+	},
+	'subscribers.activity': {
+		data: [
+			{
+				id: 'activity-1',
+				log_name: 'added_to_group',
+				subject_id: 'subscriber-1',
+				subject_type: 'subscribers',
+				properties: { group_id: 'group-1', group_name: 'Newsletter' },
+				created_at: '2026-11-20 09:00:00',
+			},
+		],
+	},
+	'campaigns.subscriberActivity': {
+		data: [
+			{
+				id: 'activity-1',
+				opens_count: 1,
+				clicks_count: 0,
+				subscriber: {
+					id: 'subscriber-1',
+					email: 'reader@mailerlite.test',
+					status: 'active',
+					fields: { name: 'Reader' },
+				},
+			},
+		],
+	},
+};
+
 function expectedMethod(operation: string): string {
 	const action = operation.split('.').at(-1);
 	if (operation.startsWith('automationReports.orders')) return 'GET';
@@ -327,8 +700,8 @@ beforeEach(() => {
 
 describe('MailerLite endpoint contracts', () => {
 	it.each(Object.entries(mailerLiteOperationRegistry))(
-		'%s validates input and builds its documented method and resource path',
-		(operation, contract) => {
+		'%s validates its input, full request, and response contract',
+		async (operation, contract) => {
 			const input =
 				operationInputOverrides[operation] ??
 				makeSchemaSample(contract.inputSchema);
@@ -339,8 +712,33 @@ describe('MailerLite endpoint contracts', () => {
 			expect(request.method).toBe(expectedMethod(operation));
 			expect(request.url.startsWith(expectedPathPrefix(operation))).toBe(true);
 			expect(request.url).not.toContain('undefined');
+			expect(request).toMatchSnapshot(operation);
+
+			const response =
+				operationResponseFixtures[operation] ??
+				makeSchemaSample(contract.outputSchema);
+			expect(contract.outputSchema.safeParse(response).success).toBe(true);
+			mockedRequest.mockResolvedValue(response);
+			await expect(contract.invoke(ctx, input)).resolves.toEqual(response);
+			expect(mockedRequest).toHaveBeenCalledWith(request, ctx.key);
 		},
 	);
+
+	it('keeps GET subscriber routes read-only and order imports destructive', () => {
+		for (const operation of [
+			'groups.subscribers',
+			'segments.subscribers',
+			'forms.subscribers',
+			'emails.html',
+			'emails.getBlock',
+			'emails.versions',
+		]) {
+			expect(mailerLiteOperationRegistry[operation]?.riskLevel).toBe('read');
+		}
+		expect(
+			mailerLiteOperationRegistry['ecommerceImports.orders']?.riskLevel,
+		).toBe('destructive');
+	});
 
 	it('fetches a subscriber by an encoded identifier and never logs subscriber PII', async () => {
 		const response = {

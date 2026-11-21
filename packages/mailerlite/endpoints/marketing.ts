@@ -1,15 +1,33 @@
 import { z } from 'zod';
 import { defineMailerLiteOperation } from './operation';
 import {
+	MailerLiteCampaignListResponseSchema,
+	MailerLiteCampaignResponseSchema,
 	MailerLiteCountResponseSchema,
-	MailerLiteEntityResponseSchema,
 	MailerLiteEntitySchema,
+	MailerLiteFieldListResponseSchema,
+	MailerLiteFieldResponseSchema,
 	MailerLiteFieldsSchema,
+	MailerLiteFileListResponseSchema,
+	MailerLiteFormListResponseSchema,
+	MailerLiteFormResponseSchema,
+	MailerLiteGroupListResponseSchema,
+	MailerLiteGroupResponseSchema,
 	MailerLiteIdSchema,
 	MailerLiteImportAcceptedSchema,
 	MailerLiteImportProgressResponseSchema,
+	MailerLiteJsonArraySchema,
+	MailerLiteJsonObjectSchema,
 	MailerLiteListResponseSchema,
 	MailerLiteNoContentSchema,
+	MailerLiteOrderListResponseSchema,
+	MailerLiteSegmentListResponseSchema,
+	MailerLiteSegmentResponseSchema,
+	MailerLiteSubscriberListResponseSchema,
+	MailerLiteSubscriberResponseSchema,
+	MailerLiteSubscriberSchema,
+	MailerLiteWebhookListResponseSchema,
+	MailerLiteWebhookResponseSchema,
 } from './types';
 
 const EmptyInput = z.object({}).strict();
@@ -87,6 +105,39 @@ const SubscriberUpdateBody = z
 	})
 	.strict();
 
+const SubscriberActivityListResponseSchema =
+	MailerLiteListResponseSchema.extend({
+		data: z.array(
+			z
+				.object({
+					id: MailerLiteIdSchema,
+					log_name: z.string(),
+					subject_id: MailerLiteIdSchema.optional(),
+					subject_type: z.string().optional(),
+					properties: z
+						.union([MailerLiteJsonObjectSchema, MailerLiteJsonArraySchema])
+						.optional(),
+					created_at: z.string().optional(),
+					updated_at: z.string().optional(),
+				})
+				.passthrough(),
+		),
+	});
+
+const CampaignSubscriberActivityListResponseSchema =
+	MailerLiteListResponseSchema.extend({
+		data: z.array(
+			z
+				.object({
+					id: MailerLiteIdSchema,
+					opens_count: z.number().optional(),
+					clicks_count: z.number().optional(),
+					subscriber: MailerLiteSubscriberSchema.optional(),
+				})
+				.passthrough(),
+		),
+	});
+
 const SubscriberFilterQuery = z
 	.object({
 		limit: z.literal(0),
@@ -100,7 +151,7 @@ export const Subscribers = {
 	list: defineMailerLiteOperation({
 		operation: 'subscribers.list',
 		input: SubscriberListInput,
-		output: MailerLiteListResponseSchema,
+		output: MailerLiteSubscriberListResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: '/subscribers',
@@ -111,7 +162,7 @@ export const Subscribers = {
 		operation: 'subscribers.create',
 		riskLevel: 'destructive',
 		input: z.object({ body: SubscriberCreateBody }).strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteSubscriberResponseSchema,
 		request: (input) => ({
 			method: 'POST',
 			url: '/subscribers',
@@ -122,7 +173,7 @@ export const Subscribers = {
 		operation: 'subscribers.update',
 		riskLevel: 'destructive',
 		input: z.object({ id: Identifier, body: SubscriberUpdateBody }).strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteSubscriberResponseSchema,
 		request: (input) => ({
 			method: 'PUT',
 			url: `/subscribers/${encodeURIComponent(input.id)}`,
@@ -132,7 +183,7 @@ export const Subscribers = {
 	get: defineMailerLiteOperation({
 		operation: 'subscribers.get',
 		input: z.object({ identifier: Identifier }).strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteSubscriberResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: `/subscribers/${encodeURIComponent(input.identifier)}`,
@@ -163,7 +214,7 @@ export const Subscribers = {
 					.optional(),
 			})
 			.strict(),
-		output: MailerLiteListResponseSchema,
+		output: SubscriberActivityListResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: `/subscribers/${encodeURIComponent(input.id)}/activity-log`,
@@ -182,7 +233,7 @@ export const Subscribers = {
 	forget: defineMailerLiteOperation({
 		operation: 'subscribers.forget',
 		input: z.object({ id: Identifier }).strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteSubscriberResponseSchema,
 		request: (input) => ({
 			method: 'POST',
 			url: `/subscribers/${encodeURIComponent(input.id)}/forget`,
@@ -241,7 +292,7 @@ export const Subscribers = {
 					.strict(),
 			})
 			.strict(),
-		output: MailerLiteListResponseSchema,
+		output: MailerLiteOrderListResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: `/subscribers/${encodeURIComponent(input.id)}/reports/ecommerce/orders`,
@@ -252,7 +303,7 @@ export const Subscribers = {
 		operation: 'subscribers.addToGroup',
 		riskLevel: 'destructive',
 		input: z.object({ subscriberId: Identifier, groupId: Identifier }).strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteSubscriberResponseSchema,
 		request: (input) => ({
 			method: 'POST',
 			url: `/subscribers/${encodeURIComponent(input.subscriberId)}/groups/${encodeURIComponent(input.groupId)}`,
@@ -300,7 +351,7 @@ export const Groups = {
 					.optional(),
 			})
 			.strict(),
-		output: MailerLiteListResponseSchema,
+		output: MailerLiteGroupListResponseSchema,
 		request: (input) => ({ method: 'GET', url: '/groups', query: input.query }),
 	}),
 	create: defineMailerLiteOperation({
@@ -308,7 +359,7 @@ export const Groups = {
 		input: z
 			.object({ body: z.object({ name: z.string().min(1).max(255) }).strict() })
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteGroupResponseSchema,
 		request: (input) => ({ method: 'POST', url: '/groups', body: input.body }),
 	}),
 	update: defineMailerLiteOperation({
@@ -319,7 +370,7 @@ export const Groups = {
 				body: z.object({ name: z.string().min(1).max(255) }).strict(),
 			})
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteGroupResponseSchema,
 		request: (input) => ({
 			method: 'PUT',
 			url: `/groups/${encodeURIComponent(input.groupId)}`,
@@ -351,7 +402,7 @@ export const Groups = {
 					.optional(),
 			})
 			.strict(),
-		output: MailerLiteListResponseSchema,
+		output: MailerLiteSubscriberListResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: `/groups/${encodeURIComponent(input.groupId)}/subscribers`,
@@ -422,7 +473,7 @@ export const Fields = {
 					.optional(),
 			})
 			.strict(),
-		output: MailerLiteListResponseSchema,
+		output: MailerLiteFieldListResponseSchema,
 		request: (input) => ({ method: 'GET', url: '/fields', query: input.query }),
 	}),
 	create: defineMailerLiteOperation({
@@ -437,7 +488,7 @@ export const Fields = {
 					.strict(),
 			})
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteFieldResponseSchema,
 		request: (input) => ({ method: 'POST', url: '/fields', body: input.body }),
 	}),
 	update: defineMailerLiteOperation({
@@ -448,7 +499,7 @@ export const Fields = {
 				body: z.object({ name: z.string().min(1).max(255) }).strict(),
 			})
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteFieldResponseSchema,
 		request: (input) => ({
 			method: 'PUT',
 			url: `/fields/${encodeURIComponent(input.fieldId)}`,
@@ -496,7 +547,7 @@ export const Segments = {
 					.optional(),
 			})
 			.strict(),
-		output: MailerLiteListResponseSchema,
+		output: MailerLiteSegmentListResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: '/segments',
@@ -513,7 +564,7 @@ export const Segments = {
 					.strict(),
 			})
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteSegmentResponseSchema,
 		request: (input) => ({
 			method: 'PUT',
 			url: `/segments/${encodeURIComponent(input.segmentId)}`,
@@ -544,7 +595,7 @@ export const Segments = {
 					.optional(),
 			})
 			.strict(),
-		output: MailerLiteListResponseSchema,
+		output: MailerLiteSubscriberListResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: `/segments/${encodeURIComponent(input.segmentId)}/subscribers`,
@@ -852,7 +903,7 @@ export const Campaigns = {
 					.optional(),
 			})
 			.strict(),
-		output: MailerLiteListResponseSchema,
+		output: MailerLiteCampaignListResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: '/campaigns',
@@ -862,7 +913,7 @@ export const Campaigns = {
 	get: defineMailerLiteOperation({
 		operation: 'campaigns.get',
 		input: z.object({ campaignId: Identifier }).strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteCampaignResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: `/campaigns/${encodeURIComponent(input.campaignId)}`,
@@ -871,7 +922,7 @@ export const Campaigns = {
 	create: defineMailerLiteOperation({
 		operation: 'campaigns.create',
 		input: z.object({ body: CampaignCreateBody }).strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteCampaignResponseSchema,
 		request: (input) => ({
 			method: 'POST',
 			url: '/campaigns',
@@ -883,7 +934,7 @@ export const Campaigns = {
 		input: z
 			.object({ campaignId: Identifier, body: CampaignUpdateBody })
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteCampaignResponseSchema,
 		request: (input) => ({
 			method: 'PUT',
 			url: `/campaigns/${encodeURIComponent(input.campaignId)}`,
@@ -935,7 +986,7 @@ export const Campaigns = {
 					.strict(),
 			})
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteCampaignResponseSchema,
 		request: (input) => ({
 			method: 'POST',
 			url: `/campaigns/${encodeURIComponent(input.campaignId)}/schedule`,
@@ -945,7 +996,7 @@ export const Campaigns = {
 	cancel: defineMailerLiteOperation({
 		operation: 'campaigns.cancel',
 		input: z.object({ campaignId: Identifier }).strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteCampaignResponseSchema,
 		request: (input) => ({
 			method: 'POST',
 			url: `/campaigns/${encodeURIComponent(input.campaignId)}/cancel`,
@@ -1059,7 +1110,7 @@ export const Campaigns = {
 					.optional(),
 			})
 			.strict(),
-		output: MailerLiteListResponseSchema,
+		output: CampaignSubscriberActivityListResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: `/campaigns/${encodeURIComponent(input.campaignId)}/reports/subscriber-activity`,
@@ -1102,7 +1153,7 @@ export const Forms = {
 					.optional(),
 			})
 			.strict(),
-		output: MailerLiteListResponseSchema,
+		output: MailerLiteFormListResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: `/forms/${input.type}`,
@@ -1112,7 +1163,7 @@ export const Forms = {
 	get: defineMailerLiteOperation({
 		operation: 'forms.get',
 		input: z.object({ formId: Identifier }).strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteFormResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: `/forms/${encodeURIComponent(input.formId)}`,
@@ -1130,7 +1181,7 @@ export const Forms = {
 					.strict(),
 			})
 			.strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteFormResponseSchema,
 		request: (input) => ({
 			method: 'PUT',
 			url: `/forms/${encodeURIComponent(input.formId)}`,
@@ -1161,7 +1212,7 @@ export const Forms = {
 					.optional(),
 			})
 			.strict(),
-		output: MailerLiteListResponseSchema,
+		output: MailerLiteSubscriberListResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: `/forms/${encodeURIComponent(input.formId)}/subscribers`,
@@ -1254,7 +1305,7 @@ export const Files = {
 					.optional(),
 			})
 			.strict(),
-		output: MailerLiteListResponseSchema,
+		output: MailerLiteFileListResponseSchema,
 		request: (input) => ({ method: 'GET', url: '/files', query: input.query }),
 	}),
 };
@@ -1343,13 +1394,13 @@ export const Webhooks = {
 	list: defineMailerLiteOperation({
 		operation: 'webhooks.list',
 		input: EmptyInput,
-		output: MailerLiteListResponseSchema,
+		output: MailerLiteWebhookListResponseSchema,
 		request: () => ({ method: 'GET', url: '/webhooks' }),
 	}),
 	get: defineMailerLiteOperation({
 		operation: 'webhooks.get',
 		input: z.object({ webhookId: Identifier }).strict(),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteWebhookResponseSchema,
 		request: (input) => ({
 			method: 'GET',
 			url: `/webhooks/${encodeURIComponent(input.webhookId)}`,
@@ -1372,7 +1423,7 @@ export const Webhooks = {
 					});
 				}
 			}),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteWebhookResponseSchema,
 		request: (input) => ({
 			method: 'POST',
 			url: '/webhooks',
@@ -1397,7 +1448,7 @@ export const Webhooks = {
 					});
 				}
 			}),
-		output: MailerLiteEntityResponseSchema,
+		output: MailerLiteWebhookResponseSchema,
 		request: (input) => ({
 			method: 'PUT',
 			url: `/webhooks/${encodeURIComponent(input.webhookId)}`,

@@ -56,6 +56,89 @@ await corsair.mailerlite.api.automationEmails.ecommerceStats({ automationId: '1'
 
 ```ts
 {
+  ecommerce: {
+    orders_count?: number,
+    revenue?: number,
+    average_order_value?: number,
+    conversion_rate?: string
+  },
+  best_performing_email?: {
+    id: string | number,
+    name?: string | null,
+    subject?: string | null,
+    from_name?: string | null,
+    from?: string | null,
+    reply_to?: string | null,
+    status?: string | null,
+    editor?: string | null,
+    plain_text?: string | null,
+    screenshot_url?: string | null,
+    preview_url?: string | null,
+    is_designed?: boolean | null,
+    language_id?: string | number | null,
+    is_winner?: boolean | null,
+    stats?: {
+      sent?: number | null,
+      opens_count?: number | null,
+      unique_opens_count?: number | null,
+      open_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      clicks_count?: number | null,
+      unique_clicks_count?: number | null,
+      click_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      unsubscribes_count?: number | null,
+      unsubscribe_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      spam_count?: number | null,
+      spam_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      hard_bounces_count?: number | null,
+      hard_bounce_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      soft_bounces_count?: number | null,
+      soft_bounce_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      forwards_count?: number | null,
+      forward_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      deliveries_count?: number | null,
+      delivery_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      social_interactions_count?: number | null,
+      social_interaction_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      click_to_open_rate?: number | {
+        float?: number,
+        string: string
+      } | null
+    } | null,
+    send_after?: string | null,
+    track_opens?: boolean | null,
+    uses_survey?: boolean | null,
+    uses_quiz?: boolean | null,
+    preheader?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null
 }
 ```
 </Accordion>
@@ -155,7 +238,81 @@ await corsair.mailerlite.api.automationEmails.setContent({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  subject?: string | null,
+  from_name?: string | null,
+  from?: string | null,
+  reply_to?: string | null,
+  status?: string | null,
+  editor?: string | null,
+  plain_text?: string | null,
+  screenshot_url?: string | null,
+  preview_url?: string | null,
+  is_designed?: boolean | null,
+  language_id?: string | number | null,
+  is_winner?: boolean | null,
+  stats?: {
+    sent?: number | null,
+    opens_count?: number | null,
+    unique_opens_count?: number | null,
+    open_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    clicks_count?: number | null,
+    unique_clicks_count?: number | null,
+    click_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    unsubscribes_count?: number | null,
+    unsubscribe_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    spam_count?: number | null,
+    spam_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    hard_bounces_count?: number | null,
+    hard_bounce_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    soft_bounces_count?: number | null,
+    soft_bounce_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    forwards_count?: number | null,
+    forward_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    deliveries_count?: number | null,
+    delivery_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    social_interactions_count?: number | null,
+    social_interaction_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    click_to_open_rate?: number | {
+      float?: number,
+      string: string
+    } | null
+  } | null,
+  send_after?: string | null,
+  track_opens?: boolean | null,
+  uses_survey?: boolean | null,
+  uses_quiz?: boolean | null,
+  preheader?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }
 ```
 </Accordion>
@@ -211,6 +368,63 @@ await corsair.mailerlite.api.automationEmails.stats({ automationId: '1', emailId
 
 ```ts
 {
+  engagement?: {
+    sent?: number,
+    opens_count?: number,
+    clicks_count?: number,
+    total_opens_count?: number,
+    total_clicks_count?: number,
+    open_rate?: {
+      float?: number,
+      string: string
+    },
+    click_rate?: {
+      float?: number,
+      string: string
+    },
+    click_to_open_rate?: {
+      float?: number,
+      string: string
+    },
+    forwards_count?: number,
+    forward_rate?: {
+      float?: number,
+      string: string
+    },
+    social_interactions_count?: number,
+    social_interaction_rate?: {
+      float?: number,
+      string: string
+    }
+  },
+  deliverability?: {
+    sent?: number,
+    delivered_count?: number,
+    delivered_rate?: {
+      float?: number,
+      string: string
+    },
+    hard_bounces_count?: number,
+    hard_bounce_rate?: {
+      float?: number,
+      string: string
+    },
+    soft_bounces_count?: number,
+    soft_bounce_rate?: {
+      float?: number,
+      string: string
+    },
+    spam_count?: number,
+    spam_rate?: {
+      float?: number,
+      string: string
+    },
+    unsubscribes_count?: number,
+    unsubscribe_rate?: {
+      float?: number,
+      string: string
+    }
+  }
 }
 ```
 </Accordion>
@@ -298,6 +512,37 @@ await corsair.mailerlite.api.automationReports.abStepStat({ automationId: '1', s
 
 ```ts
 {
+  step_id?: string | number,
+  name?: string,
+  ab_test_winner?: string | null,
+  parent_id?: string | number | null,
+  can_select_winner?: boolean,
+  a_path_step_id?: string | number | null,
+  b_path_step_id?: string | number | null,
+  c_path_step_id?: string | number | null,
+  split_percentages?: {
+    label: string,
+    path: a_path | b_path | c_path,
+    value: number
+  }[],
+  stats?: Record<string, {
+    subscribers?: number,
+    sent?: number,
+    opens?: number,
+    clicks?: number,
+    open_rate?: {
+      float?: number,
+      string: string
+    },
+    click_rate?: {
+      float?: number,
+      string: string
+    },
+    click_to_open_rate?: {
+      float?: number,
+      string: string
+    }
+  }>
 }
 ```
 </Accordion>
@@ -338,6 +583,37 @@ await corsair.mailerlite.api.automationReports.abStepStats({ automationId: '1' }
 
 ```ts
 {
+  step_id?: string | number,
+  name?: string,
+  ab_test_winner?: string | null,
+  parent_id?: string | number | null,
+  can_select_winner?: boolean,
+  a_path_step_id?: string | number | null,
+  b_path_step_id?: string | number | null,
+  c_path_step_id?: string | number | null,
+  split_percentages?: {
+    label: string,
+    path: a_path | b_path | c_path,
+    value: number
+  }[],
+  stats?: Record<string, {
+    subscribers?: number,
+    sent?: number,
+    opens?: number,
+    clicks?: number,
+    open_rate?: {
+      float?: number,
+      string: string
+    },
+    click_rate?: {
+      float?: number,
+      string: string
+    },
+    click_to_open_rate?: {
+      float?: number,
+      string: string
+    }
+  }>
 }[]
 ```
 </Accordion>
@@ -392,6 +668,89 @@ await corsair.mailerlite.api.automationReports.ecommerceTotals({ automationId: '
 
 ```ts
 {
+  ecommerce: {
+    orders_count?: number,
+    revenue?: number,
+    average_order_value?: number,
+    conversion_rate?: string
+  },
+  best_performing_email?: {
+    id: string | number,
+    name?: string | null,
+    subject?: string | null,
+    from_name?: string | null,
+    from?: string | null,
+    reply_to?: string | null,
+    status?: string | null,
+    editor?: string | null,
+    plain_text?: string | null,
+    screenshot_url?: string | null,
+    preview_url?: string | null,
+    is_designed?: boolean | null,
+    language_id?: string | number | null,
+    is_winner?: boolean | null,
+    stats?: {
+      sent?: number | null,
+      opens_count?: number | null,
+      unique_opens_count?: number | null,
+      open_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      clicks_count?: number | null,
+      unique_clicks_count?: number | null,
+      click_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      unsubscribes_count?: number | null,
+      unsubscribe_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      spam_count?: number | null,
+      spam_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      hard_bounces_count?: number | null,
+      hard_bounce_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      soft_bounces_count?: number | null,
+      soft_bounce_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      forwards_count?: number | null,
+      forward_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      deliveries_count?: number | null,
+      delivery_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      social_interactions_count?: number | null,
+      social_interaction_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      click_to_open_rate?: number | {
+        float?: number,
+        string: string
+      } | null
+    } | null,
+    send_after?: string | null,
+    track_opens?: boolean | null,
+    uses_survey?: boolean | null,
+    uses_quiz?: boolean | null,
+    preheader?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null
 }
 ```
 </Accordion>
@@ -446,6 +805,63 @@ await corsair.mailerlite.api.automationReports.emailTotals({ automationId: '1' }
 
 ```ts
 {
+  engagement?: {
+    sent?: number,
+    opens_count?: number,
+    clicks_count?: number,
+    total_opens_count?: number,
+    total_clicks_count?: number,
+    open_rate?: {
+      float?: number,
+      string: string
+    },
+    click_rate?: {
+      float?: number,
+      string: string
+    },
+    click_to_open_rate?: {
+      float?: number,
+      string: string
+    },
+    forwards_count?: number,
+    forward_rate?: {
+      float?: number,
+      string: string
+    },
+    social_interactions_count?: number,
+    social_interaction_rate?: {
+      float?: number,
+      string: string
+    }
+  },
+  deliverability?: {
+    sent?: number,
+    delivered_count?: number,
+    delivered_rate?: {
+      float?: number,
+      string: string
+    },
+    hard_bounces_count?: number,
+    hard_bounce_rate?: {
+      float?: number,
+      string: string
+    },
+    soft_bounces_count?: number,
+    soft_bounce_rate?: {
+      float?: number,
+      string: string
+    },
+    spam_count?: number,
+    spam_rate?: {
+      float?: number,
+      string: string
+    },
+    unsubscribes_count?: number,
+    unsubscribe_rate?: {
+      float?: number,
+      string: string
+    }
+  }
 }
 ```
 </Accordion>
@@ -500,13 +916,125 @@ await corsair.mailerlite.api.automationReports.orders({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
+  subscriber: {
+    id: string | number,
+    email: string
+  },
+  total: number,
+  updated_at: string,
+  order: string,
+  email: {
+    id: string | number,
+    name?: string | null,
+    subject?: string | null,
+    from_name?: string | null,
+    from?: string | null,
+    reply_to?: string | null,
+    status?: string | null,
+    editor?: string | null,
+    plain_text?: string | null,
+    screenshot_url?: string | null,
+    preview_url?: string | null,
+    is_designed?: boolean | null,
+    language_id?: string | number | null,
+    is_winner?: boolean | null,
+    stats?: {
+      sent?: number | null,
+      opens_count?: number | null,
+      unique_opens_count?: number | null,
+      open_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      clicks_count?: number | null,
+      unique_clicks_count?: number | null,
+      click_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      unsubscribes_count?: number | null,
+      unsubscribe_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      spam_count?: number | null,
+      spam_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      hard_bounces_count?: number | null,
+      hard_bounce_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      soft_bounces_count?: number | null,
+      soft_bounce_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      forwards_count?: number | null,
+      forward_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      deliveries_count?: number | null,
+      delivery_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      social_interactions_count?: number | null,
+      social_interaction_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      click_to_open_rate?: number | {
+        float?: number,
+        string: string
+      } | null
+    } | null,
+    send_after?: string | null,
+    track_opens?: boolean | null,
+    uses_survey?: boolean | null,
+    uses_quiz?: boolean | null,
+    preheader?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
 }[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  last_page?: number,
+  per_page?: number,
+  total?: number,
+  next_cursor?: string | null,
+  prev_cursor?: string | null
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -669,7 +1197,12 @@ await corsair.mailerlite.api.automationReports.stepSubscribers({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  subscriber: {
+    id: string | number,
+    email: string
+  },
+  date: string
 }[]
 ```
 </Accordion>
@@ -737,6 +1270,8 @@ await corsair.mailerlite.api.automationReports.triggerRunCount({ automationId: '
 
 ```ts
 {
+  completed_runs?: number,
+  queued_runs?: number
 }
 ```
 </Accordion>
@@ -777,6 +1312,15 @@ await corsair.mailerlite.api.automationReports.triggerRunCounts({ automationId: 
 
 ```ts
 {
+  triggers?: {
+    id: string | number,
+    completed_runs: number,
+    queued_runs: number
+  }[],
+  manual_runs?: {
+    in_progress_runs: number,
+    completed_runs: number
+  } | null
 }
 ```
 </Accordion>
@@ -851,7 +1395,12 @@ await corsair.mailerlite.api.automationReports.triggerSubscribers({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  subscriber: {
+    id: string | number,
+    email: string
+  },
+  date: string
 }[]
 ```
 </Accordion>
@@ -958,7 +1507,212 @@ await corsair.mailerlite.api.automations.activity({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  status: string,
+  date?: string,
+  reason?: string | null,
+  reason_description?: string,
+  stepRuns?: {
+    id: string | number,
+    step_id: string | number,
+    description: string,
+    scheduled_for: string | null
+  }[],
+  nextStep?: {
+    id: string | number,
+    type?: string,
+    parent_id?: string | number | null,
+    name?: string | null,
+    subject?: string | null,
+    from?: string | null,
+    from_name?: string | null,
+    email_id?: string | number | null,
+    email?: {
+      id: string | number,
+      name?: string | null,
+      subject?: string | null,
+      from_name?: string | null,
+      from?: string | null,
+      reply_to?: string | null,
+      status?: string | null,
+      editor?: string | null,
+      plain_text?: string | null,
+      screenshot_url?: string | null,
+      preview_url?: string | null,
+      is_designed?: boolean | null,
+      language_id?: string | number | null,
+      is_winner?: boolean | null,
+      stats?: {
+        sent?: number | null,
+        opens_count?: number | null,
+        unique_opens_count?: number | null,
+        open_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        clicks_count?: number | null,
+        unique_clicks_count?: number | null,
+        click_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        unsubscribes_count?: number | null,
+        unsubscribe_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        spam_count?: number | null,
+        spam_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        hard_bounces_count?: number | null,
+        hard_bounce_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        soft_bounces_count?: number | null,
+        soft_bounce_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        forwards_count?: number | null,
+        forward_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        deliveries_count?: number | null,
+        delivery_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        social_interactions_count?: number | null,
+        social_interaction_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        click_to_open_rate?: number | {
+          float?: number,
+          string: string
+        } | null
+      } | null,
+      send_after?: string | null,
+      track_opens?: boolean | null,
+      uses_survey?: boolean | null,
+      uses_quiz?: boolean | null,
+      preheader?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null
+    } | null,
+    complete?: boolean,
+    broken?: boolean,
+    description?: string | null,
+    scheduled_for?: string | null,
+    yes_step_id?: string | number | null,
+    no_step_id?: string | number | null,
+    matching_type?: string,
+    conditions?: Record<string, JsonValue>[]
+  } | null,
+  currentStep?: {
+    id: string | number,
+    type?: string,
+    parent_id?: string | number | null,
+    name?: string | null,
+    subject?: string | null,
+    from?: string | null,
+    from_name?: string | null,
+    email_id?: string | number | null,
+    email?: {
+      id: string | number,
+      name?: string | null,
+      subject?: string | null,
+      from_name?: string | null,
+      from?: string | null,
+      reply_to?: string | null,
+      status?: string | null,
+      editor?: string | null,
+      plain_text?: string | null,
+      screenshot_url?: string | null,
+      preview_url?: string | null,
+      is_designed?: boolean | null,
+      language_id?: string | number | null,
+      is_winner?: boolean | null,
+      stats?: {
+        sent?: number | null,
+        opens_count?: number | null,
+        unique_opens_count?: number | null,
+        open_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        clicks_count?: number | null,
+        unique_clicks_count?: number | null,
+        click_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        unsubscribes_count?: number | null,
+        unsubscribe_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        spam_count?: number | null,
+        spam_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        hard_bounces_count?: number | null,
+        hard_bounce_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        soft_bounces_count?: number | null,
+        soft_bounce_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        forwards_count?: number | null,
+        forward_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        deliveries_count?: number | null,
+        delivery_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        social_interactions_count?: number | null,
+        social_interaction_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        click_to_open_rate?: number | {
+          float?: number,
+          string: string
+        } | null
+      } | null,
+      send_after?: string | null,
+      track_opens?: boolean | null,
+      uses_survey?: boolean | null,
+      uses_quiz?: boolean | null,
+      preheader?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null
+    } | null,
+    complete?: boolean,
+    broken?: boolean,
+    description?: string | null,
+    scheduled_for?: string | null,
+    yes_step_id?: string | number | null,
+    no_step_id?: string | number | null,
+    matching_type?: string,
+    conditions?: Record<string, JsonValue>[]
+  } | null,
+  subscriber?: {
+    id: string | number,
+    email: string,
+    name?: string | null
+  }
 }[]
 ```
 </Accordion>
@@ -1177,7 +1931,178 @@ await corsair.mailerlite.api.automations.copy({ automationId: '1' });
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  enabled?: boolean | null,
+  status?: string | null,
+  complete?: boolean | null,
+  broken?: boolean | null,
+  warnings?: string[] | null,
+  emails_count?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  trigger_data?: Record<string, JsonValue> | null,
+  steps?: {
+    id: string | number,
+    type?: string | null,
+    parent_id?: string | number | null,
+    name?: string | null,
+    subject?: string | null,
+    from?: string | null,
+    from_name?: string | null,
+    reply_to?: string | null,
+    email_id?: string | number | null,
+    email?: {
+      id: string | number,
+      name?: string | null,
+      subject?: string | null,
+      from_name?: string | null,
+      from?: string | null,
+      reply_to?: string | null,
+      status?: string | null,
+      editor?: string | null,
+      plain_text?: string | null,
+      screenshot_url?: string | null,
+      preview_url?: string | null,
+      is_designed?: boolean | null,
+      language_id?: string | number | null,
+      is_winner?: boolean | null,
+      stats?: {
+        sent?: number | null,
+        opens_count?: number | null,
+        unique_opens_count?: number | null,
+        open_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        clicks_count?: number | null,
+        unique_clicks_count?: number | null,
+        click_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        unsubscribes_count?: number | null,
+        unsubscribe_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        spam_count?: number | null,
+        spam_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        hard_bounces_count?: number | null,
+        hard_bounce_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        soft_bounces_count?: number | null,
+        soft_bounce_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        forwards_count?: number | null,
+        forward_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        deliveries_count?: number | null,
+        delivery_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        social_interactions_count?: number | null,
+        social_interaction_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        click_to_open_rate?: number | {
+          float?: number,
+          string: string
+        } | null
+      } | null,
+      send_after?: string | null,
+      track_opens?: boolean | null,
+      uses_survey?: boolean | null,
+      uses_quiz?: boolean | null,
+      preheader?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null
+    } | null,
+    unit?: string | null,
+    value?: string | number | null,
+    complete?: boolean | null,
+    broken?: boolean | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    description?: string | null
+  }[] | null,
+  stats?: {
+    completed_subscribers_count?: number | null,
+    subscribers_in_queue_count?: number | null,
+    bounce_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    click_to_open_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    sent?: number | null,
+    opens_count?: number | null,
+    unique_opens_count?: number | null,
+    open_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    clicks_count?: number | null,
+    unique_clicks_count?: number | null,
+    click_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    unsubscribes_count?: number | null,
+    unsubscribe_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    spam_count?: number | null,
+    spam_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    hard_bounces_count?: number | null,
+    hard_bounce_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    soft_bounces_count?: number | null,
+    soft_bounce_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    forward_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    social_interactions_count?: number | null,
+    social_interaction_rate?: number | {
+      float?: number,
+      string: string
+    } | null
+  } | null,
+  triggers?: {
+    id: string | number,
+    type?: string | null,
+    group_ids?: (string | number)[] | null,
+    exclude_group_ids?: (string | number)[] | null,
+    ecommerce_shop_id?: string | number | null,
+    ecommerce_category_id?: string | number | null,
+    ecommerce_product_id?: string | number | null,
+    broken?: boolean | null,
+    complete?: boolean | null,
+    data?: Record<string, JsonValue> | null
+  }[] | null
 }
 ```
 </Accordion>
@@ -1231,7 +2156,178 @@ await corsair.mailerlite.api.automations.create({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  enabled?: boolean | null,
+  status?: string | null,
+  complete?: boolean | null,
+  broken?: boolean | null,
+  warnings?: string[] | null,
+  emails_count?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  trigger_data?: Record<string, JsonValue> | null,
+  steps?: {
+    id: string | number,
+    type?: string | null,
+    parent_id?: string | number | null,
+    name?: string | null,
+    subject?: string | null,
+    from?: string | null,
+    from_name?: string | null,
+    reply_to?: string | null,
+    email_id?: string | number | null,
+    email?: {
+      id: string | number,
+      name?: string | null,
+      subject?: string | null,
+      from_name?: string | null,
+      from?: string | null,
+      reply_to?: string | null,
+      status?: string | null,
+      editor?: string | null,
+      plain_text?: string | null,
+      screenshot_url?: string | null,
+      preview_url?: string | null,
+      is_designed?: boolean | null,
+      language_id?: string | number | null,
+      is_winner?: boolean | null,
+      stats?: {
+        sent?: number | null,
+        opens_count?: number | null,
+        unique_opens_count?: number | null,
+        open_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        clicks_count?: number | null,
+        unique_clicks_count?: number | null,
+        click_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        unsubscribes_count?: number | null,
+        unsubscribe_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        spam_count?: number | null,
+        spam_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        hard_bounces_count?: number | null,
+        hard_bounce_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        soft_bounces_count?: number | null,
+        soft_bounce_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        forwards_count?: number | null,
+        forward_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        deliveries_count?: number | null,
+        delivery_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        social_interactions_count?: number | null,
+        social_interaction_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        click_to_open_rate?: number | {
+          float?: number,
+          string: string
+        } | null
+      } | null,
+      send_after?: string | null,
+      track_opens?: boolean | null,
+      uses_survey?: boolean | null,
+      uses_quiz?: boolean | null,
+      preheader?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null
+    } | null,
+    unit?: string | null,
+    value?: string | number | null,
+    complete?: boolean | null,
+    broken?: boolean | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    description?: string | null
+  }[] | null,
+  stats?: {
+    completed_subscribers_count?: number | null,
+    subscribers_in_queue_count?: number | null,
+    bounce_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    click_to_open_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    sent?: number | null,
+    opens_count?: number | null,
+    unique_opens_count?: number | null,
+    open_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    clicks_count?: number | null,
+    unique_clicks_count?: number | null,
+    click_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    unsubscribes_count?: number | null,
+    unsubscribe_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    spam_count?: number | null,
+    spam_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    hard_bounces_count?: number | null,
+    hard_bounce_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    soft_bounces_count?: number | null,
+    soft_bounce_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    forward_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    social_interactions_count?: number | null,
+    social_interaction_rate?: number | {
+      float?: number,
+      string: string
+    } | null
+  } | null,
+  triggers?: {
+    id: string | number,
+    type?: string | null,
+    group_ids?: (string | number)[] | null,
+    exclude_group_ids?: (string | number)[] | null,
+    ecommerce_shop_id?: string | number | null,
+    ecommerce_category_id?: string | number | null,
+    ecommerce_product_id?: string | number | null,
+    broken?: boolean | null,
+    complete?: boolean | null,
+    data?: Record<string, JsonValue> | null
+  }[] | null
 }
 ```
 </Accordion>
@@ -1297,7 +2393,178 @@ await corsair.mailerlite.api.automations.disable({ automationId: '1' });
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  enabled?: boolean | null,
+  status?: string | null,
+  complete?: boolean | null,
+  broken?: boolean | null,
+  warnings?: string[] | null,
+  emails_count?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  trigger_data?: Record<string, JsonValue> | null,
+  steps?: {
+    id: string | number,
+    type?: string | null,
+    parent_id?: string | number | null,
+    name?: string | null,
+    subject?: string | null,
+    from?: string | null,
+    from_name?: string | null,
+    reply_to?: string | null,
+    email_id?: string | number | null,
+    email?: {
+      id: string | number,
+      name?: string | null,
+      subject?: string | null,
+      from_name?: string | null,
+      from?: string | null,
+      reply_to?: string | null,
+      status?: string | null,
+      editor?: string | null,
+      plain_text?: string | null,
+      screenshot_url?: string | null,
+      preview_url?: string | null,
+      is_designed?: boolean | null,
+      language_id?: string | number | null,
+      is_winner?: boolean | null,
+      stats?: {
+        sent?: number | null,
+        opens_count?: number | null,
+        unique_opens_count?: number | null,
+        open_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        clicks_count?: number | null,
+        unique_clicks_count?: number | null,
+        click_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        unsubscribes_count?: number | null,
+        unsubscribe_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        spam_count?: number | null,
+        spam_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        hard_bounces_count?: number | null,
+        hard_bounce_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        soft_bounces_count?: number | null,
+        soft_bounce_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        forwards_count?: number | null,
+        forward_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        deliveries_count?: number | null,
+        delivery_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        social_interactions_count?: number | null,
+        social_interaction_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        click_to_open_rate?: number | {
+          float?: number,
+          string: string
+        } | null
+      } | null,
+      send_after?: string | null,
+      track_opens?: boolean | null,
+      uses_survey?: boolean | null,
+      uses_quiz?: boolean | null,
+      preheader?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null
+    } | null,
+    unit?: string | null,
+    value?: string | number | null,
+    complete?: boolean | null,
+    broken?: boolean | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    description?: string | null
+  }[] | null,
+  stats?: {
+    completed_subscribers_count?: number | null,
+    subscribers_in_queue_count?: number | null,
+    bounce_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    click_to_open_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    sent?: number | null,
+    opens_count?: number | null,
+    unique_opens_count?: number | null,
+    open_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    clicks_count?: number | null,
+    unique_clicks_count?: number | null,
+    click_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    unsubscribes_count?: number | null,
+    unsubscribe_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    spam_count?: number | null,
+    spam_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    hard_bounces_count?: number | null,
+    hard_bounce_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    soft_bounces_count?: number | null,
+    soft_bounce_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    forward_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    social_interactions_count?: number | null,
+    social_interaction_rate?: number | {
+      float?: number,
+      string: string
+    } | null
+  } | null,
+  triggers?: {
+    id: string | number,
+    type?: string | null,
+    group_ids?: (string | number)[] | null,
+    exclude_group_ids?: (string | number)[] | null,
+    ecommerce_shop_id?: string | number | null,
+    ecommerce_category_id?: string | number | null,
+    ecommerce_product_id?: string | number | null,
+    broken?: boolean | null,
+    complete?: boolean | null,
+    data?: Record<string, JsonValue> | null
+  }[] | null
 }
 ```
 </Accordion>
@@ -1340,7 +2607,178 @@ Enabling activates workflow triggers and may start sending automation emails.
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  enabled?: boolean | null,
+  status?: string | null,
+  complete?: boolean | null,
+  broken?: boolean | null,
+  warnings?: string[] | null,
+  emails_count?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  trigger_data?: Record<string, JsonValue> | null,
+  steps?: {
+    id: string | number,
+    type?: string | null,
+    parent_id?: string | number | null,
+    name?: string | null,
+    subject?: string | null,
+    from?: string | null,
+    from_name?: string | null,
+    reply_to?: string | null,
+    email_id?: string | number | null,
+    email?: {
+      id: string | number,
+      name?: string | null,
+      subject?: string | null,
+      from_name?: string | null,
+      from?: string | null,
+      reply_to?: string | null,
+      status?: string | null,
+      editor?: string | null,
+      plain_text?: string | null,
+      screenshot_url?: string | null,
+      preview_url?: string | null,
+      is_designed?: boolean | null,
+      language_id?: string | number | null,
+      is_winner?: boolean | null,
+      stats?: {
+        sent?: number | null,
+        opens_count?: number | null,
+        unique_opens_count?: number | null,
+        open_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        clicks_count?: number | null,
+        unique_clicks_count?: number | null,
+        click_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        unsubscribes_count?: number | null,
+        unsubscribe_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        spam_count?: number | null,
+        spam_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        hard_bounces_count?: number | null,
+        hard_bounce_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        soft_bounces_count?: number | null,
+        soft_bounce_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        forwards_count?: number | null,
+        forward_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        deliveries_count?: number | null,
+        delivery_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        social_interactions_count?: number | null,
+        social_interaction_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        click_to_open_rate?: number | {
+          float?: number,
+          string: string
+        } | null
+      } | null,
+      send_after?: string | null,
+      track_opens?: boolean | null,
+      uses_survey?: boolean | null,
+      uses_quiz?: boolean | null,
+      preheader?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null
+    } | null,
+    unit?: string | null,
+    value?: string | number | null,
+    complete?: boolean | null,
+    broken?: boolean | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    description?: string | null
+  }[] | null,
+  stats?: {
+    completed_subscribers_count?: number | null,
+    subscribers_in_queue_count?: number | null,
+    bounce_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    click_to_open_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    sent?: number | null,
+    opens_count?: number | null,
+    unique_opens_count?: number | null,
+    open_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    clicks_count?: number | null,
+    unique_clicks_count?: number | null,
+    click_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    unsubscribes_count?: number | null,
+    unsubscribe_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    spam_count?: number | null,
+    spam_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    hard_bounces_count?: number | null,
+    hard_bounce_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    soft_bounces_count?: number | null,
+    soft_bounce_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    forward_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    social_interactions_count?: number | null,
+    social_interaction_rate?: number | {
+      float?: number,
+      string: string
+    } | null
+  } | null,
+  triggers?: {
+    id: string | number,
+    type?: string | null,
+    group_ids?: (string | number)[] | null,
+    exclude_group_ids?: (string | number)[] | null,
+    ecommerce_shop_id?: string | number | null,
+    ecommerce_category_id?: string | number | null,
+    ecommerce_product_id?: string | number | null,
+    broken?: boolean | null,
+    complete?: boolean | null,
+    data?: Record<string, JsonValue> | null
+  }[] | null
 }
 ```
 </Accordion>
@@ -1393,7 +2831,178 @@ await corsair.mailerlite.api.automations.get({ automationId: '1' });
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  enabled?: boolean | null,
+  status?: string | null,
+  complete?: boolean | null,
+  broken?: boolean | null,
+  warnings?: string[] | null,
+  emails_count?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  trigger_data?: Record<string, JsonValue> | null,
+  steps?: {
+    id: string | number,
+    type?: string | null,
+    parent_id?: string | number | null,
+    name?: string | null,
+    subject?: string | null,
+    from?: string | null,
+    from_name?: string | null,
+    reply_to?: string | null,
+    email_id?: string | number | null,
+    email?: {
+      id: string | number,
+      name?: string | null,
+      subject?: string | null,
+      from_name?: string | null,
+      from?: string | null,
+      reply_to?: string | null,
+      status?: string | null,
+      editor?: string | null,
+      plain_text?: string | null,
+      screenshot_url?: string | null,
+      preview_url?: string | null,
+      is_designed?: boolean | null,
+      language_id?: string | number | null,
+      is_winner?: boolean | null,
+      stats?: {
+        sent?: number | null,
+        opens_count?: number | null,
+        unique_opens_count?: number | null,
+        open_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        clicks_count?: number | null,
+        unique_clicks_count?: number | null,
+        click_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        unsubscribes_count?: number | null,
+        unsubscribe_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        spam_count?: number | null,
+        spam_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        hard_bounces_count?: number | null,
+        hard_bounce_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        soft_bounces_count?: number | null,
+        soft_bounce_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        forwards_count?: number | null,
+        forward_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        deliveries_count?: number | null,
+        delivery_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        social_interactions_count?: number | null,
+        social_interaction_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        click_to_open_rate?: number | {
+          float?: number,
+          string: string
+        } | null
+      } | null,
+      send_after?: string | null,
+      track_opens?: boolean | null,
+      uses_survey?: boolean | null,
+      uses_quiz?: boolean | null,
+      preheader?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null
+    } | null,
+    unit?: string | null,
+    value?: string | number | null,
+    complete?: boolean | null,
+    broken?: boolean | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    description?: string | null
+  }[] | null,
+  stats?: {
+    completed_subscribers_count?: number | null,
+    subscribers_in_queue_count?: number | null,
+    bounce_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    click_to_open_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    sent?: number | null,
+    opens_count?: number | null,
+    unique_opens_count?: number | null,
+    open_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    clicks_count?: number | null,
+    unique_clicks_count?: number | null,
+    click_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    unsubscribes_count?: number | null,
+    unsubscribe_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    spam_count?: number | null,
+    spam_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    hard_bounces_count?: number | null,
+    hard_bounce_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    soft_bounces_count?: number | null,
+    soft_bounce_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    forward_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    social_interactions_count?: number | null,
+    social_interaction_rate?: number | {
+      float?: number,
+      string: string
+    } | null
+  } | null,
+  triggers?: {
+    id: string | number,
+    type?: string | null,
+    group_ids?: (string | number)[] | null,
+    exclude_group_ids?: (string | number)[] | null,
+    ecommerce_shop_id?: string | number | null,
+    ecommerce_category_id?: string | number | null,
+    ecommerce_product_id?: string | number | null,
+    broken?: boolean | null,
+    complete?: boolean | null,
+    data?: Record<string, JsonValue> | null
+  }[] | null
 }
 ```
 </Accordion>
@@ -1471,7 +3080,178 @@ await corsair.mailerlite.api.automations.list({});
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  enabled?: boolean | null,
+  status?: string | null,
+  complete?: boolean | null,
+  broken?: boolean | null,
+  warnings?: string[] | null,
+  emails_count?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  trigger_data?: Record<string, JsonValue> | null,
+  steps?: {
+    id: string | number,
+    type?: string | null,
+    parent_id?: string | number | null,
+    name?: string | null,
+    subject?: string | null,
+    from?: string | null,
+    from_name?: string | null,
+    reply_to?: string | null,
+    email_id?: string | number | null,
+    email?: {
+      id: string | number,
+      name?: string | null,
+      subject?: string | null,
+      from_name?: string | null,
+      from?: string | null,
+      reply_to?: string | null,
+      status?: string | null,
+      editor?: string | null,
+      plain_text?: string | null,
+      screenshot_url?: string | null,
+      preview_url?: string | null,
+      is_designed?: boolean | null,
+      language_id?: string | number | null,
+      is_winner?: boolean | null,
+      stats?: {
+        sent?: number | null,
+        opens_count?: number | null,
+        unique_opens_count?: number | null,
+        open_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        clicks_count?: number | null,
+        unique_clicks_count?: number | null,
+        click_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        unsubscribes_count?: number | null,
+        unsubscribe_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        spam_count?: number | null,
+        spam_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        hard_bounces_count?: number | null,
+        hard_bounce_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        soft_bounces_count?: number | null,
+        soft_bounce_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        forwards_count?: number | null,
+        forward_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        deliveries_count?: number | null,
+        delivery_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        social_interactions_count?: number | null,
+        social_interaction_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        click_to_open_rate?: number | {
+          float?: number,
+          string: string
+        } | null
+      } | null,
+      send_after?: string | null,
+      track_opens?: boolean | null,
+      uses_survey?: boolean | null,
+      uses_quiz?: boolean | null,
+      preheader?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null
+    } | null,
+    unit?: string | null,
+    value?: string | number | null,
+    complete?: boolean | null,
+    broken?: boolean | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    description?: string | null
+  }[] | null,
+  stats?: {
+    completed_subscribers_count?: number | null,
+    subscribers_in_queue_count?: number | null,
+    bounce_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    click_to_open_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    sent?: number | null,
+    opens_count?: number | null,
+    unique_opens_count?: number | null,
+    open_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    clicks_count?: number | null,
+    unique_clicks_count?: number | null,
+    click_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    unsubscribes_count?: number | null,
+    unsubscribe_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    spam_count?: number | null,
+    spam_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    hard_bounces_count?: number | null,
+    hard_bounce_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    soft_bounces_count?: number | null,
+    soft_bounce_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    forward_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    social_interactions_count?: number | null,
+    social_interaction_rate?: number | {
+      float?: number,
+      string: string
+    } | null
+  } | null,
+  triggers?: {
+    id: string | number,
+    type?: string | null,
+    group_ids?: (string | number)[] | null,
+    exclude_group_ids?: (string | number)[] | null,
+    ecommerce_shop_id?: string | number | null,
+    ecommerce_category_id?: string | number | null,
+    ecommerce_product_id?: string | number | null,
+    broken?: boolean | null,
+    complete?: boolean | null,
+    data?: Record<string, JsonValue> | null
+  }[] | null
 }[]
 ```
 </Accordion>
@@ -1783,7 +3563,178 @@ await corsair.mailerlite.api.automations.update({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  enabled?: boolean | null,
+  status?: string | null,
+  complete?: boolean | null,
+  broken?: boolean | null,
+  warnings?: string[] | null,
+  emails_count?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  trigger_data?: Record<string, JsonValue> | null,
+  steps?: {
+    id: string | number,
+    type?: string | null,
+    parent_id?: string | number | null,
+    name?: string | null,
+    subject?: string | null,
+    from?: string | null,
+    from_name?: string | null,
+    reply_to?: string | null,
+    email_id?: string | number | null,
+    email?: {
+      id: string | number,
+      name?: string | null,
+      subject?: string | null,
+      from_name?: string | null,
+      from?: string | null,
+      reply_to?: string | null,
+      status?: string | null,
+      editor?: string | null,
+      plain_text?: string | null,
+      screenshot_url?: string | null,
+      preview_url?: string | null,
+      is_designed?: boolean | null,
+      language_id?: string | number | null,
+      is_winner?: boolean | null,
+      stats?: {
+        sent?: number | null,
+        opens_count?: number | null,
+        unique_opens_count?: number | null,
+        open_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        clicks_count?: number | null,
+        unique_clicks_count?: number | null,
+        click_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        unsubscribes_count?: number | null,
+        unsubscribe_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        spam_count?: number | null,
+        spam_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        hard_bounces_count?: number | null,
+        hard_bounce_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        soft_bounces_count?: number | null,
+        soft_bounce_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        forwards_count?: number | null,
+        forward_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        deliveries_count?: number | null,
+        delivery_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        social_interactions_count?: number | null,
+        social_interaction_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        click_to_open_rate?: number | {
+          float?: number,
+          string: string
+        } | null
+      } | null,
+      send_after?: string | null,
+      track_opens?: boolean | null,
+      uses_survey?: boolean | null,
+      uses_quiz?: boolean | null,
+      preheader?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null
+    } | null,
+    unit?: string | null,
+    value?: string | number | null,
+    complete?: boolean | null,
+    broken?: boolean | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    description?: string | null
+  }[] | null,
+  stats?: {
+    completed_subscribers_count?: number | null,
+    subscribers_in_queue_count?: number | null,
+    bounce_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    click_to_open_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    sent?: number | null,
+    opens_count?: number | null,
+    unique_opens_count?: number | null,
+    open_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    clicks_count?: number | null,
+    unique_clicks_count?: number | null,
+    click_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    unsubscribes_count?: number | null,
+    unsubscribe_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    spam_count?: number | null,
+    spam_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    hard_bounces_count?: number | null,
+    hard_bounce_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    soft_bounces_count?: number | null,
+    soft_bounce_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    forward_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    social_interactions_count?: number | null,
+    social_interaction_rate?: number | {
+      float?: number,
+      string: string
+    } | null
+  } | null,
+  triggers?: {
+    id: string | number,
+    type?: string | null,
+    group_ids?: (string | number)[] | null,
+    exclude_group_ids?: (string | number)[] | null,
+    ecommerce_shop_id?: string | number | null,
+    ecommerce_category_id?: string | number | null,
+    ecommerce_product_id?: string | number | null,
+    broken?: boolean | null,
+    complete?: boolean | null,
+    data?: Record<string, JsonValue> | null
+  }[] | null
 }
 ```
 </Accordion>
@@ -1841,7 +3792,101 @@ await corsair.mailerlite.api.automationSteps.copy({ automationId: '1', stepId: '
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  parent_id?: string | number | null,
+  type?: string | null,
+  position?: number | null,
+  name?: string | null,
+  subject?: string | null,
+  from?: string | null,
+  from_name?: string | null,
+  reply_to?: string | null,
+  email_id?: string | number | null,
+  unit?: string | null,
+  value?: string | number | null,
+  complete?: boolean | null,
+  broken?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  description?: string | null,
+  email?: {
+    id: string | number,
+    name?: string | null,
+    subject?: string | null,
+    from_name?: string | null,
+    from?: string | null,
+    reply_to?: string | null,
+    status?: string | null,
+    editor?: string | null,
+    plain_text?: string | null,
+    screenshot_url?: string | null,
+    preview_url?: string | null,
+    is_designed?: boolean | null,
+    language_id?: string | number | null,
+    is_winner?: boolean | null,
+    stats?: {
+      sent?: number | null,
+      opens_count?: number | null,
+      unique_opens_count?: number | null,
+      open_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      clicks_count?: number | null,
+      unique_clicks_count?: number | null,
+      click_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      unsubscribes_count?: number | null,
+      unsubscribe_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      spam_count?: number | null,
+      spam_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      hard_bounces_count?: number | null,
+      hard_bounce_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      soft_bounces_count?: number | null,
+      soft_bounce_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      forwards_count?: number | null,
+      forward_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      deliveries_count?: number | null,
+      delivery_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      social_interactions_count?: number | null,
+      social_interaction_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      click_to_open_rate?: number | {
+        float?: number,
+        string: string
+      } | null
+    } | null,
+    send_after?: string | null,
+    track_opens?: boolean | null,
+    uses_survey?: boolean | null,
+    uses_quiz?: boolean | null,
+    preheader?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null,
+  data?: Record<string, JsonValue> | null
 }
 ```
 </Accordion>
@@ -1990,7 +4035,101 @@ await corsair.mailerlite.api.automationSteps.create({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  parent_id?: string | number | null,
+  type?: string | null,
+  position?: number | null,
+  name?: string | null,
+  subject?: string | null,
+  from?: string | null,
+  from_name?: string | null,
+  reply_to?: string | null,
+  email_id?: string | number | null,
+  unit?: string | null,
+  value?: string | number | null,
+  complete?: boolean | null,
+  broken?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  description?: string | null,
+  email?: {
+    id: string | number,
+    name?: string | null,
+    subject?: string | null,
+    from_name?: string | null,
+    from?: string | null,
+    reply_to?: string | null,
+    status?: string | null,
+    editor?: string | null,
+    plain_text?: string | null,
+    screenshot_url?: string | null,
+    preview_url?: string | null,
+    is_designed?: boolean | null,
+    language_id?: string | number | null,
+    is_winner?: boolean | null,
+    stats?: {
+      sent?: number | null,
+      opens_count?: number | null,
+      unique_opens_count?: number | null,
+      open_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      clicks_count?: number | null,
+      unique_clicks_count?: number | null,
+      click_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      unsubscribes_count?: number | null,
+      unsubscribe_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      spam_count?: number | null,
+      spam_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      hard_bounces_count?: number | null,
+      hard_bounce_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      soft_bounces_count?: number | null,
+      soft_bounce_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      forwards_count?: number | null,
+      forward_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      deliveries_count?: number | null,
+      delivery_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      social_interactions_count?: number | null,
+      social_interaction_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      click_to_open_rate?: number | {
+        float?: number,
+        string: string
+      } | null
+    } | null,
+    send_after?: string | null,
+    track_opens?: boolean | null,
+    uses_survey?: boolean | null,
+    uses_quiz?: boolean | null,
+    preheader?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null,
+  data?: Record<string, JsonValue> | null
 }
 ```
 </Accordion>
@@ -2071,7 +4210,101 @@ await corsair.mailerlite.api.automationSteps.get({ automationId: '1', stepId: '1
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  parent_id?: string | number | null,
+  type?: string | null,
+  position?: number | null,
+  name?: string | null,
+  subject?: string | null,
+  from?: string | null,
+  from_name?: string | null,
+  reply_to?: string | null,
+  email_id?: string | number | null,
+  unit?: string | null,
+  value?: string | number | null,
+  complete?: boolean | null,
+  broken?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  description?: string | null,
+  email?: {
+    id: string | number,
+    name?: string | null,
+    subject?: string | null,
+    from_name?: string | null,
+    from?: string | null,
+    reply_to?: string | null,
+    status?: string | null,
+    editor?: string | null,
+    plain_text?: string | null,
+    screenshot_url?: string | null,
+    preview_url?: string | null,
+    is_designed?: boolean | null,
+    language_id?: string | number | null,
+    is_winner?: boolean | null,
+    stats?: {
+      sent?: number | null,
+      opens_count?: number | null,
+      unique_opens_count?: number | null,
+      open_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      clicks_count?: number | null,
+      unique_clicks_count?: number | null,
+      click_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      unsubscribes_count?: number | null,
+      unsubscribe_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      spam_count?: number | null,
+      spam_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      hard_bounces_count?: number | null,
+      hard_bounce_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      soft_bounces_count?: number | null,
+      soft_bounce_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      forwards_count?: number | null,
+      forward_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      deliveries_count?: number | null,
+      delivery_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      social_interactions_count?: number | null,
+      social_interaction_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      click_to_open_rate?: number | {
+        float?: number,
+        string: string
+      } | null
+    } | null,
+    send_after?: string | null,
+    track_opens?: boolean | null,
+    uses_survey?: boolean | null,
+    uses_quiz?: boolean | null,
+    preheader?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null,
+  data?: Record<string, JsonValue> | null
 }
 ```
 </Accordion>
@@ -2106,13 +4339,136 @@ await corsair.mailerlite.api.automationSteps.list({ automationId: '1' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
+  id: string | number,
+  parent_id?: string | number | null,
+  type?: string | null,
+  position?: number | null,
+  name?: string | null,
+  subject?: string | null,
+  from?: string | null,
+  from_name?: string | null,
+  reply_to?: string | null,
+  email_id?: string | number | null,
+  unit?: string | null,
+  value?: string | number | null,
+  complete?: boolean | null,
+  broken?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  description?: string | null,
+  email?: {
+    id: string | number,
+    name?: string | null,
+    subject?: string | null,
+    from_name?: string | null,
+    from?: string | null,
+    reply_to?: string | null,
+    status?: string | null,
+    editor?: string | null,
+    plain_text?: string | null,
+    screenshot_url?: string | null,
+    preview_url?: string | null,
+    is_designed?: boolean | null,
+    language_id?: string | number | null,
+    is_winner?: boolean | null,
+    stats?: {
+      sent?: number | null,
+      opens_count?: number | null,
+      unique_opens_count?: number | null,
+      open_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      clicks_count?: number | null,
+      unique_clicks_count?: number | null,
+      click_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      unsubscribes_count?: number | null,
+      unsubscribe_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      spam_count?: number | null,
+      spam_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      hard_bounces_count?: number | null,
+      hard_bounce_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      soft_bounces_count?: number | null,
+      soft_bounce_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      forwards_count?: number | null,
+      forward_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      deliveries_count?: number | null,
+      delivery_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      social_interactions_count?: number | null,
+      social_interaction_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      click_to_open_rate?: number | {
+        float?: number,
+        string: string
+      } | null
+    } | null,
+    send_after?: string | null,
+    track_opens?: boolean | null,
+    uses_survey?: boolean | null,
+    uses_quiz?: boolean | null,
+    preheader?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null,
+  data?: Record<string, JsonValue> | null
 }[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  last_page?: number,
+  per_page?: number,
+  total?: number,
+  next_cursor?: string | null,
+  prev_cursor?: string | null
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -2171,7 +4527,101 @@ await corsair.mailerlite.api.automationSteps.reorder({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  parent_id?: string | number | null,
+  type?: string | null,
+  position?: number | null,
+  name?: string | null,
+  subject?: string | null,
+  from?: string | null,
+  from_name?: string | null,
+  reply_to?: string | null,
+  email_id?: string | number | null,
+  unit?: string | null,
+  value?: string | number | null,
+  complete?: boolean | null,
+  broken?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  description?: string | null,
+  email?: {
+    id: string | number,
+    name?: string | null,
+    subject?: string | null,
+    from_name?: string | null,
+    from?: string | null,
+    reply_to?: string | null,
+    status?: string | null,
+    editor?: string | null,
+    plain_text?: string | null,
+    screenshot_url?: string | null,
+    preview_url?: string | null,
+    is_designed?: boolean | null,
+    language_id?: string | number | null,
+    is_winner?: boolean | null,
+    stats?: {
+      sent?: number | null,
+      opens_count?: number | null,
+      unique_opens_count?: number | null,
+      open_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      clicks_count?: number | null,
+      unique_clicks_count?: number | null,
+      click_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      unsubscribes_count?: number | null,
+      unsubscribe_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      spam_count?: number | null,
+      spam_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      hard_bounces_count?: number | null,
+      hard_bounce_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      soft_bounces_count?: number | null,
+      soft_bounce_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      forwards_count?: number | null,
+      forward_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      deliveries_count?: number | null,
+      delivery_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      social_interactions_count?: number | null,
+      social_interaction_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      click_to_open_rate?: number | {
+        float?: number,
+        string: string
+      } | null
+    } | null,
+    send_after?: string | null,
+    track_opens?: boolean | null,
+    uses_survey?: boolean | null,
+    uses_quiz?: boolean | null,
+    preheader?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null,
+  data?: Record<string, JsonValue> | null
 }
 ```
 </Accordion>
@@ -2229,6 +4679,37 @@ await corsair.mailerlite.api.automationSteps.selectWinner({
 
 ```ts
 {
+  step_id?: string | number,
+  name?: string,
+  ab_test_winner?: string | null,
+  parent_id?: string | number | null,
+  can_select_winner?: boolean,
+  a_path_step_id?: string | number | null,
+  b_path_step_id?: string | number | null,
+  c_path_step_id?: string | number | null,
+  split_percentages?: {
+    label: string,
+    path: a_path | b_path | c_path,
+    value: number
+  }[],
+  stats?: Record<string, {
+    subscribers?: number,
+    sent?: number,
+    opens?: number,
+    clicks?: number,
+    open_rate?: {
+      float?: number,
+      string: string
+    },
+    click_rate?: {
+      float?: number,
+      string: string
+    },
+    click_to_open_rate?: {
+      float?: number,
+      string: string
+    }
+  }>
 }
 ```
 </Accordion>
@@ -2376,7 +4857,101 @@ await corsair.mailerlite.api.automationSteps.update({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  parent_id?: string | number | null,
+  type?: string | null,
+  position?: number | null,
+  name?: string | null,
+  subject?: string | null,
+  from?: string | null,
+  from_name?: string | null,
+  reply_to?: string | null,
+  email_id?: string | number | null,
+  unit?: string | null,
+  value?: string | number | null,
+  complete?: boolean | null,
+  broken?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  description?: string | null,
+  email?: {
+    id: string | number,
+    name?: string | null,
+    subject?: string | null,
+    from_name?: string | null,
+    from?: string | null,
+    reply_to?: string | null,
+    status?: string | null,
+    editor?: string | null,
+    plain_text?: string | null,
+    screenshot_url?: string | null,
+    preview_url?: string | null,
+    is_designed?: boolean | null,
+    language_id?: string | number | null,
+    is_winner?: boolean | null,
+    stats?: {
+      sent?: number | null,
+      opens_count?: number | null,
+      unique_opens_count?: number | null,
+      open_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      clicks_count?: number | null,
+      unique_clicks_count?: number | null,
+      click_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      unsubscribes_count?: number | null,
+      unsubscribe_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      spam_count?: number | null,
+      spam_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      hard_bounces_count?: number | null,
+      hard_bounce_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      soft_bounces_count?: number | null,
+      soft_bounce_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      forwards_count?: number | null,
+      forward_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      deliveries_count?: number | null,
+      delivery_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      social_interactions_count?: number | null,
+      social_interaction_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      click_to_open_rate?: number | {
+        float?: number,
+        string: string
+      } | null
+    } | null,
+    send_after?: string | null,
+    track_opens?: boolean | null,
+    uses_survey?: boolean | null,
+    uses_quiz?: boolean | null,
+    preheader?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null,
+  data?: Record<string, JsonValue> | null
 }
 ```
 </Accordion>
@@ -2419,7 +4994,11 @@ await corsair.mailerlite.api.automationTemplates.createFromTemplate({ templateId
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  type?: string | null,
+  category?: string | null,
+  created_at?: string | null
 }
 ```
 </Accordion>
@@ -2480,7 +5059,11 @@ await corsair.mailerlite.api.automationTemplates.list({});
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  type?: string | null,
+  category?: string | null,
+  created_at?: string | null
 }[]
 ```
 </Accordion>
@@ -2611,7 +5194,17 @@ await corsair.mailerlite.api.automationTriggers.create({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  automation_id?: string | number | null,
+  type?: string | null,
+  group_ids?: (string | number)[] | null,
+  exclude_group_ids?: (string | number)[] | null,
+  ecommerce_shop_id?: string | number | null,
+  ecommerce_category_id?: string | number | null,
+  ecommerce_product_id?: string | number | null,
+  broken?: boolean | null,
+  complete?: boolean | null,
+  data?: Record<string, JsonValue> | null
 }
 ```
 </Accordion>
@@ -2679,7 +5272,17 @@ await corsair.mailerlite.api.automationTriggers.get({ automationId: '1', trigger
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  automation_id?: string | number | null,
+  type?: string | null,
+  group_ids?: (string | number)[] | null,
+  exclude_group_ids?: (string | number)[] | null,
+  ecommerce_shop_id?: string | number | null,
+  ecommerce_category_id?: string | number | null,
+  ecommerce_product_id?: string | number | null,
+  broken?: boolean | null,
+  complete?: boolean | null,
+  data?: Record<string, JsonValue> | null
 }
 ```
 </Accordion>
@@ -2714,13 +5317,52 @@ await corsair.mailerlite.api.automationTriggers.list({ automationId: '1' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
+  id: string | number,
+  automation_id?: string | number | null,
+  type?: string | null,
+  group_ids?: (string | number)[] | null,
+  exclude_group_ids?: (string | number)[] | null,
+  ecommerce_shop_id?: string | number | null,
+  ecommerce_category_id?: string | number | null,
+  ecommerce_product_id?: string | number | null,
+  broken?: boolean | null,
+  complete?: boolean | null,
+  data?: Record<string, JsonValue> | null
 }[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  last_page?: number,
+  per_page?: number,
+  total?: number,
+  next_cursor?: string | null,
+  prev_cursor?: string | null
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -2823,7 +5465,17 @@ await corsair.mailerlite.api.automationTriggers.update({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  automation_id?: string | number | null,
+  type?: string | null,
+  group_ids?: (string | number)[] | null,
+  exclude_group_ids?: (string | number)[] | null,
+  ecommerce_shop_id?: string | number | null,
+  ecommerce_category_id?: string | number | null,
+  ecommerce_product_id?: string | number | null,
+  broken?: boolean | null,
+  complete?: boolean | null,
+  data?: Record<string, JsonValue> | null
 }
 ```
 </Accordion>
@@ -2978,7 +5630,106 @@ await corsair.mailerlite.api.campaigns.cancel({ campaignId: '1' });
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  account_id?: string | number | null,
+  name?: string | null,
+  type?: string | null,
+  status?: string | null,
+  missing_data?: string[] | null,
+  settings?: {
+    track_opens?: boolean | null,
+    use_google_analytics?: boolean | null,
+    ecommerce_tracking?: boolean | null
+  } | null,
+  delivery_schedule?: string | null,
+  language_id?: string | number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  scheduled_for?: string | null,
+  queued_at?: string | null,
+  started_at?: string | null,
+  scheduled_at?: string | null,
+  stopped_at?: string | null,
+  finished_at?: string | null,
+  default_email_id?: string | number | null,
+  emails?: {
+    id?: string | number,
+    account_id?: string | number,
+    emailable_id?: string | number,
+    emailable_type?: string | null,
+    type?: string | null,
+    name?: string | null,
+    subject?: string | null,
+    from_name?: string | null,
+    from?: string | null,
+    reply_to?: string | null,
+    content?: string | null,
+    plain_text?: string | null,
+    screenshot_url?: string | null,
+    preview_url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    is_designed?: boolean | null,
+    language_id?: string | number | null,
+    is_winner?: boolean | null,
+    stats?: Record<string, JsonValue>,
+    send_after?: string | null,
+    track_opens?: boolean | null
+  }[] | null,
+  groups?: (string | number)[] | null,
+  segments?: (string | number)[] | null,
+  stats?: {
+    sent?: number | null,
+    opens_count?: number | null,
+    unique_opens_count?: number | null,
+    open_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    clicks_count?: number | null,
+    unique_clicks_count?: number | null,
+    click_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    unsubscribes_count?: number | null,
+    unsubscribe_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    spam_count?: number | null,
+    spam_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    hard_bounces_count?: number | null,
+    hard_bounce_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    soft_bounces_count?: number | null,
+    soft_bounce_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    forwards_count?: number | null,
+    forward_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    click_to_open_rate?: number | {
+      float?: number,
+      string: string
+    } | null
+  } | null,
+  is_stopped?: boolean | null,
+  has_winner?: boolean | null,
+  uses_ecommerce?: boolean | null,
+  uses_survey?: boolean | null,
+  can_be_scheduled?: boolean | null,
+  warnings?: string[] | null,
+  initial_created_at?: string | null,
+  is_currently_sending_out?: boolean | null
 }
 ```
 </Accordion>
@@ -3086,7 +5837,106 @@ await corsair.mailerlite.api.campaigns.create({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  account_id?: string | number | null,
+  name?: string | null,
+  type?: string | null,
+  status?: string | null,
+  missing_data?: string[] | null,
+  settings?: {
+    track_opens?: boolean | null,
+    use_google_analytics?: boolean | null,
+    ecommerce_tracking?: boolean | null
+  } | null,
+  delivery_schedule?: string | null,
+  language_id?: string | number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  scheduled_for?: string | null,
+  queued_at?: string | null,
+  started_at?: string | null,
+  scheduled_at?: string | null,
+  stopped_at?: string | null,
+  finished_at?: string | null,
+  default_email_id?: string | number | null,
+  emails?: {
+    id?: string | number,
+    account_id?: string | number,
+    emailable_id?: string | number,
+    emailable_type?: string | null,
+    type?: string | null,
+    name?: string | null,
+    subject?: string | null,
+    from_name?: string | null,
+    from?: string | null,
+    reply_to?: string | null,
+    content?: string | null,
+    plain_text?: string | null,
+    screenshot_url?: string | null,
+    preview_url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    is_designed?: boolean | null,
+    language_id?: string | number | null,
+    is_winner?: boolean | null,
+    stats?: Record<string, JsonValue>,
+    send_after?: string | null,
+    track_opens?: boolean | null
+  }[] | null,
+  groups?: (string | number)[] | null,
+  segments?: (string | number)[] | null,
+  stats?: {
+    sent?: number | null,
+    opens_count?: number | null,
+    unique_opens_count?: number | null,
+    open_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    clicks_count?: number | null,
+    unique_clicks_count?: number | null,
+    click_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    unsubscribes_count?: number | null,
+    unsubscribe_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    spam_count?: number | null,
+    spam_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    hard_bounces_count?: number | null,
+    hard_bounce_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    soft_bounces_count?: number | null,
+    soft_bounce_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    forwards_count?: number | null,
+    forward_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    click_to_open_rate?: number | {
+      float?: number,
+      string: string
+    } | null
+  } | null,
+  is_stopped?: boolean | null,
+  has_winner?: boolean | null,
+  uses_ecommerce?: boolean | null,
+  uses_survey?: boolean | null,
+  can_be_scheduled?: boolean | null,
+  warnings?: string[] | null,
+  initial_created_at?: string | null,
+  is_currently_sending_out?: boolean | null
 }
 ```
 </Accordion>
@@ -3300,7 +6150,106 @@ await corsair.mailerlite.api.campaigns.get({ campaignId: '1' });
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  account_id?: string | number | null,
+  name?: string | null,
+  type?: string | null,
+  status?: string | null,
+  missing_data?: string[] | null,
+  settings?: {
+    track_opens?: boolean | null,
+    use_google_analytics?: boolean | null,
+    ecommerce_tracking?: boolean | null
+  } | null,
+  delivery_schedule?: string | null,
+  language_id?: string | number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  scheduled_for?: string | null,
+  queued_at?: string | null,
+  started_at?: string | null,
+  scheduled_at?: string | null,
+  stopped_at?: string | null,
+  finished_at?: string | null,
+  default_email_id?: string | number | null,
+  emails?: {
+    id?: string | number,
+    account_id?: string | number,
+    emailable_id?: string | number,
+    emailable_type?: string | null,
+    type?: string | null,
+    name?: string | null,
+    subject?: string | null,
+    from_name?: string | null,
+    from?: string | null,
+    reply_to?: string | null,
+    content?: string | null,
+    plain_text?: string | null,
+    screenshot_url?: string | null,
+    preview_url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    is_designed?: boolean | null,
+    language_id?: string | number | null,
+    is_winner?: boolean | null,
+    stats?: Record<string, JsonValue>,
+    send_after?: string | null,
+    track_opens?: boolean | null
+  }[] | null,
+  groups?: (string | number)[] | null,
+  segments?: (string | number)[] | null,
+  stats?: {
+    sent?: number | null,
+    opens_count?: number | null,
+    unique_opens_count?: number | null,
+    open_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    clicks_count?: number | null,
+    unique_clicks_count?: number | null,
+    click_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    unsubscribes_count?: number | null,
+    unsubscribe_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    spam_count?: number | null,
+    spam_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    hard_bounces_count?: number | null,
+    hard_bounce_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    soft_bounces_count?: number | null,
+    soft_bounce_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    forwards_count?: number | null,
+    forward_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    click_to_open_rate?: number | {
+      float?: number,
+      string: string
+    } | null
+  } | null,
+  is_stopped?: boolean | null,
+  has_winner?: boolean | null,
+  uses_ecommerce?: boolean | null,
+  uses_survey?: boolean | null,
+  can_be_scheduled?: boolean | null,
+  warnings?: string[] | null,
+  initial_created_at?: string | null,
+  is_currently_sending_out?: boolean | null
 }
 ```
 </Accordion>
@@ -3373,7 +6322,106 @@ await corsair.mailerlite.api.campaigns.list({});
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  account_id?: string | number | null,
+  name?: string | null,
+  type?: string | null,
+  status?: string | null,
+  missing_data?: string[] | null,
+  settings?: {
+    track_opens?: boolean | null,
+    use_google_analytics?: boolean | null,
+    ecommerce_tracking?: boolean | null
+  } | null,
+  delivery_schedule?: string | null,
+  language_id?: string | number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  scheduled_for?: string | null,
+  queued_at?: string | null,
+  started_at?: string | null,
+  scheduled_at?: string | null,
+  stopped_at?: string | null,
+  finished_at?: string | null,
+  default_email_id?: string | number | null,
+  emails?: {
+    id?: string | number,
+    account_id?: string | number,
+    emailable_id?: string | number,
+    emailable_type?: string | null,
+    type?: string | null,
+    name?: string | null,
+    subject?: string | null,
+    from_name?: string | null,
+    from?: string | null,
+    reply_to?: string | null,
+    content?: string | null,
+    plain_text?: string | null,
+    screenshot_url?: string | null,
+    preview_url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    is_designed?: boolean | null,
+    language_id?: string | number | null,
+    is_winner?: boolean | null,
+    stats?: Record<string, JsonValue>,
+    send_after?: string | null,
+    track_opens?: boolean | null
+  }[] | null,
+  groups?: (string | number)[] | null,
+  segments?: (string | number)[] | null,
+  stats?: {
+    sent?: number | null,
+    opens_count?: number | null,
+    unique_opens_count?: number | null,
+    open_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    clicks_count?: number | null,
+    unique_clicks_count?: number | null,
+    click_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    unsubscribes_count?: number | null,
+    unsubscribe_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    spam_count?: number | null,
+    spam_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    hard_bounces_count?: number | null,
+    hard_bounce_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    soft_bounces_count?: number | null,
+    soft_bounce_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    forwards_count?: number | null,
+    forward_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    click_to_open_rate?: number | {
+      float?: number,
+      string: string
+    } | null
+  } | null,
+  is_stopped?: boolean | null,
+  has_winner?: boolean | null,
+  uses_ecommerce?: boolean | null,
+  uses_survey?: boolean | null,
+  can_be_scheduled?: boolean | null,
+  warnings?: string[] | null,
+  initial_created_at?: string | null,
+  is_currently_sending_out?: boolean | null
 }[]
 ```
 </Accordion>
@@ -3476,7 +6524,106 @@ Scheduling with delivery=instant sends the campaign immediately; scheduled and t
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  account_id?: string | number | null,
+  name?: string | null,
+  type?: string | null,
+  status?: string | null,
+  missing_data?: string[] | null,
+  settings?: {
+    track_opens?: boolean | null,
+    use_google_analytics?: boolean | null,
+    ecommerce_tracking?: boolean | null
+  } | null,
+  delivery_schedule?: string | null,
+  language_id?: string | number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  scheduled_for?: string | null,
+  queued_at?: string | null,
+  started_at?: string | null,
+  scheduled_at?: string | null,
+  stopped_at?: string | null,
+  finished_at?: string | null,
+  default_email_id?: string | number | null,
+  emails?: {
+    id?: string | number,
+    account_id?: string | number,
+    emailable_id?: string | number,
+    emailable_type?: string | null,
+    type?: string | null,
+    name?: string | null,
+    subject?: string | null,
+    from_name?: string | null,
+    from?: string | null,
+    reply_to?: string | null,
+    content?: string | null,
+    plain_text?: string | null,
+    screenshot_url?: string | null,
+    preview_url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    is_designed?: boolean | null,
+    language_id?: string | number | null,
+    is_winner?: boolean | null,
+    stats?: Record<string, JsonValue>,
+    send_after?: string | null,
+    track_opens?: boolean | null
+  }[] | null,
+  groups?: (string | number)[] | null,
+  segments?: (string | number)[] | null,
+  stats?: {
+    sent?: number | null,
+    opens_count?: number | null,
+    unique_opens_count?: number | null,
+    open_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    clicks_count?: number | null,
+    unique_clicks_count?: number | null,
+    click_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    unsubscribes_count?: number | null,
+    unsubscribe_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    spam_count?: number | null,
+    spam_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    hard_bounces_count?: number | null,
+    hard_bounce_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    soft_bounces_count?: number | null,
+    soft_bounce_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    forwards_count?: number | null,
+    forward_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    click_to_open_rate?: number | {
+      float?: number,
+      string: string
+    } | null
+  } | null,
+  is_stopped?: boolean | null,
+  has_winner?: boolean | null,
+  uses_ecommerce?: boolean | null,
+  uses_survey?: boolean | null,
+  can_be_scheduled?: boolean | null,
+  warnings?: string[] | null,
+  initial_created_at?: string | null,
+  is_currently_sending_out?: boolean | null
 }
 ```
 </Accordion>
@@ -3540,7 +6687,53 @@ await corsair.mailerlite.api.campaigns.subscriberActivity({ campaignId: '1' });
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  opens_count?: number,
+  clicks_count?: number,
+  subscriber?: {
+    id: string | number,
+    email?: string,
+    status?: active | unsubscribed | unconfirmed | bounced | junk,
+    source?: string | null,
+    sent?: number | null,
+    opens_count?: number | null,
+    clicks_count?: number | null,
+    open_rate?: number | null,
+    click_rate?: number | null,
+    ip_address?: string | null,
+    subscribed_at?: string | null,
+    unsubscribed_at?: string | null,
+    opted_in_at?: string | null,
+    optin_ip?: string | null,
+    deleted_at?: string | null,
+    forget_at?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    fields?: Record<string, string | number | boolean | null>,
+    groups?: {
+      id: string | number,
+      name?: string | null,
+      active_count?: number | null,
+      sent_count?: number | null,
+      opens_count?: number | null,
+      clicks_count?: number | null,
+      open_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      click_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      total?: number | null,
+      unsubscribed_count?: number | null,
+      unconfirmed_count?: number | null,
+      bounced_count?: number | null,
+      junk_count?: number | null,
+      created_at?: string | null,
+      updated_at?: string | null
+    }[] | null
+  }
 }[]
 ```
 </Accordion>
@@ -3668,7 +6861,106 @@ await corsair.mailerlite.api.campaigns.update({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  account_id?: string | number | null,
+  name?: string | null,
+  type?: string | null,
+  status?: string | null,
+  missing_data?: string[] | null,
+  settings?: {
+    track_opens?: boolean | null,
+    use_google_analytics?: boolean | null,
+    ecommerce_tracking?: boolean | null
+  } | null,
+  delivery_schedule?: string | null,
+  language_id?: string | number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  scheduled_for?: string | null,
+  queued_at?: string | null,
+  started_at?: string | null,
+  scheduled_at?: string | null,
+  stopped_at?: string | null,
+  finished_at?: string | null,
+  default_email_id?: string | number | null,
+  emails?: {
+    id?: string | number,
+    account_id?: string | number,
+    emailable_id?: string | number,
+    emailable_type?: string | null,
+    type?: string | null,
+    name?: string | null,
+    subject?: string | null,
+    from_name?: string | null,
+    from?: string | null,
+    reply_to?: string | null,
+    content?: string | null,
+    plain_text?: string | null,
+    screenshot_url?: string | null,
+    preview_url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    is_designed?: boolean | null,
+    language_id?: string | number | null,
+    is_winner?: boolean | null,
+    stats?: Record<string, JsonValue>,
+    send_after?: string | null,
+    track_opens?: boolean | null
+  }[] | null,
+  groups?: (string | number)[] | null,
+  segments?: (string | number)[] | null,
+  stats?: {
+    sent?: number | null,
+    opens_count?: number | null,
+    unique_opens_count?: number | null,
+    open_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    clicks_count?: number | null,
+    unique_clicks_count?: number | null,
+    click_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    unsubscribes_count?: number | null,
+    unsubscribe_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    spam_count?: number | null,
+    spam_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    hard_bounces_count?: number | null,
+    hard_bounce_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    soft_bounces_count?: number | null,
+    soft_bounce_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    forwards_count?: number | null,
+    forward_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    click_to_open_rate?: number | {
+      float?: number,
+      string: string
+    } | null
+  } | null,
+  is_stopped?: boolean | null,
+  has_winner?: boolean | null,
+  uses_ecommerce?: boolean | null,
+  uses_survey?: boolean | null,
+  can_be_scheduled?: boolean | null,
+  warnings?: string[] | null,
+  initial_created_at?: string | null,
+  is_currently_sending_out?: boolean | null
 }
 ```
 </Accordion>
@@ -3787,7 +7079,28 @@ await corsair.mailerlite.api.cartItems.create({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  ecommerce_product_id?: string | number | null,
+  ecommerce_product_variant_id?: string | number | null,
+  product?: {
+    id: string | number,
+    name?: string | null,
+    price?: number | null,
+    url?: string | null,
+    image?: string | null,
+    exclude_from_automations?: boolean | null,
+    enabled?: boolean | null,
+    categories?: {
+      id: string | number,
+      name?: string | null,
+      exclude_from_automations?: boolean | null,
+      created_at?: string | null,
+      updated_at?: string | null
+    }[] | null
+  } | null,
+  variant?: string | null,
+  quantity?: number | null,
+  price?: number | null
 }
 ```
 </Accordion>
@@ -3842,7 +7155,28 @@ await corsair.mailerlite.api.cartItems.delete({ shopId: '1', cartId: '1', itemId
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  ecommerce_product_id?: string | number | null,
+  ecommerce_product_variant_id?: string | number | null,
+  product?: {
+    id: string | number,
+    name?: string | null,
+    price?: number | null,
+    url?: string | null,
+    image?: string | null,
+    exclude_from_automations?: boolean | null,
+    enabled?: boolean | null,
+    categories?: {
+      id: string | number,
+      name?: string | null,
+      exclude_from_automations?: boolean | null,
+      created_at?: string | null,
+      updated_at?: string | null
+    }[] | null
+  } | null,
+  variant?: string | null,
+  quantity?: number | null,
+  price?: number | null
 }
 ```
 </Accordion>
@@ -3897,7 +7231,28 @@ await corsair.mailerlite.api.cartItems.get({ shopId: '1', cartId: '1', itemId: '
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  ecommerce_product_id?: string | number | null,
+  ecommerce_product_variant_id?: string | number | null,
+  product?: {
+    id: string | number,
+    name?: string | null,
+    price?: number | null,
+    url?: string | null,
+    image?: string | null,
+    exclude_from_automations?: boolean | null,
+    enabled?: boolean | null,
+    categories?: {
+      id: string | number,
+      name?: string | null,
+      exclude_from_automations?: boolean | null,
+      created_at?: string | null,
+      updated_at?: string | null
+    }[] | null
+  } | null,
+  variant?: string | null,
+  quantity?: number | null,
+  price?: number | null
 }
 ```
 </Accordion>
@@ -3956,7 +7311,28 @@ await corsair.mailerlite.api.cartItems.list({ shopId: '1', cartId: '1' });
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  ecommerce_product_id?: string | number | null,
+  ecommerce_product_variant_id?: string | number | null,
+  product?: {
+    id: string | number,
+    name?: string | null,
+    price?: number | null,
+    url?: string | null,
+    image?: string | null,
+    exclude_from_automations?: boolean | null,
+    enabled?: boolean | null,
+    categories?: {
+      id: string | number,
+      name?: string | null,
+      exclude_from_automations?: boolean | null,
+      created_at?: string | null,
+      updated_at?: string | null
+    }[] | null
+  } | null,
+  variant?: string | null,
+  quantity?: number | null,
+  price?: number | null
 }[]
 ```
 </Accordion>
@@ -4058,7 +7434,28 @@ await corsair.mailerlite.api.cartItems.update({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  ecommerce_product_id?: string | number | null,
+  ecommerce_product_variant_id?: string | number | null,
+  product?: {
+    id: string | number,
+    name?: string | null,
+    price?: number | null,
+    url?: string | null,
+    image?: string | null,
+    exclude_from_automations?: boolean | null,
+    enabled?: boolean | null,
+    categories?: {
+      id: string | number,
+      name?: string | null,
+      exclude_from_automations?: boolean | null,
+      created_at?: string | null,
+      updated_at?: string | null
+    }[] | null
+  } | null,
+  variant?: string | null,
+  quantity?: number | null,
+  price?: number | null
 }
 ```
 </Accordion>
@@ -4144,7 +7541,27 @@ await corsair.mailerlite.api.carts.get({ shopId: '1', cartId: '1' });
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  resource_id?: string | null,
+  checkout_url?: string | null,
+  cart_total?: number | null,
+  ecommerce_customer_id?: string | number | null,
+  items?: {
+    id?: string | number,
+    ecommerce_product_id?: string | number,
+    ecommerce_product_variant_id?: string | number | null,
+    product?: {
+      id: string | number,
+      name?: string | null,
+      price?: number | null,
+      url?: string | null,
+      image?: string | null
+    },
+    quantity?: number | null,
+    price?: number | null
+  }[] | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }
 ```
 </Accordion>
@@ -4201,7 +7618,27 @@ await corsair.mailerlite.api.carts.list({ shopId: '1' });
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  resource_id?: string | null,
+  checkout_url?: string | null,
+  cart_total?: number | null,
+  ecommerce_customer_id?: string | number | null,
+  items?: {
+    id?: string | number,
+    ecommerce_product_id?: string | number,
+    ecommerce_product_variant_id?: string | number | null,
+    product?: {
+      id: string | number,
+      name?: string | null,
+      price?: number | null,
+      url?: string | null,
+      image?: string | null
+    },
+    quantity?: number | null,
+    price?: number | null
+  }[] | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }[]
 ```
 </Accordion>
@@ -4298,7 +7735,27 @@ await corsair.mailerlite.api.carts.update({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  resource_id?: string | null,
+  checkout_url?: string | null,
+  cart_total?: number | null,
+  ecommerce_customer_id?: string | number | null,
+  items?: {
+    id?: string | number,
+    ecommerce_product_id?: string | number,
+    ecommerce_product_variant_id?: string | number | null,
+    product?: {
+      id: string | number,
+      name?: string | null,
+      price?: number | null,
+      url?: string | null,
+      image?: string | null
+    },
+    quantity?: number | null,
+    price?: number | null
+  }[] | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }
 ```
 </Accordion>
@@ -4387,7 +7844,12 @@ await corsair.mailerlite.api.categories.create({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  exclude_from_automations?: boolean | null,
+  products_count?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }
 ```
 </Accordion>
@@ -4435,6 +7897,11 @@ await corsair.mailerlite.api.categories.delete({ shopId: '1', categoryId: '1' })
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `exclude_from_automations` | `boolean \| null` | No | — |
+| `products_count` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 
 
 
@@ -4484,7 +7951,12 @@ await corsair.mailerlite.api.categories.get({ shopId: '1', categoryId: '1' });
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  exclude_from_automations?: boolean | null,
+  products_count?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }
 ```
 </Accordion>
@@ -4541,7 +8013,12 @@ await corsair.mailerlite.api.categories.list({ shopId: '1' });
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  exclude_from_automations?: boolean | null,
+  products_count?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }[]
 ```
 </Accordion>
@@ -4636,7 +8113,12 @@ await corsair.mailerlite.api.categories.update({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  exclude_from_automations?: boolean | null,
+  products_count?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }
 ```
 </Accordion>
@@ -4693,7 +8175,38 @@ await corsair.mailerlite.api.categoryProducts.assign({ shopId: '1', categoryId: 
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  price?: number | null,
+  currency?: string | null,
+  exclude_from_automations?: boolean | null,
+  enabled?: boolean | null,
+  url?: string | null,
+  image?: string | null,
+  short_description?: string | null,
+  description?: string | null,
+  variants?: {
+    id: string | number,
+    name?: string | null,
+    attributes?: Record<string, string> | null,
+    price?: number | null
+  }[] | null,
+  categories?: {
+    id: string | number,
+    name?: string | null,
+    exclude_from_automations?: boolean | null,
+    products_count?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null,
+  currency_symbol?: string | null,
+  checkout_url?: string | null,
+  stripe_minimum?: boolean | null,
+  has_checkout?: boolean | null,
+  order_stats?: Record<string, number> | null,
+  type?: one-time | subscription | booking | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }
 ```
 </Accordion>
@@ -4764,7 +8277,38 @@ await corsair.mailerlite.api.categoryProducts.assignMultiple({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  price?: number | null,
+  currency?: string | null,
+  exclude_from_automations?: boolean | null,
+  enabled?: boolean | null,
+  url?: string | null,
+  image?: string | null,
+  short_description?: string | null,
+  description?: string | null,
+  variants?: {
+    id: string | number,
+    name?: string | null,
+    attributes?: Record<string, string> | null,
+    price?: number | null
+  }[] | null,
+  categories?: {
+    id: string | number,
+    name?: string | null,
+    exclude_from_automations?: boolean | null,
+    products_count?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null,
+  currency_symbol?: string | null,
+  checkout_url?: string | null,
+  stripe_minimum?: boolean | null,
+  has_checkout?: boolean | null,
+  order_stats?: Record<string, number> | null,
+  type?: one-time | subscription | booking | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }
 ```
 </Accordion>
@@ -4822,7 +8366,38 @@ await corsair.mailerlite.api.categoryProducts.list({ shopId: '1', categoryId: '1
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  price?: number | null,
+  currency?: string | null,
+  exclude_from_automations?: boolean | null,
+  enabled?: boolean | null,
+  url?: string | null,
+  image?: string | null,
+  short_description?: string | null,
+  description?: string | null,
+  variants?: {
+    id: string | number,
+    name?: string | null,
+    attributes?: Record<string, string> | null,
+    price?: number | null
+  }[] | null,
+  categories?: {
+    id: string | number,
+    name?: string | null,
+    exclude_from_automations?: boolean | null,
+    products_count?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null,
+  currency_symbol?: string | null,
+  checkout_url?: string | null,
+  stripe_minimum?: boolean | null,
+  has_checkout?: boolean | null,
+  order_stats?: Record<string, number> | null,
+  type?: one-time | subscription | booking | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }[]
 ```
 </Accordion>
@@ -4897,6 +8472,53 @@ await corsair.mailerlite.api.categoryProducts.unassign({ shopId: '1', categoryId
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `price` | `number \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `exclude_from_automations` | `boolean \| null` | No | — |
+| `enabled` | `boolean \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `image` | `string \| null` | No | — |
+| `short_description` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `variants` | `object[] \| null` | No | — |
+| `categories` | `object[] \| null` | No | — |
+| `currency_symbol` | `string \| null` | No | — |
+| `checkout_url` | `string \| null` | No | — |
+| `stripe_minimum` | `boolean \| null` | No | — |
+| `has_checkout` | `boolean \| null` | No | — |
+| `order_stats` | `Record<string, number> \| null` | No | — |
+| `type` | `one-time \| subscription \| booking \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="variants full type">
+
+```ts
+{
+  id: string | number,
+  name?: string | null,
+  attributes?: Record<string, string> | null,
+  price?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="categories full type">
+
+```ts
+{
+  id: string | number,
+  name?: string | null,
+  exclude_from_automations?: boolean | null,
+  products_count?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -4988,7 +8610,60 @@ Set accepts_marketing from the customer's actual consent; create_subscriber is p
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  email?: string | null,
+  resource_id?: string | null,
+  accepts_marketing?: boolean | null,
+  total_spent?: number | null,
+  orders_count?: number | null,
+  name?: string | null,
+  last_name?: string | null,
+  subscriber?: {
+    id: string | number,
+    email?: string,
+    status?: active | unsubscribed | unconfirmed | bounced | junk,
+    source?: string | null,
+    sent?: number | null,
+    opens_count?: number | null,
+    clicks_count?: number | null,
+    open_rate?: number | null,
+    click_rate?: number | null,
+    ip_address?: string | null,
+    subscribed_at?: string | null,
+    unsubscribed_at?: string | null,
+    opted_in_at?: string | null,
+    optin_ip?: string | null,
+    deleted_at?: string | null,
+    forget_at?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    fields?: Record<string, string | number | boolean | null>,
+    groups?: {
+      id: string | number,
+      name?: string | null,
+      active_count?: number | null,
+      sent_count?: number | null,
+      opens_count?: number | null,
+      clicks_count?: number | null,
+      open_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      click_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      total?: number | null,
+      unsubscribed_count?: number | null,
+      unconfirmed_count?: number | null,
+      bounced_count?: number | null,
+      junk_count?: number | null,
+      created_at?: string | null,
+      updated_at?: string | null
+    }[] | null
+  } | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }
 ```
 </Accordion>
@@ -5042,7 +8717,60 @@ await corsair.mailerlite.api.customers.delete({ shopId: '1', customerId: '1' });
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  email?: string | null,
+  resource_id?: string | null,
+  accepts_marketing?: boolean | null,
+  total_spent?: number | null,
+  orders_count?: number | null,
+  name?: string | null,
+  last_name?: string | null,
+  subscriber?: {
+    id: string | number,
+    email?: string,
+    status?: active | unsubscribed | unconfirmed | bounced | junk,
+    source?: string | null,
+    sent?: number | null,
+    opens_count?: number | null,
+    clicks_count?: number | null,
+    open_rate?: number | null,
+    click_rate?: number | null,
+    ip_address?: string | null,
+    subscribed_at?: string | null,
+    unsubscribed_at?: string | null,
+    opted_in_at?: string | null,
+    optin_ip?: string | null,
+    deleted_at?: string | null,
+    forget_at?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    fields?: Record<string, string | number | boolean | null>,
+    groups?: {
+      id: string | number,
+      name?: string | null,
+      active_count?: number | null,
+      sent_count?: number | null,
+      opens_count?: number | null,
+      clicks_count?: number | null,
+      open_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      click_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      total?: number | null,
+      unsubscribed_count?: number | null,
+      unconfirmed_count?: number | null,
+      bounced_count?: number | null,
+      junk_count?: number | null,
+      created_at?: string | null,
+      updated_at?: string | null
+    }[] | null
+  } | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }
 ```
 </Accordion>
@@ -5096,7 +8824,60 @@ await corsair.mailerlite.api.customers.get({ shopId: '1', customerId: '1' });
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  email?: string | null,
+  resource_id?: string | null,
+  accepts_marketing?: boolean | null,
+  total_spent?: number | null,
+  orders_count?: number | null,
+  name?: string | null,
+  last_name?: string | null,
+  subscriber?: {
+    id: string | number,
+    email?: string,
+    status?: active | unsubscribed | unconfirmed | bounced | junk,
+    source?: string | null,
+    sent?: number | null,
+    opens_count?: number | null,
+    clicks_count?: number | null,
+    open_rate?: number | null,
+    click_rate?: number | null,
+    ip_address?: string | null,
+    subscribed_at?: string | null,
+    unsubscribed_at?: string | null,
+    opted_in_at?: string | null,
+    optin_ip?: string | null,
+    deleted_at?: string | null,
+    forget_at?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    fields?: Record<string, string | number | boolean | null>,
+    groups?: {
+      id: string | number,
+      name?: string | null,
+      active_count?: number | null,
+      sent_count?: number | null,
+      opens_count?: number | null,
+      clicks_count?: number | null,
+      open_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      click_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      total?: number | null,
+      unsubscribed_count?: number | null,
+      unconfirmed_count?: number | null,
+      bounced_count?: number | null,
+      junk_count?: number | null,
+      created_at?: string | null,
+      updated_at?: string | null
+    }[] | null
+  } | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }
 ```
 </Accordion>
@@ -5156,7 +8937,60 @@ await corsair.mailerlite.api.customers.list({ shopId: '1' });
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  email?: string | null,
+  resource_id?: string | null,
+  accepts_marketing?: boolean | null,
+  total_spent?: number | null,
+  orders_count?: number | null,
+  name?: string | null,
+  last_name?: string | null,
+  subscriber?: {
+    id: string | number,
+    email?: string,
+    status?: active | unsubscribed | unconfirmed | bounced | junk,
+    source?: string | null,
+    sent?: number | null,
+    opens_count?: number | null,
+    clicks_count?: number | null,
+    open_rate?: number | null,
+    click_rate?: number | null,
+    ip_address?: string | null,
+    subscribed_at?: string | null,
+    unsubscribed_at?: string | null,
+    opted_in_at?: string | null,
+    optin_ip?: string | null,
+    deleted_at?: string | null,
+    forget_at?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    fields?: Record<string, string | number | boolean | null>,
+    groups?: {
+      id: string | number,
+      name?: string | null,
+      active_count?: number | null,
+      sent_count?: number | null,
+      opens_count?: number | null,
+      clicks_count?: number | null,
+      open_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      click_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      total?: number | null,
+      unsubscribed_count?: number | null,
+      unconfirmed_count?: number | null,
+      bounced_count?: number | null,
+      junk_count?: number | null,
+      created_at?: string | null,
+      updated_at?: string | null
+    }[] | null
+  } | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }[]
 ```
 </Accordion>
@@ -5256,7 +9090,60 @@ await corsair.mailerlite.api.customers.update({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  email?: string | null,
+  resource_id?: string | null,
+  accepts_marketing?: boolean | null,
+  total_spent?: number | null,
+  orders_count?: number | null,
+  name?: string | null,
+  last_name?: string | null,
+  subscriber?: {
+    id: string | number,
+    email?: string,
+    status?: active | unsubscribed | unconfirmed | bounced | junk,
+    source?: string | null,
+    sent?: number | null,
+    opens_count?: number | null,
+    clicks_count?: number | null,
+    open_rate?: number | null,
+    click_rate?: number | null,
+    ip_address?: string | null,
+    subscribed_at?: string | null,
+    unsubscribed_at?: string | null,
+    opted_in_at?: string | null,
+    optin_ip?: string | null,
+    deleted_at?: string | null,
+    forget_at?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    fields?: Record<string, string | number | boolean | null>,
+    groups?: {
+      id: string | number,
+      name?: string | null,
+      active_count?: number | null,
+      sent_count?: number | null,
+      opens_count?: number | null,
+      clicks_count?: number | null,
+      open_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      click_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      total?: number | null,
+      unsubscribed_count?: number | null,
+      unconfirmed_count?: number | null,
+      bounced_count?: number | null,
+      junk_count?: number | null,
+      created_at?: string | null,
+      updated_at?: string | null
+    }[] | null
+  } | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }
 ```
 </Accordion>
@@ -5328,7 +9215,12 @@ await corsair.mailerlite.api.ecommerceImports.categories({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  exclude_from_automations?: boolean | null,
+  products_count?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }[]
 ```
 </Accordion>
@@ -5436,7 +9328,7 @@ await corsair.mailerlite.api.ecommerceImports.customers({
 
 MailerLite orders ecommerce imports.
 
-**Risk:** `read`
+**Risk:** `destructive`
 
 ```ts
 await corsair.mailerlite.api.ecommerceImports.orders({
@@ -5510,7 +9402,135 @@ await corsair.mailerlite.api.ecommerceImports.orders({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  status?: pending | complete | null,
+  total?: number | null,
+  total_price?: number | null,
+  shop?: {
+    id: string | number,
+    name?: string | null,
+    url?: string | null,
+    currency?: string | null,
+    platform?: string | null,
+    group_id?: string | number | null,
+    group?: {
+      id: string | number,
+      name?: string | null,
+      active_count?: number | null,
+      sent_count?: number | null,
+      opens_count?: number | null,
+      clicks_count?: number | null,
+      open_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      click_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      total?: number | null,
+      unsubscribed_count?: number | null,
+      unconfirmed_count?: number | null,
+      bounced_count?: number | null,
+      junk_count?: number | null,
+      created_at?: string | null,
+      updated_at?: string | null
+    } | null,
+    enable_popups?: boolean | null,
+    enabled?: boolean | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null,
+  customer?: {
+    id: string | number,
+    email?: string | null,
+    resource_id?: string | null,
+    accepts_marketing?: boolean | null,
+    total_spent?: number | null,
+    orders_count?: number | null,
+    name?: string | null,
+    last_name?: string | null,
+    subscriber?: {
+      id: string | number,
+      email?: string,
+      status?: active | unsubscribed | unconfirmed | bounced | junk,
+      source?: string | null,
+      sent?: number | null,
+      opens_count?: number | null,
+      clicks_count?: number | null,
+      open_rate?: number | null,
+      click_rate?: number | null,
+      ip_address?: string | null,
+      subscribed_at?: string | null,
+      unsubscribed_at?: string | null,
+      opted_in_at?: string | null,
+      optin_ip?: string | null,
+      deleted_at?: string | null,
+      forget_at?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      fields?: Record<string, string | number | boolean | null>,
+      groups?: {
+        id: string | number,
+        name?: string | null,
+        active_count?: number | null,
+        sent_count?: number | null,
+        opens_count?: number | null,
+        clicks_count?: number | null,
+        open_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        click_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        total?: number | null,
+        unsubscribed_count?: number | null,
+        unconfirmed_count?: number | null,
+        bounced_count?: number | null,
+        junk_count?: number | null,
+        created_at?: string | null,
+        updated_at?: string | null
+      }[] | null
+    } | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null,
+  cart?: {
+    items?: {
+      id?: string | number,
+      ecommerce_product_id?: string | number,
+      ecommerce_product_variant_id?: string | number | null,
+      product?: {
+        id: string | number,
+        name?: string | null,
+        price?: number | null,
+        url?: string | null,
+        image?: string | null,
+        exclude_from_automations?: boolean | null,
+        enabled?: boolean | null,
+        categories?: {
+          id: string | number,
+          name?: string | null,
+          exclude_from_automations?: boolean | null,
+          products_count?: number | null,
+          created_at?: string | null,
+          updated_at?: string | null
+        }[] | null
+      } | null,
+      variant?: string | null,
+      quantity?: number | null,
+      price?: number | null
+    }[]
+  } | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  completed_at?: string | null,
+  attribution?: {
+    email_id: string | number,
+    type: string
+  } | null
 }[]
 ```
 </Accordion>
@@ -5613,7 +9633,38 @@ await corsair.mailerlite.api.ecommerceImports.products({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  price?: number | null,
+  currency?: string | null,
+  exclude_from_automations?: boolean | null,
+  enabled?: boolean | null,
+  url?: string | null,
+  image?: string | null,
+  short_description?: string | null,
+  description?: string | null,
+  variants?: {
+    id: string | number,
+    name?: string | null,
+    attributes?: Record<string, string> | null,
+    price?: number | null
+  }[] | null,
+  categories?: {
+    id: string | number,
+    name?: string | null,
+    exclude_from_automations?: boolean | null,
+    products_count?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null,
+  currency_symbol?: string | null,
+  checkout_url?: string | null,
+  stripe_minimum?: boolean | null,
+  has_checkout?: boolean | null,
+  order_stats?: Record<string, number> | null,
+  type?: one-time | subscription | booking | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }[]
 ```
 </Accordion>
@@ -5764,13 +9815,58 @@ await corsair.mailerlite.api.emails.get({ emailId: '1' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object` | Yes | — |
+| `etag` | `string` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  type: builder_inline_email,
+  emailable_type: campaigns | automations,
+  emailable_id: string | number,
+  settings: {
+    brand?: {
+      mode?: account | template | custom,
+      font_family?: string,
+      background_color?: string,
+      text_color?: string,
+      border_color?: string
+    },
+    layout?: {
+      width_mode?: string,
+      alignment?: string
+    },
+    typography?: Record<string, JsonValue>,
+    button?: Record<string, JsonValue>,
+    footer?: {
+      show_preferences?: boolean,
+      unsubscribe_text?: string,
+      preferences_text?: string,
+      company_name?: {
+        editor_content: Record<string, JsonValue>
+      },
+      address?: {
+        editor_content: Record<string, JsonValue>
+      },
+      info_text?: {
+        editor_content: Record<string, JsonValue>
+      },
+      social_links?: {
+        url: string,
+        type: string,
+        label: string,
+        link_id?: number
+      }[]
+    }
+  },
+  blocks: {
+    id: string | number,
+    type: string,
+    editor_content: Record<string, JsonValue>,
+    children?: Record<string, JsonValue>[]
+  }[]
 }
 ```
 </Accordion>
@@ -5786,7 +9882,7 @@ await corsair.mailerlite.api.emails.get({ emailId: '1' });
 
 MailerLite get block emails.
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
 await corsair.mailerlite.api.emails.getBlock({ emailId: '1', blockId: '1' });
@@ -5806,13 +9902,20 @@ await corsair.mailerlite.api.emails.getBlock({ emailId: '1', blockId: '1' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object` | Yes | — |
+| `etag` | `string` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  type?: string | null,
+  editor_content?: Record<string, JsonValue> | null,
+  placement?: {
+    after?: string | number | null,
+    before?: string | number | null
+  }
 }
 ```
 </Accordion>
@@ -5828,7 +9931,7 @@ await corsair.mailerlite.api.emails.getBlock({ emailId: '1', blockId: '1' });
 
 MailerLite html emails.
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
 await corsair.mailerlite.api.emails.html({ emailId: '1' });
@@ -5927,13 +10030,20 @@ await corsair.mailerlite.api.emails.insertBlock({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object` | Yes | — |
+| `etag` | `string` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  type?: string | null,
+  editor_content?: Record<string, JsonValue> | null,
+  placement?: {
+    after?: string | number | null,
+    before?: string | number | null
+  }
 }
 ```
 </Accordion>
@@ -5993,13 +10103,20 @@ await corsair.mailerlite.api.emails.moveBlock({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object` | Yes | — |
+| `etag` | `string` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  type?: string | null,
+  editor_content?: Record<string, JsonValue> | null,
+  placement?: {
+    after?: string | number | null,
+    before?: string | number | null
+  }
 }
 ```
 </Accordion>
@@ -6042,7 +10159,11 @@ await corsair.mailerlite.api.emails.restoreVersion({ emailId: '1', versionId: '1
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  type?: string | null,
+  created_at?: string | null,
+  current?: boolean | null
 }
 ```
 </Accordion>
@@ -6144,7 +10265,11 @@ await corsair.mailerlite.api.emails.saveVersion({ emailId: '1' });
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  type?: string | null,
+  created_at?: string | null,
+  current?: boolean | null
 }
 ```
 </Accordion>
@@ -6213,13 +10338,20 @@ await corsair.mailerlite.api.emails.updateBlock({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object` | Yes | — |
+| `etag` | `string` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  type?: string | null,
+  editor_content?: Record<string, JsonValue> | null,
+  placement?: {
+    after?: string | number | null,
+    before?: string | number | null
+  }
 }
 ```
 </Accordion>
@@ -6847,7 +10979,7 @@ await corsair.mailerlite.api.emails.validateSettings({
 
 MailerLite versions emails.
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
 await corsair.mailerlite.api.emails.versions({ emailId: '1' });
@@ -6887,7 +11019,11 @@ await corsair.mailerlite.api.emails.versions({ emailId: '1' });
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  type?: string | null,
+  created_at?: string | null,
+  current?: boolean | null
 }[]
 ```
 </Accordion>
@@ -6970,7 +11106,12 @@ await corsair.mailerlite.api.fields.create({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  key?: string | null,
+  type?: text | number | date | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }
 ```
 </Accordion>
@@ -7057,7 +11198,12 @@ await corsair.mailerlite.api.fields.list({});
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  key?: string | null,
+  type?: text | number | date | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }[]
 ```
 </Accordion>
@@ -7139,7 +11285,12 @@ await corsair.mailerlite.api.fields.update({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  key?: string | null,
+  type?: text | number | date | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }
 ```
 </Accordion>
@@ -7203,7 +11354,12 @@ await corsair.mailerlite.api.files.list({});
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  type?: image | pdf | epub | null,
+  url?: string | null,
+  size?: number | null,
+  created_at?: string | null
 }[]
 ```
 </Accordion>
@@ -7297,7 +11453,31 @@ await corsair.mailerlite.api.forms.get({ formId: '1' });
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  slug?: string | null,
+  name?: string | null,
+  type?: popup | embedded | promotion | null,
+  conversions_count?: number | null,
+  opens_count?: number | null,
+  visitors?: number | null,
+  conversion_rate?: number | {
+    float?: number,
+    string: string
+  } | null,
+  last_registration_at?: string | null,
+  settings?: Record<string, JsonValue> | JsonValue[] | null,
+  active?: boolean | null,
+  is_broken?: boolean | null,
+  has_content?: boolean | null,
+  can?: {
+    update?: boolean
+  },
+  used_in_automations?: boolean | null,
+  warnings?: string[] | null,
+  double_optin?: boolean | null,
+  screenshot_url?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }
 ```
 </Accordion>
@@ -7357,7 +11537,31 @@ await corsair.mailerlite.api.forms.list({ type: 'popup' });
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  slug?: string | null,
+  name?: string | null,
+  type?: popup | embedded | promotion | null,
+  conversions_count?: number | null,
+  opens_count?: number | null,
+  visitors?: number | null,
+  conversion_rate?: number | {
+    float?: number,
+    string: string
+  } | null,
+  last_registration_at?: string | null,
+  settings?: Record<string, JsonValue> | JsonValue[] | null,
+  active?: boolean | null,
+  is_broken?: boolean | null,
+  has_content?: boolean | null,
+  can?: {
+    update?: boolean
+  },
+  used_in_automations?: boolean | null,
+  warnings?: string[] | null,
+  double_optin?: boolean | null,
+  screenshot_url?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }[]
 ```
 </Accordion>
@@ -7399,7 +11603,7 @@ await corsair.mailerlite.api.forms.list({ type: 'popup' });
 
 MailerLite subscribers forms.
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
 await corsair.mailerlite.api.forms.subscribers({ formId: '1' });
@@ -7442,7 +11646,48 @@ await corsair.mailerlite.api.forms.subscribers({ formId: '1' });
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  email?: string,
+  status?: active | unsubscribed | unconfirmed | bounced | junk,
+  source?: string | null,
+  sent?: number | null,
+  opens_count?: number | null,
+  clicks_count?: number | null,
+  open_rate?: number | null,
+  click_rate?: number | null,
+  ip_address?: string | null,
+  subscribed_at?: string | null,
+  unsubscribed_at?: string | null,
+  opted_in_at?: string | null,
+  optin_ip?: string | null,
+  deleted_at?: string | null,
+  forget_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: Record<string, string | number | boolean | null>,
+  groups?: {
+    id: string | number,
+    name?: string | null,
+    active_count?: number | null,
+    sent_count?: number | null,
+    opens_count?: number | null,
+    clicks_count?: number | null,
+    open_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    click_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    total?: number | null,
+    unsubscribed_count?: number | null,
+    unconfirmed_count?: number | null,
+    bounced_count?: number | null,
+    junk_count?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null
 }[]
 ```
 </Accordion>
@@ -7524,7 +11769,31 @@ await corsair.mailerlite.api.forms.update({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  slug?: string | null,
+  name?: string | null,
+  type?: popup | embedded | promotion | null,
+  conversions_count?: number | null,
+  opens_count?: number | null,
+  visitors?: number | null,
+  conversion_rate?: number | {
+    float?: number,
+    string: string
+  } | null,
+  last_registration_at?: string | null,
+  settings?: Record<string, JsonValue> | JsonValue[] | null,
+  active?: boolean | null,
+  is_broken?: boolean | null,
+  has_content?: boolean | null,
+  can?: {
+    update?: boolean
+  },
+  used_in_automations?: boolean | null,
+  warnings?: string[] | null,
+  double_optin?: boolean | null,
+  screenshot_url?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }
 ```
 </Accordion>
@@ -7580,7 +11849,27 @@ await corsair.mailerlite.api.groups.create({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  active_count?: number | null,
+  sent_count?: number | null,
+  opens_count?: number | null,
+  clicks_count?: number | null,
+  open_rate?: number | {
+    float?: number,
+    string: string
+  } | null,
+  click_rate?: number | {
+    float?: number,
+    string: string
+  } | null,
+  total?: number | null,
+  unsubscribed_count?: number | null,
+  unconfirmed_count?: number | null,
+  bounced_count?: number | null,
+  junk_count?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }
 ```
 </Accordion>
@@ -7718,7 +12007,27 @@ await corsair.mailerlite.api.groups.list({});
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  active_count?: number | null,
+  sent_count?: number | null,
+  opens_count?: number | null,
+  clicks_count?: number | null,
+  open_rate?: number | {
+    float?: number,
+    string: string
+  } | null,
+  click_rate?: number | {
+    float?: number,
+    string: string
+  } | null,
+  total?: number | null,
+  unsubscribed_count?: number | null,
+  unconfirmed_count?: number | null,
+  bounced_count?: number | null,
+  junk_count?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }[]
 ```
 </Accordion>
@@ -7760,7 +12069,7 @@ await corsair.mailerlite.api.groups.list({});
 
 MailerLite subscribers groups.
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
 await corsair.mailerlite.api.groups.subscribers({ groupId: '1' });
@@ -7804,7 +12113,48 @@ await corsair.mailerlite.api.groups.subscribers({ groupId: '1' });
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  email?: string,
+  status?: active | unsubscribed | unconfirmed | bounced | junk,
+  source?: string | null,
+  sent?: number | null,
+  opens_count?: number | null,
+  clicks_count?: number | null,
+  open_rate?: number | null,
+  click_rate?: number | null,
+  ip_address?: string | null,
+  subscribed_at?: string | null,
+  unsubscribed_at?: string | null,
+  opted_in_at?: string | null,
+  optin_ip?: string | null,
+  deleted_at?: string | null,
+  forget_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: Record<string, string | number | boolean | null>,
+  groups?: {
+    id: string | number,
+    name?: string | null,
+    active_count?: number | null,
+    sent_count?: number | null,
+    opens_count?: number | null,
+    clicks_count?: number | null,
+    open_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    click_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    total?: number | null,
+    unsubscribed_count?: number | null,
+    unconfirmed_count?: number | null,
+    bounced_count?: number | null,
+    junk_count?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null
 }[]
 ```
 </Accordion>
@@ -7886,7 +12236,27 @@ await corsair.mailerlite.api.groups.update({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  active_count?: number | null,
+  sent_count?: number | null,
+  opens_count?: number | null,
+  clicks_count?: number | null,
+  open_rate?: number | {
+    float?: number,
+    string: string
+  } | null,
+  click_rate?: number | {
+    float?: number,
+    string: string
+  } | null,
+  total?: number | null,
+  unsubscribed_count?: number | null,
+  unconfirmed_count?: number | null,
+  bounced_count?: number | null,
+  junk_count?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }
 ```
 </Accordion>
@@ -8015,7 +12385,135 @@ Orders marked complete can trigger purchase automations and revenue attribution.
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  status?: pending | complete | null,
+  total?: number | null,
+  total_price?: number | null,
+  shop?: {
+    id: string | number,
+    name?: string | null,
+    url?: string | null,
+    currency?: string | null,
+    platform?: string | null,
+    group_id?: string | number | null,
+    group?: {
+      id: string | number,
+      name?: string | null,
+      active_count?: number | null,
+      sent_count?: number | null,
+      opens_count?: number | null,
+      clicks_count?: number | null,
+      open_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      click_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      total?: number | null,
+      unsubscribed_count?: number | null,
+      unconfirmed_count?: number | null,
+      bounced_count?: number | null,
+      junk_count?: number | null,
+      created_at?: string | null,
+      updated_at?: string | null
+    } | null,
+    enable_popups?: boolean | null,
+    enabled?: boolean | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null,
+  customer?: {
+    id: string | number,
+    email?: string | null,
+    resource_id?: string | null,
+    accepts_marketing?: boolean | null,
+    total_spent?: number | null,
+    orders_count?: number | null,
+    name?: string | null,
+    last_name?: string | null,
+    subscriber?: {
+      id: string | number,
+      email?: string,
+      status?: active | unsubscribed | unconfirmed | bounced | junk,
+      source?: string | null,
+      sent?: number | null,
+      opens_count?: number | null,
+      clicks_count?: number | null,
+      open_rate?: number | null,
+      click_rate?: number | null,
+      ip_address?: string | null,
+      subscribed_at?: string | null,
+      unsubscribed_at?: string | null,
+      opted_in_at?: string | null,
+      optin_ip?: string | null,
+      deleted_at?: string | null,
+      forget_at?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      fields?: Record<string, string | number | boolean | null>,
+      groups?: {
+        id: string | number,
+        name?: string | null,
+        active_count?: number | null,
+        sent_count?: number | null,
+        opens_count?: number | null,
+        clicks_count?: number | null,
+        open_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        click_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        total?: number | null,
+        unsubscribed_count?: number | null,
+        unconfirmed_count?: number | null,
+        bounced_count?: number | null,
+        junk_count?: number | null,
+        created_at?: string | null,
+        updated_at?: string | null
+      }[] | null
+    } | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null,
+  cart?: {
+    items?: {
+      id?: string | number,
+      ecommerce_product_id?: string | number,
+      ecommerce_product_variant_id?: string | number | null,
+      product?: {
+        id: string | number,
+        name?: string | null,
+        price?: number | null,
+        url?: string | null,
+        image?: string | null,
+        exclude_from_automations?: boolean | null,
+        enabled?: boolean | null,
+        categories?: {
+          id: string | number,
+          name?: string | null,
+          exclude_from_automations?: boolean | null,
+          products_count?: number | null,
+          created_at?: string | null,
+          updated_at?: string | null
+        }[] | null
+      } | null,
+      variant?: string | null,
+      quantity?: number | null,
+      price?: number | null
+    }[]
+  } | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  completed_at?: string | null,
+  attribution?: {
+    email_id: string | number,
+    type: string
+  } | null
 }
 ```
 </Accordion>
@@ -8069,7 +12567,135 @@ await corsair.mailerlite.api.orders.delete({ shopId: '1', orderId: '1' });
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  status?: pending | complete | null,
+  total?: number | null,
+  total_price?: number | null,
+  shop?: {
+    id: string | number,
+    name?: string | null,
+    url?: string | null,
+    currency?: string | null,
+    platform?: string | null,
+    group_id?: string | number | null,
+    group?: {
+      id: string | number,
+      name?: string | null,
+      active_count?: number | null,
+      sent_count?: number | null,
+      opens_count?: number | null,
+      clicks_count?: number | null,
+      open_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      click_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      total?: number | null,
+      unsubscribed_count?: number | null,
+      unconfirmed_count?: number | null,
+      bounced_count?: number | null,
+      junk_count?: number | null,
+      created_at?: string | null,
+      updated_at?: string | null
+    } | null,
+    enable_popups?: boolean | null,
+    enabled?: boolean | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null,
+  customer?: {
+    id: string | number,
+    email?: string | null,
+    resource_id?: string | null,
+    accepts_marketing?: boolean | null,
+    total_spent?: number | null,
+    orders_count?: number | null,
+    name?: string | null,
+    last_name?: string | null,
+    subscriber?: {
+      id: string | number,
+      email?: string,
+      status?: active | unsubscribed | unconfirmed | bounced | junk,
+      source?: string | null,
+      sent?: number | null,
+      opens_count?: number | null,
+      clicks_count?: number | null,
+      open_rate?: number | null,
+      click_rate?: number | null,
+      ip_address?: string | null,
+      subscribed_at?: string | null,
+      unsubscribed_at?: string | null,
+      opted_in_at?: string | null,
+      optin_ip?: string | null,
+      deleted_at?: string | null,
+      forget_at?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      fields?: Record<string, string | number | boolean | null>,
+      groups?: {
+        id: string | number,
+        name?: string | null,
+        active_count?: number | null,
+        sent_count?: number | null,
+        opens_count?: number | null,
+        clicks_count?: number | null,
+        open_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        click_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        total?: number | null,
+        unsubscribed_count?: number | null,
+        unconfirmed_count?: number | null,
+        bounced_count?: number | null,
+        junk_count?: number | null,
+        created_at?: string | null,
+        updated_at?: string | null
+      }[] | null
+    } | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null,
+  cart?: {
+    items?: {
+      id?: string | number,
+      ecommerce_product_id?: string | number,
+      ecommerce_product_variant_id?: string | number | null,
+      product?: {
+        id: string | number,
+        name?: string | null,
+        price?: number | null,
+        url?: string | null,
+        image?: string | null,
+        exclude_from_automations?: boolean | null,
+        enabled?: boolean | null,
+        categories?: {
+          id: string | number,
+          name?: string | null,
+          exclude_from_automations?: boolean | null,
+          products_count?: number | null,
+          created_at?: string | null,
+          updated_at?: string | null
+        }[] | null
+      } | null,
+      variant?: string | null,
+      quantity?: number | null,
+      price?: number | null
+    }[]
+  } | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  completed_at?: string | null,
+  attribution?: {
+    email_id: string | number,
+    type: string
+  } | null
 }
 ```
 </Accordion>
@@ -8123,7 +12749,135 @@ await corsair.mailerlite.api.orders.get({ shopId: '1', orderId: '1' });
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  status?: pending | complete | null,
+  total?: number | null,
+  total_price?: number | null,
+  shop?: {
+    id: string | number,
+    name?: string | null,
+    url?: string | null,
+    currency?: string | null,
+    platform?: string | null,
+    group_id?: string | number | null,
+    group?: {
+      id: string | number,
+      name?: string | null,
+      active_count?: number | null,
+      sent_count?: number | null,
+      opens_count?: number | null,
+      clicks_count?: number | null,
+      open_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      click_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      total?: number | null,
+      unsubscribed_count?: number | null,
+      unconfirmed_count?: number | null,
+      bounced_count?: number | null,
+      junk_count?: number | null,
+      created_at?: string | null,
+      updated_at?: string | null
+    } | null,
+    enable_popups?: boolean | null,
+    enabled?: boolean | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null,
+  customer?: {
+    id: string | number,
+    email?: string | null,
+    resource_id?: string | null,
+    accepts_marketing?: boolean | null,
+    total_spent?: number | null,
+    orders_count?: number | null,
+    name?: string | null,
+    last_name?: string | null,
+    subscriber?: {
+      id: string | number,
+      email?: string,
+      status?: active | unsubscribed | unconfirmed | bounced | junk,
+      source?: string | null,
+      sent?: number | null,
+      opens_count?: number | null,
+      clicks_count?: number | null,
+      open_rate?: number | null,
+      click_rate?: number | null,
+      ip_address?: string | null,
+      subscribed_at?: string | null,
+      unsubscribed_at?: string | null,
+      opted_in_at?: string | null,
+      optin_ip?: string | null,
+      deleted_at?: string | null,
+      forget_at?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      fields?: Record<string, string | number | boolean | null>,
+      groups?: {
+        id: string | number,
+        name?: string | null,
+        active_count?: number | null,
+        sent_count?: number | null,
+        opens_count?: number | null,
+        clicks_count?: number | null,
+        open_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        click_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        total?: number | null,
+        unsubscribed_count?: number | null,
+        unconfirmed_count?: number | null,
+        bounced_count?: number | null,
+        junk_count?: number | null,
+        created_at?: string | null,
+        updated_at?: string | null
+      }[] | null
+    } | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null,
+  cart?: {
+    items?: {
+      id?: string | number,
+      ecommerce_product_id?: string | number,
+      ecommerce_product_variant_id?: string | number | null,
+      product?: {
+        id: string | number,
+        name?: string | null,
+        price?: number | null,
+        url?: string | null,
+        image?: string | null,
+        exclude_from_automations?: boolean | null,
+        enabled?: boolean | null,
+        categories?: {
+          id: string | number,
+          name?: string | null,
+          exclude_from_automations?: boolean | null,
+          products_count?: number | null,
+          created_at?: string | null,
+          updated_at?: string | null
+        }[] | null
+      } | null,
+      variant?: string | null,
+      quantity?: number | null,
+      price?: number | null
+    }[]
+  } | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  completed_at?: string | null,
+  attribution?: {
+    email_id: string | number,
+    type: string
+  } | null
 }
 ```
 </Accordion>
@@ -8192,7 +12946,135 @@ await corsair.mailerlite.api.orders.list({ shopId: '1' });
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  status?: pending | complete | null,
+  total?: number | null,
+  total_price?: number | null,
+  shop?: {
+    id: string | number,
+    name?: string | null,
+    url?: string | null,
+    currency?: string | null,
+    platform?: string | null,
+    group_id?: string | number | null,
+    group?: {
+      id: string | number,
+      name?: string | null,
+      active_count?: number | null,
+      sent_count?: number | null,
+      opens_count?: number | null,
+      clicks_count?: number | null,
+      open_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      click_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      total?: number | null,
+      unsubscribed_count?: number | null,
+      unconfirmed_count?: number | null,
+      bounced_count?: number | null,
+      junk_count?: number | null,
+      created_at?: string | null,
+      updated_at?: string | null
+    } | null,
+    enable_popups?: boolean | null,
+    enabled?: boolean | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null,
+  customer?: {
+    id: string | number,
+    email?: string | null,
+    resource_id?: string | null,
+    accepts_marketing?: boolean | null,
+    total_spent?: number | null,
+    orders_count?: number | null,
+    name?: string | null,
+    last_name?: string | null,
+    subscriber?: {
+      id: string | number,
+      email?: string,
+      status?: active | unsubscribed | unconfirmed | bounced | junk,
+      source?: string | null,
+      sent?: number | null,
+      opens_count?: number | null,
+      clicks_count?: number | null,
+      open_rate?: number | null,
+      click_rate?: number | null,
+      ip_address?: string | null,
+      subscribed_at?: string | null,
+      unsubscribed_at?: string | null,
+      opted_in_at?: string | null,
+      optin_ip?: string | null,
+      deleted_at?: string | null,
+      forget_at?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      fields?: Record<string, string | number | boolean | null>,
+      groups?: {
+        id: string | number,
+        name?: string | null,
+        active_count?: number | null,
+        sent_count?: number | null,
+        opens_count?: number | null,
+        clicks_count?: number | null,
+        open_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        click_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        total?: number | null,
+        unsubscribed_count?: number | null,
+        unconfirmed_count?: number | null,
+        bounced_count?: number | null,
+        junk_count?: number | null,
+        created_at?: string | null,
+        updated_at?: string | null
+      }[] | null
+    } | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null,
+  cart?: {
+    items?: {
+      id?: string | number,
+      ecommerce_product_id?: string | number,
+      ecommerce_product_variant_id?: string | number | null,
+      product?: {
+        id: string | number,
+        name?: string | null,
+        price?: number | null,
+        url?: string | null,
+        image?: string | null,
+        exclude_from_automations?: boolean | null,
+        enabled?: boolean | null,
+        categories?: {
+          id: string | number,
+          name?: string | null,
+          exclude_from_automations?: boolean | null,
+          products_count?: number | null,
+          created_at?: string | null,
+          updated_at?: string | null
+        }[] | null
+      } | null,
+      variant?: string | null,
+      quantity?: number | null,
+      price?: number | null
+    }[]
+  } | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  completed_at?: string | null,
+  attribution?: {
+    email_id: string | number,
+    type: string
+  } | null
 }[]
 ```
 </Accordion>
@@ -8287,7 +13169,135 @@ await corsair.mailerlite.api.orders.update({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  status?: pending | complete | null,
+  total?: number | null,
+  total_price?: number | null,
+  shop?: {
+    id: string | number,
+    name?: string | null,
+    url?: string | null,
+    currency?: string | null,
+    platform?: string | null,
+    group_id?: string | number | null,
+    group?: {
+      id: string | number,
+      name?: string | null,
+      active_count?: number | null,
+      sent_count?: number | null,
+      opens_count?: number | null,
+      clicks_count?: number | null,
+      open_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      click_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      total?: number | null,
+      unsubscribed_count?: number | null,
+      unconfirmed_count?: number | null,
+      bounced_count?: number | null,
+      junk_count?: number | null,
+      created_at?: string | null,
+      updated_at?: string | null
+    } | null,
+    enable_popups?: boolean | null,
+    enabled?: boolean | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null,
+  customer?: {
+    id: string | number,
+    email?: string | null,
+    resource_id?: string | null,
+    accepts_marketing?: boolean | null,
+    total_spent?: number | null,
+    orders_count?: number | null,
+    name?: string | null,
+    last_name?: string | null,
+    subscriber?: {
+      id: string | number,
+      email?: string,
+      status?: active | unsubscribed | unconfirmed | bounced | junk,
+      source?: string | null,
+      sent?: number | null,
+      opens_count?: number | null,
+      clicks_count?: number | null,
+      open_rate?: number | null,
+      click_rate?: number | null,
+      ip_address?: string | null,
+      subscribed_at?: string | null,
+      unsubscribed_at?: string | null,
+      opted_in_at?: string | null,
+      optin_ip?: string | null,
+      deleted_at?: string | null,
+      forget_at?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      fields?: Record<string, string | number | boolean | null>,
+      groups?: {
+        id: string | number,
+        name?: string | null,
+        active_count?: number | null,
+        sent_count?: number | null,
+        opens_count?: number | null,
+        clicks_count?: number | null,
+        open_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        click_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        total?: number | null,
+        unsubscribed_count?: number | null,
+        unconfirmed_count?: number | null,
+        bounced_count?: number | null,
+        junk_count?: number | null,
+        created_at?: string | null,
+        updated_at?: string | null
+      }[] | null
+    } | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null,
+  cart?: {
+    items?: {
+      id?: string | number,
+      ecommerce_product_id?: string | number,
+      ecommerce_product_variant_id?: string | number | null,
+      product?: {
+        id: string | number,
+        name?: string | null,
+        price?: number | null,
+        url?: string | null,
+        image?: string | null,
+        exclude_from_automations?: boolean | null,
+        enabled?: boolean | null,
+        categories?: {
+          id: string | number,
+          name?: string | null,
+          exclude_from_automations?: boolean | null,
+          products_count?: number | null,
+          created_at?: string | null,
+          updated_at?: string | null
+        }[] | null
+      } | null,
+      variant?: string | null,
+      quantity?: number | null,
+      price?: number | null
+    }[]
+  } | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  completed_at?: string | null,
+  attribution?: {
+    email_id: string | number,
+    type: string
+  } | null
 }
 ```
 </Accordion>
@@ -8357,7 +13367,38 @@ await corsair.mailerlite.api.products.changeStatus({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  price?: number | null,
+  currency?: string | null,
+  exclude_from_automations?: boolean | null,
+  enabled?: boolean | null,
+  url?: string | null,
+  image?: string | null,
+  short_description?: string | null,
+  description?: string | null,
+  variants?: {
+    id: string | number,
+    name?: string | null,
+    attributes?: Record<string, string> | null,
+    price?: number | null
+  }[] | null,
+  categories?: {
+    id: string | number,
+    name?: string | null,
+    exclude_from_automations?: boolean | null,
+    products_count?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null,
+  currency_symbol?: string | null,
+  checkout_url?: string | null,
+  stripe_minimum?: boolean | null,
+  has_checkout?: boolean | null,
+  order_stats?: Record<string, number> | null,
+  type?: one-time | subscription | booking | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }
 ```
 </Accordion>
@@ -8487,7 +13528,38 @@ await corsair.mailerlite.api.products.create({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  price?: number | null,
+  currency?: string | null,
+  exclude_from_automations?: boolean | null,
+  enabled?: boolean | null,
+  url?: string | null,
+  image?: string | null,
+  short_description?: string | null,
+  description?: string | null,
+  variants?: {
+    id: string | number,
+    name?: string | null,
+    attributes?: Record<string, string> | null,
+    price?: number | null
+  }[] | null,
+  categories?: {
+    id: string | number,
+    name?: string | null,
+    exclude_from_automations?: boolean | null,
+    products_count?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null,
+  currency_symbol?: string | null,
+  checkout_url?: string | null,
+  stripe_minimum?: boolean | null,
+  has_checkout?: boolean | null,
+  order_stats?: Record<string, number> | null,
+  type?: one-time | subscription | booking | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }
 ```
 </Accordion>
@@ -8541,7 +13613,38 @@ await corsair.mailerlite.api.products.delete({ shopId: '1', productId: '1' });
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  price?: number | null,
+  currency?: string | null,
+  exclude_from_automations?: boolean | null,
+  enabled?: boolean | null,
+  url?: string | null,
+  image?: string | null,
+  short_description?: string | null,
+  description?: string | null,
+  variants?: {
+    id: string | number,
+    name?: string | null,
+    attributes?: Record<string, string> | null,
+    price?: number | null
+  }[] | null,
+  categories?: {
+    id: string | number,
+    name?: string | null,
+    exclude_from_automations?: boolean | null,
+    products_count?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null,
+  currency_symbol?: string | null,
+  checkout_url?: string | null,
+  stripe_minimum?: boolean | null,
+  has_checkout?: boolean | null,
+  order_stats?: Record<string, number> | null,
+  type?: one-time | subscription | booking | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }
 ```
 </Accordion>
@@ -8595,7 +13698,38 @@ await corsair.mailerlite.api.products.get({ shopId: '1', productId: '1' });
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  price?: number | null,
+  currency?: string | null,
+  exclude_from_automations?: boolean | null,
+  enabled?: boolean | null,
+  url?: string | null,
+  image?: string | null,
+  short_description?: string | null,
+  description?: string | null,
+  variants?: {
+    id: string | number,
+    name?: string | null,
+    attributes?: Record<string, string> | null,
+    price?: number | null
+  }[] | null,
+  categories?: {
+    id: string | number,
+    name?: string | null,
+    exclude_from_automations?: boolean | null,
+    products_count?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null,
+  currency_symbol?: string | null,
+  checkout_url?: string | null,
+  stripe_minimum?: boolean | null,
+  has_checkout?: boolean | null,
+  order_stats?: Record<string, number> | null,
+  type?: one-time | subscription | booking | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }
 ```
 </Accordion>
@@ -8668,7 +13802,38 @@ await corsair.mailerlite.api.products.list({ shopId: '1' });
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  price?: number | null,
+  currency?: string | null,
+  exclude_from_automations?: boolean | null,
+  enabled?: boolean | null,
+  url?: string | null,
+  image?: string | null,
+  short_description?: string | null,
+  description?: string | null,
+  variants?: {
+    id: string | number,
+    name?: string | null,
+    attributes?: Record<string, string> | null,
+    price?: number | null
+  }[] | null,
+  categories?: {
+    id: string | number,
+    name?: string | null,
+    exclude_from_automations?: boolean | null,
+    products_count?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null,
+  currency_symbol?: string | null,
+  checkout_url?: string | null,
+  stripe_minimum?: boolean | null,
+  has_checkout?: boolean | null,
+  order_stats?: Record<string, number> | null,
+  type?: one-time | subscription | booking | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }[]
 ```
 </Accordion>
@@ -8806,7 +13971,38 @@ await corsair.mailerlite.api.products.update({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  price?: number | null,
+  currency?: string | null,
+  exclude_from_automations?: boolean | null,
+  enabled?: boolean | null,
+  url?: string | null,
+  image?: string | null,
+  short_description?: string | null,
+  description?: string | null,
+  variants?: {
+    id: string | number,
+    name?: string | null,
+    attributes?: Record<string, string> | null,
+    price?: number | null
+  }[] | null,
+  categories?: {
+    id: string | number,
+    name?: string | null,
+    exclude_from_automations?: boolean | null,
+    products_count?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null,
+  currency_symbol?: string | null,
+  checkout_url?: string | null,
+  stripe_minimum?: boolean | null,
+  has_checkout?: boolean | null,
+  order_stats?: Record<string, number> | null,
+  type?: one-time | subscription | booking | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }
 ```
 </Accordion>
@@ -8886,7 +14082,14 @@ E-commerce product variant creation with resource_id can delete variants omitted
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  ecommerce_product_id?: string | number | null,
+  name?: string | null,
+  attributes?: Record<string, string> | null,
+  price_type?: fixed | increment | null,
+  price?: number | null,
+  resource_id?: string | null,
+  image_url?: string | null
 }
 ```
 </Accordion>
@@ -8941,7 +14144,14 @@ await corsair.mailerlite.api.productVariants.delete({ shopId: '1', productId: '1
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  ecommerce_product_id?: string | number | null,
+  name?: string | null,
+  attributes?: Record<string, string> | null,
+  price_type?: fixed | increment | null,
+  price?: number | null,
+  resource_id?: string | null,
+  image_url?: string | null
 }
 ```
 </Accordion>
@@ -8997,7 +14207,14 @@ await corsair.mailerlite.api.productVariants.list({ shopId: '1', productId: '1' 
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  ecommerce_product_id?: string | number | null,
+  name?: string | null,
+  attributes?: Record<string, string> | null,
+  price_type?: fixed | increment | null,
+  price?: number | null,
+  resource_id?: string | null,
+  image_url?: string | null
 }[]
 ```
 </Accordion>
@@ -9101,7 +14318,14 @@ await corsair.mailerlite.api.productVariants.update({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  ecommerce_product_id?: string | number | null,
+  name?: string | null,
+  attributes?: Record<string, string> | null,
+  price_type?: fixed | increment | null,
+  price?: number | null,
+  resource_id?: string | null,
+  image_url?: string | null
 }
 ```
 </Accordion>
@@ -9184,7 +14408,19 @@ await corsair.mailerlite.api.segments.list({});
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  total?: number | null,
+  open_rate?: number | {
+    float?: number,
+    string: string
+  } | null,
+  click_rate?: number | {
+    float?: number,
+    string: string
+  } | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }[]
 ```
 </Accordion>
@@ -9226,7 +14462,7 @@ await corsair.mailerlite.api.segments.list({});
 
 MailerLite subscribers segments.
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
 await corsair.mailerlite.api.segments.subscribers({ segmentId: '1' });
@@ -9269,7 +14505,48 @@ await corsair.mailerlite.api.segments.subscribers({ segmentId: '1' });
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  email?: string,
+  status?: active | unsubscribed | unconfirmed | bounced | junk,
+  source?: string | null,
+  sent?: number | null,
+  opens_count?: number | null,
+  clicks_count?: number | null,
+  open_rate?: number | null,
+  click_rate?: number | null,
+  ip_address?: string | null,
+  subscribed_at?: string | null,
+  unsubscribed_at?: string | null,
+  opted_in_at?: string | null,
+  optin_ip?: string | null,
+  deleted_at?: string | null,
+  forget_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: Record<string, string | number | boolean | null>,
+  groups?: {
+    id: string | number,
+    name?: string | null,
+    active_count?: number | null,
+    sent_count?: number | null,
+    opens_count?: number | null,
+    clicks_count?: number | null,
+    open_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    click_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    total?: number | null,
+    unsubscribed_count?: number | null,
+    unconfirmed_count?: number | null,
+    bounced_count?: number | null,
+    junk_count?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null
 }[]
 ```
 </Accordion>
@@ -9351,7 +14628,19 @@ await corsair.mailerlite.api.segments.update({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  total?: number | null,
+  open_rate?: number | {
+    float?: number,
+    string: string
+  } | null,
+  click_rate?: number | {
+    float?: number,
+    string: string
+  } | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }
 ```
 </Accordion>
@@ -9439,7 +14728,39 @@ await corsair.mailerlite.api.shops.create({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  url?: string | null,
+  currency?: string | null,
+  platform?: string | null,
+  group_id?: string | number | null,
+  group?: {
+    id: string | number,
+    name?: string | null,
+    active_count?: number | null,
+    sent_count?: number | null,
+    opens_count?: number | null,
+    clicks_count?: number | null,
+    open_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    click_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    total?: number | null,
+    unsubscribed_count?: number | null,
+    unconfirmed_count?: number | null,
+    bounced_count?: number | null,
+    junk_count?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null,
+  enable_popups?: boolean | null,
+  enabled?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }
 ```
 </Accordion>
@@ -9480,7 +14801,39 @@ await corsair.mailerlite.api.shops.delete({ shopId: '1' });
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  url?: string | null,
+  currency?: string | null,
+  platform?: string | null,
+  group_id?: string | number | null,
+  group?: {
+    id: string | number,
+    name?: string | null,
+    active_count?: number | null,
+    sent_count?: number | null,
+    opens_count?: number | null,
+    clicks_count?: number | null,
+    open_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    click_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    total?: number | null,
+    unsubscribed_count?: number | null,
+    unconfirmed_count?: number | null,
+    bounced_count?: number | null,
+    junk_count?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null,
+  enable_popups?: boolean | null,
+  enabled?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }
 ```
 </Accordion>
@@ -9521,7 +14874,39 @@ await corsair.mailerlite.api.shops.get({ shopId: '1' });
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  url?: string | null,
+  currency?: string | null,
+  platform?: string | null,
+  group_id?: string | number | null,
+  group?: {
+    id: string | number,
+    name?: string | null,
+    active_count?: number | null,
+    sent_count?: number | null,
+    opens_count?: number | null,
+    clicks_count?: number | null,
+    open_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    click_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    total?: number | null,
+    unsubscribed_count?: number | null,
+    unconfirmed_count?: number | null,
+    bounced_count?: number | null,
+    junk_count?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null,
+  enable_popups?: boolean | null,
+  enabled?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }
 ```
 </Accordion>
@@ -9576,7 +14961,39 @@ await corsair.mailerlite.api.shops.list({});
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  url?: string | null,
+  currency?: string | null,
+  platform?: string | null,
+  group_id?: string | number | null,
+  group?: {
+    id: string | number,
+    name?: string | null,
+    active_count?: number | null,
+    sent_count?: number | null,
+    opens_count?: number | null,
+    clicks_count?: number | null,
+    open_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    click_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    total?: number | null,
+    unsubscribed_count?: number | null,
+    unconfirmed_count?: number | null,
+    bounced_count?: number | null,
+    junk_count?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null,
+  enable_popups?: boolean | null,
+  enabled?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }[]
 ```
 </Accordion>
@@ -9730,7 +15147,39 @@ await corsair.mailerlite.api.shops.update({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  url?: string | null,
+  currency?: string | null,
+  platform?: string | null,
+  group_id?: string | number | null,
+  group?: {
+    id: string | number,
+    name?: string | null,
+    active_count?: number | null,
+    sent_count?: number | null,
+    opens_count?: number | null,
+    clicks_count?: number | null,
+    open_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    click_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    total?: number | null,
+    unsubscribed_count?: number | null,
+    unconfirmed_count?: number | null,
+    bounced_count?: number | null,
+    junk_count?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null,
+  enable_popups?: boolean | null,
+  enabled?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }
 ```
 </Accordion>
@@ -9791,7 +15240,13 @@ await corsair.mailerlite.api.subscribers.activity({ id: '1' });
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  log_name: string,
+  subject_id?: string | number,
+  subject_type?: string,
+  properties?: Record<string, JsonValue> | JsonValue[],
+  created_at?: string,
+  updated_at?: string
 }[]
 ```
 </Accordion>
@@ -9859,7 +15314,48 @@ await corsair.mailerlite.api.subscribers.addToGroup({ subscriberId: '1', groupId
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  email?: string,
+  status?: active | unsubscribed | unconfirmed | bounced | junk,
+  source?: string | null,
+  sent?: number | null,
+  opens_count?: number | null,
+  clicks_count?: number | null,
+  open_rate?: number | null,
+  click_rate?: number | null,
+  ip_address?: string | null,
+  subscribed_at?: string | null,
+  unsubscribed_at?: string | null,
+  opted_in_at?: string | null,
+  optin_ip?: string | null,
+  deleted_at?: string | null,
+  forget_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: Record<string, string | number | boolean | null>,
+  groups?: {
+    id: string | number,
+    name?: string | null,
+    active_count?: number | null,
+    sent_count?: number | null,
+    opens_count?: number | null,
+    clicks_count?: number | null,
+    open_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    click_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    total?: number | null,
+    unsubscribed_count?: number | null,
+    unconfirmed_count?: number | null,
+    bounced_count?: number | null,
+    junk_count?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null
 }
 ```
 </Accordion>
@@ -9978,7 +15474,48 @@ The plugin pins X-Version to the implementation date and preserves MailerLite's 
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  email?: string,
+  status?: active | unsubscribed | unconfirmed | bounced | junk,
+  source?: string | null,
+  sent?: number | null,
+  opens_count?: number | null,
+  clicks_count?: number | null,
+  open_rate?: number | null,
+  click_rate?: number | null,
+  ip_address?: string | null,
+  subscribed_at?: string | null,
+  unsubscribed_at?: string | null,
+  opted_in_at?: string | null,
+  optin_ip?: string | null,
+  deleted_at?: string | null,
+  forget_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: Record<string, string | number | boolean | null>,
+  groups?: {
+    id: string | number,
+    name?: string | null,
+    active_count?: number | null,
+    sent_count?: number | null,
+    opens_count?: number | null,
+    clicks_count?: number | null,
+    open_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    click_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    total?: number | null,
+    unsubscribed_count?: number | null,
+    unconfirmed_count?: number | null,
+    bounced_count?: number | null,
+    junk_count?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null
 }
 ```
 </Accordion>
@@ -10063,7 +15600,135 @@ await corsair.mailerlite.api.subscribers.ecommerceOrders({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  status?: pending | complete | null,
+  total?: number | null,
+  total_price?: number | null,
+  shop?: {
+    id: string | number,
+    name?: string | null,
+    url?: string | null,
+    currency?: string | null,
+    platform?: string | null,
+    group_id?: string | number | null,
+    group?: {
+      id: string | number,
+      name?: string | null,
+      active_count?: number | null,
+      sent_count?: number | null,
+      opens_count?: number | null,
+      clicks_count?: number | null,
+      open_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      click_rate?: number | {
+        float?: number,
+        string: string
+      } | null,
+      total?: number | null,
+      unsubscribed_count?: number | null,
+      unconfirmed_count?: number | null,
+      bounced_count?: number | null,
+      junk_count?: number | null,
+      created_at?: string | null,
+      updated_at?: string | null
+    } | null,
+    enable_popups?: boolean | null,
+    enabled?: boolean | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null,
+  customer?: {
+    id: string | number,
+    email?: string | null,
+    resource_id?: string | null,
+    accepts_marketing?: boolean | null,
+    total_spent?: number | null,
+    orders_count?: number | null,
+    name?: string | null,
+    last_name?: string | null,
+    subscriber?: {
+      id: string | number,
+      email?: string,
+      status?: active | unsubscribed | unconfirmed | bounced | junk,
+      source?: string | null,
+      sent?: number | null,
+      opens_count?: number | null,
+      clicks_count?: number | null,
+      open_rate?: number | null,
+      click_rate?: number | null,
+      ip_address?: string | null,
+      subscribed_at?: string | null,
+      unsubscribed_at?: string | null,
+      opted_in_at?: string | null,
+      optin_ip?: string | null,
+      deleted_at?: string | null,
+      forget_at?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      fields?: Record<string, string | number | boolean | null>,
+      groups?: {
+        id: string | number,
+        name?: string | null,
+        active_count?: number | null,
+        sent_count?: number | null,
+        opens_count?: number | null,
+        clicks_count?: number | null,
+        open_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        click_rate?: number | {
+          float?: number,
+          string: string
+        } | null,
+        total?: number | null,
+        unsubscribed_count?: number | null,
+        unconfirmed_count?: number | null,
+        bounced_count?: number | null,
+        junk_count?: number | null,
+        created_at?: string | null,
+        updated_at?: string | null
+      }[] | null
+    } | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null,
+  cart?: {
+    items?: {
+      id?: string | number,
+      ecommerce_product_id?: string | number,
+      ecommerce_product_variant_id?: string | number | null,
+      product?: {
+        id: string | number,
+        name?: string | null,
+        price?: number | null,
+        url?: string | null,
+        image?: string | null,
+        exclude_from_automations?: boolean | null,
+        enabled?: boolean | null,
+        categories?: {
+          id: string | number,
+          name?: string | null,
+          exclude_from_automations?: boolean | null,
+          products_count?: number | null,
+          created_at?: string | null,
+          updated_at?: string | null
+        }[] | null
+      } | null,
+      variant?: string | null,
+      quantity?: number | null,
+      price?: number | null
+    }[]
+  } | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  completed_at?: string | null,
+  attribution?: {
+    email_id: string | number,
+    type: string
+  } | null
 }[]
 ```
 </Accordion>
@@ -10191,7 +15856,48 @@ await corsair.mailerlite.api.subscribers.forget({ id: '1' });
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  email?: string,
+  status?: active | unsubscribed | unconfirmed | bounced | junk,
+  source?: string | null,
+  sent?: number | null,
+  opens_count?: number | null,
+  clicks_count?: number | null,
+  open_rate?: number | null,
+  click_rate?: number | null,
+  ip_address?: string | null,
+  subscribed_at?: string | null,
+  unsubscribed_at?: string | null,
+  opted_in_at?: string | null,
+  optin_ip?: string | null,
+  deleted_at?: string | null,
+  forget_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: Record<string, string | number | boolean | null>,
+  groups?: {
+    id: string | number,
+    name?: string | null,
+    active_count?: number | null,
+    sent_count?: number | null,
+    opens_count?: number | null,
+    clicks_count?: number | null,
+    open_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    click_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    total?: number | null,
+    unsubscribed_count?: number | null,
+    unconfirmed_count?: number | null,
+    bounced_count?: number | null,
+    junk_count?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null
 }
 ```
 </Accordion>
@@ -10232,7 +15938,48 @@ await corsair.mailerlite.api.subscribers.get({ identifier: '1' });
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  email?: string,
+  status?: active | unsubscribed | unconfirmed | bounced | junk,
+  source?: string | null,
+  sent?: number | null,
+  opens_count?: number | null,
+  clicks_count?: number | null,
+  open_rate?: number | null,
+  click_rate?: number | null,
+  ip_address?: string | null,
+  subscribed_at?: string | null,
+  unsubscribed_at?: string | null,
+  opted_in_at?: string | null,
+  optin_ip?: string | null,
+  deleted_at?: string | null,
+  forget_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: Record<string, string | number | boolean | null>,
+  groups?: {
+    id: string | number,
+    name?: string | null,
+    active_count?: number | null,
+    sent_count?: number | null,
+    opens_count?: number | null,
+    clicks_count?: number | null,
+    open_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    click_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    total?: number | null,
+    unsubscribed_count?: number | null,
+    unconfirmed_count?: number | null,
+    bounced_count?: number | null,
+    junk_count?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null
 }
 ```
 </Accordion>
@@ -10370,7 +16117,48 @@ await corsair.mailerlite.api.subscribers.list({});
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  email?: string,
+  status?: active | unsubscribed | unconfirmed | bounced | junk,
+  source?: string | null,
+  sent?: number | null,
+  opens_count?: number | null,
+  clicks_count?: number | null,
+  open_rate?: number | null,
+  click_rate?: number | null,
+  ip_address?: string | null,
+  subscribed_at?: string | null,
+  unsubscribed_at?: string | null,
+  opted_in_at?: string | null,
+  optin_ip?: string | null,
+  deleted_at?: string | null,
+  forget_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: Record<string, string | number | boolean | null>,
+  groups?: {
+    id: string | number,
+    name?: string | null,
+    active_count?: number | null,
+    sent_count?: number | null,
+    opens_count?: number | null,
+    clicks_count?: number | null,
+    open_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    click_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    total?: number | null,
+    unsubscribed_count?: number | null,
+    unconfirmed_count?: number | null,
+    bounced_count?: number | null,
+    junk_count?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null
 }[]
 ```
 </Accordion>
@@ -10486,7 +16274,48 @@ await corsair.mailerlite.api.subscribers.update({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  email?: string,
+  status?: active | unsubscribed | unconfirmed | bounced | junk,
+  source?: string | null,
+  sent?: number | null,
+  opens_count?: number | null,
+  clicks_count?: number | null,
+  open_rate?: number | null,
+  click_rate?: number | null,
+  ip_address?: string | null,
+  subscribed_at?: string | null,
+  unsubscribed_at?: string | null,
+  opted_in_at?: string | null,
+  optin_ip?: string | null,
+  deleted_at?: string | null,
+  forget_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: Record<string, string | number | boolean | null>,
+  groups?: {
+    id: string | number,
+    name?: string | null,
+    active_count?: number | null,
+    sent_count?: number | null,
+    opens_count?: number | null,
+    clicks_count?: number | null,
+    open_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    click_rate?: number | {
+      float?: number,
+      string: string
+    } | null,
+    total?: number | null,
+    unsubscribed_count?: number | null,
+    unconfirmed_count?: number | null,
+    bounced_count?: number | null,
+    junk_count?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null
 }
 ```
 </Accordion>
@@ -10591,7 +16420,14 @@ await corsair.mailerlite.api.webhooks.create({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  events?: string[] | null,
+  url?: string | null,
+  enabled?: boolean | null,
+  batchable?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }
 ```
 </Accordion>
@@ -10657,7 +16493,14 @@ await corsair.mailerlite.api.webhooks.get({ webhookId: '1' });
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  events?: string[] | null,
+  url?: string | null,
+  enabled?: boolean | null,
+  batchable?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }
 ```
 </Accordion>
@@ -10695,7 +16538,14 @@ await corsair.mailerlite.api.webhooks.list({});
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  events?: string[] | null,
+  url?: string | null,
+  enabled?: boolean | null,
+  batchable?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }[]
 ```
 </Accordion>
@@ -10781,7 +16631,14 @@ await corsair.mailerlite.api.webhooks.update({
 
 ```ts
 {
-  id: string | number
+  id: string | number,
+  name?: string | null,
+  events?: string[] | null,
+  url?: string | null,
+  enabled?: boolean | null,
+  batchable?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }
 ```
 </Accordion>
