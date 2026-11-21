@@ -146,7 +146,7 @@ describe('makeLodgifyRequest', () => {
 		);
 		expect(sanitized.request.url).toBe('/v2/reservations/bookings');
 		expect(sanitized).toBe(rawError);
-		expect(sanitized.request.body).toBeUndefined();
+		expect(sanitized.request.body).toEqual({});
 		expect(sanitized.request.headers).toEqual({});
 		expect(sanitized.body).toEqual({});
 		expect(JSON.stringify(sanitized)).not.toContain('Alice');
