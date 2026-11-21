@@ -116,6 +116,7 @@ describe('output parsing', () => {
 		respond(linkedinProfile);
 		const profile = (await invoke(LinkedIn.profileInfo, {
 			query: 'example-user',
+			// unknown: provider-shaped or untyped until a schema narrows it; no stricter type fits.
 		})) as { full_name?: string; experiences?: unknown[] };
 		expect(profile.full_name).toBe('Alex Martin');
 		expect(profile.experiences).toHaveLength(1);
@@ -139,6 +140,7 @@ describe('output parsing', () => {
 		respond(linkedinPost);
 		const post = (await invoke(LinkedIn.postInfo, {
 			query: '7027826235833520128',
+			// unknown: provider-shaped or untyped until a schema narrows it; no stricter type fits.
 		})) as { comments?: unknown[] };
 		expect(post.comments).toHaveLength(1);
 	});
@@ -178,6 +180,7 @@ describe('output parsing', () => {
 		respond(jobCompleted);
 		const job = (await invoke(Account.getJob, { id: 'abc123' })) as {
 			status?: string;
+			// unknown: provider-shaped or untyped until a schema narrows it; no stricter type fits.
 			result?: unknown;
 		};
 		expect(job.status).toBe('CompletedJob');

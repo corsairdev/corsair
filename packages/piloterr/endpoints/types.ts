@@ -479,6 +479,7 @@ export const GoogleSearchOutputSchema = z
 			.nullish()
 			.describe('Related searches'),
 		knowledge_graph: z
+			// unknown: provider-shaped or untyped until a schema narrows it; no stricter type fits.
 			.unknown()
 			.nullish()
 			.describe('Knowledge graph, when present'),
