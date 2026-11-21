@@ -1,0 +1,204 @@
+---
+title: "Wispr Flow API reference"
+sidebarTitle: "API"
+description: "API reference for the Wispr Flow plugin in Corsair: every `wisprflow.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Tokens
+
+### generate
+
+`tokens.generate`
+
+Create a short-lived client JWT so a browser or app can call the client-side API without the org key
+
+**Risk:** `write`
+
+```ts
+await corsair.wisprflow.api.tokens.generate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_id` | `string` | Yes | Your identifier for the end user or app |
+| `duration_secs` | `number` | Yes | Token lifetime in seconds |
+| `metadata` | `Record<string, any>` | No | Extra data stored with the token |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `access_token` | `string` | Yes | Client JWT for the client-side API |
+| `expires_in` | `number` | Yes | Seconds until the token expires |
+
+
+
+---
+
+### revoke
+
+`tokens.revoke`
+
+Revoke one client JWT so it stops working immediately
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wisprflow.api.tokens.revoke({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `access_token` | `string` | Yes | The client JWT to revoke |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### revokeClient
+
+`tokens.revokeClient`
+
+Revoke every client JWT issued to a client_id
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wisprflow.api.tokens.revokeClient({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_id` | `string` | Yes | Client whose tokens are all revoked |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+## Transcriptions
+
+### create
+
+`transcriptions.create`
+
+Transcribe base64 16kHz PCM16 WAV audio into formatted text. Billed per generated token
+
+**Risk:** `write`
+
+```ts
+await corsair.wisprflow.api.transcriptions.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `audio` | `string` | Yes | Base64-encoded 16kHz PCM16 WAV audio, up to 25MB or 6 minutes |
+| `language` | `string[]` | No | ISO 639-1 codes the speaker may use. One code skips detection, empty detects from all languages. Defaults to []. |
+| `context` | `object` | No | App, user, textbox, screen and conversation context that improves formatting and accuracy. Defaults to &#123;&#125;. |
+
+<AccordionGroup>
+<Accordion title="context full type">
+
+```ts
+{
+  app?: {
+    name?: string,
+    type?: ai | email | other
+  },
+  dictionary_context?: string[],
+  user_identifier?: string,
+  user_first_name?: string,
+  user_last_name?: string,
+  textbox_contents?: {
+    before_text?: string,
+    selected_text?: string,
+    after_text?: string
+  },
+  screenshot?: string,
+  content_text?: string,
+  content_html?: string,
+  conversation?: {
+    id: string,
+    participants?: string[],
+    messages?: {
+      role: user | human | assistant,
+      content: string
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Transcription UUID |
+| `text` | `string` | Yes | Transcribed text with formatting applied |
+| `detected_language` | `string` | Yes | Detected ISO 639-1 language code |
+| `total_time` | `number` | Yes | Processing time in milliseconds |
+| `generated_tokens` | `number` | Yes | Tokens generated, the unit Wispr Flow bills on |
+
+
+
+---
+
+### warmup
+
+`transcriptions.warmup`
+
+Warm the API connection before a dictation session to cut first-request latency
+
+**Risk:** `read`
+
+```ts
+await corsair.wisprflow.api.transcriptions.warmup({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+
+
+
+---
+
