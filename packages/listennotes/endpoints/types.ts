@@ -2,9 +2,9 @@ import { z } from 'zod';
 
 // Shared entity schemas
 export const GenreSchema = z.object({
-	id: z.number(),
+	id: z.number().int(),
 	name: z.string(),
-	parent_id: z.number().nullable().optional(),
+	parent_id: z.number().int().nullable().optional(),
 });
 export type Genre = z.infer<typeof GenreSchema>;
 
@@ -12,9 +12,9 @@ export const EpisodeMinimumSchema = z.object({
 	id: z.string(),
 	title: z.string(),
 	description: z.string().optional(),
-	pub_date_ms: z.number().optional(),
+	pub_date_ms: z.number().int().optional(),
 	audio: z.string().optional(),
-	audio_length_sec: z.number().optional(),
+	audio_length_sec: z.number().int().optional(),
 	listennotes_url: z.string().optional(),
 	image: z.string().optional(),
 	thumbnail: z.string().optional(),
@@ -34,22 +34,22 @@ export const PodcastSimpleSchema = z.object({
 	listennotes_url: z.string().optional(),
 	is_claimed: z.boolean().optional(),
 	type: z.enum(['episodic', 'serial']).optional(),
-	total_episodes: z.number().optional(),
-	audio_length_sec: z.number().optional(),
-	update_frequency_hours: z.number().optional(),
-	earliest_pub_date_ms: z.number().optional(),
+	total_episodes: z.number().int().optional(),
+	audio_length_sec: z.number().int().optional(),
+	update_frequency_hours: z.number().int().optional(),
+	earliest_pub_date_ms: z.number().int().optional(),
 	rss: z.string().optional(),
 	latest_episode_id: z.string().optional(),
-	latest_pub_date_ms: z.number().optional(),
+	latest_pub_date_ms: z.number().int().optional(),
 	explicit_content: z.boolean().optional(),
 	description: z.string().optional(),
-	itunes_id: z.number().nullable().optional(),
+	itunes_id: z.number().int().nullable().optional(),
 	language: z.string().optional(),
 	country: z.string().optional(),
 	website: z.string().nullable().optional(),
 	email: z.string().nullable().optional(),
-	genre_ids: z.array(z.number()).optional(),
-	listen_score: z.number().nullable().optional(),
+	genre_ids: z.array(z.number().int()).optional(),
+	listen_score: z.number().int().nullable().optional(),
 	listen_score_global_rank: z.string().nullable().optional(),
 	looking_for: z
 		.object({
@@ -87,7 +87,7 @@ export type EpisodeSimple = z.infer<typeof EpisodeSimpleSchema>;
 
 export const PodcastFullSchema = PodcastSimpleSchema.extend({
 	episodes: z.array(EpisodeMinimumSchema),
-	next_episode_pub_date: z.number().nullable().optional(),
+	next_episode_pub_date: z.number().int().nullable().optional(),
 });
 export type PodcastFull = z.infer<typeof PodcastFullSchema>;
 
@@ -102,9 +102,9 @@ export const CuratedListSimpleSchema = z.object({
 	description: z.string().optional(),
 	source_url: z.string().optional(),
 	source_domain: z.string().optional(),
-	pub_date_ms: z.number().optional(),
+	pub_date_ms: z.number().int().optional(),
 	listennotes_url: z.string().optional(),
-	total: z.number().optional(),
+	total: z.number().int().optional(),
 	podcasts: z.array(PodcastSimpleSchema).optional(),
 });
 export type CuratedListSimple = z.infer<typeof CuratedListSimpleSchema>;
@@ -115,9 +115,9 @@ export const CuratedListFullSchema = z.object({
 	description: z.string().optional(),
 	source_url: z.string().optional(),
 	source_domain: z.string().optional(),
-	pub_date_ms: z.number().optional(),
+	pub_date_ms: z.number().int().optional(),
 	listennotes_url: z.string().optional(),
-	total: z.number().optional(),
+	total: z.number().int().optional(),
 	podcasts: z.array(PodcastSimpleSchema),
 });
 export type CuratedListFull = z.infer<typeof CuratedListFullSchema>;
@@ -130,19 +130,19 @@ export const PlaylistSummarySchema = z.object({
 	thumbnail: z.string().nullable().optional(),
 	listennotes_url: z.string().optional(),
 	visibility: z.enum(['public', 'unlisted', 'private']).optional(),
-	episode_count: z.number().optional(),
-	podcast_count: z.number().optional(),
-	total_audio_length_sec: z.number().optional(),
+	episode_count: z.number().int().optional(),
+	podcast_count: z.number().int().optional(),
+	total_audio_length_sec: z.number().int().optional(),
 	last_timestamp_ms: z.number().int().optional(),
 	type: z.enum(['episode_list', 'podcast_list']).optional(),
 });
 export type PlaylistSummary = z.infer<typeof PlaylistSummarySchema>;
 
 export const PlaylistItemSchema = z.object({
-	id: z.number(),
+	id: z.number().int(),
 	type: z.enum(['episode', 'custom_audio', 'podcast']),
 	notes: z.string().optional(),
-	added_at_ms: z.number().optional(),
+	added_at_ms: z.number().int().optional(),
 	// unknown because playlist item data contains heterogeneous objects (episode, podcast, custom audio).
 	data: z.record(z.string(), z.unknown()).optional(),
 });
@@ -297,9 +297,9 @@ export const SearchInputSchema = z
 export type SearchInput = z.infer<typeof SearchInputSchema>;
 
 export const SearchResponseSchema = z.object({
-	count: z.number(),
-	next_offset: z.number().optional(),
-	total: z.number(),
+	count: z.number().int(),
+	next_offset: z.number().int().optional(),
+	total: z.number().int(),
 	took: z.number().optional(),
 	// unknown because search results can be episodes, podcasts, or curated lists depending on the type query param.
 	results: z.array(z.record(z.string(), z.unknown())),
@@ -438,8 +438,8 @@ export type PodcastsGetEpisodesInput = z.infer<
 
 export const PodcastsGetEpisodesResponseSchema = z.object({
 	id: z.string().optional(),
-	total_episodes: z.number().optional(),
-	next_episode_pub_date: z.number().nullable().optional(),
+	total_episodes: z.number().int().optional(),
+	next_episode_pub_date: z.number().int().nullable().optional(),
 	episodes: z.array(EpisodeMinimumSchema),
 });
 export type PodcastsGetEpisodesResponse = z.infer<
@@ -498,15 +498,15 @@ export const PodcastsGetBestInputSchema = z
 export type PodcastsGetBestInput = z.infer<typeof PodcastsGetBestInputSchema>;
 
 export const PodcastsGetBestResponseSchema = z.object({
-	id: z.number(),
+	id: z.number().int(),
 	name: z.string(),
-	parent_id: z.number().nullable().optional(),
-	total: z.number(),
+	parent_id: z.number().int().nullable().optional(),
+	total: z.number().int(),
 	has_next: z.boolean(),
 	has_previous: z.boolean(),
-	page_number: z.number(),
-	previous_page_number: z.number().nullable().optional(),
-	next_page_number: z.number().nullable().optional(),
+	page_number: z.number().int(),
+	previous_page_number: z.number().int().nullable().optional(),
+	next_page_number: z.number().int().nullable().optional(),
 	listennotes_url: z.string(),
 	podcasts: z.array(PodcastSimpleSchema),
 });
@@ -580,10 +580,10 @@ export const CuratedListInputSchema = z
 export type CuratedListInput = z.infer<typeof CuratedListInputSchema>;
 
 export const CuratedListResponseSchema = z.object({
-	page_number: z.number(),
-	previous_page_number: z.number().nullable().optional(),
-	next_page_number: z.number().nullable().optional(),
-	total: z.number(),
+	page_number: z.number().int(),
+	previous_page_number: z.number().int().nullable().optional(),
+	next_page_number: z.number().int().nullable().optional(),
+	total: z.number().int(),
 	has_next: z.boolean(),
 	has_previous: z.boolean(),
 	curated_lists: z.array(CuratedListSimpleSchema),
@@ -612,10 +612,10 @@ export const PlaylistsListInputSchema = z
 export type PlaylistsListInput = z.infer<typeof PlaylistsListInputSchema>;
 
 export const PlaylistsListResponseSchema = z.object({
-	page_number: z.number(),
-	previous_page_number: z.number().nullable().optional(),
-	next_page_number: z.number().nullable().optional(),
-	total: z.number(),
+	page_number: z.number().int(),
+	previous_page_number: z.number().int().nullable().optional(),
+	next_page_number: z.number().int().nullable().optional(),
+	total: z.number().int(),
 	has_next: z.boolean(),
 	has_previous: z.boolean(),
 	playlists: z.array(PlaylistSummarySchema),
@@ -655,9 +655,9 @@ export const PlaylistsGetResponseSchema = z.object({
 	thumbnail: z.string().nullable().optional(),
 	listennotes_url: z.string().optional(),
 	visibility: z.enum(['public', 'unlisted', 'private']).optional(),
-	last_timestamp_ms: z.number().optional(),
-	total: z.number().optional(),
-	total_audio_length_sec: z.number().optional(),
+	last_timestamp_ms: z.number().int().optional(),
+	total: z.number().int().optional(),
+	total_audio_length_sec: z.number().int().optional(),
 	type: z.enum(['episode_list', 'podcast_list']).optional(),
 	items: z.array(PlaylistItemSchema),
 });
@@ -761,7 +761,7 @@ export const PodcastMinimumSchema = z.object({
 	image: z.string().optional(),
 	thumbnail: z.string().optional(),
 	listennotes_url: z.string().optional(),
-	listen_score: z.number().nullable().optional(),
+	listen_score: z.number().int().nullable().optional(),
 	listen_score_global_rank: z.string().nullable().optional(),
 });
 export type PodcastMinimum = z.infer<typeof PodcastMinimumSchema>;

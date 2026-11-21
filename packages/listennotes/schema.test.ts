@@ -98,6 +98,13 @@ describe('Listen Notes endpoint schemas', () => {
 		);
 		expect(SearchResponseSchema.safeParse({ count: 1 }).success).toBe(false);
 		expect(
+			SearchResponseSchema.safeParse({
+				count: 1.5,
+				total: 2,
+				results: [],
+			}).success,
+		).toBe(false);
+		expect(
 			SearchInputSchema.safeParse({
 				q: 'podcasts',
 				interviews_only: 1,
@@ -294,6 +301,12 @@ describe('Listen Notes endpoint schemas', () => {
 		expect(EpisodesGetResponseSchema.safeParse(validEpisode).success).toBe(
 			true,
 		);
+		expect(
+			EpisodesGetResponseSchema.safeParse({
+				...validEpisode,
+				pub_date_ms: 1.5,
+			}).success,
+		).toBe(false);
 
 		expect(
 			EpisodesGetRecommendationsInputSchema.safeParse({ id: 'ep1' }).success,

@@ -23,8 +23,8 @@ export class ListennotesAPIError extends Error {
 export const LISTENNOTES_API_BASE = 'https://listen-api.listennotes.com/api/v2';
 
 /**
- * Handler owns rate-limit retries; transport retries are set to 0 while
- * preserving Retry-After extraction.
+ * Automatic 429 retries are disabled because Listen Notes uses 429 for both
+ * throttling and exhausted quotas; Retry-After extraction remains enabled.
  */
 export const LISTENNOTES_NO_TRANSPORT_RETRIES: RateLimitConfig = {
 	enabled: true,
