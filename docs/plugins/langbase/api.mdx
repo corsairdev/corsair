@@ -59,7 +59,15 @@ string | {
     }
   }[] | null,
   tool_call_id?: string,
-  name?: string
+  name?: string,
+  tool_calls?: {
+    id: string,
+    type: function,
+    function: {
+      name: string,
+      arguments: string
+    }
+  }[]
 }[]
 ```
 </Accordion>
@@ -822,7 +830,15 @@ Run the named pipe with the configured User/Organization API key, as documented 
     }
   }[] | null,
   tool_call_id?: string,
-  name?: string
+  name?: string,
+  tool_calls?: {
+    id: string,
+    type: function,
+    function: {
+      name: string,
+      arguments: string
+    }
+  }[]
 }[]
 ```
 </Accordion>

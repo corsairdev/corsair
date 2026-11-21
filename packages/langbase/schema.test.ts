@@ -90,6 +90,29 @@ describe('Langbase schema', () => {
 		expect(
 			RunAgentInputSchema.safeParse({
 				model: 'openai:gpt-4o-mini',
+				input: [
+					{
+						role: 'assistant',
+						content: null,
+						tool_calls: [
+							{
+								id: 'call-123',
+								type: 'function',
+								function: { name: 'lookup', arguments: '{"id":"1"}' },
+							},
+						],
+					},
+					{
+						role: 'tool',
+						content: 'Found record',
+						tool_call_id: 'call-123',
+					},
+				],
+			}).success,
+		).toBe(true);
+		expect(
+			RunAgentInputSchema.safeParse({
+				model: 'openai:gpt-4o-mini',
 				input: 'Hello',
 				stream: true,
 			}).success,

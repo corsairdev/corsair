@@ -17,27 +17,6 @@ const ContentPartSchema = z
 	})
 	.strict();
 
-const RunMessageSchema = z
-	.object({
-		role: z.enum(['system', 'user', 'assistant', 'tool']),
-		// Langbase documents text, structured text/image content, null tool-call
-		// content, and omitted content on the pipe-run message shape.
-		content: z
-			.union([z.string(), z.array(ContentPartSchema), z.null()])
-			.optional(),
-		tool_call_id: z.string().optional(),
-		name: z.string().optional(),
-	})
-	.strict();
-
-const PipeConfigurationMessageSchema = z
-	.object({
-		role: z.enum(['system', 'user', 'assistant', 'tool']),
-		content: z.string(),
-		name: z.enum(['json', 'safety', 'opening', 'rag']).optional(),
-	})
-	.strict();
-
 const ToolCallSchema = z
 	.object({
 		id: z.string().min(1),
@@ -48,6 +27,30 @@ const ToolCallSchema = z
 				arguments: z.string(),
 			})
 			.strict(),
+	})
+	.strict();
+
+const RunMessageSchema = z
+	.object({
+		role: z.enum(['system', 'user', 'assistant', 'tool']),
+		// Langbase documents text, structured text/image content, null tool-call
+		// content, and omitted content on the pipe-run message shape.
+		content: z
+			.union([z.string(), z.array(ContentPartSchema), z.null()])
+			.optional(),
+		tool_call_id: z.string().optional(),
+		name: z.string().optional(),
+		// Langbase's Agent tool-calling example resubmits assistant messages with
+		// tool_calls before appending each tool result.
+		tool_calls: z.array(ToolCallSchema).optional(),
+	})
+	.strict();
+
+const PipeConfigurationMessageSchema = z
+	.object({
+		role: z.enum(['system', 'user', 'assistant', 'tool']),
+		content: z.string(),
+		name: z.enum(['json', 'safety', 'opening', 'rag']).optional(),
 	})
 	.strict();
 

@@ -102,7 +102,26 @@ describe('Langbase bound endpoints', () => {
 
 		const result = await api.agent.run({
 			model: 'openai:gpt-4o-mini',
-			input: [{ role: 'user', content: 'Hello' }],
+			input: [
+				{ role: 'user', content: 'Hello' },
+				{
+					role: 'assistant',
+					content: null,
+					tool_calls: [
+						{
+							id: 'call-123',
+							type: 'function',
+							function: { name: 'lookup', arguments: '{"id":"1"}' },
+						},
+					],
+				},
+				{
+					role: 'tool',
+					content: 'Found record',
+					name: 'lookup',
+					tool_call_id: 'call-123',
+				},
+			],
 			instructions: 'Be concise.',
 		});
 
@@ -110,7 +129,26 @@ describe('Langbase bound endpoints', () => {
 		expect(capturedUrl).toContain('/v1/agent/run');
 		expect(capturedBody).toEqual({
 			model: 'openai:gpt-4o-mini',
-			input: [{ role: 'user', content: 'Hello' }],
+			input: [
+				{ role: 'user', content: 'Hello' },
+				{
+					role: 'assistant',
+					content: null,
+					tool_calls: [
+						{
+							id: 'call-123',
+							type: 'function',
+							function: { name: 'lookup', arguments: '{"id":"1"}' },
+						},
+					],
+				},
+				{
+					role: 'tool',
+					content: 'Found record',
+					name: 'lookup',
+					tool_call_id: 'call-123',
+				},
+			],
 			instructions: 'Be concise.',
 			stream: false,
 		});
