@@ -218,7 +218,7 @@ await corsair.pipelinecrm.api.companies.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `conditions` | `Record<string, string \| number \| boolean>` | No | Filter conditions as Pipeline CRM query parameters: each key is the full bracketed key (e.g. "conditions[deal_stage][]" or "conditions[deal_created][selection]") with its value; unknown keys are ignored by the API |
-| `sort` | `string` | No | Sort field; prefix - for descending |
+| `sort` | `string` | No | Record field to sort by, e.g. value, name, created_at; prefix - for descending |
 | `page` | `number` | No | Page number |
 | `perPage` | `number` | No | Records per page, at most 200 |
 
@@ -376,6 +376,7 @@ await corsair.pipelinecrm.api.companies.update({ id: 77, phone1: "+1 555 0111" }
 | `facebookUrl` | `string` | No | Facebook URL |
 | `linkedInUrl` | `string` | No | LinkedIn URL |
 | `twitter` | `string` | No | Twitter username |
+| `userId` | `number` | No | New owning user id |
 | `customFields` | `Record<string, any>` | No | Custom field values keyed by custom_label_&lt;id&gt; |
 | `deliverReassignmentEmail` | `boolean` | No | Email the new owner on reassignment |
 
@@ -610,7 +611,7 @@ List deals with conditions filters and paging
 **Risk:** `read`
 
 ```ts
-await corsair.pipelinecrm.api.deals.list({ conditions: { "conditions[deal_stage][]": 3 }, sort: "-deal_value", perPage: 50 });
+await corsair.pipelinecrm.api.deals.list({ conditions: { "conditions[deal_stage][]": 3 }, sort: "-value", perPage: 50 });
 ```
 
 **Input**
@@ -618,7 +619,7 @@ await corsair.pipelinecrm.api.deals.list({ conditions: { "conditions[deal_stage]
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `conditions` | `Record<string, string \| number \| boolean>` | No | Filter conditions as Pipeline CRM query parameters: each key is the full bracketed key (e.g. "conditions[deal_stage][]" or "conditions[deal_created][selection]") with its value; unknown keys are ignored by the API |
-| `sort` | `string` | No | Sort field; prefix - for descending |
+| `sort` | `string` | No | Record field to sort by, e.g. value, name, created_at; prefix - for descending |
 | `page` | `number` | No | Page number |
 | `perPage` | `number` | No | Records per page, at most 200 |
 
@@ -781,7 +782,7 @@ await corsair.pipelinecrm.api.deals.totalsByStage({});
   deal_stage_id?: number | null,
   deal_stage_name?: string | null,
   count?: number | null,
-  total?: string | null
+  total?: string | number | null
 }[]
 ```
 </Accordion>
@@ -1327,7 +1328,7 @@ await corsair.pipelinecrm.api.people.list({ conditions: { "conditions[lead_statu
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `conditions` | `Record<string, string \| number \| boolean>` | No | Filter conditions as Pipeline CRM query parameters: each key is the full bracketed key (e.g. "conditions[deal_stage][]" or "conditions[deal_created][selection]") with its value; unknown keys are ignored by the API |
-| `sort` | `string` | No | Sort field; prefix - for descending |
+| `sort` | `string` | No | Record field to sort by, e.g. value, name, created_at; prefix - for descending |
 | `page` | `number` | No | Page number |
 | `perPage` | `number` | No | Records per page, at most 200 |
 
