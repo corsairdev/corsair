@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-20T17:37:10.169Z",
-  "corsairVersion": "0.2.18",
+  "generatedAt": "2026-11-21T06:51:26.011Z",
+  "corsairVersion": "0.2.19",
   "catalogVersion": 2,
   "plugins": [
     {
@@ -9512,6 +9512,21 @@
       "defaultAuthType": "api_key",
       "counts": {
         "api": 15,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "tailscale",
+      "displayName": "Tailscale",
+      "description": "Run a tailnet from an agent: list and approve devices, mint tagged, ephemeral auth keys for new nodes, read, validate and safely update the policy file (ACLs and grants, with etag checks and ACL tests), publish internal apps and MCP servers as Tailscale Services, and manage DNS, users, invites, webhooks, posture attributes and the configuration audit log (93 operations).",
+      "npmPackageName": "@corsair-dev/tailscale",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 93,
         "webhooks": 0,
         "db": 0
       }
@@ -164371,6 +164386,564 @@
       "kind": "api",
       "shortPath": "verbose.url",
       "haystack": "verbose.url taggun.api.verbose.url scan a receipt at an https url and return the full extraction: line items, text, helper arrays, per-field confidence and enabled feature blocks write"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "contacts.get",
+      "haystack": "contacts.get tailscale.api.contacts.get get the tailnet's account, support and security contact emails. read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "contacts.resendVerificationEmail",
+      "haystack": "contacts.resendverificationemail tailscale.api.contacts.resendverificationemail email the verification link for a contact address again. destructive"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "contacts.update",
+      "haystack": "contacts.update tailscale.api.contacts.update change the account, support or security contact email. tailscale emails the new address to verify it. destructive"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "deviceInvites.accept",
+      "haystack": "deviceinvites.accept tailscale.api.deviceinvites.accept accept a device share invite from another tailnet into this key's tailnet, by its invite url or code. the shared device then appears in devices.list. needs a user's api access token: a share belongs to a user, so an oauth client can't accept one. write"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "deviceInvites.create",
+      "haystack": "deviceinvites.create tailscale.api.deviceinvites.create share a device with people outside the tailnet. each invite gives an invite url to send; with email set, tailscale emails the invite itself. allowexitnode lets the recipient use the device as an exit node; multiuse lets several people accept one link. deviceid is the device `id` or `nodeid` from devices.list. destructive"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "deviceInvites.delete",
+      "haystack": "deviceinvites.delete tailscale.api.deviceinvites.delete delete a device share invite; its link stops working. write"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "deviceInvites.get",
+      "haystack": "deviceinvites.get tailscale.api.deviceinvites.get get a device share invite: its invite url, who accepted it and when. read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "deviceInvites.list",
+      "haystack": "deviceinvites.list tailscale.api.deviceinvites.list list the share invites for a device (who it was shared with, accepted or not); null when there are none. deviceid is the device `id` or `nodeid` from devices.list. read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "deviceInvites.resend",
+      "haystack": "deviceinvites.resend tailscale.api.deviceinvites.resend email a device share invite again to the address it was created for. destructive"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "devices.authorize",
+      "haystack": "devices.authorize tailscale.api.devices.authorize approve (authorized: true) or revoke approval for (authorized: false) a device when the tailnet requires device approval. revoking cuts the device's access until it is approved again. deviceid is the device `id` or `nodeid` from devices.list. write"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "devices.delete",
+      "haystack": "devices.delete tailscale.api.devices.delete remove a device from the tailnet. it loses access at once and must be signed in again (with a new auth key or login) to rejoin. cannot be undone. deviceid is the device `id` or `nodeid` from devices.list. destructive"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "devices.expireKey",
+      "haystack": "devices.expirekey tailscale.api.devices.expirekey expire a device's node key now: the device is disconnected until someone signs in on it again. use it to cut off a lost or compromised machine. deviceid is the device `id` or `nodeid` from devices.list. destructive"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "devices.get",
+      "haystack": "devices.get tailscale.api.devices.get get one device. fields: \"all\" adds routes, posture and connectivity details. deviceid is the device `id` or `nodeid` from devices.list. read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "devices.list",
+      "haystack": "devices.list tailscale.api.devices.list list the devices in the tailnet: name, hostname, tailscale ips, owner, os, client version, tags, last seen, key expiry, authorized. pass fields: \"all\" to add advertised and enabled routes, posture and connectivity details. filters narrows the list on the server by exact match on top-level device fields, all of them required to match (for example { tags: [\"tag:prod\"], isephemeral: true }). read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "devices.postureAttributes.batchUpdate",
+      "haystack": "devices.postureattributes.batchupdate tailscale.api.devices.postureattributes.batchupdate set or delete custom posture attributes on many devices in one call. a null value deletes that attribute. applied all together or not at all. write"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "devices.postureAttributes.delete",
+      "haystack": "devices.postureattributes.delete tailscale.api.devices.postureattributes.delete delete a custom posture attribute (custom:...) from a device. deviceid is the device `id` or `nodeid` from devices.list. write"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "devices.postureAttributes.get",
+      "haystack": "devices.postureattributes.get tailscale.api.devices.postureattributes.get get a device's posture attributes: tailscale's own (node:os, node:tsversion, node:tsreleasetrack, ...) and custom ones (custom:<name>) set through the api or a posture integration. deviceid is the device `id` or `nodeid` from devices.list. read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "devices.postureAttributes.set",
+      "haystack": "devices.postureattributes.set tailscale.api.devices.postureattributes.set set a custom posture attribute on a device. attributekey must start with custom: (for example custom:agentapproved); value is a string, number or boolean. expiry (rfc 3339) makes it lapse on its own. policy postures can then allow or deny access on it. deviceid is the device `id` or `nodeid` from devices.list. write"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "devices.routes.list",
+      "haystack": "devices.routes.list tailscale.api.devices.routes.list list the subnet routes and exit-node routes a device advertises and which of them are enabled. deviceid is the device `id` or `nodeid` from devices.list. read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "devices.routes.set",
+      "haystack": "devices.routes.set tailscale.api.devices.routes.set set which of the routes a device advertises are enabled (subnet routes, and 0.0.0.0/0 plus ::/0 for an exit node). replaces the enabled list: routes left out are turned off. only routes the device advertises can be enabled. deviceid is the device `id` or `nodeid` from devices.list. write"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "devices.setIp",
+      "haystack": "devices.setip tailscale.api.devices.setip change a device's tailscale ipv4 address to an unused one in the tailnet's range (100.64.0.0/10 by default). existing connections to the old address break and must reconnect to the new one. deviceid is the device `id` or `nodeid` from devices.list. write"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "devices.setName",
+      "haystack": "devices.setname tailscale.api.devices.setname rename a device: its magicdns name becomes <name>.<tailnet>.ts.net. pass name: \"\" to go back to the machine's own hostname. connections using the old name stop resolving. deviceid is the device `id` or `nodeid` from devices.list. write"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "devices.setTags",
+      "haystack": "devices.settags tailscale.api.devices.settags replace a device's acl tags (tag:server, tag:mcp, ...). each tag must be defined in the policy file and owned by the caller (tagowners). tagging a user's device turns it into a tagged device that no longer belongs to that user, and the access rules for its tags apply from then on. pass tags: [] to remove every tag. deviceid is the device `id` or `nodeid` from devices.list. write"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "devices.updateKey",
+      "haystack": "devices.updatekey tailscale.api.devices.updatekey turn key expiry off (keyexpirydisabled: true) or back on for a device, for servers that should stay signed in. deviceid is the device `id` or `nodeid` from devices.list. write"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "dns.configuration.get",
+      "haystack": "dns.configuration.get tailscale.api.dns.configuration.get get the tailnet's whole dns configuration in one object: nameservers, split dns, search paths and preferences. read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "dns.configuration.set",
+      "haystack": "dns.configuration.set tailscale.api.dns.configuration.set replace the tailnet's whole dns configuration in one call (nameservers, split dns, search paths, preferences). write"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "dns.nameservers.list",
+      "haystack": "dns.nameservers.list tailscale.api.dns.nameservers.list list the global dns nameservers devices use. read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "dns.nameservers.set",
+      "haystack": "dns.nameservers.set tailscale.api.dns.nameservers.set replace the global dns nameservers (ip addresses). an empty list removes them all and turns magicdns off. write"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "dns.preferences.get",
+      "haystack": "dns.preferences.get tailscale.api.dns.preferences.get get whether magicdns is on. read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "dns.preferences.set",
+      "haystack": "dns.preferences.set tailscale.api.dns.preferences.set turn magicdns on or off. turning it on needs at least one nameserver; turning it off breaks <name>.ts.net lookups. write"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "dns.searchPaths.list",
+      "haystack": "dns.searchpaths.list tailscale.api.dns.searchpaths.list list the dns search domains pushed to devices. read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "dns.searchPaths.set",
+      "haystack": "dns.searchpaths.set tailscale.api.dns.searchpaths.set replace the dns search domains pushed to devices. write"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "dns.splitDns.get",
+      "haystack": "dns.splitdns.get tailscale.api.dns.splitdns.get get split dns: which nameservers answer for which domains. read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "dns.splitDns.set",
+      "haystack": "dns.splitdns.set tailscale.api.dns.splitdns.set replace the whole split dns map (domain to nameservers). domains left out are removed. write"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "dns.splitDns.update",
+      "haystack": "dns.splitdns.update tailscale.api.dns.splitdns.update change split dns for the given domains only; a domain set to null is removed, others are kept. write"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "keys.create",
+      "haystack": "keys.create tailscale.api.keys.create create an auth key (keytype \"auth\", the default) that adds a device to the tailnet, or a trust credential (keytype \"client\" for an oauth client, \"federated\" for a federated identity). for an agent or server, make the auth key preauthorized, tagged (capabilities.devices.create.tags) and ephemeral so the node is removed when it goes offline. the secret is returned once in `key`: hand it to the machine right away, never paste it into chat. destructive"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "keys.delete",
+      "haystack": "keys.delete tailscale.api.keys.delete revoke a key. devices already added with an auth key stay; anything using a revoked api token or oauth client stops working. cannot be undone. destructive"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "keys.get",
+      "haystack": "keys.get tailscale.api.keys.get get a key: type, description, scopes, tags, created, expires, revoked. never returns the secret. read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "keys.list",
+      "haystack": "keys.list tailscale.api.keys.list list the keys of the caller (all: true for every key in the tailnet): auth keys, api access tokens, oauth clients and federated identities, with expiry, scopes and tags. never returns the secrets. read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "keys.update",
+      "haystack": "keys.update tailscale.api.keys.update change an oauth client's or federated identity's description, scopes or tags (auth keys and api tokens can't be edited). write"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "logging.awsExternalId.get",
+      "haystack": "logging.awsexternalid.get tailscale.api.logging.awsexternalid.get get (or create on first use) the aws external id to put in an iam role trust policy before streaming logs to s3. write"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "logging.awsExternalId.validate",
+      "haystack": "logging.awsexternalid.validate tailscale.api.logging.awsexternalid.validate check that an iam role trusts tailscale with this external id, before log streaming to s3 is turned on. read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "logging.configurationLogs.list",
+      "haystack": "logging.configurationlogs.list tailscale.api.logging.configurationlogs.list read the configuration audit log between start and end (rfc 3339): who changed the policy file, approved or deleted a device, created a key, changed a setting, with old and new values. filter by actor, target or event (tailnet.update.acl, node.create, node.approve, api_key.create, user.update.user_role, ...). use it to answer \"who changed what, and when\". read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "logging.networkLogs.list",
+      "haystack": "logging.networklogs.list tailscale.api.logging.networklogs.list read network flow logs between start and end (rfc 3339): which device talked to which, over what protocol and ports, and how many bytes. network flow logging must be turned on (premium and enterprise plans). read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "logging.streaming.disable",
+      "haystack": "logging.streaming.disable tailscale.api.logging.streaming.disable stop streaming configuration or network logs; the destination settings are removed. destructive"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "logging.streaming.get",
+      "haystack": "logging.streaming.get tailscale.api.logging.streaming.get get where configuration or network logs are streamed (splunk, elastic, panther, cribl, crowdstrike, datadog, axiom or s3). read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "logging.streaming.getStatus",
+      "haystack": "logging.streaming.getstatus tailscale.api.logging.streaming.getstatus get whether log streaming to a siem is working for configuration or network logs, and its last errors. read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "logging.streaming.set",
+      "haystack": "logging.streaming.set tailscale.api.logging.streaming.set start or change streaming of configuration or network logs to a siem or bucket. replaces the current destination. write"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "oauthApps.create",
+      "haystack": "oauthapps.create tailscale.api.oauthapps.create register an oauth app in the tailnet with its redirect uris and scopes. the client secret is returned once. destructive"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "oauthApps.delete",
+      "haystack": "oauthapps.delete tailscale.api.oauthapps.delete delete an oauth app; sign-ins and tokens issued through it stop working. destructive"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "oauthApps.get",
+      "haystack": "oauthapps.get tailscale.api.oauthapps.get get an oauth app: name, redirect uris, scopes. never returns the secret. read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "oauthApps.list",
+      "haystack": "oauthapps.list tailscale.api.oauthapps.list list the oauth apps registered in the tailnet (apps people in the tailnet sign in to so it can act on their behalf). read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "oauthApps.update",
+      "haystack": "oauthapps.update tailscale.api.oauthapps.update replace an oauth app's name, redirect uris or scopes. write"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "policyFile.get",
+      "haystack": "policyfile.get tailscale.api.policyfile.get get the tailnet's policy file (acls or grants, groups, tagowners, autoapprovers, postures, tests). format \"hujson\" (the default) keeps comments and returns the text; \"json\" returns an object without comments. etag is the version: pass it as ifmatch to policyfile.set so another edit made in between is not overwritten. details: true also returns warnings and errors. read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "policyFile.preview",
+      "haystack": "policyfile.preview tailscale.api.policyfile.preview show which rules of the policy file you pass apply to a user (type \"user\", previewfor their email) or a destination (type \"ipport\", previewfor \"100.101.102.103:443\"), without saving anything. policy is required: pass a draft, or the text from policyfile.get to preview the current file. read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "policyFile.set",
+      "haystack": "policyfile.set tailscale.api.policyfile.set replace the tailnet's policy file, as hujson text (keeps comments) or a json object. it controls who can reach what across the whole tailnet, so run policyfile.validate first, and pass ifmatch with the etag from policyfile.get: tailscale then refuses the write if the file changed since. tests in the file must pass or nothing is saved. destructive"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "policyFile.validate",
+      "haystack": "policyfile.validate tailscale.api.policyfile.validate check a draft policy file without saving it: pass policy (hujson text or object) to parse it and run its tests, or tests (at least one) to run acl tests against the current file. null or an empty message means everything passed. problems still answer 200: message holds the parse error, or \"test(s) failed\" with each failing test in data. read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "postureIntegrations.create",
+      "haystack": "postureintegrations.create tailscale.api.postureintegrations.create connect a device posture provider, so its attributes (compliance, risk score) can gate access in the policy file. write"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "postureIntegrations.delete",
+      "haystack": "postureintegrations.delete tailscale.api.postureintegrations.delete disconnect a device posture provider; rules that rely on its attributes stop matching. destructive"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "postureIntegrations.get",
+      "haystack": "postureintegrations.get tailscale.api.postureintegrations.get get a device posture integration and its sync status. read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "postureIntegrations.list",
+      "haystack": "postureintegrations.list tailscale.api.postureintegrations.list list device posture integrations (crowdstrike falcon, intune, jamf pro, kandji, kolide, sentinelone, ...). read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "postureIntegrations.update",
+      "haystack": "postureintegrations.update tailscale.api.postureintegrations.update change a device posture integration (credentials, tenant, which devices it reads). write"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "services.delete",
+      "haystack": "services.delete tailscale.api.services.delete delete a tailscale service; its address stops answering on every host. destructive"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "services.get",
+      "haystack": "services.get tailscale.api.services.get get a tailscale service: its addresses, ports, tags and comment. servicename is svc:<name>. read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "services.hosts.getApproval",
+      "haystack": "services.hosts.getapproval tailscale.api.services.hosts.getapproval get whether a device is approved to serve a tailscale service. read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "services.hosts.list",
+      "haystack": "services.hosts.list tailscale.api.services.hosts.list list the devices that advertise a tailscale service and whether each is approved to serve it. read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "services.hosts.setApproval",
+      "haystack": "services.hosts.setapproval tailscale.api.services.hosts.setapproval approve (approved: true) or stop (false) a device serving a tailscale service, when its tags are not auto-approved. write"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "services.list",
+      "haystack": "services.list tailscale.api.services.list list tailscale services: named virtual endpoints (svc:<name>) with their own tailscale ips and magicdns name, served by one or more hosts. use them to give an internal app or mcp server a stable address on the tailnet. read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "services.update",
+      "haystack": "services.update tailscale.api.services.update create or replace a tailscale service (servicename svc:<name>; name defaults to it): ports (\"tcp:443\", \"do-not-validate\") and tags. hosts then advertise it with `tailscale serve --service=svc:<name>`, and the policy file grants who may reach it. write"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "tailnets.create",
+      "haystack": "tailnets.create tailscale.api.tailnets.create create an api-only tailnet in the organization (no human users, not in the admin console), for an app or agent fleet that manages its own network. at most 10 tailnets per organization. the new oauth client secret is returned once. destructive"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "tailnets.delete",
+      "haystack": "tailnets.delete tailscale.api.tailnets.delete delete a whole tailnet with all of its users, devices and settings. only api-only tailnets can be deleted this way. cannot be undone. destructive"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "tailnets.list",
+      "haystack": "tailnets.list tailscale.api.tailnets.list list the tailnets in the organization: the original one and any api-only tailnets made with tailnets.create. pages with cursor. read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "tailnetSettings.get",
+      "haystack": "tailnetsettings.get tailscale.api.tailnetsettings.get get tailnet settings: device and user approval, device auto-updates, key expiry days, who may join, posture identity collection, network flow logging, regional routing, https. read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "tailnetSettings.update",
+      "haystack": "tailnetsettings.update tailscale.api.tailnetsettings.update change tailnet settings; only the fields sent change. turning on device approval holds every new device until someone approves it. tailscale answers without the new values: read them with tailnetsettings.get. write"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "userInvites.create",
+      "haystack": "userinvites.create tailscale.api.userinvites.create invite people to join the tailnet with a role (member, admin, ...). each invite gives an invite url; with email set, tailscale emails it. needs a user's api access token (an invite needs an inviting user), not an oauth client. destructive"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "userInvites.delete",
+      "haystack": "userinvites.delete tailscale.api.userinvites.delete delete an invite to join the tailnet; its link stops working. needs a user's api access token. write"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "userInvites.get",
+      "haystack": "userinvites.get tailscale.api.userinvites.get get an invite to join the tailnet: role, invite url, email and whether it was accepted. read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "userInvites.list",
+      "haystack": "userinvites.list tailscale.api.userinvites.list list pending invites for people to join the tailnet; null when there are none. invites need a user's api access token, not an oauth client. read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "userInvites.resend",
+      "haystack": "userinvites.resend tailscale.api.userinvites.resend email an invite to join the tailnet again. destructive"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "users.approve",
+      "haystack": "users.approve tailscale.api.users.approve approve a user waiting for approval (when the tailnet requires user approval). write"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "users.delete",
+      "haystack": "users.delete tailscale.api.users.delete delete a user from the tailnet, with their devices. cannot be undone; users.suspend keeps them restorable. a user's own token can't delete that user. destructive"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "users.get",
+      "haystack": "users.get tailscale.api.users.get get one user: role, status, login name, device count, last seen. read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "users.list",
+      "haystack": "users.list tailscale.api.users.list list users: role, status (active, idle, suspended, needs-approval), device count, last seen. type and role filter the list. read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "users.restore",
+      "haystack": "users.restore tailscale.api.users.restore restore a suspended user and their access. write"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "users.suspend",
+      "haystack": "users.suspend tailscale.api.users.suspend suspend a user: they lose access to the tailnet until restored; their devices and settings are kept. a user's own token can't suspend that user. write"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "users.updateRole",
+      "haystack": "users.updaterole tailscale.api.users.updaterole change a user's role (member, admin, it-admin, network-admin, billing-admin, auditor, owner). write"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "webhooks.create",
+      "haystack": "webhooks.create tailscale.api.webhooks.create add a webhook endpoint for tailnet events (nodecreated, nodeneedsapproval, nodekeyexpiringinoneday, nodedeleted, policyupdate, userneedsapproval, userroleupdated, ...), or a whole category (categorytailnetmanagement, categorydevicemisconfigurations) that also takes events tailscale adds later. tailscale signs each event with the secret (tailscale-webhook-signature). providertype \"slack\", \"discord\", \"mattermost\" or \"googlechat\" formats the message for that chat app; \"\" or none sends the generic format. the signing secret is returned once: keep it to verify events. write"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "webhooks.delete",
+      "haystack": "webhooks.delete tailscale.api.webhooks.delete delete a webhook endpoint; tailscale stops sending it events. destructive"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "webhooks.get",
+      "haystack": "webhooks.get tailscale.api.webhooks.get get a webhook endpoint: url, provider type and subscribed events. read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "webhooks.list",
+      "haystack": "webhooks.list tailscale.api.webhooks.list list the webhook endpoints that receive tailnet events (device added, needs approval, policy changed, user joined, ...). read"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "webhooks.rotateSecret",
+      "haystack": "webhooks.rotatesecret tailscale.api.webhooks.rotatesecret replace a webhook endpoint's signing secret. the new one is returned once; signatures made with the old one stop verifying. destructive"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "webhooks.test",
+      "haystack": "webhooks.test tailscale.api.webhooks.test send a test event to a webhook endpoint (a chat channel, for a slack or discord one) to check it receives and accepts deliveries. destructive"
+    },
+    {
+      "pluginId": "tailscale",
+      "kind": "api",
+      "shortPath": "webhooks.update",
+      "haystack": "webhooks.update tailscale.api.webhooks.update change which events a webhook endpoint receives. write"
     },
     {
       "pluginId": "talenthr",
