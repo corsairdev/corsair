@@ -48,6 +48,7 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 // the caller decides it is a failure.
 export function expectEmptyBody(raw: unknown, what: string): void {
 	if (raw !== undefined && raw !== null && raw !== '') {
-		throw new Error(`PandaDoc ${what}: unexpected body ${JSON.stringify(raw)}`);
+		// The body is left out: it could carry document or contact data.
+		throw new Error(`PandaDoc ${what}: unexpected response body`);
 	}
 }

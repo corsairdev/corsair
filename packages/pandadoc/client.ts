@@ -22,54 +22,66 @@ const RATE_LIMIT_CONFIG: RateLimitConfig = {
 };
 
 /**
- * A failed call throws this: core's `ApiError` (R8: core and the handlers
- * read `status` and `retryAfter` from it), rebuilt without the request body
- * and query. Recipients and contact lookups carry email addresses, which
- * core's own ApiError keeps on the request.
+ * A failed call throws core's `ApiError` (R8: core and the handlers read
+ * `status` and `retryAfter` from it, and management maps errors named
+ * ApiError to their status), rebuilt without the request body and query.
+ * Recipients and contact lookups carry email addresses, which core's own
+ * ApiError keeps on the request.
  */
-export class PandadocAPIError extends ApiError {
-	/** The HTTP method of the failed request, for replay-safety decisions. */
-	readonly method: string;
-
-	constructor(
-		message: string,
-		options: {
-			method: string;
-			/** Request path, without query. */
-			path: string;
-			status: number;
-			statusText?: string;
-			// unknown: error bodies can be the { type, detail } envelope or
-			// non-JSON from a proxy.
-			body?: unknown;
-			retryAfter?: number;
+export function buildPandadocApiError(
+	message: string,
+	options: {
+		method: string;
+		/** Request path, without query. */
+		path: string;
+		status: number;
+		statusText?: string;
+		// unknown: error bodies can be the { type, detail } envelope or
+		// non-JSON from a proxy.
+		body?: unknown;
+		retryAfter?: number;
+	},
+): ApiError {
+	// Ids are opaque, but a path part that looks like an email is masked.
+	const url = options.path
+		.split('/')
+		.map((part) =>
+			part.includes('@') || part.toLowerCase().includes('%40')
+				? '[email]'
+				: part,
+		)
+		.join('/');
+	return new ApiError(
+		{ method: options.method as ApiRequestOptions['method'], url },
+		{
+			url,
+			ok: false,
+			status: options.status,
+			statusText: options.statusText ?? '',
+			body: options.body,
 		},
-	) {
-		// recipients can be addressed by email in contact paths on other
-		// providers; here ids are opaque uuids, but keep the guard anyway.
-		const url = options.path
-			.split('/')
-			.map((part) =>
-				part.includes('@') || part.toLowerCase().includes('%40')
-					? '[email]'
-					: part,
-			)
-			.join('/');
-		super(
-			{ method: options.method as ApiRequestOptions['method'], url },
-			{
-				url,
-				ok: false,
-				status: options.status,
-				statusText: options.statusText ?? '',
-				body: options.body,
-			},
-			message,
-			{ retryAfter: options.retryAfter },
-		);
-		this.name = 'PandadocAPIError';
-		this.method = options.method;
+		message,
+		{ retryAfter: options.retryAfter },
+	);
+}
+
+/**
+ * Keeps only the diagnostic part of an error body: PandaDoc's `type` and
+ * `detail` strings (emails masked), or a short plain-text body. Other keys a
+ * validation error can echo (phone numbers, names, addresses) are dropped.
+ */
+// unknown: error bodies are arbitrary JSON until narrowed here.
+export function safeErrorBody(body: unknown): unknown {
+	if (typeof body === 'string') {
+		return body.length <= 200 ? maskEmails(body) : undefined;
 	}
+	const record = asRecord(body);
+	if (!record) return undefined;
+	const safe: Record<string, string> = {};
+	if (typeof record.type === 'string') safe.type = maskEmails(record.type);
+	if (typeof record.detail === 'string')
+		safe.detail = maskEmails(record.detail);
+	return safe;
 }
 
 /**
@@ -194,14 +206,14 @@ export async function makePandadocRequest(
 				error.body,
 				textBody || error.statusText || 'request failed',
 			);
-			throw new PandadocAPIError(
+			throw buildPandadocApiError(
 				`PandaDoc ${error.status}: ${maskEmails(detail)}`,
 				{
 					method,
 					path,
 					status: error.status,
 					statusText: error.statusText,
-					body: maskEmails(error.body),
+					body: safeErrorBody(error.body),
 					retryAfter: error.retryAfter,
 				},
 			);

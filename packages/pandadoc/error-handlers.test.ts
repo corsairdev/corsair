@@ -1,9 +1,10 @@
 import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
-import { PandadocAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { buildPandadocApiError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
-function apiError(status: number, method: string = 'GET'): PandadocAPIError {
-	return new PandadocAPIError(`PandaDoc ${status}: boom`, {
+function apiError(status: number, method: string = 'GET'): ApiError {
+	return buildPandadocApiError(`PandaDoc ${status}: boom`, {
 		method,
 		path: '/public/v1/documents',
 		status,
@@ -108,7 +109,7 @@ describe('mergeErrorHandlers', () => {
 		// Caller keys first, then the unnamed builtins, DEFAULT last.
 		expect(order[0]).toBe('OVERLOADED_ERROR');
 		expect(order.at(-1)).toBe('DEFAULT');
-		const overloaded = new PandadocAPIError('overloaded', {
+		const overloaded = buildPandadocApiError('overloaded', {
 			method: 'GET',
 			path: '/x',
 			status: 529,
@@ -148,5 +149,5 @@ describe('mergeErrorHandlers', () => {
 });
 
 function statusIs(error: Error, status: number): boolean {
-	return error instanceof PandadocAPIError && error.status === status;
+	return error instanceof ApiError && error.status === status;
 }

@@ -1,9 +1,9 @@
 import { inspect } from 'node:util';
+import { ApiError } from 'corsair/http';
 import {
 	describePandadocError,
 	makePandadocRequest,
 	maskEmails,
-	PandadocAPIError,
 } from './client';
 import { document, unauthorized } from './test-fixtures';
 
@@ -30,10 +30,10 @@ function respond(
 }
 
 // unknown: a rejection can be any value until the instanceof check narrows it.
-async function failure(promise: Promise<unknown>): Promise<PandadocAPIError> {
+async function failure(promise: Promise<unknown>): Promise<ApiError> {
 	const error = await promise.catch((caught: unknown) => caught);
-	expect(error).toBeInstanceOf(PandadocAPIError);
-	if (!(error instanceof PandadocAPIError)) throw error;
+	expect(error).toBeInstanceOf(ApiError);
+	if (!(error instanceof ApiError)) throw error;
 	return error;
 }
 
@@ -123,7 +123,7 @@ describe('makePandadocRequest', () => {
 		);
 		expect(error.status).toBe(401);
 		expect(error.message).toContain('Authentication credentials');
-		expect(error.name).toBe('PandadocAPIError');
+		expect(error.name).toBe('ApiError');
 	});
 
 	it('retries a 429 at the transport, honouring Retry-After', async () => {
@@ -157,6 +157,24 @@ describe('makePandadocRequest', () => {
 		expect(printed).not.toContain('jane@example.com');
 		expect(printed).not.toContain('recipients');
 		expect(error.message).not.toContain('jane@example.com');
+	});
+
+	it('keeps only type and detail from an error body', async () => {
+		respond(
+			{ type: 'bad_request', detail: 'Invalid contact', phone: '+15555550100' },
+			400,
+		);
+		const error = await failure(
+			makePandadocRequest(API_KEY, {
+				method: 'POST',
+				path: '/public/v1/contacts',
+			}),
+		);
+		expect(error.body).toEqual({
+			type: 'bad_request',
+			detail: 'Invalid contact',
+		});
+		expect(inspect(error)).not.toContain('+15555550100');
 	});
 
 	it('masks email addresses in error detail', async () => {
