@@ -37,6 +37,59 @@ afterEach(() => {
 });
 
 describe('makeLapostaRequest', () => {
+	it('keeps member emails from the request out of a rejected ApiError', async () => {
+		// The mock rejects like core's request(); cast because CancelablePromise has private fields.
+		mockRequest.mockImplementation((async (
+			_config: unknown,
+			options: Parameters<typeof request>[1],
+		) => {
+			throw new actualHttp.ApiError(
+				options,
+				{
+					url: `${LAPOSTA_API_BASE}/member/person%40example.net?list_id=list-1`,
+					ok: false,
+					status: 400,
+					statusText: 'Bad Request',
+					body: {
+						error: {
+							type: 'invalid_input',
+							message: 'Email address exists',
+							code: 204,
+							parameter: 'email',
+						},
+					},
+				},
+				'Bad Request',
+			);
+		}) as never);
+
+		const rejection = await makeLapostaRequest(
+			'/member/person%40example.net',
+			'test-key',
+			{
+				method: 'POST',
+				query: { list_id: 'list-1' },
+				body: { list_id: 'list-1', email: 'person@example.net' },
+			},
+		).catch((error: unknown) => error);
+
+		expect(rejection).toBeInstanceOf(ApiError);
+		const error = rejection as ApiError;
+		expect(error.status).toBe(400);
+		expect(error.body).toEqual({
+			error: {
+				type: 'invalid_input',
+				message: 'Email address exists',
+				code: 204,
+				parameter: 'email',
+			},
+		});
+		expect(JSON.stringify({ ...error, message: error.message })).not.toMatch(
+			/person|example\.net/,
+		);
+		expect(error.request.body).toBeUndefined();
+	});
+
 	it('sends HTTP Basic Auth with API key as username and empty password', async () => {
 		mockRequest.mockResolvedValue({ data: [] });
 
@@ -107,9 +160,12 @@ describe('makeLapostaRequest', () => {
 		mockRequest.mockRejectedValue(rateLimited);
 
 		// unknown because the caught rejection value has no static type.
-		await expect(
-			makeLapostaRequest('/list', 'test-key', { method: 'GET' }),
-		).rejects.toBe(rateLimited);
+		const rejection = await makeLapostaRequest('/list', 'test-key', {
+			method: 'GET',
+		}).catch((error: unknown) => error);
+		expect(rejection).toBeInstanceOf(ApiError);
+		expect((rejection as ApiError).status).toBe(429);
+		expect((rejection as ApiError).retryAfter).toBe(4000);
 
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(rateLimited)).toBe(true);
 		await expect(errorHandlers.RATE_LIMIT_ERROR.handler()).resolves.toEqual({

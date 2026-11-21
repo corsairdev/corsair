@@ -1,6 +1,6 @@
 import { AuthMissingError } from 'corsair/core';
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class LapostaAPIError extends Error {
 	constructor(
@@ -70,6 +70,9 @@ export async function makeLapostaRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
+		if (error instanceof ApiError) {
+			throw stripRequestData(error);
+		}
 		if (error instanceof Error) {
 			throw error;
 		}
@@ -115,4 +118,38 @@ function appendFormValue(
 		return;
 	}
 	params.append(key, String(value));
+}
+
+/** Path segments that can carry a member's email address (Laposta accepts an email as member_id). */
+function redactPath(value: string): string {
+	return value
+		.split('?')[0]!
+		.split('/')
+		.map((segment) => (/@|%40|%2540/i.test(segment) ? '[member]' : segment))
+		.join('/');
+}
+
+/**
+ * Rebuilds core's ApiError without the request body, query and member addresses in the path.
+ * The form body holds subscriber emails and custom fields; status, retry metadata and
+ * Laposta's error body (type, message, code, parameter) are kept as they are.
+ */
+function stripRequestData(error: ApiError): ApiError {
+	return new ApiError(
+		{ method: error.request.method, url: redactPath(error.request.url) },
+		{
+			url: redactPath(error.url),
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
+		},
+		error.message,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
 }
