@@ -16,7 +16,7 @@ overviewNote: >
   typeSettings as flat body fields (url/encryption/port for http,
   stringtoexpect for tcp, nameserver/expectedip for dns, …) — the docs list
   them per type. resolution is one of 1, 5, 15, 30 or 60 minutes.
-  checks.updateMulti pauses or re-times every check at once.
+  checks.updateMulti pauses or re-times the listed checks at once.
   tools.runSingle performs a one-off test without creating a check.
 
   Maintenance windows silence alerts for the uptime (uptimeIds) and
@@ -52,7 +52,7 @@ apiExamples:
   checks.delete:
     call: '{ checkId: 100 }'
   checks.updateMulti:
-    call: '{ paused: true }'
+    call: '{ checkIds: [1, 2, 3], paused: true }'
   checks.deleteMulti:
     call: '{ checkIds: [1, 2, 3] }'
   analysis.list:
@@ -123,7 +123,7 @@ apiExamples:
     call: '{ contactId: 111250 }'
 apiNotes:
   checks.create: 'type is one of http, httpcustom, tcp, ping, dns, udp, smtp, pop3, imap; typeSettings carries the flat type-specific fields from the docs (http: url, encryption, port, shouldcontain, shouldnotcontain, postdata, requestheaders, verify_certificate, ssl_down_days_before; tcp: port, encryption, stringtoexpect; dns: nameserver, expectedip).'
-  checks.updateMulti: 'Pauses or unpauses every check, or changes the resolution of every check, in one call.'
+  checks.updateMulti: 'Pauses, unpauses or re-times the checks listed in checkIds, in one call. Without checkIds Pingdom would change every check, so the plugin requires the list.'
   results.list: 'status filters to up, down, unconfirmed or unknown; probes takes a comma-separated probe id list.'
   maintenance.create: 'recurrence is none, daily, weekly or monthly; from and to must be in the future (use 1 for now); effectiveTo 0 means the recurrence never stops.'
   tools.runSingle: 'Performs a single test without creating a check; the answer carries status, responsetime and the probe that ran it.'

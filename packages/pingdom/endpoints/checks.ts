@@ -18,7 +18,7 @@ function checkCommonBody(common: {
 	notifyAgainEvery?: number;
 	notifyWhenBackup?: boolean;
 	tags?: string;
-	probeFilters?: Record<string, unknown>[];
+	probeFilters?: string[];
 	ipv6?: boolean;
 	responseTimeThreshold?: number;
 	customMessage?: string;

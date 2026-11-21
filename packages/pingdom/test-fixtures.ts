@@ -54,7 +54,7 @@ export const checkDetail = {
 		teamids: [63],
 		integrationids: [42],
 		tags: [{ name: 'prod', type: 'u' }],
-		probe_filters: [{ region: 'EU' }],
+		probe_filters: ['region: EU'],
 		ipv6: false,
 		status: 'up',
 		lasterrortime: 1297446423,

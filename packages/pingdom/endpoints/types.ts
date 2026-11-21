@@ -73,7 +73,7 @@ export const CheckDetailSchema = z
 		// unknown: tag objects ({ name, type, count }) only arrive with include_tags.
 		tags: z.unknown().nullish().describe('Tags'),
 		probe_filters: z
-			// unknown: probe filters are provider-defined region objects.
+			// unknown: "region: EU" strings on reads; older checks may differ.
 			.array(z.unknown())
 			.nullish()
 			.describe('Probe region filters'),
@@ -94,9 +94,19 @@ export type CheckDetail = z.infer<typeof CheckDetailSchema>;
 const checkCommonFields = {
 	paused: z.boolean().optional().describe('Create or leave the check paused'),
 	resolution: z
-		.enum(['1', '5', '15', '30', '60'])
+		.union([
+			z.enum(['1', '5', '15', '30', '60']).transform(Number),
+			// Already a number when a caller (or an adapter that parsed the
+			// registered schema once) passes the converted value.
+			z.union([
+				z.literal(1),
+				z.literal(5),
+				z.literal(15),
+				z.literal(30),
+				z.literal(60),
+			]),
+		])
 		.optional()
-		.transform((v) => (v === undefined ? undefined : Number(v)))
 		.describe('Test interval in minutes (1, 5, 15, 30 or 60)'),
 	userIds: z.array(z.number().int()).optional().describe('User ids to alert'),
 	teamIds: z.array(z.number().int()).optional().describe('Team ids to alert'),
@@ -120,8 +130,14 @@ const checkCommonFields = {
 		.describe('Send an alert when the check recovers'),
 	tags: z.string().optional().describe('Comma-separated tags for filtering'),
 	probeFilters: z
-		// unknown: provider-defined entries the reference does not type.
-		.array(z.record(z.string(), z.unknown()))
+		.array(
+			z
+				.string()
+				.regex(
+					/^region: ?(EU|NA|APAC|LATAM)$/,
+					'Expected "region: EU", "region: NA", "region: APAC" or "region: LATAM"',
+				),
+		)
 		.optional()
 		.describe(
 			'Probe region filters, e.g. [{"region":"EU"}] or [{"region":"NA"}]',
@@ -146,7 +162,7 @@ type CheckCommon = {
 	notifyWhenBackup?: boolean;
 	tags?: string;
 	// unknown: probe filters are provider-defined region objects.
-	probeFilters?: Record<string, unknown>[];
+	probeFilters?: string[];
 	ipv6?: boolean;
 	responseTimeThreshold?: number;
 	customMessage?: string;
@@ -355,6 +371,40 @@ export const CheckOutputSchema = z
 	.loose()
 	.describe('The check');
 
+const RESERVED_SETTINGS = new Set([
+	'name',
+	'host',
+	'type',
+	'paused',
+	'resolution',
+	'userids',
+	'teamids',
+	'integrationids',
+	'sendnotificationwhendown',
+	'notifyagainevery',
+	'notifywhenbackup',
+	'tags',
+	'probe_filters',
+	'ipv6',
+	'responsetime_threshold',
+	'custom_message',
+]);
+
+/** typeSettings holds type-specific fields only; a common field there would override the explicit one. */
+const typeSettingsSchema = z
+	// unknown: type-specific body fields whose names depend on the check type.
+	.record(z.string(), z.unknown())
+	.refine(
+		(settings) =>
+			Object.keys(settings).every(
+				(key) => !RESERVED_SETTINGS.has(key.toLowerCase()),
+			),
+		{
+			message:
+				'typeSettings takes type-specific fields only; set name, host, type and the common settings as their own inputs',
+		},
+	);
+
 export const ChecksCreateInputSchema = z
 	.object({
 		name: z.string().min(1).describe('Check name'),
@@ -372,9 +422,7 @@ export const ChecksCreateInputSchema = z
 				'imap',
 			])
 			.describe('Type of check'),
-		typeSettings: z
-			// unknown: provider-defined entries the reference does not type.
-			.record(z.string(), z.unknown())
+		typeSettings: typeSettingsSchema
 			.optional()
 			.describe(
 				'Type-specific settings as flat body fields, per the check type docs: http takes url/encryption/port/shouldcontain/shouldnotcontain/postdata/requestheaders/verify_certificate/ssl_down_days_before; tcp takes port/encryption/stringtoexpect; dns takes nameserver/expectedip; udp/smtp/pop3/imap take port/stringtoexpect',
@@ -415,9 +463,7 @@ export const ChecksUpdateInputSchema = z
 			])
 			.optional()
 			.describe('New type of check'),
-		typeSettings: z
-			// unknown: provider-defined entries the reference does not type.
-			.record(z.string(), z.unknown())
+		typeSettings: typeSettingsSchema
 			.optional()
 			.describe('Type-specific settings as flat body fields'),
 		...checkCommonFields,
@@ -440,10 +486,20 @@ export const ChecksUpdateMultiInputSchema = z
 			),
 		paused: z.boolean().optional().describe('Pause (true) or unpause (false)'),
 		resolution: z
-			.enum(['1', '5', '15', '30', '60'])
+			.union([
+				z.enum(['1', '5', '15', '30', '60']).transform(Number),
+				// Already a number when a caller (or an adapter that parsed the
+				// registered schema once) passes the converted value.
+				z.union([
+					z.literal(1),
+					z.literal(5),
+					z.literal(15),
+					z.literal(30),
+					z.literal(60),
+				]),
+			])
 			.optional()
-			.transform((v) => (v === undefined ? undefined : Number(v)))
-			.describe('New test interval in minutes'),
+			.describe('New test interval in minutes (1, 5, 15, 30 or 60)'),
 	})
 	.describe('Input for pausing or re-timing multiple checks');
 export type ChecksUpdateMultiInput = z.infer<
@@ -630,9 +686,9 @@ export const SummaryPerformanceInputSchema = z
 		checkId: z.number().int().describe('The check id'),
 		...timeRange,
 		resolution: z
-			.enum(['day', 'week', 'month'])
+			.enum(['hour', 'day', 'week'])
 			.optional()
-			.describe('Interval resolution'),
+			.describe('Interval size: hour (default), day or week'),
 		includeUptime: z.boolean().optional().describe('Include uptime'),
 		probes: probesParam,
 		order: z.enum(['asc', 'desc']).optional().describe('Interval order'),
@@ -1144,6 +1200,22 @@ export type ContactsUpdateInput = z.infer<typeof ContactsUpdateInputSchema>;
 
 // ── Operation registry ─────────────────────────────────────────────────────
 
+export const ProbesListInputSchema = z
+	.object({
+		limit: z.number().int().min(1).optional().describe('Probes to return'),
+		offset: z.number().int().min(0).optional().describe('Offset for paging'),
+		onlyActive: z
+			.boolean()
+			.optional()
+			.describe('Only active probes (sent as onlyactive)'),
+		includeDeleted: z
+			.boolean()
+			.optional()
+			.describe('Include deleted probes (sent as includedeleted)'),
+	})
+	.describe('Query parameters for listing probes');
+export type ProbesListInput = z.infer<typeof ProbesListInputSchema>;
+
 export const PingdomEndpointInputSchemas = {
 	checksList: ChecksListInputSchema,
 	checksCreate: ChecksCreateInputSchema,
@@ -1162,7 +1234,7 @@ export const PingdomEndpointInputSchemas = {
 	summariesProbes: SummaryInputSchema,
 	actionsList: ActionsListInputSchema,
 	creditsGet: EmptyInputSchema,
-	probesList: EmptyInputSchema,
+	probesList: ProbesListInputSchema,
 	referenceGet: EmptyInputSchema,
 	singleRun: SingleRunInputSchema,
 	maintenanceList: MaintenanceListInputSchema,

@@ -50,7 +50,16 @@ export const listProbes: PingdomEndpoints['probesList'] = (ctx, input) =>
 			output: Outputs.probesList,
 		},
 		input,
-		() => ({ method: 'GET', path: `${V31}/probes` }),
+		({ limit, offset, onlyActive, includeDeleted }) => ({
+			method: 'GET',
+			path: `${V31}/probes`,
+			query: {
+				limit,
+				offset,
+				onlyactive: onlyActive,
+				includedeleted: includeDeleted,
+			},
+		}),
 		{ log: (_, page) => ({ count: page.probes.length }) },
 	);
 

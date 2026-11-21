@@ -117,7 +117,7 @@ describe('checks', () => {
 			typeSettings: { url: '/health', encryption: true, port: 443 },
 			resolution: '5',
 			teamIds: [63],
-			probeFilters: [{ region: 'EU' }],
+			probeFilters: ['region: EU'],
 			notifyWhenBackup: true,
 		});
 		expectCall({
@@ -132,7 +132,7 @@ describe('checks', () => {
 				port: 443,
 				resolution: 5,
 				teamids: [63],
-				probe_filters: [{ region: 'EU' }],
+				probe_filters: ['region: EU'],
 				notifywhenbackup: true,
 			},
 		});
@@ -154,6 +154,33 @@ describe('checks', () => {
 		respond(checksDeleted);
 		await invoke(Checks.deleteCheck, { checkId: 100 });
 		expectCall({ path: '/api/3.1/checks/100', method: 'DELETE' });
+	});
+
+	it('accepts resolution as the string enum or an already-converted number', async () => {
+		respond(checkModified);
+		await invoke(Checks.updateMulti, { checkIds: [1], resolution: '5' });
+		expect(lastRequest().body).toMatchObject({
+			resolution: 5,
+		});
+		respond(checkModified);
+		await invoke(Checks.updateMulti, { checkIds: [1], resolution: 15 });
+		expect(lastRequest().body).toMatchObject({
+			resolution: 15,
+		});
+		await expect(
+			invoke(Checks.updateMulti, { checkIds: [1], resolution: 7 }),
+		).rejects.toThrow();
+	});
+
+	it('refuses common fields inside typeSettings', async () => {
+		await expect(
+			invoke(Checks.create, {
+				name: 'x',
+				host: 'lug.dev',
+				type: 'http',
+				typeSettings: { host: 'other.example', url: '/' },
+			}),
+		).rejects.toThrow('typeSettings');
 	});
 
 	it('multi pause and delete use the collection route', async () => {
@@ -264,8 +291,11 @@ describe('tools', () => {
 		expectCall({ path: '/api/3.1/credits' });
 
 		respond(probesList);
-		await invoke(Tools.listProbes, {});
-		expectCall({ path: '/api/3.1/probes' });
+		await invoke(Tools.listProbes, { limit: 10, offset: 20, onlyActive: true });
+		expectCall({
+			path: '/api/3.1/probes',
+			query: { limit: '10', offset: '20', onlyactive: 'true' },
+		});
 	});
 
 	it('reference hits its route', async () => {
