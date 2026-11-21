@@ -261,7 +261,8 @@ await corsair.parallel.api.extract.extract({});
   fetch_policy?: {
     max_age_seconds?: number | null,
     timeout_seconds?: number | null,
-    disable_cache_fallback?: boolean
+    disable_cache_fallback?: boolean,
+    as_of?: string | null
   } | null,
   excerpt_settings?: {
     max_chars_per_result?: number | null
@@ -421,7 +422,7 @@ await corsair.parallel.api.findall.createRun({});
 ```ts
 {
   url: string,
-  event_types?: task_run.status[]
+  event_types?: (findall.candidate.generated | findall.candidate.matched | findall.candidate.enriched | findall.run.completed | findall.run.cancelled | findall.run.failed)[]
 } | null
 ```
 </Accordion>
@@ -934,6 +935,321 @@ await corsair.parallel.api.findall.schema({});
     allowed_tools?: string[] | null
   }[] | null
 }[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Flights
+
+### search
+
+`flights.search`
+
+Search one-way or round-trip flights with where to book them
+
+**Risk:** `read`
+
+```ts
+await corsair.parallel.api.flights.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `origins` | `string[]` | Yes | — |
+| `destinations` | `string[]` | Yes | — |
+| `departure_date` | `string` | Yes | — |
+| `return_date` | `string \| null` | No | — |
+| `adults` | `number` | No | — |
+| `children` | `number` | No | — |
+| `infants_in_seat` | `number` | No | — |
+| `infants_on_lap` | `number` | No | — |
+| `cabin` | `economy \| premium_economy \| business \| first` | No | — |
+| `max_stops` | `number \| null` | No | — |
+| `max_price` | `number \| null` | No | — |
+| `currency` | `string` | No | — |
+| `max_duration_minutes` | `number \| null` | No | — |
+| `include_airlines` | `string[]` | No | — |
+| `exclude_airlines` | `string[]` | No | — |
+| `departure_hours` | `object \| null` | No | — |
+| `arrival_hours` | `object \| null` | No | — |
+| `return_hours` | `object \| null` | No | — |
+| `return_arrival_hours` | `object \| null` | No | — |
+| `sort` | `best \| price \| duration \| departure_time \| arrival_time` | No | — |
+| `advanced_settings` | `object \| null` | No | — |
+| `mode` | `advanced \| null` | No | — |
+| `session_id` | `string \| null` | No | — |
+| `client_model` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="departure_hours full type">
+
+```ts
+{
+  earliest: number,
+  latest: number
+} | null
+```
+</Accordion>
+
+<Accordion title="arrival_hours full type">
+
+```ts
+{
+  earliest: number,
+  latest: number
+} | null
+```
+</Accordion>
+
+<Accordion title="return_hours full type">
+
+```ts
+{
+  earliest: number,
+  latest: number
+} | null
+```
+</Accordion>
+
+<Accordion title="return_arrival_hours full type">
+
+```ts
+{
+  earliest: number,
+  latest: number
+} | null
+```
+</Accordion>
+
+<Accordion title="advanced_settings full type">
+
+```ts
+{
+  max_results?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_id` | `string` | Yes | — |
+| `warnings` | `object[] \| null` | No | — |
+| `usage` | `object[] \| null` | No | — |
+| `session_id` | `string` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="warnings full type">
+
+```ts
+{
+  type: string,
+  message: string,
+  detail?: Record<string, any> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  name: string,
+  count: number
+}[] | null
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+  url: string,
+  price?: number | null,
+  outbound: {
+    departure_airport: string,
+    departure_time: string,
+    arrival_airport: string,
+    arrival_time: string,
+    duration_minutes?: number | null,
+    stops: number,
+    segments: {
+      airline: string,
+      flight_number: string,
+      departure_airport: string,
+      departure_time: string,
+      arrival_airport: string,
+      arrival_time: string,
+      duration_minutes?: number | null,
+      aircraft?: string | null,
+      cabin?: string | null,
+      legroom?: string | null,
+      overnight?: boolean
+    }[],
+    layovers?: {
+      airport: string,
+      duration_minutes?: number | null,
+      overnight?: boolean
+    }[]
+  },
+  inbound?: {
+    departure_airport: string,
+    departure_time: string,
+    arrival_airport: string,
+    arrival_time: string,
+    duration_minutes?: number | null,
+    stops: number,
+    segments: {
+      airline: string,
+      flight_number: string,
+      departure_airport: string,
+      departure_time: string,
+      arrival_airport: string,
+      arrival_time: string,
+      duration_minutes?: number | null,
+      aircraft?: string | null,
+      cabin?: string | null,
+      legroom?: string | null,
+      overnight?: boolean
+    }[],
+    layovers?: {
+      airport: string,
+      duration_minutes?: number | null,
+      overnight?: boolean
+    }[]
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Hotels
+
+### search
+
+`hotels.search`
+
+Search hotels and vacation rentals for a stay
+
+**Risk:** `read`
+
+```ts
+await corsair.parallel.api.hotels.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location` | `string` | Yes | — |
+| `check_in_date` | `string` | Yes | — |
+| `check_out_date` | `string` | Yes | — |
+| `adults` | `number` | No | — |
+| `children_ages` | `number[]` | No | — |
+| `rooms` | `number` | No | — |
+| `property_types` | `(hotel \| vacation_rental)[]` | No | — |
+| `min_price` | `number \| null` | No | — |
+| `max_price` | `number \| null` | No | — |
+| `min_rating` | `number \| null` | No | — |
+| `hotel_classes` | `number[]` | No | — |
+| `free_cancellation` | `boolean` | No | — |
+| `sort` | `relevance \| price \| rating` | No | — |
+| `currency` | `string` | No | — |
+| `mode` | `advanced \| null` | No | — |
+| `session_id` | `string \| null` | No | — |
+| `client_model` | `string \| null` | No | — |
+| `advanced_settings` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="advanced_settings full type">
+
+```ts
+{
+  max_results?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_id` | `string` | Yes | — |
+| `warnings` | `object[] \| null` | No | — |
+| `usage` | `object[] \| null` | No | — |
+| `session_id` | `string` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="warnings full type">
+
+```ts
+{
+  type: string,
+  message: string,
+  detail?: Record<string, any> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  name: string,
+  count: number
+}[] | null
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+  url: string,
+  url_kind: property_website | booking_page | string,
+  name: string,
+  property_type: hotel | vacation_rental | string,
+  address?: string | null,
+  latitude?: number | null,
+  longitude?: number | null,
+  hotel_class?: number | null,
+  rating?: fair | good | great | excellent | string | null,
+  images?: string[],
+  price_per_night?: number | null,
+  total_price?: number | null,
+  currency: string,
+  free_cancellation?: boolean | null,
+  offers: {
+    seller?: string | null,
+    url?: string | null,
+    price_per_night?: number | null,
+    total_price?: number | null,
+    currency: string,
+    free_cancellation?: boolean | null
+  }[],
+  amenities?: string[],
+  check_in_time?: string | null,
+  check_out_time?: string | null
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -1821,6 +2137,18 @@ await corsair.parallel.api.places.search({});
 | `mode` | `fast \| advanced \| null` | No | — |
 | `session_id` | `string \| null` | No | — |
 | `client_model` | `string \| null` | No | — |
+| `advanced_settings` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="advanced_settings full type">
+
+```ts
+{
+  max_results?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1862,6 +2190,7 @@ await corsair.parallel.api.places.search({});
 {
   name: string,
   url?: string | null,
+  description?: string | null,
   address?: string | null,
   phone?: string | null,
   latitude?: number | null,
@@ -2078,7 +2407,8 @@ await corsair.parallel.api.search.search({});
   fetch_policy?: {
     max_age_seconds?: number | null,
     timeout_seconds?: number | null,
-    disable_cache_fallback?: boolean
+    disable_cache_fallback?: boolean,
+    as_of?: string | null
   } | null,
   excerpt_settings?: {
     max_chars_per_result?: number | null
@@ -2133,6 +2463,112 @@ await corsair.parallel.api.search.search({});
   name: string,
   count: number
 }[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Shopping
+
+### search
+
+`shopping.search`
+
+Search products to buy, linked to store product pages
+
+**Risk:** `read`
+
+```ts
+await corsair.parallel.api.shopping.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_queries` | `string[]` | Yes | — |
+| `objective` | `string \| null` | No | — |
+| `min_price` | `number \| null` | No | — |
+| `max_price` | `number \| null` | No | — |
+| `condition` | `new \| used \| refurbished \| any` | No | — |
+| `mode` | `advanced \| null` | No | — |
+| `session_id` | `string \| null` | No | — |
+| `client_model` | `string \| null` | No | — |
+| `advanced_settings` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="advanced_settings full type">
+
+```ts
+{
+  max_results?: number | null,
+  location?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_id` | `string` | Yes | — |
+| `warnings` | `object[] \| null` | No | — |
+| `usage` | `object[] \| null` | No | — |
+| `session_id` | `string` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="warnings full type">
+
+```ts
+{
+  type: string,
+  message: string,
+  detail?: Record<string, any> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  name: string,
+  count: number
+}[] | null
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+  url: string,
+  title?: string | null,
+  description?: string | null,
+  merchant?: string | null,
+  brand?: string | null,
+  price?: number | null,
+  currency?: string | null,
+  original_price?: number | null,
+  rating?: number | null,
+  review_count?: number | null,
+  image_url?: string | null,
+  condition?: new | used | refurbished | string | null,
+  availability?: in_stock | out_of_stock | preorder | string | null,
+  offers?: {
+    url: string,
+    merchant?: string | null,
+    price?: number | null,
+    currency?: string | null
+  }[]
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -2204,7 +2640,8 @@ await corsair.parallel.api.tasks.addGroupRuns({});
       fetch_policy?: {
         max_age_seconds?: number | null,
         timeout_seconds?: number | null,
-        disable_cache_fallback?: boolean
+        disable_cache_fallback?: boolean,
+        as_of?: string | null
       } | null,
       data_sources?: {
         pay_per_use?: string[],
@@ -2367,7 +2804,8 @@ await corsair.parallel.api.tasks.createRun({});
     fetch_policy?: {
       max_age_seconds?: number | null,
       timeout_seconds?: number | null,
-      disable_cache_fallback?: boolean
+      disable_cache_fallback?: boolean,
+      as_of?: string | null
     } | null,
     data_sources?: {
       pay_per_use?: string[],
@@ -2790,7 +3228,8 @@ await corsair.parallel.api.tasks.getRunInput({});
   fetch_policy?: {
     max_age_seconds?: number | null,
     timeout_seconds?: number | null,
-    disable_cache_fallback?: boolean
+    disable_cache_fallback?: boolean,
+    as_of?: string | null
   } | null,
   data_sources?: {
     pay_per_use?: string[],

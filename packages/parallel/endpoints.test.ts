@@ -1097,3 +1097,258 @@ test('errors without a JSON body still report the status', async () => {
 		message: 'Parallel HTTP 502',
 	});
 });
+
+describe('Flights, Hotels and Shopping search', () => {
+	function respond(body: object) {
+		return jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValue(new Response(JSON.stringify(body), { status: 200 }));
+	}
+	const sentTo = (fetchMock: jest.SpyInstance, url: string, input: object) =>
+		expect(fetchMock).toHaveBeenCalledWith(
+			url,
+			expect.objectContaining({
+				method: 'POST',
+				body: JSON.stringify(input),
+				headers: expect.objectContaining({ 'x-api-key': 'test-key' }),
+			}),
+		);
+
+	test('flights.search sends a round trip and parses both legs', async () => {
+		const leg = (from: string, to: string) => ({
+			departure_airport: from,
+			departure_time: '2026-12-10 08:00',
+			arrival_airport: to,
+			arrival_time: '2026-12-10 16:20',
+			duration_minutes: 380,
+			stops: 0,
+			segments: [
+				{
+					airline: 'United',
+					flight_number: 'UA 1',
+					departure_airport: from,
+					departure_time: '2026-12-10 08:00',
+					arrival_airport: to,
+					arrival_time: '2026-12-10 16:20',
+					aircraft: null,
+					overnight: false,
+				},
+			],
+			layovers: [],
+		});
+		const output = {
+			search_id: 'search_f',
+			session_id: 's',
+			results: [
+				{
+					url: 'https://www.united.com/',
+					price: 412.4,
+					outbound: leg('SFO', 'JFK'),
+					inbound: leg('JFK', 'SFO'),
+				},
+			],
+			usage: [{ name: 'sku_flight_search', count: 1 }],
+		};
+		const fetchMock = respond(output);
+		const input = {
+			origins: ['SFO'],
+			destinations: ['JFK', 'EWR'],
+			departure_date: '2026-12-10',
+			return_date: '2026-12-14',
+			cabin: 'economy' as const,
+			max_stops: 0,
+			departure_hours: { earliest: 6, latest: 12 },
+			advanced_settings: { max_results: 5 },
+		};
+		expect(await api.flights.search(input)).toEqual(output);
+		sentTo(fetchMock, 'https://api.parallel.ai/v1/flights/search', input);
+	});
+
+	test('flights.search refuses bad airport codes and conflicting airline filters', async () => {
+		const fetchMock = jest.spyOn(globalThis, 'fetch');
+		await expect(
+			api.flights.search({
+				origins: ['sfo'],
+				destinations: ['JFK'],
+				departure_date: '2026-12-10',
+			}),
+		).rejects.toThrow();
+		await expect(
+			api.flights.search({
+				origins: ['SFO'],
+				destinations: ['JFK'],
+				departure_date: '2026-12-10',
+				include_airlines: ['UA'],
+				exclude_airlines: ['AA'],
+			}),
+		).rejects.toThrow(/cannot be combined/);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	test('hotels.search sends the stay and parses offers', async () => {
+		const output = {
+			search_id: 'search_h',
+			session_id: 's',
+			results: [
+				{
+					url: 'https://hotel.example',
+					url_kind: 'property_website',
+					name: 'Hotel Example',
+					property_type: 'hotel',
+					address: null,
+					hotel_class: 4,
+					rating: 'excellent',
+					images: [],
+					price_per_night: 210,
+					total_price: 630,
+					currency: 'USD',
+					free_cancellation: true,
+					offers: [
+						{
+							seller: 'Hotel Example',
+							url: 'https://hotel.example/book',
+							price_per_night: 210,
+							total_price: 630,
+							currency: 'USD',
+							free_cancellation: true,
+						},
+					],
+					amenities: ['Free Wi-Fi'],
+				},
+			],
+		};
+		const fetchMock = respond(output);
+		const input = {
+			location: 'Lisbon, Alfama',
+			check_in_date: '2026-12-10',
+			check_out_date: '2026-12-13',
+			adults: 2,
+			children_ages: [7],
+			property_types: ['hotel' as const],
+			hotel_classes: [4, 5],
+			sort: 'price' as const,
+		};
+		expect(await api.hotels.search(input)).toEqual(output);
+		sentTo(fetchMock, 'https://api.parallel.ai/v1/hotels/search', input);
+	});
+
+	test('hotels.search refuses a child older than 17 and unknown fields', async () => {
+		const fetchMock = jest.spyOn(globalThis, 'fetch');
+		const stay = {
+			location: 'Lisbon',
+			check_in_date: '2026-12-10',
+			check_out_date: '2026-12-13',
+		};
+		await expect(
+			api.hotels.search({ ...stay, children_ages: [18] }),
+		).rejects.toThrow();
+		await expect(
+			api.hotels.search({ ...stay, guests: 2 } as never),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	test('shopping.search sends the market in advanced_settings and parses products', async () => {
+		const output = {
+			search_id: 'search_s',
+			session_id: 's',
+			results: [
+				{
+					url: 'https://store.example/desk',
+					title: 'Standing desk',
+					description: 'Electric, 140 x 70 cm',
+					merchant: 'Store',
+					price: 399,
+					currency: 'EUR',
+					condition: 'new',
+					availability: 'in_stock',
+					offers: [{ url: 'https://other.example/desk', price: 419 }],
+				},
+			],
+		};
+		const fetchMock = respond(output);
+		const input = {
+			search_queries: ['electric standing desk 140cm'],
+			max_price: 500,
+			condition: 'any' as const,
+			advanced_settings: { max_results: 10, location: 'de' },
+		};
+		expect(await api.shopping.search(input)).toEqual(output);
+		sentTo(fetchMock, 'https://api.parallel.ai/v1/shopping/search', input);
+	});
+
+	test('shopping.search refuses more than five queries', async () => {
+		const fetchMock = jest.spyOn(globalThis, 'fetch');
+		await expect(
+			api.shopping.search({ search_queries: ['a', 'b', 'c', 'd', 'e', 'f'] }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+});
+
+describe('request fields Parallel added', () => {
+	function respond(body: object) {
+		return jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValue(new Response(JSON.stringify(body), { status: 200 }));
+	}
+
+	test('fetch_policy.as_of goes through on search and extract', async () => {
+		const fetchMock = respond({ search_id: 's', session_id: 'x', results: [] });
+		const input = {
+			search_queries: ['q'],
+			advanced_settings: { fetch_policy: { as_of: '2025-06-01' } },
+		};
+		await api.search.search(input);
+		expect(fetchMock.mock.calls[0]?.[1]?.body).toBe(JSON.stringify(input));
+	});
+
+	test('places.search takes advanced_settings.max_results and returns description', async () => {
+		const output = {
+			search_id: 'p',
+			session_id: 'x',
+			results: [{ name: 'Cafe', description: 'Specialty coffee bar' }],
+		};
+		respond(output);
+		expect(
+			await api.places.search({
+				query: 'coffee',
+				location: 'London',
+				advanced_settings: { max_results: 5 },
+			}),
+		).toEqual(output);
+	});
+
+	test('findall.createRun takes FindAll webhook events, not the Task one', async () => {
+		const run = {
+			findall_id: 'findall_1',
+			generator: 'preview',
+			status: { status: 'queued', is_active: true, metrics: {} },
+		};
+		const fetchMock = respond(run);
+		const base = {
+			objective: 'AI startups in Lisbon',
+			entity_type: 'companies',
+			match_conditions: [{ name: 'lisbon', description: 'Based in Lisbon' }],
+			generator: 'preview' as const,
+			match_limit: 5,
+		};
+		await api.findall.createRun({
+			...base,
+			webhook: {
+				url: 'https://example.com/hooks/parallel',
+				event_types: ['findall.candidate.matched', 'findall.run.completed'],
+			},
+		});
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		await expect(
+			api.findall.createRun({
+				...base,
+				webhook: {
+					url: 'https://example.com/hooks/parallel',
+					event_types: ['task_run.status'],
+				},
+			} as never),
+		).rejects.toThrow();
+	});
+});

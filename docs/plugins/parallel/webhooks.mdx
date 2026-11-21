@@ -1,0 +1,926 @@
+---
+title: "Parallel webhooks"
+sidebarTitle: "Webhooks"
+description: "Parallel incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
+---
+
+The Parallel plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/parallel/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `findall`
+  - `candidateEnriched` (`findall.candidateEnriched`)
+  - `candidateGenerated` (`findall.candidateGenerated`)
+  - `candidateMatched` (`findall.candidateMatched`)
+  - `runCancelled` (`findall.runCancelled`)
+  - `runCompleted` (`findall.runCompleted`)
+  - `runFailed` (`findall.runFailed`)
+- `monitor`
+  - `eventDetected` (`monitor.eventDetected`)
+  - `executionCompleted` (`monitor.executionCompleted`)
+  - `executionFailed` (`monitor.executionFailed`)
+- `taskRun`
+  - `status` (`taskRun.status`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
+}
+```
+
+## Events
+
+## Findall
+
+### Candidate Enriched
+
+`findall.candidateEnriched`
+
+Enrichment data was extracted for a FindAll candidate
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `findall.candidate.enriched` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  candidate_id: string,
+  name: string,
+  url: string,
+  match_status: generated | matched | unmatched | discarded | string,
+  description?: string | null,
+  output?: Record<string, JsonValue> | null,
+  basis?: {
+    field: string,
+    reasoning: string,
+    confidence?: string | null,
+    citations?: {
+      url: string,
+      title?: string | null,
+      excerpts?: string[] | null
+    }[]
+  }[] | null,
+  findall_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: findall.candidate.enriched,
+  timestamp: string,
+  data: {
+    candidate_id: string,
+    name: string,
+    url: string,
+    match_status: generated | matched | unmatched | discarded | string,
+    description?: string | null,
+    output?: Record<string, JsonValue> | null,
+    basis?: {
+      field: string,
+      reasoning: string,
+      confidence?: string | null,
+      citations?: {
+        url: string,
+        title?: string | null,
+        excerpts?: string[] | null
+      }[]
+    }[] | null,
+    findall_id: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+parallel({
+    webhookHooks: {
+        findall: {
+            candidateEnriched: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Candidate Generated
+
+`findall.candidateGenerated`
+
+A FindAll run found a candidate and queued it for checking
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `findall.candidate.generated` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  candidate_id: string,
+  name: string,
+  url: string,
+  match_status: generated | matched | unmatched | discarded | string,
+  description?: string | null,
+  output?: Record<string, JsonValue> | null,
+  basis?: {
+    field: string,
+    reasoning: string,
+    confidence?: string | null,
+    citations?: {
+      url: string,
+      title?: string | null,
+      excerpts?: string[] | null
+    }[]
+  }[] | null,
+  findall_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: findall.candidate.generated,
+  timestamp: string,
+  data: {
+    candidate_id: string,
+    name: string,
+    url: string,
+    match_status: generated | matched | unmatched | discarded | string,
+    description?: string | null,
+    output?: Record<string, JsonValue> | null,
+    basis?: {
+      field: string,
+      reasoning: string,
+      confidence?: string | null,
+      citations?: {
+        url: string,
+        title?: string | null,
+        excerpts?: string[] | null
+      }[]
+    }[] | null,
+    findall_id: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+parallel({
+    webhookHooks: {
+        findall: {
+            candidateGenerated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Candidate Matched
+
+`findall.candidateMatched`
+
+A FindAll candidate met every match condition
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `findall.candidate.matched` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  candidate_id: string,
+  name: string,
+  url: string,
+  match_status: generated | matched | unmatched | discarded | string,
+  description?: string | null,
+  output?: Record<string, JsonValue> | null,
+  basis?: {
+    field: string,
+    reasoning: string,
+    confidence?: string | null,
+    citations?: {
+      url: string,
+      title?: string | null,
+      excerpts?: string[] | null
+    }[]
+  }[] | null,
+  findall_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: findall.candidate.matched,
+  timestamp: string,
+  data: {
+    candidate_id: string,
+    name: string,
+    url: string,
+    match_status: generated | matched | unmatched | discarded | string,
+    description?: string | null,
+    output?: Record<string, JsonValue> | null,
+    basis?: {
+      field: string,
+      reasoning: string,
+      confidence?: string | null,
+      citations?: {
+        url: string,
+        title?: string | null,
+        excerpts?: string[] | null
+      }[]
+    }[] | null,
+    findall_id: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+parallel({
+    webhookHooks: {
+        findall: {
+            candidateMatched: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Run Cancelled
+
+`findall.runCancelled`
+
+A FindAll run was cancelled
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `findall.run.cancelled` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  findall_id: string,
+  generator: base | core | pro | preview | string,
+  status: {
+    status: queued | action_required | running | completed | failed | cancelling | cancelled | string,
+    is_active: boolean,
+    metrics: {
+      generated_candidates_count?: number,
+      matched_candidates_count?: number
+    },
+    termination_reason?: low_match_rate | match_limit_met | candidates_exhausted | user_cancelled | error_occurred | timeout | insufficient_funds | string | null
+  },
+  metadata?: Record<string, string | number | boolean> | null,
+  created_at?: string | null,
+  modified_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: findall.run.cancelled,
+  timestamp: string,
+  data: {
+    findall_id: string,
+    generator: base | core | pro | preview | string,
+    status: {
+      status: queued | action_required | running | completed | failed | cancelling | cancelled | string,
+      is_active: boolean,
+      metrics: {
+        generated_candidates_count?: number,
+        matched_candidates_count?: number
+      },
+      termination_reason?: low_match_rate | match_limit_met | candidates_exhausted | user_cancelled | error_occurred | timeout | insufficient_funds | string | null
+    },
+    metadata?: Record<string, string | number | boolean> | null,
+    created_at?: string | null,
+    modified_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+parallel({
+    webhookHooks: {
+        findall: {
+            runCancelled: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Run Completed
+
+`findall.runCompleted`
+
+A FindAll run completed
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `findall.run.completed` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  findall_id: string,
+  generator: base | core | pro | preview | string,
+  status: {
+    status: queued | action_required | running | completed | failed | cancelling | cancelled | string,
+    is_active: boolean,
+    metrics: {
+      generated_candidates_count?: number,
+      matched_candidates_count?: number
+    },
+    termination_reason?: low_match_rate | match_limit_met | candidates_exhausted | user_cancelled | error_occurred | timeout | insufficient_funds | string | null
+  },
+  metadata?: Record<string, string | number | boolean> | null,
+  created_at?: string | null,
+  modified_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: findall.run.completed,
+  timestamp: string,
+  data: {
+    findall_id: string,
+    generator: base | core | pro | preview | string,
+    status: {
+      status: queued | action_required | running | completed | failed | cancelling | cancelled | string,
+      is_active: boolean,
+      metrics: {
+        generated_candidates_count?: number,
+        matched_candidates_count?: number
+      },
+      termination_reason?: low_match_rate | match_limit_met | candidates_exhausted | user_cancelled | error_occurred | timeout | insufficient_funds | string | null
+    },
+    metadata?: Record<string, string | number | boolean> | null,
+    created_at?: string | null,
+    modified_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+parallel({
+    webhookHooks: {
+        findall: {
+            runCompleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Run Failed
+
+`findall.runFailed`
+
+A FindAll run failed
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `findall.run.failed` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  findall_id: string,
+  generator: base | core | pro | preview | string,
+  status: {
+    status: queued | action_required | running | completed | failed | cancelling | cancelled | string,
+    is_active: boolean,
+    metrics: {
+      generated_candidates_count?: number,
+      matched_candidates_count?: number
+    },
+    termination_reason?: low_match_rate | match_limit_met | candidates_exhausted | user_cancelled | error_occurred | timeout | insufficient_funds | string | null
+  },
+  metadata?: Record<string, string | number | boolean> | null,
+  created_at?: string | null,
+  modified_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: findall.run.failed,
+  timestamp: string,
+  data: {
+    findall_id: string,
+    generator: base | core | pro | preview | string,
+    status: {
+      status: queued | action_required | running | completed | failed | cancelling | cancelled | string,
+      is_active: boolean,
+      metrics: {
+        generated_candidates_count?: number,
+        matched_candidates_count?: number
+      },
+      termination_reason?: low_match_rate | match_limit_met | candidates_exhausted | user_cancelled | error_occurred | timeout | insufficient_funds | string | null
+    },
+    metadata?: Record<string, string | number | boolean> | null,
+    created_at?: string | null,
+    modified_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+parallel({
+    webhookHooks: {
+        findall: {
+            runFailed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Monitor
+
+### Event Detected
+
+`monitor.eventDetected`
+
+A monitor run detected one or more events
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `monitor.event.detected` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  monitor_id: string,
+  event: {
+    event_group_id: string
+  },
+  metadata?: Record<string, string | number | boolean> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: monitor.event.detected,
+  timestamp: string,
+  data: {
+    monitor_id: string,
+    event: {
+      event_group_id: string
+    },
+    metadata?: Record<string, string | number | boolean> | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+parallel({
+    webhookHooks: {
+        monitor: {
+            eventDetected: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Execution Completed
+
+`monitor.executionCompleted`
+
+A monitor run completed without detecting events
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `monitor.execution.completed` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  monitor_id: string,
+  event: {
+    type?: string,
+    monitor_ts?: string | null
+  },
+  metadata?: Record<string, string | number | boolean> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: monitor.execution.completed,
+  timestamp: string,
+  data: {
+    monitor_id: string,
+    event: {
+      type?: string,
+      monitor_ts?: string | null
+    },
+    metadata?: Record<string, string | number | boolean> | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+parallel({
+    webhookHooks: {
+        monitor: {
+            executionCompleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Execution Failed
+
+`monitor.executionFailed`
+
+A monitor run failed
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `monitor.execution.failed` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  monitor_id: string,
+  event: {
+    type?: string,
+    error?: string | null,
+    id?: string | null,
+    date?: string | null
+  },
+  metadata?: Record<string, string | number | boolean> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: monitor.execution.failed,
+  timestamp: string,
+  data: {
+    monitor_id: string,
+    event: {
+      type?: string,
+      error?: string | null,
+      id?: string | null,
+      date?: string | null
+    },
+    metadata?: Record<string, string | number | boolean> | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+parallel({
+    webhookHooks: {
+        monitor: {
+            executionFailed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Task Run
+
+### Status
+
+`taskRun.status`
+
+A task run finished, successfully or not
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `task_run.status` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  run_id: string,
+  interaction_id: string,
+  status: queued | action_required | running | completed | failed | cancelling | cancelled | string,
+  is_active: boolean,
+  processor: string,
+  created_at: string | null,
+  modified_at: string | null,
+  warnings?: {
+    type: string,
+    message: string,
+    detail?: Record<string, any> | null
+  }[] | null,
+  error?: {
+    ref_id: string,
+    message: string,
+    detail?: Record<string, JsonValue> | null
+  } | null,
+  metadata?: Record<string, string | number | boolean> | null,
+  taskgroup_id?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: task_run.status,
+  timestamp: string,
+  data: {
+    run_id: string,
+    interaction_id: string,
+    status: queued | action_required | running | completed | failed | cancelling | cancelled | string,
+    is_active: boolean,
+    processor: string,
+    created_at: string | null,
+    modified_at: string | null,
+    warnings?: {
+      type: string,
+      message: string,
+      detail?: Record<string, any> | null
+    }[] | null,
+    error?: {
+      ref_id: string,
+      message: string,
+      detail?: Record<string, JsonValue> | null
+    } | null,
+    metadata?: Record<string, string | number | boolean> | null,
+    taskgroup_id?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+parallel({
+    webhookHooks: {
+        taskRun: {
+            status: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
