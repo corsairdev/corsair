@@ -177,6 +177,28 @@ describe('makePandadocRequest', () => {
 		expect(inspect(error)).not.toContain('+15555550100');
 	});
 
+	it('reads the info_message a 403 on send answers with', async () => {
+		respond(
+			{
+				info_message:
+					'You are not allowed to send documents outside of your organization',
+				links: [{ rel: 'status', href: 'https://api.pandadoc.com/x' }],
+			},
+			403,
+		);
+		const error = await failure(
+			makePandadocRequest(API_KEY, {
+				method: 'POST',
+				path: '/public/v1/documents/abc/send',
+			}),
+		);
+		expect(error.message).toContain('outside of your organization');
+		expect(error.body).toEqual({
+			info_message:
+				'You are not allowed to send documents outside of your organization',
+		});
+	});
+
 	it('masks email addresses in error detail', async () => {
 		respond(
 			{ type: 'bad_request', detail: 'Recipient jane@example.com is invalid' },

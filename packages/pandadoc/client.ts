@@ -66,8 +66,8 @@ export function buildPandadocApiError(
 }
 
 /**
- * Keeps only the diagnostic part of an error body: PandaDoc's `type` and
- * `detail` strings (emails masked), or a short plain-text body. Other keys a
+ * Keeps only the diagnostic part of an error body: PandaDoc's `type`,
+ * `detail` and `info_message` strings (emails masked), or a short plain-text body. Other keys a
  * validation error can echo (phone numbers, names, addresses) are dropped.
  */
 // unknown: error bodies are arbitrary JSON until narrowed here.
@@ -81,6 +81,8 @@ export function safeErrorBody(body: unknown): unknown {
 	if (typeof record.type === 'string') safe.type = maskEmails(record.type);
 	if (typeof record.detail === 'string')
 		safe.detail = maskEmails(record.detail);
+	if (typeof record.info_message === 'string')
+		safe.info_message = maskEmails(record.info_message);
 	return safe;
 }
 
@@ -121,6 +123,11 @@ export function describePandadocError(
 	const text =
 		(typeof record?.detail === 'string' && record.detail.length > 0
 			? record.detail
+			: undefined) ??
+		// A 403 on send answers { info_message, links } instead (seen live:
+		// "You are not allowed to send documents outside of your organization").
+		(typeof record?.info_message === 'string' && record.info_message.length > 0
+			? record.info_message
 			: undefined) ??
 		(typeof record?.type === 'string' && record.type.length > 0
 			? record.type

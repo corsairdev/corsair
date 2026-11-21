@@ -272,7 +272,8 @@ const pandadocEndpointMeta = {
 	},
 	'documents.downloadProtected': {
 		riskLevel: 'read',
-		description: 'Download a completed document as a protected (flattened) PDF',
+		description:
+			'Download a completed document as a protected (flattened) PDF; needs a production key (sandbox keys get 401)',
 	},
 	'documents.listFields': {
 		riskLevel: 'read',
