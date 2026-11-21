@@ -1,8 +1,8 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { PaystackAPIError } from './client';
+import { ApiError } from 'corsair/http';
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof PaystackAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 // The client retries a 429 up to three times through core, honouring
@@ -10,7 +10,7 @@ function statusOf(error: Error): number | undefined {
 // retries after the client has used its attempts.
 // Documented statuses (verified live): 401 Invalid key; 400 validation
 // (sometimes answered as a 200 with status false — the client turns that
-// into a PaystackAPIError with status 200, which DEFAULT fails fast on).
+// into an ApiError with status 200, which DEFAULT fails fast on).
 export const errorHandlers = {
 	AUTH_ERROR: {
 		match: (error: Error) => statusOf(error) === 401,
@@ -33,8 +33,8 @@ export const errorHandlers = {
 	// have no documented idempotency contract.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof PaystackAPIError &&
-			error.method === 'GET' &&
+			error instanceof ApiError &&
+			error.request.method === 'GET' &&
 			(error.status ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,

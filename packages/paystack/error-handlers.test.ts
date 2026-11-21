@@ -1,9 +1,10 @@
 import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
-import { PaystackAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { buildPaystackApiError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
-function apiError(status: number, method: string = 'GET'): PaystackAPIError {
-	return new PaystackAPIError(`Paystack ${status}: boom`, {
+function apiError(status: number, method: string = 'GET'): ApiError {
+	return buildPaystackApiError(`Paystack ${status}: boom`, {
 		method,
 		path: '/transaction',
 		status,
@@ -111,7 +112,7 @@ describe('mergeErrorHandlers', () => {
 		const entry = merged.OVERLOADED_ERROR;
 		if (!entry) throw new Error('caller handler missing');
 		const result = await entry.handler(
-			new PaystackAPIError('overloaded', {
+			buildPaystackApiError('overloaded', {
 				method: 'GET',
 				path: '/x',
 				status: 529,
@@ -150,5 +151,5 @@ describe('mergeErrorHandlers', () => {
 });
 
 function statusIs(error: Error, status: number): boolean {
-	return error instanceof PaystackAPIError && error.status === status;
+	return error instanceof ApiError && error.status === status;
 }

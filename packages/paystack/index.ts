@@ -271,8 +271,9 @@ const paystackEndpointMeta = {
 			'Update a plan, optionally applying the changes to existing subscriptions',
 	},
 	'subscriptions.create': {
-		riskLevel: 'write',
-		description: 'Subscribe a customer to a plan',
+		riskLevel: 'destructive',
+		description:
+			"Subscribe a customer to a plan; Paystack then debits the customer's saved card on every interval",
 	},
 	'subscriptions.list': {
 		riskLevel: 'read',
@@ -283,8 +284,9 @@ const paystackEndpointMeta = {
 		description: 'Read one subscription by id or code',
 	},
 	'subscriptions.enable': {
-		riskLevel: 'write',
-		description: 'Enable a subscription with its email token',
+		riskLevel: 'destructive',
+		description:
+			"Enable a subscription with its email token; debits of the customer's card resume",
 	},
 	'subscriptions.disable': {
 		riskLevel: 'write',
@@ -378,7 +380,7 @@ export function paystack<const T extends PaystackPluginOptions>(
 	} satisfies InternalPaystackPlugin;
 }
 
-export { PaystackAPIError } from './client';
+export { buildPaystackApiError } from './client';
 
 export type {
 	Customer,

@@ -21,47 +21,47 @@ const RATE_LIMIT_CONFIG: RateLimitConfig = {
 };
 
 /**
- * A failed call throws this: core's `ApiError` (R8: core and the handlers
- * read `status` and `retryAfter` from it), rebuilt without the request body
- * and query. Customer emails and amounts ride through the request, which
- * core's own ApiError keeps on the request.
+ * A failed call throws core's `ApiError` (R8: core and the handlers read
+ * `status` and `retryAfter` from it, and management maps errors named
+ * ApiError to a provider error with its status), rebuilt without the request
+ * body and query. Customer emails and amounts ride through the request,
+ * which core's own ApiError keeps; a path segment holding an email
+ * (customers.get by email) is masked too.
  */
-export class PaystackAPIError extends ApiError {
-	/** The HTTP method of the failed request, for replay-safety decisions. */
-	readonly method: string;
-
-	constructor(
-		message: string,
-		options: {
-			method: string;
-			/** Request path, without query. */
-			path: string;
-			status: number;
-			statusText?: string;
-			// unknown: error bodies can be the { status, message, code, type }
-			// envelope or non-JSON from a proxy.
-			body?: unknown;
-			retryAfter?: number;
+export function buildPaystackApiError(
+	message: string,
+	options: {
+		method: string;
+		/** Request path, without query. */
+		path: string;
+		status: number;
+		statusText?: string;
+		// unknown: error bodies are Paystack's { status, message, ... }
+		// envelope or non-JSON from a proxy.
+		body?: unknown;
+		retryAfter?: number;
+	},
+): ApiError {
+	const url = options.path
+		.split('/')
+		.map((part) =>
+			part.includes('@') || part.toLowerCase().includes('%40')
+				? '[email]'
+				: part,
+		)
+		.join('/');
+	return new ApiError(
+		{ method: options.method as ApiRequestOptions['method'], url },
+		{
+			url,
+			ok: false,
+			status: options.status,
+			statusText: options.statusText ?? '',
+			body: options.body,
 		},
-	) {
-		super(
-			{
-				method: options.method as ApiRequestOptions['method'],
-				url: options.path,
-			},
-			{
-				url: options.path,
-				ok: false,
-				status: options.status,
-				statusText: options.statusText ?? '',
-				body: options.body,
-			},
-			message,
-			{ retryAfter: options.retryAfter },
-		);
-		this.name = 'PaystackAPIError';
-		this.method = options.method;
-	}
+		message,
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 /**
@@ -138,7 +138,7 @@ export async function makePaystackRequest(
 		const result = await request<unknown>(config, requestOptions, {
 			rateLimitConfig: RATE_LIMIT_CONFIG,
 		});
-		return assertOk(result);
+		return assertOk(result, method, path);
 	} catch (error) {
 		if (error instanceof ApiError) {
 			// Rebuilt without the request (customer emails, amounts). Core's
@@ -148,7 +148,7 @@ export async function makePaystackRequest(
 				error.body,
 				error.statusText || 'request failed',
 			);
-			throw new PaystackAPIError(`Paystack ${error.status}: ${detail}`, {
+			throw buildPaystackApiError(`Paystack ${error.status}: ${detail}`, {
 				method,
 				path,
 				status: error.status,
@@ -169,14 +169,19 @@ export async function makePaystackRequest(
  */
 // unknown: the raw result is the untouched response body; only the status
 // flag is inspected before the endpoint's schema parses it.
-export function assertOk(result: unknown): unknown {
+export function assertOk(
+	// unknown: the parsed response body, any shape until checked here.
+	result: unknown,
+	method = 'GET',
+	path = '',
+): unknown {
 	const record = asRecord(result);
 	if (record && record.status === false) {
-		throw new PaystackAPIError(
+		throw buildPaystackApiError(
 			`Paystack 200: ${describePaystackError(record, 'request returned status false')}`,
 			{
-				method: 'GET',
-				path: '',
+				method,
+				path,
 				status: 200,
 				body: record,
 			},
