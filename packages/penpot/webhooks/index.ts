@@ -57,7 +57,7 @@ export const event: CorsairWebhook<
 		}
 
 		await safeLog(ctx, 'penpot.webhook.event', {
-			event: parsed.data.event,
+			event: parsed.data.name,
 		});
 
 		return { success: true, data: parsed.data };

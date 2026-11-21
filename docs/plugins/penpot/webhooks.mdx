@@ -57,8 +57,11 @@ A Penpot webhook delivery: a team-level event notification
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event` | `string` | Yes | — |
-| `payload` | `Record<string, any> \| null` | No | — |
+| `name` | `string` | Yes | The action that happened |
+| `id` | `string \| null` | No | Audit event id |
+| `type` | `string \| null` | No | Event type, e.g. action |
+| `profileId` | `string` | Yes | Profile that performed the action |
+| `props` | `Record<string, any>` | Yes | Details of the action |
 
 
 
@@ -67,8 +70,11 @@ A Penpot webhook delivery: a team-level event notification
 
 ```ts
 {
-  event: string,
-  payload?: Record<string, any> | null
+  name: string,
+  id?: string | null,
+  type?: string | null,
+  profileId: string,
+  props: Record<string, any>
 }
 ```
 </Accordion>

@@ -3,8 +3,8 @@ import { penpot } from './index';
 
 /**
  * Live smoke: read-only, few calls. PENPOT_API_TOKEN is an access token
- * generated under account settings (API access tokens) on the Penpot
- * instance PENPOT_BASE_URL points at (defaults to design.penpot.app).
+ * generated under account settings (API access tokens) on
+ * design.penpot.app.
  * Without a token the whole suite skips (a skipped run is not a pass).
  * Every answer goes through its output schema so a wrongly typed field
  * fails here rather than for a caller.

@@ -86,6 +86,31 @@ describe('makePenpotRequest', () => {
 		expect(error.message).not.toContain('secret comment text');
 	});
 
+	it('drops a validation error explanation that repeats the submitted content', async () => {
+		respond(
+			{
+				type: 'validation',
+				code: 'params-validation',
+				hint: 'invalid content: "secret comment text"',
+				explain: 'content: "secret comment text" should be at most 750',
+			},
+			400,
+		);
+
+		const error = await failure(
+			makePenpotRequest(API_KEY, {
+				rpcName: 'create-comment',
+				body: { threadId: 't', content: 'secret comment text' },
+			}),
+		);
+		expect(inspect(error, { depth: 5 })).not.toContain('secret comment text');
+		expect(error.body).toEqual({
+			type: 'validation',
+			code: 'params-validation',
+		});
+		expect(error.message).toContain('params-validation');
+	});
+
 	it('lets transport failures through unwrapped', async () => {
 		fetchMock.mockRejectedValueOnce(new Error('connection reset'));
 

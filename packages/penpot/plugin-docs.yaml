@@ -16,10 +16,10 @@ overviewNote: >
   ids are UUIDs. The API reference lives at
   https://design.penpot.app/api/_doc (auto-generated from source).
 
-  Webhook deliveries from Penpot carry no signature header — the help center
-  documents no signing scheme — so the plugin accepts them on the documented
-  envelope shape (an event key with a payload) and says so plainly; add your
-  own verification at the route level if you need stronger guarantees.
+  Webhook deliveries from Penpot carry no signature: Penpot posts the audit
+  event itself ({ id, name, type, props, profileId }, with a penpot/<version>
+  User-Agent). The plugin accepts deliveries on that shape; add your own
+  check at the route if you need stronger guarantees.
 
   The RPC surface has ~150 operations; this plugin covers the teams,
   projects, files (including snapshots and share links), comments, webhooks

@@ -68,11 +68,19 @@ export const accessToken = {
 	expiration: null,
 };
 
-/** A webhook delivery body, as the help center documents the envelope. */
+/**
+ * A webhook delivery: the audit event Penpot posts, camelCased
+ * (backend/src/app/loggers/webhooks.clj). Props trimmed.
+ */
 export const webhookEvent = {
-	event: 'penpot.file.updated',
-	payload: {
-		fileId: '7f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5f',
-		profileId: 'ff2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c67',
+	id: '0f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c70',
+	name: 'rename-file',
+	type: 'action',
+	profileId: 'ff2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c67',
+	props: {
+		id: '7f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5f',
+		name: 'Landing page v2',
+		projectId: '6f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5e',
+		teamId: '5f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5d',
 	},
 };

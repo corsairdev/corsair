@@ -8,7 +8,7 @@ Use **Penpot** through Corsair: one client, typed API calls, and incoming webhoo
 
 Authenticate with an access token generated under Account settings &gt; API access tokens; the plugin sends it as `Authorization: Token <token>` and asks for plain JSON with `Accept: application/json` (without that header Penpot answers in transit format). Every operation is a single RPC: a POST to /api/rpc/command/&lt;name&gt; on design.penpot.app. Self-hosted instances are not supported yet.
 Penpot documents request schemas only, so output objects are kept loose; ids are UUIDs. The API reference lives at https://design.penpot.app/api/_doc (auto-generated from source).
-Webhook deliveries from Penpot carry no signature header — the help center documents no signing scheme — so the plugin accepts them on the documented envelope shape (an event key with a payload) and says so plainly; add your own verification at the route level if you need stronger guarantees.
+Webhook deliveries from Penpot carry no signature: Penpot posts the audit event itself (&#123; id, name, type, props, profileId &#125;, with a penpot/&lt;version&gt; User-Agent). The plugin accepts deliveries on that shape; add your own check at the route if you need stronger guarantees.
 The RPC surface has ~150 operations; this plugin covers the teams, projects, files (including snapshots and share links), comments, webhooks and access-token groups. Fonts, media objects, invitations, members, organizations and exports are documented by Penpot but not part of this plugin.
 
 **What you get:**

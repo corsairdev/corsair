@@ -325,7 +325,7 @@ describe('webhooks', () => {
 		respond([webhookSubscription]);
 		const webhooks = (await invoke(Webhooks.list, {
 			teamId: team.id,
-		})) as unknown[];
+		})) as unknown[]; // unknown: webhook records are provider-shaped; the length is all this test checks
 		expect(webhooks).toHaveLength(1);
 		expectRpc('get-webhooks');
 	});
@@ -403,7 +403,7 @@ describe('webhook envelope passthrough', () => {
 	it('accepts the documented event shape from the receiving route', () => {
 		// The webhook tests cover the verifier; here we assert the fixture is
 		// well formed for them.
-		expect(typeof webhookEvent.event).toBe('string');
-		expect(webhookEvent.payload?.fileId).toBe(file.id);
+		expect(typeof webhookEvent.name).toBe('string');
+		expect(webhookEvent.props.id).toBe(file.id);
 	});
 });

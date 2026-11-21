@@ -26,23 +26,18 @@ function rawRequest(
 }
 
 describe('verifyPenpotWebhook', () => {
-	it('accepts a delivery with the documented event envelope', () => {
+	it("accepts Penpot's audit-event envelope", () => {
 		expect(verifyPenpotWebhook(rawRequest(webhookEvent) as never)).toEqual({
 			valid: true,
 		});
 	});
 
-	it('accepts a delivery using the penpot.event key', () => {
-		const body = { 'penpot.event': 'penpot.comment.added', payload: {} };
-		expect(verifyPenpotWebhook(rawRequest(body) as never)).toEqual({
-			valid: true,
-		});
-	});
-
-	it('rejects a delivery without an event key', () => {
-		const result = verifyPenpotWebhook(rawRequest({ payload: {} }) as never);
+	it('rejects a body without name, props and profileId', () => {
+		const result = verifyPenpotWebhook(
+			rawRequest({ event: 'penpot.comment.added', payload: {} }) as never,
+		);
 		expect(result.valid).toBe(false);
-		expect(result.error).toContain('event key');
+		expect(result.error).toContain('not a Penpot event');
 	});
 
 	it('rejects a non-object body', () => {
@@ -51,21 +46,31 @@ describe('verifyPenpotWebhook', () => {
 		expect(result.error).toContain('not an object');
 	});
 
-	it('accepts a hub-verified delivery without an event key', () => {
+	it('accepts a hub-verified delivery', () => {
 		const request = { headers: {}, body: {}, payload: {}, hubVerified: true };
 		expect(verifyPenpotWebhook(request as never)).toEqual({ valid: true });
 	});
 });
 
 describe('matchPenpotWebhook', () => {
-	it('matches the documented event envelope', () => {
+	it("matches Penpot's envelope", () => {
 		expect(matchPenpotWebhook(rawRequest(webhookEvent) as never)).toBe(true);
 	});
 
-	it('does not match bodies without an event string or arrays', () => {
-		expect(matchPenpotWebhook(rawRequest({ payload: {} }) as never)).toBe(
+	it("matches with Penpot's User-Agent and not with another one", () => {
+		const withAgent = (agent: string) => ({
+			...rawRequest(webhookEvent),
+			headers: { 'user-agent': agent },
+		});
+		expect(matchPenpotWebhook(withAgent('penpot/2.16.0') as never)).toBe(true);
+		expect(matchPenpotWebhook(withAgent('Stannp-Webhooks/1.0') as never)).toBe(
 			false,
 		);
+	});
+
+	it("does not claim another provider's event (Stannp sends { event, data })", () => {
+		const stannp = { event: 'mailpiece_status', data: { id: 1 } };
+		expect(matchPenpotWebhook(rawRequest(stannp) as never)).toBe(false);
 		expect(matchPenpotWebhook(rawRequest([webhookEvent]) as never)).toBe(false);
 		expect(matchPenpotWebhook(rawRequest('plain') as never)).toBe(false);
 	});
@@ -74,27 +79,22 @@ describe('matchPenpotWebhook', () => {
 describe('PenpotWebhookPayloadSchema', () => {
 	it('parses a delivery', () => {
 		const parsed = PenpotWebhookPayloadSchema.parse(webhookEvent);
-		expect(parsed.event).toBe('penpot.file.updated');
+		expect(parsed.name).toBe('rename-file');
+		expect(parsed.props['teamId']).toBe(webhookEvent.props.teamId);
 	});
 
-	it('rejects a delivery without an event', () => {
-		expect(() => PenpotWebhookPayloadSchema.parse({ payload: {} })).toThrow();
+	it('rejects a delivery without a name', () => {
+		expect(() =>
+			PenpotWebhookPayloadSchema.parse({ props: {}, profileId: 'p' }),
+		).toThrow();
 	});
 });
 
 describe('penpot.event handler', () => {
-	it('returns a 400 refusal for a body without an event key', async () => {
+	it('returns a 400 refusal for a body that is not a Penpot event', async () => {
 		const result = await event.handler(
 			webhookContext(),
 			rawRequest({ payload: {} }) as never,
-		);
-		expect(result).toMatchObject({ success: false, statusCode: 400 });
-	});
-
-	it('returns a 400 refusal for a body the payload schema rejects', async () => {
-		const result = await event.handler(
-			webhookContext(),
-			rawRequest({ event: {} }) as never,
 		);
 		expect(result).toMatchObject({ success: false, statusCode: 400 });
 	});
@@ -106,7 +106,7 @@ describe('penpot.event handler', () => {
 		);
 		expect(result.success).toBe(true);
 		// unknown: the handler's data field is the parsed event object.
-		const data = (result as { data?: { event?: string } }).data;
-		expect(data?.event).toBe('penpot.file.updated');
+		const data = (result as { data?: { name?: string } }).data;
+		expect(data?.name).toBe('rename-file');
 	});
 });

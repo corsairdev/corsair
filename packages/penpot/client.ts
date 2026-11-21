@@ -25,6 +25,24 @@ const RATE_LIMIT_CONFIG: RateLimitConfig = {
  * `status` and `retryAfter` from it), rebuilt with only the method and the
  * path so request bodies and queries stay out of it.
  */
+/**
+ * Penpot's validation errors explain the rejected input and can repeat it
+ * (comment text, names). The rebuilt error keeps only the error's type and
+ * code, and the hint when the error is not a validation error.
+ */
+// unknown: the provider's error body, untyped until asRecord narrows it.
+function safeBody(body: unknown): unknown {
+	const record = asRecord(body);
+	if (!record) return typeof body === 'string' ? undefined : body;
+	const safe: Record<string, unknown> = {};
+	if (typeof record.type === 'string') safe.type = record.type;
+	if (typeof record.code === 'string') safe.code = record.code;
+	if (record.type !== 'validation' && typeof record.hint === 'string') {
+		safe.hint = record.hint;
+	}
+	return safe;
+}
+
 function strippedApiError(
 	error: ApiError,
 	method: ApiRequestOptions['method'],
@@ -38,7 +56,7 @@ function strippedApiError(
 			ok: false,
 			status: error.status,
 			statusText: error.statusText,
-			body: error.body,
+			body: safeBody(error.body),
 		},
 		message,
 		{ retryAfter: error.retryAfter },
@@ -121,7 +139,7 @@ export async function makePenpotRequest(
 			// fallback message embeds the whole response body, so the text
 			// comes from the provider's error or the status.
 			const detail = describePenpotError(
-				error.body,
+				safeBody(error.body),
 				error.statusText || 'request failed',
 			);
 			throw strippedApiError(
