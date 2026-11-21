@@ -431,7 +431,7 @@
     {
       "path": "openai.api.audio.createSpeech",
       "shortPath": "audio.createSpeech",
-      "description": "Generate spoken audio from text",
+      "description": "Generate spoken audio from text. On Corsair the audio comes back as audioBase64 up to about 700 KB and a longer clip comes back as fileId, a Files id; without a host that keeps files audioBase64 holds up to 100 MB, or contentOmitted is set.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -472,9 +472,40 @@
         "kind": "object",
         "fields": [
           {
-            "key": "audioBase64",
+            "key": "contentType",
             "optional": false,
-            "type": "string"
+            "type": "string",
+            "description": "Media type of the file, for example application/pdf."
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the file in bytes."
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string",
+            "description": "The file name, when known."
+          },
+          {
+            "key": "contentOmitted",
+            "optional": true,
+            "type": "not_requested | over_limit",
+            "description": "Set when the content was left out: the caller did not ask for it, or the file was over the limit."
+          },
+          {
+            "key": "fileId",
+            "optional": true,
+            "type": "string",
+            "description": "Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text."
+          },
+          {
+            "key": "audioBase64",
+            "optional": true,
+            "type": "string",
+            "description": "The audio, base64-encoded. Missing when contentOmitted is set, or when a host kept a file too large to return inline (fileId)."
           },
           {
             "key": "format",
@@ -487,7 +518,7 @@
     {
       "path": "openai.api.audio.createTranscription",
       "shortPath": "audio.createTranscription",
-      "description": "Transcribe audio into text",
+      "description": "Transcribe audio into text. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -495,7 +526,8 @@
           {
             "key": "file",
             "optional": false,
-            "type": "custom | string"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The audio file, up to 25 MB: a public http(s) or data: URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. Any other string is sent as the file's text. On Corsair, pass a Files id (fil_…)."
           },
           {
             "key": "fileName",
@@ -548,7 +580,7 @@
     {
       "path": "openai.api.audio.createTranslation",
       "shortPath": "audio.createTranslation",
-      "description": "Translate audio into English text",
+      "description": "Translate audio into English text. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -556,7 +588,8 @@
           {
             "key": "file",
             "optional": false,
-            "type": "custom | string"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The audio file, up to 25 MB: a public http(s) or data: URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. Any other string is sent as the file's text. On Corsair, pass a Files id (fil_…)."
           },
           {
             "key": "fileName",
@@ -1752,7 +1785,7 @@
     {
       "path": "openai.api.containerFiles.create",
       "shortPath": "containerFiles.create",
-      "description": "Add a file to a container",
+      "description": "Add a file to a container, by fileId or as a new upload. Takes the upload as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -1765,7 +1798,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom | string"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to add to the container: a public http(s) or data: URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. Any other string is sent as the file's text. On Corsair, pass a Files id (fil_…)."
           },
           {
             "key": "fileName",
@@ -1986,7 +2020,7 @@
     {
       "path": "openai.api.containerFiles.retrieveContent",
       "shortPath": "containerFiles.retrieveContent",
-      "description": "Download the contents of a container file",
+      "description": "Download the contents of a container file. On Corsair up to about 700 KB comes back inline and a larger file comes back as fileId, a Files id; without a host that keeps files the content comes back inline up to 100 MB, or contentOmitted.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -2007,17 +2041,49 @@
         "kind": "object",
         "fields": [
           {
-            "key": "containerId",
+            "key": "contentBase64",
+            "optional": true,
+            "type": "string",
+            "description": "The file, base64-encoded. Missing when the file came back as text or contentOmitted is set."
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string",
+            "description": "The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8."
+          },
+          {
+            "key": "contentType",
             "optional": false,
-            "type": "string"
+            "type": "string",
+            "description": "Media type of the file, for example application/pdf."
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the file in bytes."
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string",
+            "description": "The file name, when known."
+          },
+          {
+            "key": "contentOmitted",
+            "optional": true,
+            "type": "not_requested | over_limit",
+            "description": "Set when the content was left out: the caller did not ask for it, or the file was over the limit."
           },
           {
             "key": "fileId",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text."
           },
           {
-            "key": "contentBase64",
+            "key": "containerId",
             "optional": false,
             "type": "string"
           }
@@ -3438,7 +3504,7 @@
     {
       "path": "openai.api.files.downloadContent",
       "shortPath": "files.downloadContent",
-      "description": "Download the contents of a file",
+      "description": "Download the contents of a file. On Corsair up to about 700 KB comes back inline and a larger file comes back as fileId, a Files id; without a host that keeps files the content comes back inline up to 100 MB, or contentOmitted.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -3454,14 +3520,46 @@
         "kind": "object",
         "fields": [
           {
-            "key": "fileId",
-            "optional": false,
-            "type": "string"
+            "key": "contentBase64",
+            "optional": true,
+            "type": "string",
+            "description": "The file, base64-encoded. Missing when the file came back as text or contentOmitted is set."
           },
           {
-            "key": "contentBase64",
+            "key": "text",
+            "optional": true,
+            "type": "string",
+            "description": "The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8."
+          },
+          {
+            "key": "contentType",
             "optional": false,
-            "type": "string"
+            "type": "string",
+            "description": "Media type of the file, for example application/pdf."
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the file in bytes."
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string",
+            "description": "The file name, when known."
+          },
+          {
+            "key": "contentOmitted",
+            "optional": true,
+            "type": "not_requested | over_limit",
+            "description": "Set when the content was left out: the caller did not ask for it, or the file was over the limit."
+          },
+          {
+            "key": "fileId",
+            "optional": true,
+            "type": "string",
+            "description": "Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text."
           }
         ]
       }
@@ -3586,7 +3684,7 @@
     {
       "path": "openai.api.files.upload",
       "shortPath": "files.upload",
-      "description": "Upload a file to OpenAI",
+      "description": "Upload a file to OpenAI. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -3594,7 +3692,8 @@
           {
             "key": "file",
             "optional": false,
-            "type": "custom | string"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file to upload, up to 512 MB: a public http(s) or data: URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. Any other string is sent as the file's text. On Corsair, pass a Files id (fil_…)."
           },
           {
             "key": "fileName",
@@ -4245,7 +4344,7 @@
     {
       "path": "openai.api.images.createEdit",
       "shortPath": "images.createEdit",
-      "description": "Edit an image given a prompt and mask",
+      "description": "Edit an image given a prompt and mask. Takes the image and mask as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -4253,7 +4352,8 @@
           {
             "key": "image",
             "optional": false,
-            "type": "custom | string"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The image to edit, under 50 MB: a public http(s) or data: URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. Any other string is sent as the file's text. On Corsair, pass a Files id (fil_…)."
           },
           {
             "key": "imageFileName",
@@ -4263,7 +4363,8 @@
           {
             "key": "mask",
             "optional": true,
-            "type": "custom | string"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "A PNG mask under 4 MB: a public http(s) or data: URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. Any other string is sent as the file's text. On Corsair, pass a Files id (fil_…)."
           },
           {
             "key": "maskFileName",
@@ -4316,7 +4417,7 @@
     {
       "path": "openai.api.images.createVariation",
       "shortPath": "images.createVariation",
-      "description": "Create variations of an image",
+      "description": "Create variations of an image. Takes the image as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -4324,7 +4425,8 @@
           {
             "key": "image",
             "optional": false,
-            "type": "custom | string"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "A square PNG under 4 MB: a public http(s) or data: URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. Any other string is sent as the file's text. On Corsair, pass a Files id (fil_…)."
           },
           {
             "key": "imageFileName",
@@ -6152,7 +6254,7 @@
     {
       "path": "openai.api.skills.create",
       "shortPath": "skills.create",
-      "description": "Upload a skill",
+      "description": "Upload a skill. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -6160,7 +6262,8 @@
           {
             "key": "file",
             "optional": false,
-            "type": "custom | string"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The skill file: a public http(s) or data: URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. Any other string is sent as the file's text. On Corsair, pass a Files id (fil_…)."
           },
           {
             "key": "fileName",
@@ -6656,7 +6759,7 @@
     {
       "path": "openai.api.uploads.addPart",
       "shortPath": "uploads.addPart",
-      "description": "Add a part of file data to an upload",
+      "description": "Add a part of file data to an upload. Takes the part as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -6669,7 +6772,8 @@
           {
             "key": "data",
             "optional": false,
-            "type": "custom | string"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "This part of the file, up to 64 MB: a public http(s) or data: URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. Any other string is sent as the file's text. On Corsair, pass a Files id (fil_…)."
           },
           {
             "key": "fileName",
@@ -7930,7 +8034,7 @@
     {
       "path": "openai.api.videos.create",
       "shortPath": "videos.create",
-      "description": "Generate a video from a prompt",
+      "description": "Generate a video from a prompt. Takes an optional inputReference image or video as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "job": {
         "idPath": "id",
@@ -7968,7 +8072,8 @@
           {
             "key": "inputReference",
             "optional": true,
-            "type": "custom | string"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "An image or video to start the video from: a public http(s) or data: URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. Any other string is sent as the file's text. On Corsair, pass a Files id (fil_…)."
           },
           {
             "key": "inputReferenceFileName",
@@ -8158,7 +8263,7 @@
     {
       "path": "openai.api.videos.download",
       "shortPath": "videos.download",
-      "description": "Download the rendered content of a video",
+      "description": "Download the rendered content of a video. On Corsair up to about 700 KB comes back inline and a larger file comes back as fileId, a Files id; without a host that keeps files the content comes back inline up to 100 MB, or contentOmitted.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -8174,12 +8279,49 @@
         "kind": "object",
         "fields": [
           {
-            "key": "videoId",
-            "optional": false,
-            "type": "string"
+            "key": "contentBase64",
+            "optional": true,
+            "type": "string",
+            "description": "The file, base64-encoded. Missing when the file came back as text or contentOmitted is set."
           },
           {
-            "key": "contentBase64",
+            "key": "text",
+            "optional": true,
+            "type": "string",
+            "description": "The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "Media type of the file, for example application/pdf."
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the file in bytes."
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string",
+            "description": "The file name, when known."
+          },
+          {
+            "key": "contentOmitted",
+            "optional": true,
+            "type": "not_requested | over_limit",
+            "description": "Set when the content was left out: the caller did not ask for it, or the file was over the limit."
+          },
+          {
+            "key": "fileId",
+            "optional": true,
+            "type": "string",
+            "description": "Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text."
+          },
+          {
+            "key": "videoId",
             "optional": false,
             "type": "string"
           }

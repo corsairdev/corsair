@@ -625,7 +625,7 @@
     {
       "path": "filevine.api.documents.upload",
       "shortPath": "documents.upload",
-      "description": "Upload a document to a project",
+      "description": "Upload a document to a project. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -659,8 +659,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "string | custom | custom | custom",
-            "description": "File content: string | Uint8Array (incl. Buffer) | ArrayBuffer | Blob (see fileEncoding)"
+            "type": "string | string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom | custom | custom",
+            "description": "The file: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; Uint8Array (incl. Buffer), ArrayBuffer, Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). A string starting with http:// or https:// is fetched as a link when fileEncoding is not set; with fileEncoding, a string is text or base64 content as before."
           },
           {
             "key": "fileEncoding",
