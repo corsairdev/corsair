@@ -27,11 +27,24 @@ await corsair.passcreator.api.passes.activeHistory({ templateUid: "6d03a4a9-cf92
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `templateUid` | `string` | Yes | Pass-template UID |
-| `day` | `string` | No | History up to this date; omit for the current state |
+| `day` | `string` | No | First day of the history (YYYY-MM-DD); omit for the last seven days |
 
 
 
-**Output:** _empty object_
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  date: string,
+  active?: number | null,
+  inactive?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -53,7 +66,7 @@ await corsair.passcreator.api.passes.create({ passtemplate: "6d03a4a9-cf92-4e36-
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `passtemplate` | `string` | Yes | Pass-template UID the pass is created from |
-| `properties` | `Record<string, unknown>` | Yes | Additional properties keyed by property name or ID |
+| `properties` | `Record<string, any>` | Yes | Additional properties keyed by property name or ID |
 
 Property keys are the template's property names or property IDs; templates.fields lists both. The answer is the created pass.
 
@@ -103,9 +116,8 @@ Answers a success envelope.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | Yes | Whether the operation succeeded |
-| `description` | `string \| null` | No | Human-readable result description |
-| `statusCode` | `number \| null` | No | HTTP status code of the response |
+| `passUid` | `string` | Yes | The pass the call was for |
+| `success` | `boolean` | Yes | Whether the call succeeded |
 
 
 
@@ -202,7 +214,7 @@ await corsair.passcreator.api.passes.list({ templateUid: "6d03a4a9-cf92-4e36-80b
 |------|------|----------|-------------|
 | `templateUid` | `string` | Yes | Pass-template UID to list passes of |
 | `start` | `number` | No | Offset of the first pass to return |
-| `pageSize` | `number` | No | Number of passes per page |
+| `pageSize` | `number` | No | Number of passes per page (max 100) |
 | `lastIdOfPriorPage` | `string` | No | Identifier of the last pass of the prior page, for cursor paging |
 | `lastCreatedOnOfPriorPage` | `string` | No | createdOn of the last pass of the prior page, for cursor paging |
 | `createdSince` | `string` | No | Only passes created after this date, e.g. "2021-07-01 15:30" |
@@ -212,10 +224,28 @@ Cursor paging: pass lastIdOfPriorPage and lastCreatedOnOfPriorPage from the prio
 
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object \| null` | No | The query and its paging links |
+| `total` | `number \| null` | No | Total passes matching the query |
+| `results` | `object[]` | Yes | The passes on this page |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="query full type">
+
+```ts
+{
+  start?: number | null,
+  pageSize?: number | null,
+  self?: string | null,
+  next?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="results full type">
 
 ```ts
 {
@@ -232,6 +262,7 @@ Cursor paging: pass lastIdOfPriorPage and lastCreatedOnOfPriorPage from the prio
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -253,7 +284,7 @@ await corsair.passcreator.api.passes.pushNotification({ passUid: "54b4d891-4454-
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `passUid` | `string` | Yes | Pass UID |
-| `message` | `string` | Yes | Message pushed to the pass holder |
+| `message` | `string` | Yes | Text pushed to the pass holder (sent as pushNotificationText); may use &#123;Property&#125; placeholders |
 
 
 
@@ -261,9 +292,8 @@ await corsair.passcreator.api.passes.pushNotification({ passUid: "54b4d891-4454-
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | Yes | Whether the operation succeeded |
-| `description` | `string \| null` | No | Human-readable result description |
-| `statusCode` | `number \| null` | No | HTTP status code of the response |
+| `passUid` | `string` | Yes | The pass the call was for |
+| `success` | `boolean` | Yes | Whether the call succeeded |
 
 
 
@@ -339,9 +369,8 @@ await corsair.passcreator.api.passes.sendEmail({ passUid: "54b4d891-4454-435d-b0
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | Yes | Whether the operation succeeded |
-| `description` | `string \| null` | No | Human-readable result description |
-| `statusCode` | `number \| null` | No | HTTP status code of the response |
+| `passUid` | `string` | Yes | The pass the call was for |
+| `success` | `boolean` | Yes | Whether the call succeeded |
 
 
 
@@ -391,7 +420,7 @@ await corsair.passcreator.api.passes.update({ passUid: "54b4d891-4454-435d-b07f-
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `passUid` | `string` | Yes | Pass UID, barcode value or user-provided ID |
-| `properties` | `Record<string, unknown>` | No | Additional properties to update |
+| `properties` | `Record<string, any>` | No | Additional properties to update |
 | `voided` | `boolean` | No | Mark the pass voided (true) or not voided (false), as the mark-voided section documents |
 
 Answers 204 with no body; the voided flag marks or unmarks a pass as voided.
@@ -445,7 +474,7 @@ Copy a pass template
 **Risk:** `write`
 
 ```ts
-await corsair.passcreator.api.templates.copy({ templateUid: "6d03a4a9-cf92-4e36-80b4-a8994546e2f" });
+await corsair.passcreator.api.templates.copy({ templateUid: "6d03a4a9-cf92-4e36-80b4-a8994546e2f", name: "Coupon copy" });
 ```
 
 **Input**
@@ -453,6 +482,9 @@ await corsair.passcreator.api.templates.copy({ templateUid: "6d03a4a9-cf92-4e36-
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `templateUid` | `string` | Yes | Template UID to copy |
+| `name` | `string` | Yes | Name of the copy |
+| `description` | `string` | No | Description of the copy; defaults to the original |
+| `organizationName` | `string` | No | Organization name of the copy; defaults to the original |
 
 
 
@@ -460,8 +492,7 @@ await corsair.passcreator.api.templates.copy({ templateUid: "6d03a4a9-cf92-4e36-
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `identifier` | `string` | Yes | Template UID |
-| `name` | `string \| null` | No | Template name |
+| `identifier` | `string \| null` | No | UUID of the new template |
 
 
 
@@ -493,9 +524,8 @@ The API refuses with 400 while scheduled push notifications exist for the templa
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | Yes | Whether the operation succeeded |
-| `description` | `string \| null` | No | Human-readable result description |
-| `statusCode` | `number \| null` | No | HTTP status code of the response |
+| `templateUid` | `string` | Yes | Deleted template UID |
+| `success` | `boolean` | Yes | Whether the delete succeeded |
 
 
 
@@ -523,7 +553,20 @@ The zapierStyle field list; use these keys to personalise passes.
 
 
 
-**Output:** _empty object_
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  type?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -676,10 +719,13 @@ await corsair.passcreator.api.webhooks.subscribe({ target_url: "https://example.
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `target_url` | `string` | Yes | Endpoint deliveries are posted to |
-| `event` | `string` | Yes | Event to subscribe to, e.g. pass_created, pass_updated, pass_deleted, pass_scanned, pass_template_created, pass_template_updated, appscan_created |
-| `pass_template` | `string` | No | Scope the subscription to one pass-template UID |
+| `event` | `string` | Yes | Event to subscribe to, e.g. pass_created, pass_updated, pass_voided, pushnotification_registered, pass_template_created, pass_template_updated, app_scan_created |
+| `pass_template` | `string` | No | Scope the subscription to one pass-template UID (sent in the path) |
+| `subscription_url` | `string` | No | Optional URL that identifies this subscription |
+| `retryEnabled` | `boolean` | No | Retry failed deliveries |
+| `signPayload` | `boolean` | No | Sign deliveries (default true here: the receiver rejects unsigned ones) |
 
-Events include pass_created, pass_updated, pass_deleted, pass_scanned and the template, appscan and message hooks; pass_template scopes the subscription to one template.
+Events include pass_created, pass_updated, pass_voided, pushnotification_registered, pass_template_created, pass_template_updated and app_scan_created; pass_template scopes the subscription to one template, and signPayload defaults to true so deliveries can be verified.
 
 
 
@@ -687,11 +733,7 @@ Events include pass_created, pass_updated, pass_deleted, pass_scanned and the te
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `subscription_url` | `string \| null` | No | Subscription resource URL |
-| `target_url` | `string \| null` | No | Endpoint deliveries are posted to |
-| `event` | `string \| null` | No | Event the subscription delivers |
-| `pass_template` | `string \| null` | No | Template the subscription is scoped to |
-| `pull_mode` | `boolean \| null` | No | Whether the subscription is pull-mode |
+| `accessToken` | `string \| null` | No | Only returned with generateAccessToken |
 
 
 
@@ -706,14 +748,14 @@ Unsubscribe a webhook; deliveries stop until it is subscribed again
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.passcreator.api.webhooks.unsubscribe({ subscriptionUid: "f4379715-7a69-1742-38ae-836554724306" });
+await corsair.passcreator.api.webhooks.unsubscribe({ target_url: "https://example.com/webhooks/passcreator" });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `subscriptionUid` | `string` | Yes | Subscription UID to unsubscribe |
+| `target_url` | `string` | Yes | target_url the subscription was created with |
 
 
 
@@ -721,9 +763,7 @@ await corsair.passcreator.api.webhooks.unsubscribe({ subscriptionUid: "f4379715-
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | Yes | Whether the operation succeeded |
-| `description` | `string \| null` | No | Human-readable result description |
-| `statusCode` | `number \| null` | No | HTTP status code of the response |
+| `success` | `boolean` | Yes | Whether the unsubscribe succeeded |
 
 
 

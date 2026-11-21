@@ -51,16 +51,16 @@ export async function POST(request: Request) {
 
 `passcreator.event`
 
-A Passcreator event delivery: a pass object with its signature
+A signed Passcreator delivery; the result is the verified pass data from signedData
 
 **Payload**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event` | `string` | Yes | — |
-| `pass` | `Record<string, any> \| null` | No | — |
-| `signature` | `string \| null` | No | Hex SHA256 ECDSA signature over signedData |
-| `signedData` | `string \| null` | No | Canonical JSON of the signed pass data |
+| `signature` | `string` | Yes | Hex ECDSA signature over signedData |
+| `signedData` | `string` | Yes | The JSON string Passcreator signed: the pass data |
+| `identifier` | `string \| null` | No | Pass UUID |
+| `uniqueIdentifier` | `string \| null` | No | Unique pass identifier shown in the barcode |
 
 
 
@@ -69,10 +69,10 @@ A Passcreator event delivery: a pass object with its signature
 
 ```ts
 {
-  event: string,
-  pass?: Record<string, any> | null,
-  signature?: string | null,
-  signedData?: string | null
+  identifier?: string | null,
+  passId?: string | null,
+  uniqueIdentifier?: string | null,
+  passTemplateGuid?: string | null
 }
 ```
 </Accordion>
