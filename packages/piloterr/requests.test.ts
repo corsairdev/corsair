@@ -77,13 +77,21 @@ afterEach(() => {
 });
 
 describe('web', () => {
+	it('crawler unwraps the { return } object returnPageSource answers (live)', async () => {
+		respond({ return: '<html>source</html>' });
+		const html = await invoke(Web.crawler, {
+			query: 'https://example.com',
+			returnPageSource: true,
+		});
+		expect(html).toBe('<html>source</html>');
+	});
+
 	it('crawler sends the query and toggles', async () => {
 		respond(crawledHtml);
 		await invoke(Web.crawler, {
 			query: 'https://example.com',
 			allowRedirects: false,
 			returnPageSource: true,
-			softFail: true,
 			fields: 'result',
 		});
 		expectCall({
@@ -93,7 +101,6 @@ describe('web', () => {
 				query: 'https://example.com',
 				allow_redirects: 'false',
 				return_page_source: 'true',
-				soft_fail: 'true',
 				fields: 'result',
 			},
 			method: 'GET',
@@ -264,6 +271,15 @@ describe('linkedin', () => {
 		});
 	});
 
+	it('job search tolerates fields filtering the results away', async () => {
+		respond({ pagination: { current: 1 } });
+		const page = (await invoke(LinkedIn.jobSearch, {
+			keyword: 'engineer',
+			fields: 'pagination',
+		})) as { results?: unknown[] }; // unknown: only the missing results matter here
+		expect(page.results).toBeUndefined();
+	});
+
 	it('job search accepts the bare array the live API answers', async () => {
 		respond([
 			{
@@ -324,6 +340,10 @@ describe('email', () => {
 			path: '/v2/email/finder',
 			query: { query: 'Alex Martin', company_domain: 'example.com' },
 		});
+		// R8: the found address never reaches the event log.
+		const logged = JSON.stringify(mockLog.mock.calls.at(-1));
+		expect(logged).not.toContain('@');
+		expect(logged).toContain('"found":true');
 	});
 
 	it('verify and analyzes hit their routes', async () => {

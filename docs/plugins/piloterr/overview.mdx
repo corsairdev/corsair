@@ -7,7 +7,7 @@ description: "Piloterr is a scraping API for public web data. This plugin fetche
 Use **Piloterr** through Corsair: one client, typed API calls.
 
 Authenticate with the API key from your Piloterr dashboard; the plugin sends it in the x-api-key header. Every operation is a GET against https://api.piloterr.com and each call costs the credits listed on the endpoint page (account.usage and account.getJob are free). Errors answer &#123;"error": "&lt;message&gt;"&#125;; Piloterr signals rate limits as 401 with a "Rate limit exceeded" message rather than 429, and the plugin retries those with backoff (2s, then 4s). The docs prescribe exponential backoff for 500s only; 400/402/403 are never retried.
-Global parameters ride along on every endpoint: softFail answers 200 with the error in the body (errors stay unbilled) and fields filters the response by comma-separated field names with dot notation. is_async is not part of this plugin; poll jobs started elsewhere with account.getJob.
+The fields global parameter filters the response by comma-separated field names with dot notation. soft_fail and is_async are not part of this plugin (a failed call surfaces as an error with Piloterr's message); poll jobs started elsewhere with account.getJob.
 web.crawler and web.webunlocker answer a JSON-encoded HTML string, web.rendering the rendered HTML, and web.screenshot a base64-encoded file. web.webunlocker only works for domains on Piloterr's whitelist. Every operation is described in the official reference: https://docs.piloterr.com/reference
 
 **What you get:**

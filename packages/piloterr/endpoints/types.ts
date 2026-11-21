@@ -4,16 +4,12 @@ import { z } from 'zod';
 
 /**
  * Global parameters documented for every Piloterr endpoint
- * (docs.piloterr.com/global-parameters). is_async is intentionally not
- * exposed: the typed outputs below are synchronous.
+ * (docs.piloterr.com/global-parameters). is_async is not exposed: the typed
+ * outputs below are synchronous. soft_fail is not exposed either: it turns
+ * errors into 200 answers that no typed output can hold, while a failed
+ * call already surfaces as an ApiError with the provider's message.
  */
 const globalParams = {
-	softFail: z
-		.boolean()
-		.optional()
-		.describe(
-			'Answer 200 even on errors, with the message in the error field; errors stay unbilled',
-		),
 	fields: z
 		.string()
 		.optional()
@@ -84,6 +80,7 @@ export const OrganicResultSchema = z
 		position: z.number().nullish().describe('Position on the page'),
 		displayed_link: z.string().nullish().describe('Displayed URL'),
 		snippet_matched: z
+			// unknown: provider-shaped and varying by page, profile or plan; kept open on output.
 			.array(z.unknown())
 			.nullish()
 			.describe('Snippet highlights'),
@@ -95,6 +92,7 @@ export type OrganicResult = z.infer<typeof OrganicResultSchema>;
 
 /** The echo of the query an engine answered with. */
 export const SearchParametersSchema = z
+	// unknown: provider-shaped and varying by page, profile or plan; kept open on output.
 	.record(z.string(), z.unknown())
 	.nullish()
 	.describe('Search parameters echoed by the engine');
@@ -283,6 +281,7 @@ export const WebTechnologyOutputSchema = z
 			.nullish()
 			.describe('Checked URLs with their status codes'),
 		technologies: z
+			// unknown: provider-shaped and varying by page, profile or plan; kept open on output.
 			.array(z.unknown())
 			.nullish()
 			.describe('Detected technologies; names in simple mode'),
@@ -316,10 +315,12 @@ export const WebEmailPhoneExtractorOutputSchema = z
 	.object({
 		emails: z.array(z.string()).nullish().describe('Found email addresses'),
 		phone_numbers: z
+			// unknown: provider-shaped and varying by page, profile or plan; kept open on output.
 			.array(z.unknown())
 			.nullish()
 			.describe('Found phone numbers'),
 		contact_pages: z
+			// unknown: provider-shaped and varying by page, profile or plan; kept open on output.
 			.array(z.unknown())
 			.nullish()
 			.describe('Pages the extractor found contacts on'),
@@ -336,28 +337,35 @@ export const WebEmailPhoneExtractorOutputSchema = z
 			.nullish()
 			.describe('Instagram profiles'),
 		facebook_profiles: z
+			// unknown: provider-shaped and varying by page, profile or plan; kept open on output.
 			.array(z.unknown())
 			.nullish()
 			.describe('Facebook profiles'),
 		youtube_channels: z
+			// unknown: provider-shaped and varying by page, profile or plan; kept open on output.
 			.array(z.unknown())
 			.nullish()
 			.describe('YouTube channels'),
+		// unknown: provider-shaped and varying by page, profile or plan; kept open on output.
 		tiktok_profiles: z.array(z.unknown()).nullish().describe('TikTok profiles'),
 		reddit_profiles: z.array(z.unknown()).nullish().describe('Reddit profiles'),
 		snapchat_profiles: z
+			// unknown: provider-shaped and varying by page, profile or plan; kept open on output.
 			.array(z.unknown())
 			.nullish()
 			.describe('Snapchat profiles'),
 		telegram_channels: z
+			// unknown: provider-shaped and varying by page, profile or plan; kept open on output.
 			.array(z.unknown())
 			.nullish()
 			.describe('Telegram channels'),
 		pinterest_profiles: z
+			// unknown: provider-shaped and varying by page, profile or plan; kept open on output.
 			.array(z.unknown())
 			.nullish()
 			.describe('Pinterest profiles'),
 		crunchbase_profiles: z
+			// unknown: provider-shaped and varying by page, profile or plan; kept open on output.
 			.array(z.unknown())
 			.nullish()
 			.describe('Crunchbase profiles'),
@@ -456,6 +464,7 @@ export const GoogleSearchOutputSchema = z
 			.nullish()
 			.describe('Organic listings'),
 		related_searches: z
+			// unknown: provider-shaped and varying by page, profile or plan; kept open on output.
 			.array(z.record(z.string(), z.unknown()))
 			.nullish()
 			.describe('Related searches'),
@@ -468,6 +477,7 @@ export const GoogleSearchOutputSchema = z
 		),
 		search_information: z
 			.object({
+				// unknown: provider-shaped and varying by page, profile or plan; kept open on output.
 				total_results: z.unknown().nullish().describe('Total results estimate'),
 				time_taken_displayed: z
 					.unknown()
@@ -503,6 +513,7 @@ export type GoogleAutocompleteInput = z.infer<
 export const GoogleAutocompleteOutputSchema = z
 	.object({
 		suggestions: z
+			// unknown: provider-shaped and varying by page, profile or plan; kept open on output.
 			.array(z.record(z.string(), z.unknown()))
 			.nullish()
 			.describe('Suggested completions, each with a value field'),
@@ -598,10 +609,12 @@ export const LinkedInCompanyOutputSchema = z
 		locations: z.array(z.string()).nullish().describe('Office locations'),
 		specialities: z.array(z.string()).nullish().describe('Specialities'),
 		employees: z
+			// unknown: provider-shaped and varying by page, profile or plan; kept open on output.
 			.array(z.record(z.string(), z.unknown()))
 			.nullish()
 			.describe('Employee profiles'),
 		posts: z
+			// unknown: provider-shaped and varying by page, profile or plan; kept open on output.
 			.array(z.record(z.string(), z.unknown()))
 			.nullish()
 			.describe('Recent posts'),
@@ -632,22 +645,29 @@ export const LinkedInProfileOutputSchema = z
 		summary: z.string().nullish().describe('Profile summary'),
 		profile_url: z.string().nullish().describe('Profile URL'),
 		photo_url: z.string().nullish().describe('Photo URL'),
+		// unknown: provider-shaped and varying by page, profile or plan; kept open on output.
 		address: z.unknown().nullish().describe('Address'),
 		connection_count: z.number().nullish().describe('Connection count'),
 		follower_count: z.number().nullish().describe('Follower count'),
+		// unknown: provider-shaped and varying by page, profile or plan; kept open on output.
 		skills: z.array(z.unknown()).nullish().describe('Skills'),
 		experiences: z
+			// unknown: provider-shaped and varying by page, profile or plan; kept open on output.
 			.array(z.record(z.string(), z.unknown()))
 			.nullish()
 			.describe('Work experience entries'),
 		educations: z
+			// unknown: provider-shaped and varying by page, profile or plan; kept open on output.
 			.array(z.record(z.string(), z.unknown()))
 			.nullish()
 			.describe('Education entries'),
+		// unknown: provider-shaped and varying by page, profile or plan; kept open on output.
 		certifications: z.array(z.unknown()).nullish().describe('Certifications'),
 		languages: z.array(z.unknown()).nullish().describe('Languages'),
+		// unknown: provider-shaped and varying by page, profile or plan; kept open on output.
 		recommendations: z.array(z.unknown()).nullish().describe('Recommendations'),
 		articles: z
+			// unknown: provider-shaped and varying by page, profile or plan; kept open on output.
 			.array(z.record(z.string(), z.unknown()))
 			.nullish()
 			.describe('Published articles'),
@@ -674,6 +694,7 @@ export const LinkedInJobOutputSchema = z
 		job_description: z.string().nullish().describe('Job description'),
 		location: z.string().nullish().describe('Location label'),
 		address: z
+			// unknown: provider-shaped and varying by page, profile or plan; kept open on output.
 			.record(z.string(), z.unknown())
 			.nullish()
 			.describe('Structured address'),
@@ -688,6 +709,7 @@ export const LinkedInJobOutputSchema = z
 		company_url: z.string().nullish().describe('Company URL'),
 		company_logo: z.string().nullish().describe('Company logo'),
 		recruiter: z
+			// unknown: provider-shaped and varying by page, profile or plan; kept open on output.
 			.record(z.string(), z.unknown())
 			.nullish()
 			.describe('Recruiter profile'),
@@ -780,7 +802,10 @@ export const LinkedInJobSearchOutputSchema = z
 					})
 					.loose(),
 			)
-			.describe('Job listings, up to 10 per page'),
+			.optional()
+			.describe(
+				'Job listings, up to 10 per page (absent when fields omits it)',
+			),
 		pagination: PaginationSchema.nullish().describe('Result pagination'),
 	})
 	.loose()
@@ -803,11 +828,13 @@ export const LinkedInPostOutputSchema = z
 		url: z.string().nullish().describe('Post URL'),
 		text: z.string().nullish().describe('Post text'),
 		author: z
+			// unknown: provider-shaped and varying by page, profile or plan; kept open on output.
 			.record(z.string(), z.unknown())
 			.nullish()
 			.describe('Author profile'),
 		images: z.array(z.string()).nullish().describe('Post images'),
 		comments: z
+			// unknown: provider-shaped and varying by page, profile or plan; kept open on output.
 			.array(z.record(z.string(), z.unknown()))
 			.nullish()
 			.describe('First batch of comments; deep threads may be truncated'),
@@ -943,6 +970,7 @@ export const UsageOutputSchema = z
 			.loose()
 			.nullish()
 			.describe('Combined subscription quota plus packs'),
+		// unknown: provider-shaped and varying by page, profile or plan; kept open on output.
 		packs: z.unknown().nullish().describe('One-time pack balances'),
 		credits: z
 			.object({
@@ -954,14 +982,17 @@ export const UsageOutputSchema = z
 			.nullish()
 			.describe('Credit ledger balances'),
 		rate_limit: z
+			// unknown: provider-shaped and varying by page, profile or plan; kept open on output.
 			.record(z.string(), z.unknown())
 			.nullish()
 			.describe('Per-second and per-minute plan limits'),
 		account: z
+			// unknown: provider-shaped and varying by page, profile or plan; kept open on output.
 			.record(z.string(), z.unknown())
 			.nullish()
 			.describe('Account name and slug'),
 		api_key: z
+			// unknown: provider-shaped and varying by page, profile or plan; kept open on output.
 			.record(z.string(), z.unknown())
 			.nullish()
 			.describe('Key alias, active flag, category, expiry and quotas'),
@@ -1007,6 +1038,7 @@ export const JobStatusSchema = z
 		duration_ms: z.number().nullish().describe('Duration in milliseconds'),
 		progress: z.number().nullish().describe('Progress from 0 to 100'),
 		args: z
+			// unknown: provider-shaped and varying by page, profile or plan; kept open on output.
 			.record(z.string(), z.unknown())
 			.nullish()
 			.describe('Arguments the job was started with'),

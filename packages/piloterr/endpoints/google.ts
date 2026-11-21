@@ -29,7 +29,6 @@ export const search: PiloterrEndpoints['googleSearch'] = (ctx, input) =>
 			page,
 			num,
 			safe,
-			softFail,
 			fields,
 		}) => ({
 			method: 'GET',
@@ -47,7 +46,6 @@ export const search: PiloterrEndpoints['googleSearch'] = (ctx, input) =>
 				page,
 				num,
 				safe,
-				soft_fail: softFail,
 				fields,
 			},
 		}),
@@ -68,7 +66,7 @@ export const searchAutocomplete: PiloterrEndpoints['googleSearchAutocomplete'] =
 				output: Outputs.googleSearchAutocomplete,
 			},
 			input,
-			({ query, cp, googleDomain, gl, hl, cr, lr, softFail, fields }) => ({
+			({ query, cp, googleDomain, gl, hl, cr, lr, fields }) => ({
 				method: 'GET',
 				path: `${V2}/google/search/autocomplete`,
 				query: {
@@ -79,7 +77,6 @@ export const searchAutocomplete: PiloterrEndpoints['googleSearchAutocomplete'] =
 					hl,
 					cr,
 					lr,
-					soft_fail: softFail,
 					fields,
 				},
 			}),
@@ -99,7 +96,7 @@ export const news: PiloterrEndpoints['googleNews'] = (ctx, input) =>
 			output: Outputs.googleNews,
 		},
 		input,
-		({ query, page, googleDomain, gl, hl, cr, lr, softFail, fields }) => ({
+		({ query, page, googleDomain, gl, hl, cr, lr, fields }) => ({
 			method: 'GET',
 			path: `${V2}/google/news`,
 			query: {
@@ -110,7 +107,6 @@ export const news: PiloterrEndpoints['googleNews'] = (ctx, input) =>
 				hl,
 				cr,
 				lr,
-				soft_fail: softFail,
 				fields,
 			},
 		}),

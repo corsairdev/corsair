@@ -14,11 +14,10 @@ overviewNote: >
   those with backoff (2s, then 4s). The docs prescribe exponential backoff
   for 500s only; 400/402/403 are never retried.
 
-  Global parameters ride along on every endpoint: softFail answers 200 with
-  the error in the body (errors stay unbilled) and fields filters the
-  response by comma-separated field names with dot notation. is_async is
-  not part of this plugin; poll jobs started elsewhere with
-  account.getJob.
+  The fields global parameter filters the response by comma-separated field
+  names with dot notation. soft_fail and is_async are not part of this
+  plugin (a failed call surfaces as an error with Piloterr's message); poll
+  jobs started elsewhere with account.getJob.
 
   web.crawler and web.webunlocker answer a JSON-encoded HTML string,
   web.rendering the rendered HTML, and web.screenshot a base64-encoded

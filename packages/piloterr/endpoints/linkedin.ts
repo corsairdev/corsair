@@ -19,10 +19,10 @@ export const companyInfo: PiloterrEndpoints['linkedinCompanyInfo'] = (
 			output: Outputs.linkedinCompanyInfo,
 		},
 		input,
-		({ query, domain, softFail, fields }) => ({
+		({ query, domain, fields }) => ({
 			method: 'GET',
 			path: `${V2}/linkedin/company/info`,
-			query: { query, domain, soft_fail: softFail, fields },
+			query: { query, domain, fields },
 		}),
 		{
 			log: (_, company) => ({ companyName: company.company_name ?? undefined }),
@@ -41,10 +41,10 @@ export const profileInfo: PiloterrEndpoints['linkedinProfileInfo'] = (
 			output: Outputs.linkedinProfileInfo,
 		},
 		input,
-		({ query, softFail, fields }) => ({
+		({ query, fields }) => ({
 			method: 'GET',
 			path: `${V2}/linkedin/profile/info`,
-			query: { query, soft_fail: softFail, fields },
+			query: { query, fields },
 		}),
 		{ log: (_, profile) => ({ username: profile.username ?? undefined }) },
 	);
@@ -58,10 +58,10 @@ export const jobInfo: PiloterrEndpoints['linkedinJobInfo'] = (ctx, input) =>
 			output: Outputs.linkedinJobInfo,
 		},
 		input,
-		({ query, softFail, fields }) => ({
+		({ query, fields }) => ({
 			method: 'GET',
 			path: `${V2}/linkedin/job/info`,
-			query: { query, soft_fail: softFail, fields },
+			query: { query, fields },
 		}),
 		{ log: (_, job) => ({ jobId: job.id ?? undefined }) },
 	);
@@ -85,7 +85,6 @@ export const jobSearch: PiloterrEndpoints['linkedinJobSearch'] = (ctx, input) =>
 			geoId,
 			companyId,
 			page,
-			softFail,
 			fields,
 		}) => ({
 			method: 'GET',
@@ -100,7 +99,6 @@ export const jobSearch: PiloterrEndpoints['linkedinJobSearch'] = (ctx, input) =>
 				geo_id: geoId,
 				company_id: companyId,
 				page,
-				soft_fail: softFail,
 				fields,
 			},
 		}),
@@ -108,7 +106,7 @@ export const jobSearch: PiloterrEndpoints['linkedinJobSearch'] = (ctx, input) =>
 			// The live API answers a bare array of jobs (2026-11-21); the
 			// documented { results, pagination } envelope is kept as is.
 			shape: (raw) => (Array.isArray(raw) ? { results: raw } : raw),
-			log: (_, page) => ({ results: page.results.length }),
+			log: (_, page) => ({ results: page.results?.length ?? 0 }),
 		},
 	);
 
@@ -121,10 +119,10 @@ export const postInfo: PiloterrEndpoints['linkedinPostInfo'] = (ctx, input) =>
 			output: Outputs.linkedinPostInfo,
 		},
 		input,
-		({ query, softFail, fields }) => ({
+		({ query, fields }) => ({
 			method: 'GET',
 			path: `${V2}/linkedin/post/info`,
-			query: { query, soft_fail: softFail, fields },
+			query: { query, fields },
 		}),
 		{ log: (_, post) => ({ postId: post.id ?? undefined }) },
 	);

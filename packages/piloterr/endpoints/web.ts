@@ -8,6 +8,20 @@ import {
 
 const V2 = '/v2';
 
+/**
+ * With returnPageSource the API answers { "return": "<html>" } instead of
+ * the bare HTML string (live, 2026-11-21); both come back as the string.
+ */
+// unknown: raw is the response body (a string, or the page-source object).
+function pageHtml(raw: unknown): unknown {
+	if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
+		const record = raw as Record<string, unknown>;
+		if (typeof record.return === 'string') return record.return;
+		if (typeof record.result === 'string') return record.result;
+	}
+	return raw;
+}
+
 export const crawler: PiloterrEndpoints['webCrawler'] = (ctx, input) =>
 	call(
 		ctx,
@@ -17,17 +31,17 @@ export const crawler: PiloterrEndpoints['webCrawler'] = (ctx, input) =>
 			output: Outputs.webCrawler,
 		},
 		input,
-		({ query, allowRedirects, returnPageSource, softFail, fields }) => ({
+		({ query, allowRedirects, returnPageSource, fields }) => ({
 			method: 'GET',
 			path: `${V2}/website/crawler`,
 			query: {
 				query,
 				allow_redirects: allowRedirects,
 				return_page_source: returnPageSource,
-				soft_fail: softFail,
 				fields,
 			},
 		}),
+		{ shape: pageHtml },
 	);
 
 export const rendering: PiloterrEndpoints['webRendering'] = (ctx, input) =>
@@ -46,7 +60,6 @@ export const rendering: PiloterrEndpoints['webRendering'] = (ctx, input) =>
 			blockAds,
 			timeout,
 			returnPageSource,
-			softFail,
 			fields,
 		}) => ({
 			method: 'GET',
@@ -58,10 +71,10 @@ export const rendering: PiloterrEndpoints['webRendering'] = (ctx, input) =>
 				block_ads: blockAds,
 				timeout,
 				return_page_source: returnPageSource,
-				soft_fail: softFail,
 				fields,
 			},
 		}),
+		{ shape: pageHtml },
 	);
 
 export const screenshot: PiloterrEndpoints['webScreenshot'] = (ctx, input) =>
@@ -94,7 +107,6 @@ export const screenshot: PiloterrEndpoints['webScreenshot'] = (ctx, input) =>
 			blockUrls,
 			delay,
 			waitForSelector,
-			softFail,
 		}) => ({
 			method: 'GET',
 			path: `${V2}/website/screenshot`,
@@ -121,7 +133,6 @@ export const screenshot: PiloterrEndpoints['webScreenshot'] = (ctx, input) =>
 				block_urls: blockUrls,
 				delay,
 				wait_for_selector: waitForSelector,
-				soft_fail: softFail,
 			},
 		}),
 		{ shape: shapeScreenshotFile },
@@ -136,10 +147,10 @@ export const technology: PiloterrEndpoints['webTechnology'] = (ctx, input) =>
 			output: Outputs.webTechnology,
 		},
 		input,
-		({ query, mode, softFail, fields }) => ({
+		({ query, mode, fields }) => ({
 			method: 'GET',
 			path: `${V2}/website/technology`,
-			query: { query, mode, soft_fail: softFail, fields },
+			query: { query, mode, fields },
 		}),
 	);
 
@@ -153,13 +164,12 @@ export const emailPhoneExtractor: PiloterrEndpoints['webEmailPhoneExtractor'] =
 				output: Outputs.webEmailPhoneExtractor,
 			},
 			input,
-			({ query, countryCode, softFail, fields }) => ({
+			({ query, countryCode, fields }) => ({
 				method: 'GET',
 				path: `${V2}/website/email_phone_extractor`,
 				query: {
 					query,
 					country_code: countryCode,
-					soft_fail: softFail,
 					fields,
 				},
 			}),
@@ -179,15 +189,15 @@ export const webunlocker: PiloterrEndpoints['webWebunlocker'] = (ctx, input) =>
 			output: Outputs.webWebunlocker,
 		},
 		input,
-		({ query, allowRedirects, returnPageSource, softFail, fields }) => ({
+		({ query, allowRedirects, returnPageSource, fields }) => ({
 			method: 'GET',
 			path: `${V2}/website/webunlocker`,
 			query: {
 				query,
 				allow_redirects: allowRedirects,
 				return_page_source: returnPageSource,
-				soft_fail: softFail,
 				fields,
 			},
 		}),
+		{ shape: pageHtml },
 	);

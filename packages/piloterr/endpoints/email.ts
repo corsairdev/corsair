@@ -16,18 +16,18 @@ export const finder: PiloterrEndpoints['emailFinder'] = (ctx, input) =>
 			output: Outputs.emailFinder,
 		},
 		input,
-		({ query, companyDomain, companyName, softFail, fields }) => ({
+		({ query, companyDomain, companyName, fields }) => ({
 			method: 'GET',
 			path: `${V2}/email/finder`,
 			query: {
 				query,
 				company_domain: companyDomain,
 				company_name: companyName,
-				soft_fail: softFail,
 				fields,
 			},
 		}),
-		{ log: (_, found) => ({ email: found.email ?? undefined }) },
+		// R8: the found address stays out of the event log.
+		{ log: (_, found) => ({ found: Boolean(found.email) }) },
 	);
 
 export const verify: PiloterrEndpoints['emailVerify'] = (ctx, input) =>
@@ -39,10 +39,10 @@ export const verify: PiloterrEndpoints['emailVerify'] = (ctx, input) =>
 			output: Outputs.emailVerify,
 		},
 		input,
-		({ query, softFail, fields }) => ({
+		({ query, fields }) => ({
 			method: 'GET',
 			path: `${V2}/email/verify`,
-			query: { query, soft_fail: softFail, fields },
+			query: { query, fields },
 		}),
 		{ log: (_, verified) => ({ status: verified.status ?? undefined }) },
 	);
@@ -56,10 +56,10 @@ export const analyzes: PiloterrEndpoints['emailAnalyzes'] = (ctx, input) =>
 			output: Outputs.emailAnalyzes,
 		},
 		input,
-		({ query, softFail, fields }) => ({
+		({ query, fields }) => ({
 			method: 'GET',
 			path: `${V2}/email/analyzes`,
-			query: { query, soft_fail: softFail, fields },
+			query: { query, fields },
 		}),
 		{
 			log: (_, analyzed) => ({
