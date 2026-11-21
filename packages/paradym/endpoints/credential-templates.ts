@@ -126,5 +126,12 @@ export const unarchive: ParadymEndpoints['credentialTemplatesUnarchive'] = (
 			method: 'POST',
 			path: `${TEMPLATES(walletId)}/${encodeURIComponent(credentialTemplateId)}/unarchive`,
 		}),
-		{ log: (_, template) => ({ templateId: template.id ?? undefined }) },
+		{
+			// The API answers 204 with no body.
+			shape: (raw, { credentialTemplateId }) => {
+				expectEmptyBody(raw, 'credentialTemplates.unarchive');
+				return { credentialTemplateId, success: true };
+			},
+			log: (_, result) => ({ templateId: result.credentialTemplateId }),
+		},
 	);

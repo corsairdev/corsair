@@ -425,8 +425,9 @@ const paradymEndpointMeta = {
 		description: 'Read one webhook delivery with its attempt history',
 	},
 	'webhooks.redeliverDelivery': {
-		riskLevel: 'write',
-		description: 'Redeliver a pending or failed webhook delivery',
+		riskLevel: 'destructive',
+		description:
+			'Redeliver a pending or failed webhook delivery: the payload is posted to the subscription URL again',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof paradymEndpointsNested>;
 
@@ -506,7 +507,7 @@ export function paradym<const T extends ParadymPluginOptions>(
 	} satisfies InternalParadymPlugin;
 }
 
-export { ParadymAPIError } from './client';
+export { buildParadymApiError } from './client';
 
 export type {
 	OpenId4VcIssuance,

@@ -95,8 +95,9 @@ describe('paradym plugin', () => {
 		expect(meta['verification.createRequest']).toMatchObject({
 			riskLevel: 'write',
 		});
+		// Redelivery posts the payload to the subscription URL again.
 		expect(meta['webhooks.redeliverDelivery']).toMatchObject({
-			riskLevel: 'write',
+			riskLevel: 'destructive',
 		});
 	});
 

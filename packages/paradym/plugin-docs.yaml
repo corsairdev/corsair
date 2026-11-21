@@ -36,13 +36,13 @@ examples:
     args:
       credentials:
         - credentialTemplateId: tmpl_1
-          claims:
+          attributes:
             given_name: Jane
 apiExamples:
   wallets.list:
     call: '{ searchName: "Government", sort: "-createdAt" }'
   wallets.create:
-    call: '{ name: "Government wallet", verificationDataAccess: false }'
+    call: '{ name: "Government wallet", verificationDataAccess: "webhook" }'
   wallets.get:
     call: '{ walletId: "8f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5d" }'
   wallets.update:
@@ -54,7 +54,7 @@ apiExamples:
   credentialTemplates.get:
     call: '{ credentialTemplateId: "tmpl_1" }'
   credentialTemplates.update:
-    call: '{ credentialTemplateId: "tmpl_1", name: "PID v2" }'
+    call: '{ credentialTemplateId: "tmpl_1", name: "PID v2", attributes: { given_name: { type: "string" } } }'
   credentialTemplates.archive:
     call: '{ credentialTemplateId: "tmpl_1" }'
   credentialTemplates.unarchive:
@@ -66,13 +66,13 @@ apiExamples:
   presentationTemplates.get:
     call: '{ presentationTemplateId: "pres_1" }'
   presentationTemplates.update:
-    call: '{ presentationTemplateId: "pres_1", name: "Renamed" }'
+    call: '{ presentationTemplateId: "pres_1", name: "Renamed", credentials: [{ format: "sd-jwt-vc", type: "urn:eudi:pid:1", attributes: { given_name: {} } }] }'
   presentationTemplates.archive:
     call: '{ presentationTemplateId: "pres_1" }'
   issuance.listSessions:
     call: '{ filterStatus: "offered", pageSize: 10 }'
   issuance.createOffer:
-    call: '{ credentials: [{ credentialTemplateId: "tmpl_1", claims: { given_name: "Jane" } }], expirationInMinutes: 15 }'
+    call: '{ credentials: [{ credentialTemplateId: "tmpl_1", attributes: { given_name: "Jane" } }], expirationInMinutes: 15 }'
   issuance.getSession:
     call: '{ issuanceId: "issuance_1" }'
   verification.listSessions:
@@ -80,9 +80,9 @@ apiExamples:
   verification.createRequest:
     call: '{ presentationTemplateId: "pres_1", expirationInMinutes: 10, challenge: "nonce-123" }'
   verification.getSession:
-    call: '{ verificationId: "verification_1" }'
+    call: '{ verificationId: "verification_1", challenge: "challenge-1", responseCode: "code-1" }'
   verification.complete:
-    call: '{ verificationId: "verification_1" }'
+    call: '{ verificationId: "verification_1", challenge: "challenge-1", responseCode: "code-1" }'
   revocation.batch:
     call: '{ issuedCredentialIds: ["cred_1", "cred_2"], notifyWallet: true }'
   trustedEntities.list:
@@ -114,7 +114,7 @@ apiNotes:
   presentationTemplates.create: 'The credentials array names the credential types and attributes the holder must present; Paradym validates the per-format attribute definitions.'
   issuance.createOffer: 'The answer carries the offer URI, QR image and deep link a holder wallet opens; the session stays open until the wallet completes it.'
   verification.createRequest: 'The answer carries the authorization request URI, QR image and deep link.'
-  verification.complete: 'Completes a session that succeeded but was not marked completed by the holder flow.'
+  verification.complete: 'Completes a redirect-flow session with the challenge it was created with and the response_code the wallet redirect returned.'
   revocation.batch: 'Revokes every listed issued credential; revocation cannot be undone.'
   trustedEntities.create: 'Trust at least one DID or one certificate.'
   webhooks.createSubscription: 'The answer carries the subscription''s signatureSecret: store it (keys.set_webhook_signature) so deliveries can be verified.'

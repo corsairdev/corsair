@@ -25,7 +25,7 @@ export const wallet = {
 	id: '8f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5d',
 	name: 'Government wallet',
 	ownerId: 'user_1',
-	verificationDataAccess: false,
+	verificationDataAccess: 'webhook',
 	createdAt: '2025-06-01T09:00:00.000000Z',
 	updatedAt: '2025-06-01T09:00:00.000000Z',
 };
@@ -61,7 +61,7 @@ export const issuanceSession = {
 	id: 'issuance_1',
 	status: 'offered',
 	credentials: [
-		{ credentialTemplateId: 'tmpl_1', claims: { given_name: 'Jane' } },
+		{ credentialTemplateId: 'tmpl_1', attributes: { given_name: 'Jane' } },
 	],
 	error: null,
 	offerUri: 'https://paradym.id/issuance/issuance_1',

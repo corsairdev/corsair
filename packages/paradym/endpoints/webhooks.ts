@@ -16,9 +16,10 @@ export const listSubscriptions: ParadymEndpoints['webhooksListSubscriptions'] =
 				output: Outputs.webhooksListSubscriptions,
 			},
 			input,
-			(_query, walletId) => ({
+			(query, walletId) => ({
 				method: 'GET',
 				path: `/v1/wallets/${encodeURIComponent(walletId)}/webhooks`,
+				query: pageQuery(query),
 			}),
 			{ log: (_, result) => ({ count: result.data.length }) },
 		);

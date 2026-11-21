@@ -123,14 +123,14 @@ describe('wallets', () => {
 		respond(wallet, 201);
 		await invoke(Wallets.create, {
 			name: 'Government wallet',
-			verificationDataAccess: false,
+			verificationDataAccess: 'once',
 		});
 		const sent = lastRequest();
 		expectAuthenticated('/v1/wallets');
 		expect(sent.method).toBe('POST');
 		expect(JSON.parse(sent.body as string)).toEqual({
 			name: 'Government wallet',
-			verificationDataAccess: false,
+			verificationDataAccess: 'once',
 		});
 	});
 
@@ -191,11 +191,22 @@ describe('credentialTemplates', () => {
 		await invoke(CredentialTemplates.update, {
 			credentialTemplateId: 'tmpl_1',
 			name: 'PID v2',
+			attributes: { given_name: { name: 'given_name', required: true } },
 		});
 		const sent = lastRequest();
 		expectWalletScoped('/templates/credentials/sd-jwt-vc/tmpl_1');
 		expect(sent.method).toBe('PUT');
-		expect(JSON.parse(sent.body as string)).toEqual({ name: 'PID v2' });
+		expect(JSON.parse(sent.body as string)).toEqual({
+			name: 'PID v2',
+			attributes: { given_name: { name: 'given_name', required: true } },
+		});
+		// type and revocable cannot change, and a name-only body is incomplete.
+		await expect(
+			invoke(CredentialTemplates.update, {
+				credentialTemplateId: 'tmpl_1',
+				name: 'PID v2',
+			}),
+		).rejects.toThrow();
 	});
 
 	it('archive DELETEs the template', async () => {
@@ -208,11 +219,12 @@ describe('credentialTemplates', () => {
 		expect(lastRequest().method).toBe('DELETE');
 	});
 
-	it('unarchive POSTs to the unarchive route', async () => {
-		respond({ ...credentialTemplate, archived: false });
-		await invoke(CredentialTemplates.unarchive, {
+	it('unarchive POSTs to the unarchive route and accepts the empty 204', async () => {
+		respond(undefined, 204);
+		const result = await invoke(CredentialTemplates.unarchive, {
 			credentialTemplateId: 'tmpl_1',
 		});
+		expect(result).toEqual({ credentialTemplateId: 'tmpl_1', success: true });
 		expectWalletScoped('/templates/credentials/sd-jwt-vc/tmpl_1/unarchive');
 	});
 });
@@ -254,14 +266,33 @@ describe('presentationTemplates', () => {
 
 	it('update PUTs the template body', async () => {
 		respond({ id: 'pres_1', name: 'Renamed' });
+		const credentials = [
+			{
+				format: 'anoncreds',
+				schema: 'schema-id',
+				attributes: { name: { type: 'string' } },
+			},
+		];
 		await invoke(PresentationTemplates.update, {
 			presentationTemplateId: 'pres_1',
 			name: 'Renamed',
+			credentials,
 		});
 		const sent = lastRequest();
 		expectWalletScoped('/templates/presentations/pres_1');
 		expect(sent.method).toBe('PUT');
-		expect(JSON.parse(sent.body as string)).toEqual({ name: 'Renamed' });
+		expect(JSON.parse(sent.body as string)).toEqual({
+			name: 'Renamed',
+			credentials,
+		});
+		// An AnonCreds credential needs a schema, not a type.
+		await expect(
+			invoke(PresentationTemplates.update, {
+				presentationTemplateId: 'pres_1',
+				name: 'Renamed',
+				credentials: [{ format: 'anoncreds', attributes: {} }],
+			}),
+		).rejects.toThrow();
 	});
 
 	it('archive DELETEs the template', async () => {
@@ -290,7 +321,7 @@ describe('issuance', () => {
 		respond(issuanceSession, 201);
 		await invoke(Issuance.createOffer, {
 			credentials: [
-				{ credentialTemplateId: 'tmpl_1', claims: { given_name: 'Jane' } },
+				{ credentialTemplateId: 'tmpl_1', attributes: { given_name: 'Jane' } },
 			],
 			expirationInMinutes: 15,
 		});
@@ -298,7 +329,7 @@ describe('issuance', () => {
 		expectWalletScoped('/openid4vc/issuance/offer');
 		expect(JSON.parse(sent.body as string)).toEqual({
 			credentials: [
-				{ credentialTemplateId: 'tmpl_1', claims: { given_name: 'Jane' } },
+				{ credentialTemplateId: 'tmpl_1', attributes: { given_name: 'Jane' } },
 			],
 			expirationInMinutes: 15,
 		});
@@ -342,8 +373,16 @@ describe('verification', () => {
 
 	it('complete POSTs to the complete route', async () => {
 		respond({ ...verificationSession, status: 'verified' });
-		await invoke(Verification.complete, { verificationId: 'verification_1' });
+		await invoke(Verification.complete, {
+			verificationId: 'verification_1',
+			challenge: 'challenge-1',
+			responseCode: 'code-1',
+		});
 		expectWalletScoped('/openid4vc/verification/verification_1/complete');
+		expect(JSON.parse(lastRequest().body as string)).toEqual({
+			challenge: 'challenge-1',
+			responseCode: 'code-1',
+		});
 	});
 });
 
@@ -405,13 +444,20 @@ describe('trustedEntities', () => {
 describe('webhooks', () => {
 	it('listSubscriptions GETs the subscriptions', async () => {
 		respond(webhookSubscriptionList);
-		const result = (await invoke(Webhooks.listSubscriptions, {})) as {
+		const result = (await invoke(Webhooks.listSubscriptions, {
+			pageSize: 10,
+			pageAfter: 'cursor-1',
+		})) as {
 			// unknown: subscription objects are provider-defined, so the cast
 			// keeps them open.
 			data: unknown[];
 		};
 		expect(result.data).toHaveLength(1);
 		expectWalletScoped('/webhooks');
+		expect(lastRequest().query).toMatchObject({
+			'page[size]': '10',
+			'page[after]': 'cursor-1',
+		});
 	});
 
 	it('createSubscription POSTs the subscription body', async () => {

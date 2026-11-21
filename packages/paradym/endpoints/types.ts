@@ -64,8 +64,9 @@ export const WalletSchema = z
 		name: z.string().describe('Wallet name'),
 		ownerId: z.string().describe('Id of the owning user'),
 		verificationDataAccess: z
-			.boolean()
-			.describe('Whether the wallet stores presented credential data'),
+			.string()
+			.nullish()
+			.describe('Access mode for presented data: webhook, once or 15min'),
 		createdAt: isoDatetime.describe('Creation timestamp'),
 		updatedAt: isoDatetime.describe('Last modification timestamp'),
 	})
@@ -109,13 +110,13 @@ export const CreateWalletInputSchema = z
 	.object({
 		name: z.string().min(1).describe('Wallet name'),
 		verificationDataAccess: z
-			.boolean()
+			.enum(['webhook', 'once', '15min'])
 			.optional()
 			.describe(
-				'Store the credential data presented to this wallet for verification',
+				'How long presented credential data stays readable: webhook (only in the webhook), once (one read) or 15min',
 			),
 		openId4VcVersion: z
-			.enum(['v1', 'draft-00'])
+			.enum(['v1'])
 			.optional()
 			.describe('OpenID4VC version this wallet interoperates with'),
 	})
@@ -140,9 +141,11 @@ export const UpdateWalletInputSchema = z
 		walletId: z.string().min(1).describe('Wallet id'),
 		name: z.string().min(1).optional().describe('New wallet name'),
 		verificationDataAccess: z
-			.boolean()
+			.enum(['webhook', 'once', '15min'])
 			.optional()
-			.describe('Whether verification data is stored'),
+			.describe(
+				'How long presented credential data stays readable: webhook (only in the webhook), once (one read) or 15min',
+			),
 	})
 	.superRefine((input, ctx) => {
 		if (
@@ -191,6 +194,42 @@ export type SdJwtCredentialTemplate = z.infer<
 >;
 
 /** The attribute map every credential template carries, keyed by attribute name. */
+/** A date string, or a duration in the future relative to issuance. */
+const ValidFromSchema = z
+	.union([
+		z.string().min(1),
+		z.object({
+			future: z
+				.object({
+					days: z.number().int().optional(),
+					months: z.number().int().optional(),
+					years: z.number().int().optional(),
+				})
+				.describe('Offset from issuance'),
+		}),
+	])
+	.describe('A date, e.g. 2026-11-21, or { future: { days, months, years } }');
+
+const ValidUntilSchema = z
+	.union([
+		z.string().min(1),
+		z.object({
+			start: z
+				.enum(['issuance', 'validFrom'])
+				.describe('What the offset counts from'),
+			future: z
+				.object({
+					days: z.number().int().optional(),
+					months: z.number().int().optional(),
+					years: z.number().int().optional(),
+				})
+				.describe('Offset from start'),
+		}),
+	])
+	.describe(
+		'A date, or { start: issuance | validFrom, future: { days, months, years } }',
+	);
+
 const TemplateAttributesSchema = z
 	// unknown: attribute definitions are provider-defined (nested name,
 	// schema and flag objects), so the record cannot be stricter.
@@ -244,17 +283,12 @@ export const CreateCredentialTemplateInputSchema = z
 		attributes: TemplateAttributesSchema.describe(
 			'Credential attributes keyed by attribute name',
 		),
-		description: z.string().optional().describe('Template description'),
 		revocable: z
 			.boolean()
 			.optional()
 			.describe('Enable revocation for credentials from this template'),
-		validFrom: isoDatetime
-			.optional()
-			.describe('Credentials are valid from this time'),
-		validUntil: isoDatetime
-			.optional()
-			.describe('Credentials are valid until this time'),
+		validFrom: ValidFromSchema.optional(),
+		validUntil: ValidUntilSchema.optional(),
 	})
 	.describe('Create an SD-JWT VC credential template');
 export type CreateCredentialTemplateInput = z.infer<
@@ -283,34 +317,15 @@ export type GetCredentialTemplateOutput = z.infer<
 export const UpdateCredentialTemplateInputSchema = z
 	.object({
 		credentialTemplateId: z.string().min(1).describe('Template id'),
-		type: z.string().min(1).optional().describe('Credential type identifier'),
-		name: z.string().min(1).optional().describe('Template name'),
-		attributes: TemplateAttributesSchema.optional().describe(
+		name: z.string().min(1).describe('Template name'),
+		attributes: TemplateAttributesSchema.describe(
 			'Credential attributes keyed by attribute name',
 		),
-		description: z.string().optional().describe('Template description'),
-		revocable: z
-			.boolean()
-			.optional()
-			.describe('Enable revocation for credentials from this template'),
-	})
-	.superRefine((input, ctx) => {
-		const touched =
-			input.type !== undefined ||
-			input.name !== undefined ||
-			input.attributes !== undefined ||
-			input.description !== undefined ||
-			input.revocable !== undefined;
-		if (!touched) {
-			ctx.addIssue({
-				code: 'custom',
-				path: ['name'],
-				message: 'Give at least one field to update',
-			});
-		}
+		validFrom: ValidFromSchema.optional(),
+		validUntil: ValidUntilSchema.optional(),
 	})
 	.describe(
-		'Update an SD-JWT VC credential template (the API replaces the body it accepts)',
+		'Replace an SD-JWT VC credential template: name and attributes are required, and type and revocable cannot change',
 	);
 export type UpdateCredentialTemplateInput = z.infer<
 	typeof UpdateCredentialTemplateInputSchema
@@ -346,8 +361,12 @@ export type UnarchiveCredentialTemplateInput = z.infer<
 	typeof UnarchiveCredentialTemplateInputSchema
 >;
 
-export const UnarchiveCredentialTemplateOutputSchema =
-	SdJwtCredentialTemplateSchema.describe('The template as unarchived');
+export const UnarchiveCredentialTemplateOutputSchema = z
+	.object({
+		credentialTemplateId: z.string().describe('Unarchived template id'),
+		success: z.boolean().describe('Whether the unarchive succeeded'),
+	})
+	.describe('The template was unarchived (the API answers 204 with no body)');
 export type UnarchiveCredentialTemplateOutput = z.infer<
 	typeof UnarchiveCredentialTemplateOutputSchema
 >;
@@ -407,21 +426,45 @@ export type ListPresentationTemplatesOutput = z.infer<
 
 const PresentationCredentialSchema = z
 	.object({
-		type: z
-			.string()
-			.min(1)
-			.describe('Credential type the holder must present, e.g. urn:eudi:pid:1'),
 		format: z
 			.enum(['sd-jwt-vc', 'mdoc', 'anoncreds'])
 			.describe('Credential format of the presented credential'),
+		type: z
+			.string()
+			.min(1)
+			.optional()
+			.describe(
+				'Credential type the holder must present, e.g. urn:eudi:pid:1 (sd-jwt-vc and mdoc)',
+			),
+		schema: z
+			.string()
+			.min(1)
+			.optional()
+			.describe('AnonCreds schema id (anoncreds only)'),
 		attributes: z
 			// unknown: attribute definitions are provider-defined, so the
 			// record cannot be stricter.
 			.record(z.string(), z.object({}).loose())
 			.describe('Requested attributes keyed by attribute name'),
-		name: z.string().nullish().describe('Name shown to the holder'),
+		name: z.string().optional().describe('Name shown to the holder'),
 	})
 	.loose()
+	.superRefine((credential, ctx) => {
+		if (credential.format === 'anoncreds' && !credential.schema) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['schema'],
+				message: 'AnonCreds credentials need a schema',
+			});
+		}
+		if (credential.format !== 'anoncreds' && !credential.type) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['type'],
+				message: 'sd-jwt-vc and mdoc credentials need a type',
+			});
+		}
+	})
 	.describe('One credential definition the presentation template asks for');
 
 export const CreatePresentationTemplateInputSchema = z
@@ -431,7 +474,6 @@ export const CreatePresentationTemplateInputSchema = z
 			.array(PresentationCredentialSchema)
 			.min(1)
 			.describe('The credentials the holder must present'),
-		description: z.string().optional().describe('Template description'),
 	})
 	.describe('Create a presentation template');
 export type CreatePresentationTemplateInput = z.infer<
@@ -460,27 +502,15 @@ export type GetPresentationTemplateOutput = z.infer<
 export const UpdatePresentationTemplateInputSchema = z
 	.object({
 		presentationTemplateId: z.string().min(1).describe('Template id'),
-		name: z.string().min(1).optional().describe('Template name'),
+		name: z.string().min(1).describe('Template name'),
 		credentials: z
 			.array(PresentationCredentialSchema)
-			.optional()
+			.min(1)
 			.describe('The credentials to present'),
-		description: z.string().optional().describe('Template description'),
 	})
-	.superRefine((input, ctx) => {
-		if (
-			input.name === undefined &&
-			input.credentials === undefined &&
-			input.description === undefined
-		) {
-			ctx.addIssue({
-				code: 'custom',
-				path: ['name'],
-				message: 'Give at least one field to update',
-			});
-		}
-	})
-	.describe('Update a presentation template');
+	.describe(
+		'Replace a presentation template: name and credentials are required',
+	);
 export type UpdatePresentationTemplateInput = z.infer<
 	typeof UpdatePresentationTemplateInputSchema
 >;
@@ -569,12 +599,18 @@ export type ListIssuanceSessionsOutput = z.infer<
 >;
 
 const IssuanceOfferCredentialSchema = z
-	// unknown: an offer credential entry is provider-defined (credentialTemplateId
-	// plus claim values), so the object stays open.
-	.looseObject({})
-	.describe(
-		'One credential to issue: its template id and the claim values, as the API reference documents',
-	);
+	.object({
+		credentialTemplateId: z
+			.string()
+			.min(1)
+			.describe('Template the credential is issued from'),
+		attributes: z
+			// unknown: claim values follow the template's own attributes.
+			.record(z.string(), z.unknown())
+			.optional()
+			.describe('Claim values keyed by the template attribute names'),
+	})
+	.describe('One credential to issue: its template id and claim values');
 
 export const CreateIssuanceOfferInputSchema = z
 	.object({
@@ -743,8 +779,16 @@ export type GetVerificationSessionOutput = z.infer<
 export const CompleteVerificationInputSchema = z
 	.object({
 		verificationId: z.string().min(1).describe('Verification session id'),
+		challenge: z
+			.string()
+			.min(1)
+			.describe('The challenge the verification request was created with'),
+		responseCode: z
+			.string()
+			.min(1)
+			.describe('The response_code the wallet redirect returned'),
 	})
-	.describe('Complete an OpenID4VC verification session that succeeded');
+	.describe('Complete an OpenID4VC verification session in the redirect flow');
 export type CompleteVerificationInput = z.infer<
 	typeof CompleteVerificationInputSchema
 >;
@@ -847,7 +891,10 @@ const TrustedEntityDidSchema = z
 
 const TrustedEntityCertificateSchema = z
 	.object({
-		pem: z.string().min(1).describe('The X.509 certificate, in PEM format'),
+		certificate: z
+			.string()
+			.min(1)
+			.describe('The X.509 certificate, in PEM format'),
 	})
 	.loose()
 	.describe('An X.509 certificate trusted from this entity');
@@ -934,8 +981,8 @@ export const WebhookSubscriptionSchema = z
 export type WebhookSubscription = z.infer<typeof WebhookSubscriptionSchema>;
 
 export const ListWebhookSubscriptionsInputSchema = z
-	.object({})
-	.describe('Input for listing webhook subscriptions (none)');
+	.object({ ...pageParams })
+	.describe('Query parameters for listing webhook subscriptions');
 export type ListWebhookSubscriptionsInput = z.infer<
 	typeof ListWebhookSubscriptionsInputSchema
 >;

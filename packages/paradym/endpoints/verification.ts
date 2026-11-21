@@ -86,9 +86,10 @@ export const complete: ParadymEndpoints['verificationComplete'] = (
 			output: Outputs.verificationComplete,
 		},
 		input,
-		({ verificationId }, walletId) => ({
+		({ verificationId, challenge, responseCode }, walletId) => ({
 			method: 'POST',
 			path: `/v1/wallets/${encodeURIComponent(walletId)}/openid4vc/verification/${encodeURIComponent(verificationId)}/complete`,
+			body: { challenge, responseCode },
 		}),
 		{
 			log: (_, session) => ({ sessionId: session.id, status: session.status }),
